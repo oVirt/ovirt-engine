@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.gwtbootstrap3.client.ui.Container;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -200,7 +201,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     FcpStorageView fcpStorageView;
 
     @Ignore
-    AbstractStorageView storageView;
+    AbstractStorageView<? extends IStorageModel> storageView;
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     @UiField(provided = true)
@@ -262,6 +263,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void edit(final AbstractDiskModel disk) {
         driver.edit(disk);
 
@@ -270,7 +272,12 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             externalDiskPanel.setVisible(isDirectLunDiskAvaialable);
         });
 
-        disk.getIsUsingScsiReservation().getEntityChangedEvent().addListener((ev, sender, args) -> scsiReservationInfoIcon.setVisible(disk.getIsUsingScsiReservation().getEntity()));
+        disk.getIsUsingScsiReservation().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("Entity".equals(args.propertyName) || "IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$ $NON-NLS-2$
+                EntityModel<Boolean> entity = disk.getIsUsingScsiReservation();
+                scsiReservationInfoIcon.setVisible(entity.getEntity() && entity.getIsAvailable());
+            }
+        });
 
         disk.getIsVirtioScsiEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (disk.getVm() == null) {
@@ -278,15 +285,22 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return;
             }
 
-            boolean isVirtioScsiEnabled = Boolean.TRUE.equals(((EntityModel) sender).getEntity());
+            boolean isVirtioScsiEnabled = ((EntityModel<Boolean>) sender).getEntity();
 
             // Show the info icon if VirtIO-SCSI is supported by the cluster but disabled for the VM
             interfaceInfoIcon.setVisible(!isVirtioScsiEnabled);
+
+            // Make room for it by making the control widget narrower
+            interfaceEditor.removeWidgetColSize(isVirtioScsiEnabled ? ColumnSize.SM_7 : ColumnSize.SM_8);
+            interfaceEditor.addWidgetColSize(!isVirtioScsiEnabled ? ColumnSize.SM_7 : ColumnSize.SM_8);
         });
 
         disk.getCinderVolumeType().getItemsChangedEvent().addListener((ev, sender, args) -> {
             Collection<String> volumeTypes = disk.getCinderVolumeType().getItems();
-            cinderVolumeTypeInfoIcon.setVisible(volumeTypes == null || volumeTypes.isEmpty());
+            boolean showIcon = volumeTypes == null || volumeTypes.isEmpty();
+            cinderVolumeTypeInfoIcon.setVisible(showIcon);
+            cinderVolumeTypeEditor.removeWidgetColSize(!showIcon ? ColumnSize.SM_7 : ColumnSize.SM_8);
+            cinderVolumeTypeEditor.addWidgetColSize(showIcon ? ColumnSize.SM_7 : ColumnSize.SM_8);
         });
 
         disk.getIsModelDisabled().getEntityChangedEvent().addListener((ev, sender, args) -> {

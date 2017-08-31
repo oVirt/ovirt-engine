@@ -27,6 +27,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.TakesValue;
@@ -150,6 +151,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         this.removeFormGroup = removeFormGroup;
     }
 
+    @Override
     public void setUsePatternFly(final boolean usePatternfly) {
         super.setUsePatternFly(usePatternfly);
         // toggle styles -- remove both PatternFly and non-PatternFly styles
@@ -192,14 +194,42 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidgetContainer.add(unitAddOn);
     }
 
+    public void addLabelColSize(ColumnSize size) {
+        getFormLabel().addStyleName(size.getCssName());
+    }
+
+    public void removeLabelColSize(ColumnSize size) {
+        getFormLabel().removeStyleName(size.getCssName());
+    }
+
     public void setLabelColSize(ColumnSize size) {
-        getFormLabel().setAddStyleNames(size.getCssName());
+        getFormLabel().addStyleName(size.getCssName());
+    }
+
+    public void addWidgetColSize(ColumnSize size) {
+        if (sizeContainer != null) {
+            sizeContainer.addStyleName(size.getCssName());
+        }
+    }
+
+    public void removeWidgetColSize(ColumnSize size) {
+        if (sizeContainer != null) {
+            sizeContainer.removeStyleName(size.getCssName());
+        }
     }
 
     public void setWidgetColSize(ColumnSize size) {
         if (sizeContainer != null) {
             sizeContainer.addStyleName(size.getCssName());
         }
+    }
+
+    /**
+     * Insert a widget that will be place directly after the {@link #getContentWidgetContainer()}.
+     */
+    @UiChild(tagname="WidgetDecorator", limit=1)
+    public void addWidgetDecorator(Widget widget) {
+        wrapperPanel.insert(widget, wrapperPanel.getWidgetIndex(contentWidgetContainerTooltip) + 1);
     }
 
     /**
@@ -244,6 +274,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         getFormLabel().setTooltip(tooltip);
     }
 
+    @Override
     public String getLabel() {
         return getFormLabel().getText();
     }
@@ -359,7 +390,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidgetContainerTooltip.setText(tooltipText);
     }
 
-    // set styleNames on my components
+    // start style name methods on my components
     public void addContentWidgetStyleName(String styleName) {
         getContentWidget().asWidget().addStyleName(styleName);
     }
@@ -385,17 +416,20 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     /**
-     * @param styleNames space or comma-delimited list of style names
+     * @param styleName space or comma-delimited list of style names
      */
-    public void addLabelStyleNames(String styleNames) {
-        for (String name : styleNames.split("[,\\s]+")) { //$NON-NLS-1$
-            getFormLabel().setAddStyleNames(name);
+    public void addLabelStyleName(String styleName) {
+        for (String name : styleName.split("[,\\s]+")) { //$NON-NLS-1$
+            getFormLabel().addStyleName(name);
         }
     }
 
-    // UIBinder-capable alias for addLabelStyleNames
-    public void setAddLabelStyleNames(String styleNames) {
-        addLabelStyleNames(styleNames);
+    public void setAddLabelStyleName(String styleName) {
+        addLabelStyleName(styleName);
+    }
+
+    public void removeLabelStyleName(String styleName) {
+        getFormLabel().removeStyleName(styleName);
     }
 
     public void addWrapperStyleName(String styleName) {
@@ -409,9 +443,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public void removeWrapperStyleName(String styleName) {
         wrapperPanel.removeStyleName(styleName);
     }
-
-    // end set styleNames on my components
-
+    // end style name methods on my components
 
     public void hideLabel() {
         getFormLabel().asWidget().setVisible(false);
