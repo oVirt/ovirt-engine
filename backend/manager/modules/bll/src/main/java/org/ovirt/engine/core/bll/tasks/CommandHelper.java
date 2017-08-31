@@ -13,9 +13,20 @@ import org.ovirt.engine.core.compat.CommandStatus;
 public class CommandHelper {
 
     public static ActionReturnValue validate(ActionType actionType,
-                                                 ActionParametersBase parameters,
-                                                 CommandContext commandContext) {
-        return CommandsFactory.createCommand(actionType, parameters, commandContext).validateOnly();
+            ActionParametersBase parameters,
+            CommandContext commandContext) {
+        return validate(actionType, parameters, commandContext, false);
+    }
+
+    public static ActionReturnValue validate(ActionType actionType,
+            ActionParametersBase parameters,
+            CommandContext commandContext,
+            boolean runAsInternal) {
+         CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, commandContext);
+         if (runAsInternal) {
+             command.setInternalExecution(true);
+         }
+         return command.validateOnly();
     }
 
     public static CommandBase<?> buildCommand(ActionType actionType,
