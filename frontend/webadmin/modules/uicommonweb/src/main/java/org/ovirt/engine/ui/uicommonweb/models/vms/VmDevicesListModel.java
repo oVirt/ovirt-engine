@@ -127,12 +127,7 @@ public class VmDevicesListModel<E extends VM>
         if (deviceEntity == null || deviceEntity.getVmDevice().getType() != VmDeviceGeneralType.MEMORY) {
             return;
         }
-        idsOfDevicesBeingUnplugged.add(deviceEntity.getVmDevice().getId(), new ExpiringSet.RemovalAction<VmDeviceId>() {
-            @Override
-            public void itemRemoved(VmDeviceId item) {
-                updateItems();
-            }
-        });
+        idsOfDevicesBeingUnplugged.add(deviceEntity.getVmDevice().getId(), removedItem -> updateItems());
         updateItems();
         Frontend.getInstance().runAction(
                 ActionType.HotUnplugMemory,

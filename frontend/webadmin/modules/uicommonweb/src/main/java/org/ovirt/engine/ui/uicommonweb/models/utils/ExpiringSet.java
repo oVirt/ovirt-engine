@@ -35,7 +35,8 @@ public class ExpiringSet<T> {
         return set.contains(item);
     }
 
+    @FunctionalInterface
     public interface RemovalAction<T> {
-        void itemRemoved(T item);
+        void itemRemoved(T removedItem);
     }
 }
