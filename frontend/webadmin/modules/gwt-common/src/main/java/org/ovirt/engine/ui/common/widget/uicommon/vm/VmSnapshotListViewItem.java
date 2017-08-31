@@ -198,7 +198,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.dateSnapshot()), getCreateDateString(snapshot), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.statusSnapshot()), snapshot.getStatus().name(), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.memorySnapshot()),
-                String.valueOf(listModel.isMemorySnapshotSupported()), dl);
+                String.valueOf(snapshot.containsMemory()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.descriptionSnapshot()),
                 getDescription(snapshot), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.definedMemoryVm()),
