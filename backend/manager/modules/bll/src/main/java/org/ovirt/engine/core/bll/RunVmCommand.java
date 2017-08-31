@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -62,7 +63,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.Config;
@@ -1102,8 +1102,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return getVm().getDiskMap()
                 .values()
                 .stream()
-                .anyMatch(vmDisk -> vmDisk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                        storageDomainStaticDao.get(((DiskImage) vmDisk).getStorageIds().get(0)).isBackup());
+                .filter(DisksFilter.ONLY_IMAGES)
+                .map(DiskImage.class::cast)
+                .flatMap(vmDisk -> vmDisk.getStorageIds().stream())
+                .distinct()
+                .anyMatch(sdId -> storageDomainStaticDao.get(sdId).isBackup());
     }
 
     @Override
