@@ -31,10 +31,10 @@
             </b:Column>
             <b:Column size="SM_7">
                 <b:Row>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_6" paddingRight="10">
                         <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputReadEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
                     </b:Column>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_6" paddingLeft="10">
                         <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputWriteEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
                     </b:Column>
                 </b:Row>
@@ -62,10 +62,10 @@
             </b:Column>
             <b:Column size="SM_7">
                 <b:Row>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_6" paddingRight="10">
                         <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsReadEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
                     </b:Column>
-                    <b:Column size="SM_6">
+                    <b:Column size="SM_6" paddingLeft="10">
                         <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsWriteEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
                     </b:Column>
                 </b:Row>
