@@ -7,10 +7,12 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -1102,12 +1104,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected ValidationResult checkDisksInBackupStorage() {
         return new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
-                getVm().getDiskMap()
-                .values()
-                .stream()
-                .filter(DisksFilter.ONLY_IMAGES)
-                .map(DiskImage.class::cast)
-                .flatMap(vmDisk -> vmDisk.getStorageIds().stream())
+                Stream.concat(getVm().getDiskMap()
+                        .values()
+                        .stream()
+                        .filter(DisksFilter.ONLY_IMAGES)
+                        .map(DiskImage.class::cast)
+                        .flatMap(vmDisk -> vmDisk.getStorageIds().stream()),
+                        Stream.of(getVm().getLeaseStorageDomainId()).filter(Objects::nonNull))
                 .collect(Collectors.toSet()))
                 .allDomainsNotBackupDomains();
     }
