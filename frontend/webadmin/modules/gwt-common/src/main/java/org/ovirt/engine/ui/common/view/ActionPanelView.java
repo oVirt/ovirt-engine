@@ -30,6 +30,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ActionPanelView<T> extends AbstractView implements ActionPanelPresenterWidget.ViewDef<T> {
 
+    private static final String HIDDEN_KEBAB = "hidden-kebab"; // $NON-NLS-1$
+
     public interface ViewUiBinder extends UiBinder<Widget, ActionPanelView<?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -179,11 +181,17 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
                 ElementTooltipUtils.setTooltipOnElement(item.asWidget().getElement(), menuItemDef.getMenuItemTooltip());
             }
         }
-        actionKebab.setVisible(anyVisibleListItems());
+        updateKebabVisibleState();
     }
 
-    private boolean anyVisibleListItems() {
-        return actionItemMap.values().stream().anyMatch(item -> item.asWidget().isVisible());
+    public void updateKebabVisibleState() {
+        boolean hasVisibleItems = actionKebab.hasMenuItems();
+        actionKebab.setVisible(hasVisibleItems);
+        if (!hasVisibleItems) {
+            mainContainer.addStyleName(HIDDEN_KEBAB);
+        } else {
+            mainContainer.removeStyleName(HIDDEN_KEBAB);
+        }
     }
 
     @Override

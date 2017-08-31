@@ -68,6 +68,10 @@ public class Kebab extends ButtonGroup {
         kebabMenu.add(actionButton);
     }
 
+    public boolean hasMenuItems() {
+        return kebabMenu.getWidgetCount() > 0;
+    }
+
     public void addDivider() {
         kebabMenu.add(new Divider());
     }
