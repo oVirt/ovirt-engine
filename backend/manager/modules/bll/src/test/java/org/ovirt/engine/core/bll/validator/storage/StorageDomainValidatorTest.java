@@ -5,12 +5,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -19,14 +25,22 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -41,6 +55,12 @@ public class StorageDomainValidatorTest {
     private StorageDomainValidator validator;
     private static final int CRITICAL_SPACE_THRESHOLD = 5;
 
+    @Mock
+    private VmHandler vmHandler;
+
+    @Mock
+    private VmDao vmDao;
+
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
 
@@ -54,7 +74,8 @@ public class StorageDomainValidatorTest {
     @Before
     public void setUp() {
         domain = new StorageDomain();
-        validator = new StorageDomainValidator(domain);
+        validator = spy(new StorageDomainValidator(domain));
+        doReturn(vmDao).when(validator).getVmDao();
     }
 
     @Test
@@ -178,6 +199,135 @@ public class StorageDomainValidatorTest {
         domain.setDiscardAfterDelete(true);
         mcr.mockConfigValue(ConfigValues.DiscardAfterDeleteSupported, Version.v4_1, true);
         assertThat(validator.isDiscardAfterDeleteSupportedByDcVersion(Version.v4_1), isValid());
+    }
+
+    @Test
+    public void validRunningVmsOrVmLeasesForBackupDomain() {
+        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(Collections.EMPTY_LIST);
+        QueryReturnValue ret = new QueryReturnValue();
+        ret.setReturnValue(new ArrayList<VmBase>());
+        ret.setSucceeded(true);
+        doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
+        assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler), isValid());
+    }
+
+    @Test
+    public void invalidRunningVmsAndVmLeasesForBackupDomain() {
+        QueryReturnValue ret = new QueryReturnValue();
+        List<VmBase> vmLeases = new ArrayList<>();
+        VM vmWithLease = new VM();
+        vmWithLease.setName("firstVM");
+        vmLeases.add(vmWithLease.getStaticData());
+        ret.setReturnValue(vmLeases);
+        ret.setSucceeded(true);
+
+        // VM1
+        VM vm1 = new VM();
+        vm1.setName("firstVM");
+        Map<Guid, Disk> attachedDisksForVm1 = new HashMap<>();
+        DiskImage diskVm1 = new DiskImage();
+        diskVm1.setStorageIds(new ArrayList<>(Collections.singletonList(domain.getId())));
+        diskVm1.setPlugged(true);
+        attachedDisksForVm1.put(Guid.newGuid(), diskVm1);
+        vm1.setDiskMap(attachedDisksForVm1);
+
+        // VM2
+        VM vm2 = new VM();
+        vm2.setName("secondVM");
+        Map<Guid, Disk> attachedDisksForVm2 = new HashMap<>();
+        DiskImage diskVm2 = new DiskImage();
+        diskVm2.setStorageIds(new ArrayList<>(Collections.singletonList(domain.getId())));
+        diskVm2.setPlugged(true);
+        attachedDisksForVm2.put(Guid.newGuid(), diskVm2);
+        vm2.setDiskMap(attachedDisksForVm2);
+
+        List<VM> runningVMs = new ArrayList<>();
+        runningVMs.add(vm1);
+        runningVMs.add(vm2);
+        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(runningVMs);
+        doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
+        assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_RUNNING_VM_OR_VM_LEASES_PRESENT_ON_STORAGE_DOMAIN));
+    }
+
+    @Test
+    public void invalidVmLeasesQueryForBackupDomain() {
+        QueryReturnValue ret = new QueryReturnValue();
+        ret.setSucceeded(false);
+        doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
+        assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_RETRIEVE_VMS_FOR_WITH_LEASES));
+    }
+
+    @Test
+    public void invalidVmLeasesForBackupDomain() {
+        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(Collections.EMPTY_LIST);
+        QueryReturnValue ret = new QueryReturnValue();
+        List<VmBase> vmLeases = new ArrayList<>();
+        VM vm1 = new VM();
+        vm1.setName("firstVM");
+        vmLeases.add(vm1.getStaticData());
+        ret.setReturnValue(vmLeases);
+        ret.setSucceeded(true);
+        doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
+        assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_RUNNING_VM_OR_VM_LEASES_PRESENT_ON_STORAGE_DOMAIN));
+    }
+
+    @Test
+    public void invalidRunningVmsForBackupDomain() {
+        // VM1
+        VM vm1 = new VM();
+        vm1.setName("firstVM");
+        Map<Guid, Disk> attachedDisksForVm1 = new HashMap<>();
+        DiskImage diskVm1 = new DiskImage();
+        diskVm1.setStorageIds(new ArrayList<>(Collections.singletonList(domain.getId())));
+        diskVm1.setPlugged(true);
+        attachedDisksForVm1.put(Guid.newGuid(), diskVm1);
+        vm1.setDiskMap(attachedDisksForVm1);
+
+        // VM2
+        VM vm2 = new VM();
+        vm2.setName("secondVM");
+        Map<Guid, Disk> attachedDisksForVm2 = new HashMap<>();
+        DiskImage diskVm2 = new DiskImage();
+        diskVm2.setStorageIds(new ArrayList<>(Collections.singletonList(domain.getId())));
+        diskVm2.setPlugged(true);
+        attachedDisksForVm2.put(Guid.newGuid(), diskVm2);
+        vm2.setDiskMap(attachedDisksForVm2);
+
+        List<VM> runningVMs = new ArrayList<>();
+        runningVMs.add(vm1);
+        runningVMs.add(vm2);
+        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(runningVMs);
+        QueryReturnValue ret = new QueryReturnValue();
+        ret.setReturnValue(new ArrayList<VmBase>());
+        ret.setSucceeded(true);
+        doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
+        assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_RUNNING_VM_OR_VM_LEASES_PRESENT_ON_STORAGE_DOMAIN));
+    }
+
+    @Test
+    public void validRunningVmsWithUnpluggedDisksForBackupDomain() {
+        // VM1
+        VM vm1 = new VM();
+        vm1.setName("firstVM");
+        Map<Guid, Disk> attachedDisksForVm1 = new HashMap<>();
+        DiskImage diskVm1 = new DiskImage();
+        diskVm1.setStorageIds(new ArrayList<>(Collections.singletonList(domain.getId())));
+        diskVm1.setPlugged(false);
+        attachedDisksForVm1.put(Guid.newGuid(), diskVm1);
+        vm1.setDiskMap(attachedDisksForVm1);
+
+        List<VM> runningVMs = new ArrayList<>();
+        runningVMs.add(vm1);
+        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(runningVMs);
+        QueryReturnValue ret = new QueryReturnValue();
+        ret.setReturnValue(new ArrayList<VmBase>());
+        ret.setSucceeded(true);
+        doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
+        assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler), isValid());
     }
 
     @Test

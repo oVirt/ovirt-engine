@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -27,6 +28,9 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
+
+    @Inject
+    private VmHandler vmHandler;
 
     public UpdateStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -53,7 +57,8 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         StorageDomainValidator storageDomainValidator = getStorageDomainValidator();
         if (!checkStorageDomainStatusNotEqual(StorageDomainStatus.Locked) ||
                 !validateStorageNameUpdate() ||
-                !validateDiscardAfterDeleteLegal(storageDomainValidator)) {
+                !validateDiscardAfterDeleteLegal(storageDomainValidator) ||
+                !validateDiskOnBackupDomain(storageDomainValidator)) {
             return false;
         }
 
@@ -102,6 +107,14 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
             return false;
         }
         return validate(storageDomainValidator.isDiscardAfterDeleteLegalForExistingStorageDomain());
+    }
+
+    private boolean validateDiskOnBackupDomain(StorageDomainValidator storageDomainValidator) {
+        boolean storageDomainBackupChanged = !oldDomain.isBackup() && getStorageDomain().isBackup();
+        if (storageDomainBackupChanged) {
+            return validate(storageDomainValidator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler));
+        }
+        return true;
     }
 
     private boolean isPoolUp() {

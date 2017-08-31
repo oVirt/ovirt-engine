@@ -2,10 +2,17 @@ package org.ovirt.engine.core.bll.validator.storage;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -18,6 +25,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -25,15 +34,22 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StorageDomainValidator {
-
     private static final long INITIAL_BLOCK_ALLOCATION_SIZE = 1024L * 1024L * 1024L;
     private static final long EMPTY_QCOW_HEADER_SIZE = 1024L * 1024L;
 
+    private final Logger log = LoggerFactory.getLogger(StorageDomainValidator.class);
     private final StorageDomain storageDomain;
 
     public StorageDomainValidator(StorageDomain domain) {
@@ -447,5 +463,57 @@ public class StorageDomainValidator {
                     String.format("$dataCenterVersion %s", version.toString()));
         }
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult isRunningVmsOrVmLeasesForBackupDomain(VmHandler vmHandler) {
+        Set<String> invalidVmsForBackupStorageDomain = new HashSet<>();
+        QueryReturnValue ret = getEntitiesWithLeaseIdForStorageDomain(storageDomain.getId());
+        if (!ret.getSucceeded()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_RETRIEVE_VMS_FOR_WITH_LEASES);
+        }
+        if (!getRetVal(ret).isEmpty()) {
+            getRetVal(ret).stream().forEach(vmBase -> invalidVmsForBackupStorageDomain.add(vmBase.getName()));
+        }
+        List<VM> vms = getVmDao().getAllActiveForStorageDomain(storageDomain.getId());
+        for (VM vm : vms) {
+            vmHandler.updateDisksFromDb(vm);
+        }
+        invalidVmsForBackupStorageDomain.addAll(vms.stream()
+                        .filter(vm -> vm.getDiskMap()
+                                .values()
+                                .stream()
+                                .filter(DisksFilter.ONLY_IMAGES)
+                                .filter(DisksFilter.ONLY_PLUGGED)
+                                .map(DiskImage.class::cast)
+                                .anyMatch(vmDisk -> vmDisk.getStorageIds().get(0).equals(storageDomain.getId())))
+                        .map(vm -> vm.getName())
+                        .collect(Collectors.toList()));
+        if (!invalidVmsForBackupStorageDomain.isEmpty()) {
+            log.warn("Can't update the backup property of the storage domain since it contains VMs with " +
+                    "leases or active disks which are attached to running VMs." +
+                    "The following VMs list are: '{}'",
+                    invalidVmsForBackupStorageDomain);
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_RUNNING_VM_OR_VM_LEASES_PRESENT_ON_STORAGE_DOMAIN);
+        }
+        return ValidationResult.VALID;
+    }
+
+    private List<VmBase> getRetVal(QueryReturnValue ret) {
+        return ret.<List<VmBase>>getReturnValue();
+    }
+
+    protected QueryReturnValue getEntitiesWithLeaseIdForStorageDomain(Guid storageDomainId) {
+        return getBackend().runInternalQuery(
+                    QueryType.GetEntitiesWithLeaseByStorageId,
+                    new IdQueryParameters(storageDomainId));
+    }
+
+    private BackendInternal getBackend() {
+        return Backend.getInstance();
+    }
+
+    protected VmDao getVmDao() {
+        return DbFacade.getInstance().getVmDao();
     }
 }
