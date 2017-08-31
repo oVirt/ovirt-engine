@@ -15,7 +15,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -122,7 +121,7 @@ public class MultipleStorageDomainsValidatorTest {
         List<DiskImage> disksList = generateDisksList(NUM_DISKS, sdIds);
 
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
         assertTrue(validator.allDomainsHaveSpaceForNewDisks(disksList).isValid());
         verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForNewDisks(any());
@@ -136,7 +135,7 @@ public class MultipleStorageDomainsValidatorTest {
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForNewDisks(any());
-        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
         ValidationResult result = validator.allDomainsHaveSpaceForNewDisks(disksList);
         assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
@@ -148,7 +147,7 @@ public class MultipleStorageDomainsValidatorTest {
         List<DiskImage> disksList = generateDisksList(NUM_DISKS, sdIds);
 
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
         assertTrue(validator.allDomainsHaveSpaceForClonedDisks(disksList).isValid());
         verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForClonedDisks(any());
@@ -162,7 +161,7 @@ public class MultipleStorageDomainsValidatorTest {
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForClonedDisks(any());
-        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
         ValidationResult result = validator.allDomainsHaveSpaceForClonedDisks(disksList);
         assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
@@ -176,7 +175,7 @@ public class MultipleStorageDomainsValidatorTest {
         List<DiskImage> disksListForCloned = generateDisksList(NUM_DISKS, sdIdsForCloned);
 
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
         assertTrue(validator.allDomainsHaveSpaceForAllDisks(disksListForNew, disksListForCloned).isValid());
         verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForAllDisks(any(), any());
@@ -192,7 +191,7 @@ public class MultipleStorageDomainsValidatorTest {
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                when(storageDomainValidator).hasSpaceForAllDisks(any(), any());
-        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
         ValidationResult result = validator.allDomainsHaveSpaceForAllDisks(disksListForNew, disksListForCloned);
         assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
@@ -201,7 +200,7 @@ public class MultipleStorageDomainsValidatorTest {
     @Test
     public void testAllDomainsHaveSpaceForMergeSuccess(){
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
         assertTrue(validator.allDomainsHaveSpaceForMerge(anyList(), any()).isValid());
         verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForMerge(any(), any());
@@ -212,7 +211,7 @@ public class MultipleStorageDomainsValidatorTest {
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForMerge(any(), any());
-        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any());
 
         ValidationResult result = validator.allDomainsHaveSpaceForMerge(anyList(), any());
         assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
