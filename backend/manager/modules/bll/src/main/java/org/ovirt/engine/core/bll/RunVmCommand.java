@@ -1107,6 +1107,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 Stream.concat(getVm().getDiskMap()
                         .values()
                         .stream()
+                        .filter(DisksFilter.ONLY_PLUGGED)
                         .filter(DisksFilter.ONLY_IMAGES)
                         .map(DiskImage.class::cast)
                         .flatMap(vmDisk -> vmDisk.getStorageIds().stream()),
