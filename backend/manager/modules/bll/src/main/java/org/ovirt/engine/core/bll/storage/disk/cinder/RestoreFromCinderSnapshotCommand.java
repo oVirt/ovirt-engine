@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk.cinder;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -13,12 +12,9 @@ import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
-import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -53,23 +49,7 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
         cinderSnapshotToRemove.setActive(false);
         imageDao.update(cinderSnapshotToRemove.getImage());
         removeDescendentSnapshots(cinderSnapshotToRemove);
-        removeCinderVolume(cinderSnapshotToRemove.getStorageIds().get(0), 0);
-    }
-
-    protected boolean removeCinderVolume(Guid storageId, int removedVolumeIndex) {
-        RemoveCinderDiskVolumeParameters param = getParameters().getChildCommandsParameters().get(removedVolumeIndex);
-        try {
-            ActionReturnValue actionReturnValue =
-                    getFutureRemoveCinderDiskVolume(storageId, removedVolumeIndex).get();
-            if (actionReturnValue == null || !actionReturnValue.getSucceeded()) {
-                handleExecutionFailure(param.getRemovedVolume(), actionReturnValue);
-                return false;
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Error removing Cinder volume", e);
-            return false;
-        }
-        return true;
+        removeCinderVolume(0);
     }
 
     /**

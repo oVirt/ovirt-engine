@@ -56,18 +56,17 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
      *            - The index to fetch the child command parameters.
      * @return - The future command at the ChildCommandsParameters[removedChildCommandParametersIndex].
      */
-    protected Future<ActionReturnValue> getFutureRemoveCinderDiskVolume(Guid storageId,
-            int removedChildCommandParametersIndex) {
+    protected Future<ActionReturnValue> getFutureRemoveCinderDiskVolume(int removedChildCommandParametersIndex) {
         return commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveCinderDiskVolume,
                 getParameters().getChildCommandsParameters().get(removedChildCommandParametersIndex),
                 cloneContextAndDetachFromParent());
     }
 
-    public boolean removeCinderVolume(int removedVolumeIndex, Guid storageId) {
+    public boolean removeCinderVolume(int removedVolumeIndex) {
         RemoveCinderDiskVolumeParameters param = getParameters().getChildCommandsParameters().get(removedVolumeIndex);
         try {
             ActionReturnValue actionReturnValue =
-                    getFutureRemoveCinderDiskVolume(storageId, removedVolumeIndex).get();
+                    getFutureRemoveCinderDiskVolume(removedVolumeIndex).get();
             if (actionReturnValue == null || !actionReturnValue.getSucceeded()) {
                 handleExecutionFailure(param.getRemovedVolume(), actionReturnValue);
                 return false;
@@ -154,7 +153,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
             return false;
         }
         getParameters().setRemovedVolumeIndex(completedChildCount);
-        removeCinderVolume(completedChildCount, getParameters().getRemovedVolume().getStorageIds().get(0));
+        removeCinderVolume(completedChildCount);
         return true;
     }
 }

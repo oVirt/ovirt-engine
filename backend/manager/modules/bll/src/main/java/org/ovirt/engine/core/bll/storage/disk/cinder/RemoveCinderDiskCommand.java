@@ -89,7 +89,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         // Get the first volume to delete from.
         CinderDisk parentVolume = (CinderDisk) diskImageDao.getSnapshotById(disk.getId());
         initCinderDiskVolumesParametersList(parentVolume);
-        if (!removeCinderVolume(0, getDisk().getStorageIds().get(0))) {
+        if (!removeCinderVolume(0)) {
             imageDao.updateStatusOfImagesByImageGroupId(getDisk().getId(), ImageStatus.ILLEGAL);
             setSucceeded(false);
             return;
