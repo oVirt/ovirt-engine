@@ -11,6 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,6 +95,18 @@ public class MultipleStorageDomainsValidatorTest {
         domain3.setStatus(StorageDomainStatus.Active);
         ValidationResult result = validator.allDomainsExistAndActive();
         assertThat("One domain should not be active", result, failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
+    }
+
+    @Test
+    public void testAllDomainsNotBackupDomainsAllOK() {
+        assertThat("None of the domains should be in backup mode", validator.allDomainsNotBackupDomains(), isValid());
+    }
+
+    @Test
+    public void testAllDomainsNotBackupDomainsOneBackup() {
+        domain2.setBackup(true);
+        ValidationResult result = validator.allDomainsNotBackupDomains();
+        assertThat("One domain is in backup mode", result, failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE));
     }
 
     @Test

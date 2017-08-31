@@ -65,6 +65,14 @@ public class MultipleStorageDomainsValidator {
     }
 
     /**
+     * Validates that all the domains are not in backup mode
+     * @return {@link ValidationResult#VALID} if all the domains are OK, or a {@link ValidationResult} with the first non-backup domain encountered.
+     */
+    public ValidationResult allDomainsNotBackupDomains() {
+        return validOrFirstFailure(entry -> getStorageDomainValidator(entry).isNotBackupDomain());
+    }
+
+    /**
      * Validates that all the domains are within free disk space threshold.
      * @return {@link ValidationResult#VALID} if all the domains are OK, or a {@link ValidationResult} with the first low space domain encountered.
      */

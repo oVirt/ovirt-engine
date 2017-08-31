@@ -2,10 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -53,7 +51,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -341,7 +338,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         command.setStoragePool(new StoragePool());
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any(VmPayload.class));
-        doReturn(false).when(command).checkDisksInBackupStorage();
+        doReturn(ValidationResult.VALID).when(command).checkDisksInBackupStorage();
         command.setCluster(new Cluster());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -543,68 +540,5 @@ public class RunVmCommandTest extends BaseCommandTest {
         image.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
         vm.getDiskMap().put(image.getId(), image);
         return storageDomainId;
-    }
-
-    @Test
-    public void testFailForCheckDisksNotInBackupStorage() {
-        final VM vm = new VM();
-        command.setVm(vm);
-        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        command.setCluster(new Cluster());
-        Guid storageDomainId = initDiskImage(vm);
-        when(storageDomainStaticDao.get(storageDomainId)).thenReturn(backupStorageDomain(true));
-        assertTrue("checkDisksNotInBackupStorage() fails to run because one or more disk is in backup domain",
-                command.checkDisksInBackupStorage());
-    }
-
-    @Test
-    public void testSuccceedForCheckDisksNotInBackupStorage() {
-        final VM vm = new VM();
-        command.setVm(vm);
-        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        command.setCluster(new Cluster());
-        Guid storageDomainId = initDiskImage(vm);
-        when(storageDomainStaticDao.get(storageDomainId)).thenReturn(backupStorageDomain(false));
-        assertFalse(
-                "checkDisksNotInBackupStorage() succeed to run since there are no disks which are on a backup storage domain",
-                command.checkDisksInBackupStorage());
-    }
-
-    @Test
-    public void testFailWithMultipleDisksWhichOneInBackupStorage() {
-        final VM vm = new VM();
-        command.setVm(vm);
-        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        command.setCluster(new Cluster());
-        Guid storageDomainId1 = initDiskImage(vm);
-        when(storageDomainStaticDao.get(storageDomainId1)).thenReturn(backupStorageDomain(false));
-        Guid storageDomainId2 = initDiskImage(vm);
-        when(storageDomainStaticDao.get(storageDomainId2)).thenReturn(backupStorageDomain(true));
-        assertTrue("checkDisksNotInBackupStorage() fails to run because one or more disk is in backup domain",
-                command.checkDisksInBackupStorage());
-    }
-
-    @Test
-    public void testSuccessWithExternalLunDisk() {
-        final VM vm = new VM();
-        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        LunDisk lunDisk = new LunDisk();
-        lunDisk.setId(Guid.newGuid());
-        vm.getDiskMap().put(lunDisk.getId(), lunDisk);
-        assertFalse("checkDisksNotInBackupStorage() Will succeed since Lun disk should not be validated for storage",
-                command.checkDisksInBackupStorage());
-    }
-
-    @Test
-    public void testFailureWithExternalLunDiskAndImageOnBackup() {
-        final VM vm = new VM();
-        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
-        LunDisk lunDisk = new LunDisk();
-        lunDisk.setId(Guid.newGuid());
-        Guid storageDomainId = initDiskImage(vm);
-        when(storageDomainStaticDao.get(storageDomainId)).thenReturn(backupStorageDomain(true));
-        vm.getDiskMap().put(lunDisk.getId(), lunDisk);
-        assertTrue("checkDisksNotInBackupStorage() Will fail since one of the disks is in backup storage domain",
-                command.checkDisksInBackupStorage());
     }
 }

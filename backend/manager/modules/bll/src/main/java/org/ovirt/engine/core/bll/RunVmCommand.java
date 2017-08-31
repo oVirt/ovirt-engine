@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
+import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -1017,8 +1019,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }
 
-        if (checkDisksInBackupStorage()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE);
+        if (!validate(checkDisksInBackupStorage())) {
+            return false;
         }
 
         boolean isWindowsOs = osRepository.isWindows(getVm().getVmOsId());
@@ -1098,15 +1100,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     }
 
-    protected boolean checkDisksInBackupStorage() {
-        return getVm().getDiskMap()
+    protected ValidationResult checkDisksInBackupStorage() {
+        return new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
+                getVm().getDiskMap()
                 .values()
                 .stream()
                 .filter(DisksFilter.ONLY_IMAGES)
                 .map(DiskImage.class::cast)
                 .flatMap(vmDisk -> vmDisk.getStorageIds().stream())
-                .distinct()
-                .anyMatch(sdId -> storageDomainStaticDao.get(sdId).isBackup());
+                .collect(Collectors.toSet()))
+                .allDomainsNotBackupDomains();
     }
 
     @Override
