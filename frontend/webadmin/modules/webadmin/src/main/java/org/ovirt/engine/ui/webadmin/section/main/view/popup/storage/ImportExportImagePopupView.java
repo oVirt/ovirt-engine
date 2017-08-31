@@ -134,44 +134,48 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
     private void initTable(ImportExportRepoImageBaseModel model) {
         imageList = new EntityModelCellTable<>(SelectionMode.NONE, true);
         imageList.enableColumnResizing();
-        imageList.addColumn(new AbstractEntityModelTextColumn<Object>() {
-            @Override
-            public String getText(Object image) {
-                if (image instanceof RepoImage) {
-                    return ((RepoImage) image).getRepoImageTitle();
-                } else if (image instanceof DiskImage) {
-                    return ((DiskImage) image).getDiskAlias();
-                }
-                return constants.unknown();
-            }
-        }, constants.fileNameIso(), "100%"); //$NON-NLS-1$
         if (model.isImportModel()) {
+            imageList.addColumn(new AbstractEntityModelTextColumn<RepoImage>() {
+                @Override
+                public String getText(RepoImage image) {
+                    return image.getRepoImageTitle();
+                }
+            }, constants.fileNameIso(), "100%"); //$NON-NLS-1$
             imageList.addColumn(new DiskAliasTextColumn(new DiskAliasFieldUpdater()),
                     templates.sub(constants.diskSnapshotAlias(), constants.clickToEdit()), "150px"); //$NON-NLS-1$
+            imageList.addColumn(new AbstractEntityModelTextColumn<RepoImage>() {
+                @Override
+                public String getText(RepoImage image) {
+                    return image.getFileType().toString();
+                }
+            }, constants.typeIso(), "75px"); //$NON-NLS-1$
+            imageList.addColumn(new AbstractDiskSizeColumn<EntityModel<RepoImage>>(SizeConverter.SizeUnit.BYTES) {
+                @Override
+                protected Long getRawValue(EntityModel<RepoImage> image) {
+                    return image.getEntity().getSize();
+                }
+            }, constants.actualSizeTemplate(), "75px"); //$NON-NLS-1$
         }
-        imageList.addColumn(new AbstractEntityModelTextColumn<Object>() {
-            @Override
-            public String getText(Object image) {
-                if (image instanceof RepoImage) {
-                    return ((RepoImage) image).getFileType().toString();
-                } else if (image instanceof DiskImage) {
+        else {
+            imageList.addColumn(new AbstractEntityModelTextColumn<DiskImage>() {
+                @Override
+                public String getText(DiskImage image) {
+                    return image.getDiskAlias();
+                }
+            }, constants.fileNameIso(), "100%"); //$NON-NLS-1$
+            imageList.addColumn(new AbstractEntityModelTextColumn<DiskImage>() {
+                @Override
+                public String getText(DiskImage image) {
                     return ImageFileType.Disk.toString();
                 }
-                return constants.unknown();
-            }
-        }, constants.typeIso(), "75px"); //$NON-NLS-1$
-        imageList.addColumn(new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.BYTES) {
-            @Override
-            protected Long getRawValue(EntityModel object) {
-                if (object.getEntity() instanceof RepoImage) {
-                    return ((RepoImage) object.getEntity()).getSize();
-                } else if (object.getEntity() instanceof DiskImage) {
-                    return ((DiskImage) object.getEntity()).getSize();
+            }, constants.typeIso(), "75px"); //$NON-NLS-1$
+            imageList.addColumn(new AbstractDiskSizeColumn<EntityModel<DiskImage>>(SizeConverter.SizeUnit.BYTES) {
+                @Override
+                protected Long getRawValue(EntityModel<DiskImage> image) {
+                    return image.getEntity().getSize();
                 }
-                return null;
-            }
-        }, constants.actualSizeTemplate(), "75px"); //$NON-NLS-1$
-
+            }, constants.actualSizeTemplate(), "75px"); //$NON-NLS-1$
+        }
         imageList.setWidth("100%"); // $NON-NLS-1$
         imageList.setEmptyTableWidget(new NoItemsLabel());
         imageListPanel.setWidget(imageList);
