@@ -237,7 +237,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
         doReturn(true).when(cmd).setAndValidateDiskProfiles();
         doReturn(true).when(cmd).setAndValidateCpuProfile();
-        doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollection());
+        doReturn(true).when(cmd).validateNoDuplicateDiskImages(any());
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
         doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());
@@ -450,7 +450,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
         doReturn(true).when(cmd).setAndValidateDiskProfiles();
-        doReturn(true).when(cmd).validateNoDuplicateDiskImages(anyCollection());
+        doReturn(true).when(cmd).validateNoDuplicateDiskImages(any());
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any());
         doReturn(cmd.getParameters().getVm()).when(cmd).getVmFromExportDomain(any());
