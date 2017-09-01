@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenter;
@@ -34,8 +35,8 @@ public class MainContentView extends AbstractView implements MainContentPresente
         if (slot == MainContentPresenter.TYPE_SetContent) {
             if (content instanceof AbstractOverlayPresenter) {
                 IsWidget currentContent = getCurrentContent();
-                // prevent overlay content stacking
-                if (!(currentContent instanceof AbstractOverlayPresenter)) {
+                // prevent overlay content stacking, overlays views are containers
+                if (!(currentContent instanceof Container)) {
                     // remember non-overlay content
                     nonOverlayContent = currentContent;
                 }

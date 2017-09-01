@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.FormGroup;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.ui.common.view.AbstractView;
@@ -15,11 +16,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Widget;
 
 public class TasksView extends AbstractView implements TasksPresenter.ViewDef {
 
-    interface ViewUiBinder extends UiBinder<Widget, TasksView> {
+    interface ViewUiBinder extends UiBinder<Container, TasksView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 

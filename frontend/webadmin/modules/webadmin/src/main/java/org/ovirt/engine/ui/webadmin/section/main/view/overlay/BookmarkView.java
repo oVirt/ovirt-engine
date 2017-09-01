@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.ListGroup;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.ui.common.view.AbstractView;
@@ -18,12 +19,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class BookmarkView extends AbstractView implements BookmarkPresenter.ViewDef {
 
-    interface ViewUiBinder extends UiBinder<Widget, BookmarkView> {
+    interface ViewUiBinder extends UiBinder<Container, BookmarkView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 

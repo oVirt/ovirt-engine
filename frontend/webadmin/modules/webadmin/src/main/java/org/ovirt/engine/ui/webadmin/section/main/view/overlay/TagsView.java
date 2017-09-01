@@ -6,6 +6,7 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
 import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.ListGroup;
 import org.gwtbootstrap3.client.ui.ListGroupItem;
 import org.gwtbootstrap3.client.ui.constants.Styles;
@@ -23,14 +24,13 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class TagsView extends AbstractView implements TagsPresenter.ViewDef {
 
     private static final int INDENT_WIDTH = 15;
 
-    interface ViewUiBinder extends UiBinder<Widget, TagsView> {
+    interface ViewUiBinder extends UiBinder<Container, TagsView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
