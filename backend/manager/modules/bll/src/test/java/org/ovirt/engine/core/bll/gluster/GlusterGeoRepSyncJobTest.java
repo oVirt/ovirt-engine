@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -120,7 +119,7 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(getSessionDetailsVDSReturnVal(true)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus), any());
         syncJob.refreshGeoRepSessionStatus();
-        verify(geoRepDao, times(2)).saveOrUpdateDetailsInBatch(anyList());
+        verify(geoRepDao, times(2)).saveOrUpdateDetailsInBatch(any());
     }
 
     @Test
@@ -128,7 +127,7 @@ public class GlusterGeoRepSyncJobTest {
         doReturn(getSessionDetailsVDSReturnVal(false)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus), any());
         syncJob.refreshGeoRepSessionStatus();
-        verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(anyList());
+        verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(any());
     }
 
     private Object getSessionsVDSReturnVal(int count) {

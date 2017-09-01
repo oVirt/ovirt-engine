@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
@@ -170,22 +169,22 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doAnswer(invocation -> {
             VM vm = (VM) invocation.getArguments()[0];
             return vm.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(), anyList());
+        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(), any());
 
         doAnswer(invocation -> {
             VmTemplate template = (VmTemplate) invocation.getArguments()[0];
             return template.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(), anyList());
+        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(), any());
 
         doAnswer(invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
             return neededIds.stream().map(id -> vms.get(id)).collect(Collectors.toList());
-        }).when(vmDao).getVmsByIds(anyList());
+        }).when(vmDao).getVmsByIds(any());
 
         doAnswer(invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
             return neededIds.stream().map(id -> templates.get(id)).collect(Collectors.toList());
-        }).when(vmTemplateDao).getVmTemplatesByIds(anyList());
+        }).when(vmTemplateDao).getVmTemplatesByIds(any());
 
         doAnswer(invocation -> {
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> updateMap =
@@ -212,7 +211,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                         values_array[i]);
             }
             return null;
-        }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations(anyList(), anyList(), anyList());
+        }).when(vmAndTemplatesGenerationsDao).updateOvfGenerations(any(), any(), any());
 
         doAnswer(invocation -> {
             StoragePoolStatus desiredStatus = (StoragePoolStatus) invocation.getArguments()[0];

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -73,7 +72,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         initCommandMethods();
         cmd.init();
 
-        doReturn(true).when(cmd).validateCustomProperties(any(), anyList());
+        doReturn(true).when(cmd).validateCustomProperties(any(), any());
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain())));
     }
@@ -90,17 +89,17 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     @Test
     public void validateSpaceAndThreshold() {
         assertTrue(cmd.validateSpaceRequirements());
-        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForNewDisks(anyList());
-        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyList());
+        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForNewDisks(any());
+        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(any());
     }
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(storageDomainValidator).hasSpaceForNewDisks(anyList());
+                when(storageDomainValidator).hasSpaceForNewDisks(any());
         assertFalse(cmd.validateSpaceRequirements());
-        verify(storageDomainValidator).hasSpaceForNewDisks(anyList());
-        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(anyList());
+        verify(storageDomainValidator).hasSpaceForNewDisks(any());
+        verify(storageDomainValidator, never()).hasSpaceForClonedDisks(any());
     }
 
     @Test

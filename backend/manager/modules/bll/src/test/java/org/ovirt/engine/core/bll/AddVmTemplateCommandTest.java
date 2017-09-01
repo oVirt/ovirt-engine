@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
@@ -193,7 +192,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     public void insufficientStorageSpace() {
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+                when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(any());
         assertFalse(cmd.validateImages());
     }
 

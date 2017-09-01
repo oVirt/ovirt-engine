@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network.macpool;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -93,7 +92,7 @@ public class TransactionalMacPoolDecoratorRollbackTest {
 
         //no macs were actually released(release was waiting for commit), thus no macs will be added back.
         verify(sourceMacPool, never()).addMac(any());
-        verify(sourceMacPool, never()).addMacs(anyList());
+        verify(sourceMacPool, never()).addMacs(any());
 
         //because we mocked, that second mac won't be added due to duplicity, only first one will be released.
         verify(targetMacPool).freeMacs(Collections.singletonList(SOURCE_POOL_MACS.get(0)));
@@ -105,7 +104,7 @@ public class TransactionalMacPoolDecoratorRollbackTest {
      * … the other one won't be added, due to duplicity
      */
     private void mockThatDuringAddingToTargetPoolOnlyFirstMacWillBeAdded() {
-        when(targetMacPool.addMacs(anyList())).thenAnswer(invocation -> {
+        when(targetMacPool.addMacs(any())).thenAnswer(invocation -> {
             List<String> macs = invocation.getArgument(0);
             return Collections.singletonList(macs.get(1));
         });

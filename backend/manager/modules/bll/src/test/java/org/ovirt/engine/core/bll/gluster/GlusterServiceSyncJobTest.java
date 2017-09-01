@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -264,7 +263,7 @@ public class GlusterServiceSyncJobTest {
         verifyCommonCalls();
 
         // Since there are no changes in any service status, there should be no database update
-        verify(serverServiceDao, never()).updateAll(anyList());
+        verify(serverServiceDao, never()).updateAll(any());
         verify(clusterServiceDao, never()).update(any());
     }
 

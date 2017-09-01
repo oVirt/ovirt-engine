@@ -6,7 +6,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -84,7 +83,7 @@ public class VmInterfaceManagerTest {
         doReturn(vmNetworkStatisticsDao).when(vmInterfaceManager).getVmNetworkStatisticsDao();
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
         doReturn(auditLogDirector).when(vmInterfaceManager).getAuditLogDirector();
-        doNothing().when(vmInterfaceManager).removeFromExternalNetworks(anyList());
+        doNothing().when(vmInterfaceManager).removeFromExternalNetworks(any());
 
         injectorRule.bind(TransactionManager.class, transactionManager);
     }

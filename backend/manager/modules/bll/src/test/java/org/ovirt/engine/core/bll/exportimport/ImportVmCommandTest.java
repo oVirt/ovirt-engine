@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -257,7 +256,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
             image.setStorageIds(sdIds);
         }
 
-        doReturn(Collections.emptyList()).when(cmd).createDiskDummiesForSpaceValidations(anyList());
+        doReturn(Collections.emptyList()).when(cmd).createDiskDummiesForSpaceValidations(any());
     }
 
     protected ImportVmParameters createParameters() {

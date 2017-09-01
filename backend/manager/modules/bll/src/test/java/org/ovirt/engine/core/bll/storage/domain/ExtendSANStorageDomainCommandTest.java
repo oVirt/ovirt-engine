@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
@@ -60,7 +59,7 @@ public class ExtendSANStorageDomainCommandTest {
         EngineMessage lunsBreakStorageDomainDiscardSupportMessage =
                 EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_PASS_DISCARD_SUPPORT;
         doReturn(new ValidationResult(lunsBreakStorageDomainDiscardSupportMessage)).when(discardHelper)
-                .isExistingDiscardFunctionalityPreserved(anyList(), any());
+                .isExistingDiscardFunctionalityPreserved(any(), any());
         runAndAssertValidateFailure(command, lunsBreakStorageDomainDiscardSupportMessage);
     }
 

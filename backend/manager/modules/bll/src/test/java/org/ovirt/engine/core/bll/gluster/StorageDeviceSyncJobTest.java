@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -145,8 +144,8 @@ public class StorageDeviceSyncJobTest {
         mockVdsCommand();
         syncJob.refreshStorageDevices();
         verify(storageDeviceDao, times(5)).save(any());
-        verify(storageDeviceDao, times(2)).removeAllInBatch(anyList());
-        verify(storageDeviceDao, times(1)).updateAllInBatch(anyList());
+        verify(storageDeviceDao, times(2)).removeAllInBatch(any());
+        verify(storageDeviceDao, times(1)).updateAllInBatch(any());
     }
 
     private List<Cluster> getClusters() {

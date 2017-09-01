@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -232,7 +231,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     }
 
     protected void initCommandMethods() {
-        doReturn(true).when(cmd).canAddVm(anyList(), any(), any(), anyInt());
+        doReturn(true).when(cmd).canAddVm(any(), any(), any(), anyInt());
     }
 
     protected void mockStorageDomainDaoGetAllForStoragePool() {

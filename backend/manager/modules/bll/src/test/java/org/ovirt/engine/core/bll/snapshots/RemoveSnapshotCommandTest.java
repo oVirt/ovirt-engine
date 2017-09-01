@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -113,7 +112,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         doReturn(sdIds).when(cmd).getStorageDomainsIds();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsHaveSpaceForMerge(anyList(), any());
+        doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsHaveSpaceForMerge(any(), any());
     }
 
     @Test
@@ -160,7 +159,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         mockDisksList(2);
 
         doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(), any());
-        when(storageDomainsValidator.allDomainsHaveSpaceForMerge(anyList(), any()))
+        when(storageDomainsValidator.allDomainsHaveSpaceForMerge(any(), any()))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);

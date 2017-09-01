@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -106,7 +105,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         // The following is enough since the validation is mocked out anyway. Just want to make sure the flow in CDA is correct.
         // Full test for the scenarios is done in the inherited class.
         setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
-        doReturn(false).when(command).validateSpaceRequirements(anyList());
+        doReturn(false).when(command).validateSpaceRequirements(any());
         assertFalse(command.validate());
     }
 
@@ -193,7 +192,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         mockStorageDomains();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).setAndValidateCpuProfile();
-        doReturn(true).when(command).validateSpaceRequirements(anyList());
+        doReturn(true).when(command).validateSpaceRequirements(any());
     }
 
     private void mockStorageDomains() {

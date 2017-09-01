@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -62,19 +61,19 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
     public void validateSpaceAndThreshold() {
         mockGetAllSnapshots();
         assertTrue(cmd.validateSpaceRequirements());
-        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForClonedDisks(anyList());
-        verify(storageDomainValidator, never()).hasSpaceForNewDisks(anyList());
+        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForClonedDisks(any());
+        verify(storageDomainValidator, never()).hasSpaceForNewDisks(any());
     }
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
+                when(storageDomainValidator).hasSpaceForClonedDisks(any());
         mockGetAllSnapshots();
         assertFalse(cmd.validateSpaceRequirements());
         //The following is mocked to fail, should happen only once.
-        verify(storageDomainValidator).hasSpaceForClonedDisks(anyList());
-        verify(storageDomainValidator, never()).hasSpaceForNewDisks(anyList());
+        verify(storageDomainValidator).hasSpaceForClonedDisks(any());
+        verify(storageDomainValidator, never()).hasSpaceForNewDisks(any());
     }
 
     @Test

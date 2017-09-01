@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -100,9 +99,9 @@ public class GlusterSnapshotSyncJobTest {
                         argThat(snapshotInfoParam()));
         when(volumeDao.getById(any())).thenReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1));
         syncJob.refreshSnapshotList();
-        verify(snapshotDao, times(1)).saveAll(anyList());
-        verify(snapshotDao, times(1)).removeAll(anyList());
-        verify(snapshotDao, times(1)).updateAllInBatch(anyList());
+        verify(snapshotDao, times(1)).saveAll(any());
+        verify(snapshotDao, times(1)).removeAll(any());
+        verify(snapshotDao, times(1)).updateAllInBatch(any());
     }
 
     @Test

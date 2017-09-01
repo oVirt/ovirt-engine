@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -430,8 +429,8 @@ public class UpdateClusterCommandTest {
         architectureIsUpdatable();
         cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         initAndAssertValidation(true);
-        verify(inClusterUpgradeValidator, times(1)).isUpgradePossible(anyList(), anyList());
-        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
+        verify(inClusterUpgradeValidator, times(1)).isUpgradePossible(any(), any());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(any());
     }
 
     @Test
@@ -443,8 +442,8 @@ public class UpdateClusterCommandTest {
         oldCluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         cmd.getCluster().setClusterPolicyId(NOT_UPGRADE_POLICY_GUID);
         initAndAssertValidation(true);
-        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
-        verify(inClusterUpgradeValidator, times(1)).isUpgradeDone(anyList());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(any(), any());
+        verify(inClusterUpgradeValidator, times(1)).isUpgradeDone(any());
     }
 
     @Test
@@ -456,8 +455,8 @@ public class UpdateClusterCommandTest {
         oldCluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         cmd.getCluster().setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         initAndAssertValidation(true);
-        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(anyList(), anyList());
-        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(anyList());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradePossible(any(), any());
+        verify(inClusterUpgradeValidator, times(0)).isUpgradeDone(any());
     }
 
     @Test

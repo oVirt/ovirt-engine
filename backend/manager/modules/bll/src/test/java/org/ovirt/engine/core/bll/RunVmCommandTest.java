@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -487,7 +486,7 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     private RunVmValidator mockSuccessfulRunVmValidator() {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
-        when(runVmValidator.canRunVm(anyList(), any(), anyList(), anyList(), any(), anyBoolean())).thenReturn(true);
+        when(runVmValidator.canRunVm(any(), any(), any(), any(), any(), anyBoolean())).thenReturn(true);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

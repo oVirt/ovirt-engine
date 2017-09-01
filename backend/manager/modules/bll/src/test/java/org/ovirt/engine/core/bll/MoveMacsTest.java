@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -101,7 +101,7 @@ public class MoveMacsTest {
     public void testMigrateMacsToAnotherMacPoolWithUnsuccessfulDuplicityCheck() {
         //this simulates situation, where last mac cannot be added, because it already exists in target Mac Pool.
         List<String> macsFailedTobeAdded = Collections.singletonList(macsToMigrate.get(0));
-        when(targetMacPool.addMacs(anyList())).thenReturn(macsFailedTobeAdded);
+        when(targetMacPool.addMacs(any())).thenReturn(macsFailedTobeAdded);
 
         String expectedMessage =
                 underTest.createMessageCannotChangeClusterDueToDuplicatesInTargetPool(macsFailedTobeAdded);

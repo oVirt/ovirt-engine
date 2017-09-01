@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -112,20 +111,20 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         command.ensureDestinationImageMap();
         assertTrue(command.checkDestDomains());
         verify(multipleSdValidator).allDomainsWithinThresholds();
-        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
+        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(any());
     }
 
     @Test
     public void validateInsufficientSpaceOnDomains() {
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
+                when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(any());
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
         verify(multipleSdValidator).allDomainsWithinThresholds();
-        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
+        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(any());
     }
 
     @Test
@@ -138,7 +137,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
         verify(multipleSdValidator).allDomainsWithinThresholds();
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(any());
     }
 
     @Before

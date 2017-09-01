@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.memory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
@@ -127,7 +127,7 @@ public class MemoryStorageHandlerTest {
         List<Comparator<StorageDomain>> comparators = Arrays.asList(
                 Comparator.comparing((StorageDomain sd) -> sd.equals(validStorageDomain2)),
                 Comparator.comparing((StorageDomain sd) -> sd.equals(validStorageDomain3)).reversed());
-        doReturn(comparators).when(memoryStorageHandler).getStorageDomainComparators(anyList());
+        doReturn(comparators).when(memoryStorageHandler).getStorageDomainComparators(any());
     }
 
     private StorageDomain initStorageDomain() {

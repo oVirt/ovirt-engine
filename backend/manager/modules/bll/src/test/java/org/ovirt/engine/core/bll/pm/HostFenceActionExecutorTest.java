@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -43,7 +42,7 @@ public class HostFenceActionExecutorTest {
     @Before
     public void setup() {
         executor = spy(new HostFenceActionExecutor(fencedHost, new FencingPolicy()));
-        doReturn(agentExecutor1).doReturn(agentExecutor2).when(executor).createFenceActionExecutor(anyList());
+        doReturn(agentExecutor1).doReturn(agentExecutor2).when(executor).createFenceActionExecutor(any());
     }
 
     /**

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -54,7 +53,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         super.setUp();
         doNothing().when(cmd).initTemplateDisks();
         doReturn(true).when(cmd).checkNumberOfMonitors();
-        doReturn(true).when(cmd).validateCustomProperties(any(), anyList());
+        doReturn(true).when(cmd).validateCustomProperties(any(), any());
         initCommandMethods();
 
         initDestSDs();
@@ -67,19 +66,19 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     public void validateSpaceAndThreshold() {
         mockGetAllSnapshots();
         assertTrue(cmd.validateSpaceRequirements());
-        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForClonedDisks(anyList());
-        verify(storageDomainValidator, never()).hasSpaceForNewDisks(anyList());
+        verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForClonedDisks(any());
+        verify(storageDomainValidator, never()).hasSpaceForNewDisks(any());
     }
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
+                when(storageDomainValidator).hasSpaceForClonedDisks(any());
         mockGetAllSnapshots();
         assertFalse(cmd.validateSpaceRequirements());
         //The following is mocked to fail, should happen only once.
-        verify(storageDomainValidator).hasSpaceForClonedDisks(anyList());
-        verify(storageDomainValidator, never()).hasSpaceForNewDisks(anyList());
+        verify(storageDomainValidator).hasSpaceForClonedDisks(any());
+        verify(storageDomainValidator, never()).hasSpaceForNewDisks(any());
     }
 
     @Test
@@ -91,7 +90,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
-        doReturn(true).when(cmd).areParametersLegal(anyList());
+        doReturn(true).when(cmd).areParametersLegal(any());
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
         mockMaxPciSlots();
@@ -100,7 +99,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockGetAllSnapshots();
 
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(storageDomainValidator).hasSpaceForClonedDisks(anyList());
+                when(storageDomainValidator).hasSpaceForClonedDisks(any());
 
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
@@ -110,7 +109,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
         when(cpuFlagsManagerHandler.getCpuId(any(), any())).thenReturn(CPU_ID);
         when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
-        doReturn(true).when(cmd).areParametersLegal(anyList());
+        doReturn(true).when(cmd).areParametersLegal(any());
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
         mockStorageDomainDaoGetAllForStoragePool();
@@ -143,7 +142,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     @Test
     public void testUnsupportedCpus() {
         when(cpuFlagsManagerHandler.getCpuId(any(), any())).thenReturn(CPU_ID);
-        doReturn(true).when(cmd).areParametersLegal(anyList());
+        doReturn(true).when(cmd).areParametersLegal(any());
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);

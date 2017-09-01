@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.arem;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -94,12 +93,12 @@ public class AffinityRulesEnforcerTest {
 
         when(affinityGroupDao.getAllAffinityGroupsByClusterId(any())).thenReturn(affinityGroups);
 
-        when(schedulingManager.canSchedule(eq(cluster), any(), anyList(), anyList(), anyList())).thenReturn(true);
+        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any())).thenReturn(true);
     }
 
     @Test
     public void shouldNotTryToMigrateWhenNotSchedulable() {
-        when(schedulingManager.canSchedule(eq(cluster), any(), anyList(), anyList(), anyList())).thenReturn(false);
+        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any())).thenReturn(false);
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm4));
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isNull();
         affinityGroups.clear();
@@ -256,17 +255,14 @@ public class AffinityRulesEnforcerTest {
 
         // Say no to the first scheduling attempt and yes to the second one, to force the enforcer
         // to check every possible candidate
-        when(schedulingManager.canSchedule(eq(cluster), any(), anyList(), anyList(),
-                anyList())).thenReturn(false, true);
+        when(schedulingManager.canSchedule(eq(cluster), any(), any(), any(), any())).thenReturn(false, true);
 
         // There is no fixed order so we only know that one of those VMs will be selected for migration
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
 
         // Verify that the enforcer tried to schedule both candidate VMs.
-        verify(schedulingManager).canSchedule(eq(cluster), eq(vm5), anyList(), anyList(),
-                anyList());
-        verify(schedulingManager).canSchedule(eq(cluster), eq(vm6), anyList(), anyList(),
-                anyList());
+        verify(schedulingManager).canSchedule(eq(cluster), eq(vm5), any(), any(), any());
+        verify(schedulingManager).canSchedule(eq(cluster), eq(vm6), any(), any(), any());
     }
 
     @Test
@@ -274,8 +270,7 @@ public class AffinityRulesEnforcerTest {
         affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm5, vm6));
 
         // vm1 cannot be scheduled
-        when(schedulingManager.canSchedule(eq(cluster), eq(vm1), anyList(), anyList(), anyList()))
-                .thenReturn(false);
+        when(schedulingManager.canSchedule(eq(cluster), eq(vm1), any(), any(), any())).thenReturn(false);
 
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
 
@@ -284,7 +279,7 @@ public class AffinityRulesEnforcerTest {
 
         // cannot schedule vm4, vm5 and vm6
         when(schedulingManager.canSchedule(eq(cluster), argThat(vm -> Arrays.asList(vm4, vm5, vm6).contains(vm)),
-                anyList(), anyList(), anyList())).thenReturn(false);
+                any(), any(), any())).thenReturn(false);
 
         assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
     }
@@ -563,6 +558,6 @@ public class AffinityRulesEnforcerTest {
                 }
             }
             return selectedVms;
-        }).when(vmDao).getVmsByIds(anyList());
+        }).when(vmDao).getVmsByIds(any());
     }
 }

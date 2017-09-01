@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -90,7 +89,7 @@ public class GlusterTasksSyncJobTest {
         prepareMocks();
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(2)).updateSteps(any(), any(), anyList());
+        verify(taskUtils, times(2)).updateSteps(any(), any(), any());
     }
 
     @Test
@@ -101,7 +100,7 @@ public class GlusterTasksSyncJobTest {
 
         tasksSyncJob.updateGlusterAsyncTasks();
         verify(taskUtils, times(1)).endStepJob(any());
-        verify(taskUtils, times(2)).updateSteps(any(), any(), anyList());
+        verify(taskUtils, times(2)).updateSteps(any(), any(), any());
     }
 
     @Test
@@ -143,7 +142,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(2)).updateSteps(any(), any(), anyList());
+        verify(taskUtils, times(2)).updateSteps(any(), any(), any());
     }
 
     @Test
@@ -151,7 +150,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.ABORTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(2)).updateSteps(any(), any(), anyList());
+        verify(taskUtils, times(2)).updateSteps(any(), any(), any());
     }
 
     private void prepareMocks() {

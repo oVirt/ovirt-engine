@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -77,7 +76,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         doReturn(vmValidator).when(cmd).createVmValidator(any());
 
         DiskImagesValidator diskImagesValidator = spy(new DiskImagesValidator(mockImages()));
-        doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(anyList());
+        doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(any());
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesSnapshotsNotAttachedToOtherVms(false);
     }
 
