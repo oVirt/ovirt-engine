@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -257,7 +256,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         vds.setStoragePoolId(HE_SP_ID);
         when(vdsDao.get(any())).thenReturn(vds);
         List<BaseDisk> baseDisks = Collections.singletonList(new BaseDisk());
-        when(baseDiskDao.getDisksByAlias(anyString())).thenReturn(baseDisks);
+        when(baseDiskDao.getDisksByAlias(any())).thenReturn(baseDisks);
         // Data center
         StoragePool pool = new StoragePool();
         pool.setStatus(StoragePoolStatus.Up);

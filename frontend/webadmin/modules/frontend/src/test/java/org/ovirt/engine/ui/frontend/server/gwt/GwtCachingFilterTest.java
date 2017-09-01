@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -65,9 +65,9 @@ public class GwtCachingFilterTest {
         when(mockRequest.getRequestURI()).thenReturn(""); //$NON-NLS-1$
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
-        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), anyString());
-        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.CACHE_CONTROL_HEADER), anyString());
-        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.PRAGMA_HEADER), anyString());
+        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), any());
+        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.CACHE_CONTROL_HEADER), any());
+        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.PRAGMA_HEADER), any());
         verify(mockChain).doFilter(eq(mockRequest), responseCaptor.capture());
         assertFalse(responseCaptor.getValue() instanceof HttpServletResponseWrapper);
     }
@@ -76,7 +76,7 @@ public class GwtCachingFilterTest {
     public void testDoFilter_CacheMatch() throws IOException, ServletException {
         when(mockRequest.getRequestURI()).thenReturn("something.cache.js"); //$NON-NLS-1$
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
-        verify(mockResponse).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), anyString());
+        verify(mockResponse).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), any());
         verify(mockResponse).setHeader(eq(GwtCachingFilter.CACHE_CONTROL_HEADER), eq(GwtCachingFilter.CACHE_YEAR));
         verify(mockResponse).setHeader(eq(GwtCachingFilter.PRAGMA_HEADER), eq(GwtCachingFilter.EMPTY_STRING));
         verify(mockChain).doFilter(eq(mockRequest), responseCaptor.capture());
@@ -84,15 +84,15 @@ public class GwtCachingFilterTest {
         HttpServletResponse responseWrapper = responseCaptor.getValue();
         responseWrapper.setHeader(GwtCachingFilter.ETAG_HEADER, "test"); //$NON-NLS-1$
         responseWrapper.setHeader(GwtCachingFilter.LAST_MODIFIED_HEADER, "test"); //$NON-NLS-1$
-        verify(mockResponse).setHeader(eq(GwtCachingFilter.ETAG_HEADER), anyString());
-        verify(mockResponse).setHeader(eq(GwtCachingFilter.LAST_MODIFIED_HEADER), anyString());
+        verify(mockResponse).setHeader(eq(GwtCachingFilter.ETAG_HEADER), any());
+        verify(mockResponse).setHeader(eq(GwtCachingFilter.LAST_MODIFIED_HEADER), any());
     }
 
     @Test
     public void testDoFilter_NoCacheMatch() throws IOException, ServletException {
         when(mockRequest.getRequestURI()).thenReturn("something.nocache.js"); //$NON-NLS-1$
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
-        verify(mockResponse).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), anyString());
+        verify(mockResponse).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), any());
         verify(mockResponse).setHeader(eq(GwtCachingFilter.CACHE_CONTROL_HEADER), eq(GwtCachingFilter.NO_CACHE));
         verify(mockResponse).setHeader(eq(GwtCachingFilter.PRAGMA_HEADER), eq(GwtCachingFilter.NO_CACHE));
         verify(mockChain).doFilter(eq(mockRequest), responseCaptor.capture());
@@ -100,15 +100,15 @@ public class GwtCachingFilterTest {
         HttpServletResponse responseWrapper = responseCaptor.getValue();
         responseWrapper.setHeader(GwtCachingFilter.ETAG_HEADER, "test"); //$NON-NLS-1$
         responseWrapper.setHeader(GwtCachingFilter.LAST_MODIFIED_HEADER, "test"); //$NON-NLS-1$
-        verify(mockResponse).setHeader(eq(GwtCachingFilter.ETAG_HEADER), anyString());
-        verify(mockResponse).setHeader(eq(GwtCachingFilter.LAST_MODIFIED_HEADER), anyString());
+        verify(mockResponse).setHeader(eq(GwtCachingFilter.ETAG_HEADER), any());
+        verify(mockResponse).setHeader(eq(GwtCachingFilter.LAST_MODIFIED_HEADER), any());
     }
 
     @Test
     public void testDoFilter_NoStoreMatch() throws IOException, ServletException {
         when(mockRequest.getRequestURI()).thenReturn("RPCService"); //$NON-NLS-1$
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
-        verify(mockResponse).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), anyString());
+        verify(mockResponse).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), any());
         verify(mockResponse).setHeader(eq(GwtCachingFilter.CACHE_CONTROL_HEADER), eq(GwtCachingFilter.NO_STORE));
         verify(mockResponse).setHeader(eq(GwtCachingFilter.PRAGMA_HEADER), eq(GwtCachingFilter.NO_CACHE));
         verify(mockChain).doFilter(eq(mockRequest), responseCaptor.capture());
@@ -116,8 +116,8 @@ public class GwtCachingFilterTest {
         HttpServletResponse responseWrapper = responseCaptor.getValue();
         responseWrapper.setHeader(GwtCachingFilter.ETAG_HEADER, "test"); //$NON-NLS-1$
         responseWrapper.setHeader(GwtCachingFilter.LAST_MODIFIED_HEADER, "test"); //$NON-NLS-1$
-        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.ETAG_HEADER), anyString());
-        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.LAST_MODIFIED_HEADER), anyString());
+        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.ETAG_HEADER), any());
+        verify(mockResponse, never()).setHeader(eq(GwtCachingFilter.LAST_MODIFIED_HEADER), any());
 
     }
 

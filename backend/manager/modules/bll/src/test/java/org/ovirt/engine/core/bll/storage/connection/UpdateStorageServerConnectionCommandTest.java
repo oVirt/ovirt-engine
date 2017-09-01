@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.storage.connection;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -668,7 +668,7 @@ public class UpdateStorageServerConnectionCommandTest extends
                 300,
                 0);
         when(command.getConnection()).thenReturn(NFSConnection);
-        doReturn(oldNFSConnection).when(storageConnDao).get(anyString());
+        doReturn(oldNFSConnection).when(storageConnDao).get(any());
 
         // Create an active domain.
         StorageDomain domain = new StorageDomain();

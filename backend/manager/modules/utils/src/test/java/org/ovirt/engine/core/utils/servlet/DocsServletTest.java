@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -117,7 +116,7 @@ public class DocsServletTest {
         when(mockRequest.getPathInfo()).thenReturn("/ja/index.html");
         when(mockRequest.getServletPath()).thenReturn("/docs");
         testServlet.doGet(mockRequest, mockResponse);
-        verify(mockResponse).sendError(eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), anyString());
+        verify(mockResponse).sendError(eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), any());
     }
 
     /**
@@ -133,7 +132,7 @@ public class DocsServletTest {
         when(mockRequest.getPathInfo()).thenReturn("/ja/index.html");
         when(mockRequest.getServletPath()).thenReturn("/docs");
         testServlet.doGet(mockRequest, mockResponse);
-        verify(mockResponse).sendError(eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), anyString());
+        verify(mockResponse).sendError(eq(HttpServletResponse.SC_INTERNAL_SERVER_ERROR), any());
     }
 
     /**

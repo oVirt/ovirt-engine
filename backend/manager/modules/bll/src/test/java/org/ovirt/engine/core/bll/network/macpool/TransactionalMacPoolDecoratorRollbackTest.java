@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.macpool;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -82,7 +81,7 @@ public class TransactionalMacPoolDecoratorRollbackTest {
         verify(targetMacPool).getId();
 
         //related to releasing macs.
-        verify(sourceMacPool, times(2)).isMacInUse(anyString());
+        verify(sourceMacPool, times(2)).isMacInUse(any());
         //actual freing won't be invoked, macs are being held until TX end.
         verify(sourceMacPool, never()).freeMacs(SOURCE_POOL_MACS);
 
@@ -93,7 +92,7 @@ public class TransactionalMacPoolDecoratorRollbackTest {
         transaction.rollback();
 
         //no macs were actually released(release was waiting for commit), thus no macs will be added back.
-        verify(sourceMacPool, never()).addMac(anyString());
+        verify(sourceMacPool, never()).addMac(any());
         verify(sourceMacPool, never()).addMacs(anyList());
 
         //because we mocked, that second mac won't be added due to duplicity, only first one will be released.

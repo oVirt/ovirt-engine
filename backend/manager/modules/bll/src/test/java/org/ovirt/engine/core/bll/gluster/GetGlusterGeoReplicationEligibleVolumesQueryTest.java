@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Collections;
@@ -52,7 +51,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     public void setupMock() {
         doReturn(geoRepUtil).when(getQuery()).getGeoRepUtilInstance();
         doReturn(Guid.newGuid()).when(geoRepUtil).getUpServerId(any());
-        doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(any(), anyString());
+        doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(any(), any());
         doReturn(getExpectedVolumes()).when(getQuery()).getAllGlusterVolumesWithMasterCompatibleVersion(baseTest.getMASTER_VOLUME_ID());
         baseTest.setupMock(geoRepDao, clusterDao);
         doReturn(baseTest.getMasterVolume()).when(volumeDao).getById(baseTest.getMASTER_VOLUME_ID());

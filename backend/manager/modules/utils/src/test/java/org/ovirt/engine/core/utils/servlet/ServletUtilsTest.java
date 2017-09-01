@@ -8,7 +8,6 @@ import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -241,7 +240,7 @@ public class ServletUtilsTest {
        File file = createTempPng();
        ServletUtils.sendFile(mockRequest, mockResponse, file, null, false);
        //Check that we have eTag
-       verify(mockResponse, never()).setHeader(eq("ETag"), anyString());
+       verify(mockResponse, never()).setHeader(eq("ETag"), any());
        //Check that the mime type was set to the one passed in, instead of the one associated with the file
        verify(mockResponse).setContentType("image/png");
        //Check the file length is set right.

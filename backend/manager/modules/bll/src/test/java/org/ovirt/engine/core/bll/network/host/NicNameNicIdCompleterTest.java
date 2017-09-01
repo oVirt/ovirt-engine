@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.host;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -75,7 +74,7 @@ public class NicNameNicIdCompleterTest {
     public void testCompleteWhenUnsetIdAndName() throws Exception {
         NicNameAndNicIdAccessors withoutNameOrIdSet = mock(NicNameAndNicIdAccessors.class);
         completer.complete(withoutNameOrIdSet);
-        verify(withoutNameOrIdSet, never()).setName(anyString());
+        verify(withoutNameOrIdSet, never()).setName(any());
         verify(withoutNameOrIdSet, never()).setId(any());
     }
 
@@ -88,7 +87,7 @@ public class NicNameNicIdCompleterTest {
         when(accessors.getName()).thenReturn("notAExistingNicName");
 
         completer.complete(accessors);
-        verify(accessors, never()).setName(anyString());
+        verify(accessors, never()).setName(any());
         verify(accessors, never()).setId(any());
     }
 

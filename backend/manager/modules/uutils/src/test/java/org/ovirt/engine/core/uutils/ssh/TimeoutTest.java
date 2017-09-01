@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.uutils.ssh;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -47,7 +47,7 @@ public class TimeoutTest extends TestCommon {
         ConnectFuture future = mock(ConnectFuture.class);
 
         doReturn(ssh).when(client).createSshClient();
-        doReturn(future).when(ssh).connect(anyString(), anyInt());
+        doReturn(future).when(ssh).connect(any(), anyInt());
         when(future.await(anyLong())).thenReturn(false);
 
         client.connect();
@@ -61,13 +61,13 @@ public class TimeoutTest extends TestCommon {
         ClientSession session = mock(ClientSession.class);
 
         doReturn(ssh).when(client).createSshClient();
-        doReturn(future).when(ssh).connect(anyString(), anyInt());
+        doReturn(future).when(ssh).connect(any(), anyInt());
         when(future.await(anyLong())).thenReturn(true);
         when(future.getSession()).thenReturn(session);
 
         AuthFuture authFuture = mock(AuthFuture.class);
         when(authFuture.await(anyLong())).thenReturn(false);
-        when(session.authPassword(anyString(), anyString())).thenReturn(authFuture);
+        when(session.authPassword(any(), any())).thenReturn(authFuture);
 
         client.connect();
         client.authenticate();

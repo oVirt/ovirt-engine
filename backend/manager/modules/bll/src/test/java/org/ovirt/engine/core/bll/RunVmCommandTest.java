@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -299,7 +298,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
         command.setCluster(new Cluster());
         // Avoid referencing the unmockable static VmHandler.updateCurrentCd
-        doNothing().when(command).updateCurrentCd(anyString());
+        doNothing().when(command).updateCurrentCd(any());
         doReturn(null).when(command).getMemoryFromActiveSnapshot();
         when(snapshotDAO.exists(any(Guid.class), any(SnapshotStatus.class))).thenReturn(false);
         return vm;

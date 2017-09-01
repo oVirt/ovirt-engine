@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.branding;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,7 +61,7 @@ public class BrandingCascadingResourceServletTest {
                         .toURI().getPath()));
         when(mockCascadingResource.getContentType()).thenReturn("madeUp/ContentType"); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);
-        verify(mockResponse).setHeader(eq("ETag"), anyString()); //$NON-NLS-1$
+        verify(mockResponse).setHeader(eq("ETag"), any()); //$NON-NLS-1$
         verify(mockResponse).setContentType("madeUp/ContentType"); //$NON-NLS-1$
     }
 

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.searchbackend;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -42,8 +42,8 @@ public class SyntaxCheckerTest {
         BaseConditionFieldAutoCompleter.tagsHandler = mock(ITagsHandler.class);
         Tags tags = new Tags();
         tags.setTagName(TAG_NAME);
-        when(BaseConditionFieldAutoCompleter.tagsHandler.getTagByTagName(anyString())).thenReturn(tags);
-        when(BaseConditionFieldAutoCompleter.tagsHandler.getTagNamesAndChildrenNamesByRegExp(anyString()))
+        when(BaseConditionFieldAutoCompleter.tagsHandler.getTagByTagName(any())).thenReturn(tags);
+        when(BaseConditionFieldAutoCompleter.tagsHandler.getTagNamesAndChildrenNamesByRegExp(any()))
                 .thenReturn(TAG_NAME_WITH_CHILDREN);
     }
 

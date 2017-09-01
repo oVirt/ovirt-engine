@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -164,8 +163,8 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void testBlockUseHostCpuWithPPCArch() {
-        when(cpuFlagsManagerHandler.getCpuId(anyString(), any())).thenReturn(CPU_ID);
-        when(osRepository.isCpuSupported(anyInt(), any(), anyString())).thenReturn(true);
+        when(cpuFlagsManagerHandler.getCpuId(any(), any())).thenReturn(CPU_ID);
+        when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
         doNothing().when(cmd).initTemplateDisks();
         setupCanAddPpcTest();
         cmd.setEffectiveCompatibilityVersion(Version.v4_0);

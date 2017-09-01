@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -102,7 +102,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         ConstantsManager constantsManagerMock = mock(ConstantsManager.class);
         UIMessages uiMessagesMock = mock(UIMessages.class);
         when(constantsManagerMock.getMessages()).thenReturn(uiMessagesMock);
-        when(uiMessagesMock.detachNetwork(anyString())).thenReturn("doh"); //$NON-NLS-1$
+        when(uiMessagesMock.detachNetwork(any())).thenReturn("doh"); //$NON-NLS-1$
         ConstantsManager.setInstance(constantsManagerMock);
         TypeResolver typeResolverMock = mock(TypeResolver.class);
         TypeResolver.setInstance(typeResolverMock);

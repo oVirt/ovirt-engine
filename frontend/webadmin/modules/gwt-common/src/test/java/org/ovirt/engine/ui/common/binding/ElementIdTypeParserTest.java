@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.binding;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -66,8 +66,8 @@ public class ElementIdTypeParserTest {
 
     @Before
     public void setUp() throws UnableToCompleteException {
-        when(logger.branch(nullable(TreeLogger.Type.class), anyString(),
-                nullable(Throwable.class), nullable(HelpInfo.class))).thenReturn(logger);
+        when(logger.branch(nullable(TreeLogger.Type.class), any(), nullable(Throwable.class), nullable(HelpInfo.class)))
+                .thenReturn(logger);
 
         tested = new ElementIdTypeParser(logger, interfaceType) {
             @Override

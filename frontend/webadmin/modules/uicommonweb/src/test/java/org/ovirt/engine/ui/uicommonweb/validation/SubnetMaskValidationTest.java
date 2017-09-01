@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -57,14 +57,14 @@ public class SubnetMaskValidationTest {
             ErrorMessage errorType) {
 
         MaskValidator validator = mock(MaskValidator.class);
-        doReturn(isPrefixValid).when(validator).isPrefixValid(anyString());
-        doReturn(isNetmaskValidFormat).when(validator).isValidNetmaskFormat(anyString());
-        doReturn(isNetmaskValidValue).when(validator).isNetmaskValid(anyString());
+        doReturn(isPrefixValid).when(validator).isPrefixValid(any());
+        doReturn(isNetmaskValidFormat).when(validator).isValidNetmaskFormat(any());
+        doReturn(isNetmaskValidValue).when(validator).isNetmaskValid(any());
 
         SubnetMaskValidation subnetMaskValidationSpy = createUnderTest(isPrefixAllowed);
         doReturn(validator).when(subnetMaskValidationSpy).getMaskValidator();
 
-        ValidationResult actualResult = subnetMaskValidationSpy.validate(anyString());
+        ValidationResult actualResult = subnetMaskValidationSpy.validate(any());
 
         final String exceptionMessage =
                 String.format("Failed to validate subnet result message: expected: %s\tresult: %s\t for: isPrefixAllowed: %b\tisNetmaskValidFormat: %b\t isMaskValid: %b\t isPrefixValid: %b", //$NON-NLS-1$

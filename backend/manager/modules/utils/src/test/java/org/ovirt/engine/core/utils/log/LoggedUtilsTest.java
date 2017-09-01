@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -343,11 +342,11 @@ public class LoggedUtilsTest {
      * Verifies that no logging was done on the given log mock.
      */
     private static void verifyNoLogging(Logger logMock) {
-        verify(logMock, never()).trace(anyString(), (Object) any());
-        verify(logMock, never()).debug(anyString(), (Object) any());
-        verify(logMock, never()).info(anyString(), (Object) any());
-        verify(logMock, never()).warn(anyString(), (Object) any());
-        verify(logMock, never()).error(anyString(), (Object) any());
+        verify(logMock, never()).trace(any(), (Object) any());
+        verify(logMock, never()).debug(any(), (Object) any());
+        verify(logMock, never()).info(any(), (Object) any());
+        verify(logMock, never()).warn(any(), (Object) any());
+        verify(logMock, never()).error(any(), (Object) any());
     }
 
     /**

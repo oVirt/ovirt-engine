@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -330,7 +330,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     private FenceProxyLocator setupLocator(FencingPolicy fencingPolicy) {
         FenceProxyLocator fenceProxyLocator = spy(new FenceProxyLocator(fencedHost, fencingPolicy));
         when(fenceProxyLocator.getDbFacade()).thenReturn(dbFacade);
-        doReturn(vdsFenceOptions).when(fenceProxyLocator).createVdsFenceOptions(anyString());
+        doReturn(vdsFenceOptions).when(fenceProxyLocator).createVdsFenceOptions(any());
         doReturn(0L).when(fenceProxyLocator).getDelayBetweenRetries();
         doReturn(1).when(fenceProxyLocator).getFindFenceProxyRetries();
         doReturn(Arrays.asList(FenceProxySourceType.CLUSTER, FenceProxySourceType.DC))
@@ -370,7 +370,7 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     private void mockVdsFenceOptions(boolean agentsCompatibleWithProxy) {
         vdsFenceOptions = mock(VdsFenceOptions.class);
-        when(vdsFenceOptions.isAgentSupported(anyString())).thenReturn(agentsCompatibleWithProxy);
+        when(vdsFenceOptions.isAgentSupported(any())).thenReturn(agentsCompatibleWithProxy);
     }
 
     private boolean shouldHostBeUnreachable(VDSStatus status) {

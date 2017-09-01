@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -90,7 +89,7 @@ public class FileServletTest {
         when(mockResponse.getOutputStream()).thenReturn(responseOut);
         testServlet.doGet(mockRequest, mockResponse);
         //Make sure cache is enabled
-        verify(mockResponse).setHeader(eq("ETag"), anyString());
+        verify(mockResponse).setHeader(eq("ETag"), any());
         //Make sure something is written to the output stream (assuming it is the file).
         verify(responseOut).write(any(), eq(0), anyInt());
     }
@@ -108,7 +107,7 @@ public class FileServletTest {
         when(mockResponse.getOutputStream()).thenReturn(responseOut);
         testServlet.doGet(mockRequest, mockResponse);
         //Make sure cache is enabled
-        verify(mockResponse).setHeader(eq("ETag"), anyString());
+        verify(mockResponse).setHeader(eq("ETag"), any());
         //Make sure something is written to the output stream (assuming it is the file).
         verify(responseOut).write(any(), eq(0), anyInt());
     }
@@ -126,7 +125,7 @@ public class FileServletTest {
         when(mockResponse.getOutputStream()).thenReturn(responseOut);
         testServlet.doGet(mockRequest, mockResponse);
         //Make sure cache is disabled
-        verify(mockResponse, never()).setHeader(eq("ETag"), anyString());
+        verify(mockResponse, never()).setHeader(eq("ETag"), any());
         //Make sure something is written to the output stream (assuming it is the file).
         verify(responseOut).write(any(), eq(0), anyInt());
     }

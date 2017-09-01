@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -112,7 +111,7 @@ public class OvfManagerTest {
 
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
-        when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(
+        when(osRepository.getOsIdByUniqueName(any())).thenAnswer(
                 invocation-> osIdsToNames.entrySet()
                         .stream()
                         .filter(k -> invocation.getArguments()[0].equals(k.getValue()))

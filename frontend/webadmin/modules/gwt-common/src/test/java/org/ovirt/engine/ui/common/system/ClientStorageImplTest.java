@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.system;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -29,8 +29,8 @@ public class ClientStorageImplTest {
         });
 
         // Stub un-testable methods, specific tests should re-stub these as needed
-        doNothing().when(tested).setLocalItemImpl(anyString(), anyString());
-        doNothing().when(tested).setSessionItemImpl(anyString(), anyString());
+        doNothing().when(tested).setLocalItemImpl(any(), any());
+        doNothing().when(tested).setSessionItemImpl(any(), any());
     }
 
     /**
