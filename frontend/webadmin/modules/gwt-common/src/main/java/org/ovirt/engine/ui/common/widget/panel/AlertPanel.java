@@ -223,7 +223,7 @@ public class AlertPanel extends Composite {
 
         // clear all other icon style names
         for (Type t : type.getDeclaringClass().getEnumConstants()) {
-            getWidget().removeStyleName(t.iconStyleName);
+            icon.removeStyleName(t.iconStyleName);
         }
 
         icon.addStyleName(type.iconStyleName);
