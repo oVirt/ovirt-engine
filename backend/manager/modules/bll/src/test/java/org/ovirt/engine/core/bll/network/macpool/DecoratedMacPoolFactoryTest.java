@@ -10,6 +10,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -23,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
@@ -95,7 +95,7 @@ public class DecoratedMacPoolFactoryTest {
         assertThat(secondDecoratorMacPoolArgumentCaptor.getValue(), is(macPool));
 
         verify(macPool).getId();
-        Mockito.verifyNoMoreInteractions(macPoolDecoratorA, macPoolDecoratorB, macPool);
+        verifyNoMoreInteractions(macPoolDecoratorA, macPoolDecoratorB, macPool);
     }
 
     @Test

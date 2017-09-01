@@ -2,7 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_CANNOT_MIGRATE_MACS_DUE_TO_DUPLICATES;
@@ -21,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
@@ -91,7 +92,7 @@ public class MoveMacsTest {
         verify(macPoolPerCluster).getMacPoolById(sourceMacPoolId, commandContext);
         verify(macPoolPerCluster).getMacPoolById(targetMacPoolId, commandContext);
 
-        InOrder inOrder = Mockito.inOrder(sourceMacPool, targetMacPool);
+        InOrder inOrder = inOrder(sourceMacPool, targetMacPool);
 
         inOrder.verify(sourceMacPool).freeMacs(macsToMigrate);
         inOrder.verify(targetMacPool).addMacs(macsToMigrate);
@@ -113,7 +114,7 @@ public class MoveMacsTest {
         verify(macPoolPerCluster).getMacPoolById(sourceMacPoolId, commandContext);
         verify(macPoolPerCluster).getMacPoolById(targetMacPoolId, commandContext);
 
-        InOrder inOrder = Mockito.inOrder(sourceMacPool, targetMacPool);
+        InOrder inOrder = inOrder(sourceMacPool, targetMacPool);
 
         inOrder.verify(sourceMacPool).freeMacs(macsToMigrate);
         inOrder.verify(targetMacPool).addMacs(macsToMigrate);
@@ -126,7 +127,7 @@ public class MoveMacsTest {
                 Collections.emptyList(),
                 commandContext);
 
-        Mockito.verifyNoMoreInteractions( macPoolPerCluster, sourceMacPool, targetMacPool);
+        verifyNoMoreInteractions(macPoolPerCluster, sourceMacPool, targetMacPool);
     }
 
     @Test
@@ -136,7 +137,7 @@ public class MoveMacsTest {
                 macsToMigrate,
                 commandContext);
 
-        Mockito.verifyNoMoreInteractions( macPoolPerCluster, sourceMacPool, targetMacPool);
+        verifyNoMoreInteractions(macPoolPerCluster, sourceMacPool, targetMacPool);
     }
 
     @Test

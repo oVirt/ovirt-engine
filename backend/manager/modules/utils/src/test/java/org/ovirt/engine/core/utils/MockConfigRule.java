@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +10,6 @@ import java.util.List;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.mockito.Mockito;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -106,7 +106,7 @@ public class MockConfigRule extends TestWatcher {
 
     @Override
     public void finished(Description description) {
-        Mockito.reset(mockConfigUtils);
+        reset(mockConfigUtils);
         Config.setConfigUtils(origConfUtils);
     }
 }

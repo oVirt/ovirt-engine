@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.validator;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,7 +15,6 @@ import java.util.function.Predicate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
@@ -38,7 +39,7 @@ public class VmNicMacsUtilsTest {
         when(vmNetworkInterfaceMock.getMacAddress()).thenReturn("00:0a:95:9d:68:16");
 
         underTest.replaceInvalidEmptyStringMacAddressesWithNull(singletonList(vmNetworkInterfaceMock));
-        verify(vmNetworkInterfaceMock, never()).setMacAddress(Mockito.any());
+        verify(vmNetworkInterfaceMock, never()).setMacAddress(any());
     }
 
     @Test
@@ -46,7 +47,7 @@ public class VmNicMacsUtilsTest {
         when(vmNetworkInterfaceMock.getMacAddress()).thenReturn("");
 
         underTest.replaceInvalidEmptyStringMacAddressesWithNull(singletonList(vmNetworkInterfaceMock));
-        verify(vmNetworkInterfaceMock).setMacAddress(Mockito.eq(null));
+        verify(vmNetworkInterfaceMock).setMacAddress(eq(null));
     }
 
     @Test

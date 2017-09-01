@@ -2,6 +2,9 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -17,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -59,7 +61,7 @@ public class GenericApiGWTServiceImplTest {
     @Test
     public void multiQueryWithNulls() {
         underTest.runMultipleQueries(null, null);
-        Mockito.verifyZeroInteractions(backendLocal);
+        verifyZeroInteractions(backendLocal);
     }
 
     @Test
@@ -72,7 +74,7 @@ public class GenericApiGWTServiceImplTest {
 
         underTest.runMultipleQueries(queryTypeList, queryParamsList);
 
-        Mockito.verifyZeroInteractions(backendLocal);
+        verifyZeroInteractions(backendLocal);
     }
 
     @Test
@@ -86,7 +88,7 @@ public class GenericApiGWTServiceImplTest {
 
         underTest.runMultipleQueries(queryTypeList, queryParamsList);
 
-        Mockito.verify(backendLocal, Mockito.times(2)).runQuery(any(), any());
+        verify(backendLocal, times(2)).runQuery(any(), any());
     }
 
 }
