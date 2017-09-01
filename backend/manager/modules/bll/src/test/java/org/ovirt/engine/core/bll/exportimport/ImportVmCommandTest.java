@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -120,7 +119,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void insufficientDiskSpaceWithCollapse() {
         setupDiskSpaceTest();
-        doReturn(true).when(cmd).validateImages(anyMap());
+        doReturn(true).when(cmd).validateImages(any());
         when(cmd.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
@@ -130,7 +129,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void insufficientDiskSpaceWithSnapshots() {
         setupDiskSpaceTest();
-        doReturn(true).when(cmd).validateImages(anyMap());
+        doReturn(true).when(cmd).validateImages(any());
         when(cmd.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
@@ -166,7 +165,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(cmd).getCluster();
-        doReturn(true).when(cmd).validateImages(anyMap());
+        doReturn(true).when(cmd).validateImages(any());
     }
 
     @Test
@@ -219,7 +218,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Test
     public void lowThresholdStorageSpace() {
         setupDiskSpaceTest();
-        doReturn(true).when(cmd).validateImages(anyMap());
+        doReturn(true).when(cmd).validateImages(any());
         when(cmd.getImportValidator().validateSpaceRequirements(anyCollection()))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,

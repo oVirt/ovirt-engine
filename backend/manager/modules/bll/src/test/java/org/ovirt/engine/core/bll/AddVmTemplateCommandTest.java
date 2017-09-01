@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -340,7 +339,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     private void mockPassDiscardSupportedForDestSds(ValidationResult validationResult) {
         cmd.diskInfoDestinationMap = Collections.emptyMap();
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
-        doReturn(multipleDiskVmElementValidator).when(cmd).createMultipleDiskVmElementValidator(anyMap());
-        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMap())).thenReturn(validationResult);
+        doReturn(multipleDiskVmElementValidator).when(cmd).createMultipleDiskVmElementValidator(any());
+        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(any())).thenReturn(validationResult);
     }
 }

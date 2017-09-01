@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -191,7 +190,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                     (Map<Guid, KeyValuePairCompat<String, List<Guid>>>) invocation.getArguments()[1];
             assertTrue("too many ovfs were sent in one vdsm call", updateMap.size() <= ITEMS_COUNT_PER_UPDATE);
             return true;
-        }).when(ovfUpdateProcessHelper).executeUpdateVmInSpmCommand(any(), anyMap(), any());
+        }).when(ovfUpdateProcessHelper).executeUpdateVmInSpmCommand(any(), any(), any());
 
         doReturn(true).when(ovfUpdateProcessHelper).executeRemoveVmInSpm(any(), any(), any());
 
@@ -377,7 +376,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
         executeCommand();
-        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
+        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any());
 
         List<Guid> idsThatNeededToBeUpdated = new LinkedList<>(vmGuids);
         idsThatNeededToBeUpdated.addAll(templatesGuids);
@@ -404,7 +403,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
         executeCommand();
-        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
+        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any());
 
         List<Guid> needToBeUpdated = new LinkedList<>(vmGuids);
         needToBeUpdated.addAll(templatesGuids);
@@ -427,7 +426,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
         executeCommand();
-        verify(command, never()).performOvfUpdate(anyMap());
+        verify(command, never()).performOvfUpdate(any());
         verifyCorrectOvfDataUpdaterRun(Collections.emptyList());
     }
 
@@ -451,7 +450,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
         executeCommand();
-        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
+        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any());
         // list of ids that should have been updated.
         List<Guid> needToBeUpdated = new LinkedList<>(vmGuids);
         needToBeUpdated.addAll(templatesGuids);
@@ -483,7 +482,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
         command.executeCommand();
-        verify(command, never()).performOvfUpdate(anyMap());
+        verify(command, never()).performOvfUpdate(any());
         verifyCorrectOvfDataUpdaterRun(Collections.emptyList());
         verifyOvfUpdatedForSupportedPools(Collections.emptyList(), Collections.emptyMap());
     }
@@ -512,7 +511,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         List<Guid> neededToBeUpdated = new LinkedList<>(vmGuidsUnlocked);
         neededToBeUpdated.addAll(templatesGuidsUnlocked);
-        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(anyMap());
+        verify(command, times(numberOfTimesToBeCalled(size, true))).performOvfUpdate(any());
         verifyCorrectOvfDataUpdaterRun(neededToBeUpdated);
         verifyOvfUpdatedForSupportedPools(Collections.emptyList(), Collections.emptyMap());
     }
@@ -532,7 +531,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         executeCommand();
 
-        verify(command, never()).performOvfUpdate(anyMap());
+        verify(command, never()).performOvfUpdate(any());
         List<Guid> idsThatNeededToBeUpdated = new LinkedList<>(vmGuids);
         idsThatNeededToBeUpdated.addAll(templatesGuids);
 
@@ -550,7 +549,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                 Collections.emptyList(),
                 Collections.emptyList());
         executeCommand();
-        verify(command, never()).performOvfUpdate(anyMap());
+        verify(command, never()).performOvfUpdate(any());
         Map<Guid, List<Guid>> domainsRequiredUpdateForPool =
                 Collections.singletonMap(poolId, Collections.singletonList(ovfInfo.getStorageDomainId()));
         verifyOvfUpdatedForSupportedPools(Collections.singletonList(poolId), domainsRequiredUpdateForPool);

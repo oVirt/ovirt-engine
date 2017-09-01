@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -65,7 +64,7 @@ public class AddUnmanagedVmsCommandTest {
     @Before
     public void setup() {
         doNothing().when(addUnamangedVmsCommand).addExternallyManagedVm(any());
-        doNothing().when(addUnamangedVmsCommand).addDevices(anyMap(), anyLong());
+        doNothing().when(addUnamangedVmsCommand).addDevices(any(), anyLong());
         doNothing().when(addUnamangedVmsCommand).importHostedEngineVm(any(VM.class));
     }
 

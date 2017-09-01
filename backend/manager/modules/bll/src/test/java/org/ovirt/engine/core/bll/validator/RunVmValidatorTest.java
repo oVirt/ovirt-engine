@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -315,8 +314,8 @@ public class RunVmValidatorTest {
         doReturn(Collections.emptyMap()).when(runVmValidator).getVmDiskVmElementMap();
 
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
-        doReturn(multipleDiskVmElementValidator).when(runVmValidator).createMultipleDiskVmElementValidator(anyMap());
-        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(anyMap())).thenReturn(validationResult);
+        doReturn(multipleDiskVmElementValidator).when(runVmValidator).createMultipleDiskVmElementValidator(any());
+        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(any())).thenReturn(validationResult);
     }
 
     private void canRunVmAsStateless(boolean autoStartUp,
