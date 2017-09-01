@@ -232,8 +232,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         result.setReturnValue(resultMap);
         result.setSucceeded(true);
 
-        when(command.getBackend().runInternalQuery(
-                eq(QueryType.GetTemplatesFromExportDomain), any(), any())).thenReturn(result);
+        when(backend.runInternalQuery(eq(QueryType.GetTemplatesFromExportDomain), any(), any())).thenReturn(result);
     }
 
     private void mockStorageDomainStatic(StorageType storageType) {
