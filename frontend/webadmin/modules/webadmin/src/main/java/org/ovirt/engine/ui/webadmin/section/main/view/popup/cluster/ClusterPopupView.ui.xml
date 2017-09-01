@@ -170,11 +170,11 @@
         }
 
         .tabBar {
-            width: 165px !important;
+            width: 180px !important;
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="805px" height="560px">
+    <d:SimpleDialogPanel width="820px" height="560px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%" barStyle="{style.tabBar}">
                 <t:tab>
