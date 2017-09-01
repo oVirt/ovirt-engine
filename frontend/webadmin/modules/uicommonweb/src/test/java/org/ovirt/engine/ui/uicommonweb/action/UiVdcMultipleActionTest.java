@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.action;
 
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -160,11 +160,8 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
 
     private List<IFrontendMultipleActionAsyncCallback> verifyRunAction(int exepectedNumOfRunActionExecutions,
             boolean waitForResult) {
-        verify(frontend, times(exepectedNumOfRunActionExecutions)).runMultipleAction(eq(ACTION_TYPE),
-                anyListOf(ActionParametersBase.class),
-                callbackCaptor.capture(),
-                eq(false),
-                eq(waitForResult));
+        verify(frontend, times(exepectedNumOfRunActionExecutions)).runMultipleAction(
+                eq(ACTION_TYPE), any(), callbackCaptor.capture(), eq(false), eq(waitForResult));
 
         return callbackCaptor.getAllValues();
     }

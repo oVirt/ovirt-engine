@@ -4,7 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
@@ -89,7 +89,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     @Test
     public void testDoGet_ExtraAttributes_WithoutUserInfoObject() throws IOException, ServletException {
         doReturn(mockApplicationModeObject).when(testServlet).getApplicationModeObject(nullable(Integer.class));
-        doReturn(mockPluginDefinitionsArray).when(testServlet).getPluginDefinitionsArray(anyListOf(PluginData.class));
+        doReturn(mockPluginDefinitionsArray).when(testServlet).getPluginDefinitionsArray(any());
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE, mockApplicationModeObject);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS, mockPluginDefinitionsArray);
