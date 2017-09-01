@@ -20,7 +20,6 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,14 +29,10 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
 
     protected static final Guid CLUSTER_ID = GUIDS[1];
     private final QueryType listQueryType;
-    private final Class<? extends QueryParametersBase> listQueryParamsClass;
 
-    public AbstractBackendCpuProfilesResourceTest(C collection,
-            QueryType listQueryType,
-            Class<? extends QueryParametersBase> queryParamsClass) {
+    public AbstractBackendCpuProfilesResourceTest(C collection, QueryType listQueryType) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
-        this.listQueryParamsClass = queryParamsClass;
     }
 
     @Test
@@ -200,12 +195,11 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(listQueryType),
-                        any(listQueryParamsClass))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(listQueryType), any())).thenThrow((Exception) failure);
                 return;
             }
         }
-        when(backend.runQuery(eq(listQueryType), any(listQueryParamsClass))).thenReturn(queryResult);
+        when(backend.runQuery(eq(listQueryType), any())).thenReturn(queryResult);
     }
 
     static CpuProfile getModel(int index) {

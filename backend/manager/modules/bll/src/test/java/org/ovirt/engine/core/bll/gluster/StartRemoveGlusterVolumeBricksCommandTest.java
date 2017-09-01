@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -141,8 +140,8 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StartRemoveGlusterVolumeBricks),
-                any(GlusterVolumeRemoveBricksVDSParameters.class))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StartRemoveGlusterVolumeBricks), any()))
+                .thenReturn(vdsReturnValue);
     }
 
     @Test

@@ -135,7 +135,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     }
 
     protected void mockOtherDependencies() {
-        doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any(StorageDomain.class));
+        doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any());
     }
 
     protected void generateStorageToDisksMap() {
@@ -233,11 +233,11 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     }
 
     protected void initCommandMethods() {
-        doReturn(true).when(cmd).canAddVm(anyList(), anyString(), any(Guid.class), anyInt());
+        doReturn(true).when(cmd).canAddVm(anyList(), anyString(), any(), anyInt());
     }
 
     protected void mockStorageDomainDaoGetAllForStoragePool() {
-        when(sdDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(createStorageDomain()));
+        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.singletonList(createStorageDomain()));
     }
 
     protected StorageDomain createStorageDomain() {
@@ -253,6 +253,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
             Object[] args = invocation.getArguments();
             Guid arg = (Guid) args[0];
             return createDiskSnapshot(arg, 3);
-        }).when(diskImageDao).getAllSnapshotsForLeaf(any(Guid.class));
+        }).when(diskImageDao).getAllSnapshotsForLeaf(any());
     }
 }

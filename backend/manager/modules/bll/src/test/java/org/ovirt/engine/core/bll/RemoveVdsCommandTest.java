@@ -97,7 +97,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
     @Before
     public void setUp() {
         clusterId = Guid.newGuid();
-        doReturn(cluster).when(clusterDao).get(any(Guid.class));
+        doReturn(cluster).when(clusterDao).get(any());
         when(glusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
 
@@ -194,10 +194,10 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockHasMultipleClusters(true);
         command.executeCommand();
         assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
-        verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
-        verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
-        verify(volumeDao, never()).removeByClusterId(any(Guid.class));
-        verify(hooksDao, never()).removeAllInCluster(any(Guid.class));
+        verify(vdsDynamicDao, times(1)).remove(any());
+        verify(vdsStatisticsDao, times(1)).remove(any());
+        verify(volumeDao, never()).removeByClusterId(any());
+        verify(hooksDao, never()).removeAllInCluster(any());
     }
 
     @Test
@@ -208,10 +208,10 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockHasMultipleClusters(false);
         command.executeCommand();
         assertEquals(AuditLogType.USER_REMOVE_VDS, command.getAuditLogTypeValue());
-        verify(vdsDynamicDao, times(1)).remove(any(Guid.class));
-        verify(vdsStatisticsDao, times(1)).remove(any(Guid.class));
-        verify(volumeDao, times(1)).removeByClusterId(any(Guid.class));
-        verify(hooksDao, times(1)).removeAllInCluster(any(Guid.class));
+        verify(vdsDynamicDao, times(1)).remove(any());
+        verify(vdsStatisticsDao, times(1)).remove(any());
+        verify(volumeDao, times(1)).removeByClusterId(any());
+        verify(hooksDao, times(1)).removeAllInCluster(any());
     }
 
     /**

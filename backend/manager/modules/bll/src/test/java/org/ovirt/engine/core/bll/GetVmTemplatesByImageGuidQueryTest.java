@@ -36,7 +36,7 @@ public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<IdQuer
         when(vmTemplateDaoMock.getAllForImage(imageGuid)).thenReturn(expected);
 
         // Mock away the handler
-        doNothing().when(getQuery()).updateDisksFromDb(any(VmTemplate.class));
+        doNothing().when(getQuery()).updateDisksFromDb(any());
 
         // Run the query
         GetVmTemplatesByImageGuidQuery<IdQueryParameters> query = getQuery();

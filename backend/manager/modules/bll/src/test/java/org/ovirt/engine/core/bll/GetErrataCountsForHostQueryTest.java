@@ -97,8 +97,8 @@ public class GetErrataCountsForHostQueryTest
     private void setupToReportErrata(List<Erratum> errata) {
         when(host.getHostProviderId()).thenReturn(mock(Guid.class));
         when(vdsStaticDao.get(any())).thenReturn(host);
-        when(providerDao.get(any(Guid.class))).thenReturn(mock(Provider.class));
-        doReturn(providerProxy).when(getQuery()).getHostProviderProxy(any(Provider.class));
+        when(providerDao.get(any())).thenReturn(mock(Provider.class));
+        doReturn(providerProxy).when(getQuery()).getHostProviderProxy(any());
         ErrataData errataData = mock(ErrataData.class);
         ErrataCounts errataCounts = mock(ErrataCounts.class);
         when(errataData.getErrataCounts()).thenReturn(errataCounts);

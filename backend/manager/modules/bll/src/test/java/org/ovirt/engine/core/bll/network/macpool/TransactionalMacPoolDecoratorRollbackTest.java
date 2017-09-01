@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -115,7 +114,7 @@ public class TransactionalMacPoolDecoratorRollbackTest {
 
     private void mockLockObjectFactoryToDisableLocking() {
         when(lockedObjectFactory
-                .createLockingInstance(any(MacPool.class), eq(MacPool.class), any(ReentrantReadWriteLock.class)))
+                .createLockingInstance(any(), eq(MacPool.class), any()))
                 .thenAnswer(AdditionalAnswers.returnsArgAt(0));
     }
 

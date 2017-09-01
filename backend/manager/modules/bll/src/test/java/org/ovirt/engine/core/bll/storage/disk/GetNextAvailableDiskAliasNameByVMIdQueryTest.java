@@ -35,7 +35,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     @Override
     protected void initQuery(GetNextAvailableDiskAliasNameByVMIdQuery<IdQueryParameters> query) {
         super.initQuery(query);
-        doNothing().when(query).updateDisksFromDb(any(VM.class));
+        doNothing().when(query).updateDisksFromDb(any());
     }
 
     @Test

@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -169,10 +168,7 @@ public class NetworkConfiguratorTest {
 
         final NetworkConfigurator spiedUnderTest = spy(underTest);
         doReturn(backend).when(spiedUnderTest).getBackend();
-        when(backend.runInternalAction(
-                eq(ActionType.HostSetupNetworks),
-                any(HostSetupNetworksParameters.class),
-                any(CommandContext.class)))
+        when(backend.runInternalAction(eq(ActionType.HostSetupNetworks), any(), any()))
                 .thenReturn(createReturnValue(false));
 
         verifyAuditLoggableBaseFilledProperly(
@@ -186,16 +182,10 @@ public class NetworkConfiguratorTest {
 
         final NetworkConfigurator spiedUnderTest = spy(underTest);
         doReturn(backend).when(spiedUnderTest).getBackend();
-        when(backend.runInternalAction(
-                eq(ActionType.HostSetupNetworks),
-                any(HostSetupNetworksParameters.class),
-                any(CommandContext.class)))
+        when(backend.runInternalAction(eq(ActionType.HostSetupNetworks), any(), any()))
                 .thenReturn(createReturnValue(true));
         when(backend.runInternalAction(
-                eq(ActionType.CommitNetworkChanges),
-                any(VdsActionParameters.class),
-                any(CommandContext.class)))
-                .thenReturn(createReturnValue(false));
+                eq(ActionType.CommitNetworkChanges), any(), any())).thenReturn(createReturnValue(false));
 
         verifyAuditLoggableBaseFilledProperly(
                 spiedUnderTest,

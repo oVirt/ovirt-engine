@@ -76,7 +76,7 @@ public class NicNameNicIdCompleterTest {
         NicNameAndNicIdAccessors withoutNameOrIdSet = mock(NicNameAndNicIdAccessors.class);
         completer.complete(withoutNameOrIdSet);
         verify(withoutNameOrIdSet, never()).setName(anyString());
-        verify(withoutNameOrIdSet, never()).setId(any(Guid.class));
+        verify(withoutNameOrIdSet, never()).setId(any());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class NicNameNicIdCompleterTest {
 
         completer.complete(accessors);
         verify(accessors, never()).setName(anyString());
-        verify(accessors, never()).setId(any(Guid.class));
+        verify(accessors, never()).setId(any());
     }
 
     @Test

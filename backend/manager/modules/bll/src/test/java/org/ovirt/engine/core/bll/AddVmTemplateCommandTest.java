@@ -134,7 +134,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
         mockOsRepository();
 
-        doNothing().when(cmd).separateCustomProperties(any(VmStatic.class));
+        doNothing().when(cmd).separateCustomProperties(any());
         doReturn(getDisksList(vm.getStoragePoolId())).when(cmd).getVmDisksFromDB();
         doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
 
@@ -321,7 +321,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     private void setupForStorageTests() {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
         vm.setStatus(VMStatus.Down);
-        doReturn(multipleSdValidator).when(cmd).getStorageDomainsValidator(any(Guid.class), anySet());
+        doReturn(multipleSdValidator).when(cmd).getStorageDomainsValidator(any(), anySet());
 
         setupStoragePool();
     }

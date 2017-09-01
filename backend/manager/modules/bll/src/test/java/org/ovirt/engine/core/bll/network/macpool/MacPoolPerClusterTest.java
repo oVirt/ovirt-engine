@@ -72,8 +72,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         cluster = createCluster(macPool);
         vmNic = createVmNic();
 
-        when(decoratedMacPoolFactory.createDecoratedPool(
-                any(org.ovirt.engine.core.bll.network.macpool.MacPool.class), anyList()))
+        when(decoratedMacPoolFactory.createDecoratedPool(any(), anyList()))
                 .thenAnswer(invocation -> invocation.getArguments()[0]);
 
         macPoolPerCluster = new MacPoolPerCluster(macPoolDao,

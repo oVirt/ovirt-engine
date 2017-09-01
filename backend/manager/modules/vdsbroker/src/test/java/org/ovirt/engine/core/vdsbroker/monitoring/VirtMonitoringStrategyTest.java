@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -37,7 +36,7 @@ public class VirtMonitoringStrategyTest {
         vdsFromDb.setClusterId(clusterId);
 
         virtStrategy = spy(new VirtMonitoringStrategy(mockCluster(), mockVdsDao(), null));
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any());
+        doNothing().when(virtStrategy).vdsNonOperational(any(), any(), any());
     }
 
     private VirtMonitoringStrategy virtStrategy;

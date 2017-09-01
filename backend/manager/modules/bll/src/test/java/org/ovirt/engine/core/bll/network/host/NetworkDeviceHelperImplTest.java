@@ -535,7 +535,7 @@ public class NetworkDeviceHelperImplTest {
         }
 
         if (numOfVfWithVmId == 0) {
-            verify(hostDeviceDao, never()).setVmIdOnHostDevice(any(HostDeviceId.class), any(Guid.class));
+            verify(hostDeviceDao, never()).setVmIdOnHostDevice(any(), any());
         } else {
             verify(hostDeviceDao, times(numOfVfWithVmId)).setVmIdOnHostDevice(hostDeviceIdCaptor.capture(),
                     vmIdCaptor.capture());

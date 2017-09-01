@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -120,14 +119,14 @@ public class OvfManagerTest {
                         .map(Map.Entry::getKey)
                         .findFirst()
                         .orElse(0));
-        when(osRepository.getGraphicsAndDisplays(eq(DEFAULT_OS_ID), any(Version.class))).thenReturn(gndDefaultOs);
-        when(osRepository.getGraphicsAndDisplays(eq(EXISTING_OS_ID), any(Version.class))).thenReturn(gndExistingOs);
+        when(osRepository.getGraphicsAndDisplays(eq(DEFAULT_OS_ID), any())).thenReturn(gndDefaultOs);
+        when(osRepository.getGraphicsAndDisplays(eq(EXISTING_OS_ID), any())).thenReturn(gndExistingOs);
     }
 
     @Before
     public void setUp() throws Exception {
         manager.setOsRepository(osRepository);
-        doNothing().when(manager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
+        doNothing().when(manager).updateBootOrderOnDevices(any(), anyBoolean());
 
         Map<Integer, VmIconIdSizePair> iconDefaults = new HashMap<>();
         iconDefaults.put(DEFAULT_OS_ID, new VmIconIdSizePair(SMALL_DEFAULT_ICON_ID, LARGE_DEFAULT_ICON_ID));

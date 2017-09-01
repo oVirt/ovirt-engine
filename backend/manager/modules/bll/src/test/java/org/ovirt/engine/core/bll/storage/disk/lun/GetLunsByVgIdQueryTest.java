@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
-import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -86,8 +85,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(setUpLunsFromDeviceList());
-        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.GetDeviceList),
-                any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.GetDeviceList), any())).thenReturn(returnValue);
     }
 
     private void expectGetLunsMap() {

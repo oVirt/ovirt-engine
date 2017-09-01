@@ -21,7 +21,6 @@ import org.ovirt.engine.api.restapi.resource.BackendClusterResource;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionResourceTest<GlusterHook, GlusterHookEntity, BackendGlusterHooksResource> {
@@ -178,12 +177,11 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String)failure);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(QueryType.GetGlusterHooks), any(GlusterParameters.class))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(QueryType.GetGlusterHooks), any())).thenThrow((Exception) failure);
                 return;
             }
         }
-        when(backend.runQuery(eq(QueryType.GetGlusterHooks), any(GlusterParameters.class))).thenReturn(
-                queryResult);
+        when(backend.runQuery(eq(QueryType.GetGlusterHooks), any())).thenReturn(queryResult);
 
     }
 }

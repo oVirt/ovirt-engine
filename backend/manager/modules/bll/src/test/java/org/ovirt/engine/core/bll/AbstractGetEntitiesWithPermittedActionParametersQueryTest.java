@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import org.junit.After;
 import org.junit.Before;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -34,7 +33,7 @@ public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<
         sessionID = RandomUtils.instance().nextString(10);
         when(getQueryParameters().getSessionId()).thenReturn(sessionID);
 
-        when(engineSessionDao.save(any(EngineSession.class))).thenReturn(RandomUtils.instance().nextLong());
+        when(engineSessionDao.save(any())).thenReturn(RandomUtils.instance().nextLong());
         when(engineSessionDao.remove(anyLong())).thenReturn(1);
 
         when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -54,8 +53,8 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         cmd.getParameters().setStoragePoolId(storagePoolId);
         cmd.getParameters().setStorageDomainId(storageDomainId);
 
-        doReturn(true).when(cmd).validateSpaceRequirements(any(DiskImage.class));
-        doReturn(diskImagesValidator).when(cmd).createDiskImagesValidator(any(DiskImage.class));
+        doReturn(true).when(cmd).validateSpaceRequirements(any());
+        doReturn(diskImagesValidator).when(cmd).createDiskImagesValidator(any());
 
     }
 

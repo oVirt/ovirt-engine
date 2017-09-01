@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
@@ -110,8 +109,8 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
 
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.CommitRemoveGlusterVolumeBricks),
-                any(GlusterVolumeVDSParameters.class))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(
+                eq(VDSCommandType.CommitRemoveGlusterVolumeBricks), any())).thenReturn(vdsReturnValue);
     }
 
     @SuppressWarnings("unchecked")

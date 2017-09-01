@@ -18,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -101,11 +99,10 @@ public class GetUnregisteredDisksQueryTest
         VDSReturnValue volListReturnValue = new VDSReturnValue();
         volListReturnValue.setSucceeded(true);
         volListReturnValue.setReturnValue(importDiskIds);
-        doReturn(volListReturnValue).when(vdsBroker).runVdsCommand(eq(VDSCommandType.GetImagesList),
-                any(GetImagesListVDSCommandParameters.class));
+        doReturn(volListReturnValue).when(vdsBroker).runVdsCommand(eq(VDSCommandType.GetImagesList), any());
 
         // Mock the get unregistered disk query
-        when(backendMock.runInternalQuery(eq(QueryType.GetUnregisteredDisk), any(GetUnregisteredDiskQueryParameters.class), any(EngineContext.class)))
+        when(backendMock.runInternalQuery(eq(QueryType.GetUnregisteredDisk), any(), any()))
                 .thenAnswer(invocation -> {
                     GetUnregisteredDiskQueryParameters p = (GetUnregisteredDiskQueryParameters) invocation
                             .getArguments()[1];

@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -172,8 +171,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
     protected void setUpFormatDomain(boolean shouldFail) {
         VDSReturnValue ret = new VDSReturnValue();
         ret.setSucceeded(!shouldFail);
-        doReturn(ret).when(command).runVdsCommand
-                (eq(VDSCommandType.FormatStorageDomain), any(FormatStorageDomainVDSCommandParameters.class));
+        doReturn(ret).when(command).runVdsCommand(eq(VDSCommandType.FormatStorageDomain), any());
     }
 
     private void setVdsStatus(VDSStatus status) {

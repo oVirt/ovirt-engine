@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -56,7 +55,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         super.setUp();
         doNothing().when(cmd).initTemplateDisks();
         doReturn(true).when(cmd).checkNumberOfMonitors();
-        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyList());
+        doReturn(true).when(cmd).validateCustomProperties(any(), anyList());
         initCommandMethods();
 
         initDestSDs();
@@ -110,8 +109,8 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
-        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
-        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any())).thenReturn(CPU_ID);
+        when(osRepository.isCpuSupported(anyInt(), any(), anyString())).thenReturn(true);
         doReturn(true).when(cmd).areParametersLegal(anyList());
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
@@ -120,9 +119,9 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockStorageDomainDaoGetAllForStoragePool();
 
         cmd.getParameters().setVirtioScsiEnabled(true);
-        when(osRepository.isSoundDeviceEnabled(anyInt(), any(Version.class))).thenReturn(true);
+        when(osRepository.isSoundDeviceEnabled(anyInt(), any())).thenReturn(true);
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
+        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO")));
         mockGetAllSnapshots();
 
@@ -144,7 +143,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void testUnsupportedCpus() {
-        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any())).thenReturn(CPU_ID);
         doReturn(true).when(cmd).areParametersLegal(anyList());
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
@@ -163,6 +162,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     private void mockMaxPciSlots() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
+        doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any());
     }
 }

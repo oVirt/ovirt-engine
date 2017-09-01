@@ -19,7 +19,6 @@ import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,12 +27,10 @@ public class BackendMacPoolsResourceTest
         extends AbstractBackendCollectionResourceTest<MacPool, org.ovirt.engine.core.common.businessentities.MacPool, BackendMacPoolsResource> {
 
     private QueryType listQueryType;
-    private Class<? extends QueryParametersBase> listQueryParamsClass;
 
     public BackendMacPoolsResourceTest() {
         super(new BackendMacPoolsResource(), null, "");
         this.listQueryType = QueryType.GetAllMacPools;
-        this.listQueryParamsClass = QueryParametersBase.class;
     }
 
     @Override
@@ -196,13 +193,11 @@ public class BackendMacPoolsResourceTest
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(listQueryType),
-                        any(listQueryParamsClass))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(listQueryType), any())).thenThrow((Exception) failure);
                 return;
             }
         }
-        when(backend.runQuery(eq(listQueryType), any(listQueryParamsClass))).thenReturn(
-                queryResult);
+        when(backend.runQuery(eq(listQueryType), any())).thenReturn(queryResult);
     }
 
     static MacPool getModel(int index) {

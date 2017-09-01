@@ -13,7 +13,6 @@ import static org.mockito.Mockito.spy;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -31,7 +30,7 @@ public class MultipleServicesMonitoringStrategyTest {
         virtStrategy = spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), null));
         doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(any());
         glusterStrategy = spy(new GlusterMonitoringStrategy());
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), anyMap());
+        doNothing().when(virtStrategy).vdsNonOperational(any(), any(), anyMap());
         strategy = spy(new MultipleServicesMonitoringStrategy());
         strategy.addMonitoringStrategy(virtStrategy);
         strategy.addMonitoringStrategy(glusterStrategy);
@@ -73,7 +72,7 @@ public class MultipleServicesMonitoringStrategyTest {
 
     @Test
     public void testProcessingSoftwareGluster() {
-        doThrow(new RuntimeException()).when(glusterStrategy).processSoftwareCapabilities(any(VDS.class));
+        doThrow(new RuntimeException()).when(glusterStrategy).processSoftwareCapabilities(any());
         exception.expect(RuntimeException.class);
         VDS vds = new VDS();
         strategy.processSoftwareCapabilities(vds);
@@ -81,7 +80,7 @@ public class MultipleServicesMonitoringStrategyTest {
 
     @Test
     public void testProcessingHardwareVirt() {
-        doThrow(new RuntimeException()).when(virtStrategy).processHardwareCapabilities(any(VDS.class));
+        doThrow(new RuntimeException()).when(virtStrategy).processHardwareCapabilities(any());
         exception.expect(RuntimeException.class);
         VDS vds = new VDS();
         strategy.processHardwareCapabilities(vds);

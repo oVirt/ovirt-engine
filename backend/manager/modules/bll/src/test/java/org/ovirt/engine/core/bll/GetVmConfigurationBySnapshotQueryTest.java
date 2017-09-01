@@ -65,8 +65,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(existingSnapshotId);
         VM vm = new VM();
-        doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(
-                anyString(), any(Guid.class), any(Guid.class));
+        doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(anyString(), any(), any());
         query.execute();
         QueryReturnValue returnValue = query.getQueryReturnValue();
         assertNotNull("Return value from query cannot be null", returnValue);

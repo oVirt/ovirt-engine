@@ -132,7 +132,7 @@ public class ClusterValidatorTest {
     public void dataCenterVersionMatches() {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         StoragePool dataCenter = mock(StoragePool.class);
-        when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
+        when(dataCenterDao.get(any())).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -145,7 +145,7 @@ public class ClusterValidatorTest {
         when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
-        when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
+        when(dataCenterDao.get(any())).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         when(cluster.supportsVirtService()).thenReturn(true);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
@@ -157,7 +157,7 @@ public class ClusterValidatorTest {
     @Test
     public void dataCenterExists() {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
-        when(dataCenterDao.get(any(Guid.class))).thenReturn(mock(StoragePool.class));
+        when(dataCenterDao.get(any())).thenReturn(mock(StoragePool.class));
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -186,7 +186,7 @@ public class ClusterValidatorTest {
     @Test
     public void nonLocalStoragePoolAttachedToSingleCluster() {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
-        when(dataCenterDao.get(any(Guid.class))).thenReturn(mock(StoragePool.class));
+        when(dataCenterDao.get(any())).thenReturn(mock(StoragePool.class));
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -198,7 +198,7 @@ public class ClusterValidatorTest {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.isLocal()).thenReturn(true);
-        when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
+        when(dataCenterDao.get(any())).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
@@ -211,9 +211,9 @@ public class ClusterValidatorTest {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.isLocal()).thenReturn(true);
-        when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
+        when(dataCenterDao.get(any())).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        when(clusterDao.getAllForStoragePool(any(Guid.class))).thenReturn(Collections.singletonList(mock(Cluster.class)));
+        when(clusterDao.getAllForStoragePool(any())).thenReturn(Collections.singletonList(mock(Cluster.class)));
         when(dbFacade.getClusterDao()).thenReturn(clusterDao);
         validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
 
@@ -293,7 +293,7 @@ public class ClusterValidatorTest {
     @Test
     public void migrationSupported() {
         validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
-        doReturn(true).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
+        doReturn(true).when(validator).migrationSupportedForArch(any());
 
         assertThat(validator.migrationSupported(RandomUtils.instance().nextEnum(ArchitectureType.class)), isValid());
     }
@@ -301,7 +301,7 @@ public class ClusterValidatorTest {
     @Test
     public void migrationNotSupported() {
         validator = spy(new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler));
-        doReturn(false).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
+        doReturn(false).when(validator).migrationSupportedForArch(any());
 
         assertThat(validator.migrationSupported(RandomUtils.instance().nextEnum(ArchitectureType.class)),
                 failsWith(EngineMessage.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED));

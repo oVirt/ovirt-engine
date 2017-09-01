@@ -139,7 +139,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
     }
 
     private void prepareInterfaceMocks() {
-        doReturn(getNetworks()).when(networkDao).getAllForCluster(any(Guid.class));
+        doReturn(getNetworks()).when(networkDao).getAllForCluster(any());
         doReturn(getNetworkInterfaces()).when(interfaceDao).getAllInterfacesForVds(serverId);
     }
 
@@ -258,7 +258,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick1"));
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick2"));
         initTestCommand(volumeIdRepl, bricks, 3, 0, false);
-        doReturn(getVdsStatic()).when(vdsStaticDao).get(any(Guid.class));
+        doReturn(getVdsStatic()).when(vdsStaticDao).get(any());
         GlusterVolumeEntity vol =  getMultiBrickVolume(volumeIdRepl, 4);
         vol.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         vol.setReplicaCount(2);
@@ -272,7 +272,7 @@ public class AddBricksToGlusterVolumeCommandTest extends BaseCommandTest {
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick1"));
         bricks.add(getBrick(volumeIdRepl, Guid.newGuid(), "/brick2"));
         initTestCommand(volumeIdRepl, bricks, 2, 0, false);
-        doReturn(getVdsStatic()).when(vdsStaticDao).get(any(Guid.class));
+        doReturn(getVdsStatic()).when(vdsStaticDao).get(any());
         GlusterVolumeEntity vol =  getMultiBrickVolume(volumeIdRepl, 4);
         vol.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         vol.setReplicaCount(2);

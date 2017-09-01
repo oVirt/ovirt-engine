@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -84,7 +83,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
                     Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b")));
         }});
 
-        doNothing().when(ovfManager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
+        doNothing().when(ovfManager).updateBootOrderOnDevices(any(), anyBoolean());
         ovfManager.setOsRepository(osRepository);
     }
 

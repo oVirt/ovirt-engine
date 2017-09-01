@@ -134,7 +134,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     }
 
     private void setUpCallParentRemoveExpectations() {
-        when(bricksResourceMock.remove(any(Action.class))).thenReturn(Response.ok().build());
+        when(bricksResourceMock.remove(any())).thenReturn(Response.ok().build());
     }
 
     @Override

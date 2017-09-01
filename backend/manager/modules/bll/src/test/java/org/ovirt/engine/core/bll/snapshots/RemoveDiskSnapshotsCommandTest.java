@@ -74,7 +74,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         mockVm();
 
         vmValidator = spy(new VmValidator(cmd.getVm()));
-        doReturn(vmValidator).when(cmd).createVmValidator(any(VM.class));
+        doReturn(vmValidator).when(cmd).createVmValidator(any());
 
         DiskImagesValidator diskImagesValidator = spy(new DiskImagesValidator(mockImages()));
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(anyList());

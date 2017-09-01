@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmPolicyVDSParams;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
@@ -72,7 +71,7 @@ public class VmSlaPolicyCommandTest {
             VDSReturnValue retVal = new VDSReturnValue();
             retVal.setSucceeded(vdsFunction.apply(params));
             return retVal;
-        }).when(command).runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
+        }).when(command).runVdsCommand(any(), any());
 
         vm = new VM();
         vm.setId(VM_ID);

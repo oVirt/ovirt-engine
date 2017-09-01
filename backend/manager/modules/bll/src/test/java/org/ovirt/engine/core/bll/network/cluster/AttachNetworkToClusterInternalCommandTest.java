@@ -15,9 +15,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -46,7 +44,7 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
     @Test
     public void networkExists() {
         simulateClusterExists();
-        when(mockNetworkDao.get(any(Guid.class))).thenReturn(getNetwork());
+        when(mockNetworkDao.get(any())).thenReturn(getNetwork());
         when(mockNetworkClusterDao.get(param.getNetworkCluster().getId())).thenReturn(param.getNetworkCluster());
         ValidateTestUtils.runAndAssertValidateFailure(underTest, EngineMessage.NETWORK_ALREADY_ATTACHED_TO_CLUSTER);
     }
@@ -88,8 +86,7 @@ public class AttachNetworkToClusterInternalCommandTest extends BaseCommandTest {
     }
 
     private void dbFacadeThrowOnNetworkClusterSave() {
-        doThrow(new DataIntegrityViolationException("test violations")).when(mockNetworkClusterDao)
-                .save(any(NetworkCluster.class));
+        doThrow(new DataIntegrityViolationException("test violations")).when(mockNetworkClusterDao).save(any());
     }
 
     private Network getNetwork() {

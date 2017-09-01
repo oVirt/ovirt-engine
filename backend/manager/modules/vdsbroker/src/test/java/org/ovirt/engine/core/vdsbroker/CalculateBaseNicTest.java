@@ -52,7 +52,7 @@ public class CalculateBaseNicTest {
         CalculateBaseNic spy = spy(calculateBaseNic);
 
         spy.getBaseNic(baseNic);
-        verify(spy).getBaseNic(any(VdsNetworkInterface.class), isNull());
+        verify(spy).getBaseNic(any(), isNull());
     }
 
     @Test

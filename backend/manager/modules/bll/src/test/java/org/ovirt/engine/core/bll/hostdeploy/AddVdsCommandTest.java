@@ -108,13 +108,12 @@ public class AddVdsCommandTest {
     private void setupGlusterMock(boolean clusterHasServers, VDS upServer, boolean hasPeers) throws Exception {
         setupCommonMock(true);
 
-        when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
-                : Collections.emptySet());
+        when(glusterUtil.getPeers(any())).thenReturn(hasPeers ? Collections.singleton(PEER_1) : Collections.emptySet());
 
-        when(clusterUtils.hasServers(any(Guid.class))).thenReturn(clusterHasServers);
-        when(vdsDaoMock.getAllForCluster(any(Guid.class))).thenReturn(mockVdsInDb(clusterHasServers ? VDSStatus.Maintenance
+        when(clusterUtils.hasServers(any())).thenReturn(clusterHasServers);
+        when(vdsDaoMock.getAllForCluster(any())).thenReturn(mockVdsInDb(clusterHasServers ? VDSStatus.Maintenance
                 : VDSStatus.Initializing));
-        when(glusterUtil.getUpServer(any(Guid.class))).thenReturn(upServer);
+        when(glusterUtil.getUpServer(any())).thenReturn(upServer);
     }
 
     private List<VDS> mockVdsInDb(VDSStatus status) {
@@ -140,14 +139,14 @@ public class AddVdsCommandTest {
     @Test
     public void validateSucceedsWhenHasPeersThrowsException() throws Exception {
         setupGlusterMock(true, new VDS(), true);
-        when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenThrow(new RuntimeException());
+        when(glusterUtil.getPeers(any())).thenThrow(new RuntimeException());
         assertTrue(command.validate());
     }
 
     @Test
     public void validateFailsWhenGlusterServerHasPeers() throws Exception {
         setupGlusterMock(true, new VDS(), true);
-        when(glusterDBUtils.serverExists(any(Guid.class), eq(PEER_1))).thenReturn(false);
+        when(glusterDBUtils.serverExists(any(), eq(PEER_1))).thenReturn(false);
 
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
@@ -158,7 +157,7 @@ public class AddVdsCommandTest {
     @Test
     public void validateSucceedsWhenGlusterServerHasPeersThatExistInDB() throws Exception {
         setupGlusterMock(true, new VDS(), true);
-        when(glusterDBUtils.serverExists(any(Guid.class), eq(PEER_1))).thenReturn(true);
+        when(glusterDBUtils.serverExists(any(), eq(PEER_1))).thenReturn(true);
 
         assertTrue(command.validate());
     }

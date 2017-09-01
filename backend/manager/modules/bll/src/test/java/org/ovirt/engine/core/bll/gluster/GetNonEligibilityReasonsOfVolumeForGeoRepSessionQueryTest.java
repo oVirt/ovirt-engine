@@ -82,7 +82,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     public void testExecuteQueryCommnadOnVolume1() {
         GlusterVolumeEntity slaveVolume = baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_1_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L));
         Guid slaveUpServerId = Guid.newGuid();
-        doReturn(slaveUpServerId).when(geoRepUtil).getUpServerId(any(Guid.class));
+        doReturn(slaveUpServerId).when(geoRepUtil).getUpServerId(any());
         doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(slaveUpServerId, slaveVolume.getName());
         List<GlusterGeoRepNonEligibilityReason> actualNonEligibilityReasons = getQuery().getNonEligibilityReasons(baseTest.getGlusterVolume(baseTest.getMASTER_VOLUME_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)), slaveVolume);
         assertTrue(actualNonEligibilityReasons.isEmpty());
@@ -92,7 +92,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     public void testExecuteQueryCommnadOnVolume2() {
         GlusterVolumeEntity slaveVolume = baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_2_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.DOWN, new GlusterVolumeSizeInfo(4000L, 0L, 0L));
         Guid slaveUpServerID = Guid.newGuid();
-        doReturn(slaveUpServerID).when(geoRepUtil).getUpServerId(any(Guid.class));
+        doReturn(slaveUpServerID).when(geoRepUtil).getUpServerId(any());
         doReturn(false).when(geoRepUtil).checkEmptyGlusterVolume(slaveUpServerID, slaveVolume.getName());
         List<GlusterGeoRepNonEligibilityReason> actual = getQuery().getNonEligibilityReasons(baseTest.getGlusterVolume(baseTest.getMASTER_VOLUME_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)), slaveVolume);
         assertEquals(actual.size(), getNonEligibilityReasonsForSlaveVolume2().size());
@@ -103,7 +103,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     public void testExecuteQueryCommnadOnVolume3() {
         GlusterVolumeEntity slaveVolume = baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_3_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L));
         Guid slaveUpServerId = Guid.newGuid();
-        doReturn(slaveUpServerId).when(geoRepUtil).getUpServerId(any(Guid.class));
+        doReturn(slaveUpServerId).when(geoRepUtil).getUpServerId(any());
         doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(slaveUpServerId, slaveVolume.getName());
         List<GlusterGeoRepNonEligibilityReason> actual = getQuery().getNonEligibilityReasons(baseTest.getGlusterVolume(baseTest.getMASTER_VOLUME_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L)), slaveVolume);
         assertEquals(actual.size(), getNonEligibilityReasonsForSlaveVolume3().size());
@@ -112,7 +112,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
 
     @Test
     public void testExecuteQueryCommnadOnVolume4() {
-        doReturn(null).when(geoRepUtil).getUpServerId(any(Guid.class));
+        doReturn(null).when(geoRepUtil).getUpServerId(any());
         List<GlusterGeoRepNonEligibilityReason> actual = getQuery().getNonEligibilityReasons(baseTest.getGlusterVolume(baseTest.getMASTER_VOLUME_ID(), baseTest.getMASTER_CLUSTER_ID(), GlusterStatus.UP, null), baseTest.getGlusterVolume(baseTest.getSLAVE_VOLUME_4_ID(), baseTest.getSLAVE_CLUSTER_ID(), GlusterStatus.UP, null));
         assertEquals(actual.size(), getNonEligibilityReasonsForSlaveVolume4().size());
         assertTrue(getNonEligibilityReasonsForSlaveVolume4().containsAll(actual));

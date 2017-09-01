@@ -493,7 +493,7 @@ public class FrontendTest {
             // Call the failure handler.
             callbackMultipleQueries.getValue().onFailure(exception);
         }
-        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), any(FrontendFailureEventArgs.class));
+        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), any());
         verifyAsyncQueryFailed();
     }
 
@@ -527,7 +527,7 @@ public class FrontendTest {
             // Call the failure handler.
             callbackMultipleQueries.getValue().onFailure(exception);
         }
-        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), any(FrontendFailureEventArgs.class));
+        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), any());
         verifyAsyncQueryFailed();
     }
 

@@ -53,7 +53,7 @@ public class GetAllExternalNetworksOnProviderQueryTest
     @SuppressWarnings("unchecked")
     public void testExecuteQueryCommand() {
         when(params.getId()).thenReturn(mock(Guid.class));
-        when((Provider<AdditionalProperties>) providerDao.get(any(Guid.class))).thenReturn(networkProvider);
+        when((Provider<AdditionalProperties>) providerDao.get(any())).thenReturn(networkProvider);
         when(providerProxyFactory.create(networkProvider)).thenReturn(client);
 
         Network network = mock(Network.class);

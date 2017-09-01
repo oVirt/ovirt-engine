@@ -177,7 +177,7 @@ public class HostNetworkAttachmentsPersisterTest {
         )));
 
         createPersister(Collections.emptyList()).persistNetworkAttachments();
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
         verify(networkAttachmentDao).remove(eq(networkAttachmentForClusterNetworkB.getId()));
         verify(networkAttachmentDao).remove(eq(networkAttachmentWithoutNetworkAssigned.getId()));
 
@@ -220,7 +220,7 @@ public class HostNetworkAttachmentsPersisterTest {
                 .thenReturn(Collections.singletonList(upToDateNetworkAttachment));
 
         createPersister(Collections.emptyList()).persistNetworkAttachments();
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
         verifyNoMoreInteractions(networkAttachmentDao);
     }
 
@@ -229,7 +229,7 @@ public class HostNetworkAttachmentsPersisterTest {
         when(networkAttachmentDao.getAllForHost(eq(hostId))).thenReturn(Collections.singletonList( attachment));
 
         persister.persistNetworkAttachments();
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
         verify(networkAttachmentDao).update(argThat(networkAttachment -> {
             IpConfiguration ipConfiguration =
                     NetworkUtils.createIpConfigurationFromVdsNetworkInterface(interfaceWithAttachedClusterNetworkA);
@@ -251,7 +251,7 @@ public class HostNetworkAttachmentsPersisterTest {
         createPersister(Collections.singletonList(createNetworkAttachment(null)),
             new VdsNetworkInterface[] {}).persistNetworkAttachments();
 
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
 
         // verify that nothing else happens, no removals, no creations.
         verifyNoMoreInteractions(networkAttachmentDao);
@@ -263,7 +263,7 @@ public class HostNetworkAttachmentsPersisterTest {
         createPersister(Collections.singletonList(createNetworkAttachment(clusterNetworkB)),
             new VdsNetworkInterface[] {}).persistNetworkAttachments();
 
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
 
         // verify that nothing else happens, no removals, no creations.
         verifyNoMoreInteractions(networkAttachmentDao);
@@ -284,7 +284,7 @@ public class HostNetworkAttachmentsPersisterTest {
         // user attachments references network, which is not assigned to NIC.
         createPersister(Collections.singletonList(userNetworkAttachment)).persistNetworkAttachments();
 
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
 
         ArgumentCaptor<NetworkAttachment> networkAttachmentCaptor = ArgumentCaptor.forClass(NetworkAttachment.class);
         verify(networkAttachmentDao).save(networkAttachmentCaptor.capture());
@@ -315,7 +315,7 @@ public class HostNetworkAttachmentsPersisterTest {
         // user attachments references network, which is not assigned to NIC.
         createPersister(Collections.singletonList(userNetworkAttachment)).persistNetworkAttachments();
 
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
 
         ArgumentCaptor<NetworkAttachment> networkAttachmentCaptor = ArgumentCaptor.forClass(NetworkAttachment.class);
 
@@ -376,7 +376,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
         persister.persistNetworkAttachments();
 
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
 
         // verify that nothing else happens, namely, interfaceWithoutAttachedNetwork will not trigger persisting any data.
         verifyNoMoreInteractions(networkAttachmentDao);
@@ -393,7 +393,7 @@ public class HostNetworkAttachmentsPersisterTest {
 
         persister.persistNetworkAttachments();
 
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
 
         // verify that nothing else happens, namely, interfaceWithoutAttachedNetwork will not trigger persisting any data.
         verifyNoMoreInteractions(networkAttachmentDao);
@@ -403,7 +403,7 @@ public class HostNetworkAttachmentsPersisterTest {
     public void testPersistNetworkAttachmentsCreateNetworkAttachmentWhichWasntYetCreatedForEachNetworkOnReportedNic() {
         createPersister(Collections.emptyList(), interfaceWithAttachedClusterNetworkA).persistNetworkAttachments();
 
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
 
         verify(networkAttachmentDao).save(networkAttachmentCaptor.capture());
 
@@ -453,7 +453,7 @@ public class HostNetworkAttachmentsPersisterTest {
                 interfaceWithAttachedClusterNetworkA)
                         .persistNetworkAttachments();
 
-        verify(networkAttachmentDao).getAllForHost(any(Guid.class));
+        verify(networkAttachmentDao).getAllForHost(any());
 
         verify(networkAttachmentDao).remove(eq(removedAttachmentId));
 

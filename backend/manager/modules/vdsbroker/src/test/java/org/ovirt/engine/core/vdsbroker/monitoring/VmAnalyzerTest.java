@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -319,7 +318,7 @@ public class VmAnalyzerTest {
         when(vmManager.isColdReboot()).thenReturn(false);
         when(vmManager.isAutoStart()).thenReturn(vmData.dbVm() != null ? vmData.dbVm().isAutoStartup() : false);
         when(vmManager.getStatistics()).thenReturn(new VmStatistics());
-        when(resourceManager.getVdsManager(any(Guid.class))).thenReturn(vdsManager);
+        when(resourceManager.getVdsManager(any())).thenReturn(vdsManager);
         // -- default behaviors --
         // dst host is up
         mockDstHostStatus(VDSStatus.Up);
@@ -337,7 +336,7 @@ public class VmAnalyzerTest {
         doReturn(vmManager).when(vmAnalyzer).getVmManager();
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(true);
-        doReturn(vdsReturnValue).when(vmAnalyzer).runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
+        doReturn(vdsReturnValue).when(vmAnalyzer).runVdsCommand(any(), any());
 
         if (run) {
             vmAnalyzer.analyze();

@@ -81,7 +81,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
 
         when(diskDaoMock.getAllForVm(vmID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(returnArray);
 
-        when(diskVmElementDao.get(any(VmDeviceId.class))).thenReturn(new DiskVmElement(new VmDeviceId()));
+        when(diskVmElementDao.get(any())).thenReturn(new DiskVmElement(new VmDeviceId()));
 
         // Snapshots
         doReturn(new ArrayList<>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,

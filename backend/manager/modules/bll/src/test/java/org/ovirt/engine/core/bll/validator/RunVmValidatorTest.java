@@ -187,7 +187,7 @@ public class RunVmValidatorTest {
     @Test
     public void canRunVmDuringInit() {
         final VM vm = new VM();
-        doReturn(true).when(runVmValidator).isVmDuringInitiating(any(VM.class));
+        doReturn(true).when(runVmValidator).isVmDuringInitiating(any());
         validateResult(runVmValidator.vmDuringInitialization(vm),
                 false,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_RUNNING);
@@ -206,7 +206,7 @@ public class RunVmValidatorTest {
     public void testVmNotDuringInitialization() {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        doReturn(false).when(runVmValidator).isVmDuringInitiating(any(VM.class));
+        doReturn(false).when(runVmValidator).isVmDuringInitiating(any());
         validateResult(runVmValidator.vmDuringInitialization(vm),
                 true,
                 null);
@@ -344,10 +344,10 @@ public class RunVmValidatorTest {
                 "viodiskcache=^(none|writeback|writethrough)$;" +
                 "mdev_type=^.*$;hugepages=^[0-9]+$").
                 when(utils)
-                .getPredefinedVMProperties(any(Version.class));
+                .getPredefinedVMProperties(any());
         doReturn("").
                 when(utils)
-                .getUserdefinedVMProperties(any(Version.class));
+                .getUserdefinedVMProperties(any());
         doReturn(new HashSet<>(Arrays.asList(Version.v3_6, Version.v4_0))).
                 when(utils)
                 .getSupportedClusterLevels();

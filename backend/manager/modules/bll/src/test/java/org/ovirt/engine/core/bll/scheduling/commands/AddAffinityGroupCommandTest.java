@@ -47,7 +47,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
         command.setCluster(new Cluster());
         VmStatic vmStatic = new VmStatic();
         vmStatic.setClusterId(clusterId);
-        doReturn(vmStatic).when(vmStaticDao).get(any(Guid.class));
+        doReturn(vmStatic).when(vmStaticDao).get(any());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     @Test
     public void validate_vmNotExists_Test() {
-        doReturn(null).when(vmStaticDao).get(any(Guid.class));
+        doReturn(null).when(vmStaticDao).get(any());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP);
     }

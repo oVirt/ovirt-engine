@@ -247,7 +247,7 @@ public class UpdateHostValidatorTest {
     @Test
     public void hostProviderExists() {
         when(host.getHostProviderId()).thenReturn(Guid.newGuid());
-        when(providerDao.get(any(Guid.class))).thenReturn(mock(Provider.class));
+        when(providerDao.get(any())).thenReturn(mock(Provider.class));
 
         assertThat(validator.hostProviderExists(), isValid());
     }
@@ -270,7 +270,7 @@ public class UpdateHostValidatorTest {
         when(host.getHostProviderId()).thenReturn(Guid.newGuid());
         Provider provider = mock(Provider.class);
         when(provider.getType()).thenReturn(ProviderType.FOREMAN);
-        when(providerDao.get(any(Guid.class))).thenReturn(provider);
+        when(providerDao.get(any())).thenReturn(provider);
 
         assertThat(validator.hostProviderTypeMatches(), isValid());
     }
@@ -281,7 +281,7 @@ public class UpdateHostValidatorTest {
         when(host.getHostProviderId()).thenReturn(Guid.newGuid());
         Provider provider = mock(Provider.class);
         when(provider.getType()).thenReturn(ProviderType.OPENSTACK_IMAGE);
-        when(providerDao.get(any(Guid.class))).thenReturn(provider);
+        when(providerDao.get(any())).thenReturn(provider);
 
         assertThat(validator.hostProviderTypeMatches(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH));

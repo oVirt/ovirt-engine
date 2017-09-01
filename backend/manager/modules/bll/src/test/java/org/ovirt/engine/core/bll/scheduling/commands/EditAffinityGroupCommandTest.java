@@ -52,7 +52,7 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
         doReturn(new Cluster()).when(command).getCluster();
         VmStatic vmStatic = new VmStatic();
         vmStatic.setClusterId(clusterId);
-        doReturn(vmStatic).when(vmStaticDao).get(any(Guid.class));
+        doReturn(vmStatic).when(vmStaticDao).get(any());
         doReturn(clusterId).when(command).getClusterId();
     }
 

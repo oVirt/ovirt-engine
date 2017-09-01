@@ -17,7 +17,6 @@ import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAIL
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,9 +52,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -194,7 +191,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(group).when(command).getCluster();
         doReturn(vm).when(command).getVm();
         doReturn(ActionType.UpdateVm).when(command).getActionType();
-        doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
+        doReturn(false).when(command).isVirtioScsiEnabledForVm(any());
         doReturn(true).when(command).isBalloonEnabled();
         doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());
 
@@ -264,7 +261,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testDedicatedHostNotExistOrNotSameCluster() {
         prepareVmToPassValidate();
 
-        doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
+        doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any(), any());
 
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
@@ -278,8 +275,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         VDS vds = new VDS();
         vds.setClusterId(group.getId());
-        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
-        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
+        when(vdsDao.get(any())).thenReturn(vds);
+        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(), any());
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
         command.initEffectiveCompatibilityVersion();
@@ -416,9 +413,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         prepareVmToPassValidate();
         group.setCompatibilityVersion(Version.v3_6);
 
-        doReturn(true).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
-                Collections.singletonList("VirtIO"));
+        doReturn(true).when(command).isVirtioScsiEnabledForVm(any());
+        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(Collections.singletonList("VirtIO"));
 
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -497,7 +493,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Test
     public void testMigrationPolicyChangeFail() {
         prepareVmToPassValidate();
-        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
+        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(), any());
         vm.setStatus(VMStatus.Up);
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm.setRunOnVds(GUIDS[1]);
@@ -520,7 +516,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Test
     public void testMigrationPolicyChangeVmUp() {
         prepareVmToPassValidate();
-        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
+        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(), any());
         vm.setStatus(VMStatus.Up);
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm.setRunOnVds(GUIDS[2]);
@@ -538,7 +534,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         group.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
-        verify(inClusterUpgradeValidator, times(1)).isVmReadyForUpgrade(any(VM.class));
+        verify(inClusterUpgradeValidator, times(1)).isVmReadyForUpgrade(any());
     }
 
     @Test
@@ -547,7 +543,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockVmValidator();
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
-        verify(inClusterUpgradeValidator, times(0)).isVmReadyForUpgrade(any(VM.class));
+        verify(inClusterUpgradeValidator, times(0)).isVmReadyForUpgrade(any());
     }
 
     @Test
@@ -556,12 +552,12 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockVmValidator();
         final ValidationResult validationResult = new ValidationResult(EngineMessage
                 .BOUND_TO_HOST_WHILE_UPGRADING_CLUSTER);
-        doReturn(validationResult).when(inClusterUpgradeValidator).isVmReadyForUpgrade(any(VM.class));
+        doReturn(validationResult).when(inClusterUpgradeValidator).isVmReadyForUpgrade(any());
         group.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.BOUND_TO_HOST_WHILE_UPGRADING_CLUSTER);
-        verify(inClusterUpgradeValidator, times(1)).isVmReadyForUpgrade(any(VM.class));
+        verify(inClusterUpgradeValidator, times(1)).isVmReadyForUpgrade(any());
     }
 
     @Test
@@ -629,7 +625,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         VmValidator vmValidator = spy(new VmValidator(vm));
         doReturn(vmValidator).when(command).createVmValidator(vm);
         doReturn(diskDao).when(vmValidator).getDiskDao();
-        doReturn(getNoVirtioScsiDiskElement()).when(diskVmElementDao).get(any(VmDeviceId.class));
+        doReturn(getNoVirtioScsiDiskElement()).when(diskVmElementDao).get(any());
         doReturn(diskVmElementDao).when(vmValidator).getDiskVmElementDao();
     }
 
@@ -656,18 +652,18 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     private void mockVmDaoGetVm() {
-        when(vmDao.get(any(Guid.class))).thenReturn(vm);
+        when(vmDao.get(any())).thenReturn(vm);
     }
 
     private void mockValidateCustomProperties() {
-        doReturn(true).when(command).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
+        doReturn(true).when(command).validateCustomProperties(any(), any());
     }
 
     private void mockValidatePciAndIdeLimit() {
-        doReturn(true).when(command).isValidPciAndIdeLimit(any(VM.class));
+        doReturn(true).when(command).isValidPciAndIdeLimit(any());
     }
 
     private void mockSameNameQuery(boolean result) {
-        doReturn(result).when(command).isVmWithSameNameExists(anyString(), any(Guid.class));
+        doReturn(result).when(command).isVmWithSameNameExists(anyString(), any());
     }
 }

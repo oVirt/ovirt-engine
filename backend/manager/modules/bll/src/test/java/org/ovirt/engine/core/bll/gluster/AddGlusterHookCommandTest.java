@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -74,7 +73,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
 
     private void setUpMocksForAdd(boolean hookFound, GlusterHookEntity hook, VDSStatus status) {
         setupMocks(hookFound, hook);
-        when(vdsDao.get(any(Guid.class))).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID, status));
+        when(vdsDao.get(any())).thenReturn(getServer(SERVER_ID, "gfs1", CLUSTER_ID, status));
     }
 
     private void mockBackend(boolean succeeded, EngineError errorCode) {
@@ -85,8 +84,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.AddGlusterHook), any(GlusterHookVDSParameters.class)))
-                .thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.AddGlusterHook), any())).thenReturn(vdsReturnValue);
     }
 
     @Test
@@ -105,8 +103,8 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         setUpMocksForAdd();
         mockBackend(false, EngineError.GlusterHookAddFailed);
         cmd.executeCommand();
-        verify(hooksDao, never()).updateGlusterHook(any(GlusterHookEntity.class));
-        verify(hooksDao, never()).removeGlusterServerHook(any(Guid.class), any(Guid.class));
+        verify(hooksDao, never()).updateGlusterHook(any());
+        verify(hooksDao, never()).removeGlusterServerHook(any(), any());
         assertEquals(AuditLogType.GLUSTER_HOOK_ADD_FAILED, cmd.getAuditLogTypeValue());
     }
 

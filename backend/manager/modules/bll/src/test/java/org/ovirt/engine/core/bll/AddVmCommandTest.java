@@ -32,8 +32,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -76,7 +74,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         initCommandMethods();
         cmd.init();
 
-        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), anyList());
+        doReturn(true).when(cmd).validateCustomProperties(any(), anyList());
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain())));
     }
@@ -85,7 +83,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     public void isVirtioScsiEnabledDefaultedToTrue() {
         cmd.getParameters().getVm().setClusterId(cluster.getId());
         cmd.initEffectiveCompatibilityVersion();
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
+        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(
                 new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
         assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
     }
@@ -166,15 +164,15 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void testBlockUseHostCpuWithPPCArch() {
-        when(cpuFlagsManagerHandler.getCpuId(anyString(), any(Version.class))).thenReturn(CPU_ID);
-        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
+        when(cpuFlagsManagerHandler.getCpuId(anyString(), any())).thenReturn(CPU_ID);
+        when(osRepository.isCpuSupported(anyInt(), any(), anyString())).thenReturn(true);
         doNothing().when(cmd).initTemplateDisks();
         setupCanAddPpcTest();
         cmd.setEffectiveCompatibilityVersion(Version.v4_0);
         doReturn(Collections.emptyList()).when(cmd).getImagesToCheckDestinationStorageDomains();
         initPpcCluster();
         doReturn(true).when(cmd).validateAddVmCommand();
-        doReturn(true).when(cmd).isVmNameValidLength(any(VM.class));
+        doReturn(true).when(cmd).isVmNameValidLength(any());
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.ppc64);
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         cmd.getParameters().getVm().setUseHostCpuFlags(true);

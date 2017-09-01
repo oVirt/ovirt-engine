@@ -72,7 +72,7 @@ public class FindActiveVmsUsingNetworkTest {
 
     private void mockDaos(boolean pluggedInterface) {
         VM vm = createVM(VM_NAME, NETWORK_NAME, pluggedInterface);
-        when(vmDao.getAllRunningForVds(any(Guid.class))).thenReturn(Collections.singletonList(vm));
+        when(vmDao.getAllRunningForVds(any())).thenReturn(Collections.singletonList(vm));
         when(vmNetworkInterfaceDao.getAllForVm(vm.getId())).thenReturn(vm.getInterfaces());
     }
 

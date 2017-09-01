@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -188,7 +187,7 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     @Test
     public void validateFailsUnSupportedVersionForDiscardAfterDelete() {
         EngineMessage message = EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_DC_VERSION;
-        when(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(any(Version.class)))
+        when(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(any()))
                 .thenReturn(new ValidationResult(message));
         ValidateTestUtils.runAndAssertValidateFailure(cmd, message);
     }

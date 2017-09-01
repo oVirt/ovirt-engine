@@ -131,7 +131,7 @@ public class RestoreAllSnapshotsCommandTest extends BaseCommandTest {
     private void initSpyCommand() {
         doReturn(true).when(spyCommand).performImagesChecks();
         doReturn(storageValidator).when(spyCommand).createStorageDomainValidator();
-        doReturn(vmValidator).when(spyCommand).createVmValidator(any(VM.class));
+        doReturn(vmValidator).when(spyCommand).createVmValidator(any());
     }
 
     private void mockDaos() {

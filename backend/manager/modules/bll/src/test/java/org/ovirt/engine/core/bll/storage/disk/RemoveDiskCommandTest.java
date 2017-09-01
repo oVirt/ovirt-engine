@@ -116,8 +116,8 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
 
         doReturn(domain).when(cmd).getStorageDomain();
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
-        doReturn(true).when(cmd).checkDerivedDisksFromDiskNotExist(any(DiskImage.class));
-        doReturn(disk).when(diskImageDao).get(any(Guid.class));
+        doReturn(true).when(cmd).checkDerivedDisksFromDiskNotExist(any());
+        doReturn(disk).when(diskImageDao).get(any());
 
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }

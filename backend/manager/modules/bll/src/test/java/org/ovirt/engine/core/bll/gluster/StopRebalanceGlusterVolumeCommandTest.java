@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -162,7 +161,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StopRebalanceGlusterVolume), any(GlusterVolumeVDSParameters.class))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.StopRebalanceGlusterVolume), any())).thenReturn(vdsReturnValue);
     }
 
     @Test
@@ -196,7 +195,7 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         assertTrue(cmd.validate());
         cmd.executeCommand();
 
-        verify(cmd, never()).endStepJob(any(JobExecutionStatus.class), anyMap(), anyBoolean());
+        verify(cmd, never()).endStepJob(any(), anyMap(), anyBoolean());
         verify(cmd, never()).releaseVolumeLock();
         assertEquals(AuditLogType.GLUSTER_VOLUME_REBALANCE_STOP_FAILED, cmd.getAuditLogTypeValue());
     }

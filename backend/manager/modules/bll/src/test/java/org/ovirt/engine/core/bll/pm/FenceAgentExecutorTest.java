@@ -22,12 +22,10 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
-import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -69,7 +67,7 @@ public class FenceAgentExecutorTest {
         doReturn(resourceManager).when(executor).getResourceManager();
         doReturn(proxyLocator).when(executor).getProxyLocator();
         doReturn(auditLogDirector).when(executor).getAuditLogDirector();
-        doReturn(realAgent).when(executor).createRealAgent(any(FenceAgent.class), any(VDS.class));
+        doReturn(realAgent).when(executor).createRealAgent(any(), any());
     }
 
 
@@ -191,11 +189,7 @@ public class FenceAgentExecutorTest {
     private void mockFenceVdsResult(FenceOperationResult result1, FenceOperationResult result2) {
         VDSReturnValue retVal1 = createVdsReturnValue(result1);
         VDSReturnValue retVal2 = result2 == null ? null : createVdsReturnValue(result2);
-        when(resourceManager.runVdsCommand(
-                        eq(VDSCommandType.FenceVds),
-                        any(FenceVdsVDSCommandParameters.class)))
-                .thenReturn(retVal1)
-                .thenReturn(retVal2);
+        when(resourceManager.runVdsCommand(eq(VDSCommandType.FenceVds), any())).thenReturn(retVal1).thenReturn(retVal2);
     }
 
     private FenceAgent createAgent() {
@@ -210,13 +204,11 @@ public class FenceAgentExecutorTest {
 
     private void verifyAuditFenceExecutionStart(int expectedInvocations) {
         verify(auditLogDirector, times(expectedInvocations)).log(
-                any(AuditLogable.class),
-                eq(AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_STARTED));
+                any(), eq(AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_STARTED));
     }
 
     private void verifyAuditFenceExecutionFailure(int expectedInvocations) {
         verify(auditLogDirector, times(expectedInvocations)).log(
-                any(AuditLogable.class),
-                eq(AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED));
+                any(), eq(AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED));
     }
 }

@@ -148,7 +148,7 @@ public class MultipleDiskVmElementValidatorTest {
         DiskVmElementValidator diskVmElementValidator = spy(new DiskVmElementValidator(disk, diskVmElement));
         doReturn(diskVmElementValidator).when(multipleDiskVmElementValidator)
                 .createDiskVmElementValidator(disk, diskVmElement);
-        doReturn(validationResult).when(diskVmElementValidator).isPassDiscardSupported(any(Guid.class));
+        doReturn(validationResult).when(diskVmElementValidator).isPassDiscardSupported(any());
     }
 
     private ValidationResult getPassDiscardNotSupportedByDiskInterfaceValResult(Disk disk) {

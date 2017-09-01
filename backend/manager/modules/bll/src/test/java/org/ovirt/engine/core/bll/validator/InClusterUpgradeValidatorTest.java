@@ -124,7 +124,7 @@ public class InClusterUpgradeValidatorTest {
 
     @Test
     public void shouldDetectPassThroughDeviceOnVM() {
-        when(hostDeviceManager.checkVmNeedsDirectPassthrough(any(VM.class))).thenReturn(true);
+        when(hostDeviceManager.checkVmNeedsDirectPassthrough(any())).thenReturn(true);
         assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(
                 EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_NEEDS_PASSTHROUGH.name());
     }

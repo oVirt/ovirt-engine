@@ -60,7 +60,7 @@ public class ExtendSANStorageDomainCommandTest {
         EngineMessage lunsBreakStorageDomainDiscardSupportMessage =
                 EngineMessage.ACTION_TYPE_FAILED_LUN_BREAKS_STORAGE_DOMAIN_PASS_DISCARD_SUPPORT;
         doReturn(new ValidationResult(lunsBreakStorageDomainDiscardSupportMessage)).when(discardHelper)
-                .isExistingDiscardFunctionalityPreserved(anyList(), any(StorageDomain.class));
+                .isExistingDiscardFunctionalityPreserved(anyList(), any());
         runAndAssertValidateFailure(command, lunsBreakStorageDomainDiscardSupportMessage);
     }
 

@@ -21,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -82,10 +81,8 @@ public class AutoRecoveryManagerTest {
         Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
                 Boolean.TRUE.toString());
         manager.onTimer();
-        verify(backendMock, times(vdss.size())).runInternalAction(eq(ActionType.ActivateVds),
-                any(ActionParametersBase.class));
-        verify(backendMock, times(storageDomains.size())).runInternalAction(eq(ActionType.ConnectDomainToStorage),
-                any(ActionParametersBase.class));
+        verify(backendMock, times(vdss.size())).runInternalAction(eq(ActionType.ActivateVds), any());
+        verify(backendMock, times(storageDomains.size())).runInternalAction(eq(ActionType.ConnectDomainToStorage), any());
     }
 
     @Test
@@ -95,9 +92,7 @@ public class AutoRecoveryManagerTest {
         Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
                 Boolean.FALSE.toString());
         manager.onTimer();
-        verify(backendMock, never()).runInternalAction(eq(ActionType.ActivateVds),
-                any(ActionParametersBase.class));
-        verify(backendMock, never()).runInternalAction(eq(ActionType.ConnectDomainToStorage),
-                any(ActionParametersBase.class));
+        verify(backendMock, never()).runInternalAction(eq(ActionType.ActivateVds), any());
+        verify(backendMock, never()).runInternalAction(eq(ActionType.ConnectDomainToStorage), any());
     }
 }

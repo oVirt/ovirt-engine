@@ -85,7 +85,7 @@ public class VmNicValidatorTest {
         VmNicValidator validator = spy(new VmNicValidator(nic, version, 0));
         OsRepository osRepository = mock(OsRepository.class);
         when(validator.getOsRepository()).thenReturn(osRepository);
-        when(osRepository.getNetworkDevices(anyInt(), any(Version.class))).thenReturn(NETWORK_DEVICES);
+        when(osRepository.getNetworkDevices(anyInt(), any())).thenReturn(NETWORK_DEVICES);
         when(nic.getType()).thenReturn(vmInterfaceType);
 
         assertThat(validator.isCompatibleWithOs(), matcher);

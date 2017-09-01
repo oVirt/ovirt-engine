@@ -5,13 +5,12 @@ import java.util.List;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendCpuProfilesResourceTest extends AbstractBackendCpuProfilesResourceTest<BackendCpuProfilesResource> {
 
     public BackendCpuProfilesResourceTest() {
-        super(new BackendCpuProfilesResource(), QueryType.GetAllCpuProfiles, QueryParametersBase.class);
+        super(new BackendCpuProfilesResource(), QueryType.GetAllCpuProfiles);
     }
 
     @Override

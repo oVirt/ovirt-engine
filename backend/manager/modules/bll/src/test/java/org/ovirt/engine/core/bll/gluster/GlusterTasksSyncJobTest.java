@@ -90,7 +90,7 @@ public class GlusterTasksSyncJobTest {
         prepareMocks();
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(2)).updateSteps(any(Cluster.class), any(GlusterAsyncTask.class), anyList());
+        verify(taskUtils, times(2)).updateSteps(any(), any(), anyList());
     }
 
     @Test
@@ -100,8 +100,8 @@ public class GlusterTasksSyncJobTest {
         prepareMocks();
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(1)).endStepJob(any(Step.class));
-        verify(taskUtils, times(2)).updateSteps(any(Cluster.class), any(GlusterAsyncTask.class), anyList());
+        verify(taskUtils, times(1)).endStepJob(any());
+        verify(taskUtils, times(2)).updateSteps(any(), any(), anyList());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getSteps(TASK_GUIDS[2])).when(stepDao).getStepsByExternalId(TASK_GUIDS[2]);
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(1)).endStepJob(any(Step.class));
+        verify(taskUtils, times(1)).endStepJob(any());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class GlusterTasksSyncJobTest {
         tasksSyncJob.updateGlusterAsyncTasks();
         verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[0], null);
         verify(volumeDao, times(0)).updateVolumeTask(VOL_GUIDS[1], null);
-        verify(taskUtils, times(0)).endStepJob(any(Step.class));
+        verify(taskUtils, times(0)).endStepJob(any());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(0)).endStepJob(any(Step.class));
+        verify(taskUtils, times(0)).endStepJob(any());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
 
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(0)).endStepJob(any(Step.class));
+        verify(taskUtils, times(0)).endStepJob(any());
     }
 
 
@@ -143,7 +143,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(2)).updateSteps(any(Cluster.class), any(GlusterAsyncTask.class), anyList());
+        verify(taskUtils, times(2)).updateSteps(any(), any(), anyList());
     }
 
     @Test
@@ -151,7 +151,7 @@ public class GlusterTasksSyncJobTest {
         doReturn(getTasks(JobExecutionStatus.ABORTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
         prepareMocks();
         tasksSyncJob.updateGlusterAsyncTasks();
-        verify(taskUtils, times(2)).updateSteps(any(Cluster.class), any(GlusterAsyncTask.class), anyList());
+        verify(taskUtils, times(2)).updateSteps(any(), any(), anyList());
     }
 
     private void prepareMocks() {

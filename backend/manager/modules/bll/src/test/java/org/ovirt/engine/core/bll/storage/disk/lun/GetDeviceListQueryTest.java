@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
-import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,8 +55,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(lunsInput);
-        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.GetDeviceList),
-                any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValue);
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.GetDeviceList), any())).thenReturn(returnValue);
 
         // Return 'lunsFromDb'
         when(lunDaoMock.getAll()).thenReturn(lunsFromDb);

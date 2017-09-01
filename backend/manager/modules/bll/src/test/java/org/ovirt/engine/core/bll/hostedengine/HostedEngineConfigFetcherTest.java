@@ -37,13 +37,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -235,13 +233,11 @@ public class HostedEngineConfigFetcherTest {
     }
 
     private void mockVdsCommand(VDSCommandType cmdType, VDSReturnValue returnValue) {
-        doReturn(returnValue)
-                .when(resourceManager).runVdsCommand(eq(cmdType), any(VDSParametersBase.class));
+        doReturn(returnValue).when(resourceManager).runVdsCommand(eq(cmdType), any());
     }
 
     private void mockVdcCommand(ActionType actionType, ActionReturnValue returnValue) {
-        doReturn(returnValue)
-                .when(backend).runInternalAction(eq(actionType), any(ActionParametersBase.class));
+        doReturn(returnValue).when(backend).runInternalAction(eq(actionType), any());
     }
 
     private VDSReturnValue verifyCalled(VDSCommandType vdsmCmd, VerificationMode times) {
@@ -249,7 +245,7 @@ public class HostedEngineConfigFetcherTest {
     }
 
     private ActionReturnValue verifyCalled(ActionType actionType, VerificationMode times) {
-        return verify(backend, times).runInternalAction(eq(actionType), any(ActionParametersBase.class));
+        return verify(backend, times).runInternalAction(eq(actionType), any());
     }
 
     private VDSReturnValue successfulReturnValue(Object value) {

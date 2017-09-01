@@ -51,8 +51,8 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     @Before
     public void setupMock() {
         doReturn(geoRepUtil).when(getQuery()).getGeoRepUtilInstance();
-        doReturn(Guid.newGuid()).when(geoRepUtil).getUpServerId(any(Guid.class));
-        doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(any(Guid.class), anyString());
+        doReturn(Guid.newGuid()).when(geoRepUtil).getUpServerId(any());
+        doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(any(), anyString());
         doReturn(getExpectedVolumes()).when(getQuery()).getAllGlusterVolumesWithMasterCompatibleVersion(baseTest.getMASTER_VOLUME_ID());
         baseTest.setupMock(geoRepDao, clusterDao);
         doReturn(baseTest.getMasterVolume()).when(volumeDao).getById(baseTest.getMASTER_VOLUME_ID());

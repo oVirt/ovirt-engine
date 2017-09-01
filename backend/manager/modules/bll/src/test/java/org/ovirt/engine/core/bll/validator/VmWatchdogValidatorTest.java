@@ -39,7 +39,7 @@ public class VmWatchdogValidatorTest {
         OsRepository osRepository = mock(OsRepository.class);
 
         when(validator.getOsRepository()).thenReturn(osRepository);
-        when(osRepository.getVmWatchdogTypes(anyInt(), any(Version.class))).thenReturn(WATCHDOG_MODELS);
+        when(osRepository.getVmWatchdogTypes(anyInt(), any())).thenReturn(WATCHDOG_MODELS);
 
         assertThat(validator.isValid(), matcher);
     }

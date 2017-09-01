@@ -30,14 +30,12 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
 
     protected static final Guid NETWORK_ID = GUIDS[1];
     private QueryType listQueryType;
-    private Class<? extends QueryParametersBase> listQueryParamsClass;
 
     public AbstractBackendVnicProfilesResourceTest(C collection,
             QueryType listQueryType,
             Class<? extends QueryParametersBase> queryParamsClass) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
-        this.listQueryParamsClass = queryParamsClass;
     }
 
     @Test
@@ -201,13 +199,11 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(listQueryType),
-                        any(listQueryParamsClass))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(listQueryType), any())).thenThrow((Exception) failure);
                 return;
             }
         }
-        when(backend.runQuery(eq(listQueryType), any(listQueryParamsClass))).thenReturn(
-                queryResult);
+        when(backend.runQuery(eq(listQueryType), any())).thenReturn(queryResult);
     }
 
     static VnicProfile getModel(int index) {

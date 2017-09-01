@@ -356,7 +356,7 @@ public class FrontendActionTest {
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
-        verify(mockActionCallback, never()).executed(any(FrontendActionAsyncResult.class));
+        verify(mockActionCallback, never()).executed(any());
         verifyAsyncActionStartedButNotCompleted();
     }
 
@@ -522,7 +522,7 @@ public class FrontendActionTest {
         EngineFault testFault = new EngineFault();
         ArrayList<String> translatedErrors = new ArrayList<>(Collections.singletonList("Translated Message 1")); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(ActionType.AddDisk, testFault)).thenReturn(true);
-        when(mockValidateErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
+        when(mockValidateErrorsTranslator.translateErrorText(any())).thenReturn(translatedErrors);
         ActionParametersBase testParameters = new ActionParametersBase();
         ActionReturnValue returnValue = new ActionReturnValue();
         returnValue.setFault(testFault);
@@ -563,7 +563,7 @@ public class FrontendActionTest {
         ArrayList<String> translatedErrors = new ArrayList<>(Arrays.asList(
                 "Translated Message 1", "Translated Message 2")); //$NON-NLS-1$ //$NON-NLS-2$
         when(mockEventsHandler.isRaiseErrorModalPanel(ActionType.AddDisk, testFault)).thenReturn(true);
-        when(mockValidateErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
+        when(mockValidateErrorsTranslator.translateErrorText(any())).thenReturn(translatedErrors);
         ActionParametersBase testParameters = new ActionParametersBase();
         ActionReturnValue returnValue = new ActionReturnValue();
         returnValue.setFault(testFault);

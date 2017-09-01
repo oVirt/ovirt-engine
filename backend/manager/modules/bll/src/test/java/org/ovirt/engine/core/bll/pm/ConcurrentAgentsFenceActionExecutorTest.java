@@ -259,7 +259,7 @@ public class ConcurrentAgentsFenceActionExecutorTest {
     }
 
     protected void mockSingleAgentResult(SingleAgentFenceActionExecutor executor, FenceOperationResult result) {
-        doReturn(result).when(executor).fence(any(FenceActionType.class));
+        doReturn(result).when(executor).fence(any());
     }
 
     protected void validateResult(FenceOperationResult expected, FenceOperationResult actual) {

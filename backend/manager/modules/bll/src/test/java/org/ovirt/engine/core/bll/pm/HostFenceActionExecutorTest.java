@@ -245,7 +245,7 @@ public class HostFenceActionExecutorTest {
     }
 
     protected void mockFenceResult(FenceActionExecutor executor, FenceOperationResult result) {
-        doReturn(result).when(executor).fence(any(FenceActionType.class));
+        doReturn(result).when(executor).fence(any());
     }
 
     protected void mockFenceAgents() {

@@ -52,7 +52,7 @@ public class SingleAgentFenceActionExecutorTest {
         doReturn(fenceAgentExecutor).when(executor).createAgentExecutor();
         doReturn(0).when(executor).getSleepBeforeFirstAttempt();
         doReturn(0).when(executor).getUnknownResultLimit();
-        doNothing().when(executor).auditVerifyStatusRetryLimitExceeded(any(FenceActionType.class));
+        doNothing().when(executor).auditVerifyStatusRetryLimitExceeded(any());
         doReturn("host1").when(fencedHost).getHostName();
     }
 
@@ -249,7 +249,7 @@ public class SingleAgentFenceActionExecutorTest {
 
     protected void mockFenceActionResults(FenceOperationResult[] results) {
         OngoingStubbing<FenceOperationResult> fenceMethodResult =
-                when(fenceAgentExecutor.fence(any(FenceActionType.class), any(FenceAgent.class)));
+                when(fenceAgentExecutor.fence(any(), any()));
 
         for (FenceOperationResult result : results) {
             fenceMethodResult = fenceMethodResult.thenReturn(result);

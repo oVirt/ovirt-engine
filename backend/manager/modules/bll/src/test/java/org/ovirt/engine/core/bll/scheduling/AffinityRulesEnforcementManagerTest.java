@@ -105,7 +105,7 @@ public class AffinityRulesEnforcementManagerTest {
         arem.refresh();
         verify(arem, times(1)).migrateVM(eq(vm1));
         verify(arem, times(1)).migrateVM(eq(vm2));
-        verify(arem, times(2)).migrateVM(any(VM.class));
+        verify(arem, times(2)).migrateVM(any());
     }
 
     @Test
@@ -115,7 +115,7 @@ public class AffinityRulesEnforcementManagerTest {
         when(clusterDao.getWithoutMigratingVms()).thenReturn(Collections.singletonList(cluster1));
         arem.refresh();
         verify(arem).migrateVM(vm1);
-        verify(arem, times(1)).migrateVM(any(VM.class));
+        verify(arem, times(1)).migrateVM(any());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class AffinityRulesEnforcementManagerTest {
         cluster2.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         arem.refresh();
         verify(arem).migrateVM(vm1);
-        verify(arem, times(1)).migrateVM(any(VM.class));
+        verify(arem, times(1)).migrateVM(any());
         verify(arem, times(0)).migrateVM(eq(vm2));
     }
 
@@ -132,12 +132,12 @@ public class AffinityRulesEnforcementManagerTest {
         when(rulesEnforcer.chooseNextVmToMigrate(eq(cluster2))).thenReturn(null);
         arem.refresh();
         verify(arem).migrateVM(vm1);
-        verify(arem, times(1)).migrateVM(any(VM.class));
+        verify(arem, times(1)).migrateVM(any());
     }
 
     @Test
     public void shouldHaveNotingToMigrate() {
-        verify(arem, never()).migrateVM(any(VM.class));
+        verify(arem, never()).migrateVM(any());
     }
 
     @Test

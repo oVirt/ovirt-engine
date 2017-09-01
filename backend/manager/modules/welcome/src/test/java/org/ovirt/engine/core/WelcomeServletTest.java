@@ -27,7 +27,6 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -67,7 +66,7 @@ public class WelcomeServletTest {
     private void mockBackendQuery(QueryType queryType, Object returnValue) {
         QueryReturnValue queryReturnValue = new QueryReturnValue();
         queryReturnValue.setReturnValue(returnValue);
-        when(mockBackend.runPublicQuery(eq(queryType), any(QueryParametersBase.class))).thenReturn(queryReturnValue);
+        when(mockBackend.runPublicQuery(eq(queryType), any())).thenReturn(queryReturnValue);
     }
 
     @Before
@@ -76,7 +75,7 @@ public class WelcomeServletTest {
         testServlet.setBackend(mockBackend);
         testServlet.init(mockBrandingManager, "/ovirt-engine");
         mockBackendQuery(QueryType.GetConfigurationValue, "oVirtVersion");
-        when(mockBrandingManager.getWelcomeSections(any(Locale.class))).thenReturn("Welcome Section HTML");
+        when(mockBrandingManager.getWelcomeSections(any())).thenReturn("Welcome Section HTML");
     }
 
     @Test

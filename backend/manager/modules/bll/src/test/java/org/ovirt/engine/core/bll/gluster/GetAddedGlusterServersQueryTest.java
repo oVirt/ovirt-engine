@@ -17,7 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -25,12 +24,10 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
@@ -107,11 +104,10 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         doReturn(getVds(VDSStatus.Up)).when(glusterUtils).getUpServer(CLUSTER_ID);
 
         VDSReturnValue returnValue = getVDSReturnValue();
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GlusterServersList),
-                any(VDSParametersBase.class))).thenReturn(returnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GlusterServersList), any())).thenReturn(returnValue);
         QueryReturnValue vdcReturnValue = getVdcReturnValue();
-        when(backendInternal.runInternalQuery(eq(QueryType.GetServerSSHKeyFingerprint),
-                any(QueryParametersBase.class), any(EngineContext.class))).thenReturn(vdcReturnValue);
+        when(backendInternal.runInternalQuery(
+                eq(QueryType.GetServerSSHKeyFingerprint), any(), any())).thenReturn(vdcReturnValue);
         doReturn(params.getClusterId()).when(getQueryParameters()).getClusterId();
         doReturn(true).when(getQueryParameters()).isServerKeyFingerprintRequired();
     }

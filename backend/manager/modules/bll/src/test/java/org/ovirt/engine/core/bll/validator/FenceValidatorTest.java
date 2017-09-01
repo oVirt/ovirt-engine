@@ -45,7 +45,7 @@ public class FenceValidatorTest {
 
     @Before
     public void setup() {
-        doReturn(proxyLocator).when(validator).getProxyLocator(any(VDS.class));
+        doReturn(proxyLocator).when(validator).getProxyLocator(any());
         doReturn(backend).when(validator).getBackend();
     }
 

@@ -78,7 +78,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         mockVm();
         VmValidator vmValidator = spy(new VmValidator(cmd.getVm()));
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(anyBoolean());
-        doReturn(vmValidator).when(cmd).createVmValidator(any(VM.class));
+        doReturn(vmValidator).when(cmd).createVmValidator(any());
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
         mockSnapshot(SnapshotType.REGULAR);
         spySdValidator();
@@ -109,7 +109,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     private void spySdValidator() {
         Set<Guid> sdIds = new HashSet<>(Collections.singletonList(STORAGE_DOMAIN_ID));
         storageDomainsValidator = spy(new MultipleStorageDomainsValidator(STORAGE_POOL_ID, sdIds));
-        doReturn(storageDomainsValidator).when(cmd).getStorageDomainsValidator(any(Guid.class), anySet());
+        doReturn(storageDomainsValidator).when(cmd).getStorageDomainsValidator(any(), anySet());
         doReturn(sdIds).when(cmd).getStorageDomainsIds();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsWithinThresholds();
@@ -144,7 +144,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     public void testValidateEnoughSpace() {
         prepareForVmValidatorTests();
         spySdValidator();
-        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(), any());
         cmd.getVm().setStatus(VMStatus.Up);
         List<DiskImage> parentSnapshots = mockDisksList(2);
         doReturn(parentSnapshots).when(cmd).getSourceImages();
@@ -159,7 +159,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         cmd.getVm().setStatus(VMStatus.Up);
         mockDisksList(2);
 
-        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(), any());
         when(storageDomainsValidator.allDomainsHaveSpaceForMerge(anyList(), any()))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
 
@@ -173,9 +173,9 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         sp.setStatus(StoragePoolStatus.Up);
 
         cmd.setSnapshotName("someSnapshot");
-        doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotDuringSnapshot(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotInPreview(any(Guid.class));
-        doReturn(ValidationResult.VALID).when(snapshotValidator).snapshotExists(any(Guid.class), any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotDuringSnapshot(any());
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotInPreview(any());
+        doReturn(ValidationResult.VALID).when(snapshotValidator).snapshotExists(any(), any());
         doReturn(true).when(cmd).validateImages();
         doReturn(sp).when(spDao).get(STORAGE_POOL_ID);
         doReturn(Collections.emptyList()).when(cmd).getSourceImages();
@@ -184,7 +184,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Test
     public void testValidateVmUpHostCapable() {
         prepareForVmValidatorTests();
-        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(), any());
         cmd.getVm().setStatus(VMStatus.Up);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
@@ -192,7 +192,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Test
     public void testValidateVmDown() {
         prepareForVmValidatorTests();
-        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(), any());
         cmd.getVm().setStatus(VMStatus.Down);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
@@ -200,7 +200,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Test
     public void testValidateVmMigrating() {
         prepareForVmValidatorTests();
-        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(), any());
         cmd.getVm().setStatus(VMStatus.MigratingTo);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);

@@ -14,9 +14,7 @@ import org.mockito.stubbing.OngoingStubbing;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -85,11 +83,7 @@ public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
     }
 
     protected void setUpFactory(TestCommand... commands) {
-        OngoingStubbing stubbing =
-                when(commandFactory.createWrappedCommand(any(CommandContext.class),
-                        any(ActionType.class),
-                        any(ActionParametersBase.class),
-                        anyBoolean()));
+        OngoingStubbing stubbing = when(commandFactory.createWrappedCommand(any(), any(), any(), anyBoolean()));
         for (TestCommand command : commands) {
             stubbing = stubbing.thenReturn(command);
         }

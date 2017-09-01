@@ -146,20 +146,20 @@ public class ActivateStorageDomainCommandTest extends BaseCommandTest {
         StorageDomain domain = new StorageDomain();
         domain.setStatus(status);
         domain.setId(Guid.newGuid());
-        when(storageDomainDao.get(any(Guid.class))).thenReturn(domain);
-        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(domain);
+        when(storageDomainDao.get(any())).thenReturn(domain);
+        when(storageDomainDao.getForStoragePool(any(), any())).thenReturn(domain);
     }
 
     private void createUpStoragePool() {
         StoragePool pool = new StoragePool();
         pool.setId(Guid.newGuid());
         pool.setStatus(StoragePoolStatus.Up);
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(pool);
+        when(storagePoolDao.get(any())).thenReturn(pool);
     }
 
     private void createUpVds() {
-        when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up)))
-                .thenReturn(Collections.singletonList(new VDS()));
+        when(vdsDao.getAllForStoragePoolAndStatus(any(), eq(VDSStatus.Up))).thenReturn
+                (Collections.singletonList(new VDS()));
     }
 
     private void createCommand() {

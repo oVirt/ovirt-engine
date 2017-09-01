@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -48,7 +47,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -57,9 +55,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -120,7 +116,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     public void mockBackend() {
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setReturnValue(true);
-        when(vdsBrokerFrontend.runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(any(), any())).thenReturn(vdsReturnValue);
 
         // Set Valid Iso Prefix
         setIsoPrefixVDSMethod(ACTIVE_ISO_PREFIX);
@@ -135,9 +131,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     private void setCreateVmVDSMethod() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(VMStatus.Up);
-        when(vdsBrokerFrontend.runAsyncVdsCommand(eq(VDSCommandType.Create),
-                any(VdsAndVmIDVDSParametersBase.class),
-                any(IVdsAsyncCommand.class))).thenReturn(returnValue);
+        when(vdsBrokerFrontend.runAsyncVdsCommand(eq(VDSCommandType.Create), any(), any())).thenReturn(returnValue);
     }
 
     /**
@@ -147,7 +141,7 @@ public class RunVmCommandTest extends BaseCommandTest {
      *            - Valid Iso patch or blank (when the Iso is not active.
      */
     private void setIsoPrefixVDSMethod(final String isoPrefix) {
-        doReturn(isoPrefix).when(command).getIsoPrefix(any(Guid.class), any(Guid.class));
+        doReturn(isoPrefix).when(command).getIsoPrefix(any(), any());
     }
 
     @Test
@@ -337,7 +331,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         command.setVm(vm);
         command.setStoragePool(new StoragePool());
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
-        doReturn(true).when(command).checkPayload(any(VmPayload.class));
+        doReturn(true).when(command).checkPayload(any());
         doReturn(ValidationResult.VALID).when(command).checkDisksInBackupStorage();
         command.setCluster(new Cluster());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
@@ -494,9 +488,7 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     private RunVmValidator mockSuccessfulRunVmValidator() {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
-        when(runVmValidator.canRunVm(
-                anyList(), any(StoragePool.class), anyList(), anyList(), any(Cluster.class), anyBoolean()))
-                .thenReturn(true);
+        when(runVmValidator.canRunVm(anyList(), any(), anyList(), anyList(), any(), anyBoolean())).thenReturn(true);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

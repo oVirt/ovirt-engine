@@ -27,15 +27,12 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
@@ -84,17 +81,16 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void statusSetInMap() {
-        doReturn(mock(IStorageHelper.class)).when(cmd).getStorageHelper(any(StorageDomain.class));
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(new StoragePool());
-        when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
-        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
+        doReturn(mock(IStorageHelper.class)).when(cmd).getStorageHelper(any());
+        when(storagePoolDao.get(any())).thenReturn(new StoragePool());
+        when(isoMapDao.get(any())).thenReturn(map);
+        when(storageDomainDao.getForStoragePool(any(), any())).thenReturn(new StorageDomain());
 
         doReturn(Collections.emptyList()).when(cmd).getAllRunningVdssInPool();
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
-        when(vdsBrokerFrontend.runVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class)))
-                .thenReturn(returnValue);
-        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        when(vdsBrokerFrontend.runVdsCommand(any(), any())).thenReturn(returnValue);
+        when(vdsDao.get(any())).thenReturn(vds);
         map.setStatus(StorageDomainStatus.Active);
 
         cmd.setCompensationContext(mock(CompensationContext.class));

@@ -105,7 +105,7 @@ public class VmInterfaceManagerTest {
 
         OsRepository osRepository = mock(OsRepository.class);
         when(vmInterfaceManager.getOsRepository()).thenReturn(osRepository);
-        when(osRepository.hasNicHotplugSupport(anyInt(), any(Version.class))).thenReturn(true);
+        when(osRepository.hasNicHotplugSupport(anyInt(), any())).thenReturn(true);
 
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reassignMac, osId, version);
         if (!reassignMac) {
@@ -122,7 +122,7 @@ public class VmInterfaceManagerTest {
     public void removeAll() {
         List<VmNic> interfaces = Arrays.asList(createNewInterface(), createNewInterface());
 
-        when(vmNicDao.getAllForVm(any(Guid.class))).thenReturn(interfaces);
+        when(vmNicDao.getAllForVm(any())).thenReturn(interfaces);
 
         vmInterfaceManager.removeAll(Guid.newGuid());
 

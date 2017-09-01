@@ -58,14 +58,11 @@ public class NumaTestUtils {
     }
 
     public static void mockVdsNumaNodeDao(final VdsNumaNodeDao vdsNumaNodeDao, List<VdsNumaNode> vdsNumaNodes) {
-        when(vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(any(Guid.class)))
-                .thenReturn(vdsNumaNodes);
-
+        when(vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(any())).thenReturn(vdsNumaNodes);
     }
 
     public static void mockVmNumaNodeDao(final VmNumaNodeDao vmNumaNodeDao, List<VmNumaNode> vmNumaNodes) {
-        when(vmNumaNodeDao.getAllVmNumaNodeByVmId(any(Guid.class)))
-                .thenReturn(vmNumaNodes);
+        when(vmNumaNodeDao.getAllVmNumaNodeByVmId(any())).thenReturn(vmNumaNodes);
     }
 
     public static void mockVmNumaNodeDao(final VmNumaNodeDao vmNumaNodeDao, VmNumaNode... vmNumaNodes) {

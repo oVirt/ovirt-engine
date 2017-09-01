@@ -139,7 +139,7 @@ public class DiskImagesValidatorTest {
 
     @Test
     public void diskImagesAlreadyExistBothExist() {
-        doReturn(new DiskImage()).when(validator).getExistingDisk(any(Guid.class));
+        doReturn(new DiskImage()).when(validator).getExistingDisk(any());
         assertThat(validator.diskImagesAlreadyExist(),
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
                         (hasItem(createAliasReplacements(disk1, disk2)))));
@@ -177,7 +177,7 @@ public class DiskImagesValidatorTest {
 
     @Test
     public void diskImagesAlreadyExistBothDoesntExist() {
-        doReturn(null).when(validator).getExistingDisk(any(Guid.class));
+        doReturn(null).when(validator).getExistingDisk(any());
         assertThat(validator.diskImagesAlreadyExist(), isValid());
     }
 
@@ -214,8 +214,8 @@ public class DiskImagesValidatorTest {
         VmDevice device2 = createVmDeviceForDisk(disk2);
         when(vmDeviceDao.getVmDevicesByDeviceId(disk1.getId(), null)).thenReturn(Collections.singletonList(device1));
         when(vmDeviceDao.getVmDevicesByDeviceId(disk2.getId(), null)).thenReturn(Collections.singletonList(device2));
-        when(vmDao.get(any(Guid.class))).thenReturn(new VM());
-        when(snapshotDao.get(any(Guid.class))).thenReturn(new Snapshot());
+        when(vmDao.get(any())).thenReturn(new VM());
+        when(snapshotDao.get(any())).thenReturn(new Snapshot());
         return Arrays.asList(device1, device2);
     }
 
@@ -358,7 +358,7 @@ public class DiskImagesValidatorTest {
         disk1.setQcowCompat(QcowCompat.QCOW2_V3);
         StoragePool sp = new StoragePool();
         sp.setStoragePoolFormatType(StorageFormatType.V4);
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(sp);
+        when(storagePoolDao.get(any())).thenReturn(sp);
         assertThat(validator.isQcowVersionSupportedForDcVersion(), isValid());
     }
 
@@ -368,7 +368,7 @@ public class DiskImagesValidatorTest {
         disk1.setQcowCompat(QcowCompat.QCOW2_V2);
         StoragePool sp = new StoragePool();
         sp.setStoragePoolFormatType(StorageFormatType.V4);
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(sp);
+        when(storagePoolDao.get(any())).thenReturn(sp);
         assertThat(validator.isQcowVersionSupportedForDcVersion(), isValid());
     }
 
@@ -378,7 +378,7 @@ public class DiskImagesValidatorTest {
         disk1.setQcowCompat(QcowCompat.QCOW2_V3);
         StoragePool sp = new StoragePool();
         sp.setStoragePoolFormatType(StorageFormatType.V3);
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(sp);
+        when(storagePoolDao.get(any())).thenReturn(sp);
         assertThat(validator.isQcowVersionSupportedForDcVersion(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_QCOW_COMPAT_DOES_NOT_MATCH_DC_VERSION));
     }
@@ -389,7 +389,7 @@ public class DiskImagesValidatorTest {
         disk1.setQcowCompat(QcowCompat.QCOW2_V2);
         StoragePool sp = new StoragePool();
         sp.setStoragePoolFormatType(StorageFormatType.V3);
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(sp);
+        when(storagePoolDao.get(any())).thenReturn(sp);
         assertThat(validator.isQcowVersionSupportedForDcVersion(), isValid());
     }
 

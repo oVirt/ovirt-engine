@@ -224,7 +224,7 @@ public class MoveDisksCommandTest extends BaseCommandTest {
         vm.setStatus(vmStatus);
         vm.setRunOnVds(runOnVds);
 
-        when(vmDao.get(any(Guid.class))).thenReturn(vm);
+        when(vmDao.get(any())).thenReturn(vm);
         when(vmDao.getForDisk(diskImageId1, false)).thenReturn(
                 Collections.singletonMap(isPlugged1, Collections.singletonList(vm)));
 
@@ -241,12 +241,12 @@ public class MoveDisksCommandTest extends BaseCommandTest {
 
     private void initLunDisk() {
         Disk lunDisk = new LunDisk();
-        when(diskDao.get(any(Guid.class))).thenReturn(lunDisk);
+        when(diskDao.get(any())).thenReturn(lunDisk);
     }
 
     private void initCinderDisk() {
         Disk cinderDisk = new CinderDisk();
-        when(diskDao.get(any(Guid.class))).thenReturn(cinderDisk);
+        when(diskDao.get(any())).thenReturn(cinderDisk);
     }
 
     private void initDiskImageBasedOnTemplate(Guid diskImageId) {

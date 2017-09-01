@@ -14,8 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -81,8 +79,7 @@ public class HostMonitoringTest {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(false);
         value.setExceptionObject(new VDSNetworkException("unknown host"));
-        when(resourceManager.runVdsCommand(any(VDSCommandType.class),
-                any(VDSParametersBase.class))).thenReturn(value);
+        when(resourceManager.runVdsCommand(any(), any())).thenReturn(value);
 
         updater.refreshVdsStats();
     }

@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.vdscommands.GetLldpVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,8 +58,7 @@ public class GetTlvsByHostNicIdQueryTest extends AbstractQueryTest<IdQueryParame
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(creatLldpInfoMap(expectedError != ExpectedError.LLDP_ENABLED));
-        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.GetLldp), any(GetLldpVDSCommandParameters.class)))
-                .thenReturn(returnValue);
+        when(vdsBrokerFrontendMock.runVdsCommand(eq(VDSCommandType.GetLldp), any())).thenReturn(returnValue);
 
     }
 

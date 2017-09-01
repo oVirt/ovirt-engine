@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -96,7 +95,7 @@ public class QuotaManagerTest {
         doReturn(quotaDao).when(quotaManager).getQuotaDao();
         doReturn(quotaManagerAuditLogger).when(quotaManager).getQuotaManagerAuditLogger();
 
-        doNothing().when(quotaManagerAuditLogger).auditLog(any(AuditLogType.class), any(AuditLogableBase.class));
+        doNothing().when(quotaManagerAuditLogger).auditLog(any(), any());
 
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.setStoragePool(storage_pool);
@@ -133,7 +132,7 @@ public class QuotaManagerTest {
         when(quotaDao.getById(MEM_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockMemQuotaSpecificOverGrace());
         when(quotaDao.getById(DEFAULT_QUOTA_FOR_STORAGE_POOL)).thenReturn(mockDefaultQuota());
 
-        when(quotaDao.getDefaultQuotaForStoragePool(any(Guid.class))).thenReturn(mockDefaultQuota());
+        when(quotaDao.getDefaultQuotaForStoragePool(any())).thenReturn(mockDefaultQuota());
     }
 
     private void setStoragePool() {
@@ -151,11 +150,11 @@ public class QuotaManagerTest {
     }
 
     private void assertAuditLogWritten() {
-        verify(quotaManagerAuditLogger).auditLog(any(AuditLogType.class), any(AuditLogableBase.class));
+        verify(quotaManagerAuditLogger).auditLog(any(), any());
     }
 
     private void assertAuditLogNotWritten() {
-        verify(quotaManagerAuditLogger).auditLog(eq(null), any(AuditLogableBase.class));
+        verify(quotaManagerAuditLogger).auditLog(eq(null), any());
     }
 
     private void assertDbWasCalled(int expectedNumOfCalls) {

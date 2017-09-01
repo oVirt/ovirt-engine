@@ -69,7 +69,7 @@ public class ExternalNetworkTokenProviderTest {
         doReturn(TOKEN_ID).when(tokenProvider).getTokenId(same(token));
 
         when(mockKeystone.tokens()).thenReturn(mockTokensResource);
-        when(mockTokensResource.authenticate(any(UsernamePassword.class))).thenReturn(mockAuthenticate);
+        when(mockTokensResource.authenticate(any())).thenReturn(mockAuthenticate);
         when(mockAuthenticate.execute()).thenReturn(mockAccess);
         when(mockAccess.getToken()).thenReturn(token);
     }

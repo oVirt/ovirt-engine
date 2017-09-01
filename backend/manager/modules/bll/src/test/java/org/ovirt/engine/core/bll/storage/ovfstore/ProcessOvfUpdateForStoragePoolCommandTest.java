@@ -126,16 +126,16 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         initMembers();
 
         // mock ovf data updater methods
-        doNothing().when(ovfUpdateProcessHelper).loadTemplateData(any(VmTemplate.class));
-        doNothing().when(ovfUpdateProcessHelper).loadVmData(any(VM.class));
-        doNothing().when(command).updateVmDisksFromDb(any(VM.class));
-        doNothing().when(command).updateTemplateDisksFromDb(any(VmTemplate.class));
+        doNothing().when(ovfUpdateProcessHelper).loadTemplateData(any());
+        doNothing().when(ovfUpdateProcessHelper).loadVmData(any());
+        doNothing().when(command).updateVmDisksFromDb(any());
+        doNothing().when(command).updateTemplateDisksFromDb(any());
 
         // dao related mocks.
-        doReturn(1L).when(vmStaticDao).getDbGeneration(any(Guid.class));
+        doReturn(1L).when(vmStaticDao).getDbGeneration(any());
         doReturn(pool1).when(command).getStoragePool();
         List<Snapshot> snapshots = new ArrayList<>();
-        doReturn(snapshots).when(snapshotDao).getAllWithConfiguration(any(Guid.class));
+        doReturn(snapshots).when(snapshotDao).getAllWithConfiguration(any());
         // needed for ovf writer utility
         injectorRule.bind(ClusterDao.class, clusterDao);
         mockAnswers();
@@ -170,12 +170,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doAnswer(invocation -> {
             VM vm = (VM) invocation.getArguments()[0];
             return vm.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(VM.class), anyList());
+        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(), anyList());
 
         doAnswer(invocation -> {
             VmTemplate template = (VmTemplate) invocation.getArguments()[0];
             return template.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(VmTemplate.class), anyList());
+        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(), anyList());
 
         doAnswer(invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];
@@ -192,9 +192,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                     (Map<Guid, KeyValuePairCompat<String, List<Guid>>>) invocation.getArguments()[1];
             assertTrue("too many ovfs were sent in one vdsm call", updateMap.size() <= ITEMS_COUNT_PER_UPDATE);
             return true;
-        }).when(ovfUpdateProcessHelper).executeUpdateVmInSpmCommand(any(Guid.class), anyMap(), any(Guid.class));
+        }).when(ovfUpdateProcessHelper).executeUpdateVmInSpmCommand(any(), anyMap(), any());
 
-        doReturn(true).when(ovfUpdateProcessHelper).executeRemoveVmInSpm(any(Guid.class), any(Guid.class), any(Guid.class));
+        doReturn(true).when(ovfUpdateProcessHelper).executeRemoveVmInSpm(any(), any(), any());
 
         doAnswer(invocation -> {
             List<Guid> ids = (List<Guid>) invocation.getArguments()[0];
@@ -219,10 +219,10 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
             return buildStoragePoolsList().stream()
                     .filter(p -> desiredStatus.equals(p.getStatus()))
                     .collect(Collectors.toList());
-        }).when(storagePoolDao).getAllByStatus(any(StoragePoolStatus.class));
+        }).when(storagePoolDao).getAllByStatus(any());
 
         doReturn(poolDomainsOvfInfo.values().stream().map(Pair::getSecond).collect(Collectors.toList()))
-                .when(storageDomainDao).getAllForStoragePool(any(Guid.class));
+                .when(storageDomainDao).getAllForStoragePool(any());
 
         doAnswer(invocation -> {
             Guid domainId = (Guid) invocation.getArguments()[0];
@@ -231,7 +231,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
                 return pair.getFirst();
             }
             return null;
-        }).when(storageDomainOvfInfoDao).getAllForDomain(any(Guid.class));
+        }).when(storageDomainOvfInfoDao).getAllForDomain(any());
     }
 
     private List<StoragePool> buildStoragePoolsList() {
@@ -529,7 +529,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
         initTestForPool(pool1, vmGuids, templatesGuids, removedGuids);
 
-        doReturn(2L).when(vmStaticDao).getDbGeneration(any(Guid.class));
+        doReturn(2L).when(vmStaticDao).getDbGeneration(any());
 
         executeCommand();
 

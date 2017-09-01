@@ -73,7 +73,7 @@ public class IscsiBondValidatorTest {
 
         iscsiBonds.add(createIscsiBond("First", dataCenterId));
         iscsiBonds.add(createIscsiBond("Second", dataCenterId));
-        doReturn(iscsiBonds).when(iscsiBondDao).getAllByStoragePoolId(any(Guid.class));
+        doReturn(iscsiBonds).when(iscsiBondDao).getAllByStoragePoolId(any());
 
         ValidationResult res = validator.iscsiBondWithTheSameNameExistInDataCenter(createIscsiBond("Second", dataCenterId));
         assertThat(res, failsWith(EngineMessage.ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER));
@@ -86,7 +86,7 @@ public class IscsiBondValidatorTest {
 
         iscsiBonds.add(createIscsiBond("First", dataCenterId));
         iscsiBonds.add(createIscsiBond("Second", dataCenterId));
-        doReturn(iscsiBonds).when(iscsiBondDao).getAllByStoragePoolId(any(Guid.class));
+        doReturn(iscsiBonds).when(iscsiBondDao).getAllByStoragePoolId(any());
 
         assertEquals(ValidationResult.VALID,
                 validator.iscsiBondWithTheSameNameExistInDataCenter(createIscsiBond("Third", dataCenterId)));
@@ -148,7 +148,7 @@ public class IscsiBondValidatorTest {
 
         List<NetworkCluster> networkClusters = new ArrayList<>();
         networkClusters.add(createNetworkCluster(false));
-        doReturn(networkClusters).when(networkClusterDao).getAllForNetwork(any(Guid.class));
+        doReturn(networkClusters).when(networkClusterDao).getAllForNetwork(any());
 
         assertEquals(ValidationResult.VALID, validator.validateAddedLogicalNetworks(iscsiBond));
     }
@@ -168,7 +168,7 @@ public class IscsiBondValidatorTest {
 
         List<NetworkCluster> networkClusters = new ArrayList<>();
         networkClusters.add(createNetworkCluster(true));
-        doReturn(networkClusters).when(networkClusterDao).getAllForNetwork(any(Guid.class));
+        doReturn(networkClusters).when(networkClusterDao).getAllForNetwork(any());
 
         ValidationResult res = validator.validateAddedLogicalNetworks(iscsiBond);
 

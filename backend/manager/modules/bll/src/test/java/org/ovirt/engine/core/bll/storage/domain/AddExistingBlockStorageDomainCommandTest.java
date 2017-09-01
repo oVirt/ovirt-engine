@@ -72,7 +72,7 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testAlreadyExistStorageDomain() {
-        when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(getStorageDomain());
+        when(storageDomainStaticDao.get(any())).thenReturn(getStorageDomain());
         assertFalse("Storage Domain already exists", command.canAddDomain());
         assertTrue("Import block Storage Domain should have failed due to already existing Storage Domain",
                 command.getReturnValue()

@@ -43,7 +43,6 @@ import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.DumpXmlsVDSCommand;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmDevicesMonitoringTest {
@@ -84,7 +83,7 @@ public class VmDevicesMonitoringTest {
         initialHashes.add(new Pair<>(VM_ID, INITIAL_HASH));
         doReturn(initialHashes).when(vmDynamicDao).getAllDevicesHashes();
         doReturn(Version.getLast()).when(vdsManager).getCompatibilityVersion();
-        doReturn(vdsManager).when(resourceManager).getVdsManager(any(Guid.class));
+        doReturn(vdsManager).when(resourceManager).getVdsManager(any());
 
         injectorRule.bind(TransactionManager.class, transactionManager);
 
@@ -149,8 +148,7 @@ public class VmDevicesMonitoringTest {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(new Map[] { getDumpXmls(VM_ID, deviceInfos) });
         returnValue.setSucceeded(true);
-        doReturn(returnValue).when(resourceManager).runVdsCommand(eq(VDSCommandType.DumpXmls),
-                any(DumpXmlsVDSCommand.Params.class));
+        doReturn(returnValue).when(resourceManager).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
     }
 
     @Test

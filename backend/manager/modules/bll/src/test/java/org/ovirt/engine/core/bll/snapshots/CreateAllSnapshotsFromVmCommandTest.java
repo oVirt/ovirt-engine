@@ -143,7 +143,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @Test
     public void testVmDuringSnaoshot() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT)).when(snapshotsValidator)
-                .vmNotDuringSnapshot(any(Guid.class));
+                .vmNotDuringSnapshot(any());
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()
@@ -154,7 +154,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @Test
     public void testVmInPreview() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW)).when(snapshotsValidator)
-                .vmNotInPreview(any(Guid.class));
+                .vmNotInPreview(any());
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()

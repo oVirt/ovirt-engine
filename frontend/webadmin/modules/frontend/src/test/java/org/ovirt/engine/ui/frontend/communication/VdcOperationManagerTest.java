@@ -42,7 +42,7 @@ public class VdcOperationManagerTest {
                 new VdcOperation<>(ActionType.AddNetworkOnProvider, new ActionParametersBase(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
-        verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
+        verify(mockEventBus).fireEvent(any());
         assertEquals("Operations must match", testOperation, testManager.pollOperation()); //$NON-NLS-1$
     }
 
@@ -51,12 +51,12 @@ public class VdcOperationManagerTest {
         VdcOperation<QueryType, QueryParametersBase> testOperation = new VdcOperation<>(QueryType.Search, new QueryParametersBase().withRefresh(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
-        verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
+        verify(mockEventBus).fireEvent(any());
         // Second add, shouldn't add and generate an event.
         testManager.addOperation(testOperation);
         // Verify it is only called once (from before)
         verify(mockOperationProcessor).processOperation(testManager);
-        verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
+        verify(mockEventBus).fireEvent(any());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class VdcOperationManagerTest {
         operationList.add(testOperation3);
         testManager.addOperationList(operationList);
         verify(mockOperationProcessor, times(3)).processOperation(testManager);
-        verify(mockEventBus, times(2)).fireEvent(any(EngineSessionRefreshedEvent.class));
+        verify(mockEventBus, times(2)).fireEvent(any());
         assertEquals("First poll should be action", testManager.pollOperation(), testOperation1); //$NON-NLS-1$
         assertEquals("Second poll should be query", testManager.pollOperation(), testOperation2); //$NON-NLS-1$
         assertNull("Third poll should be null", testManager.pollOperation()); //$NON-NLS-1$

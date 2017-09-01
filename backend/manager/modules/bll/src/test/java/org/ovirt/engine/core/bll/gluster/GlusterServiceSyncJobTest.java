@@ -255,8 +255,7 @@ public class GlusterServiceSyncJobTest {
         verify(serverServiceDao, times(1)).getByServerId(SERVER3_ID);
 
         // Fetch services statuses from all three servers
-        verify(syncJob, times(3)).runVdsCommand(eq(VDSCommandType.GlusterServicesList),
-                any(GlusterServicesListVDSParameters.class));
+        verify(syncJob, times(3)).runVdsCommand(eq(VDSCommandType.GlusterServicesList), any());
 
     }
 
@@ -266,7 +265,7 @@ public class GlusterServiceSyncJobTest {
 
         // Since there are no changes in any service status, there should be no database update
         verify(serverServiceDao, never()).updateAll(anyList());
-        verify(clusterServiceDao, never()).update(any(GlusterClusterService.class));
+        verify(clusterServiceDao, never()).update(any());
     }
 
     private void verifyNoChangesWithFailureOnServer1() {

@@ -151,7 +151,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
     protected void setUpCommand() {
         doNothing().when(command).initTemplate();
-        doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
+        doReturn(true).when(command).areTemplateImagesInStorageReady(any());
         doReturn(true).when(command).verifyAddVm();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).setAndValidateCpuProfile();
@@ -177,7 +177,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     private void mockDiskImageDao() {
-        when(diskImageDao.getSnapshotById(any(Guid.class))).thenReturn(getDiskImageList().get(0));
+        when(diskImageDao.getSnapshotById(any())).thenReturn(getDiskImageList().get(0));
     }
 
     private void mockStorageDomainDao(List<StorageDomain> storageDomains) {
@@ -314,6 +314,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
 
     protected void setupForStorageTests() {
-        doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(Guid.class), anySet());
+        doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(), anySet());
     }
 }

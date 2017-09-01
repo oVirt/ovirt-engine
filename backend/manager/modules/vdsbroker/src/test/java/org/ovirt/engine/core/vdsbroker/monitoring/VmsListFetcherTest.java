@@ -26,8 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -129,19 +127,14 @@ public class VmsListFetcherTest {
     }
 
     private void stubCalls(VmTestPairs data) {
-        when(resourceManager.runVdsCommand(
-                eq(VDSCommandType.List),
-                any(VdsIdAndVdsVDSCommandParametersBase.class))).
-                thenReturn(getVdsReturnValue(data.vdsmVm()));
+        when(resourceManager.runVdsCommand(eq(VDSCommandType.List), any())).thenReturn(getVdsReturnValue(data.vdsmVm()));
         if (data.dbVm() != null) {
             when(vmDynamicDao.getAllRunningForVds(VmTestPairs.SRC_HOST_ID)).
                     thenReturn(Collections.singletonList(data.dbVm().getDynamicData()));
         }
         if (data.vdsmVm() != null) {
-            when(resourceManager.runVdsCommand(
-                    eq(VDSCommandType.GetVmStats),
-                    any(VdsIdVDSCommandParametersBase.class))).
-                    thenReturn(getStatsReturnValue(data.vdsmVm()));
+            when(resourceManager.runVdsCommand(eq(VDSCommandType.GetVmStats), any()))
+                    .thenReturn(getStatsReturnValue(data.vdsmVm()));
         }
     }
 
@@ -171,10 +164,7 @@ public class VmsListFetcherTest {
     }
 
     private void stubFailedCalls() {
-        when(resourceManager.runVdsCommand(
-                any(VDSCommandType.class),
-                any(VdsIdAndVdsVDSCommandParametersBase.class))).
-                thenReturn(getFailedVdsReturnValue());
+        when(resourceManager.runVdsCommand(any(), any())).thenReturn(getFailedVdsReturnValue());
     }
 
     private VDSReturnValue getFailedVdsReturnValue() {

@@ -288,7 +288,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         StorageDomain dstSd = initStorageDomain(dstStorageId);
         dstSd.setStatus(StorageDomainStatus.Active);
 
-        when(diskVmElementValidator.isPassDiscardSupported(any(Guid.class))).thenReturn(
+        when(diskVmElementValidator.isPassDiscardSupported(any())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
@@ -326,7 +326,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         vm.setStoragePoolId(storagePoolId);
 
         doReturn(vm).when(command).getVm();
-        when(vmDao.get(any(Guid.class))).thenReturn(vm);
+        when(vmDao.get(any())).thenReturn(vm);
         when(vmDao.getVmsListForDisk(diskImageId, Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
     }
 
@@ -348,7 +348,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         storageDomain.setId(storageDomainId);
         storageDomain.setStoragePoolId(storagePoolId);
 
-        when(storageDomainDao.get(any(Guid.class))).thenReturn(storageDomain);
+        when(storageDomainDao.get(any())).thenReturn(storageDomain);
         when(storageDomainDao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
         return storageDomain;
@@ -357,7 +357,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     private void initStoragePool() {
         storagePool = new StoragePool();
 
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(storagePool);
+        when(storagePoolDao.get(any())).thenReturn(storagePool);
         when(command.getStoragePoolId()).thenReturn(storagePoolId);
     }
 

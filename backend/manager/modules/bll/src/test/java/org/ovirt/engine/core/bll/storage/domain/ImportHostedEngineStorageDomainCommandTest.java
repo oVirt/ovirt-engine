@@ -31,7 +31,6 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -46,11 +45,9 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDiskDao;
@@ -137,7 +134,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         verify(backend, times(1)).runInternalQuery(
                 eq(QueryType.GetExistingStorageDomainList),
-                any(QueryParametersBase.class));
+                any());
         verify(cmd, times(0)).executeCommand();
     }
 
@@ -154,7 +151,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
         verify(backend, times(1)).runInternalQuery(
                 eq(QueryType.GetExistingStorageDomainList),
-                any(QueryParametersBase.class));
+                any());
         verify(cmd, times(0)).executeCommand();
     }
 
@@ -185,8 +182,8 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
             .save(sd.getStorageStaticData().getConnection());
         verify(backend, times(1)).runInternalAction(
                 eq(ActionType.AddExistingFileStorageDomain),
-                any(ActionParametersBase.class),
-                any(CommandContext.class));
+                any(),
+                any());
     }
 
     @Test
@@ -198,7 +195,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         mockCommandCall(ActionType.RemoveDisk, false);
         mockCommandCall(ActionType.AddExistingBlockStorageDomain, true);
         doReturn(createVdsReturnValue(createSdLuns()))
-                .when(vdsBroker).runVdsCommand(eq(VDSCommandType.GetDeviceList), any(VDSParametersBase.class));
+                .when(vdsBroker).runVdsCommand(eq(VDSCommandType.GetDeviceList), any());
         mockCommandCall(ActionType.AttachStorageDomainToPool, true);
 
         cmd.init();
@@ -207,11 +204,11 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
 
         verify(backend, times(1)).runInternalAction(
                 eq(ActionType.RemoveDisk),
-                any(ActionParametersBase.class));
+                any());
         verify(backend, times(1)).runInternalAction(
                 eq(ActionType.AddExistingBlockStorageDomain),
-                any(ActionParametersBase.class),
-                any(CommandContext.class));
+                any(),
+                any());
 
         assertTrue(cmd.getReturnValue().getSucceeded());
         assertEquals(cmd.getReturnValue().getActionReturnValue(), sd);
@@ -258,7 +255,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
         vds.setStoragePoolId(HE_SP_ID);
-        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any())).thenReturn(vds);
         List<BaseDisk> baseDisks = Collections.singletonList(new BaseDisk());
         when(baseDiskDao.getDisksByAlias(anyString())).thenReturn(baseDisks);
         // Data center
@@ -282,12 +279,12 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         if (withContext) {
             doReturn(successfulReturnValue())
                     .when(backend).runInternalAction(eq(actionType),
-                    any(ActionParametersBase.class),
-                    any(CommandContext.class));
+                    any(),
+                    any());
         } else {
             doReturn(successfulReturnValue())
                     .when(backend).runInternalAction(eq(actionType),
-                    any(ActionParametersBase.class));
+                    any());
         }
 
     }
@@ -304,7 +301,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         doReturn(createQueryReturnValueWith(domains))
                 .when(backend).runInternalQuery(
                 eq(QueryType.GetExistingStorageDomainList),
-                any(QueryParametersBase.class));
+                any());
 
         return sd;
     }

@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -217,17 +216,16 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
         doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
         when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());
-        when(stepDao.getStepsByExternalId(any(Guid.class))).thenReturn(getStepsList());
-        when(glusterServerDao.getByGlusterServerUuid(any(Guid.class))).thenReturn(getGlusterServer());
-        when(vdsDao.get(any(Guid.class))).thenReturn(getVds(VDSStatus.Up));
-        when(clusterDao.get(any(Guid.class))).thenReturn(getCluster());
+        when(stepDao.getStepsByExternalId(any())).thenReturn(getStepsList());
+        when(glusterServerDao.getByGlusterServerUuid(any())).thenReturn(getGlusterServer());
+        when(vdsDao.get(any())).thenReturn(getVds(VDSStatus.Up));
+        when(clusterDao.get(any())).thenReturn(getCluster());
 
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(expectedVolumeStatusDetails);
 
-        doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeRemoveBricksStatus),
-                any(VDSParametersBase.class));
+        doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeRemoveBricksStatus), any());
     }
 
     @Test

@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -153,7 +152,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockVm();
         when(diskVmElementValidator.isDiskInterfaceSupported(any())).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(command.getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class))).thenReturn(diskVmElementValidator);
+        when(command.getDiskVmElementValidator(any(), any())).thenReturn(diskVmElementValidator);
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
@@ -363,16 +362,16 @@ public class AddDiskCommandTest extends BaseCommandTest {
     public void initializeMocks() {
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
-        doReturn(false).when(command).isVirtioScsiControllerAttached(any(Guid.class));
-        doReturn(false).when(command).hasWatchdog(any(Guid.class));
-        doReturn(false).when(command).isBalloonEnabled(any(Guid.class));
-        doReturn(false).when(command).isSoundDeviceEnabled(any(Guid.class));
+        doReturn(false).when(command).isVirtioScsiControllerAttached(any());
+        doReturn(false).when(command).hasWatchdog(any());
+        doReturn(false).when(command).isBalloonEnabled(any());
+        doReturn(false).when(command).isSoundDeviceEnabled(any());
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).validateQuota();
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
-                .when(quotaManager).getDefaultQuotaIfNull(any(Guid.class), any(Guid.class));
+                .when(quotaManager).getDefaultQuotaIfNull(any(), any());
 
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
@@ -399,7 +398,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
      */
     private void mockStoragePoolIsoMap() {
         StoragePoolIsoMap spim = new StoragePoolIsoMap();
-        when(storagePoolIsoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(spim);
+        when(storagePoolIsoMapDao.get(any())).thenReturn(spim);
     }
 
     protected void mockInterfaceList() {
@@ -423,7 +422,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
         StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
-        when(storageDomainValidator.hasSpaceForNewDisk(any(DiskImage.class))).thenReturn(
+        when(storageDomainValidator.hasSpaceForNewDisk(any())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         return storageDomainValidator;
     }
@@ -638,7 +637,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
 
         List<LUNs> luns = Collections.singletonList(disk.getLun());
-        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), anyString());
+        doReturn(luns).when(command).executeGetDeviceList(any(), any(), anyString());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -649,7 +648,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         List<LUNs> luns = Collections.singletonList(disk.getLun());
         initializeCommand(Guid.newGuid());
 
-        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), anyString());
+        doReturn(luns).when(command).executeGetDeviceList(any(), any(), anyString());
         assertEquals(disk.getLun(), command.getLunDisk(disk.getLun(), vds));
     }
 
@@ -667,7 +666,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
 
         List<LUNs> luns = Collections.emptyList();
-        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), anyString());
+        doReturn(luns).when(command).executeGetDeviceList(any(), any(), anyString());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
     }
@@ -679,7 +678,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         List<LUNs> luns = Collections.emptyList();
         initializeCommand(Guid.newGuid());
 
-        doReturn(luns).when(command).executeGetDeviceList(any(Guid.class), any(StorageType.class), anyString());
+        doReturn(luns).when(command).executeGetDeviceList(any(), any(), anyString());
         assertNull(command.getLunDisk(disk.getLun(), vds));
     }
 
@@ -756,10 +755,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         mockMaxPciSlots();
 
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
-                Collections.singletonList("VirtIO"));
+        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(Collections.singletonList("VirtIO"));
 
-        doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any(Guid.class));
+        doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any());
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
@@ -811,10 +809,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockVm();
         mockMaxPciSlots();
 
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn(
+        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(
                 Collections.singletonList("VirtIO_SCSI"));
 
-        doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any(Guid.class));
+        doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any());
 
         mockInterfaceList();
 
@@ -855,7 +853,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(true).when(command).isDiskPassPciAndIdeLimit();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
                 when(diskVmElementValidator).isReadOnlyPropertyCompatibleWithInterface();
-        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class));
+        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
 
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
@@ -871,7 +869,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         doReturn(true).when(command).isDiskPassPciAndIdeLimit();
         doReturn(true).when(command).checkIfImageDiskCanBeAdded(any(), any());
-        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class));
+        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -928,10 +926,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
         storagePool.setCompatibilityVersion(Version.v4_1);
         command.setStoragePool(storagePool);
         command.getParameters().getDiskVmElement().setPassDiscard(true);
-        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(
-                any(Disk.class), any(DiskVmElement.class));
+        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE))
-                .when(diskVmElementValidator).isPassDiscardSupported(any(Guid.class));
+                .when(diskVmElementValidator).isPassDiscardSupported(any());
         mcr.mockConfigValue(
             ConfigValues.PassDiscardSupported,
             command.getStoragePool().getCompatibilityVersion(),

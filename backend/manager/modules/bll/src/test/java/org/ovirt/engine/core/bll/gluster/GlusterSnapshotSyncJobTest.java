@@ -88,10 +88,10 @@ public class GlusterSnapshotSyncJobTest {
     @Before
     public void init() {
         doReturn(getClusters()).when(clusterDao).getAll();
-        doReturn(getValidCluster()).when(clusterDao).get(any(Guid.class));
+        doReturn(getValidCluster()).when(clusterDao).get(any());
         doReturn(getVolumes()).when(volumeDao).getByClusterId(CLUSTER_ID_1);
-        doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
-        doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any(Guid.class));
+        doReturn(getServer()).when(glusterUtil).getRandomUpServer(any());
+        doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(getSnapshotVDSReturnVal()).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeSnapshotInfo),
                         argThat(snapshotInfoParam()));
-        when(volumeDao.getById(any(Guid.class))).thenReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1));
+        when(volumeDao.getById(any())).thenReturn(getVolume(CLUSTER_ID_1, VOLUME_ID_1, VOLUME_NAME_1));
         syncJob.refreshSnapshotList();
         verify(snapshotDao, times(1)).saveAll(anyList());
         verify(snapshotDao, times(1)).removeAll(anyList());
@@ -120,11 +120,11 @@ public class GlusterSnapshotSyncJobTest {
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeSnapshotConfigInfo),
                         argThat(snapshotInfoParam()));
         syncJob.refreshSnapshotConfig();
-        verify(snapshotConfigDao, times(3)).save(any(GlusterVolumeSnapshotConfig.class));
+        verify(snapshotConfigDao, times(3)).save(any());
         verify(snapshotConfigDao, times(1)).updateConfigByClusterIdAndName(
-                any(Guid.class), anyString(), anyString());
+                any(), anyString(), anyString());
         verify(snapshotConfigDao, times(1)).updateConfigByVolumeIdAndName(
-                any(Guid.class), any(Guid.class), anyString(), anyString());
+                any(), any(), anyString(), anyString());
     }
 
     private GlusterVolumeSnapshotConfig getClusterSnapMaxLimit() {

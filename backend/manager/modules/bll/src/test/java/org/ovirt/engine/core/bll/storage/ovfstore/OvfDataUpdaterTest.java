@@ -68,14 +68,14 @@ public class OvfDataUpdaterTest {
             Guid storagePoolId = (Guid) invocation.getArguments()[0];
             map.put(storagePoolId, domains);
             return returnValueBase;
-        }).when(ovfDataUpdater).performOvfUpdateForStoragePool(any(Guid.class));
+        }).when(ovfDataUpdater).performOvfUpdateForStoragePool(any());
 
         doAnswer(invocation -> {
             Guid storagePoolId = (Guid) invocation.getArguments()[0];
             Guid storageDomainId = (Guid) invocation.getArguments()[1];
             map.get(storagePoolId).put(storageDomainId, Boolean.TRUE);
             return null;
-        }).when(ovfDataUpdater).performOvfUpdateForDomain(any(Guid.class), any(Guid.class));
+        }).when(ovfDataUpdater).performOvfUpdateForDomain(any(), any());
     }
 
     private void verify() {

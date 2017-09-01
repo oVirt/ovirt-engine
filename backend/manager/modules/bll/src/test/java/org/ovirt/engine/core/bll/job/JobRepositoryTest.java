@@ -86,7 +86,7 @@ public class JobRepositoryTest {
     }
 
     private void mockJobDao(Job job) {
-        when(jobDao.get(any(Guid.class))).thenReturn(job);
+        when(jobDao.get(any())).thenReturn(job);
     }
 
     private void mockStepDao(Guid jobId) {
@@ -99,7 +99,7 @@ public class JobRepositoryTest {
         when(jobSubjectEntityDao.getJobSubjectEntityByJobId(eq(jobId)))
                 .thenReturn(JOB_SUBJECT_ENTITIES_MAP);
 
-        when(jobSubjectEntityDao.getJobIdByEntityId(any(Guid.class))).thenReturn(Collections.singletonList(jobId));
+        when(jobSubjectEntityDao.getJobIdByEntityId(any())).thenReturn(Collections.singletonList(jobId));
     }
 
     private void mockDaos(Job job) {

@@ -20,9 +20,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -30,13 +28,10 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -89,28 +84,26 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         StoragePool pool = new StoragePool();
         pool.setId(poolId);
         pool.setStatus(StoragePoolStatus.Up);
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(pool);
-        when(isoMapDao.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
-        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
-        when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
+        when(storagePoolDao.get(any())).thenReturn(pool);
+        when(isoMapDao.get(any())).thenReturn(map);
+        when(storageDomainDao.getForStoragePool(any(), any())).thenReturn(new StorageDomain());
+        when(storageDomainStaticDao.get(any())).thenReturn(new StorageDomainStatic());
         doReturn(pool.getId()).when(cmd).getStoragePoolIdFromVds();
         ActionReturnValue actionReturnValue = new ActionReturnValue();
         actionReturnValue.setSucceeded(true);
-        when(backendInternal.runInternalAction(any(ActionType.class),
-                any(ActionParametersBase.class),
-                any(CommandContext.class))).thenReturn(actionReturnValue);
+        when(backendInternal.runInternalAction(any(), any(), any())).thenReturn(actionReturnValue);
         StorageDomainStatic storageDomain = new StorageDomainStatic();
         storageDomain.setId(Guid.newGuid());
         storageDomain.setStorageDomainType(StorageDomainType.ImportExport);
         mockGetStorageDomainInfoVdsCommand(storageDomain);
         mockAttachStorageDomainVdsCommand();
-        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any())).thenReturn(vds);
         doReturn(Collections.emptyList()).when(cmd).getEntitiesFromStorageOvfDisk(storageDomainId, pool.getId());
         doReturn(Collections.emptyList()).when(cmd).getAllOVFDisks(storageDomainId, pool.getId());
         doAnswer(invocation -> {
             map = (StoragePoolIsoMap) invocation.getArguments()[0];
             return null;
-        }).when(isoMapDao).save(any(StoragePoolIsoMap.class));
+        }).when(isoMapDao).save(any());
 
         cmd.setCompensationContext(mock(CompensationContext.class));
         cmd.executeCommand();
@@ -121,8 +114,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
     private void mockAttachStorageDomainVdsCommand() {
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.AttachStorageDomain),
-                any(AttachStorageDomainVDSCommandParameters.class))).thenReturn(returnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.AttachStorageDomain), any())).thenReturn(returnValue);
     }
 
     private void mockGetStorageDomainInfoVdsCommand(StorageDomainStatic storageDomain) {
@@ -130,7 +122,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         VDSReturnValue returnValueForGetStorageDomainInfo = new VDSReturnValue();
         returnValueForGetStorageDomainInfo.setSucceeded(true);
         returnValueForGetStorageDomainInfo.setReturnValue(pairResult);
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
-                any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValueForGetStorageDomainInfo);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo), any()))
+                .thenReturn(returnValueForGetStorageDomainInfo);
     }
 }

@@ -46,7 +46,7 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
         quotaList.add(new Quota());
         quotaList.add(new Quota());
         when(quotaDao.getQuotaByStoragePoolGuid(storagePoolUUID)).thenReturn(quotaList);
-        when(quotaDao.isQuotaInUse(any(Quota.class))).thenReturn(false);
+        when(quotaDao.isQuotaInUse(any())).thenReturn(false);
     }
 
     @Test

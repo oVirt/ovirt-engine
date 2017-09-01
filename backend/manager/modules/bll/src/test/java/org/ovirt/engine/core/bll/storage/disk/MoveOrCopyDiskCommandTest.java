@@ -273,7 +273,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockStorageDomainValidatorWithoutSpace() {
-        when(storageDomainValidator.hasSpaceForDiskWithSnapshots(any(DiskImage.class))).thenReturn(
+        when(storageDomainValidator.hasSpaceForDiskWithSnapshots(any())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 
@@ -312,7 +312,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         command.getParameters().setOperation(imageOperation);
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
         doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
-        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSd(any(Guid.class)))
-                .thenReturn(validationResult);
+        when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSd(any())).thenReturn(validationResult);
     }
 }

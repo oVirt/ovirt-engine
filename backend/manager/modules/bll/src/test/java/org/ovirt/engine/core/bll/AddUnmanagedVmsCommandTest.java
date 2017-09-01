@@ -64,7 +64,7 @@ public class AddUnmanagedVmsCommandTest {
 
     @Before
     public void setup() {
-        doNothing().when(addUnamangedVmsCommand).addExternallyManagedVm(any(VmStatic.class));
+        doNothing().when(addUnamangedVmsCommand).addExternallyManagedVm(any());
         doNothing().when(addUnamangedVmsCommand).addDevices(anyMap(), anyLong());
         doNothing().when(addUnamangedVmsCommand).importHostedEngineVm(any(VM.class));
     }
@@ -90,7 +90,7 @@ public class AddUnmanagedVmsCommandTest {
     @Test
     public void shouldDetectHostedEngineVM() throws IOException {
         addUnamangedVmsCommand.importHostedEngineVm(hosted_engine);
-        verify(addUnamangedVmsCommand, times(0)).addExternallyManagedVm(any(VmStatic.class));
+        verify(addUnamangedVmsCommand, times(0)).addExternallyManagedVm(any());
         verify(addUnamangedVmsCommand).importHostedEngineVm(argThat(new HEVmMatcher()));
     }
 

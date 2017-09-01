@@ -25,7 +25,6 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -33,8 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -141,11 +138,11 @@ public class ConfigureConsoleOptionsQueryTest extends
         ActionReturnValue result = new ActionReturnValue();
         result.setSucceeded(true);
         result.setActionReturnValue("nbusr123");
-        doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any(SetVmTicketParameters.class));
+        doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any());
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
-        verify(backend, times(1)).runAction(eq(ActionType.SetVmTicket), any(SetVmTicketParameters.class));
+        verify(backend, times(1)).runAction(eq(ActionType.SetVmTicket), any());
     }
 
     @Test
@@ -159,7 +156,7 @@ public class ConfigureConsoleOptionsQueryTest extends
 
         QueryReturnValue caResult = new QueryReturnValue();
         caResult.setSucceeded(false);
-        doReturn(caResult).when(backend).runInternalQuery(eq(QueryType.GetCACertificate), any(QueryParametersBase.class));
+        doReturn(caResult).when(backend).runInternalQuery(eq(QueryType.GetCACertificate), any());
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
@@ -271,14 +268,14 @@ public class ConfigureConsoleOptionsQueryTest extends
         caCertificateReturnValue.setSucceeded(true);
         caCertificateReturnValue.setReturnValue(CA_CERTIFICATE);
         doReturn(caCertificateReturnValue).when(backend)
-                .runInternalQuery(eq(QueryType.GetCACertificate), any(QueryParametersBase.class));
+                .runInternalQuery(eq(QueryType.GetCACertificate), any());
     }
 
     void mockGetVdsCertificateSubjectByVmId() {
         QueryReturnValue hostSubjectReturnValue = new QueryReturnValue();
         hostSubjectReturnValue.setReturnValue(HOST_SUBJECT);
         doReturn(hostSubjectReturnValue).when(backend)
-                .runInternalQuery(eq(QueryType.GetVdsCertificateSubjectByVmId), any(IdQueryParameters.class));
+                .runInternalQuery(eq(QueryType.GetVdsCertificateSubjectByVmId), any());
     }
 
 }

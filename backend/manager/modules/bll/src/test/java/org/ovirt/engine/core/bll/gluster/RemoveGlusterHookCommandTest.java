@@ -28,8 +28,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 
 
@@ -53,7 +51,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
 
     private void setUpMocksForRemove(boolean hookFound, GlusterHookEntity hook, VDSStatus status) {
         setupMocks(hookFound, hook);
-        when(vdsDao.getAllForCluster(any(Guid.class))).thenReturn(getServers(status));
+        when(vdsDao.getAllForCluster(any())).thenReturn(getServers(status));
     }
 
     private List<VDS> getServers(VDSStatus status) {
@@ -73,7 +71,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.RemoveGlusterHook), any(GlusterHookVDSParameters.class))).thenReturn(vdsReturnValue);
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.RemoveGlusterHook), any())).thenReturn(vdsReturnValue);
      }
 
     @Test
@@ -81,7 +79,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         setUpMocksForRemove();
         mockBackend(true, null);
         cmd.executeCommand();
-        verify(hooksDao, times(1)).remove(any(Guid.class));
+        verify(hooksDao, times(1)).remove(any());
         assertEquals(AuditLogType.GLUSTER_HOOK_REMOVED, cmd.getAuditLogTypeValue());
     }
 
@@ -91,7 +89,7 @@ public class RemoveGlusterHookCommandTest extends GlusterHookCommandTest<RemoveG
         setUpMocksForRemove();
         mockBackend(false, EngineError.GlusterHookRemoveFailed);
         cmd.executeCommand();
-        verify(hooksDao, never()).remove(any(Guid.class));
+        verify(hooksDao, never()).remove(any());
         assertEquals(AuditLogType.GLUSTER_HOOK_REMOVE_FAILED, cmd.getAuditLogTypeValue());
     }
 

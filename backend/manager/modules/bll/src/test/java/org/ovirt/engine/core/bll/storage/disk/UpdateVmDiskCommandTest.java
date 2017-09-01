@@ -43,7 +43,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -354,7 +353,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockVdsCommandSetVolumeDescription() {
-        doNothing().when(command).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
+        doNothing().when(command).setVolumeDescription(any(), any());
     }
 
     @Test
@@ -370,7 +369,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         verify(command, atLeast(1)).updateReadOnlyRequested();
         assertTrue(command.updateReadOnlyRequested());
-        verify(vmDeviceDao).update(any(VmDevice.class));
+        verify(vmDeviceDao).update(any());
     }
 
     @Test
@@ -386,7 +385,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(createDiskImage()).when(command).getOldDisk();
         stubVmDevice(diskImageGuid, vmId);
 
-        when(diskVmElementValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+        when(diskVmElementValidator.isDiskInterfaceSupported(any())).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(command.getParameters().getDiskInfo())).thenReturn(diskValidator);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
@@ -402,7 +401,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         verify(command, atLeast(1)).updateReadOnlyRequested();
         assertFalse(command.updateReadOnlyRequested());
-        verify(vmDeviceDao, never()).update(any(VmDevice.class));
+        verify(vmDeviceDao, never()).update(any());
     }
 
     @Test
@@ -469,7 +468,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
         verify(command, times(1)).amendDiskImage();
-        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
+        verify(command, times(1)).setVolumeDescription(any(), any());
     }
 
     @Test
@@ -490,12 +489,12 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         ArrayList<String> msgList = new ArrayList<>();
         msgList.add(EngineMessage.ACTION_TYPE_FAILED_AMEND_NOT_SUPPORTED_BY_DC_VERSION.toString());
         ret.setValidationMessages(msgList);
-        when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
+        when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(), any())).thenReturn(ret);
         mockVdsCommandSetVolumeDescription();
         mockGetAllSnapshotsForDisk(Collections.singletonList(oldDisk));
         command.executeVmCommand();
         verify(command, times(1)).amendDiskImage();
-        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
+        verify(command, times(1)).setVolumeDescription(any(), any());
     }
 
     @Test
@@ -543,7 +542,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockGetAllSnapshotsForDisk(List<DiskImage> images) {
-        when(diskImageDao.getAllSnapshotsForImageGroup(any(Guid.class))).thenReturn(images);
+        when(diskImageDao.getAllSnapshotsForImageGroup(any())).thenReturn(images);
     }
 
     @Test
@@ -585,10 +584,10 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
-                .when(quotaManager).getDefaultQuotaIfNull(any(Guid.class), any(Guid.class));
+                .when(quotaManager).getDefaultQuotaIfNull(any(), any());
 
-        doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
-        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(Disk.class), any(DiskVmElement.class));
+        doReturn(diskValidator).when(command).getDiskValidator(any());
+        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
         doReturn(true).when(command).setAndValidateDiskProfiles();
 
         doReturn(true).when(command).validateQuota();
@@ -601,12 +600,12 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         StorageDomain sd = new StorageDomain();
         sd.setAvailableDiskSize(Integer.MAX_VALUE);
         sd.setStatus(StorageDomainStatus.Active);
-        when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(sd);
+        when(storageDomainDao.getForStoragePool(any(), any())).thenReturn(sd);
         StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
-        doReturn(sdValidator).when(command).getStorageDomainValidator(any(DiskImage.class));
+        doReturn(sdValidator).when(command).getStorageDomainValidator(any());
         ActionReturnValue ret = new ActionReturnValue();
         ret.setSucceeded(true);
-        when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
+        when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(), any())).thenReturn(ret);
         command.init();
         doReturn(ActionType.UpdateVmDisk).when(command).getActionType();
     }
@@ -639,7 +638,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
-        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
+        verify(command, times(1)).setVolumeDescription(any(), any());
     }
 
     @Test
@@ -650,7 +649,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
-        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
+        verify(command, times(1)).setVolumeDescription(any(), any());
     }
 
     @Test
@@ -661,7 +660,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
-        verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
+        verify(command, times(1)).setVolumeDescription(any(), any());
     }
 
     @Test
@@ -695,10 +694,10 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         Quota quota = new Quota();
         quota.setId(Guid.newGuid());
 
-        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
+        when(quotaDao.getById(any())).thenReturn(null);
         when(quotaDao.getById(quota.getId())).thenReturn(quota);
 
-        when(diskDao.get(any(Guid.class))).thenReturn(createDiskImage());
+        when(diskDao.get(any())).thenReturn(createDiskImage());
 
         ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(quota.getId());
         initializeCommand();
@@ -714,9 +713,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void testNonExistingQuota() {
-        when(quotaDao.getById(any(Guid.class))).thenReturn(null);
+        when(quotaDao.getById(any())).thenReturn(null);
 
-        when(diskDao.get(any(Guid.class))).thenReturn(createDiskImage());
+        when(diskDao.get(any())).thenReturn(createDiskImage());
 
         ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(Guid.newGuid());
         initializeCommand();
@@ -735,7 +734,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     public void validateDiscardFailedNotSupportedByDiskInterface() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         initializeCommand();
-        when(diskVmElementValidator.isPassDiscardSupported(any(Guid.class))).thenReturn(
+        when(diskVmElementValidator.isPassDiscardSupported(any())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
@@ -781,7 +780,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     protected void mockInterfaceList() {
-        when(osRepository.getDiskInterfaces(anyInt(), any(Version.class))).thenReturn
+        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn
                 (Arrays.asList("IDE", "VirtIO", "VirtIO_SCSI"));
     }
 

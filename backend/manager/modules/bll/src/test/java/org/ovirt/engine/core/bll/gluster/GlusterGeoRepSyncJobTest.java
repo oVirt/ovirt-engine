@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -81,9 +80,9 @@ public class GlusterGeoRepSyncJobTest {
     @Before
     public void init() {
         doReturn(getClusters()).when(clusterDao).getAll();
-        doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), anyString());
-        doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
-        doReturn(getServer()).when(glusterUtil).getRandomUpServer(any(Guid.class));
+        doReturn(getVolume()).when(volumeDao).getByName(any(), anyString());
+        doReturn(getVolume()).when(volumeDao).getById(any());
+        doReturn(getServer()).when(glusterUtil).getRandomUpServer(any());
         doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUID);
     }
 
@@ -91,41 +90,36 @@ public class GlusterGeoRepSyncJobTest {
     public void testDiscoverGeoRepData() {
 
         doReturn(getSessionsVDSReturnVal(2)).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
-                        any(GlusterVolumeGeoRepSessionVDSParameters.class));
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList), any());
         syncJob.discoverGeoRepData();
-        verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
+        verify(geoRepDao, times(2)).save(any());
     }
 
     @Test
     public void testDiscoverGeoRepDataWithConfig() {
 
         doReturn(getSessionsVDSReturnVal(2)).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
-                        any(GlusterVolumeGeoRepSessionVDSParameters.class));
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList), any());
         doReturn(getSessionsConfigListVDSReturnVal()).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepConfigList),
-                any(GlusterVolumeGeoRepSessionVDSParameters.class));
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepConfigList), any());
         syncJob.discoverGeoRepData();
-        verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
-        verify(geoRepDao, times(2)).saveConfig(any(GlusterGeoRepSessionConfiguration.class));
+        verify(geoRepDao, times(2)).save(any());
+        verify(geoRepDao, times(2)).saveConfig(any());
     }
 
     @Test
     public void testDiscoverGeoRepDataWhenNoSessions() {
 
         doReturn(getSessionsVDSReturnVal(0)).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
-                        any(GlusterVolumeGeoRepSessionVDSParameters.class));
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList), any());
         syncJob.discoverGeoRepData();
-        verify(geoRepDao, times(0)).save(any(GlusterGeoRepSession.class));
+        verify(geoRepDao, times(0)).save(any());
     }
 
     @Test
     public void testRefreshStatus() {
         doReturn(getSessionDetailsVDSReturnVal(true)).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus),
-                any(GlusterVolumeGeoRepSessionVDSParameters.class));
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus), any());
         syncJob.refreshGeoRepSessionStatus();
         verify(geoRepDao, times(2)).saveOrUpdateDetailsInBatch(anyList());
     }
@@ -133,8 +127,7 @@ public class GlusterGeoRepSyncJobTest {
     @Test
     public void testRefreshStatusNoSessions() {
         doReturn(getSessionDetailsVDSReturnVal(false)).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus),
-                        any(GlusterVolumeGeoRepSessionVDSParameters.class));
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus), any());
         syncJob.refreshGeoRepSessionStatus();
         verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(anyList());
     }

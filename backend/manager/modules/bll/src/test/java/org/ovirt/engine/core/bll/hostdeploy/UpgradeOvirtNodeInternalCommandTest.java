@@ -57,7 +57,7 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
     public void mockVdsDao() {
         VDS vds = new VDS();
         vds.setVdsType(VDSType.oVirtVintageNode);
-        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any())).thenReturn(vds);
     }
 
     private static InstallVdsParameters createParameters() {
@@ -70,7 +70,7 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setVdsType(VDSType.oVirtVintageNode);
         vds.setHostOs(osVersion);
-        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any())).thenReturn(vds);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsIfHostDoesNotExists() {
-        when(vdsDao.get(any(Guid.class))).thenReturn(null);
+        when(vdsDao.get(any())).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
     }
 

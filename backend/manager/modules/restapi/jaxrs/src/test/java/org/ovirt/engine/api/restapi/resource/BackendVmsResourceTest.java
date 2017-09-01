@@ -319,7 +319,7 @@ public class BackendVmsResourceTest
                 getTemplateEntity(0));
 
 
-        when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(false);
+        when(osRepository.isBalloonEnabled(anyInt(), any())).thenReturn(false);
 
         setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,

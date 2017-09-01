@@ -115,7 +115,7 @@ public class UiVdcActionTest extends AsyncUiActionTest<IFrontendActionAsyncCallb
     private List<IFrontendActionAsyncCallback> verfifyRunAction(int exepectedNumOfRunActionExecutions,
             boolean showErrorDialog) {
         verify(frontend, times(exepectedNumOfRunActionExecutions)).runAction(eq(ACTION_TYPE),
-                any(ActionParametersBase.class),
+                any(),
                 callbackCaptor.capture(),
                 eq(showErrorDialog));
         List<IFrontendActionAsyncCallback> callbacks = callbackCaptor.getAllValues();

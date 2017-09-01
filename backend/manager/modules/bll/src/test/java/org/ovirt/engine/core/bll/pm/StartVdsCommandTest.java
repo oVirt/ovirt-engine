@@ -23,23 +23,19 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -128,7 +124,7 @@ public class StartVdsCommandTest extends BaseCommandTest {
         } else {
             result = new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN);
         }
-        doReturn(result).when(executor).fence(any(FenceActionType.class));
+        doReturn(result).when(executor).fence(any());
     }
 
     /**
@@ -142,8 +138,7 @@ public class StartVdsCommandTest extends BaseCommandTest {
         try {
             command.executeCommand();
         } catch (EngineException exception) {
-            verify(vdsBrokerFrontend).runVdsCommand(eq(VDSCommandType.SetVdsStatus),
-                    any(SetVdsStatusVDSCommandParameters.class));
+            verify(vdsBrokerFrontend).runVdsCommand(eq(VDSCommandType.SetVdsStatus), any());
             return;
         }
         fail();
@@ -177,7 +172,7 @@ public class StartVdsCommandTest extends BaseCommandTest {
         mockExecutor(true);
         doNothing().when(command).teardown();
         command.executeCommand();
-        verify(auditLogDirector, times(2)).log(any(AuditLogable.class), any(AuditLogType.class));
+        verify(auditLogDirector, times(2)).log(any(), any());
 
     }
 
@@ -195,7 +190,7 @@ public class StartVdsCommandTest extends BaseCommandTest {
             command.executeCommand();
             fail();
         } catch (EngineException ex) {
-            verify(auditLogDirector, times(3)).log(any(AuditLogable.class), any(AuditLogType.class));
+            verify(auditLogDirector, times(3)).log(any(), any());
         }
     }
 }

@@ -435,12 +435,11 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(QueryType.GetGlusterVolumeBricks), any(IdQueryParameters.class))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(QueryType.GetGlusterVolumeBricks), any())).thenThrow((Exception) failure);
                 return;
             }
         }
-        when(backend.runQuery(eq(QueryType.GetGlusterVolumeBricks), any(IdQueryParameters.class))).thenReturn(
-                queryResult);
+        when(backend.runQuery(eq(QueryType.GetGlusterVolumeBricks), any())).thenReturn(queryResult);
     }
 
     private void setUpGetEntityExpectationsAllContent(boolean notFound) throws Exception {

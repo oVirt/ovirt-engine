@@ -52,7 +52,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
         vds.setId(vdsId);
         vds.setVdsType(VDSType.oVirtVintageNode);
         vds.setHostOs(AVAILABLE_OVIRT_ISO_VERSION);
-        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any())).thenReturn(vds);
 
         when(getQueryParameters().getId()).thenReturn(vdsId);
 
@@ -70,7 +70,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
         vds.setId(vdsId);
         vds.setVdsType(VDSType.oVirtVintageNode);
         vds.setHostOs(UNAVAILABLE_OVIRT_ISO_VERSION);
-        when(vdsDao.get(any(Guid.class))).thenReturn(vds);
+        when(vdsDao.get(any())).thenReturn(vds);
 
         when(getQueryParameters().getId()).thenReturn(vdsId);
 

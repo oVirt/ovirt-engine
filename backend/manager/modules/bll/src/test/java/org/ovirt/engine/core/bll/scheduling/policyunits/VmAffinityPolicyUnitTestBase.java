@@ -60,8 +60,8 @@ public class VmAffinityPolicyUnitTestBase {
         newVm = createVMDown(cluster);
 
         when(pendingResourceManager.pendingResources(any())).thenReturn(Collections.emptyList());
-        when(affinityGroupDao.getAllAffinityGroupsByVmId(any(Guid.class))).thenReturn(affinityGroups);
-        when(vmDao.getAllRunningByCluster(any(Guid.class))).thenReturn(runningVMs);
+        when(affinityGroupDao.getAllAffinityGroupsByVmId(any())).thenReturn(affinityGroups);
+        when(vmDao.getAllRunningByCluster(any())).thenReturn(runningVMs);
     }
 
     protected VDS createHost(Cluster cluster) {

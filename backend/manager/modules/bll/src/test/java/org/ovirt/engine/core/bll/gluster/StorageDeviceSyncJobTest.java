@@ -144,7 +144,7 @@ public class StorageDeviceSyncJobTest {
     public void testRefreshStorageDevices() {
         mockVdsCommand();
         syncJob.refreshStorageDevices();
-        verify(storageDeviceDao, times(5)).save(any(StorageDevice.class));
+        verify(storageDeviceDao, times(5)).save(any());
         verify(storageDeviceDao, times(2)).removeAllInBatch(anyList());
         verify(storageDeviceDao, times(1)).updateAllInBatch(anyList());
     }

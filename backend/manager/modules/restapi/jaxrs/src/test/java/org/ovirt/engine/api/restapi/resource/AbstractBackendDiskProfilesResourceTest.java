@@ -20,7 +20,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,14 +29,10 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
 
     protected static final Guid STORAGE_DOMAIN_ID = GUIDS[1];
     private final QueryType listQueryType;
-    private final Class<? extends QueryParametersBase> listQueryParamsClass;
 
-    public AbstractBackendDiskProfilesResourceTest(C collection,
-            QueryType listQueryType,
-            Class<? extends QueryParametersBase> queryParamsClass) {
+    public AbstractBackendDiskProfilesResourceTest(C collection, QueryType listQueryType) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
-        this.listQueryParamsClass = queryParamsClass;
     }
 
     @Test
@@ -200,13 +195,11 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(listQueryType),
-                        any(listQueryParamsClass))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(listQueryType), any())).thenThrow((Exception) failure);
                 return;
             }
         }
-        when(backend.runQuery(eq(listQueryType), any(listQueryParamsClass))).thenReturn(
-                queryResult);
+        when(backend.runQuery(eq(listQueryType), any())).thenReturn(queryResult);
     }
 
     static DiskProfile getModel(int index) {

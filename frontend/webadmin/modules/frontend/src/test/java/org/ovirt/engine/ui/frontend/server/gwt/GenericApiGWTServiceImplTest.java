@@ -86,8 +86,7 @@ public class GenericApiGWTServiceImplTest {
 
         underTest.runMultipleQueries(queryTypeList, queryParamsList);
 
-        Mockito.verify(backendLocal, Mockito.times(2)).runQuery(any(QueryType.class),
-                any(QueryParametersBase.class));
+        Mockito.verify(backendLocal, Mockito.times(2)).runQuery(any(), any());
     }
 
 }

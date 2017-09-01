@@ -32,7 +32,6 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -50,7 +49,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -188,7 +186,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
         doReturn(false).when(command).isVmTemplateWithSameNameExist();
         doReturn(true).when(command).isClusterCompatible();
-        doReturn(true).when(command).validateNoDuplicateDiskImages(any(Iterable.class));
+        doReturn(true).when(command).validateNoDuplicateDiskImages(any());
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType);
         mockStorageDomainStatic(storageType);
         mockStoragePool();
@@ -219,7 +217,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     private void mockStoragePool() {
         final StoragePool pool = new StoragePool();
         pool.setId(command.getParameters().getStoragePoolId());
-        when(storagePoolDao.get(any(Guid.class))).thenReturn(pool);
+        when(storagePoolDao.get(any())).thenReturn(pool);
     }
 
     private void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat, VolumeType volumeType) {
@@ -235,14 +233,14 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         result.setReturnValue(resultMap);
         result.setSucceeded(true);
 
-        when(command.getBackend().runInternalQuery(eq(QueryType.GetTemplatesFromExportDomain),
-                any(QueryParametersBase.class), any(EngineContext.class))).thenReturn(result);
+        when(command.getBackend().runInternalQuery(
+                eq(QueryType.GetTemplatesFromExportDomain), any(), any())).thenReturn(result);
     }
 
     private void mockStorageDomainStatic(StorageType storageType) {
         final StorageDomainStatic domain = new StorageDomainStatic();
         domain.setStorageType(storageType);
-        when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(domain);
+        when(storageDomainStaticDao.get(any())).thenReturn(domain);
     }
 
     protected ImportVmTemplateParameters createParameters() {

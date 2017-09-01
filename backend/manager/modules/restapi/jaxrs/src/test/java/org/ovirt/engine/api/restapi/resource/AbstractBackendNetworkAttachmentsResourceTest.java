@@ -243,12 +243,11 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(listQueryType),
-                        any(IdQueryParameters.class))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(listQueryType), any())).thenThrow((Exception) failure);
                 return;
             }
         }
-        when(backend.runQuery(eq(listQueryType), any(IdQueryParameters.class))).thenReturn(queryResult);
+        when(backend.runQuery(eq(listQueryType), any())).thenReturn(queryResult);
     }
 
     /**
@@ -260,7 +259,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         VDS host = mock(VDS.class);
         result.setSucceeded(true);
         result.setReturnValue(host);
-        when(backend.runQuery(eq(QueryType.GetVdsByVdsId), any(IdQueryParameters.class))).thenReturn(result);
+        when(backend.runQuery(eq(QueryType.GetVdsByVdsId), any())).thenReturn(result);
 
         QueryReturnValue interfacesByVdsIdResult = new QueryReturnValue();
         interfacesByVdsIdResult.setSucceeded(true);
@@ -269,7 +268,6 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         hostNic.setId(HOST_NIC_ID);
         List<VdsNetworkInterface> hostNics = Collections.singletonList(hostNic);
         interfacesByVdsIdResult.setReturnValue(hostNics);
-        when(backend.runQuery(eq(QueryType.GetVdsInterfacesByVdsId), any(IdQueryParameters.class)))
-                .thenReturn(interfacesByVdsIdResult);
+        when(backend.runQuery(eq(QueryType.GetVdsInterfacesByVdsId), any())).thenReturn(interfacesByVdsIdResult);
     }
 }
