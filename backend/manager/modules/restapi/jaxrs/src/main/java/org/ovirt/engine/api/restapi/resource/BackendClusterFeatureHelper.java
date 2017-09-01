@@ -16,6 +16,8 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
@@ -37,7 +39,8 @@ public class BackendClusterFeatureHelper {
                 new IdQueryParameters(clusterId),
                 clusterId.toString(),
                 false);
-        SupportedAdditionalClusterFeature feature = addlFeatures
+        SupportedAdditionalClusterFeature feature = Optional.ofNullable(addlFeatures)
+                .orElse(Collections.emptySet())
                 .stream()
                 .filter(f -> f.getFeature().getId().equals(id) && f.isEnabled())
                 .findFirst()
