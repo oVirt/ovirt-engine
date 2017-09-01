@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
@@ -84,7 +85,8 @@ public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extend
         }));
 
         registerHandler(getView().getClearButton().addClickHandler(event -> {
-            model.setSearchString(""); //$NON-NLS-1$
+            getView().setSearchString("");
+            model.setSearchString("");
             updateViewSearchString();
             updateModelSearchString();
         }));
@@ -126,7 +128,7 @@ public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extend
 
     void updateModelSearchString() {
         model.setSearchString(getView().getSearchString());
-        model.search();
+        Scheduler.get().scheduleDeferred(() -> model.search());
     }
 
     void updateViewSearchString() {
