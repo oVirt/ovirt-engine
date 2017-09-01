@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -320,7 +319,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     private void setupForStorageTests() {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
         vm.setStatus(VMStatus.Down);
-        doReturn(multipleSdValidator).when(cmd).getStorageDomainsValidator(any(), anySet());
+        doReturn(multipleSdValidator).when(cmd).getStorageDomainsValidator(any(), any());
 
         setupStoragePool();
     }

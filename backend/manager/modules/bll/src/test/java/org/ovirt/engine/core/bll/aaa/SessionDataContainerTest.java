@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.aaa;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -56,7 +56,7 @@ public class SessionDataContainerTest {
     @Before
     public void setUpContainer() {
         when(engineSessionDao.remove(anyLong())).thenReturn(1);
-        when(ssoSessionValidator.getSessionStatuses(anySet())).thenReturn(Collections.singletonMap(TEST_SSO_TOKEN, true));
+        when(ssoSessionValidator.getSessionStatuses(any())).thenReturn(Collections.singletonMap(TEST_SSO_TOKEN, true));
         when(ssoSessionUtils.isSessionInUse(anyLong())).thenReturn(false);
 
         DbUser user = mock(DbUser.class);

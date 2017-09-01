@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -108,7 +107,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     private void spySdValidator() {
         Set<Guid> sdIds = new HashSet<>(Collections.singletonList(STORAGE_DOMAIN_ID));
         storageDomainsValidator = spy(new MultipleStorageDomainsValidator(STORAGE_POOL_ID, sdIds));
-        doReturn(storageDomainsValidator).when(cmd).getStorageDomainsValidator(any(), anySet());
+        doReturn(storageDomainsValidator).when(cmd).getStorageDomainsValidator(any(), any());
         doReturn(sdIds).when(cmd).getStorageDomainsIds();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsWithinThresholds();

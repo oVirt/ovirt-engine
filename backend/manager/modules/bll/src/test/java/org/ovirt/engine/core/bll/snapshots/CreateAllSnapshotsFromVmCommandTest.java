@@ -7,7 +7,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -104,7 +103,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(vmValidator).when(cmd).createVmValidator();
         doReturn(storagePoolValidator).when(cmd).createStoragePoolValidator();
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(any());
-        doReturn(diskExistenceValidator).when(cmd).createDiskExistenceValidator(anySet());
+        doReturn(diskExistenceValidator).when(cmd).createDiskExistenceValidator(any());
         doReturn(multipleStorageDomainsValidator).when(cmd).createMultipleStorageDomainsValidator(any());
         doReturn(memoryImageBuilder).when(cmd).getMemoryImageBuilder();
         doReturn(true).when(cmd).validateCinder();

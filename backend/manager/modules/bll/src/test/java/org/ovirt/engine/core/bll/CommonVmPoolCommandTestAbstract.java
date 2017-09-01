@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -313,6 +312,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
 
 
     protected void setupForStorageTests() {
-        doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(), anySet());
+        doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(), any());
     }
 }
