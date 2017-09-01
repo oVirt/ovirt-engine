@@ -6,10 +6,10 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -113,25 +113,25 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
     @Test
     public void testDoGet_WithoutUserInfoObject() throws IOException, ServletException, NoSuchAlgorithmException {
-        doReturn(null).when(testServlet).getLoggedInUser(nullable(String.class));
-        doReturn(mockDigest).when(testServlet).getMd5Digest(nullable(HttpServletRequest.class));
+        doReturn(null).when(testServlet).getLoggedInUser(any());
+        doReturn(mockDigest).when(testServlet).getMd5Digest(any());
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey()),
-                nullable(String.class));
+                any());
         verify(mockRequest, never()).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey()),
-                nullable(ObjectNode.class));
+                any());
         verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_MESSAGES.getKey(),
                 null); //$NON-NLS-1$
     }
 
     @Test
     public void testDoGet_WithUserInfoObject() throws IOException, ServletException, NoSuchAlgorithmException {
-        doReturn(mockDigest).when(testServlet).getMd5Digest(nullable(HttpServletRequest.class));
+        doReturn(mockDigest).when(testServlet).getMd5Digest(any());
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey()),
-                nullable(String.class));
+                any());
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey()),
-                nullable(ObjectNode.class));
+                any());
         verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_MESSAGES.getKey(),
                 null); //$NON-NLS-1$
     }
