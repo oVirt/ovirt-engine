@@ -35,6 +35,8 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     @Inject
     private VmDao vmDao;
 
+    private Boolean lastInStoragePool = null;
+
     public ForceRemoveStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -48,8 +50,8 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     protected void executeCommand() {
         if (isAttachedStorageDomain() && hasRunningHostsInPool()) {
             try {
-                // if master try to reconstruct
-                if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
+                // If master and there are more storage domains in the DC try to reconstruct.
+                if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master && !isLastStorageInPool()) {
                     ReconstructMasterParameters tempVar = new ReconstructMasterParameters(getStoragePool().getId(),
                             getStorageDomain().getId(), false);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
@@ -117,7 +119,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                         && checkStorageDomainStatusNotEqual(StorageDomainStatus.Active);
 
         if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.Master
-                && isAttachedStorageDomain()) {
+                && isAttachedStorageDomain() && !isLastStorageInPool()) {
             if (electNewMaster() == null) {
                 returnValue = false;
                 addValidationMessage(EngineMessage.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
@@ -135,6 +137,12 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         return returnValue;
     }
 
+    private boolean isLastStorageInPool() {
+        if (lastInStoragePool == null) {
+            lastInStoragePool = storageDomainDao.getAllForStoragePool(getStoragePoolId()).size() == 1;
+        }
+        return lastInStoragePool.booleanValue();
+    }
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
