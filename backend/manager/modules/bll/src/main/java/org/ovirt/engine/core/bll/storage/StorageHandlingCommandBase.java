@@ -194,8 +194,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected VDS checkForActiveVds() {
-        List<VDS> hosts = vdsDao.getAllForStoragePoolAndStatus(getStoragePool().getId(),
-                VDSStatus.Up);
+        List<VDS> hosts = getAllRunningVdssInPool();
         if (!hosts.isEmpty()) {
             return hosts.get(new Random().nextInt(hosts.size()));
         }
