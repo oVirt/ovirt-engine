@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -104,9 +103,8 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     @Override
     protected boolean validate() {
         boolean returnValue =
-                super.validate()
-                        && checkStorageDomain()
-                        && (getStorageDomain().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached || checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
+                super.validate() && checkStorageDomain()
+                        && checkStorageDomainStatusNotEqual(StorageDomainStatus.Active);
 
         if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.Master
                 && isAttachedStorageDomain()) {
