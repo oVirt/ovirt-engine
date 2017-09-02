@@ -42,7 +42,6 @@ public class Ipv6ConstraintTest {
         doTest("", false);
     }
 
-    //TODO MM: Dear code reviewer! To keep test and make it more reliable, we're not testing one constraint, but usage of such constraint.
     private void doTest(String input, boolean expectedResult) {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         Set<ConstraintViolation<TestObject>> validationResult = validator.validate(new TestObject(input));

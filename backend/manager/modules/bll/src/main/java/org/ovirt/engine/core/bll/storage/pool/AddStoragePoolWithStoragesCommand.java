@@ -148,7 +148,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
         // Create pool phase completed, no rollback is needed here, so compensation information needs to be cleared!
         TransactionSupport.executeInNewTransaction(() -> {
-            getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();//TODO MMUCHA: Dear code reviewer! I think CommandBase would(should) handle that. Please advise.
+            getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
             return null;
         });
         freeLock();
