@@ -158,7 +158,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected List<VDS> getAllRunningVdssInPool() {
-        return vdsDao.getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
+        return vdsDao.getAllForStoragePoolAndStatus(getStoragePoolId(), VDSStatus.Up);
     }
 
     protected void updateStoragePoolMasterDomainVersionInDiffTransaction() {
