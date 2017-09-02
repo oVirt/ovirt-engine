@@ -195,6 +195,7 @@ public class BackendStorageDomainResourceTest
 
     @Test
     public void testRemoveStorageDomainNull() throws Exception {
+        setUpGetEntityExpectations();
         UriInfo uriInfo = setUpBasicUriExpectations();
         setUriInfo(uriInfo);
         try {
@@ -248,14 +249,13 @@ public class BackendStorageDomainResourceTest
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.ForceRemoveStorageDomain,
             StorageDomainParametersBase.class,
-            new String[] { "StorageDomainId", "VdsId" },
-            new Object[] { GUIDS[0], GUIDS[1] },
+            new String[] { "StorageDomainId" },
+            new Object[] { GUIDS[0] },
             true,
             true,
             false
         );
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(BackendStorageDomainResource.HOST, GUIDS[1].toString());
         parameters.put(BackendStorageDomainResource.DESTROY, Boolean.TRUE.toString());
         uriInfo = addMatrixParameterExpectations(uriInfo, parameters);
         setUriInfo(uriInfo);

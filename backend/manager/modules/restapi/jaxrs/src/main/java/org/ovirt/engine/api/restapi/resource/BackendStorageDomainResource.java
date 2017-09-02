@@ -125,21 +125,20 @@ public class BackendStorageDomainResource
 
     @Override
     public Response remove() {
-        String host = ParametersHelper.getParameter(httpHeaders, uriInfo, HOST);
-        if (host == null) {
-            Fault fault = new Fault();
-            fault.setReason("host parameter is missing");
-            throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(fault).build());
-        }
-        get();
-        Guid hostId = getHostId(host);
         boolean destroy = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, DESTROY, true, false);
-        boolean format = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORMAT, true, false);
+        get();
         if (destroy) {
             StorageDomainParametersBase parameters = new StorageDomainParametersBase(guid);
-            parameters.setVdsId(hostId);
             return performAction(ActionType.ForceRemoveStorageDomain, parameters);
         } else {
+            String host = ParametersHelper.getParameter(httpHeaders, uriInfo, HOST);
+            if (host == null) {
+                Fault fault = new Fault();
+                fault.setReason("host parameter is missing");
+                throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(fault).build());
+            }
+            boolean format = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORMAT, true, false);
+            Guid hostId = getHostId(host);
             RemoveStorageDomainParameters parameters = new RemoveStorageDomainParameters(guid);
             parameters.setVdsId(hostId);
             parameters.setDoFormat(format);
