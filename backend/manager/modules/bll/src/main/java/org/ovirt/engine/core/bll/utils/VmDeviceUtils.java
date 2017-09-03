@@ -349,17 +349,15 @@ public class VmDeviceUtils {
      */
 
     /**
-     * Enable/disable VirtIO-SCSI controller in the VM.
+     * Enable/disable VirtIO-SCSI controllers in the VM.
      *
-     * @param isVirtioScsiEnabled    true/false to enable/disable device respectively, null to leave it untouched
+     * @param isVirtioScsiEnabled    true/false to enable/disable device respectively, null to keep the current status
      */
     public void updateVirtioScsiController(VmBase vm, Boolean isVirtioScsiEnabled) {
-        if (isVirtioScsiEnabled == null) {
-            return; //we don't want to update the device
-        }
+        boolean enabled = isVirtioScsiEnabled != null ? isVirtioScsiEnabled : hasVirtioScsiController(vm.getId());
 
         removeVirtioScsiControllers(vm.getId());
-        if (isVirtioScsiEnabled) {
+        if (enabled) {
             addVirtioScsiController(vm, getVmCompatibilityVersion(vm));
         }
     }
