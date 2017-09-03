@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
@@ -33,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
@@ -299,26 +297,6 @@ public final class Linq {
             return Objects.equals(source.getName(), target.getName())
                     && Objects.equals(source.getAddress(), target.getAddress())
                     && Objects.equals(source.getPort(), target.getPort());
-        }
-    }
-
-    public static class DbUserPredicate implements Predicate<DbUser> {
-        private final DbUser target;
-
-        public DbUserPredicate(DbUser target) {
-            this.target = target;
-        }
-
-        @Override
-        public boolean test(DbUser source) {
-            String targetName = target.getLoginName();
-            if (!StringHelper.isNullOrEmpty(targetName)) {
-                targetName = targetName.toLowerCase();
-            }
-            return Objects.equals(source.getDomain(), target.getDomain())
-                    && (StringHelper.isNullOrEmpty(target.getLoginName())
-                    || "*".equals(target.getLoginName()) //$NON-NLS-1$
-                    || source.getLoginName().toLowerCase().startsWith(targetName));
         }
     }
 
