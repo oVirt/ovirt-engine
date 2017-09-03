@@ -571,14 +571,20 @@ public class LibvirtVmXmlBuilder {
 
     private void writeNetworkInterfaceMetadata() {
         vnicMetadata.forEach((mac, data) -> {
-            writer.writeStartElement("device");
+            writer.writeStartElement(OVIRT_VM_URI, "device");
             writer.writeAttributeString("mac_address", mac);
             List<String> portMirroring = (List<String>) data.get("portMirroring");
             if (portMirroring != null) {
-                writer.writeStartElement("portMirroring");
-                portMirroring.forEach(network -> writer.writeElement("network", network));
+                writer.writeStartElement(OVIRT_VM_URI, "portMirroring");
+                portMirroring.forEach(network -> writer.writeElement(OVIRT_VM_URI, "network", network));
                 writer.writeEndElement();
             }
+            writer.writeStartElement(OVIRT_VM_URI, "custom");
+            Map<String, String> runtimeCustomProperties = (Map<String, String>) data.get("runtimeCustomProperties");
+            if (runtimeCustomProperties != null) {
+                runtimeCustomProperties.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value));
+            }
+            writer.writeEndElement();
             writer.writeEndElement();
         });
     }
@@ -1816,6 +1822,13 @@ public class LibvirtVmXmlBuilder {
             // store port mirroring in the metadata
             vnicMetadata.computeIfAbsent(nic.getMacAddress(), mac -> new HashMap<>());
             vnicMetadata.get(nic.getMacAddress()).put("portMirroring", portMirroring);
+        }
+
+        Map<String, String> runtimeCustomProperties = vm.getRuntimeDeviceCustomProperties().get(device.getId());
+        if (runtimeCustomProperties != null && !runtimeCustomProperties.isEmpty()) {
+            // store runtime custom properties in the metadata
+            vnicMetadata.computeIfAbsent(nic.getMacAddress(), mac -> new HashMap<>());
+            vnicMetadata.get(nic.getMacAddress()).put("runtimeCustomProperties", runtimeCustomProperties);
         }
 
         writer.writeStartElement("bandwidth");
