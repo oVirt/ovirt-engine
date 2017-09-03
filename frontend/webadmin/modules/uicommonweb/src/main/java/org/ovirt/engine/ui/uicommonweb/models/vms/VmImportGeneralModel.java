@@ -65,7 +65,6 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         name = new EntityModel<>();
         operatingSystems = new ListModel<>();
 
-        getName().getEntityChangedEvent().addListener((ev, sender, args) -> getEntity().getVm().setName(getName().getEntity()));
         getOperatingSystems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
             if (getOperatingSystems().getSelectedItem() != null) {
                 getEntity().getVm().setVmOs(getOperatingSystems().getSelectedItem());

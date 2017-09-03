@@ -49,6 +49,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     private ArchitectureType targetArchitecture;
     protected StoragePool storagePool;
     private UICommand closeCommand;
+    private List<VM> vmsFromDB;
 
     public abstract void importVms(IFrontendMultipleActionAsyncCallback callback);
     public abstract boolean validate();
@@ -135,10 +136,10 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         Frontend.getInstance().runQuery(QueryType.Search,
                 new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                    List<VM> vms = returnValue.getReturnValue();
+                    vmsFromDB = returnValue.getReturnValue();
 
                     Set<String> existingNames = new HashSet<>();
-                    for (VM vm : vms) {
+                    for (VM vm : vmsFromDB) {
                         if (vm.getStoragePoolId().equals(getStoragePool().getId())) {
                             existingNames.add(vm.getName());
                         }
@@ -147,7 +148,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                     List<ImportVmData> vmDataList = new ArrayList<>();
                     for (VM vm : externalVms) {
                         ImportVmData vmData = new ImportVmData(vm);
-                        if (vms.contains(vm)) {
+                        if (vmsFromDB.contains(vm)) {
                             vmData.setExistsInSystem(true);
                             vmData.getClone().setEntity(true);
                             vmData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
@@ -163,6 +164,10 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                     setItems(vmDataList);
                     callback.onSuccess(returnValue);
                 }));
+    }
+
+    private boolean isNameExistsInTheSystem(String vmName) {
+        return vmsFromDB.stream().anyMatch(vm -> vm.getName().equals(vmName));
     }
 
     private String createSearchPattern(Collection<VM> vms) {
@@ -200,14 +205,15 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
 
     private boolean validateName(final ImportVmData data) {
         final int maxNameLength = getMaxNameLength();
-        EntityModel<String> vmName = new EntityModel<>(data.getVm().getName());
+        VmImportGeneralModel model = (VmImportGeneralModel) getDetailModels().get(0);
+        EntityModel<String> vmName = new EntityModel<>(model.getName().getEntity());
         vmName.validateEntity(
                 new IValidation[] {
                         new NotEmptyValidation(),
                         new LengthValidation(maxNameLength),
                         new I18NNameValidation(),
                         new UniqueNameValidator(data),
-                        value -> data.isNameExistsInTheSystem() && data.getName().equals(data.getVm().getName())?
+                        value -> isNameExistsInTheSystem(vmName.getEntity()) ?
                                ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
                                : ValidationResult.ok()
                 });
@@ -215,7 +221,6 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         data.setError(vmName.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());
 
         // Updating the 'name' model in general sub-tab
-        VmImportGeneralModel model = (VmImportGeneralModel) getDetailModels().get(0);
         model.getName().setInvalidityReasons(vmName.getInvalidityReasons());
         model.getName().setIsValid(vmName.getIsValid());
 
