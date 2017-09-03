@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -17,7 +18,7 @@ public class ImportVmData extends ImportEntityData<VM> {
     public ImportVmData(VM vm) {
         setCollapseSnapshots(new EntityModel<>(false));
 
-        setEntity(vm);
+        setEntity((VM) Cloner.clone(vm));
         vmName = vm.getName();
         getClone().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (templateExistsInSetup) {
