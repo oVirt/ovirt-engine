@@ -16,9 +16,12 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -36,6 +39,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
@@ -146,6 +150,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private DiskImageDao diskImageDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     private List<DiskImage> imageList;
 
@@ -311,6 +318,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
         super.executeVmCommand();
     }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
+    }
+
 
     private boolean isCopyCollapseDisabledWithSnapshotsOrWithTemplate() {
         // If there are no snapshots we may not care if copyCollapse = false
@@ -740,7 +753,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy memory image");
             }
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+            // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
+            getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
 
             // copy the memory configuration (of the VM) image
             vdcRetValue = runInternalActionWithTasksContext(
@@ -750,7 +764,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy metadata image");
             }
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+            // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
+            getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
         }
     }
 
@@ -803,8 +818,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy disk!");
             }
-
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+            // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
+            getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
         }
     }
 
