@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -37,7 +36,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -59,7 +57,6 @@ import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -996,12 +993,8 @@ public class VdsManager {
             return;
         }
 
-        for (VmDynamic vm : vms) {
-            destroyVmOnDestination(vm);
-            resourceManager.removeAsyncRunningVm(vm.getId());
-        }
-
         List<Guid> vmIds = vms.stream().map(VmDynamic::getId).collect(Collectors.toList());
+        vmIds.forEach(resourceManager::removeAsyncRunningVm);
         getVmDynamicDao().updateVmsToUnknown(vmIds);
 
         vmIds.forEach(vmId -> {
@@ -1014,27 +1007,6 @@ public class VdsManager {
 
     private VmDynamicDao getVmDynamicDao() {
         return vmDynamicDao;
-    }
-
-    private void destroyVmOnDestination(final VmDynamic vm) {
-        if (vm.getStatus() != VMStatus.MigratingFrom || vm.getMigratingToVds() == null) {
-            return;
-        }
-        // avoid nested locks by doing this in a separate thread
-        ThreadPoolUtil.execute(() -> {
-            VDSReturnValue returnValue = resourceManager.runVdsCommand(
-                    VDSCommandType.DestroyVm,
-                    new DestroyVmVDSCommandParameters(vm.getMigratingToVds(), vm.getId(), true, false, 0));
-
-            if (returnValue != null && returnValue.getSucceeded()) {
-                log.info("Stopped migrating VM: '{}' on VDS: '{}'",
-                        resourceManager.getVmManager(vm.getId()).getName(), vm.getMigratingToVds());
-            }
-            else {
-                log.info("Could not stop migrating VM: '{}' on VDS: '{}'",
-                        resourceManager.getVmManager(vm.getId()).getName(), vm.getMigratingToVds());
-            }
-        });
     }
 
     public boolean isInitialized() {
