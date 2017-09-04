@@ -375,15 +375,15 @@ public class VmAnalyzer {
 
     private void clearVm(VmExitStatus exitStatus, String exitMessage, VmExitReason vmExistReason) {
         if (dbVm.getStatus() != VMStatus.MigratingFrom) {
-            // we must check that vm.getStatus() != VMStatus.Down because if it was set to down
-            // the exit status and message were set, and we don't want to override them here.
-            // we will add it to vmDynamicToSave though because it might been removed from it in #updateRepository
-            if (dbVm.getStatus() != VMStatus.Suspended && dbVm.getStatus() != VMStatus.Down) {
+            if (dbVm.getStatus() != VMStatus.Suspended) {
+                // if the VM is set to down then the actual exit fields were set and we don't want to
+                // override them here. However, we must make sure that other fields like run_on_vds are updated
+                boolean alreadyDown = dbVm.getStatus() == VMStatus.Down;
                 resourceManager.internalSetVmStatus(dbVm,
                         VMStatus.Down,
-                        exitStatus,
-                        exitMessage,
-                        vmExistReason);
+                        alreadyDown ? dbVm.getExitStatus() : exitStatus,
+                        alreadyDown ? dbVm.getExitMessage() : exitMessage,
+                        alreadyDown ? dbVm.getExitReason() : vmExistReason);
             }
             saveDynamic(dbVm);
             resetVmStatistics();
