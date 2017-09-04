@@ -1018,6 +1018,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String vlanOutOfSyncPopUp();
 
+    String ipv4ItemInfo();
+
     String ipv4BootProtocolOutOfSyncPopUp();
 
     String ipv4AddressOutOfSyncPopUp();
@@ -1025,6 +1027,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String ipv4NetmaskOutOfSyncPopUp();
 
     String ipv4GatewayOutOfSyncPopUp();
+
+    String ipv6ItemInfo();
 
     String ipv6BootProtocolOutOfSyncPopUp();
 
@@ -2098,6 +2102,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String subnetItemInfo();
 
     String gatewayItemInfo();
+
+    String prefixItemInfo();
 
     String bondOptionsItemInfo();
 

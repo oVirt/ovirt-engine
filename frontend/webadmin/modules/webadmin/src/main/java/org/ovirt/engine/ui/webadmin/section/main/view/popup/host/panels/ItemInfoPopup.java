@@ -3,11 +3,13 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -33,7 +35,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private final FlexTable contents = new FlexTable();
-    private static final EnumRenderer<Ipv4BootProtocol> RENDERER = new EnumRenderer<>();
+    private static final EnumRenderer<Ipv4BootProtocol> IPV4_RENDERER = new EnumRenderer<>();
+    private static final EnumRenderer<Ipv6BootProtocol> IPV6_RENDERER = new EnumRenderer<>();
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationResources resources = AssetProvider.getResources();
@@ -218,7 +221,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         VdsNetworkInterface entity = nic.getOriginalIface();
         addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
 
-        if (nic.getItems().isEmpty()) {
+        if (nic.getItems().isEmpty() && !nic.isBonded()) {
             addBootProtoAndIpInfo(entity);
         }
         if (nic instanceof BondNetworkInterfaceModel) {
@@ -230,12 +233,27 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     }
 
     private void addBootProtoAndIpInfo(VdsNetworkInterface iface) {
-        Ipv4BootProtocol bootProtocol = iface.getIpv4BootProtocol();
-        addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));
-        if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
-            addRow(constants.addressItemInfo(), iface.getIpv4Address());
-            addRow(constants.subnetItemInfo(), iface.getIpv4Subnet());
-            addRow(constants.gatewayItemInfo(), iface.getIpv4Gateway());
+        // IPv4
+        addRow(templates.strongTextWithColor(constants.ipv4ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
+        Ipv4BootProtocol ipv4BootProtocol = iface.getIpv4BootProtocol();
+        addRow(constants.bootProtocolItemInfo(), IPV4_RENDERER.render(ipv4BootProtocol));
+        addNonNullOrEmptyValueRow(constants.addressItemInfo(), iface.getIpv4Address());
+        addNonNullOrEmptyValueRow(constants.subnetItemInfo(), iface.getIpv4Subnet());
+        addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), iface.getIpv4Gateway());
+
+        //IPv6
+        addRow(templates.strongTextWithColor(constants.ipv6ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
+        Ipv6BootProtocol ipv6BootProtocol = iface.getIpv6BootProtocol();
+        addRow(constants.bootProtocolItemInfo(), IPV6_RENDERER.render(ipv6BootProtocol));
+        addNonNullOrEmptyValueRow(constants.addressItemInfo(), iface.getIpv6Address());
+        addNonNullOrEmptyValueRow(constants.prefixItemInfo(),
+                iface.getIpv6Prefix() != null ? iface.getIpv6Prefix().toString() : null);
+        addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), iface.getIpv6Gateway());
+    }
+
+    private void addNonNullOrEmptyValueRow(String label, String value) {
+        if (StringHelper.isNotNullOrEmpty(value)) {
+            addRow(label, value);
         }
     }
 
