@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.common.utils;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class EnumUtils {
 
@@ -22,20 +24,10 @@ public class EnumUtils {
             throw new IllegalArgumentException(name + " is not an enum type");
         }
 
-        Map<String, E> map = cacheEnumValuesInCapitalLetters.get(c);
-
-        if (map == null) {
-            // populate the map with enum values and add it to cache
-            map = new HashMap<>(2 * universe.length);
-
-            for (E e : universe) {
-                map.put(e.name().toUpperCase(), e);
-            }
-            Map<String, E> ret = cacheEnumValuesInCapitalLetters.putIfAbsent(c, map);
-            if (ret != null) {
-                map = ret;
-            }
-        }
+        Map<String, E> map =
+                cacheEnumValuesInCapitalLetters.computeIfAbsent(c,
+                        k -> Arrays.stream(universe).collect(Collectors.toMap(
+                                e -> e.name().toUpperCase(), Function.identity())));
 
         E result = map.get(name.toUpperCase());
         if (result == null) {
