@@ -47,6 +47,7 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
 
     private void init(T qos, P qosParametersModel) {
         setQos(qos);
+        getQos().setStoragePoolId(getDataCenters().getSelectedItem().getId());
         getName().setEntity(qos.getName());
         getDescription().setEntity(qos.getDescription());
 
