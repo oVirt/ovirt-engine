@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
@@ -748,7 +750,10 @@ public class ImagesHandler {
                     snapshotImages.add(newImage);
                 }
 
-                String newOvf = ovfManager.exportVm(vmSnapshot, snapshotImages, clusterUtils.getCompatibilityVersion(vmSnapshot));
+                final Version compatibilityVersion =
+                        Optional.ofNullable(vmSnapshot.getStaticData().getClusterCompatibilityVersionOrigin())
+                        .orElse(Version.getLowest());
+                String newOvf = ovfManager.exportVm(vmSnapshot, snapshotImages, compatibilityVersion);
                 snapshot.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {
