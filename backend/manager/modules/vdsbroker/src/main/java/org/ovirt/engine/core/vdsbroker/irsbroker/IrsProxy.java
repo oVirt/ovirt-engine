@@ -1123,8 +1123,7 @@ public class IrsProxy {
     }
 
     public String getIsoDirectory() {
-        String tempVar = privatemCurrentIrsHost;
-        return String.format("\\\\%1$s\\CD", tempVar != null ? tempVar : getHostFromVds());
+        return String.format("\\\\%1$s\\CD", privatemCurrentIrsHost != null ? privatemCurrentIrsHost : getHostFromVds());
     }
 
     public void resetIrs() {
