@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
-import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -273,7 +272,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setGuestOsCodename(rs.getString("guestos_codename"));
         entity.setGuestOsDistribution(rs.getString("guestos_distribution"));
         entity.setGuestOsKernelVersion(rs.getString("guestos_kernel_version"));
-        entity.setGuestOsType(EnumUtils.valueOf(OsType.class, rs.getString("guestos_type"), true));
+        entity.setGuestOsType(OsType.valueOf(rs.getString("guestos_type")));
         entity.setGuestOsVersion(rs.getString("guestos_version"));
         entity.setGuestContainers(fromContainersString(rs.getString("guest_containers")));
         return entity;
