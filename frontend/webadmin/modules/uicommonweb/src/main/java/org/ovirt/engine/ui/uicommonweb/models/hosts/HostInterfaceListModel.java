@@ -350,9 +350,9 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         getSaveNetworkConfigCommand().setIsExecutionAllowed(host != null
                 && (host.getNetConfigDirty() == null ? false : host.getNetConfigDirty()));
 
-        getSyncAllHostNetworksCommand().setIsExecutionAllowed(getItems() != null
-                && getItems().stream().flatMap(model -> model.getInterfaces().stream())
-                .map(hostInterface -> hostInterface.getInterface().getNetworkImplementationDetails())
+        getSyncAllHostNetworksCommand().setIsExecutionAllowed(getOriginalItems() != null
+                && getOriginalItems().stream()
+                .map(hostInterface -> hostInterface.getNetworkImplementationDetails())
                 .filter(Objects::nonNull)
                 .anyMatch(implementationDetails -> implementationDetails.isManaged()
                         && !implementationDetails.isInSync()));
