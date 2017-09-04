@@ -482,7 +482,6 @@ select fn_db_add_config_value('VDSAttemptsToResetCount','2','general');
 select fn_db_add_config_value('VdsCertificateValidityInYears','5','general');
 select fn_db_add_config_value('vdsConnectionTimeout','20','general');
 select fn_db_add_config_value('VdsMaxConnectionsPerHost','2','general');
-select fn_db_add_config_value('IrsMaxConnectionsPerHost','2','general');
 select fn_db_add_config_value('MaxTotalConnections','20','general');
 select fn_db_add_config_value('CustomVdsFenceOptionMapping','','general');
 select fn_db_add_config_value('VdsFenceOptionTypes','encrypt_options=bool,secure=bool,port=int,slot=int','general');
