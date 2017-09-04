@@ -1162,8 +1162,8 @@ public class AsyncDataProvider {
     }
 
     /**
-     * Upper bound of maximum memory size for given OS and compatibilityVersion. If {@code osId} is null then minimum of
-     * all configuration values is returned.
+     * Upper bound of maximum memory size for given OS and compatibilityVersion. If {@code osId} is null then maximum of
+     * all configuration values is returned. If {@code compatVersion} is null then last Version is used.
      *
      * <p>
      * Inspired by {@link VmCommonUtils#maxMemorySizeWithHotplugInMb(int, Version)}
@@ -1176,21 +1176,22 @@ public class AsyncDataProvider {
      * @return upper bound of maximum memory size for given OS and compatibilityVersion,
      */
     public int getMaxMaxMemorySize(Integer osId, Version compatVersion) {
+        String usedVersion = compatVersion != null ? compatVersion.getValue() : Version.getLast().getValue();
         if (osId == null) {
-            return getMaxMaxMemoryForAllOss();
+            return getMaxMaxMemoryForAllOss(usedVersion);
         }
 
         final ConfigValues maxMaxMemoryConfigValue = getMaxMaxMemoryConfigValue(osId);
-        return (Integer) getConfigValuePreConvertedOptionalVersion(maxMaxMemoryConfigValue, compatVersion);
+        return (Integer) getConfigValuePreConverted(maxMaxMemoryConfigValue, usedVersion);
     }
 
-    private int getMaxMaxMemoryForAllOss() {
+    private int getMaxMaxMemoryForAllOss(String version) {
         final int x86_32MaxMaxMemory =
-                (Integer) getConfigValuePreConverted(ConfigValues.VM32BitMaxMemorySizeInMB);
+                (Integer) getConfigValuePreConverted(ConfigValues.VM32BitMaxMemorySizeInMB, version);
         final int x86_64MaxMaxMemory =
-                (Integer) getConfigValuePreConverted(ConfigValues.VM64BitMaxMemorySizeInMB);
+                (Integer) getConfigValuePreConverted(ConfigValues.VM64BitMaxMemorySizeInMB, version);
         final int ppc64MaxMaxMemory =
-                (Integer) getConfigValuePreConverted(ConfigValues.VMPpc64BitMaxMemorySizeInMB);
+                (Integer) getConfigValuePreConverted(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version);
         return Math.max(Math.max(x86_32MaxMaxMemory, x86_64MaxMaxMemory), ppc64MaxMaxMemory);
     }
 
@@ -1200,12 +1201,6 @@ public class AsyncDataProvider {
                         ? ConfigValues.VMPpc64BitMaxMemorySizeInMB
                         : ConfigValues.VM64BitMaxMemorySizeInMB)
                 : ConfigValues.VM32BitMaxMemorySizeInMB;
-    }
-
-    private Object getConfigValuePreConvertedOptionalVersion(ConfigValues configValue, Version version) {
-        return version != null
-                ? getConfigValuePreConverted(configValue, version.toString())
-                : getConfigValuePreConverted(configValue);
     }
 
     public void getAuthzExtensionsNames(AsyncQuery<List<String>> aQuery) {

@@ -63,7 +63,7 @@ public class RunVmValidatorTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.PredefinedVMProperties, Version.v3_6, "0"),
             mockConfig(ConfigValues.UserDefinedVMProperties, Version.v3_6, "0"),
-            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, "general", MEMORY_LIMIT_32_BIT),
+            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_32_BIT),
             mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_64_BIT)
             );
 

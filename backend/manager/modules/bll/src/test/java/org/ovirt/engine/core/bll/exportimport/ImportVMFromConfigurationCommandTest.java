@@ -8,7 +8,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,6 +41,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -65,11 +65,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private ImportValidator validator;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 20480),
-        mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, 4194304),
-        mockConfig(ConfigValues.VMPpc64BitMaxMemorySizeInMB, 1048576)
-    );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
@@ -114,6 +110,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any()))
                 .thenReturn(ValidationResult.VALID);
 
+        mcr.mockConfigValue(ConfigValues.VM32BitMaxMemorySizeInMB, Version.getLast(), 20480);
+        mcr.mockConfigValue(ConfigValues.VM64BitMaxMemorySizeInMB, Version.getLast(), 4194304);
+        mcr.mockConfigValue(ConfigValues.VMPpc64BitMaxMemorySizeInMB, Version.getLast(), 1048576);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 

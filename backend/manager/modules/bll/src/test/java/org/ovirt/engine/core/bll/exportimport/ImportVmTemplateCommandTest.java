@@ -10,7 +10,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +52,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -83,11 +83,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     private OsRepository osRepository;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 20480),
-        mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, 4194304),
-        mockConfig(ConfigValues.VMPpc64BitMaxMemorySizeInMB, 1048576)
-    );
+    public static MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void injectOsRepository() {
@@ -159,6 +155,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
             VolumeType volumeType,
             StorageType storageType) {
         setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType);
+        mockMemorySize(Version.getLast());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -328,5 +325,11 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         assertEquals("The old disk id should be similar to the value at the newDiskIdForDisk.", beforeOldDiskId, oldDiskId);
         assertNotNull("The manged deivce should return the disk device by the new key", managedDevices.get(disk.getId()));
         assertNull("The manged deivce should not return the disk device by the old key", managedDevices.get(beforeOldDiskId));
+    }
+
+    private void mockMemorySize(Version version) {
+        mcr.mockConfigValue(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480);
+        mcr.mockConfigValue(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304);
+        mcr.mockConfigValue(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version, 1048576);
     }
 }

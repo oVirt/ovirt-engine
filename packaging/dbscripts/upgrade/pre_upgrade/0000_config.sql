@@ -182,11 +182,11 @@ select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"
 select fn_db_add_config_value('HotUnplugMemorySupported', '{"x86_64":"true","ppc64":"false"}', '4.1');
 
 -- migration support per architecture
-select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
+select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
 -- snapshot support per architecture
-select fn_db_add_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
+select fn_db_add_config_value_for_versions_up_to('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
 -- suspend support per architecture
-select fn_db_add_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
+select fn_db_add_config_value_for_versions_up_to('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
 select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
@@ -493,7 +493,7 @@ select fn_db_add_config_value('VdsRefreshRate','2','general');
 select fn_db_add_config_value('vdsRetries','0','general');
 select fn_db_add_config_value('vdsTimeout','180','general');
 --Handling Virtual Machine Domain Name
-select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
+select fn_db_add_config_value_for_versions_up_to('VM32BitMaxMemorySizeInMB','20480','4.2');
 select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','4194304','4.2');
 select fn_db_add_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
@@ -820,10 +820,18 @@ select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc
 select fn_db_update_config_value('DataOperationsByHSM','true','4.1');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
-select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
-select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
-
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
 
 select fn_db_update_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli','3.6');
 select fn_db_update_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli,collectd,collectd-disk,collectd-netlink,collectd-write_http,fluentd,rubygem-fluent-plugin-rewrite-tag-filter,rubygem-fluent-plugin-secure-forward,rubygem-fluent-plugin-collectd-nest,rubygem-fluent-plugin-viaq_data_model','4.1');

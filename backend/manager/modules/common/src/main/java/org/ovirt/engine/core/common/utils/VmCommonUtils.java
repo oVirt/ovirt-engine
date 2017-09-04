@@ -55,9 +55,10 @@ public class VmCommonUtils {
      */
     public static int maxMemorySizeWithHotplugInMb(int osId, Version compatibilityVersion) {
         final ConfigValues configValue = getMaxMemConfigValueByOsId(osId);
-        return compatibilityVersion != null
-                ? Config.<Integer>getValue(configValue, compatibilityVersion.getValue())
-                : Config.<Integer>getValue(configValue);
+        return Config.<Integer>getValue(
+            configValue,
+            compatibilityVersion != null ? compatibilityVersion.getValue() : Version.getLast().getValue()
+        );
     }
 
     private static ConfigValues getMaxMemConfigValueByOsId(int osId) {
