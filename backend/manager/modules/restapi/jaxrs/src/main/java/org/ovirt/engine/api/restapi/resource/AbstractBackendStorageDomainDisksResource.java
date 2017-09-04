@@ -53,6 +53,8 @@ public class AbstractBackendStorageDomainDisksResource
     }
 
     public Response add(Disk disk) {
+        // Unregistering a disk using this method was deprecated in version 4.2
+        // unregistered support for add disk has moved to BackendAttachedStorageDomainDiskResource..
         boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED, true, false);
         if (unregistered) {
             // First we need to query the backend to fill in all the information about the disk from the VDSM.
