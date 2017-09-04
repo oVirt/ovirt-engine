@@ -767,11 +767,6 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmDynamic.setGuestOsType(guestOsType);
     }
 
-    @JsonIgnore
-    public void setGuestOsType(String osType) {
-        vmDynamic.setGuestOsType(osType);
-    }
-
     public String getGuestOsKernelVersion() {
         return vmDynamic.getGuestOsKernelVersion();
     }

@@ -9,7 +9,6 @@ import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
-import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comparable<VmDynamic> {
@@ -641,11 +640,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setGuestOsType(OsType guestOsType) {
         this.guestOsType = guestOsType;
-    }
-
-    @JsonIgnore
-    public void setGuestOsType(String osType) {
-        this.guestOsType = EnumUtils.valueOf(OsType.class, osType, true);
     }
 
     public String getGuestOsKernelVersion() {

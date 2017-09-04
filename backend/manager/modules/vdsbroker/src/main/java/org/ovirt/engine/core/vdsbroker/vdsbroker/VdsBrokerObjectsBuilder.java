@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.LeaseStatus;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
+import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
@@ -647,7 +648,8 @@ public class VdsBrokerObjectsBuilder {
         if(guestOsInfoStruct.containsKey(VdsProperties.GUEST_OS_INFO_TYPE)) {
             String osType = assignStringValue(guestOsInfoStruct, VdsProperties.GUEST_OS_INFO_TYPE);
             try {
-                vm.setGuestOsType(osType);
+                OsType type = EnumUtils.valueOf(OsType.class, osType, true);
+                vm.setGuestOsType(type);
             } catch(IllegalArgumentException e) {
                 log.warn("Invalid or unknown guest os type '{}' received from guest agent", osType);
             }
