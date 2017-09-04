@@ -655,7 +655,7 @@ public class IrsProxy {
             if (storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
                 String host =
                         TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
-                                () -> gethostFromVds());
+                                () -> getHostFromVds());
 
                 if (host != null) {
                     // Get the values of the timeouts:
@@ -724,7 +724,7 @@ public class IrsProxy {
         }
     }
 
-    private String gethostFromVds() {
+    private String getHostFromVds() {
         String returnValue = null;
         Guid curVdsId = (currentVdsId != null) ? currentVdsId : Guid.Empty;
         StoragePool storagePool = storagePoolDao.get(storagePoolId);
@@ -1124,7 +1124,7 @@ public class IrsProxy {
 
     public String getIsoDirectory() {
         String tempVar = privatemCurrentIrsHost;
-        return String.format("\\\\%1$s\\CD", tempVar != null ? tempVar : gethostFromVds());
+        return String.format("\\\\%1$s\\CD", tempVar != null ? tempVar : getHostFromVds());
     }
 
     public void resetIrs() {
