@@ -48,10 +48,10 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
 
     @Override
     protected void executeCommand() {
-        if (isAttachedStorageDomain() && hasRunningHostsInPool()) {
+        if (isAttachedStorageDomain() && hasRunningHostsInPool() && !isLastStorageInPool()) {
             try {
                 // If master and there are more storage domains in the DC try to reconstruct.
-                if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master && !isLastStorageInPool()) {
+                if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                     ReconstructMasterParameters tempVar = new ReconstructMasterParameters(getStoragePool().getId(),
                             getStorageDomain().getId(), false);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
