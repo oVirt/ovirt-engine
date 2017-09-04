@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_PLUGGED;
 import static org.ovirt.engine.core.common.config.ConfigValues.VdsRefreshRate;
 
@@ -28,12 +30,13 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
-import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -42,6 +45,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -264,19 +268,22 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             vmHandler.updateDisksFromDb(getVm());
         }
         List<LunDisk> lunDisks = DisksFilter.filterLunDisks(getVm().getDiskMap().values());
-        for (LunDisk lunDisk : lunDisks) {
-            LUNs lun = lunDisk.getLun();
-            lun.setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLUNId())));
 
-            if (!lun.getLunConnections().isEmpty()
-                    && !storageHelperDirector.getItem(lun.getLunConnections().get(0).getStorageType())
-                            .connectStorageToLunByVdsId(null, hostId, lun, getVm().getStoragePoolId())) {
-                log.info("Failed to connect  a lun disk to vdsm '{}' skiping it", hostId);
-                return false;
-            }
+        Map<StorageType, List<StorageServerConnections>> connectionsByType =
+                lunDisks.stream()
+                        .flatMap(d -> storageServerConnectionDao.getAllForLun(d.getLun().getLUNId()).stream())
+                        .distinct()
+                        .collect(groupingBy(StorageServerConnections::getStorageType, toList()));
 
-        }
-        return true;
+        return connectionsByType.entrySet().stream()
+                .map(entry -> runVdsCommand(
+                        VDSCommandType.ConnectStorageServer,
+                        new StorageServerConnectionManagementVDSParameters(
+                                hostId,
+                                getStoragePoolId(),
+                                entry.getKey(),
+                                entry.getValue())))
+                .noneMatch(vdsReturnValue -> !vdsReturnValue.getSucceeded());
     }
 
     protected boolean updateCinderDisksConnections() {

@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -11,7 +13,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.common.vdscommands.VDSCommandType.ConnectStorageServer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +31,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -41,22 +46,28 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -101,6 +112,9 @@ public class RunVmCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainStaticDao storageDomainStaticDao;
 
+    @Mock
+    private StorageServerConnectionDao storageServerConnectionDao;
+
     @Spy
     @InjectMocks
     VmHandler vmHandler;
@@ -126,7 +140,7 @@ public class RunVmCommandTest extends BaseCommandTest {
      * Set create VM to return VM with status Up.
      */
     private void setCreateVmVDSMethod() {
-        VDSReturnValue returnValue = new VDSReturnValue();
+        VDSReturnValue returnValue = succesfull();
         returnValue.setReturnValue(VMStatus.Up);
         when(vdsBrokerFrontend.runAsyncVdsCommand(eq(VDSCommandType.Create), any(), any())).thenReturn(returnValue);
     }
@@ -513,6 +527,160 @@ public class RunVmCommandTest extends BaseCommandTest {
         command.setActionReturnValue(VMStatus.Down);
         doReturn(false).when(command).isStatelessSnapshotExistsForVm();
         assertEquals(AuditLogType.USER_INITIATED_RUN_VM, command.getAuditLogTypeValue());
+    }
+
+    @Test
+    public void skipIdenticalTargets() {
+        command.setVm(new VM());
+        // create 2 lun disks
+        LunDisk lunDisk1 = new LunDisk();
+        LUNs lun1 = new LUNs();
+        lun1.setLUNId("id1");
+        lunDisk1.setLun(lun1);
+        LunDisk lunDisk2 = new LunDisk();
+        LUNs lun2 = new LUNs();
+        lun2.setLUNId("id2");
+        lunDisk2.setLun(lun2);
+
+        // add luns to the vm
+        command.getVm().getDiskMap().put(Guid.newGuid(), lunDisk1);
+        command.getVm().getDiskMap().put(Guid.newGuid(), lunDisk2);
+        List<StorageServerConnections> connections = new ArrayList<>();
+
+        // luns have the same backing targets
+        connections.add(new StorageServerConnections("/path/to/con1", "id1", null, null, StorageType.ISCSI, null, null, null));
+        when(storageServerConnectionDao.getAllForLun("id1")).thenReturn(connections);
+        when(storageServerConnectionDao.getAllForLun("id2")).thenReturn(connections);
+        ArgumentCaptor<StorageServerConnectionManagementVDSParameters> captor =
+                ArgumentCaptor.forClass(StorageServerConnectionManagementVDSParameters.class);
+        doReturn(succesfull())
+                .when(command).runVdsCommand(eq(ConnectStorageServer), any(StorageServerConnectionManagementVDSParameters.class));
+
+        boolean connectSucceeded = command.connectLunDisks(Guid.newGuid());
+
+        // for same targets, connect only once
+        verify(command).runVdsCommand(
+                eq(ConnectStorageServer),
+                captor.capture());
+        assertThat(captor.getValue().getConnectionList().size(), is(1));
+        assertTrue(connectSucceeded);
+    }
+
+    private VDSReturnValue succesfull() {
+        VDSReturnValue v = new VDSReturnValue();
+        v.setSucceeded(true);
+        return v;
+    }
+
+    @Test
+    public void connectAllTargets() {
+        command.setVm(new VM());
+        // create 2 lun disks
+        LunDisk lunDisk1 = new LunDisk();
+        LUNs lun1 = new LUNs();
+        lun1.setLUNId("id1");
+        lunDisk1.setLun(lun1);
+        LunDisk lunDisk2 = new LunDisk();
+        LUNs lun2 = new LUNs();
+        lun2.setLUNId("id2");
+        lunDisk2.setLun(lun2);
+
+        // add luns to the vm
+        command.getVm().getDiskMap().put(Guid.newGuid(), lunDisk1);
+        command.getVm().getDiskMap().put(Guid.newGuid(), lunDisk2);
+        List<StorageServerConnections> connections1 = new ArrayList<>();
+        List<StorageServerConnections> connections2 = new ArrayList<>();
+
+        // luns have the separate backing targets
+        connections1.add(new StorageServerConnections("/path/to/con1", "id1", null, null, StorageType.ISCSI, null, null, null));
+        connections2.add(new StorageServerConnections("/path/to/con2", "id2", null, null, StorageType.ISCSI, null, null, null));
+        when(storageServerConnectionDao.getAllForLun("id1")).thenReturn(connections1);
+        when(storageServerConnectionDao.getAllForLun("id2")).thenReturn(connections2);
+        ArgumentCaptor<StorageServerConnectionManagementVDSParameters> captor =
+                ArgumentCaptor.forClass(StorageServerConnectionManagementVDSParameters.class);
+        doReturn(succesfull())
+            .when(command).runVdsCommand(eq(ConnectStorageServer), any(StorageServerConnectionManagementVDSParameters.class));
+
+        boolean connectSucceeded = command.connectLunDisks(Guid.newGuid());
+
+        // for different targets, make sure all of them are connected
+        verify(command).runVdsCommand(
+                eq(ConnectStorageServer),
+                captor.capture());
+        assertThat(captor.getValue().getConnectionList().size(), is(2));
+        assertTrue(connectSucceeded);
+    }
+
+    @Test
+    public void dontConnectFCLuns() {
+        // FC luns are connected physically, they don't have StorageServerConnection set.
+        // Make sure if we have an FC lun connection we don't try to connect
+        // otherwise NPE will be thrown.
+        command.setVm(new VM());
+
+        // create 2 FC lun disks
+        LunDisk fcLunDisk = new LunDisk();
+        LUNs lun1 = new LUNs();
+        lun1.setLUNId("id1");
+        fcLunDisk.setLun(lun1);
+        LunDisk isciDisk = new LunDisk();
+        LUNs lun2 = new LUNs();
+        lun2.setLUNId("id2");
+        isciDisk.setLun(lun2);
+
+        // add luns to the vm
+        command.getVm().getDiskMap().put(Guid.newGuid(), fcLunDisk);
+        command.getVm().getDiskMap().put(Guid.newGuid(), isciDisk);
+        List<StorageServerConnections> iscsiLunConnections = new ArrayList<>();
+        iscsiLunConnections.add(new StorageServerConnections("path/to/iscsi/connection", "id1", null, null, StorageType.ISCSI, null, null, null));
+        when(storageServerConnectionDao.getAllForLun("id1")).thenReturn(Collections.emptyList());
+        when(storageServerConnectionDao.getAllForLun("id2")).thenReturn(iscsiLunConnections);
+        ArgumentCaptor<StorageServerConnectionManagementVDSParameters> captor =
+                ArgumentCaptor.forClass(StorageServerConnectionManagementVDSParameters.class);
+        doReturn(succesfull())
+            .when(command).runVdsCommand(eq(ConnectStorageServer), any(StorageServerConnectionManagementVDSParameters.class));
+
+        boolean connectSucceeded = command.connectLunDisks(Guid.newGuid());
+
+        // for different targets, make sure we connect all but not FC.
+        verify(command).runVdsCommand(
+                eq(ConnectStorageServer),
+                captor.capture());
+        assertThat(captor.getValue().getConnectionList().size(), is(1));
+        assertEquals(captor.getValue().getStorageType(), StorageType.ISCSI);
+        assertTrue(connectSucceeded);
+    }
+
+    @Test
+    public void oneConnectFailed() {
+        command.setVm(new VM());
+        // create 2 lun disks
+        LunDisk lunDisk1 = new LunDisk();
+        LUNs lun1 = new LUNs();
+        lun1.setLUNId("id1");
+        lunDisk1.setLun(lun1);
+
+        // add luns to the vm
+        command.getVm().getDiskMap().put(Guid.newGuid(), lunDisk1);
+        List<StorageServerConnections> connections = new ArrayList<>();
+
+        // luns have the same backing targets
+        connections.add(new StorageServerConnections("/path/to/con1", "id1", null, null, StorageType.ISCSI, null, null, null));
+        when(storageServerConnectionDao.getAllForLun("id1")).thenReturn(connections);
+        ArgumentCaptor<StorageServerConnectionManagementVDSParameters> captor =
+                ArgumentCaptor.forClass(StorageServerConnectionManagementVDSParameters.class);
+        doReturn(new VDSReturnValue())
+                .when(command).runVdsCommand(eq(ConnectStorageServer), any(StorageServerConnectionManagementVDSParameters.class));
+
+        boolean connectSucceeded = command.connectLunDisks(Guid.newGuid());
+
+        // for same targets, connect only once
+        verify(command).runVdsCommand(
+                eq(ConnectStorageServer),
+                captor.capture());
+        assertThat(captor.getValue().getConnectionList().size(), is(1));
+        assertFalse(connectSucceeded);
+
     }
 
     private StorageDomainStatic backupStorageDomain(boolean isBackup) {
