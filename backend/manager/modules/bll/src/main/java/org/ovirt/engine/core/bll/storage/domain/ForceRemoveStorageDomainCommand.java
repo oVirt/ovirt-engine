@@ -52,17 +52,18 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
             try {
                 // If master and there are more storage domains in the DC try to reconstruct.
                 if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
-                    ReconstructMasterParameters tempVar = new ReconstructMasterParameters(getStoragePool().getId(),
-                            getStorageDomain().getId(), false);
-                    tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-                    runInternalAction(ActionType.ReconstructMasterDomain, tempVar);
+                    ReconstructMasterParameters reconstructMasterParameters =
+                            new ReconstructMasterParameters(getStoragePool().getId(),
+                                    getStorageDomain().getId(), false);
+                    reconstructMasterParameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+                    runInternalAction(ActionType.ReconstructMasterDomain, reconstructMasterParameters);
                 }
 
                 // try to force detach first
-                DetachStorageDomainVDSCommandParameters tempVar2 = new DetachStorageDomainVDSCommandParameters(
+                DetachStorageDomainVDSCommandParameters detachParameters = new DetachStorageDomainVDSCommandParameters(
                         getStoragePool().getId(), getStorageDomain().getId(), Guid.Empty, -1);
-                tempVar2.setForce(true);
-                runVdsCommand(VDSCommandType.DetachStorageDomain, tempVar2);
+                detachParameters.setForce(true);
+                runVdsCommand(VDSCommandType.DetachStorageDomain, detachParameters);
             } catch (RuntimeException ex) {
                 log.error("Could not force detach storage domain '{}': {}",
                         getStorageDomain().getStorageName(),
