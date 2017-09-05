@@ -52,11 +52,11 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
     }
 
     public String getUserdefinedVMProperties(Version version) {
-        return Config.<String> getValue(ConfigValues.UserDefinedVMProperties, version.getValue());
+        return Config.getValue(ConfigValues.UserDefinedVMProperties, version.getValue());
     }
 
     public String getPredefinedVMProperties(Version version) {
-        return Config.<String> getValue(ConfigValues.PredefinedVMProperties, version.getValue());
+        return Config.getValue(ConfigValues.PredefinedVMProperties, version.getValue());
     }
 
     public static class VMCustomProperties {
