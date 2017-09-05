@@ -90,8 +90,7 @@ public class VnicProfileMappingPopupView
             @Override
             protected String renderNullSafe(VnicProfileView profile) {
                 return (profile == VnicProfileView.EMPTY) ? messages.emptyProfile().asString()
-                        : messages.profileAndNetworkSelected(profile.getName(), profile.getNetworkName())
-                        .asString();
+                        : messages.profileAndNetworkSelected(profile.getName(), profile.getNetworkName());
             }
         };
         vnicProfileMappingTable.addColumn(

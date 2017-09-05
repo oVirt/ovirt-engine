@@ -18,8 +18,7 @@ public class ProfileEditor extends ListModelTypeAheadListBoxEditor<VnicProfileVi
                     @Override
                     public String getReplacementStringNullSafe(VnicProfileView profile) {
                         return (profile == VnicProfileView.EMPTY) ? messages.emptyProfile().asString()
-                                : messages.profileAndNetworkSelected(profile.getName(), profile.getNetworkName())
-                                        .asString();
+                                : messages.profileAndNetworkSelected(profile.getName(), profile.getNetworkName());
                     }
 
                     @Override
@@ -31,7 +30,7 @@ public class ProfileEditor extends ListModelTypeAheadListBoxEditor<VnicProfileVi
 
                         String profileDescription = profile.getDescription();
                         String profileAndNetwork =
-                                messages.profileAndNetwork(profile.getName(), profile.getNetworkName()).asString();
+                                messages.profileAndNetwork(profile.getName(), profile.getNetworkName());
 
                         return templates.typeAheadNameDescription(profileAndNetwork,
                                 profileDescription != null ? profileDescription : "").asString(); //$NON-NLS-1$

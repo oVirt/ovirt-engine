@@ -65,9 +65,9 @@ public interface CommonApplicationMessages extends Messages {
 
     SafeHtml emptyProfileDescription();
 
-    SafeHtml profileAndNetwork(String profileName, String networkName);
+    String profileAndNetwork(String profileName, String networkName);
 
-    SafeHtml profileAndNetworkSelected(String profileName, String networkName);
+    String profileAndNetworkSelected(String profileName, String networkName);
 
     SafeHtml userWithRole(String userName, String roleName);
 
