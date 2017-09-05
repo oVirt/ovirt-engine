@@ -148,10 +148,6 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         propertiesMap.putAll(convertProperties(vmPropertiesFieldValue, allVmProperties.get(version)));
     }
 
-    protected boolean keyExistsInVersion(Map<Version, Map<String, String>> propertiesMap, Version version, String key) {
-        return propertiesMap.get(version).containsKey(key);
-    }
-
     private void convertCustomPropertiesStrToMaps(Version version, String propertiesValue,
             Map<String, String> predefinedPropertiesMap, Map<String, String> userDefinedPropertiesMap) {
         Map<String, String> propertiesMap =
