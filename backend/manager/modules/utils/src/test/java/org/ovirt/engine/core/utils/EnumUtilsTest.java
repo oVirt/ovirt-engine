@@ -21,4 +21,35 @@ public class EnumUtilsTest {
     public void nameOrNullForEnum() {
         assertEquals(EnumForTesting.ENUM1.name(), EnumUtils.nameOrNull(EnumForTesting.ENUM1));
     }
+
+    @Test
+    public void valeOfRightCaseSensitive() {
+        assertEquals(EnumForTesting.ENUM1, EnumUtils.valueOf(EnumForTesting.class, EnumForTesting.ENUM1.name(), false));
+    }
+
+    @Test
+    public void valeOfRightCaseInsensitive() {
+        assertEquals(EnumForTesting.ENUM1, EnumUtils.valueOf(EnumForTesting.class, EnumForTesting.ENUM1.name(), true));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void valeOfWrongCaseSensitive() {
+        EnumUtils.valueOf(EnumForTesting.class, EnumForTesting.ENUM1.name().toLowerCase(), false);
+    }
+
+    @Test
+    public void valeOfWrongCaseInsensitive() {
+        assertEquals(EnumForTesting.ENUM1,
+                EnumUtils.valueOf(EnumForTesting.class, EnumForTesting.ENUM1.name().toLowerCase(), true));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void valeOfWrongValueSensitive() {
+        EnumUtils.valueOf(EnumForTesting.class, "no such value!", false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void valeOfWrongValueInsensitive() {
+        EnumUtils.valueOf(EnumForTesting.class, "no such value!", true);
+    }
 }
