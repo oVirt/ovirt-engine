@@ -14,12 +14,12 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
 
     @Test
     public void testExecuteQueryUserConfigFiltered() {
-        assertQueryExecution(ConfigValues.MaxVmsInPool, true, true);
+        assertQueryExecution(ConfigValues.PredefinedVMProperties, true, true);
     }
 
     @Test
     public void testExecuteQueryUserConfigNotFiltered() {
-        assertQueryExecution(ConfigValues.MaxVmsInPool, false, true);
+        assertQueryExecution(ConfigValues.PredefinedVMProperties, false, true);
     }
 
     private void assertQueryExecution(ConfigValues configValue, boolean isFiltered, boolean shouldSucceed) {
