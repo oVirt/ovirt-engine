@@ -437,6 +437,11 @@ Requires:	%{name}-dwh-setup >= 4.2
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-imageio-proxy-setup
 Requires:	openssh
+%if %{ovirt_rh_postgresql95}
+Requires:       rh-postgresql95-postgresql-server
+%else
+Requires:       postgresql-server >= 9.5
+%endif
 Conflicts:	%{name} < 3.6.0
 
 %description setup-plugin-ovirt-engine
