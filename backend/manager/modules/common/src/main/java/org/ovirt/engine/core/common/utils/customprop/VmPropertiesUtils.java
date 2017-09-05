@@ -38,9 +38,9 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
             allVmProperties = new HashMap<>();
             Set<Version> versions = getSupportedClusterLevels();
             for (Version version : versions) {
-                predefinedProperties.put(version, new HashMap<String, String>());
-                userdefinedProperties.put(version, new HashMap<String, String>());
-                allVmProperties.put(version, new HashMap<String, String>());
+                predefinedProperties.put(version, new HashMap<>());
+                userdefinedProperties.put(version, new HashMap<>());
+                allVmProperties.put(version, new HashMap<>());
                 parsePropertiesRegex(getPredefinedVMProperties(version), predefinedProperties.get(version));
                 parsePropertiesRegex(getUserdefinedVMProperties(version), userdefinedProperties.get(version));
                 allVmProperties.get(version).putAll(predefinedProperties.get(version));
