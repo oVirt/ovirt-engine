@@ -538,8 +538,6 @@ select fn_db_add_config_value('LogMaxPhysicalMemoryUsedThresholdInPercentage', '
 select fn_db_add_config_value('LogMaxSwapMemoryUsedThresholdInPercentage', '95', 'general');
 select fn_db_add_config_value('LogMaxCpuUsedThresholdInPercentage', '95', 'general');
 select fn_db_add_config_value('LogMaxNetworkUsedThresholdInPercentage', '95', 'general');
-select fn_db_add_config_value('LogMinFreeSwapThresholdInMB', '256', 'general');
-select fn_db_add_config_value('LogMaxSwapUsedThresholdInPercentage', '95', 'general');
 
 -- Allow to specify SecurityGroups property for vNICs, containing either an empty string or a list of one or more comma seperated UUIDs.
 select fn_db_add_config_value_for_versions_up_to('CustomDeviceProperties', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '4.2');

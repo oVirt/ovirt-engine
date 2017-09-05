@@ -1211,16 +1211,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("95")
     LogMaxNetworkUsedThresholdInPercentage,
 
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("256")
-    LogMinFreeSwapThresholdInMB,
-
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("95")
-    LogMaxSwapUsedThresholdInPercentage,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("9")
     PgMajorRelease,
@@ -1875,10 +1865,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("HostedEngine")
     HostedEngineVmName,
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ChangeNetworkUnderBridgeInUseSupported,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("127")
     MaxIoThreadsPerVm(ClientAccessLevel.User),
@@ -1974,10 +1960,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     AgentChannelNamingSupported,
-
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    DnsResolverConfigurationSupported,
 
     /**
      * Timeout in seconds for the completion of calls to external network providers.
