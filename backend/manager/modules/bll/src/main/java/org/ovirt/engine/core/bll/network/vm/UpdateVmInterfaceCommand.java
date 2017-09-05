@@ -164,24 +164,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         if (getSucceeded()) {    // command succeeded, actions are not going to be reverted.
 
             String macToRelease = oldIface.getMacAddress();
-            boolean isRunningStatelessVm = getVm().isStateless() && getVm().isRunning();
-
-            /*
-             * This can be really confusing, so to explain:
-             *
-             * if not running as stateless, you can release mac you have in hand for release.
-             *
-             * If running stateless you can release mac, if usageDifference is 0. That means, that you have MAC to be
-             * released, which is not used after operations in this command, and it is not used in original snapshot.
-             * No one is using it, so it's possible to release it. If difference is negative, it means, that MAC is used
-             * less in state after this command is done, but it's still used in original snapshot, so we have to keep it
-             * reserved. If difference is positive, it means, that MAC is used less than before this command
-             * (because we are trying to release this mac), but it is still used more than in original snapshot,
-             * therefore we can safely release it.
-             */
-            boolean canReleaseOriginalMac = !(isRunningStatelessVm && countMacUsageDifference.usageDifference(macToRelease) < 0);
-
-            if (canReleaseOriginalMac) {
+            boolean canReleaseMac = new MacIsNotReservedInSnapshotAndCanBeReleased().macCanBeReleased(macToRelease, getVm(), countMacUsageDifference);
+            if (canReleaseMac) {
                 macPool.freeMac(macToRelease);
             }
         } else {
