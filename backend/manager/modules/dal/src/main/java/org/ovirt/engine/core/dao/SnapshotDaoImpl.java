@@ -298,4 +298,12 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
         getCallsHandler().executeModification("UpdateMemory",
                 parameterSource);
     }
+
+    @Override
+    public List<Snapshot> getSnapshotsByMemoryDiskId(Guid memoryDiskId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("memory_disk_id", memoryDiskId);
+
+        return getCallsHandler().executeReadList("GetAllSnapshotsByMemoryDisk", createEntityRowMapper(), parameterSource);
+    }
 }

@@ -240,4 +240,13 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *          Comma-separated String representation of the memory volumes
      */
     void updateHibernationMemory(Guid vmId, Guid memoryDumpDiskId, Guid memoryMetadataDiskId, String memoryVolume);
+
+    /**
+     * Returns the snapshots containing the specified memory disk ID (metadata disk or memory disk)
+     *
+     * @param memoryDiskId
+     *          The ID of the disk
+     * @return The snapshots containing the specified memory disk ID (metadata disk or memory disk)
+     */
+    List<Snapshot> getSnapshotsByMemoryDiskId(Guid memoryDiskId);
 }

@@ -40,12 +40,10 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
 
             RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
             removeMemoryDumpDiskParameters.setShouldBeLogged(false);
-            removeMemoryDumpDiskParameters.setSuppressContentTypeCheck(true);
             runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
 
             RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(guids.get(4));
             removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
-            removeMemoryMetadataDiskParameters.setSuppressContentTypeCheck(true);
             runInternalAction(ActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
         }
         setSucceeded(true);

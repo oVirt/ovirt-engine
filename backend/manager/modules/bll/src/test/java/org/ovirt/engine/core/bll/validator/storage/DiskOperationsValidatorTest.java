@@ -33,6 +33,9 @@ public class DiskOperationsValidatorTest {
         for (Map.Entry<ActionType, List<DiskContentType>> entry : DiskOperationsValidator.allowedCommandsOnTypes.entrySet()) {
             EnumSet<DiskContentType> allowedTypes = EnumSet.copyOf(entry.getValue());
             EnumSet<DiskContentType> disallowedTypes = EnumSet.complementOf(allowedTypes);
+            if (disallowedTypes.isEmpty()) {
+                continue;
+            }
 
             disk.setContentType(disallowedTypes.iterator().next());
             DiskOperationsValidator validator = new DiskOperationsValidator(disk);

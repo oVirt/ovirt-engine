@@ -428,3 +428,13 @@ END; $PROCEDURE$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION GetAllSnapshotsByMemoryDisk(v_memory_disk_id UUID)
+RETURNS SETOF snapshots STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM snapshots
+    WHERE v_memory_disk_id IN (memory_dump_disk_id, memory_metadata_disk_id);
+END; $PROCEDURE$
+LANGUAGE plpgsql;

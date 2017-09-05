@@ -279,7 +279,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
         removeMemoryDumpDiskParameters.setShouldBeLogged(false);
-        removeMemoryDumpDiskParameters.setSuppressContentTypeCheck(true);
         ActionReturnValue retVal = runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
         if (!retVal.getSucceeded()) {
             return false;
@@ -287,7 +286,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(guids.get(4));
         removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
-        removeMemoryMetadataDiskParameters.setSuppressContentTypeCheck(true);
         retVal = runInternalAction(ActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
         if (!retVal.getSucceeded()) {
             return false;

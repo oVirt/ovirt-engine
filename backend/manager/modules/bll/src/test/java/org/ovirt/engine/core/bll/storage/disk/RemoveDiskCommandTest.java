@@ -166,11 +166,4 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK);
     }
-
-    @Test
-    public void testRemoveMemoryDiskFails() {
-        disk.setContentType(DiskContentType.MEMORY_DUMP_VOLUME);
-        doReturn(disk).when(cmd).getDisk();
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
-    }
 }

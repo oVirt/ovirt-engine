@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -54,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
@@ -66,6 +68,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -102,6 +105,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private VmStaticDao vmStaticDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private SnapshotDao snapshotDao;
 
     public RemoveDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -125,7 +130,41 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
-        return validateHostedEngineDisks() && validateAllVmsForDiskAreDown() && canRemoveDiskBasedOnStorageTypeCheck();
+
+        return validateHostedEngineDisks() && validateAllVmsForDiskAreDown() && canRemoveDiskBasedOnContentTypeChecks()
+                && canRemoveDiskBasedOnStorageTypeCheck();
+    }
+
+    private boolean canRemoveDiskBasedOnContentTypeChecks() {
+        Disk disk = getDisk();
+
+        if (!getParameters().isSuppressContentTypeCheck() &&
+                !validate(new DiskOperationsValidator(disk).isOperationAllowedOnDisk(getActionType()))) {
+            return false;
+        }
+
+        switch (disk.getContentType()) {
+        case OVF_STORE:
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator((DiskImage) disk);
+            if (!validate(diskImagesValidator.disksInStatus(ImageStatus.ILLEGAL,
+                    EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS))) {
+                return false;
+            }
+            break;
+        case MEMORY_DUMP_VOLUME:
+        case MEMORY_METADATA_VOLUME:
+            List<Snapshot> snapshots = snapshotDao.getSnapshotsByMemoryDiskId(disk.getId());
+            // If there's more than one snapshot it means the snapshot is in preview
+            if (snapshots.size() > 1) {
+                return false;
+            }
+            if (!snapshots.isEmpty() && snapshots.get(0).getType() == Snapshot.SnapshotType.ACTIVE) {
+                return false;
+            }
+            break;
+        }
+
+        return true;
     }
 
     private boolean validateHostedEngineDisks() {
@@ -174,18 +213,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveDiskBasedOnImageStorageCheck() {
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
-
-        if (!getParameters().isSuppressContentTypeCheck() &&
-                !validate(new DiskOperationsValidator(diskImage).isOperationAllowedOnDisk(getActionType()))) {
-            return false;
-        }
-
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImage);
-        if (diskImage.isOvfStore()
-                && !validate(diskImagesValidator.disksInStatus(ImageStatus.ILLEGAL,
-                        EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS))) {
-            return false;
-        }
 
         boolean isVmTemplateType = diskImage.getVmEntityType() != null &&
                 diskImage.getVmEntityType().isTemplateType();
@@ -343,6 +370,11 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                         runInternalActionWithTasksContext(ActionType.RemoveImage,
                                 buildRemoveImageParameters(getDiskImage()));
                 if (actionReturnValue.getSucceeded()) {
+                    if (getDisk().getContentType() == DiskContentType.MEMORY_DUMP_VOLUME ||
+                            getDisk().getContentType() == DiskContentType.MEMORY_METADATA_VOLUME) {
+                        removeMemoryDiskFromSnapshotIfNeeded();
+                    }
+
                     incrementVmsGeneration();
                     getReturnValue().getVdsmTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
                     setSucceeded(true);
@@ -368,6 +400,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     log.debug("Exception", e);
                 }
                 break;
+        }
+    }
+
+    private void removeMemoryDiskFromSnapshotIfNeeded() {
+        List<Snapshot> snapshots = snapshotDao.getSnapshotsByMemoryDiskId(getDisk().getId());
+        if (!snapshots.isEmpty()) {
+            snapshotDao.removeMemoryFromSnapshot(snapshots.get(0).getId());
         }
     }
 
