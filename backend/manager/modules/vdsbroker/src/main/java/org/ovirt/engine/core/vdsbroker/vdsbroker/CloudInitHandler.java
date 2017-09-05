@@ -152,7 +152,9 @@ public class CloudInitHandler {
                     output.append("\n");
                 }
 
-                storeIpv6(iface, output);
+                // bugzilla.redhat.com/1464043:
+                // muting configuration of IPv6 until a proper solution is found
+                //storeIpv6(iface, output);
             }
         }
 
