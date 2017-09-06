@@ -361,6 +361,11 @@ class Defaults(object):
         ',ovirt-engine-dashboard'
     )
 
+    DEFAULT_OVN_FIREWALLD_SERVICES = (
+        'ovn-central-firewall-service'
+        ',ovirt-provider-ovn'
+    )
+
 
 @util.export
 class Stages(object):
@@ -890,6 +895,9 @@ class OvnEnv(object):
 
     PROVIDER_NAME = 'ovirt-provider-ovn'
 
+    FIREWALLD_SERVICES_DIR = 'OVESETUP_OVN/firewalldServicesDir'
+    OVN_FIREWALLD_SERVICES = 'OVESETUP_OVN/firewalldServices'
+
     @osetupattrs(
         is_secret=True,
     )
@@ -899,6 +907,8 @@ class OvnEnv(object):
 
 @util.export
 class OvnFileLocations(object):
+
+    DEFAULT_FIREWALLD_SERVICES_DIR = '/usr/lib/firewalld/services'
 
     OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE = (
         '/etc/ovirt-provider-ovn/conf.d/10-setup-ovirt-provider-ovn.conf'

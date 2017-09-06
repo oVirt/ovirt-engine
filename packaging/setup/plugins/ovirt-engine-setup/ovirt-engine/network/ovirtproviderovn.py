@@ -20,6 +20,7 @@
 
 import base64
 import gettext
+import os
 import random
 import string
 import uuid
@@ -37,10 +38,13 @@ from otopi import util
 from ovirt_engine import configfile
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine.constants import Const
+from ovirt_engine_setup.engine.constants import Defaults
 from ovirt_engine_setup.engine.constants import FileLocations
 from ovirt_engine_setup.engine.constants import OvnEnv
+from ovirt_engine_setup.engine.constants import OvnFileLocations
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 from ovirt_setup_lib import dialog
@@ -106,6 +110,19 @@ class Plugin(plugin.PluginBase):
         self._manual_commands = []
         self._failed_commands = []
         self._manual_tasks = []
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            OvnEnv.FIREWALLD_SERVICES_DIR,
+            OvnFileLocations.DEFAULT_FIREWALLD_SERVICES_DIR
+        )
+        self.environment.setdefault(
+            OvnEnv.OVN_FIREWALLD_SERVICES,
+            Defaults.DEFAULT_OVN_FIREWALLD_SERVICES
+        )
 
     def _add_provider_to_db(self):
         auth_required = self._user is not None
@@ -224,14 +241,66 @@ class Plugin(plugin.PluginBase):
             ),
         )
 
+    def _getSink(self, pm, pmsinkbase):
+
+        class MyPMSink(pmsinkbase):
+
+            def __init__(self, log):
+                super(MyPMSink, self).__init__()
+                self._log = log
+
+            def verbose(self, msg):
+                super(MyPMSink, self).verbose(msg)
+                self._log.debug('%s %s', pm, msg)
+
+            def info(self, msg):
+                super(MyPMSink, self).info(msg)
+                self._log.info('%s %s', pm, msg)
+
+            def error(self, msg):
+                super(MyPMSink, self).error(msg)
+                self._log.error('%s %s', pm, msg)
+        return MyPMSink(self.logger)
+
     def _setup_packages(self):
-        self.environment[
-            osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
-        ].append(
-            {
-                'packages': self.OVN_PACKAGES
-            },
+        PM, MiniPM, MiniPMSinkBase = osetuputil.getPackageManager()
+        mpm = MiniPM(
+            sink=self._getSink(PM, MiniPMSinkBase),
         )
+        with mpm.transaction():
+            self.logger.debug(
+                'Installing OVN packages using {pm}: {packages}'.format(
+                    pm=PM,
+                    packages=self.OVN_PACKAGES,
+                )
+            )
+            mpm.install(packages=self.OVN_PACKAGES)
+            if mpm.buildTransaction():
+                mpm.processTransaction()
+
+    def _setup_firewalld_services(self):
+        services = [
+            s.strip()
+            for s in self.environment[
+                OvnEnv.OVN_FIREWALLD_SERVICES
+            ].split(',')
+        ]
+
+        # TODO: handle services that were copied over to
+        # /etc/firewalld/services
+        services_dir = self.environment[
+            OvnEnv.FIREWALLD_SERVICES_DIR
+        ]
+
+        for service in services:
+            self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].append(
+                {
+                    'name': service,
+                    'absolute_path': os.path.join(
+                        services_dir, '%s.xml' % (service,)
+                    )
+                },
+            )
 
     def _prompt_for_credentials(self):
         user = self._query_ovn_user()
@@ -270,7 +339,10 @@ class Plugin(plugin.PluginBase):
             dialog=self.dialog,
             name='ovirt-provider-ovn',
             note=_(
-                'Install ovirt-provider-ovn(@VALUES@) [@DEFAULT@]?: '
+                'Install ovirt-provider-ovn? Please note that this will cause '
+                'an immediate installation\nof several OVN packages that will '
+                'not be rolled back in case of a failure. '
+                '(@VALUES@) [@DEFAULT@]: '
             ),
             prompt=True,
             default=True
@@ -625,6 +697,7 @@ class Plugin(plugin.PluginBase):
         if not self._enabled:
             return
         self._setup_packages()
+        self._setup_firewalld_services()
 
     def _print_commands(self, message, commands):
         self.dialog.note(
