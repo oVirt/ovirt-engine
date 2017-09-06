@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -69,18 +70,15 @@ public class RemoveDiskModel extends ConfirmationModel {
     public void onRemove(final ICommandTarget target) {
         boolean removeDisk = getLatch().getEntity();
         ActionType actionType = removeDisk ? ActionType.RemoveDisk : ActionType.DetachDiskFromVm;
-        ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
 
-        for (Disk disk : disksToRemove) {
-            ActionParametersBase parameters = removeDisk ?
-                    new RemoveDiskParameters(disk.getId()) :
-                    new AttachDetachVmDiskParameters(new DiskVmElement(disk.getId(), vm.getId()));
-            paramerterList.add(parameters);
-        }
+        List<ActionParametersBase> parameterList = disksToRemove.stream()
+                .map(disk -> removeDisk ? new RemoveDiskParameters(disk.getId()) :
+                        new AttachDetachVmDiskParameters(new DiskVmElement(disk.getId(), vm.getId())))
+                .collect(Collectors.toList());
 
         startProgress();
 
-        Frontend.getInstance().runMultipleAction(actionType, paramerterList,
+        Frontend.getInstance().runMultipleAction(actionType, parameterList,
                 result -> {
                     stopProgress();
                     target.executeCommand(cancelCommand);
