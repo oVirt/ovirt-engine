@@ -32,47 +32,104 @@ public class EventMapper {
                 .getLogTime(), null));
         model.setDescription(entity.getMessage());
 
-        if (entity.getUserId() != null
-                && !entity.getUserId().equals(Guid.Empty)) {
+        boolean idValid = entity.getUserId()!=null && !entity.getUserId().equals(Guid.Empty);
+        boolean nameValid = entity.getUserName()!=null;
+
+        if (idValid || nameValid) {
             User user = new User();
-            user.setId(entity.getUserId().toString());
+            if (idValid) {
+                user.setId(entity.getUserId().toString());
+            }
+            if (nameValid) {
+                user.setName(entity.getUserName());
+            }
             model.setUser(user);
         }
-        if (entity.getVmId() != null && !entity.getVmId().equals(Guid.Empty)) {
+
+        idValid = entity.getVmId()!=null && !entity.getVmId().equals(Guid.Empty);
+        nameValid = entity.getVmName()!=null;
+
+        if (idValid || nameValid) {
             Vm vm = new Vm();
-            vm.setId(entity.getVmId().toString());
+            if (idValid) {
+                vm.setId(entity.getVmId().toString());
+            }
+            if (nameValid) {
+                vm.setName(entity.getVmName());
+            }
             model.setVm(vm);
         }
-        if (entity.getStorageDomainId() != null
-                && !entity.getStorageDomainId().equals(Guid.Empty)) {
+
+        idValid = entity.getStorageDomainId()!=null && !entity.getStorageDomainId().equals(Guid.Empty);
+        nameValid = entity.getStorageDomainName()!=null;
+
+        if (idValid || nameValid) {
             StorageDomain sd = new StorageDomain();
-            sd.setId(entity.getStorageDomainId().toString());
+            if (idValid) {
+                sd.setId(entity.getStorageDomainId().toString());
+            }
+            if (nameValid) {
+                sd.setName(entity.getStorageDomainName());
+            }
             model.setStorageDomain(sd);
         }
-        if (entity.getVdsId() != null
-                && !entity.getVdsId().equals(Guid.Empty)) {
+
+        idValid = entity.getVdsId()!=null && !entity.getVdsId().equals(Guid.Empty);
+        nameValid = entity.getVdsName()!=null;
+
+        if (idValid || nameValid) {
             Host host = new Host();
-            host.setId(entity.getVdsId().toString());
+            if (idValid) {
+                host.setId(entity.getVdsId().toString());
+            }
+            if (nameValid) {
+                host.setName(entity.getVdsName());
+            }
             model.setHost(host);
         }
-        if (entity.getVmTemplateId() != null
-                && !entity.getVmTemplateId().equals(Guid.Empty)) {
+
+        idValid = entity.getVmTemplateId()!=null && !entity.getVmTemplateId().equals(Guid.Empty);
+        nameValid = entity.getVmTemplateName()!=null;
+
+        if (idValid || nameValid) {
             Template template = new Template();
-            template.setId(entity.getVmTemplateId().toString());
+            if (idValid) {
+                template.setId(entity.getVmTemplateId().toString());
+            }
+            if (nameValid) {
+                template.setName(entity.getVmTemplateName());
+            }
             model.setTemplate(template);
         }
-        if (entity.getClusterId() != null
-                && !entity.getClusterId().equals(Guid.Empty)) {
+
+        idValid = entity.getClusterId()!=null && !entity.getClusterId().equals(Guid.Empty);
+        nameValid = entity.getClusterName()!=null;
+
+        if (idValid || nameValid) {
             Cluster cluster = new Cluster();
-            cluster.setId(entity.getClusterId().toString());
+            if (idValid) {
+                cluster.setId(entity.getClusterId().toString());
+            }
+            if (nameValid) {
+                cluster.setName(entity.getClusterName());
+            }
             model.setCluster(cluster);
         }
-        if (entity.getStoragePoolId() != null
-                && !entity.getStoragePoolId().equals(Guid.Empty)) {
+
+        idValid = entity.getStoragePoolId()!=null && !entity.getStoragePoolId().equals(Guid.Empty);
+        nameValid = entity.getStoragePoolName()!=null;
+
+        if (idValid || nameValid) {
             DataCenter dataCenter = new DataCenter();
-            dataCenter.setId(entity.getStoragePoolId().toString());
+            if (idValid) {
+                dataCenter.setId(entity.getStoragePoolId().toString());
+            }
+            if (nameValid) {
+                dataCenter.setName(entity.getStoragePoolName());
+            }
             model.setDataCenter(dataCenter);
         }
+
         if (StringUtils.isNotEmpty(entity.getCorrelationId())) {
             model.setCorrelationId(entity.getCorrelationId());
         }
