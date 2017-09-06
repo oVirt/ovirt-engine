@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class RemoveDiskModel extends ConfirmationModel {
 
     public static final String ON_REMOVE = "OnRemoveDisk"; //$NON-NLS-1$
