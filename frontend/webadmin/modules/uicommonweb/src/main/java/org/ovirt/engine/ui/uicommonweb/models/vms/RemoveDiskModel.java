@@ -46,7 +46,7 @@ public class RemoveDiskModel extends ConfirmationModel {
 
         getLatch().setEntity(false);
 
-        ArrayList<DiskModel> items = new ArrayList<>();
+        List<DiskModel> items = new ArrayList<>();
         for (Disk disk : disksToRemove) {
             DiskModel diskModel = new DiskModel();
             diskModel.setDisk(disk);
