@@ -32,7 +32,7 @@ DECLARE
     v_pm_cursor CURSOR FOR select vds_id, ip, pm_type, pm_user, pm_password, pm_port, pm_options,
                                   pm_secondary_ip, pm_secondary_type, pm_secondary_user, pm_secondary_password,
                                   pm_secondary_port, pm_secondary_options, pm_secondary_concurrent from vds_static
-                                  where ip IS NOT NULL;
+                                  where (ip, pm_type, pm_user, pm_password) IS NOT NULL;
 BEGIN
     OPEN v_pm_cursor;
     FETCH v_pm_cursor into v_record;
