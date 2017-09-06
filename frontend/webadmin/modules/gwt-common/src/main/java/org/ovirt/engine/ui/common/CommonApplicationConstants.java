@@ -1736,4 +1736,6 @@ public interface CommonApplicationConstants extends Constants {
     String diskType();
 
     String diskContentType();
+
+    String memoryDisk();
 }

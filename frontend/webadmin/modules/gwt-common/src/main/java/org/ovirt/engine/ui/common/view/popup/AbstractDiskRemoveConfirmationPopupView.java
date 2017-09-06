@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.view.popup;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -47,6 +48,11 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
         }
         else if (!isInVm && disk.getNumberOfVms() > 0) {
             notes.add(messages.diskAttachedToVMs(disk.getNumberOfVms()));
+        }
+
+        if (disk.getContentType() == DiskContentType.MEMORY_METADATA_VOLUME ||
+                disk.getContentType() == DiskContentType.MEMORY_DUMP_VOLUME) {
+            notes.add(constants.memoryDisk());
         }
 
         if (!notes.isEmpty()) {
