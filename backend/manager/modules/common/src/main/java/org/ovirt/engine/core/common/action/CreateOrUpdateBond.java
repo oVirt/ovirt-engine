@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -72,17 +71,6 @@ public class CreateOrUpdateBond implements BusinessEntity<Guid>, Nameable {
 
         return createOrUpdateBond;
     }
-
-    public static List<CreateOrUpdateBond> fromBonds(List<Bond> bonds) {
-        List<CreateOrUpdateBond> result = new ArrayList<>();
-
-        for (Bond bond : bonds) {
-            result.add(fromBond(bond));
-        }
-
-        return result;
-    }
-
 
     @Override
     public boolean equals(Object o) {
