@@ -32,6 +32,7 @@ DEV_BUILD_GWT_DRAFT=0
 DEV_BUILD_GWT_SUPER_DEV_MODE=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=
+DEV_BUILD_SCL_POSTGRESQL=0
 JS_DEPS_DIR=/usr/share/ovirt-js-dependencies
 VMCONSOLE_SYSCONF_DIR=/etc/ovirt-vmconsole
 VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
@@ -73,6 +74,7 @@ PYTHON_DIR=$(PYTHON_SYS_DIR)
 PYTHON3_DIR=$(PYTHON3_SYS_DIR)
 DEV_PYTHON_DIR=
 DEV_PYTHON3_DIR=
+DEV_SETUP_ENV_DIR=
 PKG_USER=ovirt
 PKG_GROUP=ovirt
 WILDFLY_OVERLAY_MODULES=/usr/share/ovirt-engine-wildfly-overlay/modules
@@ -130,6 +132,25 @@ BUILD_FILE=tmp.built
 MAVEN_OUTPUT_DIR=.
 BUILD_TARGET=install
 
+# SCL rh-postgresql95 customization
+define ENVFILEC
+RHPOSTGRESQL95BASE="/opt/rh/rh-postgresql95/root"
+RHPOSTGRESQL95DATA="/var/opt/rh/rh-postgresql95/lib/pgsql/data"
+if [ -e $${RHPOSTGRESQL95BASE}/usr/bin/postgresql-setup ]
+then
+  export sclenv="rh-postgresql95"
+  export POSTGRESQLENV="COMMAND/pg_dump=str:$${RHPOSTGRESQL95BASE}/usr/bin/pg_dump \
+         COMMAND/psql=str:$${RHPOSTGRESQL95BASE}/usr/bin/psql \
+         COMMAND/pg_restore=str:$${RHPOSTGRESQL95BASE}/usr/bin/pg_restore \
+         COMMAND/postgresql-setup=str:$${RHPOSTGRESQL95BASE}/usr/bin/postgresql-setup \
+         OVESETUP_PROVISIONING/postgresService=str:rh-postgresql95-postgresql \
+         OVESETUP_PROVISIONING/postgresConf=str:$${RHPOSTGRESQL95DATA}/postgresql.conf \
+         OVESETUP_PROVISIONING/postgresPgHba=str:$${RHPOSTGRESQL95DATA}/pg_hba.conf \
+         OVESETUP_PROVISIONING/postgresPgVersion=str:$${RHPOSTGRESQL95DATA}/PG_VERSION"
+fi
+endef
+export ENVFILEC
+
 # Don't use any of the bultin rules, in particular don't use the rule
 # for .sh files, as that means that we can't generate .sh files from
 # templates:
@@ -164,6 +185,7 @@ BUILD_TARGET=install
 	-e "s|@SETUP_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@DEV_PYTHON_DIR@|$(DEV_PYTHON_DIR)|g" \
 	-e "s|@DEV_PYTHON3_DIR@|$(DEV_PYTHON3_DIR)|g" \
+	-e "s|@DEV_SETUP_ENV_DIR@|$(DEV_SETUP_ENV_DIR)|g" \
 	-e "s|@RPM_VERSION@|$(ENGINE_VERSION)|g" \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
 	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
@@ -506,6 +528,7 @@ all-dev:
 		BUILD_DEV=1 \
 		DEV_PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		DEV_PYTHON3_DIR="$(PREFIX)$(PYTHON3_SYS_DIR)" \
+		DEV_SETUP_ENV_DIR="$(PREFIX)/etc/ovirt-engine-setup.env.d" \
 		VMCONSOLE_SYSCONF_DIR="$(PREFIX)/etc/ovirt-vmconsole" \
 		VMCONSOLE_PKI_DIR="$(PREFIX)/etc/pki/ovirt-vmconsole" \
 		$(NULL)
@@ -548,3 +571,9 @@ install-dev:	\
 	if [ -e "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments" ]; then \
 		touch "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments/engine.ear.deployed"; \
 	fi
+
+ifneq ($(DEV_BUILD_SCL_POSTGRESQL),0)
+	mkdir -p "$(PREFIX)/etc/ovirt-engine-setup.env.d"
+	echo "$$ENVFILEC" > "$(PREFIX)/etc/ovirt-engine-setup.env.d/10-setup-scl-postgres-95.env"
+	echo "sclenv=\"rh-postgresql95\"" > "$(PREFIX)/etc/ovirt-engine/engine.conf.d/10-scl-postgres-95.conf"
+endif

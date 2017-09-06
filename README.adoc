@@ -10,7 +10,9 @@ Install the following system components:
 - mime-types or mailcap
 - unzip
 - openssl
-- postgresql-server postgresql
+- bind-utils
+- postgresql-server >= 9.5 / rh-postgresql95-postgresql-server
+- postgresql >= 9.5 / rh-postgresql95-postgresql-server
 - python-dateutil / dateutil
 - python-m2crypto / m2crypto
 - python-psycopg2 / psycopg
@@ -23,14 +25,15 @@ Install the following system components:
 - ovirt-setup-lib
 - maven-3
 - ovirt-ansible
-- pyflakes (optional)
+- python-flake8 / pyflakes (optional)
 - python-pep8 / pep8 (optional)
 - python-docker-py (optional)
+- python2-isort (optional)
 
 Maven-3 is required, download and extract if not installed using
 distribution package management, and add to PATH.
 
-WildFly 10 is required along with ovirt-engine-wildfly-overlay. Preferred way
+WildFly 11 is required along with ovirt-engine-wildfly-overlay. Preferred way
 is to install following packages:
 
 - ovirt-engine-wildfly
@@ -73,18 +76,33 @@ Locate `pg_hba.conf` within your distribution, common locations are:
 - `/var/lib/pgsql/data/pg_hba.conf`
 - `/etc/postgresql-*/pg_hba.conf`
 - `/etc/postgresql/*/main/pg_hba.conf`
+- `/var/opt/rh/rh-postgresql95/lib/pgsql/data/pg_hba.conf` (el7 with rh-postgresql95)
 
 Within `pg_hba.conf` set method to `password` for `127.0.0.1/32` and
 `::1/128`.
 
-Restart the PostgreSQL service.
+Tune PostgreSQL configuration:
+Locate `postgresql.conf` within your distribution, common locations are:
+
+- `/var/lib/pgsql/data`
+- `/etc/postgresql*`
+- `/var/opt/rh/rh-postgresql95/lib/pgsql/data/postgresql.conf` (el7 with rh-postgresql95)
+
+Within `postgresql.conf` set:
+  autovacuum_vacuum_scale_factor = 0.01
+  autovacuum_analyze_scale_factor = 0.075
+  autovacuum_max_workers = 6
+  max_connections = 150
+
+Restart the PostgreSQL service (`systemctl restart rh-postgresql95-postgresql` for the SCL one).
 
 === Database creation
 
 Create database for ovirt-engine, usually the following sequence should
 work to create a user named `engine` that owns database named `engine`:
 
-  # su - postgres -c "psql -d template1"
+  # su - postgres -c "psql -d template1" # if on fedora or
+  # su - postgres -c "scl enable rh-postgresql95 -- psql -d template1" # if on el7 with rh-postgresql95
   template1=# create user engine password 'engine';
   template1=# drop database engine;
   template1=# create database engine owner engine template template0
@@ -115,6 +133,9 @@ directory execute the following command:
 
 NOTE: `${PREFIX}` should be replaced with the location in which you
 intend to install the environment.
+
+NOTE: Add DEV_BUILD_SCL_POSTGRESQL=1 in order to configure your local build
+for SCL rh-postgresql95.
 
 ==== Build targets
 
@@ -169,6 +190,11 @@ Following changes are applied for draft builds:
 On local development environment, using GWT Super Dev Mode (see below)
 is preferred, as it automatically disables all optimizations and allows
 you to recompile the GWT application on the fly.
+
+DEV_BUILD_SCL_POSTGRESQL:: Configure your local development deployment
+to be used with SCL rh-postgresql95 instead of system PostgreSQL.
+Default value is `0`.
++
 
 DEV_BUILD_GWT_SUPER_DEV_MODE:: Allows debugging GWT applications via
 Super Dev Mode, using web browser's JavaScript development tooling.
