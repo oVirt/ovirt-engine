@@ -155,7 +155,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
      * @return device custom properties definition for specified version
      */
     String getCustomDeviceProperties(Version version) {
-        return Config.<String> getValue(ConfigValues.CustomDeviceProperties, version.getValue());
+        return Config.getValue(ConfigValues.CustomDeviceProperties, version.getValue());
     }
 
     /**
