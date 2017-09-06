@@ -10,14 +10,14 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.TaskWidget;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TasksPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TasksPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 
-public class TasksView extends AbstractView implements TasksPresenter.ViewDef {
+public class TasksView extends AbstractView implements TasksPresenterWidget.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Container, TasksView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);

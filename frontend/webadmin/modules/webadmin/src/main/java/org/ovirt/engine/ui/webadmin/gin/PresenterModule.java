@@ -109,9 +109,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVnicProfilePresen
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MenuPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TasksPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TasksPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostErrataListWithDetailsPopupPresenterWidget;
@@ -1970,20 +1970,17 @@ public class PresenterModule extends BasePresenterModule {
 
         // Overlays
         // Tasks
-        bindPresenter(TasksPresenter.class,
-                TasksPresenter.ViewDef.class,
-                TasksView.class,
-                TasksPresenter.ProxyDef.class);
+        bindPresenterWidget(TasksPresenterWidget.class,
+                TasksPresenterWidget.ViewDef.class,
+                TasksView.class);
         // Bookmarks
-        bindPresenter(BookmarkPresenter.class,
-                BookmarkPresenter.ViewDef.class,
-                BookmarkView.class,
-                BookmarkPresenter.ProxyDef.class);
+        bindPresenterWidget(BookmarkPresenterWidget.class,
+                BookmarkPresenterWidget.ViewDef.class,
+                BookmarkView.class);
         // Tags
-        bindPresenter(TagsPresenter.class,
-                TagsPresenter.ViewDef.class,
-                TagsView.class,
-                TagsPresenter.ProxyDef.class);
+        bindPresenterWidget(TagsPresenterWidget.class,
+                TagsPresenterWidget.ViewDef.class,
+                TagsView.class);
 
         // Popup/detail Action panels
         bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<Label>>(){},

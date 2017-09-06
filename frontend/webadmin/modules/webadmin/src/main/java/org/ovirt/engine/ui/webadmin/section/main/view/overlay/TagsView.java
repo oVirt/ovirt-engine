@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 
 import com.google.gwt.core.client.GWT;
@@ -26,7 +26,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.inject.Inject;
 
-public class TagsView extends AbstractView implements TagsPresenter.ViewDef {
+public class TagsView extends AbstractView implements TagsPresenterWidget.ViewDef {
 
     private static final int INDENT_WIDTH = 15;
 

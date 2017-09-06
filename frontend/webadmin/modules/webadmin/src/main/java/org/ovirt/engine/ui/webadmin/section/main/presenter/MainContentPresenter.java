@@ -10,7 +10,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef, MainContentPresenter.ProxyDef> {
+public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef, MainContentPresenter.ProxyDef>
+    implements RevealOverlayContentEvent.RevealOverlayContentHandler {
 
     @ProxyCodeSplit
     public interface ProxyDef extends Proxy<MainContentPresenter> {
@@ -22,8 +23,22 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetContent = new Type<>();
 
+    @ContentSlot
+    public static final Type<RevealContentHandler<?>> TYPE_SetOverlay = new Type<>();
+
     @Inject
     public MainContentPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy) {
         super(eventBus, view, proxy, MainSectionPresenter.TYPE_SetMainContent);
+    }
+
+    @Override
+    public void onBind() {
+        super.onBind();
+        addRegisteredHandler(RevealOverlayContentEvent.getType(), this);
+    }
+
+    @Override
+    public void onRevealOverlayContent(RevealOverlayContentEvent event) {
+        setInSlot(TYPE_SetOverlay, event.getContent());
     }
 }

@@ -17,9 +17,9 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TasksPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TasksPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
@@ -31,7 +31,6 @@ import com.google.gwt.view.client.HasData;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
-import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderPresenterWidget.ViewDef> {
@@ -68,18 +67,18 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     private final TaskModelProvider taskModelProvider;
     private final AlertModelProvider alertModelProvider;
     private final EventModelProvider eventModelProvider;
-    private final TasksPresenter tasksPresenter;
-    private final BookmarkPresenter bookmarksPresenter;
-    private final TagsPresenter tagsPresenter;
+    private final TasksPresenterWidget tasksPresenter;
+    private final BookmarkPresenterWidget bookmarksPresenter;
+    private final TagsPresenterWidget tagsPresenter;
 
     @Inject
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
             OptionsProvider optionsProvider,
             Provider<AboutPopupPresenterWidget> aboutPopupProvider,
             ApplicationDynamicMessages dynamicMessages,
-            TasksPresenter tasksPresenter,
-            BookmarkPresenter bookmarksPresenter,
-            TagsPresenter tagsPresenter,
+            TasksPresenterWidget tasksPresenter,
+            BookmarkPresenterWidget bookmarksPresenter,
+            TagsPresenterWidget tagsPresenter,
             @Named("notification") EventModelProvider eventModelProvider,
             AlertModelProvider alertModelProvider,
             TaskModelProvider taskModelProvider) {
@@ -161,11 +160,11 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         });
     }
 
-    private void toggleOverlayPresenter(Presenter<?, ?> presenter) {
-        if (presenter.isVisible()) {
-            presenter.removeFromParentSlot();
+    private void toggleOverlayPresenter(AbstractOverlayPresenterWidget<? extends AbstractOverlayPresenterWidget.ViewDef> presenterWidget) {
+        if (presenterWidget.isVisible()) {
+            RevealOverlayContentEvent.fire(this, new RevealOverlayContentEvent(null));
         } else {
-            presenter.forceReveal();
+            RevealOverlayContentEvent.fire(this, presenterWidget);
         }
     }
 }

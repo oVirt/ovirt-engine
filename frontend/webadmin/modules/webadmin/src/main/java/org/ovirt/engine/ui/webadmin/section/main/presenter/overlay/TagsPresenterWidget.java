@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,24 +14,18 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.Proxy;
 
-public class TagsPresenter extends AbstractOverlayPresenter<TagsPresenter.ViewDef, TagsPresenter.ProxyDef> {
+public class TagsPresenterWidget extends AbstractOverlayPresenterWidget<TagsPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends AbstractOverlayPresenter.ViewDef {
+    public interface ViewDef extends AbstractOverlayPresenterWidget.ViewDef {
         void updateTags(Collection<TagModel> tags);
         HasClickHandlers getAddTagButton();
     }
 
-    @ProxyCodeSplit
-    public interface ProxyDef extends Proxy<TagsPresenter> {
-    }
-
     private final TagModelProvider tagModelProvider;
     @Inject
-    public TagsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy, TagModelProvider tagModelProvider) {
-        super(eventBus, view, proxy);
+    public TagsPresenterWidget(EventBus eventBus, ViewDef view, TagModelProvider tagModelProvider) {
+        super(eventBus, view);
         this.tagModelProvider = tagModelProvider;
     }
 

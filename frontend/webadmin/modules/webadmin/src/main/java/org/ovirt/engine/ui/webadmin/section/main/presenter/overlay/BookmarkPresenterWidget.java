@@ -3,30 +3,24 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.overlay;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.Proxy;
 
-public class BookmarkPresenter extends AbstractOverlayPresenter<BookmarkPresenter.ViewDef, BookmarkPresenter.ProxyDef> {
+public class BookmarkPresenterWidget extends AbstractOverlayPresenterWidget<BookmarkPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends AbstractOverlayPresenter.ViewDef {
+    public interface ViewDef extends AbstractOverlayPresenterWidget.ViewDef {
         void updateBookmarks();
-    }
-
-    @ProxyCodeSplit
-    public interface ProxyDef extends Proxy<BookmarkPresenter> {
     }
 
     private final BookmarkModelProvider bookmarkModelProvider;
 
     @Inject
-    public BookmarkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public BookmarkPresenterWidget(EventBus eventBus, ViewDef view,
             BookmarkModelProvider bookmarkModelProvider) {
-        super(eventBus, view, proxy);
+        super(eventBus, view);
         this.bookmarkModelProvider = bookmarkModelProvider;
     }
 

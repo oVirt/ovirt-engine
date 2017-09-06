@@ -13,22 +13,16 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.Proxy;
 
-public class TasksPresenter extends AbstractOverlayPresenter<TasksPresenter.ViewDef, TasksPresenter.ProxyDef> {
+public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends AbstractOverlayPresenter.ViewDef {
+    public interface ViewDef extends AbstractOverlayPresenterWidget.ViewDef {
         void updateTaskStatus(TaskListModel taskListModel);
-    }
-
-    @ProxyCodeSplit
-    public interface ProxyDef extends Proxy<TasksPresenter> {
     }
 
     private final TaskModelProvider taskModelProvider;
@@ -36,8 +30,8 @@ public class TasksPresenter extends AbstractOverlayPresenter<TasksPresenter.View
     private Set<String> runningTasks = new HashSet<>();
 
     @Inject
-    public TasksPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy, TaskModelProvider taskModelProvider) {
-        super(eventBus, view, proxy);
+    public TasksPresenterWidget(EventBus eventBus, ViewDef view, TaskModelProvider taskModelProvider) {
+        super(eventBus, view);
         this.taskModelProvider = taskModelProvider;
     }
 

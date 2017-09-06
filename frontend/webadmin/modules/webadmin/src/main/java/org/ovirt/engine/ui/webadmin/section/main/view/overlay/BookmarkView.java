@@ -9,7 +9,7 @@ import org.gwtbootstrap3.client.ui.ListGroup;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.bookmark.BookmarkListGroupItem;
 
@@ -21,7 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 
-public class BookmarkView extends AbstractView implements BookmarkPresenter.ViewDef {
+public class BookmarkView extends AbstractView implements BookmarkPresenterWidget.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Container, BookmarkView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
