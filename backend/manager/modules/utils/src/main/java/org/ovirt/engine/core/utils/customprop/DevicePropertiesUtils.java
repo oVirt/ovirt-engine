@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils.customprop;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -144,7 +143,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
         devicePropValidationPattern = Pattern.compile(devicePropValidationStr);
 
         invalidDeviceTypeValidationError =
-                Arrays.asList(new ValidationError(ValidationFailureReason.INVALID_DEVICE_TYPE, ""));
+                Collections.singletonList(new ValidationError(ValidationFailureReason.INVALID_DEVICE_TYPE, ""));
     }
 
     /**
