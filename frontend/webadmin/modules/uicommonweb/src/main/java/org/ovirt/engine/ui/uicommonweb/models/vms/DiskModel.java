@@ -189,30 +189,30 @@ public class DiskModel extends Model {
     }
 
     public DiskModel() {
-        setSize(new EntityModel<Integer>());
-        setAlias(new EntityModel<String>());
-        setDescription(new EntityModel<String>());
-        setSourceStorageDomainName(new EntityModel<String>());
-        setSourceStorageDomain(new ListModel<StorageDomain>());
-        setDiskInterface(new ListModel<DiskInterface>());
-        setStorageDomain(new ListModel<StorageDomain>());
-        setDiskProfile(new ListModel<DiskProfile>());
+        setSize(new EntityModel<>());
+        setAlias(new EntityModel<>());
+        setDescription(new EntityModel<>());
+        setSourceStorageDomainName(new EntityModel<>());
+        setSourceStorageDomain(new ListModel<>());
+        setDiskInterface(new ListModel<>());
+        setStorageDomain(new ListModel<>());
+        setDiskProfile(new ListModel<>());
 
-        setIsBootable(new EntityModel<Boolean>());
+        setIsBootable(new EntityModel<>());
         getIsBootable().setEntity(false);
 
-        setPassDiscard(new EntityModel<Boolean>());
+        setPassDiscard(new EntityModel<>());
         getPassDiscard().setEntity(false);
         getPassDiscard().setIsAvailable(false);
         getPassDiscard().setIsChangeable(false);
 
-        setQuota(new ListModel<Quota>());
+        setQuota(new ListModel<>());
         getQuota().setIsAvailable(false);
 
-        setVolumeType(new ListModel<VolumeType>());
+        setVolumeType(new ListModel<>());
         getVolumeType().setItems(AsyncDataProvider.getInstance().getVolumeTypeList());
 
-        setVolumeFormat(new ListModel<VolumeFormat>());
+        setVolumeFormat(new ListModel<>());
         getVolumeFormat().setItems(AsyncDataProvider.getInstance().getVolumeFormats());
         getVolumeFormat().setIsAvailable(false);
     }
