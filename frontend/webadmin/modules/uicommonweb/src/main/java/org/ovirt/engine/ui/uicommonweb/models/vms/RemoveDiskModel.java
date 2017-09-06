@@ -31,7 +31,7 @@ public class RemoveDiskModel extends ConfirmationModel {
     private UICommand cancelCommand;
 
     public RemoveDiskModel() {
-        setLatch(new EntityModel<Boolean>());
+        setLatch(new EntityModel<>());
         getLatch().setIsAvailable(true);
     }
 
