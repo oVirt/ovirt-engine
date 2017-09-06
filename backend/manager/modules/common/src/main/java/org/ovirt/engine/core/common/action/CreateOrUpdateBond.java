@@ -48,7 +48,7 @@ public class CreateOrUpdateBond implements BusinessEntity<Guid>, Nameable {
     }
 
     private Collection<String> replaceNullWithEmptyList(Collection<String> list) {
-        return list == null ? Collections.<String>emptyList() : list;
+        return list == null ? Collections.emptyList() : list;
     }
 
     public Bond toBond() {
