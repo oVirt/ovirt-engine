@@ -37,6 +37,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
@@ -238,7 +239,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 new Pair<>("host_deploy_override_firewall", getParameters().getOverrideFirewall()),
                 new Pair<>("host_deploy_firewall_type", firewallType.name()),
                 new Pair<>("ansible_port", getVds().getSshPort()),
-                new Pair<>("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH)
+                new Pair<>("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH),
+                new Pair<>("host_deploy_ovn_tunneling_network", managementNetworkUtil.getManagementNetwork(
+                        getVds().getClusterId()).getVdsmName()),
+                new Pair<>("host_deploy_ovn_central", getOvnCentral())
             )
             // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
             .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
@@ -297,6 +301,25 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 e
             );
         }
+    }
+
+    private String getOvnCentral() {
+        Guid providerId = getParameters().getNetworkProviderId();
+        if (providerId != null) {
+            Provider provider = providerDao.get(providerId);
+            if (provider.getType() == ProviderType.EXTERNAL_NETWORK) {
+                String ovnCentral = NetworkUtils.getIpAddress(provider.getUrl());
+                if (ovnCentral == null) {
+                    throw new VdsInstallException(
+                            VDSStatus.InstallFailed,
+                            String.format(
+                                    "Failed to extract OVN central IP from %1$s",
+                                    provider.getUrl()));
+                }
+                return ovnCentral;
+            }
+        }
+        return null;
     }
 
     @Override

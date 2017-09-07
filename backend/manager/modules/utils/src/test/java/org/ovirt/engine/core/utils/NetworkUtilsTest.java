@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -96,5 +97,12 @@ public class NetworkUtilsTest {
         networkCluster.setMigration(migration);
         networkCluster.setGluster(gluster);
         return networkCluster;
+    }
+
+    @Test
+    public void getIpAddressTest() {
+        final String IP_ADDRESS = "192.0.2.1";
+        final String URL = String.format("https://%s/someting", IP_ADDRESS);
+        assertEquals(IP_ADDRESS, NetworkUtils.getIpAddress(URL));
     }
 }

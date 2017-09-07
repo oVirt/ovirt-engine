@@ -3,6 +3,8 @@ package org.ovirt.engine.core.utils;
 import static java.util.stream.Collectors.toList;
 
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
@@ -157,6 +159,25 @@ public final class NetworkUtils {
             final String msg = "Failed to resolve host ip by name '{}'";
             log.warn(msg, " Details: '{}' ", host.getHostName(), ex.getCause());
             log.debug(msg, host.getHostName(), ex);
+            return null;
+        }
+    }
+
+    /**
+     * resolve the ip address the url references
+     *
+     * @param url
+     *            the url which it's address is about to be resolved
+     * @return if succeeded, string representing the ip address the url references, null otherwise
+     */
+    public static String getIpAddress(String url) {
+        try {
+            final URI uri = new URI(url);
+            return InetAddress.getByName(uri.getHost()).getHostAddress();
+        } catch (URISyntaxException | UnknownHostException ex) {
+            final String msg = "Failed to resolve ip from URL '{}'";
+            log.warn(msg, " Details: '{}' ", url, ex.getCause());
+            log.debug(msg, url, ex);
             return null;
         }
     }

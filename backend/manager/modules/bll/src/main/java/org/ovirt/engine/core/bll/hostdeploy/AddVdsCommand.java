@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -351,11 +352,21 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             return false;
         }
 
-        if (params.getVdsStaticData().getOpenstackNetworkProviderId() != null
-                && !validateOpenstackNetworkProviderProperties(
+        if (params.getVdsStaticData().getOpenstackNetworkProviderId() != null) {
+            Provider<?> provider = providerDao.get(params.getVdsStaticData().getOpenstackNetworkProviderId());
+            if (provider == null) {
+                return false;
+            }
+            if (!(provider.getType() == ProviderType.OPENSTACK_NETWORK ||
+                    provider.getType() == ProviderType.EXTERNAL_NETWORK)) {
+                return false;
+            }
+
+            if ((provider.getType() == ProviderType.OPENSTACK_NETWORK) && !validateOpenstackNetworkProviderProperties(
                         params.getVdsStaticData().getOpenstackNetworkProviderId(),
-                        params.getNetworkMappings())) {
-            return false;
+                        params.getNetworkMappings())){
+                return false;
+            }
         }
 
         if (isGlusterSupportEnabled() && clusterHasNonInitializingServers()) {
