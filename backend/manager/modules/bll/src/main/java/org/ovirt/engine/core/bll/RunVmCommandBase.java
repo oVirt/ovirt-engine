@@ -225,7 +225,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     @Override
-    public final void reportCompleted() {
+    public void reportCompleted() {
         try {
             // decrease pending resources if they were not decreased already
             decreasePendingVm();
