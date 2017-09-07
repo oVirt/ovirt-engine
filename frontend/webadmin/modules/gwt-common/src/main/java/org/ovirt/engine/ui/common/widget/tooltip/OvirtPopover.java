@@ -5,8 +5,11 @@ import org.gwtbootstrap3.client.ui.Popover;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class OvirtPopover extends Popover {
@@ -17,6 +20,8 @@ public class OvirtPopover extends Popover {
     private String contentId;
     private IsWidget content;
     private boolean isVisible;
+    private HandlerRegistration autoCloseHandler;
+    private boolean autoClose = false;
 
     public OvirtPopover() {
         super();
@@ -47,22 +52,52 @@ public class OvirtPopover extends Popover {
         container.add(this.contentContainer);
     }
 
+    public void setAutoClose(boolean value) {
+        this.autoClose = value;
+    }
+
     @Override
     public void show() {
         Scheduler.get().scheduleDeferred( ()-> {
             isVisible = true;
         });
+        if (autoClose) {
+            attachAutoCloseHandler();
+        }
         super.show();
     }
 
     @Override
     public void hide() {
         isVisible = false;
+        removeAutoCloseHandler();
         super.hide();
     }
 
     public boolean isVisible() {
         return isVisible;
+    }
+
+    private void attachAutoCloseHandler() {
+        removeAutoCloseHandler();
+        autoCloseHandler = RootPanel.get().addDomHandler(e -> {
+            if (isVisible()) {
+                int top = content.asWidget().getElement().getAbsoluteTop();
+                int left = content.asWidget().getElement().getAbsoluteLeft();
+                int right = content.asWidget().getElement().getAbsoluteRight();
+                int bottom = content.asWidget().getElement().getAbsoluteBottom();
+                if (e.getY() < top || e.getY() > bottom || e.getX() < left || e.getX() > right) {
+                    hide();
+                }
+            }
+        }, ClickEvent.getType());
+    }
+
+    public void removeAutoCloseHandler() {
+        if (autoCloseHandler != null) {
+            autoCloseHandler.removeHandler();
+            autoCloseHandler = null;
+        }
     }
 
     public void addTitle(IsWidget titleWidget) {

@@ -115,6 +115,7 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
         popover = new OvirtPopover(anchor);
         popover.setTrigger(Trigger.MANUAL);
         popover.setPlacement(Placement.BOTTOM);
+        popover.setAutoClose(true);
         popover.setContainer(anchor);
         if (searchBox == null) {
             searchBox = createSearchBox();
