@@ -953,4 +953,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return new VmValidator(getVm());
     }
 
+    @Override
+    public void reportCompleted() {
+        try {
+            vmDynamicDao.clearMigratingToVds(getVmId());
+        } finally {
+            super.reportCompleted();
+        }
+    }
+
 }
