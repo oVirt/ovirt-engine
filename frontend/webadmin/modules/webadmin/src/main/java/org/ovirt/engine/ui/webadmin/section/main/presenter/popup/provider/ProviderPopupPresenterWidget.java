@@ -13,7 +13,7 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ProviderModel> {
         HasUiCommandClickHandlers getTestButton();
-        void setTestResultImage(String errorMessage);
+        void setTestResult(String errorMessage);
         void setAgentTabVisibility(boolean visible);
         void setCurrentActiveProviderWidget();
     }
@@ -30,7 +30,7 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
         registerHandler(getView().getTestButton().addClickHandler(event -> model.getTestCommand().execute()));
 
         model.getTestResult().getEntityChangedEvent().addListener((ev, sender, args) ->
-                getView().setTestResultImage(model.getTestResult().getEntity()));
+                getView().setTestResult(model.getTestResult().getEntity()));
         model.getNeutronAgentModel()
                 .isPluginConfigurationAvailable()
                 .getEntityChangedEvent()

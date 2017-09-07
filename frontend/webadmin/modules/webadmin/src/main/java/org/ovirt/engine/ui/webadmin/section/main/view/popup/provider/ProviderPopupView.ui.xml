@@ -5,6 +5,7 @@
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+    xmlns:pa="urn:import:org.ovirt.engine.ui.common.widget.panel"
     xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
@@ -20,15 +21,6 @@
 
         .topElement {
             padding-top: 15px;
-        }
-
-        .testResultImage {
-            float: left;
-            margin-right: 2px;
-        }
-
-        .testResultMessage {
-            font-size: 8pt;
         }
 
         .testButton {
@@ -72,6 +64,11 @@
                                 <p:KVMPropertiesWidget addStyleNames="{style.topElement}" ui:field="kvmPropertiesWidget" visible="false" />
                                 <p:XENPropertiesWidget addStyleNames="{style.topElement}" ui:field="xenPropertiesWidget" visible="false" />
                                 <b:Row>
+                                    <b:Column size="SM_12">
+                                        <pa:AlertPanel ui:field="testResultMessage" visible="false" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
                                     <ge:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" label="{constants.requiresAuthenticationProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
@@ -87,11 +84,7 @@
                                     <ge:StringEntityModelTextBoxEditor ui:field="authUrlEditor" label="{constants.authUrlProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="SM_10">
-                                        <g:Image ui:field="testResultImage" addStyleNames="{style.testResultImage}" />
-                                        <g:Label ui:field="testResultMessage" addStyleNames="{style.testResultMessage}" />
-                                    </b:Column>
-                                    <b:Column size="SM_2">
+                                    <b:Column size="SM_2" offset="SM_10">
                                         <w:UiCommandButton ui:field="testButton" label="{constants.testProvider}" addStyleNames="{style.testButton}" />
                                     </b:Column>
                                 </b:Row>

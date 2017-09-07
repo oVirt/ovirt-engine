@@ -17,11 +17,11 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.KVMPropertiesWidget;
@@ -32,11 +32,10 @@ import org.ovirt.engine.ui.webadmin.widget.provider.XENPropertiesWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel> implements ProviderPopupPresenterWidget.ViewDef {
@@ -53,7 +52,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
@@ -85,11 +83,8 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     UiCommandButton testButton;
 
     @UiField
-    Image testResultImage;
-
-    @UiField
     @Ignore
-    Label testResultMessage;
+    AlertPanel testResultMessage;
 
     @UiField(provided = true)
     @Path(value = "requiresAuthentication.entity")
@@ -214,7 +209,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     interface Style extends CssResource {
         String contentStyle();
-        String testResultImage();
         String headerSeparator();
     }
 
@@ -224,10 +218,18 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     }
 
     @Override
-    public void setTestResultImage(String errorMessage) {
-        testResultImage.setResource(errorMessage.isEmpty() ? resources.logNormalImage() : resources.logErrorImage());
-        testResultImage.setStylePrimaryName(style.testResultImage());
-        testResultMessage.setText(errorMessage.isEmpty() ? constants.testSuccessMessage() : errorMessage);
+    public void setTestResult(String errorMessage) {
+        testResultMessage.clearMessages();
+        testResultMessage.setVisible(true);
+        if (errorMessage == null || errorMessage.isEmpty()) {
+            testResultMessage.setType(AlertPanel.Type.SUCCESS);
+            testResultMessage.addMessage(SafeHtmlUtils.fromSafeConstant(constants.testSuccessMessage()));
+        }
+        else {
+            testResultMessage.setType(AlertPanel.Type.DANGER);
+            testResultMessage.addMessage(SafeHtmlUtils.fromString(errorMessage));
+
+        }
     }
 
     @Override
