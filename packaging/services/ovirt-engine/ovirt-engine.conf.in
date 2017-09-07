@@ -522,3 +522,8 @@ ENGINE_THREAD_POOL_SIZE=500
 # methods. It is generally not necessary to increase the number of threads in this thread pool. To change the value
 # permanentaly create a conf file 99-engine-scheduled-thread-pool.conf in /etc/ovirt-engine/engine.conf.d/
 ENGINE_SCHEDULED_THREAD_POOL_SIZE=100
+
+# Specify the thread pool monitoring interval in seconds used by the ThreadPoolMonitoringService to monitor the
+# thread pool usage. To change the value permanentaly create a conf file 99-engine-monitoring-interval.conf in
+# /etc/ovirt-engine/engine.conf.d/
+THREAD_POOL_MONITORING_INTERVAL_IN_SECONDS=600

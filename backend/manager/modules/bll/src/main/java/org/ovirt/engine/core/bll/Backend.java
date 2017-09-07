@@ -44,6 +44,7 @@ import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
 import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.utils.ThreadPoolMonitoringService;
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -245,6 +246,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Load the thread pools
         serviceLoader.load(EngineThreadPools.class);
 
+        // Load the thread monitoring service
+        serviceLoader.load(ThreadPoolMonitoringService.class);
+
         // save host that HE VM was running on prior to engine startup
         serviceLoader.load(PreviousHostedEngineHost.class);
 
@@ -256,6 +260,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         serviceLoader.load(CacheManager.class);
         // initialize configuration utils to use DB
         Config.setConfigUtils(new DBConfigUtils());
+
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository
         initOsRepository();
 

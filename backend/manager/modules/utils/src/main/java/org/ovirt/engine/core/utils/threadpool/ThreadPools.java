@@ -1,9 +1,6 @@
 package org.ovirt.engine.core.utils.threadpool;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -12,10 +9,15 @@ import javax.inject.Qualifier;
 
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
-@Target({FIELD, TYPE, METHOD })
+@Target({ElementType.FIELD, ElementType.TYPE, ElementType.METHOD })
 public @interface ThreadPools {
 
-    enum ThreadPoolType {CoCo, HostUpdatesChecker, EngineThreadPool, EngineScheduledThreadPool}
+    enum ThreadPoolType {
+        CoCo,
+        HostUpdatesChecker,
+        EngineThreadPool,
+        EngineScheduledThreadPool,
+        EngineThreadMonitoringThreadPool}
 
     ThreadPoolType value();
 }
