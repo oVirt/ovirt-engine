@@ -26,11 +26,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.network.function.NicToIpv4AddressFunction;
 import org.ovirt.engine.core.utils.network.function.NicToIpv6AddressFunction;
 import org.slf4j.Logger;
@@ -149,30 +147,6 @@ public final class NetworkUtils {
     }
 
     /**
-     * Determine if a given network interface should be configured on hosts
-     *
-     * @param network
-     *            the network to check.
-     * @return <code>true</code> iff the network is labeled and not an external network.
-     */
-    public static boolean isConfiguredByLabel(Network network) {
-        return isLabeled(network) && !network.isExternal();
-    }
-
-    /**
-     * Constructs the vlan device name in the format of "{nic name}.{vlan-id}"
-     *
-     * @param underlyingNic
-     *            the device on top the vlan device is created
-     * @param network
-     *            the network which holds the vlan-id
-     * @return a name representing the vlan device
-     */
-    public static String constructVlanDeviceName(VdsNetworkInterface underlyingNic, Network network) {
-        return underlyingNic.getName() + "." + network.getVlanId();
-    }
-
-    /**
      * Returns the cluster's display network
      */
     public static Network getDisplayNetwork(Collection<Network> clusterNetworks) {
@@ -250,12 +224,6 @@ public final class NetworkUtils {
                     .replaceAll("[^a-zA-Z0-9]+", "")
                     .substring(0, BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH - 2));
         }
-    }
-
-    public static <E extends VmNetworkInterface> Map<Guid, List<E>> vmInterfacesByVmId(List<E> vnics) {
-        return vnics == null
-                ? Collections.emptyMap()
-                : vnics.stream().collect(Collectors.groupingBy(VmNetworkInterface::getVmId));
     }
 
     public static <E extends VdsNetworkInterface> Map<String, E> hostInterfacesByNetworkName(Collection<E> hostNics) {
