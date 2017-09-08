@@ -4,10 +4,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,24 +57,11 @@ public final class NetworkUtils {
     }
 
     public static boolean interfaceHasVlan(VdsNetworkInterface iface, List<VdsNetworkInterface> allIfaces) {
-        for (VdsNetworkInterface i : allIfaces) {
-            if (NetworkCommonUtils.isVlan(i) && interfaceBasedOn(i, iface.getName())) {
-                return true;
-            }
-        }
-        return false;
+        return allIfaces.stream().anyMatch(i -> NetworkCommonUtils.isVlan(i) && interfaceBasedOn(i, iface.getName()));
     }
 
     public static Map<String, Network> networksByName(List<Network> networks) {
-        if (!networks.isEmpty()) {
-            Map<String, Network> byName = new HashMap<>();
-            for (Network net : networks) {
-                byName.put(net.getName(), net);
-            }
-            return byName;
-        } else {
-            return Collections.emptyMap();
-        }
+        return networks.stream().collect(Collectors.toMap(Network::getName, Function.identity()));
     }
 
     /**
@@ -87,13 +72,10 @@ public final class NetworkUtils {
      *            target names to match non-VM networks upon
      */
     public static List<String> filterNonVmNetworkNames(List<Network> networks, Set<String> networkNames) {
-        List<String> list = new ArrayList<>();
-        for (Network net : networks) {
-            if (!net.isVmNetwork() && networkNames.contains(net.getName())) {
-                list.add(net.getName());
-            }
-        }
-        return list;
+        return networks.stream()
+                .filter(net -> !net.isVmNetwork() && networkNames.contains(net.getName()))
+                .map(Network::getName)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -150,16 +132,7 @@ public final class NetworkUtils {
      * Returns the cluster's display network
      */
     public static Network getDisplayNetwork(Collection<Network> clusterNetworks) {
-        Network displayNetwork = null;
-
-        for (Network network : clusterNetworks) {
-            if (network.getCluster().isDisplay()) {
-                displayNetwork = network;
-                break;
-            }
-        }
-
-        return displayNetwork;
+        return clusterNetworks.stream().filter(n -> n.getCluster().isDisplay()).findFirst().orElse(null);
     }
 
     /**
