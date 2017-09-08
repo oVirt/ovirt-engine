@@ -263,6 +263,6 @@ public final class NetworkUtils {
                 ? Collections.emptyMap()
                 : hostNics.stream()
                         .filter(hostNic -> hostNic.getNetworkName() != null)
-                        .collect(Collectors.toMap(VdsNetworkInterface::getNetworkName, Function.<E>identity()));
+                        .collect(Collectors.toMap(VdsNetworkInterface::getNetworkName, Function.identity()));
     }
 }
