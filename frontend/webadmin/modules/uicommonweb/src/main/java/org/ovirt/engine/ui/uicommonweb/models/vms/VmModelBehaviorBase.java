@@ -1492,7 +1492,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (getModel().getMigrationMode().getSelectedItem() != MigrationSupport.PINNED_TO_HOST ||
                 getModel().getIsAutoAssign().getEntity() ||
                 getModel().getDefaultHost().getSelectedItem() == null ||
-                !getModel().getDefaultHost().getSelectedItem().isNumaSupport()) {
+                getModel().getDefaultHost().getSelectedItems().stream().filter(x -> !x.isNumaSupport()).count() > 0) {
             enabled = false;
         }
         if (enabled) {
