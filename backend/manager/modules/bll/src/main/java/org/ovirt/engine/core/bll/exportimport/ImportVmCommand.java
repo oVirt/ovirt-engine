@@ -149,8 +149,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private List<DiskImage> imageList;
 
-    private MacPool macPool;
-
     protected Map<Guid, String> failedDisksToImportForAuditLog = new HashMap<>();
 
     @Override
@@ -192,7 +190,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
-        macPool = getMacPool();
         Map<Guid, StorageDomain> domainsMap = new HashMap<>();
         if (!validateBeforeCloneVm(domainsMap)) {
             return false;
@@ -206,7 +203,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (getParameters().isImportAsNewEntity()) {
             initImportClonedVm();
 
-            if (getVm().getInterfaces().size() > macPool.getAvailableMacsCount()) {
+            if (getVm().getInterfaces().size() > getMacPool().getAvailableMacsCount()) {
                 return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             }
         }
@@ -1211,7 +1208,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     protected void removeVmNetworkInterfaces() {
-        new VmInterfaceManager(macPool).removeAllAndReleaseMacAddresses(getVmId());
+        new VmInterfaceManager(getMacPool()).removeAllAndReleaseMacAddresses(getVmId());
     }
 
     @Override
