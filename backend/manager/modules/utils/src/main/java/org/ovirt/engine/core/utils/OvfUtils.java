@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,6 +62,7 @@ public class OvfUtils {
         for (XmlNode file : references.selectNodes("File")) {
             disksIds.add(Guid.createGuidFromString(file.attributes.get("ovf:href").getValue().substring(0, GUID_LENGTH)));
         }
+        disksIds.addAll(fetchMemoryDisks(xmlDocument));
         return disksIds;
     }
 
@@ -151,6 +153,30 @@ public class OvfUtils {
         log.info("Finish to fetch OVF files from tar file. The number of OVF entities are {}",
                 ovfEntityDataFromTar.size());
         return ovfEntityDataFromTar;
+    }
+
+    public static Set<Guid> fetchMemoryDisks(XmlDocument xmlDocument) {
+        Set<Guid> memoryDiskIds = new HashSet<>();
+        xmlDocument.selectNodes("ovf:SnapshotsSection_Type");
+        XmlNode content = xmlDocument.selectSingleNode("//*/Content");
+        XmlNodeList nodeList = content.selectNodes("Section");
+        if (nodeList != null) {
+            for (XmlNode section : nodeList) {
+                String value = section.attributes.get("xsi:type").getValue();
+                if (value.equals("ovf:SnapshotsSection_Type")) {
+                    Iterator<XmlNode> snapshotIter = section.selectNodes("Snapshot").iterator();
+                    while (snapshotIter.hasNext()) {
+                        XmlNode memorySnapshot = snapshotIter.next().selectSingleNode("Memory");
+                        if (memorySnapshot != null) {
+                            List<Guid> guids = Guid.createGuidListFromString(memorySnapshot.innerText);
+                            memoryDiskIds.add(guids.get(2));
+                            memoryDiskIds.add(guids.get(4));
+                        }
+                    }
+                }
+            }
+        }
+        return memoryDiskIds;
     }
 
     public static boolean isExternalVM(XmlDocument xmlDocument) {

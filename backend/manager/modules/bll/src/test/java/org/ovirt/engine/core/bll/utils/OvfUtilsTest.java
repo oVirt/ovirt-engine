@@ -45,6 +45,13 @@ public class OvfUtilsTest {
     }
 
     @Test
+    public void testMemoryDisks() throws Exception {
+        XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
+        Set<Guid> memoryDisks = OvfUtils.fetchMemoryDisks(xmlDocument);
+        assertFalse("The list of memory disks for snapshot should not be empty", memoryDisks.isEmpty());
+    }
+
+    @Test
     public void testUpdateUnregisteredDisksWithVMsWithInitializedUnregDisks() throws Exception {
         XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
         List<UnregisteredDisk> unregDisks = new ArrayList<>();
