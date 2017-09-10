@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
@@ -42,8 +41,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 
 public final class Linq {
-    public static final Comparator<AuditLog> AuditLogComparer = Comparator.comparing(AuditLog::getAuditLogId);
-
     public static final Comparator<? super Identifiable> IdentifiableComparator =
             Comparator.nullsFirst(Comparator.comparing(Identifiable::getValue));
 
