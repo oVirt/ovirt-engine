@@ -59,6 +59,7 @@ public class VmsListFetcherTest {
         vds.setId(VmTestPairs.SRC_HOST_ID);
         when(vdsManager.getCopyVds()).thenReturn(vds);
         when(vdsManager.getVdsId()).thenReturn(vds.getId());
+        when(vdsManager.isInitialized()).thenReturn(true);
         vmsListFetcher = new VmsListFetcher(vdsManager, dbFacade, resourceManager);
     }
 

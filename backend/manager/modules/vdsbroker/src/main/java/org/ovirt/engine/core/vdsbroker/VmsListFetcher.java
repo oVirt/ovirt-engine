@@ -103,7 +103,7 @@ public class VmsListFetcher {
     }
 
     protected void gatherChangedVms(VM dbVm, VmInternalData vdsmVm) {
-        if (statusChanged(dbVm, vdsmVm.getVmDynamic())) {
+        if (statusChanged(dbVm, vdsmVm.getVmDynamic()) || !vdsManager.isInitialized()) {
             VDSReturnValue vmStats =
                     getResourceManager().runVdsCommand(
                             VDSCommandType.GetVmStats,
