@@ -9,7 +9,7 @@ public class ApplicationMapper {
     public static Application map(String appName, Application template) {
         Application model = template != null ? template : new Application();
         model.setName(appName);
-        model.setId(GuidUtils.asGuid(appName.getBytes(), true).toString());
+        model.setId(GuidUtils.asGuid(appName.getBytes()).toString());
         return model;
     }
 }

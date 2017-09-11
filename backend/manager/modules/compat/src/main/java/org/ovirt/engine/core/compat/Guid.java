@@ -13,11 +13,6 @@ public class Guid implements Serializable, Comparable<Guid> {
      */
     private static final long serialVersionUID = 27305745737022810L;
 
-    private static final byte[] CHANGE_BYTE_ORDER_INDICES = { 3, 2, 1, 0,
-            5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 };
-    private static final byte[] KEEP_BYTE_ORDER_INDICES = { 0, 1, 2, 3,
-            4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-
     public static final Guid SYSTEM = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     public static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
     public static final Guid Empty = new Guid("00000000-0000-0000-0000-000000000000");
@@ -38,26 +33,25 @@ public class Guid implements Serializable, Comparable<Guid> {
         this.uuid = uuid;
     }
 
-    public Guid(byte[] guid, boolean keepByteOrder) {
+    public Guid(byte[] guid) {
         // Note that the indexes are computed modulo the length of the input
         // array because this is how they used to be calculated in the past,
         // and some components (the REST API, for example) build GUIDs from an
         // array of bytes created from arbitrary strings, for example, in the
         // BackendGroupsResource class a GUID is built from the domain with this code:
         //
-        //    Guid domainId = new Guid(domain.getBytes(StandardCharsets.UTF_8), true);
+        //    Guid domainId = new Guid(domain.getBytes(StandardCharsets.UTF_8));
         //
         // This may result in an array of bytes shorter than the 16 bytes
         // needed to build a GUID, thus the modulo operation is required.
-        byte[] indexes = keepByteOrder? KEEP_BYTE_ORDER_INDICES: CHANGE_BYTE_ORDER_INDICES;
         long msb = 0;
         long lsb = 0;
         int length = guid.length;
         for (int i = 0; i <= 7; i++) {
-            msb = (msb << 8) | (guid[indexes[i] % length] & 0xff);
+            msb = (msb << 8) | (guid[i % length] & 0xff);
         }
         for (int i = 8; i <= 15; i++) {
-            lsb = (lsb << 8) | (guid[indexes[i] % length] & 0xff);
+            lsb = (lsb << 8) | (guid[i % length] & 0xff);
         }
         uuid = new UUID(msb, lsb);
     }

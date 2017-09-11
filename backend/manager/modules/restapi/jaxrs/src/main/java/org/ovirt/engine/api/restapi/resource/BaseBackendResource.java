@@ -276,9 +276,9 @@ public class BaseBackendResource {
         }
     }
 
-    protected Guid asGuid(byte[] guid, boolean keepByteOrder) {
+    protected Guid asGuid(byte[] guid) {
         try {
-            return new Guid(guid, keepByteOrder);
+            return new Guid(guid);
         } catch (IllegalArgumentException e) {
             throw new MalformedIdException(e);
         }

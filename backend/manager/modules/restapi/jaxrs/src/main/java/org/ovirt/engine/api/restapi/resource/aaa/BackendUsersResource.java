@@ -80,7 +80,7 @@ public class BackendUsersResource
         }
         else if (user.isSetDomain() && user.getDomain().isSetId()) {
             for (String domain : authzProvidersNames) {
-                Guid domainId = asGuid(domain.getBytes(StandardCharsets.UTF_8), true);
+                Guid domainId = asGuid(domain.getBytes(StandardCharsets.UTF_8));
                 if (domainId.toString().equals(user.getDomain().getId())) {
                    return domain;
                 }

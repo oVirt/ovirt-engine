@@ -23,7 +23,7 @@ public class ApplicationMapperTest extends AbstractInvertibleMappingTest<Applica
         Application model = Application.class.cast(populate(Application.class));
         model = postPopulate(model);
         model.setName(NAMES[0]);
-        model.setId(new Guid(NAMES[0].getBytes(), true).toString());
+        model.setId(new Guid(NAMES[0].getBytes()).toString());
         Mapper<String, Application> back = getMappingLocator().getMapper(String.class, Application.class);
         Application transform = back.map(NAMES[0], null);
         verify(model, transform);

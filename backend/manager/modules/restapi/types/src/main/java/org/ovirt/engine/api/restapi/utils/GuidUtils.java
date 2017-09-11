@@ -17,9 +17,9 @@ public class GuidUtils {
         }
     }
 
-    public static Guid asGuid(byte[] guid, boolean keepByteOrder) {
+    public static Guid asGuid(byte[] guid) {
         try {
-            return new Guid(guid, keepByteOrder);
+            return new Guid(guid);
         } catch (IllegalArgumentException e) {
             throw new MalformedIdException(e);
         }
@@ -46,6 +46,6 @@ public class GuidUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e); // never happens, MD5 algorithm exists
         }
-        return new Guid(hash, true);
+        return new Guid(hash);
     }
 }

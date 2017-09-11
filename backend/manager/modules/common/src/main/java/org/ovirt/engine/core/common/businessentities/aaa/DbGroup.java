@@ -32,7 +32,7 @@ public class DbGroup implements Queryable {
 
     public DbGroup(DirectoryGroup directoryGroup) {
         externalId = directoryGroup.getId();
-        setId(new Guid(directoryGroup.getId().getBytes(), true));
+        setId(new Guid(directoryGroup.getId().getBytes()));
         namespace = directoryGroup.getNamespace();
         domain = directoryGroup.getDirectoryName();
         name = directoryGroup.getName();

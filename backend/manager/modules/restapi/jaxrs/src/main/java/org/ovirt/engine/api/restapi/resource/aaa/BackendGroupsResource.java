@@ -73,7 +73,7 @@ public class BackendGroupsResource
         }
         else if (group.isSetDomain() && group.getDomain().isSetId()) {
             for (String domain : authzProvidersNames) {
-                Guid domainId = new Guid(domain.getBytes(StandardCharsets.UTF_8), true);
+                Guid domainId = new Guid(domain.getBytes(StandardCharsets.UTF_8));
                 if (domainId.toString().equals(group.getDomain().getId())) {
                    return domain;
                 }

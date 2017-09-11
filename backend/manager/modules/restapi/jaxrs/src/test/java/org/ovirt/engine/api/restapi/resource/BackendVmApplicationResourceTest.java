@@ -20,7 +20,7 @@ public class BackendVmApplicationResourceTest
 
     protected static final Guid VM_ID = GUIDS[1];
     protected static final int APPLICATION_INDEX = 1;
-    protected static final Guid APPLICATION_ID = new Guid(NAMES[APPLICATION_INDEX].getBytes(), true);
+    protected static final Guid APPLICATION_ID = new Guid(NAMES[APPLICATION_INDEX].getBytes());
 
     protected static BackendVmApplicationsResource collection = new BackendVmApplicationsResource(VM_ID);
 
