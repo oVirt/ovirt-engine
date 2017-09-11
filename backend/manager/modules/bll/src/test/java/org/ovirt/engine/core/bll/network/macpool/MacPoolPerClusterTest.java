@@ -56,6 +56,9 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
     @Mock
     private AuditLogDirector auditLogDirector;
 
+    @Mock
+    private MacsUsedAcrossWholeSystem macsUsedAcrossWholeSystem;
+
     @InjectMocks
     private MacPoolFactory macPoolFactory;
 
@@ -78,6 +81,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
 
         when(decoratedMacPoolFactory.createDecoratedPool(any(), any())).thenAnswer(AdditionalAnswers.returnsFirstArg());
 
+        mockUsedMacsInSystem(macPool.getId());
         macPoolPerCluster = new MacPoolPerCluster(macPoolDao,
                 clusterDao,
                 macPoolFactory,
@@ -104,7 +108,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
     public void testNicIsCorrectlyAllocatedInScopedPool() throws Exception {
         mockCluster(cluster);
         mockGettingAllMacPools(macPool);
-        mockAllMacsForCluster(cluster, vmNic.getMacAddress());
+        mockUsedMacsInSystem(macPool.getId(), vmNic.getMacAddress());
 
         macPoolPerCluster.initialize();
         assertThat("scoped pool for this nic should exist",
@@ -155,12 +159,12 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         modify assumes, that all allocated macs is used for vmNics. If allocatedMac succeeded it's expected that all
         vmNics were also successfully persisted to db or all allocated macs were returned to the pool. So after
         allocation we need to mock db, otherwise re-init in modifyPool would return improper results.*/
-        mockAllMacsForCluster(cluster, allocatedMac);
+        mockUsedMacsInSystem(getMacPool(cluster.getId()).getId(), allocatedMac, MAC_FROM);
 
         assertThat(allocatedMac, is(macAddress1));
         try {
             allocateMac(cluster);
-            fail("this allocation should not succeed.");
+            fail("this allocation should not succeed, MAC should be full.");
         } catch (EngineException e) {
             //ok, this exception should occur.
         }
@@ -248,8 +252,8 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
         return macPool;
     }
 
-    protected void mockAllMacsForCluster(Cluster cluster, String... macAddress) {
-        when(macPoolDao.getAllMacsForMacPool(eq(cluster.getMacPoolId()))).thenReturn(Arrays.asList(macAddress));
+    protected void mockUsedMacsInSystem(Guid macPoolId, String... macAddress) {
+        when(macsUsedAcrossWholeSystem.getMacsForMacPool(macPoolId)).thenReturn(Arrays.asList(macAddress));
     }
 
     protected void mockGettingAllMacPools(MacPool... macPool) {
