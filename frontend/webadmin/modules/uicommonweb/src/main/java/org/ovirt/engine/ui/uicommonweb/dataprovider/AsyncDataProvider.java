@@ -2323,9 +2323,9 @@ public class AsyncDataProvider {
         getAllProvidersByProvidedEntity(query, VdcObjectType.Network);
     }
 
-    public void getAllProvidersByType(AsyncQuery<List<Provider<?>>> aQuery, ProviderType providerType) {
+    public void getAllProvidersByType(AsyncQuery<List<Provider<?>>> aQuery, ProviderType ... providerTypes) {
         aQuery.converterCallback = new ListConverter<>();
-        Frontend.getInstance().runQuery(QueryType.GetAllProviders, new GetAllProvidersParameters(providerType), aQuery);
+        Frontend.getInstance().runQuery(QueryType.GetAllProviders, new GetAllProvidersParameters(providerTypes), aQuery);
     }
 
     public void getProviderCertificateChain(AsyncQuery<List<CertificateInfo>> aQuery, Provider provider) {

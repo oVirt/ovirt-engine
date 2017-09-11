@@ -60,7 +60,7 @@ public class HostNetworkProviderModel extends EntityModel {
             providers.add(0, null);
             getNetworkProviders().setItems(providers);
             getNetworkProviders().setSelectedItem(null);
-        }), ProviderType.OPENSTACK_NETWORK);
+        }), ProviderType.OPENSTACK_NETWORK, ProviderType.EXTERNAL_NETWORK);
     }
 
     public boolean validate() {
