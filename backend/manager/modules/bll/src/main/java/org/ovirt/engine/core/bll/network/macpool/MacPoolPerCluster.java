@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 @Startup
+@DependsOn("Backend")
 public class MacPoolPerCluster {
 
     @Inject
