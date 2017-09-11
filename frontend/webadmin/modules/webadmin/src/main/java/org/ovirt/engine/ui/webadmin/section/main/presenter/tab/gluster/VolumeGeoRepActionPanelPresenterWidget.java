@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,7 +21,7 @@ public class VolumeGeoRepActionPanelPresenterWidget
 
     @Inject
     public VolumeGeoRepActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<GlusterGeoRepSession> view,
+            DetailActionPanelPresenterWidget.ViewDef<GlusterGeoRepSession> view,
             SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

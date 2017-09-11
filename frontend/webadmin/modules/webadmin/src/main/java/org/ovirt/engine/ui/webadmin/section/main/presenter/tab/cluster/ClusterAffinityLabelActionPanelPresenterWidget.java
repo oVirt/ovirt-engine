@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Label;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
@@ -18,7 +18,7 @@ public class ClusterAffinityLabelActionPanelPresenterWidget
 
     @Inject
     public ClusterAffinityLabelActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<Label> view,
+            DetailActionPanelPresenterWidget.ViewDef<Label> view,
             SearchableDetailModelProvider<Label, ClusterListModel<Void>, ClusterAffinityLabelListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

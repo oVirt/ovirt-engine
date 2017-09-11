@@ -21,7 +21,7 @@ public class DataCenterQuotaActionPanelPresenterWidget extends
 
     @Inject
     public DataCenterQuotaActionPanelPresenterWidget(EventBus eventBus,
-            org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget.ViewDef<Quota> view,
+            DetailActionPanelPresenterWidget.ViewDef<Quota> view,
             SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

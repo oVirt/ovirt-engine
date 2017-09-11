@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,7 +21,7 @@ public class DataCenterIscsiBondActionPanelPresenterWidget extends
 
     @Inject
     public DataCenterIscsiBondActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<IscsiBond> view,
+            DetailActionPanelPresenterWidget.ViewDef<IscsiBond> view,
             SearchableDetailModelProvider<IscsiBond, DataCenterListModel, DataCenterIscsiBondListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

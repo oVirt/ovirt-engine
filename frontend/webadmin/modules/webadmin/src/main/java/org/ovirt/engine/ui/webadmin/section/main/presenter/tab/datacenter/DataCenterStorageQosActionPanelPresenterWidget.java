@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,7 +21,7 @@ public class DataCenterStorageQosActionPanelPresenterWidget extends
 
     @Inject
     public DataCenterStorageQosActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<StorageQos> view,
+            DetailActionPanelPresenterWidget.ViewDef<StorageQos> view,
             SearchableDetailModelProvider<StorageQos, DataCenterListModel, DataCenterStorageQosListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

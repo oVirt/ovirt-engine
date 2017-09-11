@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,7 +21,7 @@ public class NetworkProfileActionPanelPresenterWidget extends
 
     @Inject
     public NetworkProfileActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<VnicProfileView> view,
+            DetailActionPanelPresenterWidget.ViewDef<VnicProfileView> view,
             SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

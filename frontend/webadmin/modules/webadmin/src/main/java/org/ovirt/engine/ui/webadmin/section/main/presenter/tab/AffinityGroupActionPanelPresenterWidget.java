@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,7 +21,7 @@ public class AffinityGroupActionPanelPresenterWidget<M extends ListWithDetailsMo
 
     @Inject
     public AffinityGroupActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<AffinityGroup> view,
+            DetailActionPanelPresenterWidget.ViewDef<AffinityGroup> view,
             SearchableDetailModelProvider<AffinityGroup, M, D> dataProvider) {
         super(eventBus, view, dataProvider);
     }

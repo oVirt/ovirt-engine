@@ -22,7 +22,7 @@ public class DetailPermissionActionPanelPresenterWidget<
 
     @Inject
     public DetailPermissionActionPanelPresenterWidget(EventBus eventBus,
-            org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget.ViewDef<Permission> view,
+            DetailActionPanelPresenterWidget.ViewDef<Permission> view,
             SearchableDetailModelProvider<Permission, M, P> dataProvider) {
         super(eventBus, view, dataProvider);
     }

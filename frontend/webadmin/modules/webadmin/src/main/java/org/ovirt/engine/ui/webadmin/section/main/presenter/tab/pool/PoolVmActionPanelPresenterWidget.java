@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,8 +21,8 @@ public class PoolVmActionPanelPresenterWidget extends
 
     @Inject
     public PoolVmActionPanelPresenterWidget(EventBus eventBus,
-           ActionPanelPresenterWidget.ViewDef<VM> view,
-            SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> dataProvider) {
+           DetailActionPanelPresenterWidget.ViewDef<VM> view,
+           SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
 

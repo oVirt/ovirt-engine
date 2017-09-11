@@ -6,7 +6,7 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
@@ -17,7 +17,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 
-public class VmDiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<Disk, VmDiskListModel> {
+public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenterWidget<Disk, VmListModel<Void>, VmDiskListModel> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -28,7 +28,7 @@ public class VmDiskActionPanelPresenterWidget extends ActionPanelPresenterWidget
 
     @Inject
     public VmDiskActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<Disk> view,
+            DetailActionPanelPresenterWidget.ViewDef<Disk> view,
             SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
@@ -38,35 +38,35 @@ public class VmDiskActionPanelPresenterWidget extends ActionPanelPresenterWidget
         addActionButton(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.newDisk()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
+                return getDetailModel().getNewCommand();
             }
         });
 
         addActionButton(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.attachDisk()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getAttachCommand();
+                return getDetailModel().getAttachCommand();
             }
         });
 
         addActionButton(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.editDisk()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
+                return getDetailModel().getEditCommand();
             }
         });
 
         addActionButton(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
+                return getDetailModel().getRemoveCommand();
             }
         });
 
         addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.sparsifyDisk()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getSparsifyCommand();
+                return getDetailModel().getSparsifyCommand();
             }
         });
 
@@ -74,13 +74,13 @@ public class VmDiskActionPanelPresenterWidget extends ActionPanelPresenterWidget
                 IconType.ARROW_UP, true, false) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getPlugCommand();
+                return getDetailModel().getPlugCommand();
             }
 
             @Override
             public SafeHtml getTooltip() {
                 SafeHtml tooltip = null;
-                if (getModel().isHotPlugAvailable() && !getModel().isPlugAvailableByDisks(true)) {
+                if (getDetailModel().isHotPlugAvailable() && !getDetailModel().isPlugAvailableByDisks(true)) {
                     tooltip = SafeHtmlUtils.fromString(constants.diskHotPlugNotSupported());
                 }
                 return tooltip;
@@ -92,13 +92,13 @@ public class VmDiskActionPanelPresenterWidget extends ActionPanelPresenterWidget
                 IconType.ARROW_DOWN, true, false) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getUnPlugCommand();
+                return getDetailModel().getUnPlugCommand();
             }
 
             @Override
             public SafeHtml getTooltip() {
                 SafeHtml tooltip = null;
-                if (getModel().isHotPlugAvailable() && !getModel().isPlugAvailableByDisks(false)) {
+                if (getDetailModel().isHotPlugAvailable() && !getDetailModel().isPlugAvailableByDisks(false)) {
                     tooltip = SafeHtmlUtils.fromString(constants.diskHotPlugNotSupported());
                 }
                 return tooltip;
@@ -112,7 +112,7 @@ public class VmDiskActionPanelPresenterWidget extends ActionPanelPresenterWidget
             addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.moveDisk()) {
                 @Override
                 protected UICommand resolveCommand() {
-                    return getModel().getMoveCommand();
+                    return getDetailModel().getMoveCommand();
                 }
             });
         }
@@ -121,27 +121,27 @@ public class VmDiskActionPanelPresenterWidget extends ActionPanelPresenterWidget
                 CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getScanAlignmentCommand();
+                return getDetailModel().getScanAlignmentCommand();
             }
         });
 
         addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.assignQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getChangeQuotaCommand();
+                return getDetailModel().getChangeQuotaCommand();
             }
         });
     }
 
     protected void attachActivationListenersForModel() {
-        getDataProvider().getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+        getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsDiskHotPlugAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                 InitializeEvent.fire(plugButtonDefinition);
                 InitializeEvent.fire(unPlugButtonDefinition);
             }
         });
 
-        getDataProvider().getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+        getDetailModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
             InitializeEvent.fire(plugButtonDefinition);
             InitializeEvent.fire(unPlugButtonDefinition);
         });

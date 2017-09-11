@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,7 +21,7 @@ public class ClusterGlusterHookActionPanelPresenterWidget extends
 
     @Inject
     public ClusterGlusterHookActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<GlusterHookEntity> view,
+            DetailActionPanelPresenterWidget.ViewDef<GlusterHookEntity> view,
             SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>,
                 ClusterGlusterHookListModel> dataProvider) {
         super(eventBus, view, dataProvider);

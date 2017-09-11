@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.SubTableResources;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -41,7 +41,7 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     private HandlerRegistration registration;
 
     public AbstractModelBoundTableWidget(SearchableTableModelProvider<T, M> modelProvider,
-            EventBus eventBus, ActionPanelPresenterWidget<T, M> actionPanel, ClientStorage clientStorage,
+            EventBus eventBus, DetailActionPanelPresenterWidget<T, ?, M> actionPanel, ClientStorage clientStorage,
             boolean useMainTableResources) {
         this.modelProvider = modelProvider;
         this.eventBus = eventBus;

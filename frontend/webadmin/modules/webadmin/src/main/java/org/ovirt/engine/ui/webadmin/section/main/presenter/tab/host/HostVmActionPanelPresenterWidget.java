@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -26,7 +25,7 @@ public class HostVmActionPanelPresenterWidget extends
 
     @Inject
     public HostVmActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<VM> view,
+            DetailActionPanelPresenterWidget.ViewDef<VM> view,
             SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

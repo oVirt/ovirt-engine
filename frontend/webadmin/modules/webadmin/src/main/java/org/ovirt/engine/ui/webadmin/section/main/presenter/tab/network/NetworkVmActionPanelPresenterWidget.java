@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -24,7 +23,7 @@ public class NetworkVmActionPanelPresenterWidget extends
 
     @Inject
     public NetworkVmActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<PairQueryable<VmNetworkInterface, VM>> view,
+            DetailActionPanelPresenterWidget.ViewDef<PairQueryable<VmNetworkInterface, VM>> view,
             SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel,
                 NetworkVmListModel> dataProvider) {
         super(eventBus, view, dataProvider);

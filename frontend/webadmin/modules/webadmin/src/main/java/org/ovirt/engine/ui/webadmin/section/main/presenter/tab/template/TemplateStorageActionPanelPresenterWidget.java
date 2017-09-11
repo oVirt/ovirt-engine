@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
@@ -22,7 +21,7 @@ public class TemplateStorageActionPanelPresenterWidget extends
 
     @Inject
     public TemplateStorageActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<StorageDomain> view,
+            DetailActionPanelPresenterWidget.ViewDef<StorageDomain> view,
             SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

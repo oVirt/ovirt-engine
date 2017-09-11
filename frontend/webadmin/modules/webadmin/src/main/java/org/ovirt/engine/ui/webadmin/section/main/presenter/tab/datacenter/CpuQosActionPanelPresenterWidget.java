@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -14,13 +14,14 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class CpuQosActionPanelPresenterWidget extends ActionPanelPresenterWidget<CpuQos, DataCenterCpuQosListModel> {
+public class CpuQosActionPanelPresenterWidget extends DetailActionPanelPresenterWidget<CpuQos,
+    DataCenterListModel, DataCenterCpuQosListModel> {
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public CpuQosActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<CpuQos> view,
+            DetailActionPanelPresenterWidget.ViewDef<CpuQos> view,
             SearchableDetailModelProvider<CpuQos, DataCenterListModel, DataCenterCpuQosListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

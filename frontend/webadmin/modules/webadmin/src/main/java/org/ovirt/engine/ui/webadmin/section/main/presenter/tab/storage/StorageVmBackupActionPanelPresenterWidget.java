@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,7 +21,7 @@ public class StorageVmBackupActionPanelPresenterWidget extends
 
     @Inject
     public StorageVmBackupActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<VM> view,
+            DetailActionPanelPresenterWidget.ViewDef<VM> view,
             SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }

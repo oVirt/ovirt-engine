@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
@@ -14,13 +14,13 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class TemplateInterfaceActionPanelPresenterWidget extends
-    ActionPanelPresenterWidget<VmNetworkInterface, TemplateInterfaceListModel> {
+    DetailActionPanelPresenterWidget<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public TemplateInterfaceActionPanelPresenterWidget(EventBus eventBus,
-            ActionPanelPresenterWidget.ViewDef<VmNetworkInterface> view,
+            DetailActionPanelPresenterWidget.ViewDef<VmNetworkInterface> view,
             SearchableDetailModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel> dataProvider) {
         super(eventBus, view, dataProvider);
     }
@@ -31,7 +31,7 @@ public class TemplateInterfaceActionPanelPresenterWidget extends
                 constants.newInterface()) {
             @Override
             protected UICommand resolveCommand() {
-                return getDataProvider().getModel().getNewCommand();
+                return getDetailModel().getNewCommand();
             }
         });
 
@@ -39,7 +39,7 @@ public class TemplateInterfaceActionPanelPresenterWidget extends
                 constants.editInterface()) {
             @Override
             protected UICommand resolveCommand() {
-                return getDataProvider().getModel().getEditCommand();
+                return getDetailModel().getEditCommand();
             }
         });
 
@@ -47,7 +47,7 @@ public class TemplateInterfaceActionPanelPresenterWidget extends
                 constants.removeInterface()) {
             @Override
             protected UICommand resolveCommand() {
-                return getDataProvider().getModel().getRemoveCommand();
+                return getDetailModel().getRemoveCommand();
             }
         });
     }
