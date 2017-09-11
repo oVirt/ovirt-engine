@@ -41,15 +41,11 @@ public class Guid implements Serializable, Comparable<Guid> {
     public Guid(byte[] guid, boolean keepByteOrder) {
         // Note that the indexes are computed modulo the length of the input
         // array because this is how they used to be calculated in the past,
-        // and some components (the REST API, for example) build GUIDs from
+        // and some components (the REST API, for example) build GUIDs from an
         // array of bytes created from arbitrary strings, for example, in the
-        // BackendCapabilitiesResource class a GUID is built from the version
-        // string with this code:
+        // BackendGroupsResource class a GUID is built from the domain with this code:
         //
-        //    public String generateId(Version v) {
-        //      Guid guid = new Guid((v.getMajor()+"."+v.getMinor()).getBytes(),true);
-        //      return guid.toString();
-        //    }
+        //    Guid domainId = new Guid(domain.getBytes(StandardCharsets.UTF_8), true);
         //
         // This may result in an array of bytes shorter than the 16 bytes
         // needed to build a GUID, thus the modulo operation is required.
