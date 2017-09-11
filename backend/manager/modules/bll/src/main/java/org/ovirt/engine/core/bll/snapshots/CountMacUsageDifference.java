@@ -115,15 +115,4 @@ public class CountMacUsageDifference {
         return getToUsageCount(macAddress) -
                 getFromUsageCount(macAddress);
     }
-
-    /**
-     * @return mapping from mac to its maximum usage, regardless if it's from `from` or `to` mac collection.
-     */
-    public Map<String, Long> maxUsage() {
-        Stream<String> distinctMacs =
-                Stream.concat(fromUsageCount.keySet().stream(), toUsageCount.keySet().stream()).distinct();
-        Map<String, Long> maximumMacUsage = distinctMacs.collect(Collectors.toMap(Function.identity(),
-                mac -> Math.max(getFromUsageCount(mac), getToUsageCount(mac))));
-        return maximumMacUsage;
-    }
 }
