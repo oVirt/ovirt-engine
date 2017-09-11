@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.BackendUtils;
+import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -30,6 +30,9 @@ public class CommandExecutor {
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.CoCo)
     private ManagedExecutorService executor;
+
+    @Inject
+    private BackendCommandObjectsHandler actionRunner;
 
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
     private final CommandsRepository commandsRepository;
@@ -54,7 +57,7 @@ public class CommandExecutor {
     }
 
     private ActionReturnValue executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
-        ActionReturnValue result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command,
+        ActionReturnValue result = actionRunner.runAction(command,
                 cmdContext != null ? cmdContext.getExecutionContext() : null);
         updateCommandResult(command.getCommandId(), result);
         return result;
