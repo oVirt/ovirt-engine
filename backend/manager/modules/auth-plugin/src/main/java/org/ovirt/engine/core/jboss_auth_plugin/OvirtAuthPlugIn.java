@@ -23,7 +23,9 @@ public class OvirtAuthPlugIn extends AbstractPlugIn {
     public void init(Map<String, String> configuration, Map<String, Object> sharedState) throws IOException {
         this.configuration = configuration;
         // This will allow an AuthorizationPlugIn to delegate back to this instance.
-        sharedState.put(OvirtAuthPlugIn.class.getName(), this);
+        if (sharedState != null) {
+            sharedState.put(OvirtAuthPlugIn.class.getName(), this);
+        }
     }
 
     @Override
