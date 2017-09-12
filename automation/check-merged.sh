@@ -70,8 +70,12 @@ rm -f ./*tar.gz
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
-# run findbugs
-source automation/findbugs.sh
+# Since findbugs is a pure java task, there's no reason to run it on multiple
+# platforms.
+# It seems to be stabler on EL7 for some reason, so we'll run it there:
+if [[ "$STD_CI_DISTRO" = "el7" ]]; then
+    source automation/findbugs.sh
+fi
 
 # Get the tarball
 make dist
@@ -98,15 +102,17 @@ rpmbuild \
     -D "ovirt_build_draft 1" \
     --rebuild output/*.src.rpm
 
-# Store any relevant artifacts in exported-artifacts for the ci system to
-# archive
-[[ -d exported-artifacts ]] || mkdir -p exported-artifacts
-# Move find bugs to a dedicated directory under exported-artifacts
-mkdir -p exported-artifacts/find-bugs
-find * -name "*findbugs.xml" -o -name "findbugsXml.xml" | \
-    while read source_file; do
-        destination_file=$(
-            sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
-        )
-        mv $source_file exported-artifacts/find-bugs/"$destination_file"
-    done
+if [[ "$STD_CI_DISTRO" = "el7" ]]; then
+    # Store any relevant artifacts in exported-artifacts for the ci system to
+    # archive
+    [[ -d exported-artifacts ]] || mkdir -p exported-artifacts
+    # Move find bugs to a dedicated directory under exported-artifacts
+    mkdir -p exported-artifacts/find-bugs
+    find * -name "*findbugs.xml" -o -name "findbugsXml.xml" | \
+        while read source_file; do
+            destination_file=$(
+                sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
+            )
+            mv $source_file exported-artifacts/find-bugs/"$destination_file"
+        done
+fi

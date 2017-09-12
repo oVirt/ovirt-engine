@@ -102,8 +102,12 @@ automation/packaging-setup-tests.sh
 # perform quick validations
 make validations
 
-# run findbugs
-source automation/findbugs.sh
+# Since findbugs is a pure java task, there's no reason to run it on multiple
+# platforms.
+# It seems to be stabler on EL7 for some reason, so we'll run it there:
+if [[ "$STD_CI_DISTRO" = "el7" ]]; then
+    source automation/findbugs.sh
+fi
 
 # Get the tarball
 make dist
@@ -141,16 +145,18 @@ rpmbuild \
 # archive
 find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 
-# Collect any mvn findbugs artifacts
-mkdir -p exported-artifacts/find-bugs
-find * -name "*findbugs.xml" -o -name "findbugsXml.xml" | \
-    while read source_file; do
-        destination_file=$(
-            sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
-        )
-        mv $source_file exported-artifacts/find-bugs/"$destination_file"
-    done
-mv ./*tar.gz exported-artifacts/
+if [[ "$STD_CI_DISTRO" = "el7" ]]; then
+    # Collect any mvn findbugs artifacts
+    mkdir -p exported-artifacts/find-bugs
+    find * -name "*findbugs.xml" -o -name "findbugsXml.xml" | \
+        while read source_file; do
+            destination_file=$(
+                sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
+            )
+            mv $source_file exported-artifacts/find-bugs/"$destination_file"
+        done
+    mv ./*tar.gz exported-artifacts/
+fi
 
 # Rename junit surefire reports to match jenkins report plugin
 # Error code 4 means nothing changed, ignore it
