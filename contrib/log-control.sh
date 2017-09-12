@@ -33,20 +33,19 @@ function jbossHome() {
     fi
 }
 
-function validate() {
-    jbossHome && [[ $# -eq 2 ]]
-}
 
-validate || usage
+(jbossHome && [[ $# -eq 2 ]]) || usage
+
+read  -s -p "Password: " PASS
 
 # Add the log category, ignore failures
-${JBOSS_HOME}/bin/jboss-cli.sh --controller=127.0.0.1:8706 --connect --user=admin@internal \
+${JBOSS_HOME}/bin/jboss-cli.sh --controller=remote+http://127.0.0.1:8706 --connect --user=admin@internal -p=$PASS \
    --commands="
-       /subsystem=logging/logger=$1:add,
+       /subsystem=logging/logger=$1:add
    "
 
 # Set the logging level on the specified category
-${JBOSS_HOME}/bin/jboss-cli.sh --controller=127.0.0.1:8706 --connect --user=admin@internal \
+ ${JBOSS_HOME}/bin/jboss-cli.sh --controller=remote+http://127.0.0.1:8706 --connect --user=admin@internal -p=$PASS \
    --commands="
-       /subsystem=logging/logger='$1':write-attribute(name=level,value=$2)
+       /subsystem=logging/logger=$1:write-attribute(name=level,value=$2)
    "
