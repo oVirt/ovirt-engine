@@ -14,7 +14,7 @@ public class GetTasksStatusesByTasksIDsParameters extends QueryParametersBase {
     private ArrayList<Guid> _tasksIDs;
 
     public ArrayList<Guid> getTasksIDs() {
-        return _tasksIDs == null ? new ArrayList<Guid>() : _tasksIDs;
+        return _tasksIDs == null ? new ArrayList<>() : _tasksIDs;
     }
 
     public GetTasksStatusesByTasksIDsParameters() {
