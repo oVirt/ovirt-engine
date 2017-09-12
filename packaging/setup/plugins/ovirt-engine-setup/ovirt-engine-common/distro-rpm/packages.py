@@ -176,6 +176,9 @@ class Plugin(plugin.PluginBase):
                             changes,
                         )
                         content[versionlock_list_file].extend(out)
+                        content[versionlock_list_file] = [
+                            v for v in content[versionlock_list_file] if v
+                        ]
                         with open(
                             versionlock_list_file,
                             'w',
