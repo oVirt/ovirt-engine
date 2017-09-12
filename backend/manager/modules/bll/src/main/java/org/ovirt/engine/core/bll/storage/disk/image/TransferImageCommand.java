@@ -330,13 +330,13 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             else if (verifyImage(transferingVdsId)) {
                 setVolumeLegalityInStorage(LEGAL_IMAGE);
                 if (getDiskImage().getVolumeFormat().equals(VolumeFormat.COW)) {
-                    setQcowCompat(getImage().getImage(),
+                    setQcowCompat(getDiskImage().getImage(),
                             getStoragePool().getId(),
                             getDiskImage().getId(),
                             getDiskImage().getImageId(),
                             getStorageDomainId(),
                             transferingVdsId);
-                    imageDao.update(getImage().getImage());
+                    imageDao.update(getDiskImage().getImage());
                 }
                 unLockImage();
                 updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
