@@ -381,15 +381,21 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                                 : (masterDomain.getStatus() != null && masterDomain.getStatus() == StorageDomainStatus.Active) ? StoragePoolStatus.Up
                                         : StoragePoolStatus.NonResponsive;
         if (newStatus != getStoragePool().getStatus()) {
+            log.info("Update storage pool '{}' status from '{} to '{}'",
+                    getStoragePool().getId(),
+                    getStoragePool().getStatus(),
+                    newStatus);
             getCompensationContext().snapshotEntity(getStoragePool());
             getStoragePool().setStatus(newStatus);
             StoragePool poolFromDb = storagePoolDao.get(getStoragePool().getId());
             if ((getStoragePool().getSpmVdsId() == null && poolFromDb.getSpmVdsId() != null)
                     || (getStoragePool().getSpmVdsId() != null && !getStoragePool().getSpmVdsId().equals(
                             poolFromDb.getSpmVdsId()))) {
+                log.info("Set storage pool '{}' vds Id to '{}'", getStoragePool().getId(), poolFromDb.getSpmVdsId());
                 getStoragePool().setSpmVdsId(poolFromDb.getSpmVdsId());
             }
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
+                log.info("Set storage pool '{}' vds Id to null", getStoragePool().getId(), poolFromDb.getSpmVdsId());
                 getStoragePool().setSpmVdsId(null);
             }
 

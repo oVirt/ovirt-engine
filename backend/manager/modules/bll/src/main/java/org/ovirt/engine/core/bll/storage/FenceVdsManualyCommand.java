@@ -104,6 +104,9 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     @Override
     protected void executeCommand() {
         setVdsName(problematicVds.getName());
+        log.info("Start fence execution for Host '{}' (spm status: '{}')",
+                problematicVds.getName(),
+                problematicVds.getSpmStatus());
         if (problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
             activateDataCenter();
         }
@@ -167,21 +170,26 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         calcStoragePoolStatusByDomainsStatus();
 
         // fence spm if moving from not operational and master domain is active
-        if (masterDomain != null
-                && masterDomain.getStatus() != null
-                && (masterDomain.getStatus() == StorageDomainStatus.Active
-                        || masterDomain.getStatus() == StorageDomainStatus.Unknown || masterDomain.getStatus() == StorageDomainStatus.Inactive)) {
-            resetIrs();
+        if (masterDomain == null) {
+            log.info("no master domain found");
+        } else {
+            log.info("Master domain id:'{}' has status:'{}'",
+                    masterDomain.getId(), masterDomain.getStatus());
+            if (masterDomain.getStatus() == StorageDomainStatus.Active ||
+                    masterDomain.getStatus() == StorageDomainStatus.Unknown ||
+                    masterDomain.getStatus() == StorageDomainStatus.Inactive) {
+                resetSPM();
+            }
         }
     }
 
-    private void resetIrs() {
+    private void resetSPM() {
+        log.info("Start reset of SPM. Spm vds id: '{}'", getStoragePool().getSpmVdsId());
         if (getStoragePool().getSpmVdsId() != null) {
-            ResetIrsVDSCommandParameters tempVar =
-                    new ResetIrsVDSCommandParameters(getStoragePool()
-                            .getId(), getStoragePool().getSpmVdsId());
-            tempVar.setVdsAlreadyRebooted(true);
-            runVdsCommand(VDSCommandType.ResetIrs, tempVar);
+            ResetIrsVDSCommandParameters resetIrsParams =
+                    new ResetIrsVDSCommandParameters(getStoragePool().getId(), getStoragePool().getSpmVdsId());
+            resetIrsParams.setVdsAlreadyRebooted(true);
+            runVdsCommand(VDSCommandType.ResetIrs, resetIrsParams);
         }
     }
 
