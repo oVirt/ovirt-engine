@@ -523,12 +523,28 @@ COMMAND_COORDINATOR_THREAD_POOL_SIZE=10
 HOST_CHECK_FOR_UPDATES_THREAD_POOL_SIZE=5
 
 #
-# Specify the thread pool size for jboss managed executor services used by the thread pool util. This thread pool
+# Specify the core thread pool size for jboss managed executor services used by the thread pool util. This thread pool
 # is used to execute multiple commands from UI. It is generally not necessary to increase the number of threads in
 # this thread pool. To change the value permanentaly create a conf file 99-engine-thread-pool.conf in
 # /etc/ovirt-engine/engine.conf.d/
 #
-ENGINE_THREAD_POOL_SIZE=500
+ENGINE_THREAD_POOL_MIN_SIZE=50
+
+#
+# Specify the max thread pool size for jboss managed executor services used by the thread pool util. This thread pool
+# is used to execute multiple commands from UI. It is generally not necessary to increase the number of threads in
+# this thread pool. To change the value permanentaly create a conf file 99-engine-thread-pool.conf in
+# /etc/ovirt-engine/engine.conf.d/
+#
+ENGINE_THREAD_POOL_MAX_SIZE=500
+
+#
+# Specify the queue size for jboss managed executor services used by the thread pool util. This thread pool
+# is used to execute multiple commands from UI. It is generally not necessary to increase the queue size for
+# this thread pool. To change the value permanentaly create a conf file 99-engine-thread-pool.conf in
+# /etc/ovirt-engine/engine.conf.d/
+#
+ENGINE_THREAD_POOL_QUEUE_SIZE=100
 
 # Specify the thread pool size for jboss managed scheduled executor service used by commands to periodically execute
 # methods. It is generally not necessary to increase the number of threads in this thread pool. To change the value

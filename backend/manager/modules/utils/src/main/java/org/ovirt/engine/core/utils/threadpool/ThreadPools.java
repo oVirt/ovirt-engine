@@ -15,7 +15,6 @@ public @interface ThreadPools {
     enum ThreadPoolType {
         CoCo,
         HostUpdatesChecker,
-        EngineThreadPool,
         EngineScheduledThreadPool,
         EngineThreadMonitoringThreadPool}
 
