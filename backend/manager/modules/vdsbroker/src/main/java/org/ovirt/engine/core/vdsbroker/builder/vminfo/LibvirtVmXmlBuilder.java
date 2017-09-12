@@ -1727,7 +1727,7 @@ public class LibvirtVmXmlBuilder {
                 vm.getCompatibilityVersion(),
                 vm.getStaticData());
         VnicProfile vnicProfile = vnicProfileDao.get(nic.getVnicProfileId());
-        Network network = networkDao.get(vnicProfile.getNetworkId());
+        Network network = vnicProfile != null ? networkDao.get(vnicProfile.getNetworkId()) : null;
 
         switch (device.getDevice()) {
         case "bridge":
@@ -1743,10 +1743,10 @@ public class LibvirtVmXmlBuilder {
             // The source element is different when using legacy or OVS bridge. We
             // expect VDSM to replace the source element if it is a non legacy bridge
             writer.writeStartElement("source");
-            writer.writeAttributeString("bridge", network.getVdsmName());
+            writer.writeAttributeString("bridge", network != null ? network.getVdsmName() : "");
             writer.writeEndElement();
 
-            String queues = vnicProfile.getCustomProperties().get("queues");
+            String queues = vnicProfile != null ? vnicProfile.getCustomProperties().get("queues") : null;
             String driverName = getDriverNameForNetwork(nic.getNetworkName(), properties);
             if (queues != null || driverName != null) {
                 writer.writeStartElement("driver");
@@ -1768,7 +1768,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("driver");
             writer.writeAttributeString("name", "vfio");
             writer.writeEndElement();
-            if (NetworkUtils.isVlan(network)) {
+            if (network != null && NetworkUtils.isVlan(network)) {
                 writer.writeStartElement("vlan");
                 writer.writeStartElement("tag");
                 writer.writeAttributeString("id", network.getVlanId().toString());
