@@ -113,6 +113,10 @@ public class PatternflyListView<E, T, M extends SearchableListModel<E, T>> exten
             int i = 0;
             List<PatternflyListViewItem<T>> newCurrentState = new ArrayList<>();
             for(T item: getModel().getItems()) {
+                if (item == null) {
+                    continue;
+                }
+
                 PatternflyListViewItem<T> newItem = creator.createListViewItem(item);
                 handlerRegistrations.add(newItem.addClickHandler(this));
                 if (i < currentState.size()) {
