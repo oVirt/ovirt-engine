@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -146,5 +148,40 @@ public class ImagesHandlerTest {
         assertEquals("Total Initial Size should be 0",
                 Long.valueOf(0L),
                 imagesHandler.determineTotalImageInitialSize(disk, VolumeFormat.COW, srcDomainGuid, dstDomainGuid));
+    }
+
+    @Test
+    public void testAggregateDiskImagesSnapshots() {
+        disk1.setId(Guid.newGuid());
+        disk1.setActive(true);
+        disk1.setStorageIds(new ArrayList<>());
+
+        disk2.setId(disk1.getId());
+        disk2.setActive(false);
+
+        disk3.setId(disk1.getId());
+        disk3.setActive(false);
+
+        DiskImage diskWithoutSnapshots = new DiskImage();
+        diskWithoutSnapshots.setId(Guid.newGuid());
+        diskWithoutSnapshots.setActive(true);
+        diskWithoutSnapshots.setStorageIds(new ArrayList<>());
+
+        List<DiskImage> result =
+                new ArrayList<>(imagesHandler.aggregateDiskImagesSnapshots(Arrays.asList(
+                        disk1,
+                        disk2,
+                        disk3,
+                        diskWithoutSnapshots)));
+        DiskImage resultDisk =
+                result.stream().filter(diskImage -> diskImage.getId() == disk1.getId()).findFirst().orElse(null);
+        assertEquals("wrong number of disks returned", 2, result.size());
+        assertEquals("wrong number of snapshots for disk1", 3, resultDisk.getSnapshots().size());
+    }
+
+    @Test
+    public void testAggregateDiskImagesSnapshotsWithEmptyList() {
+        Collection<DiskImage> result =  imagesHandler.aggregateDiskImagesSnapshots(Collections.emptyList());
+        assertTrue("should return an empty list", result.isEmpty());
     }
 }

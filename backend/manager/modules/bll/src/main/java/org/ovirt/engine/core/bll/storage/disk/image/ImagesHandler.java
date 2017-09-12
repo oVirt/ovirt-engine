@@ -541,6 +541,35 @@ public class ImagesHandler {
         });
     }
 
+    /**
+     * Gets a List of DiskImage objects, which include active and non-active (snapshots) disks.
+     * Aggregates the snapshot for each Disk.
+     *
+     * @param images
+     *            List of Disk objects to aggregate their snapshots
+     * @return List of active DiskImages objects which related to their snapshots
+     */
+    public Collection<DiskImage> aggregateDiskImagesSnapshots(Collection<DiskImage> images){
+        Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
+
+        // Get active diskImages
+        images.forEach(diskImage -> {
+            if (diskImage.getActive()) {
+                diskImage.getSnapshots().add(DiskImage.copyOf(diskImage));
+                diskImagesMap.put(diskImage.getId(), diskImage);
+            }
+        });
+
+        // Update diskImages snapshots
+        images.forEach(diskImage -> {
+            if (!diskImage.getActive()) {
+                diskImagesMap.get(diskImage.getId()).getSnapshots().add(diskImage);
+            }
+        });
+
+        return diskImagesMap.values();
+    }
+
     public void removeDiskImage(DiskImage diskImage, Guid vmId) {
         try {
             removeDiskFromVm(vmId, diskImage.getId());
