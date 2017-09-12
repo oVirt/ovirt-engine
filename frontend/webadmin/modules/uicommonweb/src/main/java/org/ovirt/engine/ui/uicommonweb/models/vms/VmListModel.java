@@ -1677,7 +1677,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         final UnitVmModel model = (UnitVmModel) getWindow();
 
         EntityModel<String> cpuPinning = model.getCpuPinning();
-        if (!cpuPinning.getIsChangable() && cpuPinning.getEntity() != null
+        if (!cpuPinning.getIsChangable() && !model.isVmAttachedToPool() && cpuPinning.getEntity() != null
                 && !cpuPinning.getEntity().isEmpty()) {
             confirmCpuPinningLost();
         } else {
@@ -1915,10 +1915,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setWindow(null);
 
         updateActionsAvailability();
-    }
-
-    private void cancelConfirmation() {
-        setConfirmWindow(null);
     }
 
     @Override
@@ -2191,6 +2187,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         else if (CMD_CONFIGURE_VMS_TO_IMPORT.equals(command.getName())) {
             onConfigureVmsToImport();
         }
+        else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
+            UnitVmModel model = (UnitVmModel) getWindow();
+            if (!model.validate()) {
+                return;
+            }
+            saveOrUpdateVM(model);
+        }
     }
 
     private void importVms() {
@@ -2458,5 +2461,4 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     protected Guid extractStoragePoolIdNullSafe(VM entity) {
         return entity.getStoragePoolId();
     }
-
 }

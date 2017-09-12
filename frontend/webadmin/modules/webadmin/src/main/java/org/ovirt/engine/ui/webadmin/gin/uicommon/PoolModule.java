@@ -19,8 +19,10 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
@@ -42,7 +44,8 @@ public class PoolModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<PoolNewPopupPresenterWidget> poolPopupProvider,
             final Provider<PoolEditPopupPresenterWidget> poolEditPopupProvider,
-            final Provider<PoolListModel> modelProvider) {
+            final Provider<PoolListModel> modelProvider,
+        final Provider<VmHighPerformanceConfigurationPresenterWidget> highPerformanceConfigurationProvider) {
         MainViewModelProvider<VmPool, PoolListModel> result =
                 new MainViewModelProvider<VmPool, PoolListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
@@ -63,10 +66,12 @@ public class PoolModule extends AbstractGinModule {
                         if (lastExecutedCommand == getModel().getRemoveCommand()) {
                             return removeConfirmPopupProvider.get();
                         } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
-                            return defaultConfirmPopupProvider.get();
-                        }
-
-                        else {
+                            if (source.getConfirmWindow() instanceof VmHighPerformanceConfigurationModel) {
+                                return highPerformanceConfigurationProvider.get();
+                            } else {
+                                return defaultConfirmPopupProvider.get();
+                            }
+                        } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }
                     }

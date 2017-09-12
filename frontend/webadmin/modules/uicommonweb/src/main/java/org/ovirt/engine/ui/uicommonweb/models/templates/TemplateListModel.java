@@ -738,10 +738,6 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         updateActionsAvailability();
     }
 
-    private void cancelConfirmation() {
-        setConfirmWindow(null);
-    }
-
     @Override
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
@@ -878,6 +874,13 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         }
         else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
+        }
+        else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
+            UnitVmModel model = (UnitVmModel) getWindow();
+            if (!model.validate()) {
+                return;
+            }
+            saveOrUpdateVM(model);
         }
     }
 

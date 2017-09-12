@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
@@ -38,6 +39,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.Templa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.TemplateMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
@@ -63,7 +65,8 @@ public class TemplateModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<TemplateListModel> modelProvider,
             final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
-            final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider) {
+            final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider,
+            final Provider<VmHighPerformanceConfigurationPresenterWidget> highPerformanceConfigurationProvider) {
 
         MainViewModelProvider<VmTemplate, TemplateListModel> result =
                 new MainViewModelProvider<VmTemplate, TemplateListModel>(eventBus, defaultConfirmPopupProvider) {
@@ -96,6 +99,9 @@ public class TemplateModule extends AbstractGinModule {
                             return removeConfirmPopupProvider.get();
                         } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             return defaultConfirmPopupProvider.get();
+                        } else if ("OnSaveVm".equals(lastExecutedCommand.getName()) //$NON-NLS-1$
+                                && source.getConfirmWindow() instanceof VmHighPerformanceConfigurationModel) {
+                            return highPerformanceConfigurationProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }

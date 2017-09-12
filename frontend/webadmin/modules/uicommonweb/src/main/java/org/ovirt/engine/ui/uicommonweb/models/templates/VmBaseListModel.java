@@ -42,7 +42,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.HasDiskWindow;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -317,11 +319,26 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         if (!model.getProviders().getItems().iterator().next().equals(model.getProviders().getSelectedItem())) {
             getcurrentVm().setProviderId(model.getProviders().getSelectedItem().getId());
         }
+
+        if (getcurrentVm().getVmType() == VmType.HighPerformance) {
+            displayHighPerformanceConfirmationPopup();
+        } else {
+            saveOrUpdateVM(model);
+        }
+    }
+
+    protected void saveOrUpdateVM(final UnitVmModel model) {
+        setConfirmWindow(null);
+
         if (model.getIsNew()) {
             saveNewVm(model);
         } else {
             updateVM(model);
         }
+    }
+
+    protected void cancelConfirmation() {
+        setConfirmWindow(null);
     }
 
     private void saveNewVm(final UnitVmModel model) {
@@ -470,4 +487,52 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         }
     }
 
+    protected void displayHighPerformanceConfirmationPopup() {
+        final UnitVmModel model = (UnitVmModel) getWindow();
+
+        if (model == null || model.getProgress() != null) {
+            return;
+        }
+
+        VmHighPerformanceConfigurationModel confirmModel = new VmHighPerformanceConfigurationModel();
+
+        // Handle CPU Pinning topology
+        final boolean isVmAssignedToSpecificHosts = !model.getIsAutoAssign().getEntity();
+        final boolean isVmCpuPinningSet = model.getCpuPinning().getIsChangable()
+                && model.getCpuPinning().getEntity() != null && !model.getCpuPinning().getEntity().isEmpty();
+        confirmModel.addRecommendationForCpuPinning(isVmAssignedToSpecificHosts, isVmCpuPinningSet);
+
+        // Handle NUMA
+        final boolean isVmVirtNumaSet = model.getNumaEnabled().getEntity() && model.getNumaNodeCount().getEntity() > 0;
+        final boolean isVmVirtNumaPinned = model.getVmNumaNodes() != null && !model.getVmNumaNodes().isEmpty()
+                && model.getVmNumaNodes().stream().filter(x -> !x.getVdsNumaNodeList().isEmpty()).count() > 0;
+        confirmModel.addRecommendationForVirtNumaSetAndPinned(isVmVirtNumaSet, isVmVirtNumaPinned);
+
+        // Handle KSM (Kernel Same Page Merging)
+        confirmModel.addRecommendationForKsm(model.getSelectedCluster().isEnableKsm(), model.getSelectedCluster().getName());
+
+        // Handle Huge Pages
+        KeyValueModel keyValue = model.getCustomPropertySheet();
+        final boolean isVmHugePagesSet = keyValue != null && keyValue.getUsedKeys().contains("hugepages"); //$NON-NLS-1$
+        confirmModel.addRecommendationForHugePages(isVmHugePagesSet);
+
+        // If there are recommendations to display and it is not a Pool VM then display the popup
+        if (!confirmModel.getRecommendationsList().isEmpty() && !model.isVmAttachedToPool()) {
+            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().configurationChangesForHighPerformanceVmTitle());
+            confirmModel.setHelpTag(HelpTag.configuration_changes_for_high_performance_vm);
+            confirmModel.setHashName("configuration_changes_for_high_performance_vm"); //$NON-NLS-1$
+
+            confirmModel.getCommands().add(new UICommand("SaveOrUpdateVM", VmBaseListModel.this) //$NON-NLS-1$
+                    .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                    .setIsDefault(true));
+
+            confirmModel.getCommands()
+                    .add(UICommand.createCancelUiCommand("CancelConfirmation", VmBaseListModel.this)); //$NON-NLS-1$
+
+            setConfirmWindow(null);
+            setConfirmWindow(confirmModel);
+         } else {
+            saveOrUpdateVM(model);
+         }
+    }
 }

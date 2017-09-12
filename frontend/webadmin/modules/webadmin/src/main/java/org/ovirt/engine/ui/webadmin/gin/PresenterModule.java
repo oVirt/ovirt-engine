@@ -228,6 +228,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskSparsifyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
@@ -507,6 +508,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskSparsifyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmHighPerformanceConfigurationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMigratePopupView;
@@ -1473,6 +1475,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmNextRunConfigurationPresenterWidget.class,
                 VmNextRunConfigurationPresenterWidget.ViewDef.class,
                 VmNextRunConfigurationPopupView.class);
+
+        bindPresenterWidget(VmHighPerformanceConfigurationPresenterWidget.class,
+                VmHighPerformanceConfigurationPresenterWidget.ViewDef.class,
+                VmHighPerformanceConfigurationPopupView.class);
 
         // Bookmarks
         bindPresenterWidget(BookmarkPopupPresenterWidget.class,

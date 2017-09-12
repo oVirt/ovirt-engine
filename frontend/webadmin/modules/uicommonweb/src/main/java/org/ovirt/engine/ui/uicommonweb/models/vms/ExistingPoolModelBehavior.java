@@ -104,6 +104,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             setupWindowFromVmBase(template);
         } else {
             setupWindowFromVmBase(pool.getStaticData());
+            //can be set only from DB since it is not part of the Template's fields
+            getModel().getCpuPinning().setEntity(pool.getCpuPinning());
         }
     }
 

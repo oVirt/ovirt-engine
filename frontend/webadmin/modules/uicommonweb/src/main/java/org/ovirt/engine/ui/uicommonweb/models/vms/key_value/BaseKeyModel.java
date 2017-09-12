@@ -97,7 +97,7 @@ public abstract class BaseKeyModel<M extends KeyLineModel> extends ListModel<M> 
         return list;
     }
 
-    private List<String> getUsedKeys() {
+    public List<String> getUsedKeys() {
         if (usedKeys == null) {
             return new ArrayList<>();
         } else {

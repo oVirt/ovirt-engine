@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:with field="messages" type="org.ovirt.engine.ui.common.CommonApplicationMessages" />
+    <ui:with field="constants" type="org.ovirt.engine.ui.common.CommonApplicationConstants" />
+
+	<ui:style>
+        .verticalPanel>* {
+            display: block;
+            clear: both;
+        }
+        .sectionPanel {
+            margin-bottom: 10px;
+            margin-left: 5px;
+        }
+        .sectionTitle {
+            font-weight: bold;
+        }
+	</ui:style>
+
+	<g:FlowPanel>
+        <g:FlowPanel ui:field="recommendationsListPanel" addStyleNames="{style.sectionPanel}">
+            <g:Label ui:field="recommendationsListPanelTitle" addStyleNames="{style.sectionTitle}" text="{messages.highPerformanceConfigurationManualChange}"/>
+            <g:FlowPanel ui:field="recommendationsListContent" addStyleNames="{style.sectionPanel}">
+                <g:HTML ui:field="recommendationsList" />
+            </g:FlowPanel>
+        </g:FlowPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>

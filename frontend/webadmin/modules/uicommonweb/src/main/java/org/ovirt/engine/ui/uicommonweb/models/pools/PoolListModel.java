@@ -47,6 +47,8 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -389,9 +391,12 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
 
                                 setConfirmWindow(confirmModel);
                             } else {
-                                savePoolPostValidation();
+                                if (model.getVmType().getSelectedItem() == VmType.HighPerformance) {
+                                    displayHighPerformanceConfirmationPopup();
+                                } else {
+                                    savePoolPostValidation();
+                                }
                             }
-
                         }),
                 name);
     }
@@ -402,6 +407,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
 
         VmPool pool = getCurrentPool();
 
+        setConfirmWindow(null);
 
         // Save changes.
         pool.setName(model.getName().getEntity());
@@ -447,6 +453,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         BuilderExecutor.build(model, param, new UnitToGraphicsDeviceParamsBuilder());
 
         param.getVmStaticData().setUseHostCpuFlags(model.getHostCpu().getEntity());
+        param.getVmStaticData().setCpuPinning(model.getCpuPinning().getEntity());
 
         if (model.getQuota().getSelectedItem() != null) {
             vm.setQuotaId(model.getQuota().getSelectedItem().getId());
@@ -547,7 +554,6 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         }
         if ("OnSave_Phase2".equals(command.getName())) { //$NON-NLS-1$
             savePoolPostValidation();
-            setConfirmWindow(null);
         }
         if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
@@ -574,4 +580,47 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         setConfirmWindow(null);
     }
 
+    protected void displayHighPerformanceConfirmationPopup() {
+        final PoolModel model = (PoolModel) getWindow();
+
+        if (model == null || model.getProgress() != null) {
+            return;
+        }
+
+        VmHighPerformanceConfigurationModel confirmModel = new VmHighPerformanceConfigurationModel();
+
+        // Handle CPU Pinning topology
+        final boolean isVmAssignedToSpecificHosts = !model.getIsAutoAssign().getEntity();
+        final boolean isVmCpuPinningSet = model.getCpuPinning().getIsChangable()
+                && model.getCpuPinning().getEntity() != null && !model.getCpuPinning().getEntity().isEmpty();
+        confirmModel.addRecommendationForCpuPinning(isVmAssignedToSpecificHosts, isVmCpuPinningSet);
+
+        // Handle KSM (Kernel Same Page Merging)
+        confirmModel.addRecommendationForKsm(model.getSelectedCluster().isEnableKsm(), model.getSelectedCluster().getName());
+
+        // Handle Huge Pages
+        KeyValueModel keyValue = model.getCustomPropertySheet();
+        final boolean isVmHugePagesSet = keyValue != null && keyValue.getUsedKeys().contains("hugepages"); //$NON-NLS-1$
+        confirmModel.addRecommendationForHugePages(isVmHugePagesSet);
+
+        if (!confirmModel.getRecommendationsList().isEmpty()) {
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .configurationChangesForHighPerformancePoolTitle());
+            confirmModel.setHelpTag(HelpTag.configuration_changes_for_high_performance_pool);
+            confirmModel.setHashName("configuration_changes_for_high_performance_pool"); //$NON-NLS-1$
+
+            confirmModel.getCommands().add(new UICommand("OnSave_Phase2", PoolListModel.this) //$NON-NLS-1$
+                    .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                    .setIsDefault(true));
+
+            confirmModel.getCommands()
+                    .add(UICommand.createCancelUiCommand("CancelConfirmation", PoolListModel.this)); //$NON-NLS-1$
+
+            setConfirmWindow(null);
+            setConfirmWindow(confirmModel);
+        } else {
+            savePoolPostValidation();
+        }
+    }
 }

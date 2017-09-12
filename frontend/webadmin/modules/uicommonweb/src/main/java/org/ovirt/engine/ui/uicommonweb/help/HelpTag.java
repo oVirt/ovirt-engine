@@ -282,6 +282,10 @@ public enum HelpTag {
 
     edit_next_run_configuration("edit_next_run_configuration", HelpTagType.WEBADMIN, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    configuration_changes_for_high_performance_vm("configuration_changes_for_high_performance_vm", HelpTagType.WEBADMIN), //$NON-NLS-1$
+
+    configuration_changes_for_high_performance_pool("configuration_changes_for_high_performance_pool", HelpTagType.WEBADMIN), //$NON-NLS-1$
+
     edit_unsupported_cpu("edit_unsupported_cpu", HelpTagType.WEBADMIN, "'VMs' main tab -> 'Edit VM' dialog -> 'System' sub tab -> 'Advanced Parameters' -> 'Custom CPU Type'"), //$NON-NLS-1$ //$NON-NLS-2$
 
     monitor("monitor", HelpTagType.UNKNOWN), //$NON-NLS-1$

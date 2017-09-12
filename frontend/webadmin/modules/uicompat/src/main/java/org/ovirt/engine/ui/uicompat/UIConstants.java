@@ -123,6 +123,24 @@ public interface UIConstants extends Constants {
 
     String editNextRunConfigurationTitle();
 
+    String configurationChangesForHighPerformanceVmTitle();
+
+    String configurationChangesForHighPerformancePoolTitle();
+
+    String highPerformancePopupRecommendationMsgForKsmPart1();
+
+    String highPerformancePopupRecommendationMsgForKsmPart2();
+
+    String highPerformancePopupRecommendationMsgForHugePages();
+
+    String highPerformancePopupRecommendationMsgForNumaSetAndPinned();
+
+    String highPerformancePopupRecommendationMsgForNumaPinned();
+
+    String highPerformancePopupRecommendationMsgForCpuPin();
+
+    String highPerformancePopupRecommendationMsgForCpuSpecificHostPin();
+
     String vmUnsupportedCpuTitle();
 
     String vmUnsupportedCpuMessage();
@@ -2092,6 +2110,5 @@ public interface UIConstants extends Constants {
     String forceRemoveProvider();
 
     String forceRemoveCinderProvider();
-
 }
 

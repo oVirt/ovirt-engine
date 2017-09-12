@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestContainerListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -72,6 +73,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskSparsifyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
@@ -122,7 +124,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmListModel<Void>> modelProvider,
             final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
             final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider,
-            final Provider<VmDiskRemovePopupPresenterWidget> removeDiskConfirmPopupProvider) {
+            final Provider<VmDiskRemovePopupPresenterWidget> removeDiskConfirmPopupProvider,
+            final Provider<VmHighPerformanceConfigurationPresenterWidget> highPerformanceConfigurationProvider) {
         MainViewModelProvider<VM, VmListModel<Void>> result =
                 new MainViewModelProvider<VM, VmListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
                     @Override
@@ -180,6 +183,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return removeConfirmPopupProvider.get();
                         } else if (source.getConfirmWindow() instanceof VmNextRunConfigurationModel) {
                             return nextRunProvider.get();
+                        } else if (source.getConfirmWindow() instanceof VmHighPerformanceConfigurationModel) {
+                            return highPerformanceConfigurationProvider.get();
                         } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             return defaultConfirmPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getEditCommand()) {

@@ -107,6 +107,8 @@ public interface CommonApplicationMessages extends Messages {
 
     String nextRunConfigurationVmLeaseValue();
 
+    String highPerformanceConfigurationManualChange();
+
     String unpinnedRunningVmWarningTitle();
 
     String warningSectionTitle();

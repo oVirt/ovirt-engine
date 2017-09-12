@@ -1295,6 +1295,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getIsHeadlessModeEnabled().setEntity(true);
             getModel().getIsConsoleDeviceEnabled().setEntity(true);
             getModel().getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
+            getModel().getIsSmartcardEnabled().setEntity(false);
 
             // High Availability tab
             getModel().getWatchdogModel().setSelectedItem(null);
