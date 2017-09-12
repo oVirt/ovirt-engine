@@ -11,7 +11,7 @@
     <g:FlowPanel ui:field="mainContainer">
         <b:Row>
             <b:Column size="SM_12">
-                <l:EnableableFormLabel text="{constants.hostNetworkQosOutLabel}" ui:field="qosOutLabel" />
+                <l:EnableableFormLabel text="{constants.hostNetworkQosOutLabel}" ui:field="qosOutLabel" addStyleNames="h4" />
             </b:Column>
         </b:Row>
         <b:Row>

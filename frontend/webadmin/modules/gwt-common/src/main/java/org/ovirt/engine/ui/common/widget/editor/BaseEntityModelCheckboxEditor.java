@@ -165,4 +165,41 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
             super.setLabel(label);
         }
     }
+
+    @Override
+    public void addLabelStyleName(String styleName) {
+        if (useCheckBoxWidgetLabel) {
+            getCheckboxWidgetLabel().addClassName(styleName);
+        } else {
+            super.addLabelStyleName(styleName);
+        }
+    }
+
+    @Override
+    public void setAddLabelStyleName(String styleName) {
+        if (useCheckBoxWidgetLabel) {
+            getCheckboxWidgetLabel().addClassName(styleName);
+        } else {
+            super.setAddLabelStyleName(styleName);
+        }
+    }
+
+    @Override
+    public void setLabelStyleName(String styleName) {
+        if (useCheckBoxWidgetLabel) {
+            getCheckboxWidgetLabel().setClassName(styleName);
+        } else {
+            super.setLabelStyleName(styleName);
+        }
+    }
+
+    @Override
+    public void removeLabelStyleName(String styleName) {
+        if (useCheckBoxWidgetLabel) {
+            getCheckboxWidgetLabel().removeClassName(styleName);
+        } else {
+            super.removeLabelStyleName(styleName);
+        }
+    }
+
 }

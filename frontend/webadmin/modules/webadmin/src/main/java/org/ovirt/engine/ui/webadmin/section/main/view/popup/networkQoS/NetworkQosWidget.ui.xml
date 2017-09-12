@@ -11,7 +11,7 @@
     <g:FlowPanel ui:field="mainContainer">
         <b:Row>
             <b:Column size="SM_12">
-                <e:EntityModelCheckBoxEditor ui:field="inboundEnabled" label="{constants.inboundLabelQoSPopup}" usePatternFly="true" removeFormGroup="true" />
+                <e:EntityModelCheckBoxEditor ui:field="inboundEnabled" label="{constants.inboundLabelQoSPopup}" labelStyleName="h4" usePatternFly="true" removeFormGroup="true" />
             </b:Column>
         </b:Row>
         <b:Row>
@@ -38,7 +38,7 @@
         </b:Row>
         <b:Row>
             <b:Column size="SM_12">
-                <e:EntityModelCheckBoxEditor ui:field="outboundEnabled" label="{constants.outboundLabelQoSPopup}" usePatternFly="true" removeFormGroup="true" />
+                <e:EntityModelCheckBoxEditor ui:field="outboundEnabled" label="{constants.outboundLabelQoSPopup}" labelStyleName="h4" usePatternFly="true" removeFormGroup="true" />
             </b:Column>
         </b:Row>
         <b:Row>

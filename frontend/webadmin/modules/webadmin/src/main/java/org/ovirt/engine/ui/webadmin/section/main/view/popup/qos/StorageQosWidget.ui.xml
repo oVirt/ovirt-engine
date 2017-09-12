@@ -11,7 +11,7 @@
     <g:FlowPanel ui:field="mainContainer">
         <b:Row>
             <b:Column size="SM_12">
-                <g:Label text="{constants.throughputLabelQosPopup}" />
+                <g:Label text="{constants.throughputLabelQosPopup}" addStyleNames="h4" />
             </b:Column>
         </b:Row>
         <b:Row>
@@ -42,7 +42,7 @@
         </b:Row>
         <b:Row>
             <b:Column size="SM_12">
-                <g:Label text="{constants.iopsLabelQosPopup}" />
+                <g:Label text="{constants.iopsLabelQosPopup}" addStyleNames="h4" />
             </b:Column>
         </b:Row>
         <b:Row>

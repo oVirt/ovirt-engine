@@ -425,7 +425,11 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     public void setAddLabelStyleName(String styleName) {
-        addLabelStyleName(styleName);
+        getFormLabel().addStyleName(styleName);
+    }
+
+    public void setLabelStyleName(String styleName) {
+        getFormLabel().setStyleName(styleName);
     }
 
     public void removeLabelStyleName(String styleName) {

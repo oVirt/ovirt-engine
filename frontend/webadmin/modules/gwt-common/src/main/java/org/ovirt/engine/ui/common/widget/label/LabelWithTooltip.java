@@ -9,9 +9,11 @@ public class LabelWithTooltip implements WidgetLabel, IsWidget {
 
     private HasWidgetLabels currentTarget;
     private final WidgetTooltip tooltip;
+    private final EnableableFormLabel label;
 
     public LabelWithTooltip() {
-        tooltip = new WidgetTooltip(new EnableableFormLabel());
+        label = new EnableableFormLabel();
+        tooltip = new WidgetTooltip(label);
     }
 
     @Override
@@ -25,7 +27,7 @@ public class LabelWithTooltip implements WidgetLabel, IsWidget {
 
     @Override
     public void setFor(String targetId) {
-        getLabel().setFor(targetId);
+        label.setFor(targetId);
     }
 
     @Override
@@ -36,27 +38,23 @@ public class LabelWithTooltip implements WidgetLabel, IsWidget {
 
     @Override
     public boolean isEnabled() {
-        return getLabel().isEnabled();
+        return label.isEnabled();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        getLabel().setEnabled(enabled);
+        label.setEnabled(enabled);
         if (enabled) {
             tooltip.setText("");
         }
     }
 
     public void setText(String text) {
-        getLabel().setText(text);
+        label.setText(text);
     }
 
     public String getText() {
-        return getLabel().getText();
-    }
-
-    private EnableableFormLabel getLabel() {
-        return (EnableableFormLabel) tooltip.getWidget();
+        return label.getText();
     }
 
     public void setTooltip(String tooltipText) {
@@ -69,22 +67,22 @@ public class LabelWithTooltip implements WidgetLabel, IsWidget {
     }
 
     public void addStyleName(String style) {
-        getLabel().addStyleName(style);
+        label.addStyleName(style);
     }
 
     public void setAddStyleName(String style) {
-        getLabel().addStyleName(style);
+        label.addStyleName(style);
     }
 
     public void setStyleName(String style) {
-        getLabel().setStyleName(style);
+        label.setStyleName(style);
     }
 
     public void setStyleName(String style, boolean add) {
-        getLabel().setStyleName(style, add);
+        label.setStyleName(style, add);
     }
 
     public void removeStyleName(String style) {
-        getLabel().removeStyleName(style);
+        label.removeStyleName(style);
     }
 }

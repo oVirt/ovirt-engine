@@ -16,21 +16,21 @@
             border-bottom: 1px solid #D1D1D1;
         }
 
-        .container {
-            width: 100%;
+        .headerStandoff {
+            margin-top: 15px;
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="600px" height="400px">
+    <d:SimpleDialogPanel width="600px" height="450px">
         <d:content>
-            <b:Container addStyleNames="{style.container}">
+            <b:Container fluid="true">
                 <b:Row>
                     <e:ListModelListBoxEditor ui:field="dataCenterEditor" label="{constants.dataCenterNetworkQoSPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row addStyleNames="{style.topDecorator}">
                     <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.networkQoSName}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
-                <b:Row>
+                <b:Row addStyleNames="{style.headerStandoff}">
                     <b:Column size="SM_12">
                         <n:NetworkQosWidget ui:field="qosWidget" />
                     </b:Column>
