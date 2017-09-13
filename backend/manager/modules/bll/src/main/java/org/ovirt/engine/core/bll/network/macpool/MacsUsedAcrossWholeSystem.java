@@ -16,9 +16,11 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 
 @Singleton
 public class MacsUsedAcrossWholeSystem {
@@ -28,6 +30,9 @@ public class MacsUsedAcrossWholeSystem {
 
     @Inject
     private ClusterDao clusterDao;
+
+    @Inject
+    private VmNicDao vmNicDao;
 
     @Inject
     private SnapshotsManager snapshotsManager;
@@ -64,15 +69,19 @@ public class MacsUsedAcrossWholeSystem {
 
         List<String> macsToBeAllocated = vmsById.keySet()
                 .stream()
-                .flatMap(vmId -> calculateAllMacsUsedInVmAndItsSnapshot(vmsById.get(vmId).getInterfaces(),
+                .flatMap(vmId -> calculateAllMacsUsedInVmAndItsSnapshot(getVmInterfaces(vmId),
                         snapshottedInterfacesByVmId.get(vmId)))
                 .collect(Collectors.toList());
 
         return macsToBeAllocated;
     }
 
-    private Stream<String> calculateAllMacsUsedInVmAndItsSnapshot(List<VmNetworkInterface> vmInterfaces,
-            List<VmNetworkInterface> snapshotInterfaces) {
+    private List<VmNic> getVmInterfaces(Guid vmId) {
+        return vmNicDao.getAllForVm(vmId);
+    }
+
+    private Stream<String> calculateAllMacsUsedInVmAndItsSnapshot(List<? extends VmNic> vmInterfaces,
+            List<? extends VmNic> snapshotInterfaces) {
 
         CountMacUsageDifference countMacUsageDifference =
                 new CountMacUsageDifference(macAddressesOfInterfaces(snapshotInterfaces),
@@ -85,11 +94,11 @@ public class MacsUsedAcrossWholeSystem {
         return macsDuplicatedByNumberOfTimesTheyAreUsed;
     }
 
-    private Stream<String> macAddressesOfInterfaces(List<VmNetworkInterface> interfaces) {
+    private Stream<String> macAddressesOfInterfaces(List<? extends VmNic> interfaces) {
         if (interfaces == null) {
             return Stream.empty();
         }
-        return interfaces.stream().map(VmNetworkInterface::getMacAddress);
+        return interfaces.stream().map(VmNic::getMacAddress);
     }
 
     private List<Guid> getIdsOfAllClustersHavingMacPool(Guid macPoolId) {
