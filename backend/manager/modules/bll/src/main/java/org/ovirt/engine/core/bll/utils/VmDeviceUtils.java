@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
@@ -88,7 +87,8 @@ public class VmDeviceUtils {
                   MacPoolPerCluster macPoolPerCluster,
                   RngDeviceUtils rngDeviceUtils,
                   VideoDeviceSettings videoDeviceSettings,
-                  ClusterUtils clusterUtils) {
+                  ClusterUtils clusterUtils,
+                  OsRepository osRepository) {
         this.vmDao = vmDao;
         this.vmDeviceDao = vmDeviceDao;
         this.clusterDao = clusterDao;
@@ -98,11 +98,7 @@ public class VmDeviceUtils {
         this.rngDeviceUtils = rngDeviceUtils;
         this.videoDeviceSettings = videoDeviceSettings;
         this.clusterUtils = clusterUtils;
-        init();
-    }
-
-    public void init() {
-        osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+        this.osRepository = osRepository;
     }
 
     /*
