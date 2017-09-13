@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -22,6 +23,7 @@ public class VmInfoBuilderFactory {
     private final VmDeviceDao vmDeviceDao;
     private final VmNumaNodeDao vmNumaNodeDao;
     private final VmInfoBuildUtils vmInfoBuildUtils;
+    private final OsRepository osRepository;
 
     @Inject
     VmInfoBuilderFactory(
@@ -30,13 +32,15 @@ public class VmInfoBuilderFactory {
             VdsNumaNodeDao vdsNumaNodeDao,
             VmDeviceDao vmDeviceDao,
             VmNumaNodeDao vmNumaNodeDao,
-            VmInfoBuildUtils vmInfoBuildUtils) {
+            VmInfoBuildUtils vmInfoBuildUtils,
+            OsRepository osRepository) {
         this.clusterDao = Objects.requireNonNull(clusterDao);
         this.networkDao = Objects.requireNonNull(networkDao);
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
         this.vmInfoBuildUtils = Objects.requireNonNull(vmInfoBuildUtils);
+        this.osRepository = Objects.requireNonNull(osRepository);
     }
 
     public VmInfoBuilder createVmInfoBuilder(VM vm, Guid vdsId, Map<String, Object> createInfo) {
@@ -49,6 +53,7 @@ public class VmInfoBuilderFactory {
                 vdsNumaNodeDao,
                 vmDeviceDao,
                 vmNumaNodeDao,
-                vmInfoBuildUtils);
+                vmInfoBuildUtils,
+                osRepository);
     }
 }

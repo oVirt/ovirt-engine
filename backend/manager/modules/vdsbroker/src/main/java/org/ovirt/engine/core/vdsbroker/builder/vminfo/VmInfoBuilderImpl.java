@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -83,7 +82,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     private final Map<String, Object> createInfo;
     private final VM vm;
 
-    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    private OsRepository osRepository;
     private List<VmDevice> bootableDevices = null;
     private Guid vdsId;
     private Cluster cluster;
@@ -98,12 +97,14 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             VdsNumaNodeDao vdsNumaNodeDao,
             VmDeviceDao vmDeviceDao,
             VmNumaNodeDao vmNumaNodeDao,
-            VmInfoBuildUtils vmInfoBuildUtils) {
+            VmInfoBuildUtils vmInfoBuildUtils,
+            OsRepository osRepository) {
         this.clusterDao = Objects.requireNonNull(clusterDao);
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
         this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
         this.vmInfoBuildUtils = Objects.requireNonNull(vmInfoBuildUtils);
+        this.osRepository = Objects.requireNonNull(osRepository);
 
         this.vdsId = vdsId;
         this.vm = vm;

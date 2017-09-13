@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -36,6 +37,8 @@ public class VmInfoBuilderFactoryTest {
     private  VmNumaNodeDao vmNumaNodeDao;
     @Mock
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Mock
+    private OsRepository osRepository;
 
     @InjectMocks
     private VmInfoBuilderFactory underTest;
