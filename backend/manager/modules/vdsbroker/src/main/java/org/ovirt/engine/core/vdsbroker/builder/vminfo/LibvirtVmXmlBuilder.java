@@ -612,17 +612,19 @@ public class LibvirtVmXmlBuilder {
         vnicMetadata.forEach((mac, data) -> {
             writer.writeStartElement(OVIRT_VM_URI, "device");
             writer.writeAttributeString("mac_address", mac);
-            List<String> portMirroring = (List<String>) data.get("portMirroring");
+            List<String> portMirroring = (List<String>) data.remove("portMirroring");
             if (portMirroring != null) {
                 writer.writeStartElement(OVIRT_VM_URI, "portMirroring");
                 portMirroring.forEach(network -> writer.writeElement(OVIRT_VM_URI, "network", network));
                 writer.writeEndElement();
             }
             writer.writeStartElement(OVIRT_VM_URI, "custom");
-            Map<String, String> runtimeCustomProperties = (Map<String, String>) data.get("runtimeCustomProperties");
+            Map<String, String> runtimeCustomProperties = (Map<String, String>) data.remove("runtimeCustomProperties");
             if (runtimeCustomProperties != null) {
                 runtimeCustomProperties.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value));
             }
+            // write the other custom properties
+            data.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value.toString()));
             writer.writeEndElement();
             writer.writeEndElement();
         });
@@ -1785,7 +1787,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("bridge", network != null ? network.getVdsmName() : "");
             writer.writeEndElement();
 
-            String queues = vnicProfile != null ? vnicProfile.getCustomProperties().get("queues") : null;
+            String queues = vnicProfile != null ? vnicProfile.getCustomProperties().remove("queues") : null;
             String driverName = getDriverNameForNetwork(nic.getNetworkName(), properties);
             if (queues != null || driverName != null) {
                 writer.writeStartElement("driver");
@@ -1868,6 +1870,11 @@ public class LibvirtVmXmlBuilder {
             // store runtime custom properties in the metadata
             vnicMetadata.computeIfAbsent(nic.getMacAddress(), mac -> new HashMap<>());
             vnicMetadata.get(nic.getMacAddress()).put("runtimeCustomProperties", runtimeCustomProperties);
+        }
+
+        if (vnicProfile != null && vnicProfile.getCustomProperties() != null) {
+            vnicMetadata.computeIfAbsent(nic.getMacAddress(), mac -> new HashMap<>());
+            vnicMetadata.get(nic.getMacAddress()).putAll(vnicProfile.getCustomProperties());
         }
 
         writer.writeStartElement("bandwidth");
