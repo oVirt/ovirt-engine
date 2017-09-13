@@ -52,6 +52,10 @@ HOST_STATE_ERROR = 'error'
 HOST_STATE_INSTALLING = 'installing'
 # 7
 HOST_STATE_INSTALL_FAILED = 'install_failed'
+# 8
+HOST_STATE_REBOOT = 'reboot'
+# 9
+HOST_STATE_PREPARING_FOR_MAINT = 'preparing_for_maintenance'
 # 10
 HOST_STATE_NON_OPERATIONAL = 'non_operational'
 
@@ -61,6 +65,11 @@ HOST_INSTALL_FAILED_STATES = [
     HOST_STATE_NON_OPERATIONAL,
     HOST_STATE_ERROR,
 ]
+
+OVIRT_NODE_LEGACY_HOST_TYPES = (
+    'rhev-h',
+    'RHEV_H',
+)
 
 # Default connection params.
 defaultEngineFqdn = 'engine'
@@ -73,10 +82,16 @@ activationTimeout = 900
 maintenanceTimeout = 900
 waitForInstallTimeout = 90
 installProcessTimeout = 900
+waitForUpgradeTimeout = 90
+upgradeInstallTimeout = 900
+upgradeRebootTimeout = 900
 
 # Wait times are in seconds
 HOST_UP_VERIFY_TIME = 90
 SLEEP_TIME = 5
+
+# Max tries
+MAX_NON_RESPONSIVE_COUNT = 10
 
 ENV_ADMIN_USER = 'OVIRT_ADMIN_USER'
 ENV_ADMIN_PASS = 'OVIRT_ADMIN_PASS'
@@ -236,7 +251,7 @@ def reinstallHost(
         skipInvalidHostNames=False,
 ):
     """
-    Perform re-installation of oVirt/RHEV host.
+    Perform re-installation of oVirt/RHEV RHEL/oVirt-Node host.
 
     Expects the host to be in the maintenance, otherwise it raises
     an InvalidState exception.
@@ -280,6 +295,7 @@ def reinstallHost(
                     'Timed out while waiting for host to begin installation.'
                 )
 
+        secs = 0
         while True:
             print('.', end='')
             state = getHostState(api, name)
@@ -300,6 +316,105 @@ def reinstallHost(
     else:
         raise InvalidState(
             'Host must be in maintenance mode before attemting an upgrade.'
+        )
+
+
+def upgradeoVirtNodeLegacy(
+        api,
+        name,
+        waitForUpgradeTimeout=waitForUpgradeTimeout,
+        upgradeInstallTimeout=upgradeInstallTimeout,
+        upgradeRebootTimeout=upgradeRebootTimeout,
+        skipInvalidHostNames=False,
+):
+    """
+    Performs upgrade of oVirt Legacy node.
+
+    Expects the host to be in the up or maintenance, otherwise it raises
+    an InvalidState exception.
+    """
+    if api.hosts.list(name=name):
+        host = api.hosts.list(name=name)[0]
+        state = getHostState(api, name)
+    else:
+        if skipInvalidHostNames:
+            return
+        else:
+            raise InvalidHostName(
+                'Invalid host name %s.' % name
+            )
+    if state == HOST_STATE_UP:
+        host.upgrade(
+            ovirtsdk.xml.params.Action(
+                image='rhev-hypervisor.iso',
+            )
+        )
+        secs = 0
+        while True:
+            state = getHostState(api, name)
+            if state == HOST_STATE_INSTALLING:
+                print('\tInstalling', end='')
+                break
+            elif state in HOST_INSTALL_FAILED_STATES:
+                raise RuntimeError(
+                    'Unable to complete the reinstall operational, '
+                    'host is in mode: {0}'.format(state)
+                )
+
+            time.sleep(SLEEP_TIME)
+            secs += SLEEP_TIME
+            if secs > waitForUpgradeTimeout:
+                raise TimeoutError(
+                    'Timed out while waiting for host to begin installation.'
+                )
+
+        secs = 0
+        while True:
+            print('.', end='')
+            state = getHostState(api, name)
+            if state == HOST_STATE_REBOOT:
+                print("\n\tRebooting.", end='')
+                break
+            elif state in HOST_INSTALL_FAILED_STATES:
+                raise RuntimeError(
+                    'Unable to complete the reinstall operational, '
+                    'host is in mode: {0}'.format(state)
+                )
+
+            time.sleep(SLEEP_TIME)
+            secs += SLEEP_TIME
+            if secs > upgradeInstallTimeout:
+                raise TimeoutError(
+                    'Timed out while waiting for host to be re-installed.'
+                )
+
+        secs = 0
+        nonResponsiveCounter = 0
+        while True:
+            print('.', end='')
+            state = getHostState(api, name)
+            if state == HOST_STATE_UP:
+                print("\n\tInstalled.")
+                break
+            elif state in HOST_INSTALL_FAILED_STATES:
+                print('*', end='')
+                nonResponsiveCounter += 1
+                if nonResponsiveCounter >= MAX_NON_RESPONSIVE_COUNT:
+                    raise RuntimeError(
+                        'Unable to complete the reinstall operational, '
+                        'host is in mode: {0}'.format(state)
+                    )
+
+            time.sleep(SLEEP_TIME)
+            secs += SLEEP_TIME
+            if secs > upgradeRebootTimeout:
+                raise TimeoutError(
+                    'Timed out while waiting for host to reboot and activate.'
+                )
+
+    else:
+        raise InvalidState(
+            'Host must be up before attemting an upgrade.'
         )
 
 
@@ -387,12 +502,18 @@ def processHost(api, name, skipInvalidHostNames):
                 'Invalid host name %s.' % name
             )
 
-    print('Type: %s' % host.get_type())
+    vdsType = host.get_type()
+    print('Type: %s' % vdsType)
     try:
         state = getHostState(api, name)
         if state == HOST_STATE_UP:
-            deactivateHost(api, name)
-            reinstallHost(api, name)
+            if vdsType in OVIRT_NODE_LEGACY_HOST_TYPES:
+                print('\tPerforming oVirt Node/RHEVH (Legacy) upgrade...')
+                upgradeoVirtNodeLegacy(api, name)
+            else:
+                print('\tPerforming host update through reinstallation...')
+                deactivateHost(api, name)
+                reinstallHost(api, name)
             activateHost(api, name)
             verifyHost(api, name)
     except TimeoutError as error:
@@ -476,7 +597,7 @@ def usage():
     """
     Show command line options of the tool.
     """
-    print('\nUpdates RHEL-H hosts by performing a re-install.')
+    print('\nUpdates RHEL-H hosts and upgrades oVirt Node/RHEVH Legacy hosts.')
     print('--engine = <engine FQDN>')
     print(
         '--username = <Admin username> '
