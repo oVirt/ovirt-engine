@@ -38,7 +38,16 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     @Spy
     @InjectMocks
     protected ImportRepoImageCommand<ImportRepoImageParameters> cmd =
-            new ImportRepoImageCommand<>(new ImportRepoImageParameters(), null);
+            new ImportRepoImageCommand<>(createParameters(), null);
+
+    private ImportRepoImageParameters createParameters() {
+        ImportRepoImageParameters p = new ImportRepoImageParameters();
+        p.setSourceRepoImageId(repoImageId);
+        p.setSourceStorageDomainId(repoStorageDomainId);
+        p.setStoragePoolId(storagePoolId);
+        p.setStorageDomainId(storageDomainId);
+        return p;
+    }
 
     @Override
     @Before
@@ -48,14 +57,8 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
         when(providerProxy.getImageAsDiskImage(repoImageId)).thenReturn(diskImage);
 
-        cmd.getParameters().setSourceRepoImageId(repoImageId);
-        cmd.getParameters().setSourceStorageDomainId(repoStorageDomainId);
-        cmd.getParameters().setStoragePoolId(storagePoolId);
-        cmd.getParameters().setStorageDomainId(storageDomainId);
-
         doReturn(true).when(cmd).validateSpaceRequirements(any());
         doReturn(diskImagesValidator).when(cmd).createDiskImagesValidator(any());
-
     }
 
     @Test
