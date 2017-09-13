@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -149,8 +150,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             // we don't want the firstHost repeated in backup-volfile-servers
             addressSet.remove(firstHost);
             connection.setConnection(firstHost + StorageConstants.GLUSTER_VOL_SEPARATOR + glusterVolume.getName());
-            String mountOptions = StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION
-                    + KEY_VALUE_SEPARATOR + StringUtils.join(addressSet.toArray(), ':');
+            String mountOptions = addressSet.stream().collect(Collectors.joining(":", StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION + KEY_VALUE_SEPARATOR, ""));
             if (StringUtils.isBlank(connection.getMountOptions())) {
                 connection.setMountOptions(mountOptions);
             } else if (!connection.getMountOptions().contains(StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION)) {

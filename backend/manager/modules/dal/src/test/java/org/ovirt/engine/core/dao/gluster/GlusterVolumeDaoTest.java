@@ -450,7 +450,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetVolumesSupportedAsStorageDomain() {
         List<GlusterVolumeEntity> vols = dao.getVolumesSupportedAsStorageDomain();
-        assertEquals(1, vols.size());
+        assertEquals(2, vols.size());
     }
 
     private GlusterVolumeEntity insertTestVolume() {

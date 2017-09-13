@@ -209,7 +209,8 @@ BEGIN
     RETURN QUERY
     SELECT *
     FROM gluster_volumes_view
-    WHERE replica_count = 3;
+    WHERE vol_type IN ('REPLICATE', 'DISTRIBUTE', 'DISTRIBUTED_REPLICATE')
+    AND replica_count IN (0, 3);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
