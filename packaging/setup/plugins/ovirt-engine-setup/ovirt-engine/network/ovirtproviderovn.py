@@ -129,6 +129,8 @@ class Plugin(plugin.PluginBase):
         fqdn = self.environment[osetupcons.ConfigEnv.FQDN]
         provider_id = str(uuid.uuid4())
 
+        self.logger.info(_('Adding default OVN provider to database'))
+
         self.environment[
             oenginecons.EngineDBEnv.STATEMENT
         ].execute(
@@ -160,7 +162,6 @@ class Plugin(plugin.PluginBase):
             ),
         )
 
-        self.logger.info(_('Default OVN provider added to database'))
         return provider_id
 
     def _generate_client_secret(self):
@@ -339,9 +340,9 @@ class Plugin(plugin.PluginBase):
             dialog=self.dialog,
             name='ovirt-provider-ovn',
             note=_(
-                'Install ovirt-provider-ovn? Please note that this will cause '
-                'an immediate installation\nof several OVN packages that will '
-                'not be rolled back in case of a failure. '
+                'Install and configure ovirt-provider-ovn? Please note that '
+                'this will cause an immediate installation\nof several OVN '
+                'packages that will not be rolled back in case of a failure. '
                 '(@VALUES@) [@DEFAULT@]: '
             ),
             prompt=True,
@@ -354,7 +355,7 @@ class Plugin(plugin.PluginBase):
             name='ovirt-provider-ovn-default-credentials',
             note=_(
                 'Use default credentials (%s) for '
-                'ovirt-provider-ovn(@VALUES@) [@DEFAULT@]?: ' % user
+                'ovirt-provider-ovn (@VALUES@) [@DEFAULT@]: ' % user
             ),
             prompt=True,
             default=True
