@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -79,11 +77,8 @@ public class AddUnmanagedVmsCommandTest {
     @Test
     public void shouldConvertExternalVm() throws IOException {
         addUnamangedVmsCommand.convertVm(1, DisplayType.qxl, System.nanoTime(), externalVm);
-        verify(addUnamangedVmsCommand).addExternallyManagedVm(argThat(vmStatic -> {
-            assertThat(vmStatic.getNumOfSockets(), is(4));
-            assertThat(vmStatic.getMemSizeMb(), is(7052));
-            return true;
-        }));
+        verify(addUnamangedVmsCommand).addExternallyManagedVm(argThat(
+                vmStatic -> vmStatic.getNumOfSockets() == 4 && vmStatic.getMemSizeMb() == 7052));
     }
 
     @Test
@@ -98,17 +93,23 @@ public class AddUnmanagedVmsCommandTest {
         @Override
         public boolean matches(VM argument) {
             VmStatic vmStatic = argument.getStaticData();
-            assertThat(vmStatic.getNumOfSockets(), is(4));
-            assertThat(vmStatic.getMemSizeMb(), is(7052));
-            assertThat(vmStatic.getManagedDeviceMap().size(), is(2));
-            for(VmDevice vmDevice : vmStatic.getManagedDeviceMap().values()){
-                if(vmDevice instanceof GraphicsDevice){
+            if (vmStatic.getNumOfSockets() != 4 ||
+                    vmStatic.getMemSizeMb() != 7052 ||
+                    vmStatic.getManagedDeviceMap().size() != 2) {
+                return false;
+            }
+            for (VmDevice vmDevice : vmStatic.getManagedDeviceMap().values()) {
+                if (vmDevice instanceof GraphicsDevice) {
                    GraphicsDevice device = (GraphicsDevice) vmDevice;
-                   assertThat(device.getGraphicsType(), is(GraphicsType.VNC));
-                   assertThat(vmStatic.getDefaultDisplayType(), is(DisplayType.vga));
+                   if (device.getGraphicsType() != GraphicsType.VNC ||
+                           vmStatic.getDefaultDisplayType() != DisplayType.vga) {
+                       return false;
+                   }
                 }
                 else{
-                    assertThat(vmDevice.getType(), is(VmDeviceGeneralType.CONSOLE));
+                    if (vmDevice.getType() != VmDeviceGeneralType.CONSOLE) {
+                        return false;
+                    }
                 }
 
             }
