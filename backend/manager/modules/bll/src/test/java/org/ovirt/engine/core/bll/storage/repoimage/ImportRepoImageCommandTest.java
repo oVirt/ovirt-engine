@@ -60,8 +60,6 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     @Test
     public void testValidateSuccess() {
-        doReturn(ValidationResult.VALID).when(diskImagesValidator)
-                .isQcowVersionSupportedForDcVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
