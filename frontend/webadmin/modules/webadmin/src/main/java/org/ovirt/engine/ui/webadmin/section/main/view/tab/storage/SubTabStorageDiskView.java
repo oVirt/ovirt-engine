@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
@@ -39,6 +40,8 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     private static AbstractTextColumn<Disk> typeColumn;
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
+    private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
+
 
     @Inject
     public SubTabStorageDiskView(SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> modelProvider) {
@@ -76,14 +79,14 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
                 true, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.shareableDiskColumn,
-                new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
+                shareableDiskColumn,
+                new ImageResourceHeader(shareableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.shareable())),
                 true, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(sizeColumn, constants.provisionedSizeDisk(), true, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnVisible(actualSizeColumn, constants.sizeDisk(), isDataStorage, "130px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(actualSizeColumn, constants.sizeDisk(), isDataStorage,   "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(allocationColumn, constants.allocationDisk(), isDataStorage, "130px"); //$NON-NLS-1$
 
@@ -123,5 +126,6 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         typeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
         cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
+        shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
     }
 }

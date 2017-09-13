@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
@@ -39,6 +40,8 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     private static AbstractTextColumn<Disk> diskStorageTypeColumn;
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
+    private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
+
 
     public BaseVmDiskListModelTable(
             SearchableTableModelProvider<Disk, T> modelProvider,
@@ -90,10 +93,10 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
                         all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.shareableDiskColumn,
-                new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
+                shareableDiskColumn,
+                new ImageResourceHeader(shareableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.shareable())),
-                        all || images || luns || cinder, "30px"); //$NON-NLS-1$
+                all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
                 DisksViewColumns.readOnlyDiskColumn,
@@ -171,5 +174,6 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(null);
         cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(null);
+        shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
     }
 }

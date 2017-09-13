@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksContentTypeRadioGroup;
@@ -61,6 +62,8 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     private static AbstractTextColumn<Disk> diskStorageTypeColumn;
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
+    private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
+
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -155,8 +158,8 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.shareableDiskColumn,
-                new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
+                shareableDiskColumn,
+                new ImageResourceHeader(shareableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.shareable())),
                 all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
@@ -246,6 +249,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
         cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
+        shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
     }
 
     void initTableOverhead() {

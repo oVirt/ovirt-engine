@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.disks;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -135,29 +136,33 @@ public class DisksViewColumns {
         }
     };
 
-    public static final AbstractImageResourceColumn<Disk> shareableDiskColumn = new AbstractImageResourceColumn<Disk>() {
-        {
-            setContextMenuTitle(constants.shareable());
-        }
-
-        @Override
-        public ImageResource getValue(Disk object) {
-            return object.isShareable() ? getDefaultImage() : null;
-        }
-
-        @Override
-        public ImageResource getDefaultImage() {
-            return resources.shareableDiskIcon();
-        }
-
-        @Override
-        public SafeHtml getTooltip(Disk object) {
-            if (object.isShareable()) {
-                return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+    public static AbstractImageResourceColumn<Disk> getShareableDiskColumn() {
+        AbstractImageResourceColumn<Disk> shareableDiskColumn = new AbstractImageResourceColumn<Disk>() {
+            {
+                setContextMenuTitle(constants.shareable());
             }
-            return null;
-        }
-    };
+
+            @Override
+            public ImageResource getValue(Disk object) {
+                return object.isShareable() ? getDefaultImage() : null;
+            }
+
+            @Override
+            public ImageResource getDefaultImage() {
+                return resources.shareableDiskIcon();
+            }
+
+            @Override
+            public SafeHtml getTooltip(Disk object) {
+                if (object.isShareable()) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+                }
+                return null;
+            }
+        };
+        shareableDiskColumn.makeSortable(Comparator.comparing(Disk::isShareable));
+        return shareableDiskColumn;
+    }
 
     public static final AbstractImageResourceColumn<Disk> readOnlyDiskColumn = new AbstractImageResourceColumn<Disk>() {
         {
