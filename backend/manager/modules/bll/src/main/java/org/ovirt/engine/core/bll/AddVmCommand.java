@@ -711,7 +711,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled())) {
             // Verify OS compatibility
-            if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
+            if (!vmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
                     getReturnValue().getValidationMessages())) {
                 return false;
             }
@@ -770,7 +770,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
         }
 
-        if (!validate(VmHandler.validateMaxMemorySize(
+        if (!validate(vmHandler.validateMaxMemorySize(
                 getParameters().getVmStaticData(),
                 getEffectiveCompatibilityVersion()))) {
             return false;
@@ -963,7 +963,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean verifyAddVM(List<String> reasons, int vmPriority) {
-        return VmHandler.verifyAddVm(reasons, getVmInterfaces().size(), vmPriority, getMacPool());
+        return vmHandler.verifyAddVm(reasons, getVmInterfaces().size(), vmPriority, getMacPool());
     }
 
     @Override

@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -100,7 +99,7 @@ implements QuotaStorageDependent {
         setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
         setSingleQxlPci();
         checkImageTarget();
-        VmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
+        vmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
     }
 
     @Override
@@ -173,7 +172,7 @@ implements QuotaStorageDependent {
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
 
-        if (!validate(VmHandler.validateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion()))) {
+        if (!validate(vmHandler.validateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion()))) {
             return false;
         }
 

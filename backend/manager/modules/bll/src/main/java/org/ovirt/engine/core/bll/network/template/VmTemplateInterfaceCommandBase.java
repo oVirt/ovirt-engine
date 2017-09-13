@@ -5,7 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.BackwardCompatibilityVnicHelper;
@@ -48,7 +47,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
     }
 
     protected boolean interfaceNameUnique(List<VmNic> interfaces) {
-        return VmHandler.isNotDuplicateInterfaceName(interfaces,
+        return vmHandler.isNotDuplicateInterfaceName(interfaces,
                 getInterfaceName(),
                 getReturnValue().getValidationMessages());
     }

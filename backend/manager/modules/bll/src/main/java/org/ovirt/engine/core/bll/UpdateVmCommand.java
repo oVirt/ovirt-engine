@@ -871,7 +871,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!VmHandler.isVmPriorityValueLegal(vmFromParams.getPriority(),
+        if (!vmHandler.isVmPriorityValueLegal(vmFromParams.getPriority(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
@@ -953,7 +953,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (isVirtioScsiEnabled())  {
             // Verify OS compatibility
-            if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
+            if (!vmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
                     getReturnValue().getValidationMessages())) {
                 return false;
             }
@@ -1041,7 +1041,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!validate(VmHandler.validateMaxMemorySize(
+        if (!validate(vmHandler.validateMaxMemorySize(
                 getParameters().getVmStaticData(),
                 getEffectiveCompatibilityVersion()))) {
             return false;

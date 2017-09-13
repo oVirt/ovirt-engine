@@ -644,7 +644,7 @@ public class SnapshotsManager {
             if (!vmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData(), null)) {
                 vm.setDedicatedVmForVdsList(oldVmStatic.getDedicatedVmForVdsList());
             }
-            VmHandler.updateMaxMemorySize(vm.getStaticData(), vm.getCompatibilityVersion());
+            vmHandler.updateMaxMemorySize(vm.getStaticData(), vm.getCompatibilityVersion());
             validateQuota(vm);
             return true;
         } catch (OvfReaderException e) {

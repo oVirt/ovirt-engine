@@ -127,7 +127,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     protected boolean isVmWithSameNameExists(String name, Guid storagePoolId) {
-        return VmHandler.isVmWithSameNameExistStatic(name, storagePoolId);
+        return vmHandler.isVmWithSameNameExistStatic(name, storagePoolId);
     }
 
     protected boolean isCpuSharesValid(VM vmData) {

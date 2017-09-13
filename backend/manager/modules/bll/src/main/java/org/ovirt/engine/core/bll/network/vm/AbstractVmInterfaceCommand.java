@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.MacAddressValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -82,7 +81,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     protected boolean uniqueInterfaceName(List<VmNic> interfaces) {
-        return VmHandler.isNotDuplicateInterfaceName(interfaces, getInterfaceName(),
+        return vmHandler.isNotDuplicateInterfaceName(interfaces, getInterfaceName(),
                 getReturnValue().getValidationMessages());
     }
 

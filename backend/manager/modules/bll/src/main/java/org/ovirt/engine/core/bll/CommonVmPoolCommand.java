@@ -277,7 +277,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         String currentVmName;
         do {
             currentVmName = nameForVmInPoolGenerator.generateVmName();
-        } while (VmHandler.isVmWithSameNameExistStatic(currentVmName, getStoragePoolId()));
+        } while (vmHandler.isVmWithSameNameExistStatic(currentVmName, getStoragePoolId()));
 
         return currentVmName;
     }
@@ -437,7 +437,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         final int nicsCount = getParameters().getVmsCount() * vmNicDao.getAllForTemplate(getVmTemplateId()).size();
         final int priority = getParameters().getVmStaticData().getPriority();
 
-        return VmHandler.verifyAddVm(reasons, nicsCount, priority, getMacPool());
+        return vmHandler.verifyAddVm(reasons, nicsCount, priority, getMacPool());
     }
 
     protected boolean areTemplateImagesInStorageReady(Guid storageId) {

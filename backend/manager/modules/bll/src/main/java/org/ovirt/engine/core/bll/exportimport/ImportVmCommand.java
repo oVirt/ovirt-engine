@@ -26,7 +26,6 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
@@ -206,7 +205,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         // Since methods #validateBeforeCloneVm > #validateAndSetVmFromExportDomain > #setVmFromExportDomain may
         // change this.vm instance, following code can't be in #init() method and has to follow call of
         // #validateBeforeCloneVm.
-        VmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
+        vmHandler.updateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
         if (getParameters().isImportAsNewEntity()) {
             initImportClonedVm();
@@ -224,7 +223,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
-        if (!validate(VmHandler.validateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion()))) {
+        if (!validate(vmHandler.validateMaxMemorySize(getVm().getStaticData(), getEffectiveCompatibilityVersion()))) {
             return false;
         }
 

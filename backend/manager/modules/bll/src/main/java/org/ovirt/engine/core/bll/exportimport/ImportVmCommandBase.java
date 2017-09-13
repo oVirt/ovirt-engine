@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.UniquePermissionsSet;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -193,7 +192,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected boolean validateUniqueVmName() {
-        return VmHandler.isVmWithSameNameExistStatic(getVm().getName(), getStoragePoolId()) ?
+        return vmHandler.isVmWithSameNameExistStatic(getVm().getName(), getStoragePoolId()) ?
                 failValidation(EngineMessage.VM_CANNOT_IMPORT_VM_NAME_EXISTS)
                 : true;
     }

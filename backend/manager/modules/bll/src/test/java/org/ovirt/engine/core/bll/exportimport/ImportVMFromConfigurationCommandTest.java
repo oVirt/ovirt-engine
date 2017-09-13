@@ -25,6 +25,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
@@ -86,6 +87,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Mock
     private OsRepository osRepository;
+
+    @Mock
+    private VmHandler vmHandler;
 
     @Before
     public void setUp() throws IOException {

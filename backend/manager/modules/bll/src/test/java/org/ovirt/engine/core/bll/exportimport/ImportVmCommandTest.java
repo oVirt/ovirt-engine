@@ -35,6 +35,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
@@ -84,6 +85,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Mock
     private VmNicMacsUtils vmNicMacsUtils;
+
+    @Mock
+    private VmHandler vmHandler;
 
     @Spy
     @InjectMocks

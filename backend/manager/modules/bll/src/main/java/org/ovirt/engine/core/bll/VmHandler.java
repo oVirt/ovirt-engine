@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -168,6 +169,9 @@ public class VmHandler implements BackendService {
     @Inject
     private SnapshotsManager snapshotsManager;
 
+    @Inject
+    private BackendInternal backend;
+
     private ObjectIdentityChecker updateVmsStatic;
     private OsRepository osRepository;
 
@@ -260,10 +264,7 @@ public class VmHandler implements BackendService {
      * @param nicsCount
      *            How many vNICs need to be allocated.
      */
-    public static boolean verifyAddVm(List<String> reasons,
-            int nicsCount,
-            int vmPriority,
-            MacPool macPool) {
+    public boolean verifyAddVm(List<String> reasons, int nicsCount, int vmPriority, MacPool macPool) {
         boolean returnValue = true;
         if (macPool.getAvailableMacsCount() < nicsCount) {
             if (reasons != null) {
@@ -285,7 +286,7 @@ public class VmHandler implements BackendService {
      *            The reasons in case of failure (output parameter).
      * @return <code>true</code> if VM priority value is in the correct range; otherwise, <code>false</code>.
      */
-    public static boolean isVmPriorityValueLegal(int value, List<String> reasons) {
+    public boolean isVmPriorityValueLegal(int value, List<String> reasons) {
         boolean res = false;
         if (value >= 0 && value <= Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)) {
             res = true;
@@ -299,10 +300,10 @@ public class VmHandler implements BackendService {
     /**
      * Checks if VM with same name exists in the given DC. If no DC provided, check all VMs in the database.
      */
-    public static boolean isVmWithSameNameExistStatic(String vmName, Guid storagePoolId) {
+    public boolean isVmWithSameNameExistStatic(String vmName, Guid storagePoolId) {
         NameQueryParameters params = new NameQueryParameters(vmName);
         params.setDatacenterId(storagePoolId);
-        QueryReturnValue result = Backend.getInstance().runInternalQuery(QueryType.IsVmWithSameNameExist, params);
+        QueryReturnValue result = backend.runInternalQuery(QueryType.IsVmWithSameNameExist, params);
         return (Boolean) result.getReturnValue();
     }
 
@@ -657,9 +658,7 @@ public class VmHandler implements BackendService {
      * @param reasons
      *            Reasons List
      */
-    public static boolean isOsTypeSupportedForVirtioScsi(int osId,
-                                            Version clusterVersion,
-                                            List<String> reasons) {
+    public boolean isOsTypeSupportedForVirtioScsi(int osId, Version clusterVersion, List<String> reasons) {
         boolean result = VmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, DiskInterface.VirtIO_SCSI);
         if (!result) {
             reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI.name());
@@ -678,9 +677,8 @@ public class VmHandler implements BackendService {
      *            - Messages for Validate().
      * @return - True , if name is valid, false, if name already exist.
      */
-    public static boolean isNotDuplicateInterfaceName(List<VmNic> interfaces,
-                                                      final String candidateInterfaceName,
-                                                      List<String> messages) {
+    public boolean isNotDuplicateInterfaceName
+        (List<VmNic> interfaces, final String candidateInterfaceName, List<String> messages) {
 
         boolean candidateNameUsed = interfaces.stream().anyMatch(i -> i.getName().equals(candidateInterfaceName));
         if (candidateNameUsed) {
@@ -1203,7 +1201,7 @@ public class VmHandler implements BackendService {
         return false;
     }
 
-    public static ValidationResult validateMaxMemorySize(VmBase vmBase, Version effectiveCompatibilityVersion) {
+    public ValidationResult validateMaxMemorySize(VmBase vmBase, Version effectiveCompatibilityVersion) {
         if (vmBase.getMaxMemorySizeMb() < vmBase.getMemSizeMb()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE,
                     ReplacementUtils.createSetVariableString("maxMemory", vmBase.getMaxMemorySizeMb()),
@@ -1223,7 +1221,7 @@ public class VmHandler implements BackendService {
      * OvfReader can't provide proper value of {@link VmBase#maxMemorySizeMb} since it depends on effective
      * compatibility version of target cluster.
      */
-    public static void updateMaxMemorySize(VmBase vmBase, Version effectiveCompatibilityVersion) {
+    public void updateMaxMemorySize(VmBase vmBase, Version effectiveCompatibilityVersion) {
         if (vmBase == null) {
             return;
         }

@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -164,7 +163,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 vmTemplateFromConfiguration.setClusterId(getParameters().getClusterId());
                 setVmTemplate(vmTemplateFromConfiguration);
                 setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
-                VmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
+                vmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
                 getParameters().setVmTemplate(vmTemplateFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());

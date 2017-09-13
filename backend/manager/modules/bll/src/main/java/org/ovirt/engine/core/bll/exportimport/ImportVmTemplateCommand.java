@@ -10,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -140,7 +139,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         super.init();
         setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
         ImportUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
-        VmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
+        vmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
     }
 
     public ImportVmTemplateCommand(Guid commandId) {
@@ -277,7 +276,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             return false;
         }
 
-        if (!validate(VmHandler.validateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion()))) {
+        if (!validate(vmHandler.validateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion()))) {
             return false;
         }
 

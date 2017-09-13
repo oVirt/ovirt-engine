@@ -546,7 +546,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
 
-        if (!VmHandler.isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(),
+        if (!vmHandler.isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(),
                 getReturnValue().getValidationMessages())) {
             return false;
         }
@@ -621,7 +621,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
 
-        if (!validate(VmHandler.validateMaxMemorySize(
+        if (!validate(vmHandler.validateMaxMemorySize(
                 getParameters().getMasterVm(),
                 CompatibilityVersionUtils.getEffective(getParameters().getMasterVm(), this::getCluster)))) {
             return false;

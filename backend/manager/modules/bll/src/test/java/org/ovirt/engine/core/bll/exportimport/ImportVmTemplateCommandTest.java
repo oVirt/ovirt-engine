@@ -20,7 +20,6 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -29,6 +28,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
@@ -46,10 +46,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -80,15 +78,10 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     private VmTemplateDao vmTemplateDao;
 
     @Mock
-    private OsRepository osRepository;
+    private VmHandler vmHandler;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
-
-    @Before
-    public void injectOsRepository() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-    }
 
 
     @Spy

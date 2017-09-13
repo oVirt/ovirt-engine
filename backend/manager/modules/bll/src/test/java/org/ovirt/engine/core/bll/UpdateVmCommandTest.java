@@ -182,6 +182,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         when(vmHandler.validateDedicatedVdsExistOnSameCluster(any(), any())).thenReturn(true);
         when(vmHandler.isNumOfMonitorsLegal(any(), anyInt(), any())).thenReturn(true);
         when(vmHandler.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any(), any())).thenReturn(true);
+        when(vmHandler.isVmPriorityValueLegal(anyInt(), any())).thenReturn(true);
 
         vm = new VM();
         vmStatic = command.getParameters().getVmStaticData();

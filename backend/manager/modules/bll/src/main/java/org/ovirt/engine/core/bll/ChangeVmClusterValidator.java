@@ -116,7 +116,7 @@ public class ChangeVmClusterValidator {
 
             if (vmDeviceUtils.hasVirtioScsiController(vm.getId())) {
                 // Verify OS compatibility
-                if (!VmHandler.isOsTypeSupportedForVirtioScsi(
+                if (!vmHandler.isOsTypeSupportedForVirtioScsi(
                         vm.getOs(),
                         vmCompatibilityVersion,
                         parentCommand.getReturnValue().getValidationMessages())) {

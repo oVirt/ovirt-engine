@@ -155,7 +155,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-        if (VmHandler.isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(),
+        if (vmHandler.isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(),
                 getReturnValue().getValidationMessages()) && checkDomain()) {
             returnValue = vmTemplateHandler.isUpdateValid(oldTemplate, getVmTemplate());
             if (!returnValue) {
@@ -197,7 +197,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             );
         }
 
-        if (!validate(VmHandler.validateMaxMemorySize(
+        if (!validate(vmHandler.validateMaxMemorySize(
                 getParameters().getVmTemplateData(),
                 CompatibilityVersionUtils.getEffective(getParameters().getVmTemplateData(), this::getCluster)))) {
             return false;
