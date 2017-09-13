@@ -83,7 +83,6 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
@@ -175,8 +174,10 @@ public class VmHandler implements BackendService {
     @Inject
     private VmValidationUtils vmValidationUtils;
 
-    private ObjectIdentityChecker updateVmsStatic;
+    @Inject
     private OsRepository osRepository;
+
+    private ObjectIdentityChecker updateVmsStatic;
 
     /**
      * Initialize list containers, for identity and permission check. The initialization should be executed
@@ -192,8 +193,6 @@ public class VmHandler implements BackendService {
                 VmStatic.class,
                 VmDynamic.class,
                 VmManagementParametersBase.class };
-
-        osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
         updateVmsStatic =
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames));
