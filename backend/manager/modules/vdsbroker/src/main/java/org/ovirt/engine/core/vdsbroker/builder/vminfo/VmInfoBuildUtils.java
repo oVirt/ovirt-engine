@@ -59,7 +59,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -107,8 +106,7 @@ public class VmInfoBuildUtils {
     private final VmNicFilterParameterDao vmNicFilterParameterDao;
     private final AuditLogDirector auditLogDirector;
     private final ClusterFeatureDao clusterFeatureDao;
-
-    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    private final OsRepository osRepository;
 
     @Inject
     VmInfoBuildUtils(
@@ -121,7 +119,8 @@ public class VmInfoBuildUtils {
             VmNicFilterParameterDao vmNicFilterParameterDao,
             NetworkClusterDao networkClusterDao,
             AuditLogDirector auditLogDirector,
-            ClusterFeatureDao clusterFeatureDao) {
+            ClusterFeatureDao clusterFeatureDao,
+            OsRepository osRepository) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -132,10 +131,7 @@ public class VmInfoBuildUtils {
         this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
         this.auditLogDirector = Objects.requireNonNull(auditLogDirector);
         this.clusterFeatureDao = Objects.requireNonNull(clusterFeatureDao);
-    }
-
-    OsRepository getOsRepository() {
-        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
+        this.osRepository = Objects.requireNonNull(osRepository);
     }
 
     @SuppressWarnings("unchecked")
@@ -386,7 +382,7 @@ public class VmInfoBuildUtils {
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
 
-        String cdInterface = getOsRepository().getCdInterface(
+        String cdInterface = osRepository.getCdInterface(
                 vm.getOs(),
                 vm.getCompatibilityVersion(),
                 ChipsetType.fromMachineType(vm.getEmulatedMachine()));
@@ -789,7 +785,7 @@ public class VmInfoBuildUtils {
         VmPayload vmPayload = new VmPayload();
         vmPayload.setDeviceType(VmDeviceType.FLOPPY);
         vmPayload.getFiles().put(
-                getOsRepository().getSysprepFileName(vm.getOs(), vm.getCompatibilityVersion()),
+                osRepository.getSysprepFileName(vm.getOs(), vm.getCompatibilityVersion()),
                 new String(BASE_64.encode(sysPrepContent.getBytes()), Charset.forName(CharEncoding.UTF_8)));
 
         return new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),

@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -97,9 +98,10 @@ public class VmInfoBuildUtilsTest {
     private VmNicFilterParameterDao vmNicFilterParameterDao;
     @Mock
     private ClusterFeatureDao clusterFeatureDao;
-
     @Mock
     private AuditLogDirector auditLogDirector;
+    @Mock
+    private OsRepository osRepository;
 
     @InjectMocks
     private VmInfoBuildUtils underTest;
