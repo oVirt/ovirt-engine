@@ -1450,13 +1450,11 @@ class OvirtUtils(base.Base):
             jdbcUrl=self.getJdbcUrl(localhost_replacement),
         )
 
-    def _setupOwnsDB(self):
+    def setupOwnsDB(self):
         # FIXME localhost is inappropriate in case of docker e.g
         # we need a deterministic notion of local/remote pg_host in sense of
         # 'we own postgres' or not.
-        return self.replaced_localhost(
-            localhost_replacement=None
-        ) == 'localhost'
+        return _ind_env(self, DEK.HOST) == 'localhost'
 
     def _HumanReadableSize(self, bytes):
         size_in_mb = bytes / pow(2, 20)
@@ -1486,7 +1484,7 @@ class OvirtUtils(base.Base):
             )
         )
 
-        if not self._setupOwnsDB:
+        if not self.setupOwnsDB():
             self.logger.error(_(
                 'Please upgrade the PostgreSQL instance that serves the {db}'
                 'database to {v} and retry.\n'
@@ -1497,6 +1495,7 @@ class OvirtUtils(base.Base):
                 'Otherwise please consult the documentation shipped with your '
                 'PostgreSQL distribution.'
             ).format(
+                v=client_v,
                 db=which_db,
             ))
             raise RuntimeError(
