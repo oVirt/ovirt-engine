@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -89,7 +86,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainValidator storageDomainValidator;
 
-    protected static OsRepository osRepository;
+    @Mock
+    protected OsRepository osRepository;
 
     /**
      * The command under test.
@@ -97,12 +95,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     protected HotPlugDiskToVmCommand<VmDiskOperationParameterBase> command = createCommand();
-
-    @BeforeClass
-    public static void setUpClass() {
-        osRepository = mock(OsRepository.class);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-    }
 
     @Before
     public void setUp() {

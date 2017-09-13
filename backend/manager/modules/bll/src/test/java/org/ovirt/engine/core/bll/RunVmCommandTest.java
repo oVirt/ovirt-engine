@@ -50,7 +50,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -308,7 +307,6 @@ public class RunVmCommandTest extends BaseCommandTest {
         mockCpuFlagsManagerHandler();
         when(osRepository.isWindows(anyInt())).thenReturn(false);
         when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
         vmHandler.init();
 

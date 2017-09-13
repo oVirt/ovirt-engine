@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -62,7 +60,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -114,7 +111,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private DiskVmElementDao diskVmElementDao;
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
-    static OsRepository osRepository;
+    @Mock
+    private OsRepository osRepository;
 
     @Mock
     InClusterUpgradeValidator inClusterUpgradeValidator;
@@ -151,12 +149,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         params.setUpdateNuma(true);
 
         return params;
-    }
-
-    @BeforeClass
-    public static void setUpOsRepository() {
-        osRepository = mock(OsRepository.class);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     @Before

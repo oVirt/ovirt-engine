@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
@@ -94,7 +93,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Inject
     protected ImagesHandler imagesHandler;
 
-    protected final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    @Inject
+    protected OsRepository osRepository;
+
     private Boolean skipCommandExecution;
 
     private MacPool macPool;

@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -111,14 +110,9 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected abstract T createCommand();
 
-    private void initOsRepository() {
-        injectorRule.bind(OsRepository.class, osRepository);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-    }
-
     @Before
     public void setUp() {
-        initOsRepository();
+        injectorRule.bind(OsRepository.class, osRepository);
 
         when(vmValidationUtils.isOsTypeSupported(anyInt(), any())).thenReturn(true);
         when(vmValidationUtils.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any())).thenReturn(true);
