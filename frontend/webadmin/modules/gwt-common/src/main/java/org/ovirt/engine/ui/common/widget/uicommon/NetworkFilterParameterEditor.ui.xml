@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
-    <g:FlowPanel>
-        <b:Row>
-            <b:Column size="SM_6">
-                <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameNetworkFilterParameter}" usePatternFly="true" removeFormGroup="true"/>
-            </b:Column>
-            <b:Column size="SM_6">
-                <ge:StringEntityModelTextBoxEditor ui:field="valueEditor" label="{constants.valueNetworkFilterParameter}" usePatternFly="true" removeFormGroup="true"/>
-            </b:Column>
-        </b:Row>
-    </g:FlowPanel>
+    <ui:style>
+        .wrapper label {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    </ui:style>
+
+    <b:Row addStyleNames="{style.wrapper}">
+        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.nameNetworkFilterParameter}"
+                usePatternFly="true" removeFormGroup="true"
+                addStyleNames="col-sm-6" widgetColSize="SM_10" labelColSize="SM_2" />
+        <ge:StringEntityModelTextBoxEditor ui:field="valueEditor" label="{constants.valueNetworkFilterParameter}"
+                usePatternFly="true" removeFormGroup="true"
+                addStyleNames="col-sm-6" widgetColSize="SM_10" labelColSize="SM_2" />
+    </b:Row>
 </ui:UiBinder>
