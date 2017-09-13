@@ -44,11 +44,11 @@ public class AddUnmanagedVmsCommandTest {
     public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
-    VmStaticDao vmStaticDao;
+    private VmStaticDao vmStaticDao;
 
     @Spy
     @InjectMocks
-    AddUnmanagedVmsCommand<AddUnmanagedVmsParameters> addUnamangedVmsCommand =
+    private AddUnmanagedVmsCommand<AddUnmanagedVmsParameters> addUnamangedVmsCommand =
             new AddUnmanagedVmsCommand<>(new AddUnmanagedVmsParameters(), null);
 
     private static Map<String, Object> externalVm;
