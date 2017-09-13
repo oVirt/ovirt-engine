@@ -54,7 +54,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -122,8 +121,9 @@ public class LibvirtVmXmlBuilder {
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private VdsStatisticsDao vdsStatisticsDao;
-
+    @Inject
     private OsRepository osRepository;
+
     private String serialConsolePath;
     private boolean hypervEnabled;
     private XmlTextWriter writer;
@@ -165,7 +165,6 @@ public class LibvirtVmXmlBuilder {
 
     @PostConstruct
     private void init() {
-        osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         hypervEnabled = osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion());
         cdInterface = osRepository.getCdInterface(
                 vm.getOs(),
