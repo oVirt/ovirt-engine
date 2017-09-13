@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -65,6 +64,8 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     private ResourceManager resourceManager;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private OsRepository osRepository;
 
     private Set<String> graphicsDeviceTypes = new HashSet<>(Arrays.asList(
             GraphicsType.SPICE.toString().toLowerCase(),
@@ -261,13 +262,11 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     }
 
     private int getDefaultOsId(ArchitectureType architecture) {
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         Integer defaultArchOsId = osRepository.getDefaultOSes().get(architecture);
         return (defaultArchOsId == null) ? 0 : defaultArchOsId;
     }
 
     private DisplayType getDefaultDisplayType(int osId, Version clusterVersion) {
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, clusterVersion);
 
         if (!pairs.isEmpty()) {
