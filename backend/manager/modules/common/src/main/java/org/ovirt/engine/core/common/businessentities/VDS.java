@@ -388,6 +388,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsStatic.setVdsType(value);
     }
 
+    public Guid getOpenstackNetworkProviderId() {
+        return vdsStatic.getOpenstackNetworkProviderId();
+    }
+
+    public void setOpenstackNetworkProviderId(Guid value) {
+        vdsStatic.setOpenstackNetworkProviderId(value);
+    }
+
     @Override
     public VDSStatus getStatus() {
         return vdsDynamic.getStatus();
