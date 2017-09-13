@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -58,8 +57,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private StorageDomainDao storageDomainDao;
     @Inject
     private VmDao vmDao;
-    @Inject
-    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public TransferDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -81,8 +78,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected void createImage() {
-        commandCoordinatorUtil.executeAsyncCommand(
-                ActionType.AddDisk, getAddDiskParameters(), cloneContextAndDetachFromParent());
+        runInternalAction(ActionType.AddDisk, getAddDiskParameters(), cloneContextAndDetachFromParent());
     }
 
     @Override
