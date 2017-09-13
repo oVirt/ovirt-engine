@@ -18,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -85,13 +84,7 @@ public class AddUnmanagedVmsCommandTest {
     public void shouldDetectHostedEngineVM() throws IOException {
         addUnamangedVmsCommand.importHostedEngineVm(hostedEngine);
         verify(addUnamangedVmsCommand, times(0)).addExternallyManagedVm(any());
-        verify(addUnamangedVmsCommand).importHostedEngineVm(argThat(new HEVmMatcher()));
-    }
-
-    private class HEVmMatcher implements ArgumentMatcher<VM> {
-
-        @Override
-        public boolean matches(VM argument) {
+        verify(addUnamangedVmsCommand).importHostedEngineVm(argThat((VM argument) -> {
             VmStatic vmStatic = argument.getStaticData();
             if (vmStatic.getNumOfSockets() != 4 ||
                     vmStatic.getMemSizeMb() != 7052 ||
@@ -115,6 +108,6 @@ public class AddUnmanagedVmsCommandTest {
             }
 
             return true;
-        }
+        }));
     }
 }
