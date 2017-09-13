@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -46,8 +45,8 @@ public class OvfManager {
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
-    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    @Inject
+    private OsRepository osRepository;
 
     public String exportVm(VM vm, List<DiskImage> images, Version version) {
         updateBootOrderOnDevices(vm.getStaticData(), false);
@@ -160,9 +159,4 @@ public class OvfManager {
                 interfaces,
                 diskVmElements);
     }
-
-    public void setOsRepository(OsRepository osRepository) {
-        this.osRepository = osRepository;
-    }
-
 }

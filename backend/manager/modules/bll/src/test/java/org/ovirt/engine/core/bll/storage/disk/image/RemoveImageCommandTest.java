@@ -84,7 +84,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         }});
 
         doNothing().when(ovfManager).updateBootOrderOnDevices(any(), anyBoolean());
-        ovfManager.setOsRepository(osRepository);
     }
 
     @Test

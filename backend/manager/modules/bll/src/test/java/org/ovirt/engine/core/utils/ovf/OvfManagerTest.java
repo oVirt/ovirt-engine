@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -21,7 +20,6 @@ import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -94,12 +92,11 @@ public class OvfManagerTest {
     private OvfManager manager = new OvfManager();
     @Mock
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
+    @Mock
+    private OsRepository osRepository;
 
-    private static OsRepository osRepository;
-
-    @BeforeClass
-    public static void setUpClass() {
-        osRepository = mock(OsRepository.class);
+    @Before
+    public void setUp() throws Exception {
         final HashMap<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
@@ -108,7 +105,6 @@ public class OvfManagerTest {
         gndDefaultOs.add(new Pair<>(GraphicsType.VNC, DisplayType.cirrus));
         final List<Pair<GraphicsType, DisplayType>> gndExistingOs = new ArrayList<>();
         gndExistingOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.cirrus));
-
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
         when(osRepository.getOsIdByUniqueName(any())).thenAnswer(
@@ -120,11 +116,7 @@ public class OvfManagerTest {
                         .orElse(0));
         when(osRepository.getGraphicsAndDisplays(eq(DEFAULT_OS_ID), any())).thenReturn(gndDefaultOs);
         when(osRepository.getGraphicsAndDisplays(eq(EXISTING_OS_ID), any())).thenReturn(gndExistingOs);
-    }
 
-    @Before
-    public void setUp() throws Exception {
-        manager.setOsRepository(osRepository);
         doNothing().when(manager).updateBootOrderOnDevices(any(), anyBoolean());
 
         Map<Integer, VmIconIdSizePair> iconDefaults = new HashMap<>();
