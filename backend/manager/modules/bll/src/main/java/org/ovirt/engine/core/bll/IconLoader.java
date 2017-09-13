@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.dao.VmIconDefaultDao;
@@ -64,6 +63,9 @@ public class IconLoader implements BackendService {
     @Inject
     private VmIconDefaultDao vmIconDefaultDao;
 
+    @Inject
+    private OsRepository osRepository;
+
     @PostConstruct
     private void init() {
         loadIconsToDatabase();
@@ -73,8 +75,7 @@ public class IconLoader implements BackendService {
     }
 
     private void loadIconsToDatabase() {
-        final Map<Integer, String> osIdToOsNameMap =
-                SimpleDependencyInjector.getInstance().get(OsRepository.class).getUniqueOsNames();
+        final Map<Integer, String> osIdToOsNameMap = osRepository.getUniqueOsNames();
         for (Map.Entry<Integer, String> entry : osIdToOsNameMap.entrySet()) {
             final VmIconIdSizePair iconIdPair = ensureIconsInDatabase(entry.getValue());
             if (iconIdPair != null) {
