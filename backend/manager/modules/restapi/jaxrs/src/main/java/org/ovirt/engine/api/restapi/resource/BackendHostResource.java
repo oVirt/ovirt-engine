@@ -737,7 +737,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public ExternalNetworkProviderConfigurationsResource getExternalNetworkProviderConfigurationsResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendHostExternalNetworkProviderConfigurationsResource(guid));
     }
 }

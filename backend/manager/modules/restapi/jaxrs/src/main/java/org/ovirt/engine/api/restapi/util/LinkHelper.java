@@ -54,6 +54,7 @@ import org.ovirt.engine.api.model.ExternalDiscoveredHost;
 import org.ovirt.engine.api.model.ExternalHost;
 import org.ovirt.engine.api.model.ExternalHostGroup;
 import org.ovirt.engine.api.model.ExternalHostProvider;
+import org.ovirt.engine.api.model.ExternalNetworkProviderConfiguration;
 import org.ovirt.engine.api.model.ExternalVmImport;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Filter;
@@ -164,6 +165,8 @@ import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
+import org.ovirt.engine.api.resource.ExternalNetworkProviderConfigurationResource;
+import org.ovirt.engine.api.resource.ExternalNetworkProviderConfigurationsResource;
 import org.ovirt.engine.api.resource.ExternalVmImportsResource;
 import org.ovirt.engine.api.resource.FenceAgentResource;
 import org.ovirt.engine.api.resource.FenceAgentsResource;
@@ -532,6 +535,10 @@ public class LinkHelper {
         map = new LocationByParentMap(NicNetworkFilterParameterResource.class,
                 NicNetworkFilterParametersResource.class, Nic.class);
         TYPES.put(NetworkFilterParameter.class, map);
+
+        map = new LocationByParentMap(ExternalNetworkProviderConfigurationResource.class,
+                ExternalNetworkProviderConfigurationsResource.class, Host.class);
+        TYPES.put(ExternalNetworkProviderConfiguration.class, map);
 
         map = new LocationByParentMap(VmNumaNodeResource.class, VmNumaNodesResource.class, Vm.class);
         TYPES.put(VirtualNumaNode.class, map);
