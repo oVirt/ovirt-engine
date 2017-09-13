@@ -20,9 +20,11 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacsUsedAcrossWholeSystemTest {
@@ -37,7 +39,10 @@ public class MacsUsedAcrossWholeSystemTest {
  * • Cluster4: has stateless vm, which has 1 snapshot. Nic from snapshot was updated, so that its mac was changed,
  *             and its mac is used in different mac. Mac from snapshot is used twice, because it's not linked to same
  *             nic in VM, other nic is used once.
- * • Cluster5: contains two VMs, which should be ignored.
+ * • Cluster5: contains two VMs, which snapshot should be ignored.
+ *
+ * • Cluster6: contains VMs, used for testing, that preexisting duplicity among VMs or snapshots has to be introduced
+ *             into pool.
  *
  *
  *                       .----------.     .-----.   .------.     .------.
@@ -135,6 +140,9 @@ public class MacsUsedAcrossWholeSystemTest {
 
     @Mock
     private ClusterDao clusterDao;
+
+    @Mock
+    private VmNicDao vmNicDao;
 
     @Mock
     private SnapshotsManager snapshotsManager;
@@ -309,6 +317,8 @@ public class MacsUsedAcrossWholeSystemTest {
         vm.setClusterId(cluster.getId());
         vm.setStatus(running ? VMStatus.Up : VMStatus.Down);
         vm.setStateless(stateless);
+
+        when(vmNicDao.<VmNic>getAllForVm(vm.getId())).<VmNic>thenReturn(new ArrayList<>(vm.getInterfaces()));
 
         return vm;
     }
