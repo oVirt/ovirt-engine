@@ -59,7 +59,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
@@ -80,6 +79,8 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     private ImageDao imageDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
+    @Inject
+    private OsRepository osRepository;
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -245,7 +246,6 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
         VmTemplate blankTemplate = vmTemplateDao.get(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         VmStatic masterVm = new VmStatic(blankTemplate);
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
         DiskImage templateDiskImage = getParameters().getDiskImage();
         String vmTemplateName = getParameters().getTemplateName();
