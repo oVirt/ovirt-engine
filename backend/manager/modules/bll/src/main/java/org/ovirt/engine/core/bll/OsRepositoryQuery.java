@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.bll;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 
 public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesCommandBase<P> {
 
-    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    @Inject
+    private OsRepository osRepository;
 
     public OsRepositoryQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
