@@ -82,8 +82,8 @@ public abstract class AutoStartVmsRunner implements BackendService {
     private void init() {
         autoStartVmsToRestart = new CopyOnWriteArraySet<>(getInitialVmsToStart());
 
-        int autoStartVmsRunnerIntervalInSeconds =
-                Config.<Integer>getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
+        long autoStartVmsRunnerIntervalInSeconds =
+                Config.<Long>getValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
         executor.scheduleWithFixedDelay(
                 this::startFailedAutoStartVms,
                 autoStartVmsRunnerIntervalInSeconds,

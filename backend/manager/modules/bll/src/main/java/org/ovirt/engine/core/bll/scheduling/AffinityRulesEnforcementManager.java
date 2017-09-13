@@ -54,8 +54,8 @@ public class AffinityRulesEnforcementManager implements BackendService {
         scheduleJobs(getRegularInterval(), getInitialInterval());
     }
 
-    private Integer getInitialInterval() {
-        return Config.<Integer>getValue(ConfigValues.AffinityRulesEnforcementManagerInitialDelay);
+    private long getInitialInterval() {
+        return Config.<Long>getValue(ConfigValues.AffinityRulesEnforcementManagerInitialDelay);
     }
 
     /**
@@ -63,8 +63,8 @@ public class AffinityRulesEnforcementManager implements BackendService {
      *
      * @return - The regular interval from the ConfigValues.
      */
-    private Integer getRegularInterval() {
-        return Config.<Integer>getValue(ConfigValues.AffinityRulesEnforcementManagerRegularInterval);
+    private long getRegularInterval() {
+        return Config.<Long>getValue(ConfigValues.AffinityRulesEnforcementManagerRegularInterval);
     }
 
     /**

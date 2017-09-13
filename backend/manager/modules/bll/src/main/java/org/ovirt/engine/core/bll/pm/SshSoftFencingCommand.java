@@ -119,7 +119,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
     private boolean checkIfHostBecomeUp() {
         VdsManager vdsManager = getResourceManager().getVdsManager(getVdsId());
         long sleepInterval = TimeUnit.SECONDS.toMillis(
-                Config.<Integer> getValue(ConfigValues.VdsRefreshRate));
+                Config.<Long> getValue(ConfigValues.VdsRefreshRate));
         while (vdsManager.isHostInGracePeriod(true)) {
             if (vdsManager.getCopyVds().getStatus() == VDSStatus.Up) {
                 // host became Up during grace period

@@ -77,7 +77,7 @@ public final class AsyncTaskManager implements BackendService {
     private boolean logChangedMap = true;
 
     /** The period of time (in minutes) to hold the asynchronous tasks' statuses in the asynchronous tasks cache **/
-    private int cacheTimeInMinutes;
+    private long cacheTimeInMinutes;
 
     /**Map of tasks in DB per storage pool that exist after restart **/
     private ConcurrentMap<Guid, List<AsyncTask>> tasksInDbAfterRestart = null;
@@ -91,17 +91,17 @@ public final class AsyncTaskManager implements BackendService {
 
     @PostConstruct
     private void init() {
-        cacheTimeInMinutes = Config.<Integer>getValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
+        cacheTimeInMinutes = Config.<Long>getValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
         tasks = new ConcurrentHashMap<>();
 
         schedulerService.scheduleWithFixedDelay(this::timerElapsed,
-                Config.<Integer> getValue(ConfigValues.AsyncTaskPollingRate),
-                Config.<Integer> getValue(ConfigValues.AsyncTaskPollingRate),
+                Config.<Long> getValue(ConfigValues.AsyncTaskPollingRate),
+                Config.<Long> getValue(ConfigValues.AsyncTaskPollingRate),
                 TimeUnit.SECONDS);
 
         schedulerService.scheduleWithFixedDelay(this::cacheTimerElapsed,
-                Config.<Integer> getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
-                Config.<Integer> getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
+                Config.<Long> getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
+                Config.<Long> getValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
                 TimeUnit.SECONDS);
         initAsyncTaskManager();
     }
@@ -154,7 +154,7 @@ public final class AsyncTaskManager implements BackendService {
 
             if (thereAreTasksToPoll() && logChangedMap) {
                 log.info("Finished polling Tasks, will poll again in {} seconds.",
-                        Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate));
+                        Config.<Long>getValue(ConfigValues.AsyncTaskPollingRate));
 
                 // Set indication to false for not logging the same message next
                 // time.

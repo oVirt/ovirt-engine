@@ -50,7 +50,7 @@ public class VmPoolMonitor implements BackendService {
 
     private ScheduledFuture poolMonitoringJob;
 
-    private int vmPoolMonitorIntervalInMinutes;
+    private long vmPoolMonitorIntervalInMinutes;
 
     @Inject
     private VmPoolHandler vmPoolHandler;
@@ -67,7 +67,7 @@ public class VmPoolMonitor implements BackendService {
 
     @PostConstruct
     private void init() {
-        vmPoolMonitorIntervalInMinutes = Config.<Integer>getValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
+        vmPoolMonitorIntervalInMinutes = Config.<Long>getValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
         poolMonitoringJob =
                 schedulerService.scheduleWithFixedDelay(
                         this::managePrestartedVmsInAllVmPools,

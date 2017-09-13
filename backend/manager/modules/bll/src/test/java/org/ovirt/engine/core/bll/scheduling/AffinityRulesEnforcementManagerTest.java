@@ -40,8 +40,8 @@ public class AffinityRulesEnforcementManagerTest {
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule(
-        mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1),
-        mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1)
+        mockConfig(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1L),
+        mockConfig(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1L)
     );
 
     @ClassRule

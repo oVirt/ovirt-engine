@@ -153,13 +153,13 @@ public class VdsManager {
     private int autoRestartUnknownVmsIteration;
 
     private final ReentrantLock autoStartVmsWithLeasesLock;
-    protected final int HOST_REFRESH_RATE;
+    protected final long HOST_REFRESH_RATE;
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresher hostRefresher;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
-        HOST_REFRESH_RATE = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
+        HOST_REFRESH_RATE = Config.<Long> getValue(ConfigValues.VdsRefreshRate) * 1000L;
         NUMBER_HOST_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
         refreshIteration = NUMBER_HOST_REFRESHES_BEFORE_SAVE - 1;
         log.info("Entered VdsManager constructor");
@@ -204,7 +204,7 @@ public class VdsManager {
     }
 
     public void scheduleJobs() {
-        int refreshRate = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
+        long refreshRate = Config.<Long> getValue(ConfigValues.VdsRefreshRate) * 1000;
 
         registeredJobs.add(executor.scheduleWithFixedDelay(
                 this::refresh,
@@ -403,7 +403,7 @@ public class VdsManager {
                     cachedVds.getId(),
                     ex.getMessage());
             log.debug("Exception", ex);
-            final int VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config.<Integer> getValue(ConfigValues.VdsRecoveryTimeoutInMinutes);
+            final long VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config.<Long>getValue(ConfigValues.VdsRecoveryTimeoutInMinutes);
             ScheduledFuture scheduled = executor.schedule(
                     this::handleVdsRecovering,
                     VDS_RECOVERY_TIMEOUT_IN_MINUTES,
@@ -649,11 +649,11 @@ public class VdsManager {
 
             executor.schedule(
                     this::recoverFromError,
-                    Config.<Integer>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes),
+                    Config.<Long>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes),
                     TimeUnit.MINUTES);
             AuditLogable logable = createAuditLogableForHost(vds);
             logable.addCustomValue("Time",
-                    Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString());
+                    Config.<Long> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString());
             auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
             log.info("Vds '{}' moved to Error mode after {} attempts. Time: {}", vds.getName(),
                     failedToRunVmAttempts, new Date());

@@ -47,7 +47,7 @@ public class PollVmStatsRefresherTest {
 
     @Rule
     public final MockConfigRule mcr = new MockConfigRule(
-        mockConfig(ConfigValues.VdsRefreshRate, 2),
+        mockConfig(ConfigValues.VdsRefreshRate, 2L),
         mockConfig(ConfigValues.NumberVmRefreshesBeforeSave, 1)
     );
 

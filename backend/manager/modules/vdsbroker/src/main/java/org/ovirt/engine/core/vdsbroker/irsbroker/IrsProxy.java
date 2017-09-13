@@ -219,14 +219,14 @@ public class IrsProxy {
 
     @PostConstruct
     public void init() {
-        int storagePoolRefreshTime = Config.<Integer> getValue(ConfigValues.StoragePoolRefreshTimeInSeconds);
+        long storagePoolRefreshTime = Config.<Long> getValue(ConfigValues.StoragePoolRefreshTimeInSeconds);
         storagePoolRefreshJob = schedulerService.scheduleWithFixedDelay(this::updatingTimerElapsed,
                 storagePoolRefreshTime,
                 storagePoolRefreshTime,
                 TimeUnit.SECONDS);
         domainRecoverOnHostJob =
                 schedulerService.scheduleWithFixedDelay(this::hostsStorageConnectionsAndPoolMetadataRefresh,
-                        Config.<Integer>getValue(ConfigValues.HostStorageConnectionAndPoolRefreshTimeInSeconds),
+                        Config.<Long>getValue(ConfigValues.HostStorageConnectionAndPoolRefreshTimeInSeconds),
                         storagePoolRefreshTime,
                         TimeUnit.SECONDS);
     }
@@ -1508,15 +1508,14 @@ public class IrsProxy {
         domainsInProblem.put(domainId, new HashSet<>(Arrays.asList(vdsId)));
         log.warn("domain '{}' in problem '{}'. vds: '{}'", getDomainIdTuple(domainId), domainMonitoringResult,
                 vdsName);
-        ScheduledFuture job = schedulerService.schedule(() -> onTimer(domainId),
+        ScheduledFuture job = schedulerService.schedule(() -> addDomainData(domainId),
                 Config.<Long>getValue(ConfigValues.StorageDomainFailureTimeoutInMinutes),
                 TimeUnit.MINUTES);
         clearTimer(domainId);
         timersMap.put(domainId, job);
     }
 
-    @OnTimerMethodAnnotation("onTimer")
-    public void onTimer(final Guid domainId) {
+    public void addDomainData(final Guid domainId) {
         getEventQueue().submitEventAsync(new Event(storagePoolId,
                 domainId, null, EventType.DOMAINFAILOVER, ""),
                 () -> {

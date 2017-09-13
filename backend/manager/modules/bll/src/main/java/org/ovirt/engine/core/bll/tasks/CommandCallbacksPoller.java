@@ -29,7 +29,7 @@ public class CommandCallbacksPoller implements BackendService {
     private ManagedScheduledExecutorService executor;
 
     private static final Logger log = LoggerFactory.getLogger(CommandCallbacksPoller.class);
-    private int pollingRate;
+    private long pollingRate;
 
     @Inject
     private CommandsRepository commandsRepository;
@@ -37,7 +37,7 @@ public class CommandCallbacksPoller implements BackendService {
     @PostConstruct
     private void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
-        pollingRate = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
+        pollingRate = Config.<Long>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
         initCommandExecutor();
         executor.scheduleWithFixedDelay(this::invokeCallbackMethods,
                 pollingRate,
@@ -148,7 +148,7 @@ public class CommandCallbacksPoller implements BackendService {
                     callbackTiming.setInitialDelay(pollingRate);
                     callbackTiming.setRemainingDelay(pollingRate);
                 } else {
-                    int maxDelay = Config.<Integer>getValue(ConfigValues.AsyncCommandPollingRateInSeconds);
+                    long maxDelay = Config.<Long>getValue(ConfigValues.AsyncCommandPollingRateInSeconds);
                     callbackTiming.setInitialDelay(Math.min(maxDelay, callbackTiming.getInitialDelay() * 2));
                     callbackTiming.setRemainingDelay(callbackTiming.getInitialDelay());
                 }

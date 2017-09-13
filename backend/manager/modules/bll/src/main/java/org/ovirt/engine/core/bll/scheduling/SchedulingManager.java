@@ -863,8 +863,8 @@ public class SchedulingManager implements BackendService {
         if (Config.<Boolean>getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start scheduling to enable vds load balancer");
             executor.scheduleWithFixedDelay(this::performLoadBalancing,
-                    Config.<Integer>getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
-                    Config.<Integer>getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
+                    Config.<Long>getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
+                    Config.<Long>getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
                     TimeUnit.MINUTES);
             log.info("Finished scheduling to enable vds load balancer");
         }
@@ -874,7 +874,7 @@ public class SchedulingManager implements BackendService {
 
         if (Config.<Boolean>getValue(ConfigValues.EnableVdsLoadBalancing)) {
             log.info("Start HA Reservation check");
-            Integer interval = Config.<Integer> getValue(ConfigValues.VdsHaReservationIntervalInMinutes);
+            long interval = Config.<Long> getValue(ConfigValues.VdsHaReservationIntervalInMinutes);
             executor.scheduleWithFixedDelay(this::performHaResevationCheck,
                     interval,
                     interval,

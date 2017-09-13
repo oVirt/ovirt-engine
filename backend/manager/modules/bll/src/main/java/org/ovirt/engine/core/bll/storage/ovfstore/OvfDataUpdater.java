@@ -49,8 +49,8 @@ public class OvfDataUpdater implements BackendService {
     @PostConstruct
     public void initOvfDataUpdater() {
         updateTimerJob = schedulerService.scheduleWithFixedDelay(this::ovfUpdate,
-                Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
-                Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
+                Config.<Long> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
+                Config.<Long> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
                 TimeUnit.MINUTES);
         log.info("Initialization of OvfDataUpdater completed successfully.");
     }
@@ -111,7 +111,7 @@ public class OvfDataUpdater implements BackendService {
         }
         updateTimerJob = schedulerService.scheduleWithFixedDelay(this::ovfUpdate,
                 0,
-                Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
+                Config.<Long> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
                 TimeUnit.MINUTES);
     }
 }

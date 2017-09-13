@@ -76,7 +76,7 @@ public class DwhHeartBeat implements BackendService {
 
         executor.scheduleWithFixedDelay(this::engineIsRunningNotification,
                 0,
-                Config.<Integer>getValue(ConfigValues.DwhHeartBeatInterval),
+                Config.<Long>getValue(ConfigValues.DwhHeartBeatInterval),
                 TimeUnit.SECONDS);
         log.info("DWH Heart Beat initialized");
     }

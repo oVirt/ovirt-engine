@@ -67,7 +67,7 @@ public class CommandsRepository {
             CommandBase<?> cmd = retrieveCommand(cmdEntity.getId());
             if (cmd != null && cmd.getCallback() != null) {
                 CallbackTiming callbackTiming = new CallbackTiming(cmd.getCallback(),
-                        Config.<Integer>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds));
+                        Config.<Long>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds));
                 if (cmdEntity.isWaitingForEvent()) {
                     long waitOnEventEndTime = System.currentTimeMillis()
                             + TimeUnit.MINUTES.toMillis(Config.<Integer>getValue(ConfigValues.CoCoWaitForEventInMinutes));

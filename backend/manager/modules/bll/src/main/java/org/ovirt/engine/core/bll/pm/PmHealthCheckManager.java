@@ -68,7 +68,7 @@ public class PmHealthCheckManager implements BackendService {
     private void initialize() {
         if(Config.<Boolean>getValue(ConfigValues.PMHealthCheckEnabled)) {
             log.info("Start initializing {}", getClass().getSimpleName());
-            Integer pmHealthCheckInterval = Config.<Integer> getValue(ConfigValues.PMHealthCheckIntervalInSec);
+            long pmHealthCheckInterval = Config.<Long> getValue(ConfigValues.PMHealthCheckIntervalInSec);
             executor.scheduleWithFixedDelay(this::pmHealthCheck,
                     pmHealthCheckInterval,
                     pmHealthCheckInterval,

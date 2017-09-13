@@ -63,7 +63,7 @@ public class EngineBackupAwarenessManager implements BackendService {
     @PostConstruct
     private void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
-        Integer backupCheckPeriodInHours = Config.<Integer>getValue(ConfigValues.BackupCheckPeriodInHours);
+        long backupCheckPeriodInHours = Config.<Long>getValue(ConfigValues.BackupCheckPeriodInHours);
         // disable feature if value is negative
         if (backupCheckPeriodInHours > 0) {
             executor.scheduleWithFixedDelay(this::backupCheck,

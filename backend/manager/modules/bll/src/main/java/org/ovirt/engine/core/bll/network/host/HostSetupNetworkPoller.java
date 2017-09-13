@@ -53,7 +53,7 @@ public class HostSetupNetworkPoller {
     private boolean getValue(FutureVDSCall<VDSReturnValue> task) {
         try {
             VDSReturnValue vdsReturnValue =
-                    task.get(Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
+                    task.get(Config.<Long> getValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
             return vdsReturnValue.getSucceeded();
         } catch (TimeoutException e) {
             // VDSReturn value did not become available in given timeout. Ignore failure.

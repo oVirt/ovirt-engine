@@ -63,7 +63,7 @@ public class QuotaManager implements BackendService {
 
     @PostConstruct
     private void init() {
-        int quotaCacheIntervalInMinutes = Config.<Integer>getValue(ConfigValues.QuotaCacheIntervalInMinutes);
+        long quotaCacheIntervalInMinutes = Config.<Long>getValue(ConfigValues.QuotaCacheIntervalInMinutes);
         executor.scheduleWithFixedDelay(this::updateQuotaCache,
                 1,
                 quotaCacheIntervalInMinutes,

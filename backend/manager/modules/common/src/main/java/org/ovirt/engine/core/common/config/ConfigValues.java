@@ -55,27 +55,27 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     MaxTotalConnections,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     VdsRefreshRate,
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     AsyncTaskPollingRate,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     AsyncCommandPollingLoopInSeconds,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     AsyncCommandPollingRateInSeconds,
 
     /**
      * The rate (in seconds) to refresh the cache that holds the asynchronous tasks' statuses.
      */
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     AsyncTaskStatusCacheRefreshRateInSeconds,
 
     /**
      * The period of time (in minutes) to hold the asynchronous tasks' statuses in the asynchronous tasks cache.
      */
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     AsyncTaskStatusCachingTimeInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -169,7 +169,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     NumberOfFailedRunsOnVds,
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     TimeToReduceFailedRunOnVdsInMinutes,
     /**
      * In default rerun Vm on all Available desktops
@@ -268,7 +268,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     IsMultilevelAdministrationOn,
     @Reloadable
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     VdsRecoveryTimeoutInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -292,18 +292,18 @@ public enum ConfigValues {
     VcpuConsumptionPercentage,
     @TypeConverterAttribute(Boolean.class)
     EnableVdsLoadBalancing,
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     VdsLoadBalancingIntervalInMinutes,
 
     //AffinityRulesEnforcementManager
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     AffinityRulesEnforcementManagerRegularInterval,
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     AffinityRulesEnforcementManagerInitialDelay,
     @TypeConverterAttribute(Boolean.class)
     AffinityRulesEnforcementManagerEnabled,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     VdsHaReservationIntervalInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -369,14 +369,14 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     AutoRegistrationDefaultClusterID,
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     StoragePoolRefreshTimeInSeconds,
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     HostStorageConnectionAndPoolRefreshTimeInSeconds,
     @Reloadable
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     StoragePoolNonOperationalResetTimeoutInMin,
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     StorageDomainFailureTimeoutInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -460,7 +460,7 @@ public enum ConfigValues {
     WaitForVdsInitInSec,
 
     @Reloadable
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     OvfUpdateIntervalInMinutes,
 
     @Reloadable
@@ -710,10 +710,10 @@ public enum ConfigValues {
     UploadImageXhrMaxRetries(ClientAccessLevel.Admin),
 
     @Reloadable
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     SetupNetworksPollingTimeout,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     JobCleanupRateInMinutes,
 
     @TypeConverterAttribute(Integer.class)
@@ -726,7 +726,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     JobPageSize,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     VmPoolMonitorIntervalInMinutes,
 
     @Reloadable
@@ -897,7 +897,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     OvirtNodeOS,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     QuotaCacheIntervalInMinutes,
 
     @TypeConverterAttribute(Integer.class)
@@ -1104,7 +1104,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     UseFqdnForRdpIfAvailable(ClientAccessLevel.User),
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     DwhHeartBeatInterval,
 
     @TypeConverterAttribute(Integer.class)
@@ -1135,7 +1135,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     GlusterPeerStatusRetries,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     AutoStartVmsRunnerIntervalInSeconds,
 
     @TypeConverterAttribute(Integer.class)
@@ -1203,7 +1203,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     PMHealthCheckEnabled,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     PMHealthCheckIntervalInSec,
 
     @TypeConverterAttribute(String.class)
@@ -1364,7 +1364,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     DefaultMigrationCompression,
 
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Long.class)
     BackupCheckPeriodInHours,
 
     @TypeConverterAttribute(Integer.class)

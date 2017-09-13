@@ -43,9 +43,9 @@ public final class StoragePoolStatusHandler {
     }
 
     private StoragePoolStatusHandler scheduleTimeout() {
-        Integer timeout = Config.<Integer> getValue(ConfigValues.StoragePoolNonOperationalResetTimeoutInMin);
-
-        scheduledTask = schedulerService.schedule(this::handleTimeout, timeout, TimeUnit.MINUTES);
+        scheduledTask = schedulerService.schedule(this::handleTimeout,
+                Config.<Long>getValue(ConfigValues.StoragePoolNonOperationalResetTimeoutInMin),
+                TimeUnit.MINUTES);
 
         return this;
     }

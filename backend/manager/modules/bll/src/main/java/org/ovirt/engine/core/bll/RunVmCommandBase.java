@@ -323,7 +323,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             // but still no higher than a configurable max to prevent very long updates to stall command.
             long t = Math.max(
                     resourceManager.getVdsManager(vdsId).getLastUpdateElapsed(),
-                    TimeUnit.SECONDS.toMillis(Config.<Integer> getValue(VdsRefreshRate)));
+                    TimeUnit.SECONDS.toMillis(Config.<Long> getValue(VdsRefreshRate)));
             t = Math.min(Config.<Integer> getValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
 
             // wait for the run-time refresh to decrease any current powering-up VMs

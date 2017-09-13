@@ -114,7 +114,7 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
         if (callBack != null) {
             commandsRepository.addToCallbackMap(command.getCommandId(),
                     new CallbackTiming(callBack,
-                            Config.<Integer> getValue(ConfigValues.AsyncCommandPollingLoopInSeconds)));
+                            Config.<Long> getValue(ConfigValues.AsyncCommandPollingLoopInSeconds)));
         }
 
         return cmdExecutor.executeAsyncCommand(command, cmdContext);

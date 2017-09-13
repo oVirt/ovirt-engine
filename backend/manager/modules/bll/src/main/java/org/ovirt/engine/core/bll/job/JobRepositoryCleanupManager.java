@@ -47,7 +47,7 @@ public class JobRepositoryCleanupManager implements BackendService {
         succeededJobTime = Config.<Integer> getValue(ConfigValues.SucceededJobCleanupTimeInMinutes);
         failedJobTime = Config.<Integer> getValue(ConfigValues.FailedJobCleanupTimeInMinutes);
 
-        Integer cleanupFrequency = Config.<Integer> getValue(ConfigValues.JobCleanupRateInMinutes);
+        long cleanupFrequency = Config.<Long> getValue(ConfigValues.JobCleanupRateInMinutes);
         executor.scheduleWithFixedDelay(this::cleanCompletedJob,
                 cleanupFrequency,
                 cleanupFrequency,
