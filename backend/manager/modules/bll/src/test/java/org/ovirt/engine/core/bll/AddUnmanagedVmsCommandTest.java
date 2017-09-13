@@ -51,14 +51,14 @@ public class AddUnmanagedVmsCommandTest {
     AddUnmanagedVmsCommand<AddUnmanagedVmsParameters> addUnamangedVmsCommand =
             new AddUnmanagedVmsCommand<>(new AddUnmanagedVmsParameters(), null);
 
-    private static Map<String, Object> external_vm;
+    private static Map<String, Object> externalVm;
 
-    private static Map<String, Object> hosted_engine;
+    private static Map<String, Object> hostedEngine;
 
     @BeforeClass
     public static void loadVmData() throws IOException {
-        external_vm = loadVm("/external_vm.json");
-        hosted_engine = loadVm("/he_vm.json");
+        externalVm = loadVm("/external_vm.json");
+        hostedEngine = loadVm("/he_vm.json");
     }
 
     @Before
@@ -78,7 +78,7 @@ public class AddUnmanagedVmsCommandTest {
 
     @Test
     public void shouldConvertExternalVm() throws IOException {
-        addUnamangedVmsCommand.convertVm(1, DisplayType.qxl, System.nanoTime(), external_vm);
+        addUnamangedVmsCommand.convertVm(1, DisplayType.qxl, System.nanoTime(), externalVm);
         verify(addUnamangedVmsCommand).addExternallyManagedVm(argThat(vmStatic -> {
             assertThat(vmStatic.getNumOfSockets(), is(4));
             assertThat(vmStatic.getMemSizeMb(), is(7052));
@@ -88,7 +88,7 @@ public class AddUnmanagedVmsCommandTest {
 
     @Test
     public void shouldDetectHostedEngineVM() throws IOException {
-        addUnamangedVmsCommand.importHostedEngineVm(hosted_engine);
+        addUnamangedVmsCommand.importHostedEngineVm(hostedEngine);
         verify(addUnamangedVmsCommand, times(0)).addExternallyManagedVm(any());
         verify(addUnamangedVmsCommand).importHostedEngineVm(argThat(new HEVmMatcher()));
     }
