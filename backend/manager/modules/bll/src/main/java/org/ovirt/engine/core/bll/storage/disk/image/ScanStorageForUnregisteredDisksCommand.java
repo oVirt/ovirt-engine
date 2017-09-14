@@ -38,6 +38,8 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    private OvfUtils ovfUtils;
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
@@ -105,7 +107,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
         for (OvfEntityData ovfEntity : allEntities) {
             try {
                 XmlDocument xmlDocument = new XmlDocument(ovfEntity.getOvfData());
-                OvfUtils.updateUnregisteredDisksWithVMs(unregisteredDisks,
+                ovfUtils.updateUnregisteredDisksWithVMs(unregisteredDisks,
                         ovfEntity.getEntityId(),
                         ovfEntity.getEntityName(),
                         xmlDocument);

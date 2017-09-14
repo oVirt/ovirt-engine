@@ -132,6 +132,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private  UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private OvfUtils ovfUtils;
 
     @Inject
     protected StorageHelperDirector storageHelperDirector;
@@ -585,7 +587,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                         getReturnValue().getVdsmTaskIdList().addAll(actionReturnValueReturnValue.getInternalVdsmTaskIdList());
                         if (actionReturnValueReturnValue.getSucceeded()) {
                             List<OvfEntityData> returnedMap =
-                                    OvfUtils.getOvfEntities(actionReturnValueReturnValue.getActionReturnValue(),
+                                    ovfUtils.getOvfEntities(actionReturnValueReturnValue.getActionReturnValue(),
                                             unregisteredDisks,
                                             storageDomainId);
                             return returnedMap;
