@@ -70,7 +70,6 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -128,6 +127,9 @@ public class ImagesHandler {
 
     @Inject
     private VdsCommandsHelper vdsCommandsHelper;
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
@@ -445,7 +447,6 @@ public class ImagesHandler {
         if (disk.getDiskVmElementForVm(vmId) != null) {
             diskVmElementDao.save(disk.getDiskVmElementForVm(vmId));
         }
-        final VmDeviceUtils vmDeviceUtils = Injector.get(VmDeviceUtils.class);
         vmDeviceUtils.addDiskDevice(vmId, disk.getId());
     }
 
