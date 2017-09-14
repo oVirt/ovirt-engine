@@ -45,8 +45,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -78,8 +76,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private StoragePoolDao storagePoolDao;
     @Mock
-    private OsRepository osRepository;
-    @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
     @Mock
     private DiskImagesValidator diskImagesValidator;
@@ -95,8 +91,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private VmHandler vmHandler;
 
-    @Spy
-    @InjectMocks
+    @Mock
     private VmDeviceUtils vmDeviceUtils;
 
     private VM createVM() {
@@ -126,23 +121,10 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         cluster.setCompatibilityVersion(Version.getLast());
         when(clusterDao.get(vm.getClusterId())).thenReturn(cluster);
 
-        mockOsRepository();
-
         doNothing().when(cmd).separateCustomProperties(any());
         doReturn(getDisksList(vm.getStoragePoolId())).when(cmd).getVmDisksFromDB();
-        doReturn(vmDeviceUtils).when(cmd).getVmDeviceUtils();
 
         cmd.init();
-    }
-
-    protected void mockOsRepository() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-        vmDeviceUtils.init();
-        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-        when(osRepository.isWindows(0)).thenReturn(true);
-        when(osRepository.getMinimumRam(vm.getVmOsId(), Version.getLast())).thenReturn(0);
-        when(osRepository.getMaximumRam(vm.getVmOsId(), Version.getLast())).thenReturn(100);
-        when(osRepository.getArchitectureFromOS(14)).thenReturn(ArchitectureType.x86_64);
     }
 
     @Test
