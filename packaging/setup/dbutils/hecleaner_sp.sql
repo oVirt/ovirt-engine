@@ -51,6 +51,11 @@ BEGIN
             RAISE EXCEPTION 'The hosted-engine storage domain contains a vm that is not the hosted-engine one.';
         END IF;
     END;
+    PERFORM DeleteLUN(lun_id) FROM (
+        SELECT (GetLUNsBystorage_server_connection(id)).lun_id FROM (
+            SELECT id
+                FROM GetStorageServerConnectionsForDomain(v_storage_id)
+    ) t) t;
     PERFORM deletestorage_server_connections(id)
         FROM (
             SELECT id
