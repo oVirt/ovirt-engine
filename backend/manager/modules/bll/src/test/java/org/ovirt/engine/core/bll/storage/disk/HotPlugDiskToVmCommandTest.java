@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -81,8 +80,8 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     @Mock
     private DiskValidator diskValidator;
 
-    @Spy
-    private DiskVmElementValidator diskVmElementValidator = new DiskVmElementValidator(disk, diskVmElement);
+    @Mock
+    private DiskVmElementValidator diskVmElementValidator;
 
     @Mock
     private SnapshotsValidator snapshotsValidator;
@@ -91,9 +90,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
     private StorageDomainValidator storageDomainValidator;
 
     protected static OsRepository osRepository;
-
-    @Mock
-    private VmDeviceUtils vmDeviceUtils;
 
     /**
      * The command under test.
@@ -119,7 +115,6 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
 
         when(osRepository.getDiskHotpluggableInterfaces(anyInt(), any()))
                 .thenReturn(new HashSet<>(DISK_HOTPLUGGABLE_INTERFACES));
-        SimpleDependencyInjector.getInstance().bind(VmDeviceUtils.class, vmDeviceUtils);
 
     }
 
