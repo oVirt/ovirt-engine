@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.dal.dbbroker.generic;
 
+import static org.ovirt.engine.core.common.config.OptionBehaviour.ValueDependent;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.Reloadable;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDao;
@@ -23,7 +28,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
      */
     public void refresh() {
         _vdcOptionCache.clear();
-        List<VdcOption> list = getVdcOptionDao().getAll();
+        List<VdcOption> list = moveDependentToEnd(getVdcOptionDao().getAll());
         for (VdcOption option : list) {
             try {
                 if (!_vdcOptionCache.containsKey(option.getOptionName()) ||
@@ -75,5 +80,20 @@ public class DBConfigUtils extends ConfigUtilsBase {
 
     private static boolean isReloadable(String optionName) throws NoSuchFieldException {
         return ConfigValues.class.getField(optionName).isAnnotationPresent(Reloadable.class);
+    }
+
+    private List<VdcOption> moveDependentToEnd(List<VdcOption> list) {
+        Predicate<VdcOption> isDependent =
+            o -> {
+                EnumValue parsed = parseEnumValue(o.getOptionName());
+                if (parsed != null) {
+                    OptionBehaviourAttribute behaviour = parsed.getOptionBehaviour();
+                    return behaviour != null && behaviour.behaviour() == ValueDependent;
+                }
+                return false;
+            };
+        List<VdcOption> optionsList = list.stream().filter(isDependent.negate()).collect(Collectors.toList());
+        optionsList.addAll(list.stream().filter(isDependent).collect(Collectors.toList()));
+        return optionsList;
     }
 }
