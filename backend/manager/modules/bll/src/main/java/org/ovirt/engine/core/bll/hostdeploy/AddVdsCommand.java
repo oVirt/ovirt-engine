@@ -356,7 +356,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (!(returnValue
                 && isPowerManagementLegal(params.getVdsStaticData().isPmEnabled(),
                         params.getFenceAgents(),
-                        getCluster().getCompatibilityVersion().toString())
+                        getCluster().getCompatibilityVersion().toString(),
+                        true)
                 && canConnect(params.getvds()))) {
             return false;
         }

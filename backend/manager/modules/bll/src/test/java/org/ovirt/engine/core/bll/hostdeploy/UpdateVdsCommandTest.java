@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfigura
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 public class UpdateVdsCommandTest {
@@ -29,6 +33,9 @@ public class UpdateVdsCommandTest {
 
     @Mock
     private VdsDao vdsDaoMock;
+
+    @Mock
+    private FenceAgentDao fenceAgentDao;
 
     @Mock
     private UpdateHostValidator updateHostValidator;
@@ -57,6 +64,7 @@ public class UpdateVdsCommandTest {
     @Test
     public void testValidate() {
         when(vdsDaoMock.get(HOST_ID)).thenReturn(oldHost);
+        when(fenceAgentDao.getFenceAgentsForHost(HOST_ID)).thenReturn(new ArrayList());
         assertTrue(underTestCommand.validate());
     }
 

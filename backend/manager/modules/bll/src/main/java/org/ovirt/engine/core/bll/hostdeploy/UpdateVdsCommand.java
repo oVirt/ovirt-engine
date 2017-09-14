@@ -110,6 +110,14 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Override
     protected boolean validate() {
         oldHost = vdsDao.get(getVdsId());
+        // if fence agents list is null, try to fill it from database
+        // so we can enable changing other host attributes from API
+        // without failing validation or removing the persisted fence agents
+        boolean validateAgents=true;
+        if (getParameters().getFenceAgents() == null) {
+            getParameters().setFenceAgents(fenceAgentDao.getFenceAgentsForHost(getVdsId()));
+            validateAgents = false;
+        }
         UpdateHostValidator validator =
                 getUpdateHostValidator(oldHost, getParameters().getvds(), getParameters().isInstallHost());
 
@@ -130,7 +138,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 && validateNetworkProviderConfiguration()
                 && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
                         getParameters().getFenceAgents(),
-                        oldHost.getClusterCompatibilityVersion().toString())
+                        oldHost.getClusterCompatibilityVersion().toString(),
+                        validateAgents)
                 && validate(validator.supportsDeployingHostedEngine(
                         getParameters().getHostedEngineDeployConfiguration()));
     }
@@ -315,8 +324,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Override
     protected boolean isPowerManagementLegal(boolean pmEnabled,
                                              List<FenceAgent> fenceAgents,
-                                             String clusterCompatibilityVersion) {
-        return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion);
+                                             String clusterCompatibilityVersion,
+                                             boolean validateAgents) {
+        return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion, validateAgents);
     }
 
     private void updateAffinityLabels() {

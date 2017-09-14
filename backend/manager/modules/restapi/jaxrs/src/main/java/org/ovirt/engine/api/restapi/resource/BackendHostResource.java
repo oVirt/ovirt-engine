@@ -106,6 +106,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Host update(Host incoming) {
         QueryIdResolver<Guid> hostResolver = new QueryIdResolver<>(QueryType.GetVdsByVdsId, IdQueryParameters.class);
         VDS entity = getEntity(hostResolver, true);
+        // if fence agents list is null set it to null in entity
+        if(incoming.getAgents() == null) {
+            entity.setFenceAgents(null);
+        }
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
             if (!clusterId.equals(entity.getClusterId())) {

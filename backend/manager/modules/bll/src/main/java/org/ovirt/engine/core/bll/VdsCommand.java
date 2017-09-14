@@ -212,20 +212,25 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      */
     protected boolean isPowerManagementLegal(boolean pmEnabled,
             List<FenceAgent> fenceAgents,
-            String clusterCompatibilityVersion) {
+            String clusterCompatibilityVersion,
+            boolean validateAgents) {
         if (pmEnabled && fenceAgents != null) {
             if (fenceAgents.isEmpty()) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
                 return false;
             }
-            FenceValidator fenceValidator = new FenceValidator();
-            for (FenceAgent agent : fenceAgents) {
-                if (!fenceValidator.isFenceAgentVersionCompatible(agent,
-                        clusterCompatibilityVersion,
-                        getReturnValue().getValidationMessages())
-                        || !isFenceAgentValid(agent)) {
-                    return false;
+            if (validateAgents) {
+                FenceValidator fenceValidator = new FenceValidator();
+                for (FenceAgent agent : fenceAgents) {
+                    if (!fenceValidator.isFenceAgentVersionCompatible(agent,
+                            clusterCompatibilityVersion,
+                            getReturnValue().getValidationMessages())
+                            || !isFenceAgentValid(agent)) {
+                        return false;
+                    }
                 }
+            } else {
+                return true;
             }
         }
         return true;
