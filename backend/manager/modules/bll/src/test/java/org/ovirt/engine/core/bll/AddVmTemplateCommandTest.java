@@ -78,8 +78,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private StoragePoolDao storagePoolDao;
     @Mock
-    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
-    @Mock
     private OsRepository osRepository;
     @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
@@ -94,8 +92,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private ImagesHandler imagesHandler;
 
-    @Spy
-    @InjectMocks
+    @Mock
     private VmHandler vmHandler;
 
     @Spy
@@ -142,8 +139,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         vmDeviceUtils.init();
         injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
-        injectorRule.bind(CpuFlagsManagerHandler.class, cpuFlagsManagerHandler);
-        vmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);
         when(osRepository.getMinimumRam(vm.getVmOsId(), Version.getLast())).thenReturn(0);
         when(osRepository.getMaximumRam(vm.getVmOsId(), Version.getLast())).thenReturn(100);
