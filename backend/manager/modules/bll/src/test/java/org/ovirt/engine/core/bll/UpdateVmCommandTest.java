@@ -33,6 +33,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
+import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -118,6 +119,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Mock
     InClusterUpgradeValidator inClusterUpgradeValidator;
 
+    @Mock
+    private VmValidationUtils vmValidationUtils;
+
     @InjectMocks
     private VmDeviceUtils vmDeviceUtils;
     @InjectMocks
@@ -170,6 +174,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         when(osRepository.isWindows(osId)).thenReturn(false);
         when(osRepository.getArchitectureFromOS(osId)).thenReturn(ArchitectureType.x86_64);
         when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
+
+        when(vmValidationUtils.isOsTypeSupported(anyInt(), any())).thenReturn(true);
+        when(vmValidationUtils.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any())).thenReturn(true);
 
         Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
         displayTypeMap.put(osId, new HashMap<>());

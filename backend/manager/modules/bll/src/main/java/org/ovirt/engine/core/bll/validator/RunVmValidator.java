@@ -90,6 +90,9 @@ public class RunVmValidator {
     @Inject
     private VmDeviceUtils vmDeviceUtils;
 
+    @Inject
+    private VmValidationUtils vmValidationUtils;
+
     public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution, Guid activeIsoDomainId) {
         this.vm = vm;
         this.runVmParam = rumVmParam;
@@ -183,7 +186,7 @@ public class RunVmValidator {
     private ValidationResult validateFloppy() {
 
         if (StringUtils.isNotEmpty(runVmParam.getFloppyPath())
-                && !VmValidationUtils.isFloppySupported(vm.getOs(), vm.getCompatibilityVersion())) {
+                && !vmValidationUtils.isFloppySupported(vm.getOs(), vm.getCompatibilityVersion())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS);
         }
 
@@ -235,7 +238,7 @@ public class RunVmValidator {
     }
 
     private ValidationResult validateDisplayType() {
-        if (!VmValidationUtils.isGraphicsAndDisplaySupported(vm.getOs(),
+        if (!vmValidationUtils.isGraphicsAndDisplaySupported(vm.getOs(),
                 vm.getCompatibilityVersion(),
                 getVmActiveGraphics(),
                 vm.getDefaultDisplayType())) {

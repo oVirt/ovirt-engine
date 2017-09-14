@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -81,8 +83,8 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     public void isVirtioScsiEnabledDefaultedToTrue() {
         cmd.getParameters().getVm().setClusterId(cluster.getId());
         cmd.initEffectiveCompatibilityVersion();
-        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(
-                new ArrayList<>(Collections.singletonList("VirtIO_SCSI")));
+        when(vmValidationUtils.isDiskInterfaceSupportedByOs(anyInt(), any(), eq(DiskInterface.VirtIO_SCSI)))
+                .thenReturn(true);
         assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
     }
 
@@ -171,7 +173,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         initPpcCluster();
         doReturn(true).when(cmd).validateAddVmCommand();
         doReturn(true).when(cmd).isVmNameValidLength(any());
-        when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.ppc64);
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         cmd.getParameters().getVm().setUseHostCpuFlags(true);
         cmd.getParameters().getVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);

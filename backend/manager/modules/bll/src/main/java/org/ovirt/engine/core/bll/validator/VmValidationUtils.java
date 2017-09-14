@@ -3,16 +3,21 @@ package org.ovirt.engine.core.bll.validator;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
 
+@Singleton
 public class VmValidationUtils {
+    @Inject
+    private OsRepository osRepository;
 
     /**
      * Check if the memory size is within the correct limits (as per the configuration), taking into account the
@@ -23,7 +28,7 @@ public class VmValidationUtils {
      *
      * @return Is the memory within the configured limits or not.
      */
-    public static boolean isMemorySizeLegal(int osId, int memSizeInMB, Version clusterVersion) {
+    public boolean isMemorySizeLegal(int osId, int memSizeInMB, Version clusterVersion) {
         return memSizeInMB >= getMinMemorySizeInMb(osId, clusterVersion) && memSizeInMB <= getMaxMemorySizeInMb(osId, clusterVersion);
     }
 
@@ -35,8 +40,8 @@ public class VmValidationUtils {
      *
      * @return If the OS type is supported.
      */
-    public static boolean isOsTypeSupported(int osId, ArchitectureType architectureType) {
-        return architectureType == getOsRepository().getArchitectureFromOS(osId);
+    public boolean isOsTypeSupported(int osId, ArchitectureType architectureType) {
+        return architectureType == osRepository.getArchitectureFromOS(osId);
     }
 
     /**
@@ -47,8 +52,8 @@ public class VmValidationUtils {
      *
      * @return If the floppy device is supported by the OS type.
      */
-    public static boolean isFloppySupported(int osId, Version clusterVersion) {
-        return getOsRepository().isFloppySupported(osId, clusterVersion);
+    public boolean isFloppySupported(int osId, Version clusterVersion) {
+        return osRepository.isFloppySupported(osId, clusterVersion);
     }
 
     /**
@@ -60,8 +65,8 @@ public class VmValidationUtils {
      *
      * @return If the disk interface is supported by the OS type.
      */
-    public static boolean isDiskInterfaceSupportedByOs(int osId, Version clusterVersion, DiskInterface diskInterface) {
-        List<String> diskInterfaces = getOsRepository().getDiskInterfaces(osId, clusterVersion);
+    public boolean isDiskInterfaceSupportedByOs(int osId, Version clusterVersion, DiskInterface diskInterface) {
+        List<String> diskInterfaces = osRepository.getDiskInterfaces(osId, clusterVersion);
         return diskInterfaces.contains(diskInterface.name());
     }
 
@@ -70,9 +75,9 @@ public class VmValidationUtils {
      *
      * @return a boolean
      */
-    public static boolean isGraphicsAndDisplaySupported(int osId, Version version, Collection<GraphicsType> graphics, DisplayType displayType) {
+    public boolean isGraphicsAndDisplaySupported(int osId, Version version, Collection<GraphicsType> graphics, DisplayType displayType) {
         for (GraphicsType graphicType : graphics) {
-            if (!getOsRepository().getGraphicsAndDisplays().get(osId).get(version).contains(new Pair<>(graphicType, displayType))) {
+            if (!osRepository.getGraphicsAndDisplays().get(osId).get(version).contains(new Pair<>(graphicType, displayType))) {
                 return false;
             }
         }
@@ -85,8 +90,8 @@ public class VmValidationUtils {
      *
      * @return The minimum VM memory size allowed (as per configuration).
      */
-    public static Integer getMinMemorySizeInMb(int osId, Version version) {
-        return getOsRepository().getMinimumRam(osId, version);
+    public Integer getMinMemorySizeInMb(int osId, Version version) {
+        return osRepository.getMinimumRam(osId, version);
     }
 
     /**
@@ -96,11 +101,7 @@ public class VmValidationUtils {
      *
      * @return The maximum VM memory setting for this OS (as per configuration).
      */
-    public static Integer getMaxMemorySizeInMb(int osId, Version clusterVersion) {
-        return getOsRepository().getMaximumRam(osId, clusterVersion);
-    }
-
-    private static OsRepository getOsRepository() {
-        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    public Integer getMaxMemorySizeInMb(int osId, Version clusterVersion) {
+        return osRepository.getMaximumRam(osId, clusterVersion);
     }
 }

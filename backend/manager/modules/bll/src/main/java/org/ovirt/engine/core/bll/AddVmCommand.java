@@ -158,6 +158,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
+    @Inject
+    private VmValidationUtils vmValidationUtils;
+
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
@@ -1654,7 +1657,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected boolean isVirtioScsiEnabled() {
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
-        boolean isOsSupportedForVirtIoScsi = VmValidationUtils.isDiskInterfaceSupportedByOs(
+        boolean isOsSupportedForVirtIoScsi = vmValidationUtils.isDiskInterfaceSupportedByOs(
                 getParameters().getVm().getOs(), getEffectiveCompatibilityVersion(), DiskInterface.VirtIO_SCSI);
 
         return virtioScsiEnabled != null ? virtioScsiEnabled : isOsSupportedForVirtIoScsi;

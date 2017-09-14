@@ -172,6 +172,9 @@ public class VmHandler implements BackendService {
     @Inject
     private BackendInternal backend;
 
+    @Inject
+    private VmValidationUtils vmValidationUtils;
+
     private ObjectIdentityChecker updateVmsStatic;
     private OsRepository osRepository;
 
@@ -561,15 +564,15 @@ public class VmHandler implements BackendService {
      *            the vm's cluster version.
      */
     public void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
-        if (! VmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
+        if (!vmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
             AuditLogable logable = new AuditLogableImpl();
             logable.setVmId(vm.getId());
             logable.setVmName(vm.getName());
             logable.addCustomValue("VmMemInMb", String.valueOf(vm.getMemSizeMb()));
             logable.addCustomValue("VmMinMemInMb",
-                    String.valueOf(VmValidationUtils.getMinMemorySizeInMb(vm.getOsId(), clusterVersion)));
+                    String.valueOf(vmValidationUtils.getMinMemorySizeInMb(vm.getOsId(), clusterVersion)));
             logable.addCustomValue("VmMaxMemInMb",
-                    String.valueOf(VmValidationUtils.getMaxMemorySizeInMb(vm.getOsId(), clusterVersion)));
+                    String.valueOf(vmValidationUtils.getMaxMemorySizeInMb(vm.getOsId(), clusterVersion)));
 
             auditLogDirector.log(logable, AuditLogType.VM_MEMORY_NOT_IN_RECOMMENDED_RANGE);
         }
@@ -590,7 +593,7 @@ public class VmHandler implements BackendService {
     public ValidationResult isOsTypeSupported(int osId, ArchitectureType architectureType) {
         return ValidationResult
                 .failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_IS_NOT_SUPPORTED_BY_ARCHITECTURE_TYPE)
-                .unless(VmValidationUtils.isOsTypeSupported(osId, architectureType));
+                .unless(vmValidationUtils.isOsTypeSupported(osId, architectureType));
     }
 
     /**
@@ -609,7 +612,7 @@ public class VmHandler implements BackendService {
         (int osId, Collection<GraphicsType> graphics, DisplayType displayType, Version clusterVersion) {
         return ValidationResult
                 .failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS)
-                .unless(VmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType));
+                .unless(vmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType));
     }
 
     /**
@@ -623,7 +626,7 @@ public class VmHandler implements BackendService {
     public ValidationResult isOsTypeSupportedForVirtioScsi(int osId, Version clusterVersion) {
         return ValidationResult
                 .failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI)
-                .unless(VmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, DiskInterface.VirtIO_SCSI));
+                .unless(vmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, DiskInterface.VirtIO_SCSI));
     }
 
     /**
@@ -1102,7 +1105,7 @@ public class VmHandler implements BackendService {
             List<GraphicsType> sourceGraphics = vmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId);
             // if the source graphics device is supported then use it
             // otherwise choose the first supported graphics device
-            if (!VmValidationUtils.isGraphicsAndDisplaySupported(osId, compatibilityVersion, sourceGraphics, defaultDisplayType)) {
+            if (!vmValidationUtils.isGraphicsAndDisplaySupported(osId, compatibilityVersion, sourceGraphics, defaultDisplayType)) {
                 GraphicsType defaultGraphicsType = null;
                 List<Pair<GraphicsType, DisplayType>> pairs = osRepository.getGraphicsAndDisplays(osId, compatibilityVersion);
                 for (Pair<GraphicsType, DisplayType> pair : pairs) {

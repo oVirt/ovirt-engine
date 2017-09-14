@@ -9,8 +9,6 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -39,6 +38,9 @@ public class DiskVmElementValidatorTest {
     @Mock
     private OsRepository osRepository;
 
+    @Mock
+    private VmValidationUtils vmValidationUtils;
+
     private static final int OS_WITH_SUPPORTED_INTERFACES = 1;
     private static final int OS_WITH_NO_SUPPORTED_INTERFACES = 2;
 
@@ -48,7 +50,8 @@ public class DiskVmElementValidatorTest {
 
     @Before
     public void setUp() {
-        initializeOsRepository(DiskInterface.VirtIO);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        initializeInterfaceValidation(DiskInterface.VirtIO);
 
         disk = new DiskImage();
         dve = new DiskVmElement();
@@ -101,7 +104,7 @@ public class DiskVmElementValidatorTest {
     @Test
     public void diskInterfaceSupportedByOs() {
         VM vm = createVM(OS_WITH_SUPPORTED_INTERFACES);
-        initializeOsRepository(DiskInterface.VirtIO);
+        initializeInterfaceValidation(DiskInterface.VirtIO);
         dve.setDiskInterface(DiskInterface.VirtIO);
         assertThat(validator.isDiskInterfaceSupported(vm), isValid());
     }
@@ -109,7 +112,7 @@ public class DiskVmElementValidatorTest {
     @Test
     public void diskInterfaceNotSupportedByOs() {
         VM vm = createVM(OS_WITH_NO_SUPPORTED_INTERFACES);
-        initializeOsRepository(DiskInterface.VirtIO);
+        initializeInterfaceValidation(DiskInterface.VirtIO);
         dve.setDiskInterface(DiskInterface.VirtIO);
         assertThat(validator.isDiskInterfaceSupported(vm), failsWith(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
     }
@@ -134,12 +137,9 @@ public class DiskVmElementValidatorTest {
                 failsWith(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED));
     }
 
-    private void initializeOsRepository(DiskInterface diskInterface) {
-        ArrayList<String> supportedDiskInterfaces = new ArrayList<>();
-        supportedDiskInterfaces.add(diskInterface.name());
-        when(osRepository.getDiskInterfaces(OS_WITH_SUPPORTED_INTERFACES, null)).thenReturn(supportedDiskInterfaces);
-        // init the injector with the osRepository instance
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+    private void initializeInterfaceValidation(DiskInterface diskInterface) {
+        when(vmValidationUtils.isDiskInterfaceSupportedByOs(OS_WITH_SUPPORTED_INTERFACES, null, diskInterface)).thenReturn(true);
+        injectorRule.bind(VmValidationUtils.class, vmValidationUtils);
     }
 
     private static VM createVM(int vmOs) {

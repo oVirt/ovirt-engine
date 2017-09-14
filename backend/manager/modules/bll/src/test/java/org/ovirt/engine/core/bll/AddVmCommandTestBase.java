@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -97,6 +98,9 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     @Mock
     DiskImageDao diskImageDao;
 
+    @Mock
+    VmValidationUtils vmValidationUtils;
+
     @Spy
     @InjectMocks
     VmHandler vmHandler;
@@ -115,6 +119,8 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     public void setUp() {
         initOsRepository();
 
+        when(vmValidationUtils.isOsTypeSupported(anyInt(), any())).thenReturn(true);
+        when(vmValidationUtils.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any())).thenReturn(true);
         vmHandler.init();
 
         initVmTemplate();
