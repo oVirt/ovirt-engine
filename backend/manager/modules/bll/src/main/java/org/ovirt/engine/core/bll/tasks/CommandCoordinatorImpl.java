@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -51,8 +50,6 @@ import org.slf4j.LoggerFactory;
 public class CommandCoordinatorImpl implements BackendService, CommandCoordinator {
 
     private static final Logger log = LoggerFactory.getLogger(CommandCoordinatorImpl.class);
-    private CommandExecutor cmdExecutor;
-    private CommandsRepository commandsRepository;
 
     @Inject
     private AsyncTaskFactory asyncTaskFactory;
@@ -65,39 +62,33 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
     @Inject
     private Instance<CommandExecutor> commandExecutorInstance;
 
-    @PostConstruct
-    private void init() {
-        commandsRepository = commandsRepositoryInstance.get();
-        cmdExecutor = commandExecutorInstance.get();
-    }
-
     public <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
         return CommandsFactory.createCommand(action, parameters);
     }
 
     @Override
     public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
-        commandsRepository.persistCommand(cmdEntity, cmdContext);
+        commandsRepositoryInstance.get().persistCommand(cmdEntity, cmdContext);
     }
 
     @Override
     public void persistCommand(CommandEntity cmdEntity) {
-        commandsRepository.persistCommand(cmdEntity);
+        commandsRepositoryInstance.get().persistCommand(cmdEntity);
     }
 
     @Override
     public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
-        commandsRepository.persistCommandAssociatedEntities(cmdAssociatedEntities);
+        commandsRepositoryInstance.get().persistCommandAssociatedEntities(cmdAssociatedEntities);
     }
 
     @Override
     public List<Guid> getCommandIdsByEntityId(Guid entityId) {
-        return commandsRepository.getCommandIdsByEntityId(entityId);
+        return commandsRepositoryInstance.get().getCommandIdsByEntityId(entityId);
     }
 
     @Override
     public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
-        return commandsRepository.getCommandAssociatedEntities(cmdId);
+        return commandsRepositoryInstance.get().getCommandAssociatedEntities(cmdId);
     }
 
     /**
@@ -112,17 +103,17 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
         CommandCallback callBack = command.getCallback();
         command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null, false);
         if (callBack != null) {
-            commandsRepository.addToCallbackMap(command.getCommandId(),
+            commandsRepositoryInstance.get().addToCallbackMap(command.getCommandId(),
                     new CallbackTiming(callBack,
-                            Config.<Long> getValue(ConfigValues.AsyncCommandPollingLoopInSeconds)));
+                            Config.<Long>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds)));
         }
 
-        return cmdExecutor.executeAsyncCommand(command, cmdContext);
+        return commandExecutorInstance.get().executeAsyncCommand(command, cmdContext);
     }
 
     @Override
     public CommandEntity getCommandEntity(Guid commandId) {
-        return commandsRepository.getCommandEntity(commandId);
+        return commandsRepositoryInstance.get().getCommandEntity(commandId);
     }
 
     @Override
@@ -136,12 +127,12 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
 
     @Override
     public CommandBase<?> retrieveCommand(Guid commandId) {
-        return commandsRepository.retrieveCommand(commandId);
+        return commandsRepositoryInstance.get().retrieveCommand(commandId);
     }
 
     @Override
     public CommandStatus getCommandStatus(final Guid commandId) {
-        return commandsRepository.getCommandStatus(commandId);
+        return commandsRepositoryInstance.get().getCommandStatus(commandId);
     }
 
     @Override
@@ -155,37 +146,37 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
 
     @Override
     public void removeCommand(final Guid commandId) {
-        commandsRepository.removeCommand(commandId);
+        commandsRepositoryInstance.get().removeCommand(commandId);
     }
 
     @Override
     public void removeAllCommandsBeforeDate(final DateTime cutoff) {
-        commandsRepository.removeAllCommandsBeforeDate(cutoff);
+        commandsRepositoryInstance.get().removeAllCommandsBeforeDate(cutoff);
     }
 
     @Override
     public void updateCommandData(final Guid commandId, final Map<String, Serializable> data) {
-        commandsRepository.updateCommandData(commandId, data);
+        commandsRepositoryInstance.get().updateCommandData(commandId, data);
     }
 
     @Override
     public void updateCommandStatus(final Guid commandId, final CommandStatus status) {
-        commandsRepository.updateCommandStatus(commandId, status);
+        commandsRepositoryInstance.get().updateCommandStatus(commandId, status);
     }
 
     @Override
     public void updateCommandExecuted(Guid commandId) {
-        commandsRepository.updateCommandExecuted(commandId);
+        commandsRepositoryInstance.get().updateCommandExecuted(commandId);
     }
 
     @Override
     public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId) {
-        return commandsRepository.hasCommandEntitiesWithRootCommandId(rootCommandId);
+        return commandsRepositoryInstance.get().hasCommandEntitiesWithRootCommandId(rootCommandId);
     }
 
     @Override
     public List<Guid> getChildCommandIds(Guid cmdId) {
-        return commandsRepository.getChildCommandIds(cmdId);
+        return commandsRepositoryInstance.get().getChildCommandIds(cmdId);
     }
 
     @Override
@@ -204,12 +195,12 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
 
     @Override
     public List<Guid> getCommandIdsBySessionSeqId(long engineSessionSeqId) {
-        return commandsRepository.getCommandIdsBySessionSeqId(engineSessionSeqId);
+        return commandsRepositoryInstance.get().getCommandIdsBySessionSeqId(engineSessionSeqId);
     }
 
     @Override
     public List<CommandEntity> getChildCmdsByRootCmdId(Guid cmdId) {
-        return commandsRepository.getChildCmdsByParentCmdId(cmdId);
+        return commandsRepositoryInstance.get().getChildCmdsByParentCmdId(cmdId);
     }
 
     @Override
@@ -362,7 +353,7 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
 
     @Override
     public CommandContext retrieveCommandContext(Guid cmdId) {
-        return commandsRepository.retrieveCommandContext(cmdId);
+        return commandsRepositoryInstance.get().retrieveCommandContext(cmdId);
     }
 
     protected BackendInternal getBackend() {
@@ -371,10 +362,10 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
 
     @Override
     public void subscribe(String eventKey, CommandEntity commandEntity) {
-        commandsRepository.persistCommand(commandEntity);
-        CoCoEventSubscriber subscriber = new CoCoEventSubscriber(eventKey, commandEntity, commandsRepository);
+        commandsRepositoryInstance.get().persistCommand(commandEntity);
+        CoCoEventSubscriber subscriber = new CoCoEventSubscriber(eventKey, commandEntity, commandsRepositoryInstance.get());
         getResourceManager().subscribe(subscriber);
-        commandsRepository.addEventSubscription(commandEntity, subscriber);
+        commandsRepositoryInstance.get().addEventSubscription(commandEntity, subscriber);
     }
 
     private ResourceManager getResourceManager() {
