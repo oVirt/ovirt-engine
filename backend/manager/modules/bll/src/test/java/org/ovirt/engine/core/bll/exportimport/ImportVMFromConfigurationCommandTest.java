@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
@@ -88,12 +89,16 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() throws IOException {
-        ovfManager.setOsRepository(osRepository);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         doReturn(cluster).when(cmd).getCluster();
         doReturn(emptyList()).when(cmd).getImages();
 
         mockCluster();
         setXmlOvfData();
+    }
+
+    public void tearDown() {
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, null);
     }
 
     private void setXmlOvfData() throws IOException {
