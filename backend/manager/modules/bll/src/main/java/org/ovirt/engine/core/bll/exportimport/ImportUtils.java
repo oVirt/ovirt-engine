@@ -5,6 +5,9 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -14,13 +17,15 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
+@Singleton
 public class ImportUtils {
+    @Inject
+    private OsRepository osRepository;
 
     /**
      * Checks whether imported VM/Template has Graphics devices.
@@ -31,7 +36,7 @@ public class ImportUtils {
      *  - If the VM/Template has no Video devices, no Graphics devices are added
      *    (we assume headless VM/Template).
      */
-    public static void updateGraphicsDevices(VmBase vmBase, Version clusterVersion) {
+    public void updateGraphicsDevices(VmBase vmBase, Version clusterVersion) {
         if (vmBase == null || vmBase.getManagedDeviceMap() == null || clusterVersion == null) {
             return;
         }
@@ -55,7 +60,7 @@ public class ImportUtils {
         }
     }
 
-    private static boolean removeVideoDevice(VmDeviceType whenGraphicsExists, VmDeviceType videoToRemove,
+    private boolean removeVideoDevice(VmDeviceType whenGraphicsExists, VmDeviceType videoToRemove,
                                                 Map<Guid, VmDevice> managedDevicesMap) {
         if (VmDeviceCommonUtils.isVmDeviceExists(managedDevicesMap, whenGraphicsExists)) {
             Guid key = null;
@@ -73,15 +78,14 @@ public class ImportUtils {
         return false;
     }
 
-    private static List<VmDevice> getDevicesOfType(VmDeviceGeneralType type, Map<Guid, VmDevice> managedDevicesMap) {
+    private List<VmDevice> getDevicesOfType(VmDeviceGeneralType type, Map<Guid, VmDevice> managedDevicesMap) {
         return managedDevicesMap.values().stream().filter(device -> device.getType() == type).collect(toList());
     }
 
-    private static GraphicsDevice getCompatibleGraphics(VmDeviceType videoDeviceType, Version clusterVersion, VmBase vmBase) {
+    private GraphicsDevice getCompatibleGraphics(VmDeviceType videoDeviceType, Version clusterVersion, VmBase vmBase) {
         GraphicsDevice graphicsDevice = null;
         GraphicsType compatibleType = null;
 
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
         for (Pair<GraphicsType, DisplayType> graphicsDisplayPair : osRepository.getGraphicsAndDisplays(vmBase.getOsId(), clusterVersion)) {
             if (graphicsDisplayPair.getSecond().getDefaultVmDeviceType() == videoDeviceType) {
                 compatibleType = graphicsDisplayPair.getFirst();

@@ -66,6 +66,8 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     private DiskVmElementDao diskVmElementDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    private ImportUtils importUtils;
 
     private ConvertVmCallback cachedCallback;
 
@@ -277,7 +279,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         // Disk and network interface devices were already added
         vmStatic.setImages(new ArrayList<>());
         vmStatic.setInterfaces(new ArrayList<>());
-        ImportUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
+        importUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
         getVmDeviceUtils().addImportedDevices(vmStatic, false, false);
         saveDiskVmElements(vm);
     }

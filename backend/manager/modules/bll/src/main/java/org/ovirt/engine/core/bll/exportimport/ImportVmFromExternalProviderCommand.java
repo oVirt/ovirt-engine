@@ -81,6 +81,8 @@ implements QuotaStorageDependent {
     private VmDeviceDao vmDeviceDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    private ImportUtils importUtils;
 
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);
@@ -366,7 +368,7 @@ implements QuotaStorageDependent {
     protected void addVmToDb() {
         super.addVmToDb();
         if (getVm().getOrigin() == OriginType.KVM) {
-            ImportUtils.updateGraphicsDevices(getVm().getStaticData(), getStoragePool().getCompatibilityVersion());
+            importUtils.updateGraphicsDevices(getVm().getStaticData(), getStoragePool().getCompatibilityVersion());
             if (getParameters().isImportAsNewEntity()) {
                 for (VmDevice device : getVm().getStaticData().getManagedDeviceMap().values()) {
                     device.getId().setVmId(getVmId());

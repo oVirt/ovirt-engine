@@ -151,6 +151,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Inject
     private SnapshotDao snapshotDao;
     @Inject
+    private ImportUtils importUtils;
+    @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
@@ -409,7 +411,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void initGraphicsData() {
-        ImportUtils.updateGraphicsDevices(getVm().getStaticData(), getEffectiveCompatibilityVersion());
+        importUtils.updateGraphicsDevices(getVm().getStaticData(), getEffectiveCompatibilityVersion());
     }
 
     protected DiskImage getActiveVolumeDisk(List<DiskImage> diskList) {

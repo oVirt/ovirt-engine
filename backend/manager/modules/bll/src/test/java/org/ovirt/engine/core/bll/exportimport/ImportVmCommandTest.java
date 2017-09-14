@@ -89,6 +89,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Mock
     private VmHandler vmHandler;
 
+    @Mock
+    private ImportUtils importUtils;
+
     @Spy
     @InjectMocks
     private ImportVmCommand<ImportVmParameters> cmd = new ImportVmCommand<>(createParameters(), null);

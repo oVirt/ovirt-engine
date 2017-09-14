@@ -119,6 +119,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private ImportUtils importUtils;
 
     private Version effectiveCompatibilityVersion;
     private StorageDomain sourceDomain;
@@ -138,7 +140,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     public void init() {
         super.init();
         setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
-        ImportUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
+        importUtils.updateGraphicsDevices(getVmTemplate(), getEffectiveCompatibilityVersion());
         vmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
     }
 
