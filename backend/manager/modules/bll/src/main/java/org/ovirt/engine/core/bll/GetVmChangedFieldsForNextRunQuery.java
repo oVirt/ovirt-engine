@@ -52,6 +52,7 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         }
         if (VmCommonUtils.isMemoryToBeHotplugged(srcVm, dstVm)) {
             dstStatic.setMemSizeMb(srcStatic.getMemSizeMb());
+            dstStatic.setMinAllocatedMem(srcStatic.getMinAllocatedMem());
         }
 
         VmPropertiesUtils vmPropertiesUtils = SimpleDependencyInjector.getInstance().get(VmPropertiesUtils.class);

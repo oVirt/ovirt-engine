@@ -105,6 +105,8 @@ public interface CommonApplicationMessages extends Messages {
 
     String nextRunConfigurationMemoryValue();
 
+    String nextRunConfigurationMinAllocatedMemoryValue();
+
     String nextRunConfigurationVmLeaseValue();
 
     String highPerformanceConfigurationManualChange();

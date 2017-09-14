@@ -437,6 +437,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
+            hotsetAllowed = true,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private int minAllocatedMem;

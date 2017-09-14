@@ -1736,6 +1736,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                     final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
                     final boolean memoryHotPluggable =
                             VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm());
+                    final boolean minAllocatedMemoryChanged = selectedItem.getMinAllocatedMem() != getcurrentVm().getMinAllocatedMem();
                     final boolean vmLeaseUpdated = !Objects.equals(selectedItem.getLeaseStorageDomainId(), getcurrentVm().getLeaseStorageDomainId());
                     if (isHeadlessModeChanged) {
                         changedFields.add(constants.headlessMode());
@@ -1753,6 +1754,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                         confirmModel.setChangedFields(changedFields);
                         confirmModel.setCpuPluggable(cpuHotPluggable);
                         confirmModel.setMemoryPluggable(memoryHotPluggable);
+                        // it can be plugged only together with the memory, never alone
+                        confirmModel.setMinAllocatedMemoryPluggable(memoryHotPluggable && minAllocatedMemoryChanged);
                         confirmModel.setVmLeaseUpdated(vmLeaseUpdated);
 
                         confirmModel.getCommands().add(new UICommand("updateExistingVm", VmListModel.this) //$NON-NLS-1$

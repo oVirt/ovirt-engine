@@ -100,7 +100,8 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 new SetAmountOfMemoryVDSCommand.Params(
                         getVm().getRunOnVds(),
                         getVm().getId(),
-                        createMemoryDevice()));
+                        createMemoryDevice(),
+                        getParameters().getVmStaticData().getMinAllocatedMem()));
 
         if (vdsReturnValue.getSucceeded()) {
             setSucceeded(true);

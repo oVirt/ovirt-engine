@@ -53,6 +53,10 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
 
     @UiField
     @Ignore
+    HTML applyNowMinAllocatedMemoryMessage;
+
+    @UiField
+    @Ignore
     HTML applyNowVmLeaseMessage;
 
     @UiField
@@ -114,6 +118,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     void localize() {
         applyNowCpuMessage.setHTML(bulletedItem(messages.nextRunConfigurationCpuValue()));
         applyNowMemoryMessage.setHTML(bulletedItem(messages.nextRunConfigurationMemoryValue()));
+        applyNowMinAllocatedMemoryMessage.setHTML(bulletedItem(messages.nextRunConfigurationMinAllocatedMemoryValue()));
         applyNowVmLeaseMessage.setHTML(bulletedItem(messages.nextRunConfigurationVmLeaseValue()));
         vmUnpinnedMessage1.setHTML(bulletedItem(messages.unpinnedRunningVmWarningIncompatability()));
         vmUnpinnedMessage2.setHTML(bulletedItem(messages.unpinnedRunningVmWarningSecurity()));
@@ -157,6 +162,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
         hotplugPanel.setVisible(object.isCpuPluggable() || object.isMemoryPluggable() || object.isVmLeaseUpdated());
         applyNowCpuMessage.setVisible(object.isCpuPluggable());
         applyNowMemoryMessage.setVisible(object.isMemoryPluggable());
+        applyNowMinAllocatedMemoryMessage.setVisible(object.isMinAllocatedMemoryPluggable());
         applyNowVmLeaseMessage.setVisible(object.isVmLeaseUpdated());
     }
 

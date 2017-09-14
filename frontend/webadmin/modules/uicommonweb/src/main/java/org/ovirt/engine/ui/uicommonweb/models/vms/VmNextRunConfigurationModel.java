@@ -13,6 +13,7 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
     private boolean vmLeaseUpdated;
     private List<String> changedFields;
     private boolean vmUnpinned;
+    private boolean minAllocatedMemoryPluggable;
 
     public VmNextRunConfigurationModel() {
         setApplyLater(new EntityModel<>(false));
@@ -69,4 +70,11 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
         this.vmLeaseUpdated = vmLeaseUpdated;
     }
 
+    public boolean isMinAllocatedMemoryPluggable() {
+        return minAllocatedMemoryPluggable;
+    }
+
+    public void setMinAllocatedMemoryPluggable(boolean minAllocatedMemoryPluggable) {
+        this.minAllocatedMemoryPluggable = minAllocatedMemoryPluggable;
+    }
 }

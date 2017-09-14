@@ -16,7 +16,7 @@ public class SetAmountOfMemoryVDSCommand <P extends SetAmountOfMemoryVDSCommand.
     protected void executeVdsBrokerCommand() {
         try {
             status = getBroker().hotplugMemory(
-                    MemoryUtils.createHotplugMemoryParamsMap(getParameters().getMemoryDevice(), false));
+                    MemoryUtils.createHotplugMemoryParamsMap(getParameters().getMemoryDevice(), false, getParameters().getMinAllocatedMem()));
             proceedProxyReturnValue();
         } catch (RuntimeException e) {
             setVdsRuntimeErrorAndReport(e);
@@ -29,19 +29,27 @@ public class SetAmountOfMemoryVDSCommand <P extends SetAmountOfMemoryVDSCommand.
 
         private VmDevice memoryDevice;
 
-        public Params(Guid vdsId, Guid vmId, VmDevice memoryDevice) {
+        private final int minAllocatedMem;
+
+        public Params(Guid vdsId, Guid vmId, VmDevice memoryDevice, int minAllocatedMem) {
             super(vdsId, vmId);
             this.memoryDevice = memoryDevice;
+            this.minAllocatedMem = minAllocatedMem;
         }
 
         public VmDevice getMemoryDevice() {
             return memoryDevice;
         }
 
+        public int getMinAllocatedMem() {
+            return minAllocatedMem;
+        }
+
         @Override
         protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
             return super.appendAttributes(tsb)
-                    .append("memoryDevice", getMemoryDevice());
+                    .append("memoryDevice", getMemoryDevice())
+                    .append("minAllocatedMem", getMinAllocatedMem());
         }
     }
 }
