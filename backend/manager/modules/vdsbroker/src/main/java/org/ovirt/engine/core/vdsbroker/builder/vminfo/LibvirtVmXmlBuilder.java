@@ -26,7 +26,9 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -51,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -60,6 +63,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
@@ -99,6 +103,8 @@ public class LibvirtVmXmlBuilder {
     private static final int LIBVIRT_PORT_AUTOSELECT = -1;
     private static final Set<String> SPICE_CHANNEL_NAMES = new HashSet<>(Arrays.asList(
             "main", "display", "inputs", "cursor", "playback", "record", "smartcard", "usbredir"));
+    private static final int DEFAULT_HUGEPAGESIZE_X86_64 = 2048;
+    private static final int DEFAULT_HUGEPAGESIZE_PPC64LE = 16384;
 
     @Inject
     private VmDeviceDao vmDeviceDao;
@@ -114,6 +120,8 @@ public class LibvirtVmXmlBuilder {
     private VmNicFilterParameterDao vmNicFilterParameterDao;
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private VdsStatisticsDao vdsStatisticsDao;
 
     private OsRepository osRepository;
     private String serialConsolePath;
@@ -130,6 +138,7 @@ public class LibvirtVmXmlBuilder {
     private Map<String, Object> createInfo;
     private VM vm;
     private MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier;
+    private MemoizingSupplier<VdsStatistics> hostStatisticsSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
 
@@ -151,6 +160,7 @@ public class LibvirtVmXmlBuilder {
         hostDevicesSupplier = new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
                 .stream()
                 .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device)));
+        hostStatisticsSupplier = new MemoizingSupplier<>(() -> vdsStatisticsDao.get(hostId));
     }
 
     @PostConstruct
@@ -184,6 +194,7 @@ public class LibvirtVmXmlBuilder {
         writePowerManagement();
         // note that this must be called after writeDevices to get the serial console, if exists
         writeOs();
+        writeMemoryBacking();
         writeMetadata();
         return writer.getStringXML();
     }
@@ -551,6 +562,34 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
+        writer.writeEndElement();
+    }
+
+    private void writeMemoryBacking() {
+        if (!HugePageUtils.isBackedByHugepages(vm.getStaticData())) {
+            return;
+        }
+
+        writer.writeStartElement("memoryBacking");
+        writer.writeStartElement("hugepages");
+        writer.writeStartElement("page");
+        int hugepageSize = Integer.parseInt(HugePageUtils.getHugePageSize(vm.getStaticData()));
+        List<Integer> hugepageSizes = hostStatisticsSupplier.get().getHugePages().stream()
+                .map(HugePage::getSizeKB)
+                .collect(Collectors.toList());
+        if (!hugepageSizes.contains(hugepageSizes)) {
+            switch(vm.getClusterArch().getFamily()) {
+            case x86:
+                hugepageSize = DEFAULT_HUGEPAGESIZE_X86_64;
+                break;
+            case ppc:
+                hugepageSize = DEFAULT_HUGEPAGESIZE_PPC64LE;
+                break;
+            }
+        }
+        writer.writeAttributeString("size", String.valueOf(hugepageSize));
+        writer.writeEndElement();
+        writer.writeEndElement();
         writer.writeEndElement();
     }
 

@@ -46,7 +46,7 @@ public class HugePageUtils {
         return Collections.singletonMap(hugePageSize, fullPages);
     }
 
-    private static String getHugePageSize(VmBase vm) {
+    public static String getHugePageSize(VmBase vm) {
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
         Map<String, String> customProperties = util.convertProperties(vm.getCustomProperties());
         return customProperties.get("hugepages");
