@@ -238,13 +238,13 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
 
         idColumn = DisksViewColumns.getIdColumn(DiskConditionFieldAutoCompleter.ID);
         sizeColumn = DisksViewColumns.getSizeColumn(DiskConditionFieldAutoCompleter.PROVISIONED_SIZE);
-        allocationColumn = DisksViewColumns.getAllocationColumn(constants.empty());
+        allocationColumn = DisksViewColumns.getAllocationColumn(null);
         dateCreatedColumn = DisksViewColumns.getDateCreatedColumn(DiskConditionFieldAutoCompleter.CREATION_DATE);
         statusColumn = DisksViewColumns.getStatusColumn(DiskConditionFieldAutoCompleter.STATUS);
-        lunIdColumn = DisksViewColumns.getLunIdColumn(constants.empty());
-        lunSerialColumn = DisksViewColumns.getLunSerialColumn(constants.empty());
-        lunVendorIdColumn = DisksViewColumns.getLunVendorIdColumn(constants.empty());
-        lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(constants.empty());
+        lunIdColumn = DisksViewColumns.getLunIdColumn(null);
+        lunSerialColumn = DisksViewColumns.getLunSerialColumn(null);
+        lunVendorIdColumn = DisksViewColumns.getLunVendorIdColumn(null);
+        lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(null);
         qoutaColumn = DisksViewColumns.getQoutaColumn(DiskConditionFieldAutoCompleter.QUOTA);
         diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
         cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
