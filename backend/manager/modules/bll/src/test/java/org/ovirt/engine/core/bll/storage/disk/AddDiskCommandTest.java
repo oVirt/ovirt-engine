@@ -151,7 +151,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
         mockVm();
         when(diskVmElementValidator.isDiskInterfaceSupported(any())).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(command.getDiskVmElementValidator(any(), any())).thenReturn(diskVmElementValidator);
+        doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
