@@ -15,9 +15,13 @@
             color: red;
             margin-bottom: 10px
         }
+
+        .hostNetworkProviderWidget {
+            min-height: 464px;
+        }
     </ui:style>
 
-    <g:FlowPanel>
+    <g:FlowPanel addStyleNames="{style.hostNetworkProviderWidget}">
         <b:Row>
             <b:Column size="LG_12">
                 <g:Label text="{constants.automaticNetworkProviderInstallWarning}" addStyleNames="{style.warningLabel}"/>
