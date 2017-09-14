@@ -32,7 +32,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -111,9 +110,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private OsRepository osRepository;
-
-    @Mock
-    private VmDeviceUtils vmDeviceUtils;
 
     @Mock
     private DiskVmElementValidator diskVmElementValidator;
@@ -373,8 +369,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
                 .when(quotaManager).getDefaultQuotaIfNull(any(), any());
 
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-
-        injectorRule.bind(VmDeviceUtils.class, vmDeviceUtils);
     }
 
     /**
@@ -752,8 +746,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(
                 Collections.singletonList("VirtIO_SCSI"));
-
-        doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any());
 
         mockInterfaceList();
 

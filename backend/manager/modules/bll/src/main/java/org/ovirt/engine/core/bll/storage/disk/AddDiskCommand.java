@@ -244,7 +244,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
-        DiskVmElementValidator diskVmElementValidator = new DiskVmElementValidator(getParameters().getDiskInfo(), getDiskVmElement());
+        DiskVmElementValidator diskVmElementValidator =
+                getDiskVmElementValidator(getParameters().getDiskInfo(), getDiskVmElement());
 
         if (!validate(diskVmElementValidator.isVirtIoScsiValid(getVm()))) {
             return false;
