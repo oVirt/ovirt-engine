@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -558,7 +559,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         List<HostNetwork> networksToConfigure = new ArrayList<>(getParameters().getNetworkAttachments().size());
         BusinessEntityMap<VdsNetworkInterface> nics = getExistingNicsBusinessEntityMap();
 
-        for (NetworkAttachment attachment : getParameters().getNetworkAttachments()) {
+        for (NetworkAttachment attachment : getAttachmentsWithMissingUpdatedDefaultRoute()) {
             Network network = existingNetworkRelatedToAttachment(attachment);
             NetworkCluster networkCluster = network.getCluster();
             HostNetwork networkToConfigure = new HostNetwork(network, attachment);
@@ -589,6 +590,108 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
 
         return networksToConfigure;
+    }
+
+    private List<NetworkAttachment> getAttachmentsWithMissingUpdatedDefaultRoute() {
+        NetworkCluster currentDefaultRouteNetworkCluster = findCurrentDefaultRouteNetworkForCluster();
+        NetworkAttachment currentDefaultRouteNetworkAttachment = currentDefaultRouteNetworkCluster == null ? null
+                : findNetworkAttachmentBy(
+                        networkIdAttachmentPredicate(currentDefaultRouteNetworkCluster.getNetworkId()),
+                        getExistingAttachments());
+
+        VdsNetworkInterface previousDefaultRouteNic = findPreviousDefaultRouteNic();
+        NetworkAttachment previousDefaultRouteNetworkAttachment = previousDefaultRouteNic == null ? null
+                : findNetworkAttachmentBy(networkNameAttachmentPredicate(previousDefaultRouteNic.getNetworkName()),
+                        getExistingAttachments());
+
+        if (currentDefaultRouteNetworkAttachment != null && previousDefaultRouteNetworkAttachment != null
+                && currentDefaultRouteNetworkAttachment.getId().equals(previousDefaultRouteNetworkAttachment.getId())) {
+            return getParameters().getNetworkAttachments();
+        }
+
+        List<NetworkAttachment> extendedAttachments = getParameters().getNetworkAttachments();
+        NetworkAttachment potentialyMissingAttachment = getPotentialyMissingAttachment(
+                currentDefaultRouteNetworkCluster == null ? null : currentDefaultRouteNetworkCluster.getNetworkId(),
+                currentDefaultRouteNetworkAttachment,
+                previousDefaultRouteNetworkAttachment);
+        addAttachmentIfMissing(potentialyMissingAttachment, extendedAttachments);
+
+        return extendedAttachments;
+    }
+
+    private Predicate<NetworkAttachment> networkIdAttachmentPredicate(Guid networkId) {
+        return attachment -> Objects.equals(networkId, attachment.getNetworkId());
+    }
+
+    private Predicate<NetworkAttachment> networkNameAttachmentPredicate(String networkName) {
+        return attachment -> Objects.equals(networkName, attachment.getNetworkName());
+    }
+
+    private Predicate<NetworkAttachment> idAttachmentPredicate(Guid id) {
+        return attachment -> Objects.equals(id, attachment.getId());
+    }
+
+    private NetworkCluster findCurrentDefaultRouteNetworkForCluster() {
+        List<NetworkCluster> allForCluster = networkClusterDao.getAllForCluster(getClusterId());
+        return allForCluster.stream()
+                .filter(NetworkCluster::isDefaultRoute)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private NetworkAttachment findNetworkAttachmentBy(Predicate<NetworkAttachment> predicate,
+            List<NetworkAttachment> attachments) {
+        return attachments.stream()
+                .filter(attachment -> predicate.test(attachment))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private VdsNetworkInterface findPreviousDefaultRouteNic() {
+        List<VdsNetworkInterface> existingNics = getExistingNics();
+        return existingNics.stream()
+                .filter(VdsNetworkInterface::isIpv4DefaultRoute)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private NetworkAttachment getPotentialyMissingAttachment(Guid currentDefaultRouteNetworkId,
+            NetworkAttachment currentDefaultRouteNetworkAttachment,
+            NetworkAttachment previousDefaultRouteNetworkAttachment) {
+        if (isPreviousDefaultRouteInParameters(previousDefaultRouteNetworkAttachment)) {
+            return currentDefaultRouteNetworkAttachment;
+        }
+        if (isCurrentDefaultRouteInParameters(currentDefaultRouteNetworkId)) {
+            return previousDefaultRouteNetworkAttachment;
+        }
+        return null;
+    }
+
+    private void addAttachmentIfMissing(NetworkAttachment attachmentToAdd,
+            List<NetworkAttachment> extendedAttachments) {
+        if (attachmentToAdd == null) {
+            return;
+        }
+
+        if (findNetworkAttachmentBy(idAttachmentPredicate(attachmentToAdd.getId()),
+                getParameters().getNetworkAttachments()) == null
+                && !getParameters().getRemovedNetworkAttachments().contains(attachmentToAdd.getId())) {
+            extendedAttachments.add(attachmentToAdd);
+        }
+    }
+
+    private boolean isCurrentDefaultRouteInParameters(Guid currentDefaultRouteNetworkId) {
+        return currentDefaultRouteNetworkId != null
+                && findNetworkAttachmentBy(networkIdAttachmentPredicate(currentDefaultRouteNetworkId),
+                        getParameters().getNetworkAttachments()) != null;
+    }
+
+    private boolean isPreviousDefaultRouteInParameters(NetworkAttachment previousDefaultRouteNetworkAttachment) {
+        return previousDefaultRouteNetworkAttachment != null
+                && findNetworkAttachmentBy(idAttachmentPredicate(previousDefaultRouteNetworkAttachment.getId()),
+                        getParameters().getNetworkAttachments()) != null
+                && !getParameters().getRemovedNetworkAttachments()
+                        .contains(previousDefaultRouteNetworkAttachment.getId());
     }
 
     private DnsResolverConfiguration getDnsConfigurationFromNetworkOrItsAttachment(NetworkAttachment attachment,
