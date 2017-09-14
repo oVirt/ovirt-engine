@@ -35,6 +35,8 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     protected VmInfoBuilder builder;
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Inject
+    private SysprepHandler sysprepHandler;
 
     public CreateBrokerVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
@@ -117,7 +119,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
 
         switch (getParameters().getInitializationType()) {
         case Sysprep:
-            String sysPrepContent = SysprepHandler.getSysPrep(
+            String sysPrepContent = sysprepHandler.getSysPrep(
                     getParameters().getVm(),
                     getParameters().getSysPrepParams());
 
@@ -147,7 +149,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     private VmDevice getRunOncePayload() {
         switch (getParameters().getInitializationType()) {
         case Sysprep:
-            String sysPrepContent = SysprepHandler.getSysPrep(
+            String sysPrepContent = sysprepHandler.getSysPrep(
                     getParameters().getVm(),
                     getParameters().getSysPrepParams());
 

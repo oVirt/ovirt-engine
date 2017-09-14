@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -16,21 +19,22 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class SysprepHandler {
-    private static final Map<String, Integer> timeZoneIndex = new HashMap<>();
-    private static OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-
+@Singleton
+public class SysprepHandler {
     private static final Logger log = LoggerFactory.getLogger(SysprepHandler.class);
+    private static final Map<String, Integer> timeZoneIndex = new HashMap<>();
+
+    @Inject
+    private OsRepository osRepository;
 
     static {
         initTimeZones();
     }
 
-    public static String getSysPrep(VM vm, SysPrepParams sysPrepParams) {
+    public String getSysPrep(VM vm, SysPrepParams sysPrepParams) {
         String sysPrepContent = "";
         boolean useCustomScript = vm.getVmInit() != null && !StringUtils.isEmpty(vm.getVmInit().getCustomScript());
         if (useCustomScript) {
@@ -180,7 +184,7 @@ public final class SysprepHandler {
         return value != null ? value : defaultValue;
     }
 
-    private static String getTimeZone(VM vm) {
+    private String getTimeZone(VM vm) {
         String timeZone = null;
         // Can be empty if the VM was imported.
         if (vm.getVmInit() != null && StringUtils.isNotEmpty(vm.getVmInit().getTimeZone())) {
@@ -309,14 +313,14 @@ public final class SysprepHandler {
     // we use:
     // key = "Afghanistan Standard Time"
     // value = "(GMT+04:30) Afghanistan Standard Time"
-    public static String getTimezoneKey(String value) {
+    public String getTimezoneKey(String value) {
         return value.substring(value.indexOf(' ') + 1);
     }
 
     // we get "Afghanistan Standard Time" we return "175"
     // the "Afghanistan Standard Time" is the vm Key that we get from the method getTimezoneKey()
     // "175" is the timezone keys that xp/2003 excpect to get, vista/7/2008 gets "Afghanistan Standard Time"
-    public static String getTimezoneIndexByKey(String key) {
+    public String getTimezoneIndexByKey(String key) {
         for (Map.Entry<String, Integer> timeZoneEntry : timeZoneIndex.entrySet()) {
             if (getTimezoneKey(timeZoneEntry.getKey()).equals(key)) {
                 return timeZoneEntry.getValue().toString();
