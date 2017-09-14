@@ -221,8 +221,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockVmValidator();
 
         command.initEffectiveCompatibilityVersion();
-        boolean c = command.validate();
-        assertTrue("validate should have passed.", c);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -253,7 +252,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mcr.mockConfigValue(ConfigValues.VM64BitMaxMemorySizeInMB, command.getEffectiveCompatibilityVersion(), 4194304);
         mcr.mockConfigValue(ConfigValues.VMPpc64BitMaxMemorySizeInMB, command.getEffectiveCompatibilityVersion(), 1048576);
 
-        assertTrue("validate should have passed.", command.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -279,7 +278,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
         command.initEffectiveCompatibilityVersion();
-        assertTrue("validate should have passed.", command.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -297,11 +296,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
         vmStatic.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
         command.getParameters().getVm().setAutoStartup(true);
-        // when
-        boolean validInput = command.validate();
-        // then
-        assertFalse(validInput);
-        assertTrue(command.getReturnValue().getValidationMessages().contains(ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE.name()));
+
+        ValidateTestUtils.runAndAssertValidateFailure
+                (command, ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE);
     }
 
     @Test
@@ -312,10 +309,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vm.setOrigin(OriginType.RHEV);
         vmStatic.setOrigin(OriginType.RHEV);
         command.getParameters().getVm().setAutoStartup(true);
-        // when
-        boolean validInput = command.validate();
-        // then
-        assertTrue(validInput);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     private void mockGraphicsDevice() {
@@ -523,7 +517,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
         vmStatic.setDedicatedVmForVdsList(Collections.singletonList(GUIDS[2]));
         command.initEffectiveCompatibilityVersion();
-        assertTrue("validate should allow pinning VM.", command.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -583,11 +577,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setUseHostCpuFlags(true);
         vmStatic.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
 
-        // when
-        boolean validInput = command.validate();
-
-        // then
-        assertTrue(validInput);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
