@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -11,10 +12,12 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.repla
 import java.util.ArrayList;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -26,9 +29,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DiskVmElementValidatorTest {
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private OsRepository osRepository;
@@ -106,6 +112,26 @@ public class DiskVmElementValidatorTest {
         initializeOsRepository(DiskInterface.VirtIO);
         dve.setDiskInterface(DiskInterface.VirtIO);
         assertThat(validator.isDiskInterfaceSupported(vm), failsWith(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
+    }
+
+    @Test
+    public void diskImageWithSgio() {
+        VM vm = createVM(OS_WITH_NO_SUPPORTED_INTERFACES);
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        disk.setSgio(ScsiGenericIO.UNFILTERED);
+
+        assertThat(validator.isVirtIoScsiValid(vm),
+                failsWith(EngineMessage.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK));
+    }
+
+    @Test
+    public void virtioScsiDiskWithoutController() {
+        VM vm = createVM(OS_WITH_NO_SUPPORTED_INTERFACES);
+        dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        injectorRule.bind(VmDeviceUtils.class, mock(VmDeviceUtils.class));
+
+        assertThat(validator.isVirtIoScsiValid(vm),
+                failsWith(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED));
     }
 
     private void initializeOsRepository(DiskInterface diskInterface) {
