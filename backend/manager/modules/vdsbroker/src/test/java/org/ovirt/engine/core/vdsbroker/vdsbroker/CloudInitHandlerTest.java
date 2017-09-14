@@ -36,7 +36,7 @@ public class CloudInitHandlerTest {
     @Before
     public void setUp() {
         vmInit = new VmInit();
-        underTest = new CloudInitHandler(vmInit);
+        underTest = new CloudInitHandler(vmInit, CloudInitHandler.NetConfigSourceProtocol.ENI);
     }
 
     @Test
@@ -46,6 +46,7 @@ public class CloudInitHandlerTest {
         final Map<String, Object> actualMetaData = parseResult(actual);
         assertThat(actualMetaData, not(hasKey("network_config")));
         assertThat(actualMetaData, not(hasKey("network-interfaces")));
+        assertOpenstackNetworkDataFileNotCreated(actual);
     }
 
     @Test
@@ -57,6 +58,7 @@ public class CloudInitHandlerTest {
         final Map<String, Object> actualMetaData = parseResult(actual);
         assertNetworkConfig(actualMetaData);
         assertNetworkInterfaces(actualMetaData);
+        assertOpenstackNetworkDataFileNotCreated(actual);
     }
 
     @Test
@@ -69,6 +71,7 @@ public class CloudInitHandlerTest {
 
         final Map<String, Object> actualMetaData = parseResult(actual);
         assertDnsProperties(actualMetaData);
+        assertOpenstackNetworkDataFileNotCreated(actual);
     }
 
     private void assertDnsProperties(Map<String, Object> actualMetaData) {
@@ -122,5 +125,9 @@ public class CloudInitHandlerTest {
         // vmInitNetwork.setIpv6Prefix(IPV6_PREFIX);
         // vmInitNetwork.setIpv6Gateway(IPV6_GATEWAY);
         return vmInitNetwork;
+    }
+
+    private void assertOpenstackNetworkDataFileNotCreated(Map<String, byte[]> actual) {
+        assertThat(actual, not(hasKey("openstack/latest/network_data.json")));
     }
 }

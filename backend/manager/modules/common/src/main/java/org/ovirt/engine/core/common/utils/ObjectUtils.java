@@ -28,4 +28,8 @@ public class ObjectUtils {
     public static Integer minIfExists(Integer a, Integer b) {
         return a != null && b != null ? Math.min(a, b) : null;
     }
+
+    public static boolean isEmpty(Collection<?> c) {
+        return c == null || c.isEmpty();
+    }
 }

@@ -226,7 +226,8 @@ public class VmInitModel extends Model {
 
         getIpv4BootProtocolList().setItems(Arrays.asList(Ipv4BootProtocol.values()));
         getIpv4BootProtocolList().setSelectedItem(Ipv4BootProtocol.NONE);
-        getIpv6BootProtocolList().setItems(Arrays.asList(Ipv6BootProtocol.values()));
+        // only add values which are supported by cloud-init. autoconf ('stateless address autconfiguration') is not supported by cloud-init 0.7.9
+        getIpv6BootProtocolList().setItems(Arrays.asList(Ipv6BootProtocol.NONE, Ipv6BootProtocol.DHCP, Ipv6BootProtocol.STATIC_IP));
         getIpv6BootProtocolList().setSelectedItem(Ipv6BootProtocol.NONE);
 
         VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
@@ -652,6 +653,19 @@ public class VmInitModel extends Model {
         }
     }
 
+    /**
+     * hard-code startOnBoot to true and disable its modification, because cloud-init 0.7.9 does not support false
+     */
+    private void hardCodeStartOnBoot() {
+        if (getNetworkStartOnBoot() == null) {
+            setNetworkStartOnBoot(new EntityModel<>(true));
+        }
+        else {
+            getNetworkStartOnBoot().setEntity(true);
+        }
+        getNetworkStartOnBoot().setIsChangeable(false);
+    }
+
     /* === Network === */
 
     private void networkList_SelectedItemChanged() {
@@ -751,7 +765,7 @@ public class VmInitModel extends Model {
         getNetworkIpv6Prefix().setEntity(vmInitNetwork == null ? null : vmInitNetwork.getIpv6Prefix());
         getNetworkIpv6Gateway().setEntity(vmInitNetwork == null ? null : vmInitNetwork.getIpv6Gateway());
 
-        getNetworkStartOnBoot().setEntity(networkName == null ? null : startOnBootNetworkNames.contains(networkName));
+        hardCodeStartOnBoot();
     }
 
     public void osTypeChanged(Integer selectedItem) {

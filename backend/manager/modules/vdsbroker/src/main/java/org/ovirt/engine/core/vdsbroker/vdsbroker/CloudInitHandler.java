@@ -8,11 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpInfoFetcher;
 import org.ovirt.engine.core.utils.network.vm.VmInitNetworkIpv4InfoFetcher;
@@ -32,20 +35,50 @@ public class CloudInitHandler {
     private final Map<String, byte[]> files;
     private int nextFileIndex;
     private String interfaces;
+    private Map<String, Object> networkData;
+    private final NetConfigSourceProtocol sourceProtocol;
 
     private final String passwordKey = "password";
+
+    public List<EngineMessage> validate(VmInit vmInit) {
+        return new VmInitToOpenStackMetadataAdapter().validate(vmInit);
+    }
 
     private enum CloudInitFileMode {
         FILE,
         NETWORK;
     }
 
+    /**
+     * The protocol of the input of the network configuration to cloud-init.
+     * Cloud-init supports several source protocols as described in
+     *      http://cloudinit.readthedocs.io/en/latest/topics/network-config.html#network-configuration-sources
+     *
+     * ENI has become a legacy protocol that cannot support IPv6.
+     * The Openstack Metadata protocol is a successor. It is described in
+     *      https://specs.openstack.org/openstack/nova-specs/specs/liberty/implemented/metadata-service-network-info.html
+     *
+     */
+    enum NetConfigSourceProtocol {
+        ENI, OPENSTACK_METADATA
+    }
+
     public CloudInitHandler(VmInit vmInit) {
+        this(vmInit, NetConfigSourceProtocol.OPENSTACK_METADATA);
+    }
+
+    /**
+     * This constructor is just for backward compatibility of ENI flow unit testing !!!
+     * Do not make it public unless you would like to make public the ability
+     * to configure the source protocol of the network details.
+     */
+    CloudInitHandler (VmInit vmInit, NetConfigSourceProtocol sourceProtocol){
         this.vmInit = vmInit;
         metaData = new HashMap<>();
         userData = new HashMap<>();
         files = new HashMap<>();
         nextFileIndex = 0;
+        this.sourceProtocol = sourceProtocol;
     }
 
 
@@ -70,6 +103,7 @@ public class CloudInitHandler {
 
         String metaDataStr = mapToJson(metaData);
         String userDataStr = mapToYaml(userData);
+        String networkDataStr = !MapUtils.isEmpty(networkData) ? mapToJson(networkData) : "";
 
         if (vmInit != null && vmInit.getCustomScript() != null) {
             userDataStr += vmInit.getCustomScript();
@@ -82,7 +116,10 @@ public class CloudInitHandler {
 
         files.put("openstack/latest/meta_data.json", metaDataStr.getBytes("UTF-8"));
         files.put("openstack/latest/user_data", userDataStr.getBytes("UTF-8"));
-
+        if (isOpenstackMetadataProtocol() && !StringUtils.isEmpty(networkDataStr)) {
+            //must not pass an empty file or a file with an empty json to cloud-init-0.7.9-9 because the whole init flow fails
+            files.put("openstack/latest/network_data.json", networkDataStr.getBytes("UTF-8"));
+        }
         // mask password for log if exists
         if (metaDataStr.contains(passwordKey) && vmInit != null && vmInit.getRootPassword() != null) {
             String oldStr = String.format("\"%s\" : \"%s\"", passwordKey, vmInit.getRootPassword());
@@ -91,10 +128,23 @@ public class CloudInitHandler {
         }
         log.debug("cloud-init meta-data:\n{}", metaDataStr);
         log.debug("cloud-init user-data:\n{}", userDataStr);
-
+        if (isOpenstackMetadataProtocol()) {
+            log.debug("cloud-init network-data:\n{}", networkDataStr);
+        }
         return files;
     }
 
+    private void storeNetwork() throws UnsupportedEncodingException {
+        if (isOpenstackMetadataProtocol()) {
+            networkData = new VmInitToOpenStackMetadataAdapter().asMap(vmInit);
+        } else {
+            storeNetworkAsEni();
+        }
+    }
+
+    private boolean isOpenstackMetadataProtocol() {
+        return sourceProtocol == NetConfigSourceProtocol.OPENSTACK_METADATA;
+    }
 
     private void storeHostname() {
         if (!StringUtils.isEmpty(vmInit.getHostname())) {
@@ -126,7 +176,7 @@ public class CloudInitHandler {
         }
     }
 
-    private void storeNetwork() throws UnsupportedEncodingException {
+    private void storeNetworkAsEni() throws UnsupportedEncodingException {
         StringBuilder output = new StringBuilder();
 
         if (vmInit.getNetworks() != null) {
