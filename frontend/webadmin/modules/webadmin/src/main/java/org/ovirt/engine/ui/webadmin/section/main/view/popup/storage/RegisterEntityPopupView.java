@@ -24,7 +24,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
@@ -46,11 +46,11 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
 
     private M registerEntityModel;
 
-    @UiField
+    @UiField(provided = true)
     SplitLayoutPanel splitLayoutPanel;
 
     @UiField
-    SimplePanel entityInfoContainer;
+    ResizeLayoutPanel entityInfoContainer;
 
     @UiField(provided = true)
     @Ignore

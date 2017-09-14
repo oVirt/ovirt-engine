@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.common.widget.RadioButtonPanel;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
@@ -42,7 +43,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<AttachDiskModel> {
 
@@ -125,13 +125,13 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
 
     private void initAttachPanelWidget() {
         // Create tables container
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(imageDiskTable);
-        verticalPanel.add(lunDiskTable);
-        verticalPanel.add(cinderDiskTable);
+        FlowPanel panel = new FlowPanel();
+        panel.add(imageDiskTable);
+        panel.add(lunDiskTable);
+        panel.add(cinderDiskTable);
 
         // Create ValidatedPanelWidget and add tables container
-        attachDiskPanel.setWidget(verticalPanel);
+        attachDiskPanel.setWidget(panel);
     }
 
     private void initDiskImagesTable() {
@@ -220,7 +220,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 "30px"); //$NON-NLS-1$
 
         imageDiskTable.setWidth("100%"); // $NON-NLS-1$
-        imageDiskTable.setHeight("100%"); // $NON-NLS-1$
+        imageDiskTable.setEmptyTableWidget(new NoItemsLabel());
     }
 
     private void initLunDisksTable() {
@@ -337,7 +337,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 "30px"); //$NON-NLS-1$
 
         lunDiskTable.setWidth("100%"); // $NON-NLS-1$
-        lunDiskTable.setHeight("100%"); // $NON-NLS-1$
+        lunDiskTable.setEmptyTableWidget(new NoItemsLabel());
     }
 
     private void initCinderDisksTable() {
@@ -408,7 +408,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 "30px"); //$NON-NLS-1$
 
         cinderDiskTable.setWidth("100%"); // $NON-NLS-1$
-        cinderDiskTable.setHeight("100%"); // $NON-NLS-1$
+        cinderDiskTable.setEmptyTableWidget(new NoItemsLabel());
     }
 
     @Override

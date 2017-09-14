@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
@@ -31,13 +32,18 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.view.client.NoSelectionModel;
 
 public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, M extends RegisterEntityModel<T, D>>
-        extends TabLayoutPanel {
+        extends TabLayoutPanel implements RequiresResize, SelectionHandler<Integer> {
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -55,6 +61,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
 
         init();
         addStyles();
+        addSelectionHandler(this);
     }
 
     protected abstract void init();
@@ -63,6 +70,37 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
 
     private void addStyles() {
         getElement().getStyle().setPosition(Style.Position.STATIC);
+    }
+
+    @Override
+    public void onResize() {
+        setHeight(getParent().getOffsetHeight() + Unit.PX.getType());
+    }
+
+    @Override
+    public void onSelection(SelectionEvent<Integer> event) {
+        setHeight(getParent().getOffsetHeight() + Unit.PX.getType());
+    }
+
+    @Override
+    public void setHeight(String height) {
+        super.setHeight(height);
+        // 14 for the padding and border of the layout panel defined in .gwt-TabLayoutPanel css class.
+        int heightInt = Integer.parseInt(height.substring(0, height.length() - 2)) - 14;
+        Scheduler.get().scheduleDeferred(() -> {
+            if (disksTable != null) {
+                disksTable.setHeight(heightInt - disksTable.getGridHeaderHeight() + Unit.PX.getType());
+            }
+            if (nicsTable != null) {
+                nicsTable.setHeight(heightInt - nicsTable.getGridHeaderHeight() + Unit.PX.getType());
+            }
+            if (appsTable != null) {
+                appsTable.setHeight(heightInt - appsTable.getGridHeaderHeight() + Unit.PX.getType());
+            }
+            if (containersTable != null) {
+                containersTable.setHeight(heightInt - containersTable.getGridHeaderHeight() + Unit.PX.getType());
+            }
+        });
     }
 
     protected void initDisksTable() {
@@ -134,6 +172,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         disksTable.setRowData(new ArrayList<EntityModel>());
         disksTable.setWidth("100%"); // $NON-NLS-1$
         disksTable.setSelectionModel(new NoSelectionModel());
+        disksTable.setEmptyTableWidget(new NoItemsLabel());
     }
 
     private Column<DiskImage, String> getDiskQuotaColumn() {
@@ -268,6 +307,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         nicsTable.setRowData(new ArrayList<EntityModel>());
         nicsTable.setWidth("100%"); // $NON-NLS-1$
         nicsTable.setSelectionModel(new NoSelectionModel());
+        nicsTable.setEmptyTableWidget(new NoItemsLabel());
     }
 
     protected void initAppsTable() {
@@ -284,6 +324,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         appsTable.setRowData(new ArrayList<EntityModel>());
         appsTable.setWidth("100%"); // $NON-NLS-1$
         appsTable.setSelectionModel(new NoSelectionModel());
+        appsTable.setEmptyTableWidget(new NoItemsLabel());
     }
 
 
@@ -324,5 +365,6 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         containersTable.setRowData(new ArrayList<EntityModel>());
         containersTable.setWidth("100%"); // $NON-NLS-1$
         containersTable.setSelectionModel(new NoSelectionModel());
+        containersTable.setEmptyTableWidget(new NoItemsLabel());
     }
 }

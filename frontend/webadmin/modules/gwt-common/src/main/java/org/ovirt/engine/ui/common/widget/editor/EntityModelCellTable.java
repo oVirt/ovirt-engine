@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
+import org.ovirt.engine.ui.common.widget.WindowHelper;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
 import org.ovirt.engine.ui.common.widget.table.HasColumns;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
@@ -65,6 +67,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     }
 
     private static final CellTableResources cellTableResources = GWT.create(CellTableResources.class);
+    private static final int scrollbarThickness = WindowHelper.determineScrollbarThickness();
 
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
@@ -73,6 +76,12 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      * Index of selection (check box) column, if {@linkplain #isSelectionColumnPresent present}.
      */
     public static final int SELECTION_COLUMN_INDEX = 0;
+    // The height of the header + 1 empty row.
+    private static final int NO_ITEMS_HEIGHT = 55;
+    // The height needed to show the spinner properly centered.
+    private static final int LOADING_HEIGHT = 96;
+    // The height of a row of data in the grid. I wish I could dynamically detect this.
+    private static final int ROW_HEIGHT = 26;
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -80,6 +89,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     private final HasDataListModelEditorAdapter<M, EntityModel> editorAdapter;
 
     private boolean selectionColumnPresent = false;
+    private boolean isHeightSet = false;
 
     /**
      * Create a new {@link EntityModelCellTable} with single selection mode.
@@ -191,7 +201,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         this(isMultiple ? SelectionMode.MULTIPLE : SelectionMode.SINGLE, resources, hideCheckbox, showSelectAllCheckbox);
     }
 
-    @SuppressWarnings("unchecked")
     public EntityModelCellTable(SelectionMode selectionMode,
             Resources resources,
             boolean hideCheckbox,
@@ -220,7 +229,61 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
         addSelectionChangeHandler();
         addCheckBoxColumn(hideCheckbox, showSelectAllCheckbox);
+        super.setHeight(LOADING_HEIGHT + Unit.PX.getType());
 
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        int rowCount = getRowCount();
+        int height = getLoadingIndicator() != null ? LOADING_HEIGHT : NO_ITEMS_HEIGHT;
+        if (rowCount > 0) {
+            height = rowCount * ROW_HEIGHT;
+        }
+        final int newHeight = height;
+        updateGridSize(newHeight);
+    }
+
+    @Override
+    public void setHeight(String height) {
+        super.setHeight(height);
+        redraw();
+        isHeightSet = true;
+    }
+
+    @Override
+    public void setRowData(int start, final List<? extends EntityModel> values) {
+        super.setRowData(start, values);
+        updateGridSize(values.size() * ROW_HEIGHT);
+    }
+
+    public void updateGridSize(final int rowHeight) {
+        Scheduler.get().scheduleDeferred(() -> {
+            int gridHeaderHeight = getGridHeaderHeight();
+            if (!isHeightSet && gridHeaderHeight > 0) {
+                resizeGridToContentHeight(rowHeight + gridHeaderHeight);
+            }
+        });
+    }
+
+    private boolean isHorizontalScrollbarVisible() {
+        int tableScrollWidth = this.getTableBodyElement().getScrollWidth();
+        return tableScrollWidth != this.getElement().getScrollWidth() && tableScrollWidth != 0;
+    }
+
+    private void resizeGridToContentHeight(int rowHeight) {
+        // +2 for top and bottom border
+        int contentHeight = rowHeight + 2;
+        if (isHorizontalScrollbarVisible()) {
+            contentHeight += scrollbarThickness;
+        }
+        super.setHeight(contentHeight + Unit.PX.getType());
+        redraw();
+    }
+
+    public int getGridHeaderHeight() {
+        return this.getTableHeadElement().getOffsetHeight();
     }
 
     public void addSelectionChangeHandler() {

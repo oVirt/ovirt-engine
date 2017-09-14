@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMo
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumn;
@@ -172,6 +173,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
         }, constants.actualSizeTemplate(), "75px"); //$NON-NLS-1$
 
         imageList.setWidth("100%"); // $NON-NLS-1$
+        imageList.setEmptyTableWidget(new NoItemsLabel());
         imageListPanel.setWidget(imageList);
     }
 

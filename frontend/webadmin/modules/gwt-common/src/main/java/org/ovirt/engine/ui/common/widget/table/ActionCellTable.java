@@ -23,6 +23,7 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
     private static final int GRID_SUBTRACT = 7;
     // The height of the header + 1 empty row.
     private static final int NO_ITEMS_HEIGHT = 55;
+    private static final int LOADING_HEIGHT = 96;
 
     private static final Resources DEFAULT_RESOURCES = GWT.create(Resources.class);
 
@@ -66,7 +67,7 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
         int windowHeight = Window.getClientHeight();
         int contentHeight = this.getTableBodyElement().getOffsetHeight();
         if (contentHeight == 0) {
-            contentHeight = NO_ITEMS_HEIGHT;
+            contentHeight = this.getLoadingIndicator() != null ? LOADING_HEIGHT : NO_ITEMS_HEIGHT;
         } else {
             contentHeight += getGridHeaderHeight();
         }

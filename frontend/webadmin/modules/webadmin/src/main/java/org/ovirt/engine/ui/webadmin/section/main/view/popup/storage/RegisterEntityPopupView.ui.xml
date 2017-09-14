@@ -37,11 +37,11 @@
                     </g:SimplePanel>
                 </g:center>
                 <g:south size="265">
-                    <g:SimplePanel addStyleNames="{style.containerPanel}">
-                        <g:SimplePanel addStyleNames="{style.containerPanelInner}">
-                            <g:SimplePanel ui:field="entityInfoContainer" />
-                        </g:SimplePanel>
-                    </g:SimplePanel>
+                    <g:ResizeLayoutPanel addStyleNames="{style.containerPanel}">
+                        <g:ResizeLayoutPanel addStyleNames="{style.containerPanelInner}">
+                            <g:ResizeLayoutPanel ui:field="entityInfoContainer" />
+                        </g:ResizeLayoutPanel>
+                    </g:ResizeLayoutPanel>
                 </g:south>
             </g:SplitLayoutPanel>
         </d:content>
