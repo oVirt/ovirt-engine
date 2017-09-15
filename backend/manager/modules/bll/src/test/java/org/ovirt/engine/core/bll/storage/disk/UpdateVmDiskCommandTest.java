@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doAnswer;
@@ -20,7 +19,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,9 +62,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -126,9 +122,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private DiskVmElementDao diskVmElementDao;
-
-    @Mock
-    private OsRepository osRepository;
 
     @Mock
     private QuotaManager quotaManager;
@@ -256,7 +249,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         initializeCommand();
         mockVdsCommandSetVolumeDescription();
-        mockInterfaceList();
         mockDefaultDiscardSupported();
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
@@ -285,8 +277,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
         initializeCommand();
-
-        mockInterfaceList();
 
         // The command should only succeed if there is no other bootable disk
         assertEquals(!boot, command.validate());
@@ -592,8 +582,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         doReturn(true).when(command).validateQuota();
 
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-
         mockVmsStoragePoolInfo(vm);
         mockToUpdateDiskVm(vm);
 
@@ -777,11 +765,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     private void mockNullVm() {
         mockGetForDisk(null);
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(null);
-    }
-
-    protected void mockInterfaceList() {
-        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn
-                (Arrays.asList("IDE", "VirtIO", "VirtIO_SCSI"));
     }
 
     protected VM createVmStatusDown() {
