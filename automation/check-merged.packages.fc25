@@ -7,6 +7,6 @@ python-devel
 git
 maven
 java-1.8.0-openjdk-devel
-rh-postgresql95-postgresql-server
+postgresql-server
 postgresql-jdbc
 net-tools

@@ -1,7 +1,15 @@
 #!/bin/bash -xe
 
-PGENGINE=/usr/bin
-PGDATA=/var/lib/pgsql/data
+if [[ "$STD_CI_DISTRO" = "el7" ]]; then
+    # On EL7 we are now using SCL PG 9.5
+    PGENGINE=/opt/rh/rh-postgresql95/root/usr/bin
+    PGDATA=/var/opt/rh/rh-postgresql95/lib/pgsql/data
+    PGENV="/usr/bin/scl enable rh-postgresql95 --"
+else
+    PGENGINE=/usr/bin
+    PGDATA=/var/lib/pgsql/data
+    PGENV=""
+fi
 
 HOST=localhost
 PORT=$(seq 65000 65535 | sort -R | head -n 1)
@@ -11,13 +19,13 @@ while netstat -tulpn | grep -q "$PORT"; do
 done
 
 function cleanup {
-  su -l postgres -c "$PGENGINE/pg_ctl stop -D '$PGDATA' -s -m fast"
+  su -l postgres -c "$PGENV $PGENGINE/pg_ctl stop -D '$PGDATA' -s -m fast"
 }
 
 trap cleanup EXIT
 
 # Build pgdata folder
-su -l postgres -c "$PGENGINE/initdb --pgdata='$PGDATA' --auth='ident'"
+su -l postgres -c "$PGENV $PGENGINE/initdb --pgdata='$PGDATA' --auth='ident'"
 
 echo "host    all     all     127.0.0.1/0     trust" > $PGDATA/pg_hba.conf
 echo >> $PGDATA/pg_hba.conf
@@ -30,7 +38,7 @@ echo >> $PGDATA/pg_hba.conf
 echo "host    engine  engine  ::0/0   md5" >> $PGDATA/pg_hba.conf
 
 # Start postgres server
-su -l postgres -c "$PGENGINE/pg_ctl start -D ${PGDATA} -s -o \"-h $HOST -p $PORT\" -w -t 300"
+su -l postgres -c "$PGENV $PGENGINE/pg_ctl start -D ${PGDATA} -s -o \"-h $HOST -p $PORT\" -w -t 300"
 
 if [ $? -ne 0 ]; then
     exit 1
@@ -39,13 +47,12 @@ fi
 CI_MAVEN_SETTINGS=$1
 DB_NAME=ovirt_engine_dao_unit_tests
 
-su - postgres -c "psql -h $HOST -p $PORT -d template1 -c \"create role engine;\" || \:"
-su - postgres -c "psql -h $HOST -p $PORT -d template1 -c \"ALTER ROLE engine WITH login\" || \:"
-su - postgres -c "dropdb -h $HOST -p $PORT engine || \:"
-su - postgres -c "psql -h $HOST -p $PORT -d template1 -c \"create database ${DB_NAME} owner engine;\""
+su - postgres -c "$PGENV psql -h $HOST -p $PORT -d template1 -c \"create role engine;\" || \:"
+su - postgres -c "$PGENV psql -h $HOST -p $PORT -d template1 -c \"ALTER ROLE engine WITH login\" || \:"
+su - postgres -c "$PGENV dropdb -h $HOST -p $PORT engine || \:"
+su - postgres -c "$PGENV psql -h $HOST -p $PORT -d template1 -c \"create database ${DB_NAME} owner engine;\""
 
-PGPASSWORD=engine ./packaging/dbscripts/schema.sh -c apply -d ${DB_NAME} \
-    -u engine -s $HOST -p $PORT
+$PGENV /usr/bin/bash -c "PGPASSWORD=engine ./packaging/dbscripts/schema.sh -c apply -d ${DB_NAME} -u engine -s $HOST -p $PORT"
 
 if [ $? -ne 0 ]; then
     exit 1
