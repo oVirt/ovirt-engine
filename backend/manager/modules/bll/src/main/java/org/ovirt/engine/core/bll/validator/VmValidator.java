@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -299,7 +298,7 @@ public class VmValidator {
         // Sound device controller requires one PCI slot
         pciInUse += isSoundDeviceEnabled ? 1 : 0;
 
-        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+        OsRepository osRepository = Injector.get(OsRepository.class);
 
         int maxPciSlots = osRepository.getMaxPciDevices(osId, clusterVersion);
 

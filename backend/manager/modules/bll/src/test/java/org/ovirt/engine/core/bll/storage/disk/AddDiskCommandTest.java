@@ -60,7 +60,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
@@ -368,7 +367,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
                     invocation.getArguments()[0] : Guid.newGuid())
                 .when(quotaManager).getDefaultQuotaIfNull(any(), any());
 
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        injectorRule.bind(OsRepository.class, osRepository);
     }
 
     /**
@@ -395,7 +394,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     protected void mockInterfaceList() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         List<String> diskInterfaces = Arrays.asList("IDE", "VirtIO", "VirtIO_SCSI");
         when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(diskInterfaces);
     }
@@ -431,7 +429,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockMaxPciSlots() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any());
     }
 

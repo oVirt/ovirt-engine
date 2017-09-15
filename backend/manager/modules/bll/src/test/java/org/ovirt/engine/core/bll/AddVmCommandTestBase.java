@@ -112,6 +112,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     protected abstract T createCommand();
 
     private void initOsRepository() {
+        injectorRule.bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 

@@ -21,8 +21,6 @@ import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -101,7 +99,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     }
 
     private void mockMaxPciSlots() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any());
     }
 }
