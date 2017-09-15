@@ -1123,6 +1123,7 @@ fi
 %{engine_data}/bin/generate-pgpass.sh
 %{engine_data}/bin/ovirt-engine-extensions-tool.sh
 %{engine_data}/bin/ovirt-register-sso-client-tool.sh
+%{engine_data}/bin/vdsm_to_network_name_map
 %{engine_data}/bin/ovirt-engine-crypto-tool.sh
 %{engine_data}/bin/ovirt-engine-role.sh
 %{engine_data}/conf/extensions-tool-logging.properties
