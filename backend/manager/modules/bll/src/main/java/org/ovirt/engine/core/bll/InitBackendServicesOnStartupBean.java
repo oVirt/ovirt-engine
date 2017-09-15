@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.hostdeploy.HostUpdatesCheckerService;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
+import org.ovirt.engine.core.bll.network.cluster.ExternalNetworkSyncService;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -102,6 +103,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             serviceLoader.load(CertificationValidityChecker.class);
             serviceLoader.load(HostUpdatesCheckerService.class);
             serviceLoader.load(IPTablesDeprecationNotifier.class);
+            serviceLoader.load(ExternalNetworkSyncService.class);
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;

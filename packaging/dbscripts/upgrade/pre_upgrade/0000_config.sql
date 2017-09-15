@@ -728,6 +728,7 @@ select fn_db_add_config_value('DnsResolverConfigurationSupported', 'true', 'gene
 select fn_db_add_config_value('EnableAutomaticHostPowerManagement', 'false', 'general');
 select fn_db_add_config_value('ExternalNetworkProviderConnectionTimeout', '20', 'general');
 select fn_db_add_config_value('ExternalNetworkProviderTimeout', '30', 'general');
+select fn_db_add_config_value('ExternalNetworkProviderSynchronizationRate', '300', 'general');
 select fn_db_add_config_value('GetVdsmIdByVdsmToolCommand', '/usr/bin/vdsm-tool vdsm-id', 'general');
 select fn_db_add_config_value('GlusterPeerStatusCommand', 'gluster peer status --xml', 'general');
 select fn_db_add_config_value('HighUtilizationForScheduling', '90', 'general');
