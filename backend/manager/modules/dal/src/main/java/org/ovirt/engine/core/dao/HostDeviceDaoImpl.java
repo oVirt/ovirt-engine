@@ -2,7 +2,9 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Named;
@@ -41,6 +43,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
                 .addValue("parent_device_name", entity.getParentDeviceName())
                 .addValue("capability", entity.getCapability())
                 .addValue("iommu_group", entity.getIommuGroup())
+                .addValue("mdev_types", String.join(",", entity.getMdevTypes()))
                 .addValue("product_name", entity.getProductName())
                 .addValue("product_id", entity.getProductId())
                 .addValue("vendor_name", entity.getVendorName())
@@ -140,6 +143,10 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
             device.setParentDeviceName(rs.getString("parent_device_name"));
             device.setCapability(rs.getString("capability"));
             device.setIommuGroup((Integer) rs.getObject("iommu_group"));
+            String mdevTypes = rs.getString("mdev_types");
+            if (mdevTypes != null && !mdevTypes.isEmpty()) {
+                device.setMdevTypes(new HashSet<>(Arrays.asList(mdevTypes.split(","))));
+            }
             device.setProductName(rs.getString("product_name"));
             device.setProductId(rs.getString("product_id"));
             device.setVendorName(rs.getString("vendor_name"));

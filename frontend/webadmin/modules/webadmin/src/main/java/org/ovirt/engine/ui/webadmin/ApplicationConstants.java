@@ -1832,6 +1832,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String deviceName();
 
+    String mdevTypes();
+
     @Override
     String deviceType();
 

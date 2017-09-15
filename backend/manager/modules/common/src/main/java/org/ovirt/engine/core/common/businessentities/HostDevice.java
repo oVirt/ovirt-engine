@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,9 +28,11 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
     private String driver;
     private boolean assignable;
     private Map<String, String> address;
+    private Set<String> mdevTypes;
 
     public HostDevice() {
         address = Collections.emptyMap();
+        mdevTypes = Collections.emptySet();
     }
 
     @Override
@@ -180,6 +183,14 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
         return CAPABILITY_PCI.equals(getCapability());
     }
 
+    public Set<String> getMdevTypes() {
+        return mdevTypes;
+    }
+
+    public void setMdevTypes(Set<String> mdevTypes) {
+        this.mdevTypes = mdevTypes;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -203,7 +214,8 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 && Objects.equals(driver, other.driver)
                 && Objects.equals(assignable, other.assignable)
                 && Objects.equals(address, other.address)
-                && Objects.equals(vmId, other.vmId);
+                && Objects.equals(vmId, other.vmId)
+                && Objects.equals(mdevTypes, other.mdevTypes);
     }
 
     @Override
@@ -223,7 +235,8 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 driver,
                 assignable,
                 vmId,
-                address
+                address,
+                mdevTypes
         );
     }
 
@@ -246,6 +259,7 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 .append("assignable", assignable)
                 .append("vmId", vmId)
                 .append("address", address)
+                .append("mdevTypes", mdevTypes)
                 .build();
     }
 

@@ -2441,11 +2441,17 @@ public class VdsBrokerObjectsBuilder {
      *        'product_id': '0x3a36',
      *        'vendor': 'Intel Corporation',
      *        'vendor_id': '0x8086'
+     *        'mdev': {
+     *          'nvidia-11': {'available_instances': '16', 'name': 'GRID M60-0B'}
+     *           ...
+     *        }
      *      }
      *   },
      *   'pci_0000_00_1d_1': {
      *       ...
-     *   }
+     *   },
+     },
+
      * }
      */
     public static List<HostDevice> buildHostDevices(Map<String, Map<String, Map<String, Object>>> deviceList) {
@@ -2469,6 +2475,9 @@ public class VdsBrokerObjectsBuilder {
                     assignBoolValue(params, VdsProperties.IS_ASSIGNABLE)
                     : true);
 
+            if (params.containsKey(VdsProperties.MDEV)) {
+                device.setMdevTypes(((Map<String, Object>) params.get(VdsProperties.MDEV)).keySet());
+            }
             if (params.containsKey(VdsProperties.IOMMU_GROUP)) {
                 device.setIommuGroup(Integer.parseInt(params.get(VdsProperties.IOMMU_GROUP).toString()));
             }

@@ -448,6 +448,7 @@ public final class VdsProperties {
     public static final String PARAMS = "params";
     public static final String CAPABILITY = "capability";
     public static final String IOMMU_GROUP = "iommu_group";
+    public static final String MDEV = "mdev";
     public static final String PRODUCT_NAME = "product";
     public static final String PRODUCT_ID = "product_id";
     public static final String VENDOR_NAME = "vendor";

@@ -78,6 +78,12 @@ public abstract class HostDeviceModelBaseTable<M extends HostDeviceListModelBase
                 return HostDeviceColumnHelper.renderIommuGroup(object.getIommuGroup());
             }
         });
+        addColumn(constants.mdevTypes(), "120px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
+            @Override
+            public String getValue(HostDeviceView object) {
+                return object.getMdevTypes() == null ? "" : String.join(", ", object.getMdevTypes()); //$NON-NLS-1$
+            }
+        });
     }
 
     private void addColumn(String header, String width, AbstractTextColumn<HostDeviceView> column) {
