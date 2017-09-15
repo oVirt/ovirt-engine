@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -46,10 +45,10 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
     @InjectMocks
     private UpdateWatchdogCommand command = new UpdateWatchdogCommand(new WatchdogParameters(), null);
 
-    @BeforeClass
-    public static void setUpOsRepository() {
+    @Before
+    public void setUpOsRepository() {
         OsRepository osRepository = mock(OsRepository.class);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        injectorRule.bind(OsRepository.class, osRepository);
         when(osRepository.getVmWatchdogTypes(anyInt(), any())).thenReturn(WATCHDOG_MODELS);
     }
 

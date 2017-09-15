@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * A class that can validate a {@link VmWatchdog} is valid from certain aspects.
@@ -61,7 +61,7 @@ public class VmWatchdogValidator {
         }
 
         public OsRepository getOsRepository() {
-            return SimpleDependencyInjector.getInstance().get(OsRepository.class);
+            return Injector.get(OsRepository.class);
         }
     }
 
