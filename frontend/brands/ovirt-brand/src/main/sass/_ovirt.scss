@@ -1333,17 +1333,38 @@ td.datePickerYear {
   cursor: row-resize;
 }
 
-.detailMainActionPanelContainer {
-  padding: 0;
-}
 
-.detailMainActionPanelContainer .toolbar-pf {
-  margin-top: 10px;
-  height: 57px;
-}
+.detailMainHeaderContainer {
+  background: #fff;
+  border-bottom: 1px solid #d1d1d1;
+  box-shadow: 0 1px 0 rgba(3,3,3,0.045);
+  margin-bottom: 10px;
 
-.detailMainActionPanelContainer .toolbar-pf.hidden-kebab {
-  margin-right: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+
+  .detailMainBreadcrumbs {
+    flex: 1;
+    min-width: max-content;
+  }
+
+  .detailMainActionPanelContainer {
+    padding: 0 0 9px 0;
+    flex: auto;
+
+    .toolbar-pf {
+      padding-top: 0;
+
+      border: none;
+      box-shadow: none;
+
+      .hidden-kebab {
+        margin-right: 20px;
+      }
+    }
+  }
 }
 
 .breadcrumb {

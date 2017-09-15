@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gwtbootstrap3.client.ui.AnchorListItem;
-import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.NavTabs;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
@@ -43,10 +42,10 @@ public class SimpleTabPanel extends AbstractTabPanel {
     FlowPanel tabContainer;
 
     @UiField
-    Column breadCrumbsContainer;
+    FlowPanel breadCrumbsContainer;
 
     @UiField
-    Column mainActionPanel;
+    FlowPanel mainActionPanel;
 
     private final OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs;
     private final ActionPanelPresenterWidget<?, ?> actionPanel;
@@ -66,9 +65,6 @@ public class SimpleTabPanel extends AbstractTabPanel {
         this.actionPanel = actionPanel;
         initWidget();
         tabContainer.add(navTabs);
-        if (breadCrumbs != null) {
-            breadCrumbsContainer.add(breadCrumbs);
-        }
     }
 
     /**
