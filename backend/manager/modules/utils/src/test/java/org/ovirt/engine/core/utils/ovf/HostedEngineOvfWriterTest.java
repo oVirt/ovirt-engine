@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -43,7 +42,6 @@ public class HostedEngineOvfWriterTest {
 
     @Before
     public void setup() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         initVm();
         images = new ArrayList<>();
         emulatedMachine = "pc";
