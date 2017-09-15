@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -83,10 +81,6 @@ public class VmInterfaceManager {
         getVmNetworkStatisticsDao().save(iface.getStatistics());
         compensationContext.snapshotNewEntity(iface);
         compensationContext.snapshotNewEntity(iface.getStatistics());
-    }
-
-    public OsRepository getOsRepository() {
-        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     public void auditLogMacInUse(final VmNic iface) {
