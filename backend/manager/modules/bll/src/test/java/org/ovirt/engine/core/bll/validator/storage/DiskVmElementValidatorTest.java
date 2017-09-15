@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.InjectorRule;
 
@@ -50,7 +49,7 @@ public class DiskVmElementValidatorTest {
 
     @Before
     public void setUp() {
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        injectorRule.bind(OsRepository.class, osRepository);
         initializeInterfaceValidation(DiskInterface.VirtIO);
 
         disk = new DiskImage();
