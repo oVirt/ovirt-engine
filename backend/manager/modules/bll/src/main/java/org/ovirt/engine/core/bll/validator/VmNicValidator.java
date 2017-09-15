@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.di.Injector;
@@ -82,7 +81,7 @@ public class VmNicValidator {
      *         system.
      */
     public ValidationResult isCompatibleWithOs() {
-        List<String> networkDevices = getOsRepository().getNetworkDevices(osId, version);
+        List<String> networkDevices = Injector.get(OsRepository.class).getNetworkDevices(osId, version);
         List<VmInterfaceType> interfaceTypes = new ArrayList<>();
 
         for (String networkDevice : networkDevices) {
@@ -93,10 +92,6 @@ public class VmNicValidator {
                 ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS)
                 : ValidationResult.VALID;
 
-    }
-
-    public OsRepository getOsRepository() {
-        return SimpleDependencyInjector.getInstance().get(OsRepository.class);
     }
 
     public ValidationResult typeMatchesProfile() {

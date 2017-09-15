@@ -17,6 +17,7 @@ import java.util.Arrays;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,6 +44,9 @@ public class VmNicValidatorTest {
             Arrays.asList("rtl8139", "pv"));
 
     private final Guid OTHER_GUID = Guid.newGuid();
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private VmNic nic;
@@ -84,9 +89,9 @@ public class VmNicValidatorTest {
     private void isCompatibleWithOsTest(Matcher<ValidationResult> matcher, int vmInterfaceType) {
         VmNicValidator validator = spy(new VmNicValidator(nic, version, 0));
         OsRepository osRepository = mock(OsRepository.class);
-        when(validator.getOsRepository()).thenReturn(osRepository);
         when(osRepository.getNetworkDevices(anyInt(), any())).thenReturn(NETWORK_DEVICES);
         when(nic.getType()).thenReturn(vmInterfaceType);
+        injectorRule.bind(OsRepository.class, osRepository);
 
         assertThat(validator.isCompatibleWithOs(), matcher);
     }
