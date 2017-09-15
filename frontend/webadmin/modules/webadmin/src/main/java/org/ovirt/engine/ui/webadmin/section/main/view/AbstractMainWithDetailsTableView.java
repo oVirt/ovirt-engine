@@ -44,6 +44,8 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDetailsModel> extends AbstractMainTableView<T, M>
         implements AbstractMainWithDetailsPresenter.ViewDef<T> {
 
+    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
+
     protected DetailsTransitionHandler<T> transitionHandler;
 
     private Column breadCrumbsColumn;
@@ -64,6 +66,7 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
         FlowPanel tableContainer = table.getOuterWidget();
         addBreadCrumbs(tableContainer);
         addActionSearchPanel(tableContainer);
+        table.addStyleName(OBRAND_MAIN_TAB);
         table.addStyleName(Styles.CONTAINER_FLUID);
     }
 
