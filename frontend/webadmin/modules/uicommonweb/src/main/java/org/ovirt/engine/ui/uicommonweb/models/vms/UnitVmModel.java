@@ -1888,7 +1888,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public boolean isHostedEngine() {
         boolean isExistingVmBehavior = getBehavior() instanceof ExistingVmModelBehavior;
         if (isExistingVmBehavior) {
-            return ((ExistingVmModelBehavior) getBehavior()).getVm().isHostedEngine();
+            ExistingVmModelBehavior behavior = (ExistingVmModelBehavior)getBehavior();
+            return behavior.getVm() != null ? behavior.getVm().isHostedEngine() : false;
         }
         return false;
     }
