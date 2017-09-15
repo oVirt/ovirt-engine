@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -35,6 +36,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
@@ -461,6 +463,34 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     new ArrayList<>(Arrays.asList(new Object[]{"ImportFile", //$NON-NLS-1$
                             host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS,
                             model.getActivateDomain().getEntity()}))).run();
+        } else if (model.getCurrentStorageItem() instanceof GlusterStorageModel) {
+            GlusterStorageModel glusterModel = (GlusterStorageModel) model.getCurrentStorageItem();
+            glusterModel.setMessage(null);
+
+            // Check checkbox is selected or not
+            if (glusterModel.getLinkGlusterVolume().getEntity()
+                    && glusterModel.getGlusterVolumes().getSelectedItem() != null) {
+                GlusterBrickEntity brick = glusterModel.getGlusterVolumes().getSelectedItem().getBricks().get(0);
+                if (brick != null) {
+                    String server =
+                            brick.getNetworkId() != null && StringHelper.isNotNullOrEmpty(brick.getNetworkAddress())
+                                    ? brick.getNetworkAddress()
+                                    : brick.getServerName();
+                    path = server + ":/" //$NON-NLS-1$
+                            + glusterModel.getGlusterVolumes().getSelectedItem().getName();
+                }
+            } else if (!glusterModel.getLinkGlusterVolume().getEntity()) {
+                path = glusterModel.getPath().getEntity();
+            }
+            if (StringHelper.isNotNullOrEmpty(path)) {
+                Task.create(this,
+                        new ArrayList<>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
+                                host.getId(), path, glusterModel.getRole(), glusterModel.getType(),
+                                model.getActivateDomain().getEntity() })))
+                        .run();
+            } else {
+                return;
+            }
         } else if (model.getCurrentStorageItem() instanceof PosixStorageModel) {
             PosixStorageModel posixModel = (PosixStorageModel) model.getCurrentStorageItem();
             posixModel.setMessage(null);
