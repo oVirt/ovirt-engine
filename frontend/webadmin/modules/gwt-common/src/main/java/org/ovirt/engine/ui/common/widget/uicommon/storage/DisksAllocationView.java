@@ -36,6 +36,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel>, HasElementId,
     FocusableComponentsContainer, PatternFlyCompatible {
 
+    private static final String HEADER_HEIGHT = "26px"; // $NON-NLS-1$
+
     interface Driver extends UiCommonEditorDriver<DisksAllocationModel, DisksAllocationView> {
     }
 
@@ -128,6 +130,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
         listHeader.setRowData(new ArrayList<DisksAllocationModel>());
         listHeader.setWidth("100%"); // $NON-NLS-1$
+        listHeader.setHeight(HEADER_HEIGHT);
 
         diskListHeaderPanel.setWidget(listHeader);
     }
