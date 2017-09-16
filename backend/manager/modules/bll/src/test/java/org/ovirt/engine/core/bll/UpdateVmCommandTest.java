@@ -19,6 +19,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -122,8 +123,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @InjectMocks
     private NumaValidator numaValidator;
 
-    @Spy
-    @InjectMocks
+    @Mock
     private VmHandler vmHandler;
 
     @ClassRule
@@ -131,7 +131,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockConfig(ConfigValues.MaxVmNameLength, 64),
         mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
         mockConfig(ConfigValues.VmPriorityMaxValue, 100),
-        mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
+        mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
+        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singleton(Version.getLast())))
     );
 
     private static VmManagementParametersBase initParams() {
@@ -143,6 +144,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         VmManagementParametersBase params = new VmManagementParametersBase();
         params.setCommandType(ActionType.UpdateVm);
         params.setVmStaticData(vmStatic);
+        params.setUpdateNuma(true);
 
         return params;
     }
@@ -174,7 +176,13 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         displayTypeMap.get(osId).put(version, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
 
-        vmHandler.init();
+        when(vmHandler.isOsTypeSupported(anyInt(), any(), any())).thenReturn(true);
+        when(vmHandler.isCpuSupported(anyInt(), any(), any(), any())).thenReturn(true);
+        when(vmHandler.isUpdateValid(any(), any(), any())).thenReturn(true);
+        when(vmHandler.validateDedicatedVdsExistOnSameCluster(any(), any())).thenReturn(true);
+        when(vmHandler.isNumOfMonitorsLegal(any(), anyInt(), any())).thenReturn(true);
+        when(vmHandler.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any(), any())).thenReturn(true);
+
         vm = new VM();
         vmStatic = command.getParameters().getVmStaticData();
         group = new Cluster();
@@ -194,6 +202,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         doReturn(vmDeviceUtils).when(command).getVmDeviceUtils();
         doReturn(numaValidator).when(command).getNumaValidator();
+
+        command.init();
     }
 
     @Test
