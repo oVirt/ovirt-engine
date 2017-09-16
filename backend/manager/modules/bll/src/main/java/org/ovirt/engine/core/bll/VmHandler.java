@@ -47,7 +47,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.TransientField;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -735,21 +734,6 @@ public class VmHandler implements BackendService {
     private static int getMaxNumberOfMonitors() {
         List<String> values = Config.getValue(ConfigValues.ValidNumOfMonitors);
         return values.stream().map(String::trim).mapToInt(Integer::parseInt).max().orElse(0);
-    }
-
-    /**
-     * Returns the vm's active snapshot, or null if one doesn't exist.
-     * Note that this method takes into consideration that the vm snapshots are already loaded from DB.
-     * @param vm The vm to get the active snapshot from.
-     * @return the vm's active snapshot, or null if one doesn't exist.
-     */
-    public static Snapshot getActiveSnapshot(VM vm) {
-        for (Snapshot snapshot : vm.getSnapshots()) {
-            if (snapshot.getType() == SnapshotType.ACTIVE) {
-                return snapshot;
-            }
-        }
-        return null;
     }
 
     public static ValidationResult canRunActionOnNonManagedVm(VM vm, ActionType actionType) {

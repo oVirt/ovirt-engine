@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -999,11 +1000,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     @Override
     protected Snapshot getActiveSnapshot() {
-        Snapshot activeSnapshot = VmHandler.getActiveSnapshot(getVm());
-        if (activeSnapshot == null) {
+        Optional<Snapshot> activeSnapshot =
+                getVm().getSnapshots().stream().filter(s -> s.getType() == SnapshotType.ACTIVE).findFirst();
+
+        if (!activeSnapshot.isPresent()) {
             log.warn("VM '{}' doesn't have active snapshot in export domain", getVmId());
         }
-        return activeSnapshot;
+        return activeSnapshot.orElse(null);
     }
 
     /**
