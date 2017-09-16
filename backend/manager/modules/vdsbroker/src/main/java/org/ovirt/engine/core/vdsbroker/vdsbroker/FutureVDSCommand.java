@@ -16,7 +16,7 @@ import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 
 /**
  * This class is used for the non-blocking VDSM API. It uses Future API to fetch the response from the actual http
- * connection and computes the return value when the the caller is fetching the VDSReturnValue.
+ * connection and computes the return value when the caller is fetching the VDSReturnValue.
  *
  */
 public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> implements FutureVDSCall<VDSReturnValue> {

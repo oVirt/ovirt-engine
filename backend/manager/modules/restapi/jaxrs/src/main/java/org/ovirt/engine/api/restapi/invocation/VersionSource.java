@@ -31,7 +31,7 @@ public enum VersionSource {
     HEADER,
 
     /**
-     * Indicates that the version has been extracted from the the prefix of the URL, for example, if the request URI
+     * Indicates that the version has been extracted from the prefix of the URL, for example, if the request URI
      * contains a {@code v4} prefix like in {@code http://engine.example.com/ovirt-engine/api/v4/vms}.
      */
     URL,

@@ -150,7 +150,7 @@ public class CSRFProtectionFilter implements Filter {
         if (sessionIdHeader == null) {
             log.warn(
                 "Request for path \"{}\" from IP address {} has been rejected because CSRF protection is enabled " +
-                "for the session but the the session id header \"{}\" hasn't been provided.",
+                "for the session but the session id header \"{}\" hasn't been provided.",
                 request.getContextPath() + request.getPathInfo(),
                 request.getRemoteAddr(),
                 SESSION_ID_HEADER

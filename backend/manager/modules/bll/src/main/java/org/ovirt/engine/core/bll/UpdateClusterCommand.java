@@ -535,7 +535,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             hasVmOrHost = !vmList.isEmpty() || !allForCluster.isEmpty();
         }
 
-        // cannot change the the processor architecture while there are attached hosts or VMs to the cluster
+        // cannot change the processor architecture while there are attached hosts or VMs to the cluster
         if (result  && getCluster().supportsVirtService()
                 && !isArchitectureUpdatable()
                 && hasVmOrHost) {

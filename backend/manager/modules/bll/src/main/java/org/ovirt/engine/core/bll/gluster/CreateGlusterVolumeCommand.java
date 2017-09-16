@@ -284,7 +284,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     /**
-     * Validates the the number of bricks against the replica count or stripe count based on volume type
+     * Validates the number of bricks against the replica count or stripe count based on volume type
      */
     private boolean validateBricks(GlusterVolumeEntity volume) {
         List<GlusterBrickEntity> bricks = volume.getBricks();

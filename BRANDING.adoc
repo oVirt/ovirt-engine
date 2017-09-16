@@ -114,7 +114,7 @@ The `BrandingCascadingResourceServlet` that serves these resources is mapped to
 To reference a cascaded resource in the root `ovirt-engine.jsp`, use
 `${pageContext.request.contextPath}/ovirt-engine-theme-resource/<resource>`
 where `<resource>` is the key of the resource in `resources.properties`. To
-reference a cascaded resource in the the WebAdmin GWT host page,
+reference a cascaded resource in the WebAdmin GWT host page,
 use `${pageContext.request.contextPath}/theme-resource/<resource>`
 where `<resource>` is the key of the resource in `resources.properties`.
 

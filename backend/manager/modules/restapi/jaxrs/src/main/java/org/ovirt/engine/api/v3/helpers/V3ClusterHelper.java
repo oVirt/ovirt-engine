@@ -144,7 +144,7 @@ public class V3ClusterHelper {
      *
      * @param v3Value the V3 value
      * @param v4Value the V4 value
-     * @returns {@code true} the the values are compatible, {@code false} otherwise
+     * @returns {@code true} the values are compatible, {@code false} otherwise
      */
     private static boolean arePropertiesCompatible(Integer v3Value, Integer v4Value) {
         return v3Value == null || v4Value == null || Objects.equals(v3Value, v4Value);

@@ -5,7 +5,7 @@ package org.ovirt.engine.ui.uicommonweb.builders;
  * Base synchronous implementation of the {@link Builder}. It takes care of the boilerplate invocation of the rest and lets it's descendants
  * to only take care of copying parameters.
  * <p>
- * Use this only when the the descendant class does not do any async call. Otherwise implement the {@link Builder} directly
+ * Use this only when the descendant class does not do any async call. Otherwise implement the {@link Builder} directly
  */
 public abstract class BaseSyncBuilder<S, D> implements SyncBuilder<S, D> {
 

@@ -1782,7 +1782,7 @@ public class VdsBrokerObjectsBuilder {
     }
 
     /***
-     * resolve the the host's interface that is being used to communicate with engine.
+     * resolve the host's interface that is being used to communicate with engine.
      *
      * @return host's interface that being used to communicate with engine, null otherwise
      */

@@ -42,7 +42,7 @@ public interface OsRepository {
     Map<Integer, String> getUniqueOsNames();
 
     /**
-     * @return map of osId to the the os name
+     * @return map of osId to the os name
      */
     Map<Integer, String> getOsNames();
 
@@ -66,7 +66,7 @@ public interface OsRepository {
     List<Integer> getWindowsOss();
 
     /**
-     * @return map of osId to the the os architecture
+     * @return map of osId to the os architecture
      */
     Map<Integer, ArchitectureType> getOsArchitectures();
 

@@ -359,7 +359,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             ActionReturnValue returnValue =
                     checkAndPerformRollbackUsingCommand(ActionType.RemoveImage, removeImageParams, null);
             if (returnValue.getSucceeded()) {
-                // Starting to monitor the the tasks - RemoveImage is an internal command
+                // Starting to monitor the tasks - RemoveImage is an internal command
                 // which adds the taskId on the internal task ID list
                 startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
             }

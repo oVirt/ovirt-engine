@@ -2049,7 +2049,7 @@
           <xs:element name="port" type="xs:unsignedShort" minOccurs="0"/>
           <xs:element name="type" type="xs:string" minOccurs="0"/>
           <!-- This element is deprecated because it uses a mix of attributes and text content, which makes it
-               impossible to send the values independently. Use the the "spm" element instead. -->
+               impossible to send the values independently. Use the "spm" element instead. -->
           <xs:element name="storage_manager" type="StorageManager" minOccurs="0"/>
           <xs:element name="spm" type="SPM" minOccurs="0"/>
           <xs:element name="version" type="Version" minOccurs="0"/>
@@ -2101,7 +2101,7 @@
   <xs:element name="device_passthrough" type="HostDevicePassthrough" />
 
   <!-- This element is deprecated because it uses a mix of attributes and text content, which makes it
-       impossible to send the values independently. Use the the "spm" element instead. -->
+       impossible to send the values independently. Use the "spm" element instead. -->
   <xs:element name="storage_manager" type="StorageManager"/>
 
   <xs:complexType name="StorageManager">

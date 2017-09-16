@@ -2442,7 +2442,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
      * be called when the created async tasks will end.
      */
     public ActionParametersBase getParentParameters() {
-        // When the parent has callback the the current command parameters should always be returned as the callback is
+        // When the parent has callback the current command parameters should always be returned as the callback is
         // responsible to execute the parent endAction() and not the AsyncTaskManager
         if (parentHasCallback()) {
             return getParameters();

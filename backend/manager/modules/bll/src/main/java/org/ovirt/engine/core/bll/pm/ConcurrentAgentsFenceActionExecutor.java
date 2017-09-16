@@ -173,7 +173,7 @@ public class ConcurrentAgentsFenceActionExecutor implements FenceActionExecutor 
         }
 
         /**
-         * If at least one agent reports status {@code PowerStatus.ON}, the the host is on (so the goal of status
+         * If at least one agent reports status {@code PowerStatus.ON}, the host is on (so the goal of status
          * action is reached), otherwise and we have to continue with processing
          */
         @Override
@@ -239,7 +239,7 @@ public class ConcurrentAgentsFenceActionExecutor implements FenceActionExecutor 
         }
 
         /**
-         * If at least one agent reports status {@code PowerStatus.ON}, the the host is on (so the goal of start
+         * If at least one agent reports status {@code PowerStatus.ON}, the host is on (so the goal of start
          * action is reached), otherwise and we have to continue with processing
          */
         @Override

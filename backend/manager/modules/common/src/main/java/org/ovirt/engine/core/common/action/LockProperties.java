@@ -18,7 +18,7 @@ public class LockProperties implements Serializable {
          */
         Execution,
         /**
-         * Lock is not released at the the of the command's execution, used when
+         * Lock is not released at the of the command's execution, used when
          * a child command is using the lock of the parent. The child command should
          * not release the lock, the parent will take care of releasing it
          */

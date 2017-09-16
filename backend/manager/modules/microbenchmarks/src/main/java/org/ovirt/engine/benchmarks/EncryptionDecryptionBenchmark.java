@@ -33,7 +33,7 @@ import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
  * <p> The methods are as close as they can to a real invocation, meaning no extra objects,<br/>
  * aside for {@link Blackhole}, or loops or preparations in the block, just the method invocation.<br/>
  * The benchmarks is avoiding loops on purpose, to not get optimized by the jvm in any way.<br/>
- * The result should be a good index for the the actual runtime performance of a code block.</p>
+ * The result should be a good index for the actual runtime performance of a code block.</p>
  *
  * @see EngineEncryptionUtils
  */
