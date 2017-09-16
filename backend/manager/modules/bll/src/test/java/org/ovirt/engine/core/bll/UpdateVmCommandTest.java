@@ -19,10 +19,8 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -282,13 +280,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testInvalidNumberOfMonitors() {
-        prepareVmToPassValidate();
-        vmStatic.setNumOfMonitors(99);
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
-    }
-
-    @Test
     public void testBlockSettingHaOnHostedEngine() {
         // given
         prepareVmToPassValidate();
@@ -380,38 +371,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
-    }
-
-    @Test
-    public void testUnsupportedCpus() {
-        prepareVmToPassValidate();
-
-        // prepare the mock values
-        HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
-        HashSet<String> value = new HashSet<>();
-        value.add(CPU_ID);
-        unsupported.put(new Pair<>(0, Version.v3_6), value);
-
-        when(osRepository.isCpuSupported(0, Version.v3_6, CPU_ID)).thenReturn(false);
-        when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
-
-        command.initEffectiveCompatibilityVersion();
-        ValidateTestUtils.runAndAssertValidateFailure(
-                command,
-                EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
-    }
-
-    @Test
-    public void testCannotUpdateOSNotSupportVirtioScsi() {
-        prepareVmToPassValidate();
-        group.setCompatibilityVersion(Version.v3_6);
-
-        doReturn(true).when(command).isVirtioScsiEnabledForVm(any());
-        when(osRepository.getDiskInterfaces(anyInt(), any())).thenReturn(Collections.singletonList("VirtIO"));
-
-        command.initEffectiveCompatibilityVersion();
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }
 
     @Test
