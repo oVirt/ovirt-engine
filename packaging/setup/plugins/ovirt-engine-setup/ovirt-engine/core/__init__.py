@@ -22,6 +22,7 @@
 from otopi import util
 
 from . import advertise_dwh
+from . import external_truststore
 from . import misc
 
 
@@ -29,6 +30,7 @@ from . import misc
 def createPlugins(context):
     misc.Plugin(context=context)
     advertise_dwh.Plugin(context=context)
+    external_truststore.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

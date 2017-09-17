@@ -325,6 +325,11 @@ class FileLocations(object):
         'engine-vacuum.sh',
     )
 
+    EXTERNAL_TRUSTSTORE = os.path.join(
+        OVIRT_ENGINE_LOCALSTATEDIR,
+        'external_truststore',
+    )
+
 
 @util.export
 class Defaults(object):
