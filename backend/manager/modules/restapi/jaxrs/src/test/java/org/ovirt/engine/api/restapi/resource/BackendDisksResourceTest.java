@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.ws.rs.core.Response;
 
@@ -167,5 +169,27 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         assertFalse(model.isSetVm());
         assertTrue(model.isSparse());
         assertTrue(model.isPropagateErrors());
+    }
+
+    @Override
+    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+        setUpEntityQueryExpectations(
+                QueryType.GetAllDisksWithSnapshots,
+                QueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                getEntityList(),
+                failure);
+
+        if (!query.isEmpty()) {
+            super.setUpQueryExpectations(query, failure);
+        }
+
+    }
+
+    private List<org.ovirt.engine.core.common.businessentities.storage.Disk> getEntityList() {
+        return IntStream.range(0, NAMES.length)
+                .mapToObj(this::getEntity)
+                .collect(Collectors.toList());
     }
 }

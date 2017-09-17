@@ -111,7 +111,9 @@ public class BackendDisksResource
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllDisksWithSnapshots, new QueryParametersBase()));
         } else {
-            return mapCollection(getBackendCollection(SearchType.Disk));
+            return mapCollection(getBackendCollection(QueryType.GetAllDisksWithSnapshots,
+                    new QueryParametersBase(),
+                    SearchType.Disk));
         }
     }
 
