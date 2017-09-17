@@ -224,7 +224,11 @@ public class DisksViewColumns {
         }
     };
 
-    public static final DiskContainersColumn diskContainersColumn = new DiskContainersColumn();
+    public static final DiskContainersColumn getdiskContainersColumn(String sortBy){
+        DiskContainersColumn diskContainersColumn = new DiskContainersColumn();
+        makeSortable(diskContainersColumn, sortBy);
+        return diskContainersColumn;
+    }
 
     public static final AbstractTextColumn<Disk> diskAlignmentColumn = new AbstractTextColumn<Disk>() {
         @Override

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
@@ -41,6 +42,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
     private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
+    private static DiskContainersColumn diskContainersColumn;
 
 
     public BaseVmDiskListModelTable(
@@ -138,7 +140,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
                 lunProductIdColumn, constants.productIdSanStorage(), luns, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns || cinder, "110px"); //$NON-NLS-1$
+                diskContainersColumn, constants.attachedToDisk(), all || images || luns || cinder, "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
                 interfaceColumn, constants.interfaceDisk(), all || images || luns || cinder, "100px"); //$NON-NLS-1$
@@ -175,5 +177,6 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(null);
         shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
+        diskContainersColumn = DisksViewColumns.getdiskContainersColumn(null);
     }
 }
