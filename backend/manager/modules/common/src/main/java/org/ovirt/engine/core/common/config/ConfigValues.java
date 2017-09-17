@@ -1173,6 +1173,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Map.class)
     IsMigrationSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    IsHighPerformanceTypeSupported,
+
     @TypeConverterAttribute(Map.class)
     IsMemorySnapshotSupported,
 

@@ -758,6 +758,9 @@ select fn_db_add_config_value_for_versions_up_to('VdsFenceOptionMapping',
 select fn_db_add_config_value_for_versions_up_to('VdsFenceType',
                                                  'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,rsa,rsb,wti',
                                                  '4.2');
+select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'false', '4.1');
+select fn_db_add_config_value('IsHighPerformanceTypeSupported', 'true', '4.2');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -152,6 +154,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     }
                 }
             }
+        }
+
+        Version effectiveCompatibilityVersion = CompatibilityVersionUtils.getEffective(getParameters().getVmTemplateData(), this::getCluster);
+        if (getParameters().getVmTemplateData().getVmType() == VmType.HighPerformance
+                && !FeatureSupported.isHighPerformanceTypeSupported(effectiveCompatibilityVersion)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HIGH_PERFORMANCE_IS_NOT_SUPPORTED,
+                    String.format("$Version %s", effectiveCompatibilityVersion));
         }
 
         if (vmHandler.isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority()).isValid() &&

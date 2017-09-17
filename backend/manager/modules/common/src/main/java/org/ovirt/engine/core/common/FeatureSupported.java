@@ -56,6 +56,16 @@ public class FeatureSupported {
     }
 
     /**
+     * Checks if High Performance VM type is supported by cluster version
+     *
+     * @param version
+     *            Compatibility version to check for.
+     */
+    public static boolean isHighPerformanceTypeSupported(Version version) {
+        return supportedInConfig(ConfigValues.IsHighPerformanceTypeSupported, version);
+    }
+
+    /**
      * Checks if memory snapshot is supported by architecture
      *
      * @param architecture
