@@ -951,7 +951,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!verifyAddVM(reasons, vmPriority)) {
+        if (!vmHandler.verifyMacPool(reasons, getVmInterfaces().size(), getMacPool())) {
+            return false;
+        }
+
+        if (!vmHandler.isVmPriorityValueLegal(vmPriority, reasons)) {
             return false;
         }
 
@@ -960,10 +964,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         return true;
-    }
-
-    protected boolean verifyAddVM(List<String> reasons, int vmPriority) {
-        return vmHandler.verifyAddVm(reasons, getVmInterfaces().size(), vmPriority, getMacPool());
     }
 
     @Override

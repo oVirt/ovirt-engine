@@ -256,18 +256,6 @@ public class VmHandler implements BackendService {
         return updateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
     }
 
-    /**
-     * Verifies the add vm command .
-     *
-     * @param reasons
-     *            The reasons.
-     * @param nicsCount
-     *            How many vNICs need to be allocated.
-     */
-    public boolean verifyAddVm(List<String> reasons, int nicsCount, int vmPriority, MacPool macPool) {
-        return verifyMacPool(reasons, nicsCount, macPool) &&  isVmPriorityValueLegal(vmPriority, reasons);
-    }
-
     public boolean verifyMacPool(List<String> reasons, int nicsCount, MacPool macPool) {
         if (macPool.getAvailableMacsCount() < nicsCount) {
             if (reasons != null) {

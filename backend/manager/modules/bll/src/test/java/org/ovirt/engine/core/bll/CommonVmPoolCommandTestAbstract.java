@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -50,6 +52,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
@@ -93,7 +96,16 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     protected StorageDomainDao storageDomainDao;
 
     @Mock
+    private VmNicDao vmNicDao;
+
+    @Mock
+    private MacPoolPerCluster macPoolPerCluster;
+
+    @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
+
+    @Mock
+    private VmHandler vmHandler;
 
     /**
      * The command under test.
@@ -144,13 +156,14 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         setUpCommand();
         mockGetStorageDomainList();
         mockDbDao();
+        when(vmHandler.verifyMacPool(any(), anyInt(), any())).thenReturn(true);
+        when(vmHandler.isVmPriorityValueLegal(anyInt(), any())).thenReturn(true);
         command.init();
     }
 
     protected void setUpCommand() {
         doNothing().when(command).initTemplate();
         doReturn(true).when(command).areTemplateImagesInStorageReady(any());
-        doReturn(true).when(command).verifyAddVm();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).setAndValidateCpuProfile();
     }

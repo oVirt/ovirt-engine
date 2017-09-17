@@ -392,7 +392,14 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
         }
 
-        if (!verifyAddVm()) {
+        final List<String> reasons = getReturnValue().getValidationMessages();
+        final int nicsCount = getParameters().getVmsCount() * vmNicDao.getAllForTemplate(getVmTemplateId()).size();
+        if (!vmHandler.verifyMacPool(reasons, nicsCount, getMacPool())) {
+            return false;
+        }
+
+        final int priority = getParameters().getVmStaticData().getPriority();
+        if (!vmHandler.isVmPriorityValueLegal(priority, reasons)) {
             return false;
         }
 
@@ -430,14 +437,6 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         }
 
         return checkDestDomains();
-    }
-
-    protected boolean verifyAddVm() {
-        final List<String> reasons = getReturnValue().getValidationMessages();
-        final int nicsCount = getParameters().getVmsCount() * vmNicDao.getAllForTemplate(getVmTemplateId()).size();
-        final int priority = getParameters().getVmStaticData().getPriority();
-
-        return vmHandler.verifyAddVm(reasons, nicsCount, priority, getMacPool());
     }
 
     protected boolean areTemplateImagesInStorageReady(Guid storageId) {
