@@ -265,16 +265,17 @@ public class VmHandler implements BackendService {
      *            How many vNICs need to be allocated.
      */
     public boolean verifyAddVm(List<String> reasons, int nicsCount, int vmPriority, MacPool macPool) {
-        boolean returnValue = true;
+        return verifyMacPool(reasons, nicsCount, macPool) &&  isVmPriorityValueLegal(vmPriority, reasons);
+    }
+
+    public boolean verifyMacPool(List<String> reasons, int nicsCount, MacPool macPool) {
         if (macPool.getAvailableMacsCount() < nicsCount) {
             if (reasons != null) {
                 reasons.add(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
             }
-            returnValue = false;
-        } else if (!isVmPriorityValueLegal(vmPriority, reasons)) {
-            returnValue = false;
+            return false;
         }
-        return returnValue;
+        return true;
     }
 
     /**
