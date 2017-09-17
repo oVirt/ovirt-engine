@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
+import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksContentTypeRadioGroup;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
@@ -65,7 +66,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     private static AbstractTextColumn<Disk> descriptionColumn;
     private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
     private static DiskContainersColumn diskContainersColumn;
-
+    private static StorageDomainsColumn storageDomainsColumn;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -174,7 +175,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.storageDomainsColumn, constants.storageDomainsDisk(), images || cinder,
+                storageDomainsColumn, constants.storageDomainsDisk(), images || cinder,
                 "180px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
@@ -253,6 +254,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
         shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
         diskContainersColumn = DisksViewColumns.getdiskContainersColumn(null);
+        storageDomainsColumn = DisksViewColumns.getStorageDomainsColumn(null);
     }
 
     void initTableOverhead() {

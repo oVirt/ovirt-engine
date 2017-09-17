@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
+import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
@@ -43,6 +44,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     private static AbstractTextColumn<Disk> descriptionColumn;
     private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
     private static DiskContainersColumn diskContainersColumn;
+    private static StorageDomainsColumn storageDomainsColumn;
 
 
     public BaseVmDiskListModelTable(
@@ -116,7 +118,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
                 allocationColumn, constants.allocationDisk(), images, "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), images || cinder, "125px"); //$NON-NLS-1$
+                storageDomainsColumn, constants.storageDomainDisk(), images || cinder, "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
                 DisksViewColumns.storageTypeColumn, constants.storageTypeDisk(), images, "100px"); //$NON-NLS-1$
@@ -178,5 +180,6 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         descriptionColumn = DisksViewColumns.getDescriptionColumn(null);
         shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
         diskContainersColumn = DisksViewColumns.getdiskContainersColumn(null);
+        storageDomainsColumn = DisksViewColumns.getStorageDomainsColumn(null);
     }
 }

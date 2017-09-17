@@ -247,7 +247,11 @@ public class DisksViewColumns {
         }
     };
 
-    public static final StorageDomainsColumn storageDomainsColumn = new StorageDomainsColumn();
+    public static final StorageDomainsColumn getStorageDomainsColumn(String sortBy) {
+        StorageDomainsColumn storageDomainsColumn = new StorageDomainsColumn();
+        makeSortable(storageDomainsColumn, sortBy);
+        return storageDomainsColumn;
+    }
 
     public static final AbstractTextColumn<Disk> storageTypeColumn = new AbstractEnumColumn<Disk, StorageType>() {
         @Override

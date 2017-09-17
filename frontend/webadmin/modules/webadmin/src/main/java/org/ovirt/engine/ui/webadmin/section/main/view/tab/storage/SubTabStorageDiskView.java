@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
+import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
@@ -43,6 +44,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     private static AbstractTextColumn<Disk> descriptionColumn;
     private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
     private static DiskContainersColumn diskContainersColumn;
+    private static StorageDomainsColumn storageDomainsColumn;
 
     @Inject
     public SubTabStorageDiskView(SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> modelProvider) {
@@ -92,7 +94,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         getTable().ensureColumnVisible(allocationColumn, constants.allocationDisk(), isDataStorage, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), true, "170px"); //$NON-NLS-1$
+                storageDomainsColumn, constants.storageDomainDisk(), true, "170px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), isCinderStorage,
                 "90px"); //$NON-NLS-1$
@@ -129,5 +131,6 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
         shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
         diskContainersColumn = DisksViewColumns.getdiskContainersColumn(null);
+        storageDomainsColumn = DisksViewColumns.getStorageDomainsColumn(null);
     }
 }
