@@ -970,7 +970,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected void executeVmCommand() {
         vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
-        List<String> errorMessages = new ArrayList<>();
+        List<String> errorMessages = getReturnValue().getValidationMessages();
         if (!canAddVm(errorMessages, destStorages.values())) {
             log.error("Failed to add VM. The reasons are: {}", String.join(",", errorMessages));
             return;
