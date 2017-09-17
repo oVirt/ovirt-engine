@@ -256,14 +256,9 @@ public class VmHandler implements BackendService {
         return updateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
     }
 
-    public boolean verifyMacPool(List<String> reasons, int nicsCount, MacPool macPool) {
-        if (macPool.getAvailableMacsCount() < nicsCount) {
-            if (reasons != null) {
-                reasons.add(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
-            }
-            return false;
-        }
-        return true;
+    public ValidationResult verifyMacPool(int nicsCount, MacPool macPool) {
+        return ValidationResult.failWith(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES)
+                .when(macPool.getAvailableMacsCount() < nicsCount);
     }
 
     /**
@@ -271,19 +266,14 @@ public class VmHandler implements BackendService {
      *
      * @param value
      *            The value.
-     * @param reasons
-     *            The reasons in case of failure (output parameter).
-     * @return <code>true</code> if VM priority value is in the correct range; otherwise, <code>false</code>.
+     * @return {@link ValidationResult#VALID} if VM priority value is in the correct range; otherwise a failing
+     * {@code {@link ValidationResult}}
      */
-    public boolean isVmPriorityValueLegal(int value, List<String> reasons) {
-        boolean res = false;
-        if (value >= 0 && value <= Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)) {
-            res = true;
-        } else {
-            reasons.add(EngineMessage.VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE.toString());
-            reasons.add(String.format("$MaxValue %1$s", Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue)));
-        }
-        return res;
+    public ValidationResult isVmPriorityValueLegal(int value) {
+        return ValidationResult.failWith(
+                EngineMessage.VM_OR_TEMPLATE_ILLEGAL_PRIORITY_VALUE,
+                String.format("$MaxValue %1$s", Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue))
+        ).unless(value >= 0 && value <= Config.<Integer> getValue(ConfigValues.VmPriorityMaxValue));
     }
 
     /**
@@ -596,18 +586,11 @@ public class VmHandler implements BackendService {
      *            Type of the OS.
      * @param architectureType
      *            The architecture type.
-     * @param reasons
-     *            The reasons.Cluster
      */
-    public boolean isOsTypeSupported(int osId,
-                                     ArchitectureType architectureType,
-                                     List<String> reasons) {
-        boolean result = VmValidationUtils.isOsTypeSupported(osId, architectureType);
-        if (!result) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_IS_NOT_SUPPORTED_BY_ARCHITECTURE_TYPE
-                    .toString());
-        }
-        return result;
+    public ValidationResult isOsTypeSupported(int osId, ArchitectureType architectureType) {
+        return ValidationResult
+                .failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_IS_NOT_SUPPORTED_BY_ARCHITECTURE_TYPE)
+                .unless(VmValidationUtils.isOsTypeSupported(osId, architectureType));
     }
 
     /**
@@ -619,22 +602,14 @@ public class VmHandler implements BackendService {
      *            Collection of graphics types (SPICE, VNC).
      * @param displayType
      *            Display type.
-     * @param reasons
-     *            The reasons.Cluster
      * @param clusterVersion
      *            The cluster version.
      */
-    public boolean isGraphicsAndDisplaySupported(int osId,
-                                                 Collection<GraphicsType> graphics,
-                                                 DisplayType displayType,
-                                                 List<String> reasons,
-                                                 Version clusterVersion) {
-        boolean result = VmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType);
-        if (!result) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
-        }
-
-        return result;
+    public ValidationResult isGraphicsAndDisplaySupported
+        (int osId, Collection<GraphicsType> graphics, DisplayType displayType, Version clusterVersion) {
+        return ValidationResult
+                .failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS)
+                .unless(VmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType));
     }
 
     /**
@@ -644,15 +619,11 @@ public class VmHandler implements BackendService {
      *            Type of the OS
      * @param clusterVersion
      *            Cluster's version
-     * @param reasons
-     *            Reasons List
      */
-    public boolean isOsTypeSupportedForVirtioScsi(int osId, Version clusterVersion, List<String> reasons) {
-        boolean result = VmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, DiskInterface.VirtIO_SCSI);
-        if (!result) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI.name());
-        }
-        return result;
+    public ValidationResult isOsTypeSupportedForVirtioScsi(int osId, Version clusterVersion) {
+        return ValidationResult
+                .failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI)
+                .unless(VmValidationUtils.isDiskInterfaceSupportedByOs(osId, clusterVersion, DiskInterface.VirtIO_SCSI));
     }
 
     /**
@@ -662,19 +633,11 @@ public class VmHandler implements BackendService {
      *            - List of interfaces the VM/Template got.
      * @param candidateInterfaceName
      *            - Candidate for interface name.
-     * @param messages
-     *            - Messages for Validate().
      * @return - True , if name is valid, false, if name already exist.
      */
-    public boolean isNotDuplicateInterfaceName
-        (List<VmNic> interfaces, final String candidateInterfaceName, List<String> messages) {
-
-        boolean candidateNameUsed = interfaces.stream().anyMatch(i -> i.getName().equals(candidateInterfaceName));
-        if (candidateNameUsed) {
-            messages.add(EngineMessage.NETWORK_INTERFACE_NAME_ALREADY_IN_USE.name());
-            return false;
-        }
-        return true;
+    public ValidationResult isNotDuplicateInterfaceName(List<VmNic> interfaces, final String candidateInterfaceName) {
+        return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_NAME_ALREADY_IN_USE)
+                .when(interfaces.stream().anyMatch(i -> i.getName().equals(candidateInterfaceName)));
     }
 
     /**
@@ -684,10 +647,8 @@ public class VmHandler implements BackendService {
      *            Collection of graphics types of a VM.
      * @param numOfMonitors
      *            Number of monitors
-     * @param reasons
-     *            Messages for Validate().
      */
-    public boolean isNumOfMonitorsLegal(Collection<GraphicsType> graphicsTypes, int numOfMonitors, List<String> reasons) {
+    public ValidationResult isNumOfMonitorsLegal(Collection<GraphicsType> graphicsTypes, int numOfMonitors) {
         boolean legal = false;
 
         if (graphicsTypes.contains(GraphicsType.VNC)) {
@@ -696,23 +657,17 @@ public class VmHandler implements BackendService {
             legal = numOfMonitors <= getMaxNumberOfMonitors();
         }
 
-        if (!legal) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS.toString());
-        }
-
-        return legal;
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS).unless(legal);
     }
 
-    public boolean isSingleQxlDeviceLegal(DisplayType displayType, int osId, List<String> reasons) {
+    public ValidationResult isSingleQxlDeviceLegal(DisplayType displayType, int osId) {
         if (displayType != DisplayType.qxl) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE.toString());
-            return false;
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE);
         }
         if (!osRepository.isSingleQxlDeviceEnabled(osId)) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE.toString());
-            return false;
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE);
         }
-        return true;
+        return ValidationResult.VALID;
     }
 
     /**
@@ -873,22 +828,20 @@ public class VmHandler implements BackendService {
         return true;
     }
 
-    public boolean isCpuSupported(int osId, Version version, String cpuName, ArrayList<String> validationMessages) {
+    public ValidationResult isCpuSupported(int osId, Version version, String cpuName) {
         String cpuId = cpuFlagsManagerHandler.getCpuId(cpuName, version);
         if (cpuId == null) {
-            validationMessages.add(EngineMessage.CPU_TYPE_UNKNOWN.name());
-            return false;
+            return new ValidationResult(EngineMessage.CPU_TYPE_UNKNOWN);
         }
         if (!osRepository.isCpuSupported(
                 osId,
                 version,
                 cpuId)) {
             String unsupportedCpus = osRepository.getUnsupportedCpus(osId, version).toString();
-            validationMessages.add(EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
-            validationMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus, "[]"));
-            return false;
+            return new ValidationResult(EngineMessage.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS,
+                    "$unsupportedCpus " + StringUtils.strip(unsupportedCpus, "[]"));
         }
-        return true;
+        return ValidationResult.VALID;
     }
 
     public void updateNumaNodesFromDb(VM vm){
@@ -948,26 +901,18 @@ public class VmHandler implements BackendService {
      * Checks that dedicated host exists on the same cluster as the VM
      *
      * @param vm                  - the VM to check
-     * @param validationMessages - Action messages - used for error reporting. null value indicates that no error messages are required.
      */
-    public boolean validateDedicatedVdsExistOnSameCluster(VmBase vm, ArrayList<String> validationMessages) {
-        boolean result = true;
+    public ValidationResult validateDedicatedVdsExistOnSameCluster(VmBase vm) {
         for (Guid vdsId : vm.getDedicatedVmForVdsList()) {
             // get dedicated host, checks if exists and compare its cluster to the VM cluster
             VDS vds = vdsDao.get(vdsId);
             if (vds == null) {
-                if (validationMessages != null) {
-                    validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST.toString());
-                }
-                result = false;
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST);
             } else if (!Objects.equals(vm.getClusterId(), vds.getClusterId())) {
-                if (validationMessages != null) {
-                    validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
-                }
-                result = false;
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
             }
         }
-        return result;
+        return ValidationResult.VALID;
     }
 
     private static final Pattern TOOLS_PATTERN = Pattern.compile(".*rhev-tools\\s+([\\d\\.]+).*");

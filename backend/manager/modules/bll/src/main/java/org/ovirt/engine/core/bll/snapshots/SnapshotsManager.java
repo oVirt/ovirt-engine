@@ -641,7 +641,7 @@ public class SnapshotsManager {
                 }
             }
             // if the required dedicated host is invalid -> use current VM dedicated host
-            if (!vmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData(), null)) {
+            if (!vmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData()).isValid()) {
                 vm.setDedicatedVmForVdsList(oldVmStatic.getDedicatedVmForVdsList());
             }
             vmHandler.updateMaxMemorySize(vm.getStaticData(), vm.getCompatibilityVersion());

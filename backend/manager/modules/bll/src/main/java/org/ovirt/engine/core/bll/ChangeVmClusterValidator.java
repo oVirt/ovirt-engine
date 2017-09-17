@@ -105,21 +105,18 @@ public class ChangeVmClusterValidator {
             }
 
             // Check if the display type is supported
-            if (!vmHandler.isGraphicsAndDisplaySupported(
+            if (!parentCommand.validate(vmHandler.isGraphicsAndDisplaySupported(
                     vm.getOs(),
                     vmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
                     vm.getDefaultDisplayType(),
-                    parentCommand.getReturnValue().getValidationMessages(),
-                    vmCompatibilityVersion)) {
+                    vmCompatibilityVersion))) {
                 return false;
             }
 
             if (vmDeviceUtils.hasVirtioScsiController(vm.getId())) {
                 // Verify OS compatibility
-                if (!vmHandler.isOsTypeSupportedForVirtioScsi(
-                        vm.getOs(),
-                        vmCompatibilityVersion,
-                        parentCommand.getReturnValue().getValidationMessages())) {
+                if (!parentCommand.validate(vmHandler.isOsTypeSupportedForVirtioScsi
+                        (vm.getOs(), vmCompatibilityVersion))) {
                     return false;
                 }
             }

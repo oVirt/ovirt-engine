@@ -176,13 +176,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         displayTypeMap.get(osId).put(version, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
 
-        when(vmHandler.isOsTypeSupported(anyInt(), any(), any())).thenReturn(true);
-        when(vmHandler.isCpuSupported(anyInt(), any(), any(), any())).thenReturn(true);
         when(vmHandler.isUpdateValid(any(), any(), any())).thenReturn(true);
-        when(vmHandler.validateDedicatedVdsExistOnSameCluster(any(), any())).thenReturn(true);
-        when(vmHandler.isNumOfMonitorsLegal(any(), anyInt(), any())).thenReturn(true);
-        when(vmHandler.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any(), any())).thenReturn(true);
-        when(vmHandler.isVmPriorityValueLegal(anyInt(), any())).thenReturn(true);
 
         vm = new VM();
         vmStatic = command.getParameters().getVmStaticData();
@@ -268,7 +262,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     public void testDedicatedHostNotExistOrNotSameCluster() {
         prepareVmToPassValidate();
 
-        doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any(), any());
+        doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any());
 
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
@@ -283,7 +277,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setClusterId(group.getId());
         when(vdsDao.get(any())).thenReturn(vds);
-        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(), any());
         vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
 
         command.initEffectiveCompatibilityVersion();
@@ -456,7 +449,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Test
     public void testMigrationPolicyChangeFail() {
         prepareVmToPassValidate();
-        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(), any());
         vm.setStatus(VMStatus.Up);
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm.setRunOnVds(GUIDS[1]);
@@ -479,7 +471,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Test
     public void testMigrationPolicyChangeVmUp() {
         prepareVmToPassValidate();
-        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(), any());
         vm.setStatus(VMStatus.Up);
         vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
         vm.setRunOnVds(GUIDS[2]);

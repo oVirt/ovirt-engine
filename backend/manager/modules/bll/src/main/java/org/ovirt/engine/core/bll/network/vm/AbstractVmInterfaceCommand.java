@@ -81,8 +81,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     protected boolean uniqueInterfaceName(List<VmNic> interfaces) {
-        return vmHandler.isNotDuplicateInterfaceName(interfaces, getInterfaceName(),
-                getReturnValue().getValidationMessages());
+        return validate(vmHandler.isNotDuplicateInterfaceName(interfaces, getInterfaceName()));
     }
 
     protected boolean pciAndIdeWithinLimit(VM vm, List<VmNic> allInterfaces) {

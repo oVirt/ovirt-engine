@@ -546,8 +546,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return failValidation(EngineMessage.VDS_CLUSTER_IS_NOT_VALID);
         }
 
-        if (!vmHandler.isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(),
-                getReturnValue().getValidationMessages())) {
+        if (!validate(vmHandler.isVmPriorityValueLegal(getParameters().getMasterVm().getPriority()))) {
             return false;
         }
 
@@ -693,26 +692,24 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
         }
 
-        if (!vmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
-                getCluster().getArchitecture(), getReturnValue().getValidationMessages())) {
+        if (!validate(vmHandler.isOsTypeSupported(getParameters().getMasterVm().getOsId(),
+                getCluster().getArchitecture()))) {
             return false;
         }
 
         // Check if the display type is supported
         Guid srcId = isVmInDb ? getVmId() : VmTemplateHandler.BLANK_VM_TEMPLATE_ID;
-        if (!vmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
+        if (!validate(vmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
                 vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(srcId),
                         getParameters().getGraphicsDevices()),
                 getParameters().getMasterVm().getDefaultDisplayType(),
-                getReturnValue().getValidationMessages(),
-                getVm().getCompatibilityVersion())) {
+                getVm().getCompatibilityVersion()))) {
             return false;
         }
 
         if (getParameters().getVm().getSingleQxlPci() &&
-                !vmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
-                        getParameters().getVm().getOs(),
-                        getReturnValue().getValidationMessages())) {
+                !validate(vmHandler.isSingleQxlDeviceLegal(
+                        getParameters().getVm().getDefaultDisplayType(), getParameters().getVm().getOs()))) {
             return false;
         }
 

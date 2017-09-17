@@ -155,8 +155,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-        if (vmHandler.isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(),
-                getReturnValue().getValidationMessages()) && checkDomain()) {
+        if (vmHandler.isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority()).isValid() &&
+                checkDomain()) {
             returnValue = vmTemplateHandler.isUpdateValid(oldTemplate, getVmTemplate());
             if (!returnValue) {
                 addValidationMessage(EngineMessage.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
@@ -217,9 +217,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         // Check if the OS type is supported
         boolean returnValue =
-                vmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
-                        getCluster().getArchitecture(),
-                        getReturnValue().getValidationMessages());
+                validate(vmHandler.isOsTypeSupported(getParameters().getVmTemplateData().getOsId(),
+                        getCluster().getArchitecture()));
 
 
         // Check if the watchdog model is supported
@@ -231,11 +230,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         // Check if the display type is supported
         if (returnValue) {
-            returnValue = vmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
+            returnValue = validate(vmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
                     vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
-                    getReturnValue().getValidationMessages(),
-                    getVmTemplate().getCompatibilityVersion());
+                    getVmTemplate().getCompatibilityVersion()));
         }
 
         if (returnValue) {
@@ -245,9 +243,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
                 getParameters().getVmTemplateData().getDefaultDisplayType() != DisplayType.none &&
-                !vmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
-                        getParameters().getVmTemplateData().getOsId(),
-                        getReturnValue().getValidationMessages())) {
+                !validate(vmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
+                        getParameters().getVmTemplateData().getOsId()))) {
             returnValue = false;
         }
 

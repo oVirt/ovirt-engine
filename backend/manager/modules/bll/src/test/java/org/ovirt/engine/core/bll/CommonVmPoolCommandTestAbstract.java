@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -156,8 +155,6 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
         setUpCommand();
         mockGetStorageDomainList();
         mockDbDao();
-        when(vmHandler.verifyMacPool(any(), anyInt(), any())).thenReturn(true);
-        when(vmHandler.isVmPriorityValueLegal(anyInt(), any())).thenReturn(true);
         command.init();
     }
 

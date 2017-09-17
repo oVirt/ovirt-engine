@@ -415,8 +415,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 return false;
             }
         }
-        return vmHandler.validateDedicatedVdsExistOnSameCluster(vmStaticFromParams,
-                getReturnValue().getValidationMessages());
+        return validate(vmHandler.validateDedicatedVdsExistOnSameCluster(vmStaticFromParams));
     }
 
     protected boolean shouldCheckSpaceInStorageDomains() {
@@ -493,9 +492,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!getParameters().getVmStaticData().getSingleQxlPci() || getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none) {
             return true;
         }
-        return vmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
-                        getParameters().getVm().getOs(),
-                        getReturnValue().getValidationMessages());
+        return validate(vmHandler.isSingleQxlDeviceLegal(
+                getParameters().getVm().getDefaultDisplayType(), getParameters().getVm().getOs()));
     }
 
     protected boolean hostToRunExist() {
@@ -635,27 +633,24 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // check if the OS type is supported
-        if (!vmHandler.isOsTypeSupported(vmFromParams.getOs(), getCluster().getArchitecture(),
-                getReturnValue().getValidationMessages())) {
+        if (!validate(vmHandler.isOsTypeSupported(vmFromParams.getOs(), getCluster().getArchitecture()))) {
             return false;
         }
 
-        if (!vmHandler.isCpuSupported(
+        if (!validate(vmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
-                getCluster().getCpuName(),
-                getReturnValue().getValidationMessages())) {
+                getCluster().getCpuName()))) {
             return false;
         }
 
         // Check if the graphics and display from parameters are supported
-        if (!vmHandler.isGraphicsAndDisplaySupported(getParameters().getVmStaticData().getOsId(),
+        if (!validate(vmHandler.isGraphicsAndDisplaySupported(getParameters().getVmStaticData().getOsId(),
                 vmHandler.getResultingVmGraphics(
                         getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()),
                         getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
-                getReturnValue().getValidationMessages(),
-                getEffectiveCompatibilityVersion())) {
+                getEffectiveCompatibilityVersion()))) {
             return false;
         }
 
@@ -711,8 +706,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled())) {
             // Verify OS compatibility
-            if (!vmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
-                    getReturnValue().getValidationMessages())) {
+            if (!validate(vmHandler.isOsTypeSupportedForVirtioScsi
+                    (vmFromParams.getOs(), getEffectiveCompatibilityVersion()))) {
                 return false;
             }
         }
@@ -951,11 +946,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!vmHandler.verifyMacPool(reasons, getVmInterfaces().size(), getMacPool())) {
+        if (!validate(vmHandler.verifyMacPool(getVmInterfaces().size(), getMacPool()))) {
             return false;
         }
 
-        if (!vmHandler.isVmPriorityValueLegal(vmPriority, reasons)) {
+        if (!validate(vmHandler.isVmPriorityValueLegal(vmPriority))) {
             return false;
         }
 
@@ -1757,9 +1752,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getParameters().getGraphicsDevices());
         int numOfMonitors = getParameters().getVmStaticData().getNumOfMonitors();
 
-        return vmHandler.isNumOfMonitorsLegal(graphicsTypes,
-                numOfMonitors,
-                getReturnValue().getValidationMessages());
+        return validate(vmHandler.isNumOfMonitorsLegal(graphicsTypes, numOfMonitors));
     }
 
     /**

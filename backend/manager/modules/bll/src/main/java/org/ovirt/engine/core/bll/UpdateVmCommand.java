@@ -810,24 +810,21 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!vmHandler.isOsTypeSupported(vmFromParams.getOs(),
-                getCluster().getArchitecture(), getReturnValue().getValidationMessages())) {
+        if (!validate(vmHandler.isOsTypeSupported(vmFromParams.getOs(), getCluster().getArchitecture()))) {
             return false;
         }
 
-        if (!vmHandler.isCpuSupported(
+        if (!validate(vmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
-                getCluster().getCpuName(),
-                getReturnValue().getValidationMessages())) {
+                getCluster().getCpuName()))) {
             return false;
         }
 
         if (getParameters().getVmStaticData().getDefaultDisplayType() != DisplayType.none &&
                 vmFromParams.getSingleQxlPci() &&
-                !vmHandler.isSingleQxlDeviceLegal(vmFromParams.getDefaultDisplayType(),
-                        vmFromParams.getOs(),
-                        getReturnValue().getValidationMessages())) {
+                !validate(vmHandler.isSingleQxlDeviceLegal(
+                        vmFromParams.getDefaultDisplayType(), vmFromParams.getOs()))) {
             return false;
         }
 
@@ -851,7 +848,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.VM_CANNOT_UPDATE_CLUSTER);
         }
 
-        if (!isDedicatedVdsExistOnSameCluster(vmFromParams.getStaticData(), getReturnValue().getValidationMessages())) {
+        if (!isDedicatedVdsExistOnSameCluster(vmFromParams.getStaticData())) {
             return false;
         }
 
@@ -861,8 +858,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 vmHandler.getResultingVmGraphics(
                         getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
                         getParameters().getGraphicsDevices()),
-                getParameters().getVmStaticData().getNumOfMonitors(),
-                getReturnValue().getValidationMessages())) {
+                getParameters().getVmStaticData().getNumOfMonitors()).isValid()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
         }
 
@@ -871,8 +867,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!vmHandler.isVmPriorityValueLegal(vmFromParams.getPriority(),
-                getReturnValue().getValidationMessages())) {
+        if (!validate(vmHandler.isVmPriorityValueLegal(vmFromParams.getPriority()))) {
             return false;
         }
 
@@ -902,12 +897,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check if the graphics and display from parameters are supported
-        if (!vmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
+        if (!validate(vmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
                 vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
                         getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
-                getReturnValue().getValidationMessages(),
-                getEffectiveCompatibilityVersion())) {
+                getEffectiveCompatibilityVersion()))) {
             return false;
         }
 
@@ -953,8 +947,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (isVirtioScsiEnabled())  {
             // Verify OS compatibility
-            if (!vmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getEffectiveCompatibilityVersion(),
-                    getReturnValue().getValidationMessages())) {
+            if (!validate(vmHandler.isOsTypeSupportedForVirtioScsi
+                    (vmFromParams.getOs(), getEffectiveCompatibilityVersion()))) {
                 return false;
             }
         }
@@ -1065,9 +1059,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return super.shouldAddLease(newVm) && !newVm.getLeaseStorageDomainId().equals(getVm().getLeaseStorageDomainId());
     }
 
-    protected boolean isDedicatedVdsExistOnSameCluster(VmBase vm,
-            ArrayList<String> validationMessages) {
-        return vmHandler.validateDedicatedVdsExistOnSameCluster(vm, validationMessages);
+    protected boolean isDedicatedVdsExistOnSameCluster(VmBase vm) {
+        return validate(vmHandler.validateDedicatedVdsExistOnSameCluster(vm));
     }
 
     protected boolean isValidPciAndIdeLimit(VM vmFromParams) {

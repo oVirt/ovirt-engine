@@ -392,14 +392,13 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_INCOMPATIBLE);
         }
 
-        final List<String> reasons = getReturnValue().getValidationMessages();
         final int nicsCount = getParameters().getVmsCount() * vmNicDao.getAllForTemplate(getVmTemplateId()).size();
-        if (!vmHandler.verifyMacPool(reasons, nicsCount, getMacPool())) {
+        if (!validate(vmHandler.verifyMacPool(nicsCount, getMacPool()))) {
             return false;
         }
 
         final int priority = getParameters().getVmStaticData().getPriority();
-        if (!vmHandler.isVmPriorityValueLegal(priority, reasons)) {
+        if (!validate(vmHandler.isVmPriorityValueLegal(priority))) {
             return false;
         }
 

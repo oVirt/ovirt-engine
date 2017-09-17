@@ -230,11 +230,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     protected boolean validateGraphicsAndDisplay() {
-        return vmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
+        return validate(vmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
                 getGraphicsTypesForVm(),
                 getVm().getDefaultDisplayType(),
-                getReturnValue().getValidationMessages(),
-                getEffectiveCompatibilityVersion());
+                getEffectiveCompatibilityVersion()));
     }
 
     Set<GraphicsType> getGraphicsTypesForVm() {
@@ -532,7 +531,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
-        if (!vmHandler.validateDedicatedVdsExistOnSameCluster(getVm().getStaticData(), null)) {
+        if (!vmHandler.validateDedicatedVdsExistOnSameCluster(getVm().getStaticData()).isValid()) {
             getVm().setDedicatedVmForVdsList(Collections.emptyList());
         }
 

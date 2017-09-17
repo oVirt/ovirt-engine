@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -103,8 +102,6 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        when(vmHandler.isVmPriorityValueLegal(anyInt(), any())).thenReturn(true);
-
         when(vmDao.get(vm.getId())).thenReturn(vm);
 
         // The cluster to use

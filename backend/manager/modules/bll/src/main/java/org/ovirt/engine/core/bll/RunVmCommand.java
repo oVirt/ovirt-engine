@@ -1039,11 +1039,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failValidation(EngineMessage.VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES);
         }
 
-        if (!vmHandler.isCpuSupported(
+        if (!validate(vmHandler.isCpuSupported(
                 getVm().getVmOsId(),
                 getVm().getCompatibilityVersion(),
-                getCluster().getCpuName(),
-                getReturnValue().getValidationMessages())) {
+                getCluster().getCpuName()))) {
             return false;
         }
 

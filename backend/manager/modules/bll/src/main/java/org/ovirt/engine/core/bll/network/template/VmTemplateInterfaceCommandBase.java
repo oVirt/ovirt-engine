@@ -47,9 +47,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
     }
 
     protected boolean interfaceNameUnique(List<VmNic> interfaces) {
-        return vmHandler.isNotDuplicateInterfaceName(interfaces,
-                getInterfaceName(),
-                getReturnValue().getValidationMessages());
+        return validate(vmHandler.isNotDuplicateInterfaceName(interfaces, getInterfaceName()));
     }
 
     protected ValidationResult linkedToTemplate() {

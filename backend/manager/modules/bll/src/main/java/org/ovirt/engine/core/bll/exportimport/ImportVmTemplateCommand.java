@@ -470,7 +470,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getVmTemplate().setClusterId(getParameters().getClusterId());
 
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
-        if(!vmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate(), null)){
+        if(!vmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate()).isValid()) {
             getVmTemplate().setDedicatedVmForVdsList(Collections.emptyList());
         }
 
