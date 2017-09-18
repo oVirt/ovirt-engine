@@ -9,7 +9,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils.MB_TO_BYTES;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -314,33 +313,27 @@ public class VmInfoBuildUtilsTest {
 
     @Test
     public void testGetNetworkDiskTypeForV41ClusterEnabled() {
-        DiskImage diskImage = new DiskImage();
-        diskImage.setStorageTypes(new ArrayList<>(Arrays.asList(StorageType.GLUSTERFS)));
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_1);
         vm.setClusterId(CLUSTER_ID);
         doReturn(getSupportedAdditionalClusterFeatures(true)).when(clusterFeatureDao).getSupportedFeaturesByClusterId(CLUSTER_ID);
-        assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, diskImage).get());
+        assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).get());
     }
 
     @Test
     public void testGetNetworkDiskTypeForV41() {
-        DiskImage diskImage = new DiskImage();
-        diskImage.setStorageTypes(new ArrayList<>(Arrays.asList(StorageType.GLUSTERFS)));
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_1);
         vm.setClusterId(CLUSTER_ID);
         doReturn(getSupportedAdditionalClusterFeatures(false)).when(clusterFeatureDao).getSupportedFeaturesByClusterId(CLUSTER_ID);
-        assertEquals(false, underTest.getNetworkDiskType(vm, diskImage).isPresent());
+        assertEquals(false, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).isPresent());
     }
 
     @Test
     public void testGetNetworkDiskTypeForV42() {
-        DiskImage diskImage = new DiskImage();
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setClusterId(CLUSTER_ID);
-        diskImage.setStorageTypes(new ArrayList<>(Arrays.asList(StorageType.GLUSTERFS)));
-        assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, diskImage).get());
+        assertEquals(VdsProperties.NETWORK, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).get());
     }
 }
