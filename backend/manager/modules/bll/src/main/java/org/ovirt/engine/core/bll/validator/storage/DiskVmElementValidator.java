@@ -66,7 +66,7 @@ public class DiskVmElementValidator {
                 return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
             }
             else {
-                return isOsSupportedForVirtIoScsi(vm);
+                return isDiskInterfaceSupported(vm);
 
             }
         }
@@ -77,18 +77,6 @@ public class DiskVmElementValidator {
     private boolean isVirtioScsiControllerAttached(Guid vmId) {
         VmDeviceUtils vmDeviceUtils = Injector.get(VmDeviceUtils.class);
         return vmDeviceUtils.hasVirtioScsiController(vmId);
-    }
-
-    /**
-     * Validates that the OS is supported for Virtio-SCSI interface.
-     */
-    private ValidationResult isOsSupportedForVirtIoScsi(VM vm) {
-        if (!VmValidationUtils.isDiskInterfaceSupportedByOs(
-                vm.getOs(), vm.getCompatibilityVersion(), DiskInterface.VirtIO_SCSI)) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
-        }
-
-        return ValidationResult.VALID;
     }
 
     public ValidationResult isDiskInterfaceSupported(VM vm) {

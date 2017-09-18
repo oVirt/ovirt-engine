@@ -758,8 +758,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
         doReturn(true).when(vmDeviceUtils).hasVirtioScsiController(any());
 
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
 
     @Test
