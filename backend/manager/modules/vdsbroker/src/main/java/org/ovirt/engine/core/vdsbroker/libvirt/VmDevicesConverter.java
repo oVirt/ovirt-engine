@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -133,21 +134,22 @@ public class VmDevicesConverter {
 
         // devices with spec params to appear first
         dbDevices.sort((d1, d2) -> d1.getSpecParams().isEmpty() && !d2.getSpecParams().isEmpty() ? 1 : 0);
-
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.CONTROLLER)) {
             String address = parseAddress(node);
-            // Ignore controller devices without address
-            if (address.isEmpty()) {
+            String index = parseAttribute(node, INDEX);
+            String model = parseAttribute(node, MODEL);
+            String devType = "virtio-scsi".equals(model) ? model : parseAttribute(node, TYPE);
+
+            boolean devWithModelNone = model != null ? model.equals(UsbControllerModel.NONE.libvirtName) : false;
+            // Ignore controller devices without address, unless it is a device with model='none'
+            // which is a special case of a device without address that is still marked as plugged
+            if (address.isEmpty() && !devWithModelNone) {
                 continue;
             }
 
-            String index = parseAttribute(node, INDEX);
-            String model = parseAttribute(node, MODEL);
-
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
-            String devType = "virtio-scsi".equals(model) ? model : parseAttribute(node, TYPE);
             dev.put(VdsProperties.Device, devType);
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
