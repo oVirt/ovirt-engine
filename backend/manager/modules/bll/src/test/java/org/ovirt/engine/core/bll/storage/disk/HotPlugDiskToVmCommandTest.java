@@ -160,7 +160,7 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
         createVirtIODisk();
         when(osRepository.getOsName(15)).thenReturn("RHEL3x64");
         when(osRepository.getDiskHotpluggableInterfaces(anyInt(), any())).thenReturn(Collections.emptySet());
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
 
     @Test

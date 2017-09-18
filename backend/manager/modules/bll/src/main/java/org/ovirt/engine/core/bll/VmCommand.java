@@ -365,7 +365,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         if (CollectionUtils.isEmpty(diskHotpluggableInterfaces)
                 || !diskHotpluggableInterfaces.contains(diskVmElement.getDiskInterface().name())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+            return failValidation(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED,
+                    String.format("$osName %s", osRepository.getOsName(getVm().getOs())));
         }
 
         return true;
