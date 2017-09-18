@@ -585,8 +585,7 @@ public class VmInfoBuildUtils {
         new AuditLogDirector().log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
     }
 
-    public Optional<String> getNetworkDiskType(VM vm, DiskImage diskImage) {
-        StorageType storageType = diskImage.getStorageTypes().get(0);
+    public Optional<String> getNetworkDiskType(VM vm, StorageType storageType) {
         if (storageType == StorageType.GLUSTERFS) {
             if (FeatureSupported.libgfApiSupported(vm.getCompatibilityVersion())
                     || isFeatureSupportedAsAdditionalFeature(vm.getClusterId(), VDSM_LIBGF_CAP_NAME)) {
@@ -597,7 +596,7 @@ public class VmInfoBuildUtils {
     }
 
     public Map<String, Object> prepareGlusterDisk(VM vm, DiskImage diskImage, Map<String, Object> struct) {
-        getNetworkDiskType(vm, diskImage).ifPresent((diskType) -> struct.put(VdsProperties.DiskType, diskType));
+        getNetworkDiskType(vm, diskImage.getStorageTypes().get(0)).ifPresent((diskType) -> struct.put(VdsProperties.DiskType, diskType));
         return struct;
     }
 

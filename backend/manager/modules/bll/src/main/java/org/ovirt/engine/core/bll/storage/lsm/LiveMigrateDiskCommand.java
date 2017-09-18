@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.job.Step;
@@ -291,7 +292,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     "VM " + getParameters().getVmId() + " is not running on any VDS");
         }
 
-        Optional<String> diskType = vmInfoBuildUtils.getNetworkDiskType(getVm(), diskImageDao.get(getParameters().getDestinationImageId()));
+        StorageType targetType = storageDomainDao.get(getParameters().getTargetStorageDomainId()).getStorageStaticData().getStorageType();
+        Optional<String> diskType = vmInfoBuildUtils.getNetworkDiskType(getVm(), targetType);
 
         // Start disk migration
         VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters(getParameters().getVdsId(),
