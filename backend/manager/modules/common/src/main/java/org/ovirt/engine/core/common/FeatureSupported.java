@@ -239,4 +239,9 @@ public class FeatureSupported {
     public static boolean isContentTypeSupported(Version version) {
         return supportedInConfig(ConfigValues.ContentType, version);
     }
+
+    public static boolean isDefaultRouteReportedByVdsm(Version version) {
+        return supportedInConfig(ConfigValues.DefaultRouteReportedByVdsm, version);
+    }
+
 }

@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -90,7 +91,11 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
         addDnsConfiguration(result);
 
-        result.add(DEFAULT_ROUTE, iface.isIpv4DefaultRoute(), isDefaultRouteNetwork );
+        boolean defaultRouteReportedByVdsm = FeatureSupported.isDefaultRouteReportedByVdsm(cluster.getCompatibilityVersion());
+        result.add(DEFAULT_ROUTE,
+                iface.isIpv4DefaultRoute(),
+                isDefaultRouteNetwork,
+                !defaultRouteReportedByVdsm || Objects.equals(iface.isIpv4DefaultRoute(), isDefaultRouteNetwork));
 
         return result;
     }

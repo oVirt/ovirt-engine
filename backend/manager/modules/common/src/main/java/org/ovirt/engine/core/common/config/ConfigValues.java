@@ -1536,6 +1536,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     ResumeBehaviorSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    DefaultRouteReportedByVdsm(),
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

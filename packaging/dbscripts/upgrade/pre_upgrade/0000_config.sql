@@ -666,6 +666,8 @@ select fn_db_add_config_value('AdPartnerMacSupported','false','3.6');
 select fn_db_add_config_value_for_versions_up_to('AdPartnerMacSupported', 'true', '4.2');
 select fn_db_add_config_value('OvsSupported','false','3.6');
 select fn_db_add_config_value_for_versions_up_to('OvsSupported', 'true', '4.2');
+select fn_db_add_config_value_for_versions_up_to('DefaultRouteReportedByVdsm', 'false', '4.1');
+select fn_db_add_config_value('DefaultRouteReportedByVdsm', 'true', '4.2');
 
 select fn_db_add_config_value('ForceRefreshDomainFilesListByDefault','true','general');
 

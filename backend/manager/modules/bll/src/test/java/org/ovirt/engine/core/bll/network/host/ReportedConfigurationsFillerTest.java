@@ -81,7 +81,11 @@ public class ReportedConfigurationsFillerTest {
     private Cluster cluster;
 
     @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DefaultMTU, 1500));
+    public static final MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.DefaultMTU, 1500),
+            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
+            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
+    );
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
     @Before

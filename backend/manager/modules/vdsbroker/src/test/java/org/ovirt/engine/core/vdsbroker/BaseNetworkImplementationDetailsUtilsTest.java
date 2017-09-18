@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -39,7 +41,10 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
+            mockConfig(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
+    );
 
 
     @Mock
@@ -89,7 +94,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
         VdsDynamic vdsDynamic = new VdsDynamic();
 
         cluster = new Cluster();
-        cluster.setCompatibilityVersion(Version.v4_1);
+        cluster.setCompatibilityVersion(Version.v4_2);
         cluster.setId(CLUSTER_ID);
 
         when(vdsStaticDaoMock.get(eq(VDS_ID))).thenReturn(vdsStatic);
