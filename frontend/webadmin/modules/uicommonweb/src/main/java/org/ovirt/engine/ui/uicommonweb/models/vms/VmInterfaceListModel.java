@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -143,8 +144,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         if (getWindow() != null) {
             return;
         }
-
-        RemoveVmInterfaceModel model = new RemoveVmInterfaceModel(this, getSelectedItems(), false);
+        RemoveVmInterfaceModel model = new RemoveVmInterfaceModel(this, Arrays.asList(getSelectedItem()), false);
         setWindow(model);
     }
 
@@ -175,10 +175,10 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
                 && ActionUtils.canExecute(items, VM.class, ActionType.AddVmInterface));
         getEditCommand().setIsExecutionAllowed(vm != null
                 && ActionUtils.canExecute(items, VM.class, ActionType.UpdateVmInterface)
-                && (getSelectedItems() != null && getSelectedItems().size() == 1));
+                && getSelectedItem() != null);
         getRemoveCommand().setIsExecutionAllowed(vm != null
                 && ActionUtils.canExecute(items, VM.class, ActionType.RemoveVmInterface) && canRemoveNics()
-                && (getSelectedItems() != null && getSelectedItems().size() > 0));
+                && getSelectedItem() != null);
     }
 
     private boolean canRemoveNics() {
@@ -187,15 +187,11 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
             return true;
         }
 
-        List<VmNetworkInterface> nics =
-                getSelectedItems() != null ? getSelectedItems() : new ArrayList<VmNetworkInterface>();
+        VmNetworkInterface nic = getSelectedItem();
 
-        for (VmNetworkInterface nic : nics) {
-            if (nic.isPlugged()) {
-                return false;
-            }
+        if (nic != null && nic.isPlugged()) {
+            return false;
         }
-
         return true;
     }
 
