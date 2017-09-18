@@ -28,6 +28,7 @@ public class KernelCmdlineUtil {
             case INTEL:
                 return "intel_iommu=on "; //$NON-NLS-1$
             case IBM:
+            case IBMS390:
                 return "";
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
@@ -45,6 +46,8 @@ public class KernelCmdlineUtil {
                 return "kvm-intel.nested=1 "; //$NON-NLS-1$
             case IBM:
                 return "";
+            case IBMS390:
+                return "kvm.nested=1 "; //$NON-NLS-1$
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
         }
@@ -59,6 +62,7 @@ public class KernelCmdlineUtil {
             case INTEL:
                 return "vfio_iommu_type1.allow_unsafe_interrupts=1 "; //$NON-NLS-1$
             case IBM:
+            case IBMS390:
                 return "";
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
@@ -74,6 +78,7 @@ public class KernelCmdlineUtil {
             case INTEL:
                 return "pci=realloc "; //$NON-NLS-1$
             case IBM:
+            case IBMS390:
                 return "";
             default:
                 throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$

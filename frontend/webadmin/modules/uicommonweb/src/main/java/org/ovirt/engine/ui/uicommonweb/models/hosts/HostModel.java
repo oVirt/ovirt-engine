@@ -1258,6 +1258,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         switch (cpuVendor) {
             case INTEL:
             case AMD:
+            case IBMS390:
                 setKernelCmdlineCheckboxesValue(false);
                 break;
             case IBM:
@@ -1277,6 +1278,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         switch (cpuVendor) {
             case INTEL:
             case AMD:
+            case IBMS390:
                 setKernelCmdlineCheckboxesChangeability(
                         isKernelCmdlineParsable(),
                         constants.kernelCmdlineCheckboxesAndDirectCustomizationNotAllowed());
