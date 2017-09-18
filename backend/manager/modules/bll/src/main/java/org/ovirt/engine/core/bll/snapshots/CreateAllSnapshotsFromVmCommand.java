@@ -234,6 +234,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected void executeVmCommand() {
         Guid createdSnapshotId = updateActiveSnapshotId();
         setActionReturnValue(createdSnapshotId);
+        getParameters().setCreatedSnapshotId(createdSnapshotId);
         MemoryImageBuilder memoryImageBuilder = getMemoryImageBuilder();
         freezeVm();
         createSnapshotsForDisks();
@@ -388,7 +389,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void endVmCommand() {
-        Snapshot createdSnapshot = snapshotDao.get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
+        Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
         // if the snapshot was not created in the DB
         // the command should also be handled as a failure
         boolean taskGroupSucceeded = createdSnapshot != null && getParameters().getTaskGroupSuccess();

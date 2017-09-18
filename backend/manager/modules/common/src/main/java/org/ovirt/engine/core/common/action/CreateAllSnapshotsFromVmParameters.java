@@ -34,6 +34,8 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     /** Used to indicate whether the memory should be saved as part of this snapshot or not */
     private boolean saveMemory;
 
+    private Guid createdSnapshotId;
+
     @JsonIgnore
     private Set<Guid> diskIdsToIgnoreInChecks;
 
@@ -108,5 +110,13 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     public void setDisks(List<DiskImage> disks) {
         this.disks = disks;
+    }
+
+    public Guid getCreatedSnapshotId() {
+        return createdSnapshotId;
+    }
+
+    public void setCreatedSnapshotId(Guid createdSnapshotId) {
+        this.createdSnapshotId = createdSnapshotId;
     }
 }
