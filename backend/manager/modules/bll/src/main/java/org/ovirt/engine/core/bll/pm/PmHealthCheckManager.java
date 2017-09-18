@@ -31,6 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
@@ -129,37 +130,39 @@ public class PmHealthCheckManager implements BackendService {
     }
 
     private void handleAlerts(PmHealth healthStatus) {
-        Guid hostId = healthStatus.getHost().getId();
+        VDS host = healthStatus.getHost();
         // TODO: uncomment pending implementation of removing alerts by agent-id.
         // for (Entry<FenceAgent, Boolean> entry : healthStatus.getHealthMap().entrySet()) {
             // handleAgentAlerts(entry, hostId);
         // }
-        handleStartAlerts(healthStatus, hostId);
-        handleStopAlerts(healthStatus, hostId);
+        handleStartAlerts(healthStatus, host);
+        handleStopAlerts(healthStatus, host);
     }
 
-    private void handleStartAlerts(PmHealth healthStatus, Guid hostId) {
+    private void handleStartAlerts(PmHealth healthStatus, VDS host) {
         if (healthStatus.isStartShouldWork()) {
-            removeAlert(hostId, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_START_MIGHT_FAIL);
+            removeAlert(host, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_START_MIGHT_FAIL);
         } else {
-            addAlert(hostId, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_START_MIGHT_FAIL);
+            addAlert(host, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_START_MIGHT_FAIL);
         }
     }
 
-    private void handleStopAlerts(PmHealth healthStatus, Guid hostId) {
+    private void handleStopAlerts(PmHealth healthStatus, VDS host) {
         if (healthStatus.isStopShouldWork()) {
-            removeAlert(hostId, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_STOP_MIGHT_FAIL);
+            removeAlert(host, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_STOP_MIGHT_FAIL);
         } else {
-            addAlert(hostId, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_STOP_MIGHT_FAIL);
+            addAlert(host, AuditLogType.VDS_ALERT_PM_HEALTH_CHECK_STOP_MIGHT_FAIL);
         }
     }
 
-    private void removeAlert(Guid hostId, AuditLogType auditMessage) {
-        AlertDirector.removeVdsAlert(hostId, auditMessage);
+    private void removeAlert(VDS host, AuditLogType auditMessage) {
+        AlertDirector.removeVdsAlert(host.getId(), auditMessage);
     }
 
-    private void addAlert(Guid hostId, AuditLogType auditMessage) {
-        AlertDirector.addVdsAlert(hostId, auditMessage, auditLogDirector);
+    private void addAlert(VDS host, AuditLogType auditMessage) {
+        AuditLogableBase logableBase = Injector.injectMembers(new AuditLogableBase());
+        logableBase.setVds(host);
+        AlertDirector.addVdsAlert(host.getId(), auditMessage, auditLogDirector, logableBase);
     }
 
     /**
