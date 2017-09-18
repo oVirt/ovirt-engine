@@ -281,6 +281,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String disksLabel();
 
+    String networkFilterParametersLabel();
+
     String registerDisksLabel();
 
     String statistics();

@@ -3,7 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.ActionUtils;
@@ -12,13 +14,18 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInterface> {
@@ -43,6 +50,8 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     private List<VmGuestAgentInterface> guestAgentData;
 
     private List<VmGuestAgentInterface> selectionGuestAgentData;
+
+    private Map<Guid, List<VmNicFilterParameter>> mapNicFilterParameter;
 
     public UICommand getNewCommand() {
         return privateNewCommand;
@@ -86,6 +95,14 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         this.selectionGuestAgentData = selectedGuestAgentData;
     }
 
+    public Map<Guid, List<VmNicFilterParameter>> getMapNicFilterParameter() {
+        return mapNicFilterParameter;
+    }
+
+    public void setMapNicFilterParameter(Map<Guid, List<VmNicFilterParameter>> mapNicFilterParameter) {
+        this.mapNicFilterParameter = mapNicFilterParameter;
+    }
+
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
@@ -108,8 +125,31 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         // Initialize guest agent data
         AsyncDataProvider.getInstance().getVmGuestAgentInterfacesByVmId(new AsyncQuery<>(result -> {
             setGuestAgentData(result);
-            VmInterfaceListModel.super.syncSearch(QueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
+            VmInterfaceListModel.super.syncSearch(QueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()),
+                    new AsyncQuery<>(returnValue -> updateNetworkFilterParameterMap(returnValue.getReturnValue())));
         }), vm.getId());
+    }
+
+    private void updateNetworkFilterParameterMap(List<VmNetworkInterface> vmInfaces) {
+        List<QueryType> queryTypes = new ArrayList<>();
+        List<QueryParametersBase> queryParametersBases = new ArrayList<>();
+
+        vmInfaces.stream().forEach(iface -> {
+            queryTypes.add(QueryType.GetVmInterfaceFilterParametersByVmInterfaceId);
+            queryParametersBases.add(new IdQueryParameters(iface.getId()));
+        });
+
+        final IFrontendMultipleQueryAsyncCallback callback = multiResult -> {
+            Map<Guid, List<VmNicFilterParameter>> networkFilterMap = new HashMap<>(vmInfaces.size());
+            for (int i = 0; i < multiResult.getReturnValues().size(); i++) {
+                List<VmNicFilterParameter> params = multiResult.getReturnValues().get(i).getReturnValue();
+                networkFilterMap.put(vmInfaces.get(i).getId(), params);
+            }
+            setMapNicFilterParameter(networkFilterMap);
+            setItems(vmInfaces);
+        };
+
+        Frontend.getInstance().runMultipleQueries(queryTypes, queryParametersBases, callback);
     }
 
     private void newEntity() {

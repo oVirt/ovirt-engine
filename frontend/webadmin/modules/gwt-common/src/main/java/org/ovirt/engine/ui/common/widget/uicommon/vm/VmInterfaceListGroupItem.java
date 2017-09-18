@@ -14,6 +14,7 @@ import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -45,9 +46,11 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private ExpandableListViewItem generalExpand;
     private ExpandableListViewItem statisticsExpand;
     private ExpandableListViewItem guestAgentExpand;
+    private ExpandableListViewItem networkFilterParameterExpand;
     private final List<VmGuestAgentInterface> allGuestAgentData;
 
-    public VmInterfaceListGroupItem(VmNetworkInterface networkInterface, List<VmGuestAgentInterface> allGuestAgentData) {
+    public VmInterfaceListGroupItem(VmNetworkInterface networkInterface, List<VmGuestAgentInterface> allGuestAgentData,
+            List<VmNicFilterParameter> networkFilterParameters) {
         super(networkInterface.getName(), networkInterface);
         this.allGuestAgentData = allGuestAgentData;
         listGroupItem.addStyleName(PatternflyConstants.PF_LIST_VIEW_TOP_ALIGN);
@@ -61,7 +64,31 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         Container guestAgentContainer = createGuestAgentContainerPanel(networkInterface, allGuestAgentData);
         guestAgentExpand.setDetails(guestAgentContainer);
         listGroupItem.add(guestAgentContainer);
+        Container networkFilterParameterContainer =
+                createNetworkFilterParametersContainerPanel(networkFilterParameters);
+        networkFilterParameterExpand.setDetails(networkFilterParameterContainer);
+        listGroupItem.add(networkFilterParameterContainer);
         displayImportantNicInfo(networkInterface);
+    }
+
+    private Container createNetworkFilterParametersContainerPanel(List<VmNicFilterParameter> networkFilterParameters) {
+        Row content = new Row();
+        Column column = new Column(ColumnSize.MD_12);
+        content.add(column);
+
+        networkFilterParameters.stream().forEach(parameter -> {
+            DListElement dl = Document.get().createDLElement();
+            dl.addClassName(DL_HORIZONTAL);
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.nameNetworkFilterParameter()),
+                    parameter.getName(),
+                    dl);
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.valueNetworkFilterParameter()),
+                    parameter.getValue(),
+                    dl);
+            column.getElement().appendChild(dl);
+        });
+
+        return createItemContainerPanel(content);
     }
 
     private Container createGeneralItemContainerPanel(VmNetworkInterface networkInterface) {
@@ -184,6 +211,16 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         additionalInfoPanel.add(createGeneralAdditionalInfo());
         additionalInfoPanel.add(createStatisticsAdditionalInfo());
         additionalInfoPanel.add(createGuestAgentAdditionalInfo());
+        additionalInfoPanel.add(createNetworkFilterParameterAdditionalInfo());
+    }
+
+    private IsWidget createNetworkFilterParameterAdditionalInfo() {
+        FlowPanel panel = new FlowPanel();
+        panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
+        networkFilterParameterExpand = new ExpandableListViewItem(constants.networkFilterParametersLabel());
+        getClickHandlerRegistrations().add(networkFilterParameterExpand.addClickHandler(this));
+        panel.add(networkFilterParameterExpand);
+        return panel;
     }
 
     private IsWidget createGeneralAdditionalInfo() {
@@ -318,7 +355,8 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
 
     @Override
     protected void toggleExpanded() {
-        if (!generalExpand.isActive() && !statisticsExpand.isActive() && !guestAgentExpand.isActive()) {
+        if (!generalExpand.isActive() && !statisticsExpand.isActive()
+                && !guestAgentExpand.isActive() && !networkFilterParameterExpand.isActive()) {
             removeStyleName(PatternflyConstants.PF_LIST_VIEW_EXPAND_ACTIVE);
         } else {
             addStyleName(PatternflyConstants.PF_LIST_VIEW_EXPAND_ACTIVE);
@@ -335,6 +373,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         generalExpand.toggleExpanded(false);
         statisticsExpand.toggleExpanded(false);
         guestAgentExpand.toggleExpanded(false);
+        networkFilterParameterExpand.toggleExpanded(false);
     }
 
     public boolean getGeneralState() {
@@ -364,11 +403,21 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         toggleExpanded();
     }
 
+    public boolean getNetworkFilterParametersState() {
+        return networkFilterParameterExpand.isActive();
+    }
+
+    public void setNetworkFilterParametersExpanded(boolean value) {
+        networkFilterParameterExpand.toggleExpanded(value);
+        toggleExpanded();
+    }
+
     @Override
     public void restoreStateFromViewItem(PatternflyListViewItem<VmNetworkInterface> originalViewItem) {
         VmInterfaceListGroupItem original = (VmInterfaceListGroupItem) originalViewItem;
         setGeneralExpanded(original.getGeneralState());
         setStatisticsExpanded(original.getStatisticsState());
         setGuestAgentExpanded(original.getGuestAgentState());
+        setNetworkFilterParametersExpanded(original.getNetworkFilterParametersState());
     }
 }

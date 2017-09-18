@@ -68,6 +68,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends
 
     @Override
     public PatternflyListViewItem<VmNetworkInterface> createListViewItem(VmNetworkInterface selectedItem) {
-        return new VmInterfaceListGroupItem(selectedItem, getDetailModel().getGuestAgentData());
+        return new VmInterfaceListGroupItem(selectedItem, getDetailModel().getGuestAgentData(),
+                getDetailModel().getMapNicFilterParameter().get(selectedItem.getId()));
     }
 }
