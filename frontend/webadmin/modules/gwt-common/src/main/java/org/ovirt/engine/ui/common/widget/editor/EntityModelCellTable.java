@@ -272,7 +272,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         return tableScrollWidth != this.getElement().getScrollWidth() && tableScrollWidth != 0;
     }
 
-    private void resizeGridToContentHeight(int rowHeight) {
+    protected void resizeGridToContentHeight(int rowHeight) {
         // +2 for top and bottom border
         int contentHeight = rowHeight + 2;
         if (isHorizontalScrollbarVisible()) {

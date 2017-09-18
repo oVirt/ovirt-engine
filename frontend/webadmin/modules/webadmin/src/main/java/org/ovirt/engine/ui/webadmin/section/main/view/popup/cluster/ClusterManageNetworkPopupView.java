@@ -48,6 +48,8 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    protected static final int MAX_CLUSTER_NETWORK_GRID_HEIGHT = 253;
+
     private final SafeHtml vmImage;
     private final SafeHtml emptyImage;
 
@@ -55,7 +57,17 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     public ClusterManageNetworkPopupView(EventBus eventBus) {
         super(eventBus);
 
-        this.networks = new EntityModelCellTable<>(SelectionMode.NONE, true);
+        this.networks = new EntityModelCellTable<ClusterNetworkManageModel>(SelectionMode.NONE, true) {
+            @Override
+            public void updateGridSize(final int rowHeight) {
+                int gridHeaderHeight = getGridHeaderHeight();
+                if (rowHeight + gridHeaderHeight > MAX_CLUSTER_NETWORK_GRID_HEIGHT) {
+                    resizeGridToContentHeight(MAX_CLUSTER_NETWORK_GRID_HEIGHT);
+                } else {
+                    super.updateGridSize(rowHeight);
+                }
+            }
+        };
         vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
