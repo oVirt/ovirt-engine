@@ -181,7 +181,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         // Boot protocol and IP info
         if (networkModel.isAttached()) {
             insertHorizontalLine();
-            addBootProtoAndIpInfo(networkModel.getAttachedToNic().getOriginalIface());
+            addBootProtoAndIpInfo(networkModel.hasVlan() ?
+                    networkModel.getVlanDevice() : networkModel.getAttachedToNic().getOriginalIface());
         }
     }
 
