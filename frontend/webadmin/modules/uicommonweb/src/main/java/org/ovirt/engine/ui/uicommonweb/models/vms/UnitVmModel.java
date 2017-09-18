@@ -2158,7 +2158,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         Boolean isMigrationSupported =
                 AsyncDataProvider.getInstance().isMigrationSupported(cluster.getArchitecture(), version);
 
-        if (isMigrationSupported) {
+        if (isMigrationSupported && getVmType().getSelectedItem() != VmType.HighPerformance) {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
         } else {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.PINNED_TO_HOST));

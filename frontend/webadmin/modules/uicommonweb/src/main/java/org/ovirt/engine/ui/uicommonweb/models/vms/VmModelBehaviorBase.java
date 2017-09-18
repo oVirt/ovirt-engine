@@ -857,10 +857,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         final Collection<VDS> allowedHosts = getModel().getDefaultHost().getSelectedItems();
         Collection<VDS> presentHosts = getModel().getDefaultHost().getItems();
         int pinToHostSize = allowedHosts == null ? 0 : allowedHosts.size();
-        boolean isHighlyAvailable = getModel().getIsHighlyAvailable().getEntity();
+        Boolean isHighlyAvailable = getModel().getIsHighlyAvailable().getEntity();
         Boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
 
-        if (isAutoAssign == null) {
+        if (isAutoAssign == null || isHighlyAvailable == null) {
             return;
         }
 
@@ -869,7 +869,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             presentHosts = new ArrayList<>();
         }
 
-        if (!automaticMigrationAllowed
+        if ((!automaticMigrationAllowed || getModel().getVmType().getSelectedItem() == VmType.HighPerformance)
                 && (pinToHostSize == 1
                     || (pinToHostSize == 0 && presentHosts.size() < 2))
                 && (!isAutoAssign || presentHosts.size() < 2)
@@ -881,6 +881,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         getModel().getIsHighlyAvailable().setIsChangeable(isHighlyAvailable
                 || automaticMigrationAllowed
+                || getModel().getVmType().getSelectedItem() == VmType.HighPerformance
                 || (isAutoAssign && presentHosts.size() >= 2)
                 || pinToHostSize >= 2
                 || (pinToHostSize == 0 && presentHosts.size() >= 2));
@@ -904,13 +905,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         if (haHost
+                && getModel().getVmType().getSelectedItem() != VmType.HighPerformance
                 && (pinToHostSize == 1
                     || (pinToHostSize == 0 && presentHosts.size() < 2))
                 && (!isAutoAssign || presentHosts.size() < 2)) {
             getModel().getMigrationMode().setChangeProhibitionReason(constants.hostIsHa());
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
-        getModel().getMigrationMode().setIsChangeable(!haHost
+        getModel().getMigrationMode().setIsChangeable(getModel().getVmType().getSelectedItem() == VmType.HighPerformance ?
+                false :
+                !haHost
                 || (isAutoAssign && presentHosts.size() >= 2)
                 || pinToHostSize >= 2
                 || (pinToHostSize == 0 && presentHosts.size() >= 2));
@@ -1300,8 +1304,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             // High Availability tab
             getModel().getWatchdogModel().setSelectedItem(null);
             getModel().getWatchdogAction().setSelectedItem(getModel().getWatchdogAction().getItems().iterator().next());
-
-            getModel().getIsHighlyAvailable().setEntity(false);
 
             // Random Generator tab
             getModel().getIsRngEnabled().setEntity(true);
