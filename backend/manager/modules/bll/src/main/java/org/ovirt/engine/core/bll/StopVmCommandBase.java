@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,9 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     @Inject
     private VmDynamicDao vmDynamicDao;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     @Inject
     private SnapshotDao snapshotDao;
@@ -121,6 +125,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         }
 
         getVm().setStatus(VMStatus.Down);
+        vmStaticDao.incrementDbGeneration(getVm().getId());
         snapshotDao.removeMemoryFromActiveSnapshot(getVmId());
         vmDynamicDao.update(getVm().getDynamicData());
         setSucceeded(true);

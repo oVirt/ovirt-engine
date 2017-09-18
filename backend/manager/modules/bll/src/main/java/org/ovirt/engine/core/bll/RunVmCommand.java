@@ -1231,6 +1231,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public void runningSucceded() {
         removeMemoryFromActiveSnapshot();
         setFlow(RunVmFlow.RUNNING_SUCCEEDED);
+        vmStaticDao.incrementDbGeneration(getVm().getId());
         super.runningSucceded();
     }
 

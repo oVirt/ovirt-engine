@@ -42,6 +42,8 @@ import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -60,6 +62,7 @@ import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.archivers.tar.InMemoryTar;
@@ -77,6 +80,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     private DiskDao diskDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
     @Inject
     private StoragePoolDao storagePoolDao;
     @Inject
@@ -183,6 +188,30 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         return buildJson(data, true);
     }
 
+    private String generateMetaDataFile(List<Guid> vmAndTemplatesIds) {
+        Map<String, Object> data = new HashMap<>();
+        addVmsStatus(vmAndTemplatesIds, data);
+        return buildJson(data, true);
+    }
+
+    private void addVmsStatus(List<Guid> vmAndTemplatesIds, Map<String, Object> data) {
+        Map<String, String> vmsStatus = new HashMap<>();
+        for (Guid vmId : vmAndTemplatesIds) {
+            VmDynamic vmDynamic = vmDynamicDao.get(vmId);
+            if (vmDynamic.getStatus() != VMStatus.Down) {
+                vmsStatus.put(vmId.toString(), vmDynamic.getStatus().toString());
+                log.debug("OVF_STORE - Add vm id '{}' with status: '{}'",
+                        vmId,
+                        vmDynamic.getStatus());
+            } else {
+                log.debug("OVF_STORE - Skip vm id '{}' with status: '{}'",
+                        vmId,
+                        vmDynamic.getStatus());
+            }
+        }
+        data.put(OvfInfoFileConstants.VmStatus, vmsStatus);
+    }
+
     private String buildJson(Map<String, Object> map, boolean prettyPrint) {
         try {
             return JsonHelper.mapToJson(map, prettyPrint);
@@ -197,7 +226,9 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
 
         try (InMemoryTar inMemoryTar = new InMemoryTar(bufferedOutputStream)) {
             inMemoryTar.addTarEntry(generateInfoFileData().getBytes(),
-                    "info.json");
+                    OvfInfoFileConstants.InfoFileName);
+            inMemoryTar.addTarEntry(generateMetaDataFile(vmAndTemplatesIds).getBytes(),
+                    OvfInfoFileConstants.MetaDataFileName);
             int i = 0;
             while (i < vmAndTemplatesIds.size()) {
                 int size =
