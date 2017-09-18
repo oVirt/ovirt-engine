@@ -7,7 +7,8 @@ public enum CpuVendor implements Serializable {
 
     INTEL("vmx"),
     AMD("svm"),
-    IBM("powernv");
+    IBM("powernv"),
+    IBMS390("sie");
 
     private final String flag;
 

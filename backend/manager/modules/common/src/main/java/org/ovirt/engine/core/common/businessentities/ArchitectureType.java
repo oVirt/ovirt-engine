@@ -9,6 +9,8 @@ public enum ArchitectureType implements Identifiable {
     x86(4),
     /* Guest architecture */
     ppc(3),
+    /* Host & Guest architecture */
+    s390x(7),
 
     // Specific architectures
     /* Host & Guest architecture */
