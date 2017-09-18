@@ -33,7 +33,7 @@ public class ValidationUtilsTest {
 
     @Test
     public void testTrimmingWhitespaces() {
-        assertPatternMatches("Valid string (no trimming whitespaces): ", ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, "", "aoeu", "a o e u ř", "%2123 o ^ ooe#");
+        assertPatternMatches("Valid string (no trimming whitespaces): ", ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, "", "aoeu", "a o e u ř", "%2123 o ^ ooe#", "a");
         assertPatternDoesNotMatch("Invalid string (trimming whitespaces): ", ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, " ", " aoeu", "a o e u ř ", " %2123 o ^ ooe##", " aoeu ");
     }
 
