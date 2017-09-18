@@ -151,6 +151,7 @@ public class VdsManager {
     protected final int HOST_REFRESH_RATE;
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresher hostRefresher;
+    private boolean inServerRebootTimeout;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -784,6 +785,13 @@ public class VdsManager {
      */
     public void handleNetworkException(VDSNetworkException ex) {
         boolean saveToDb = true;
+        if (isInServerRebootTimeout()) {
+            log.warn("Ignoring communication error for host '{}', because reboot timeout hasn't passed: {}",
+                    cachedVds.getHostName(),
+                    ex.getMessage());
+            log.debug("Exception", ex);
+            return;
+        }
         if (cachedVds.getStatus() != VDSStatus.Down) {
             if (isHostInGracePeriod(false)) {
                 if (cachedVds.getStatus() != VDSStatus.Connecting
@@ -1075,6 +1083,14 @@ public class VdsManager {
      */
     public void setLastVmsList(List<VmDynamic> lastVmsList) {
         this.lastVmsList = lastVmsList;
+    }
+
+    public boolean isInServerRebootTimeout() {
+        return inServerRebootTimeout;
+    }
+
+    public void setInServerRebootTimeout(boolean inServerRebootTimeout) {
+        this.inServerRebootTimeout = inServerRebootTimeout;
     }
 
     public void vmsMonitoringInitFinished() {

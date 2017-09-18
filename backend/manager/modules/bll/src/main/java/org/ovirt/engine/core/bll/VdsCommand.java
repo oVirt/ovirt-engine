@@ -100,7 +100,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         int sleepTimeInSec = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
         log.info("Waiting {} seconds, for server to finish reboot process.",
                 sleepTimeInSec);
+        resourceManager.getVdsManager(getVdsId()).setInServerRebootTimeout(true);
         ThreadUtils.sleep(TimeUnit.SECONDS.toMillis(sleepTimeInSec));
+        resourceManager.getVdsManager(getVdsId()).setInServerRebootTimeout(false);
         setVdsStatus(status);
     }
 
