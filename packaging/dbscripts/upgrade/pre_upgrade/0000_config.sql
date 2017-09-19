@@ -988,7 +988,8 @@ select fn_db_update_default_config_value('DwhHeartBeatInterval', '30', '15', 'ge
 select fn_db_update_default_config_value('UploadImageXhrTimeoutInSeconds', '10', '120', 'general', false);
 
 -- Increaded default value of maximum number of LVs per storage domain
-select fn_db_update_default_config_value('AlertOnNumberOfLVs', '300', '1000', 'general', false);
+select fn_db_update_default_config_value('AlertOnNumberOfLVs', '300', '1300', 'general', false);
+select fn_db_update_default_config_value('AlertOnNumberOfLVs', '1000', '1300', 'general', false);
 
 ------------------------------------------------------------------------------------
 --                  Split config section
