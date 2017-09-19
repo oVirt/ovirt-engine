@@ -1239,6 +1239,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         addKernelCmdlineCheckboxesListeners();
         addKernelCmdlineListener();
         updateKernelCmdlineCheckboxesChangeability();
+        updateLabelList();
     }
 
     private void addKernelCmdlineListener() {
