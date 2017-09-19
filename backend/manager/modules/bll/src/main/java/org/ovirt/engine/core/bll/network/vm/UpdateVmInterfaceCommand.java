@@ -160,6 +160,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     }
 
     void macPoolCleanupAfterExecution(boolean macAddedToPool) {
+        if (!macShouldBeChanged) {
+            return;
+        }
+
         MacPool macPool = getMacPool();
         if (getSucceeded()) {    // command succeeded, actions are not going to be reverted.
 
