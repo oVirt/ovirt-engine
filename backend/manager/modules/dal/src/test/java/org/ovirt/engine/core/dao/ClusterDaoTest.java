@@ -515,4 +515,14 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     public void testGetAllClustersByMacPoolIdForNonExistingMacPoolId() {
         assertThat(dao.getAllClustersByMacPoolId(Guid.newGuid()).size(), is(0));
     }
+
+    @Test
+    public void testGetAllClustersByDefaultNetworkProviderId() {
+        assertThat(dao.getAllClustersByDefaultNetworkProviderId(FixturesTool.OVN_NETWORK_PROVIDER_ID).size(), is(3));
+    }
+
+    @Test
+    public void testGetAllClustersByDefaultNetworkProviderIdForNonExistingDefaultNetworkProviderId() {
+        assertThat(dao.getAllClustersByDefaultNetworkProviderId(Guid.newGuid()).size(), is(0));
+    }
 }

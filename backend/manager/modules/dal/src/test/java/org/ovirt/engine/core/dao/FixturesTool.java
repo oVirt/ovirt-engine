@@ -818,6 +818,8 @@ public class FixturesTool {
 
     public static final Guid CINDER_PROVIDER_ID = new Guid("983fcfe8-ca56-4a11-8d0e-840c988d67af");
 
+    public static final Guid OVN_NETWORK_PROVIDER_ID = new Guid("47f310ad-2175-4464-89bb-5ca09062b685");
+
     public static final Guid EXISTING_LIBVIRT_SECRET_ID = new Guid("77569427-9fbe-41db-ae91-fb96fab17141");
 
     /**

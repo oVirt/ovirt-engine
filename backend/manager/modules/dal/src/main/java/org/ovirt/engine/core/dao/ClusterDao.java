@@ -195,4 +195,11 @@ public interface ClusterDao extends Dao, SearchDao<Cluster> {
      * @return all Cluster records bound to given macPoolId.
      */
     List<Cluster> getAllClustersByMacPoolId(Guid macPoolId);
+
+
+    /**
+     * @param defaultNetworkProviderId id of defaultNetworkProvider.
+     * @return all Cluster records using the given defaultNetworkProviderId.
+     */
+    List<Cluster> getAllClustersByDefaultNetworkProviderId(Guid defaultNetworkProviderId);
 }

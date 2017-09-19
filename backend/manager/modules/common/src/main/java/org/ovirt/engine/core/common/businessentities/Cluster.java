@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.Version;
 public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<Guid>,
         Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions {
 
-    private static final long serialVersionUID = 5659359762655478095L;
+    private static final long serialVersionUID = -5607824129488532099L;
 
     private Guid id;
 
@@ -152,6 +152,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
 
     private Guid migrationPolicyId;
     private Guid macPoolId;
+    private Guid defaultNetworkProviderId;
 
     public Cluster() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -577,6 +578,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
         this.firewallType = firewallType;
     }
 
+    public Guid getDefaultNetworkProviderId() {
+        return defaultNetworkProviderId;
+    }
+
+    public void setDefaultNetworkProviderId(Guid defaultNetworkProviderId) {
+        this.defaultNetworkProviderId = defaultNetworkProviderId;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -620,7 +629,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
                 migrationBandwidthLimitType,
                 migrationPolicyId,
                 macPoolId,
-                firewallType
+                firewallType,
+                defaultNetworkProviderId
         );
     }
 
@@ -677,7 +687,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
                 && Objects.equals(migrationBandwidthLimitType, other.migrationBandwidthLimitType)
                 && Objects.equals(migrationPolicyId, other.migrationPolicyId)
                 && Objects.equals(macPoolId, other.macPoolId)
-                && Objects.equals(firewallType, other.firewallType);
+                && Objects.equals(firewallType, other.firewallType)
+                && Objects.equals(defaultNetworkProviderId, other.defaultNetworkProviderId);
     }
 
     @Override

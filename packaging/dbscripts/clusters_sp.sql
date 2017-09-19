@@ -49,7 +49,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_switch_type VARCHAR(6),
     v_skip_fencing_if_gluster_bricks_up BOOLEAN,
     v_skip_fencing_if_gluster_quorum_not_met BOOLEAN,
-    v_firewall_type INT
+    v_firewall_type INT,
+    v_default_network_provider_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -99,7 +100,8 @@ BEGIN
         switch_type,
         skip_fencing_if_gluster_bricks_up,
         skip_fencing_if_gluster_quorum_not_met,
-        firewall_type
+        firewall_type,
+        default_network_provider_id
         )
     VALUES (
         v_cluster_id,
@@ -147,7 +149,8 @@ BEGIN
         v_switch_type,
         v_skip_fencing_if_gluster_bricks_up,
         v_skip_fencing_if_gluster_quorum_not_met,
-        v_firewall_type
+        v_firewall_type,
+        v_default_network_provider_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -199,7 +202,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_switch_type VARCHAR(6),
     v_skip_fencing_if_gluster_bricks_up BOOLEAN,
     v_skip_fencing_if_gluster_quorum_not_met BOOLEAN,
-    v_firewall_type INT
+    v_firewall_type INT,
+    v_default_network_provider_id UUID
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -252,7 +256,8 @@ BEGIN
         switch_type = v_switch_type,
         skip_fencing_if_gluster_bricks_up = v_skip_fencing_if_gluster_bricks_up,
         skip_fencing_if_gluster_quorum_not_met = v_skip_fencing_if_gluster_quorum_not_met,
-        firewall_type = v_firewall_type
+        firewall_type = v_firewall_type,
+        default_network_provider_id = v_default_network_provider_id
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -591,5 +596,17 @@ BEGIN
     SELECT cv.*
     FROM cluster_view cv
     WHERE cv.mac_pool_id = v_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetAllClustersByDefaultNetworkProviderId (v_id UUID)
+RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT cv.*
+    FROM cluster_view cv
+    WHERE cv.default_network_provider_id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
