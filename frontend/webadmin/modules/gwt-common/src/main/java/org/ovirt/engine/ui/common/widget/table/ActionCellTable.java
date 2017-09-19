@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.common.widget.table;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.widget.WindowHelper;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
@@ -20,16 +20,23 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
     // Magic number determined by trial and error. For some reason if the grid goes all the way to the bottom
     // of the page, a secondary scroll bar appears in all browsers. This is the minimum needed to avoid that
     // extra scroll bar.
-    private static final int GRID_SUBTRACT = 7;
+    private static final int GRID_SUBTRACT = 17;
     // The height of the header + 1 empty row.
     private static final int NO_ITEMS_HEIGHT = 55;
     private static final int LOADING_HEIGHT = 96;
 
+    private static final int CHROME_HEIGHT_ADJUST = 2;
+    private static final int FF_HEIGHT_ADJUST = 3;
+    private static final int IE_HEIGHT_ADJUST = 3;
+
+    // The height of a row of data in the grid. I wish I could dynamically detect this.
+    private static final int ROW_HEIGHT = 26;
+
     private static final Resources DEFAULT_RESOURCES = GWT.create(Resources.class);
 
     private static final int scrollbarThickness = WindowHelper.determineScrollbarThickness();
+    private static final ClientAgentType clientAgentType = new ClientAgentType();
 
-    private boolean useFullHeight = false;
     private boolean heightSet = false;
 
     public ActionCellTable(ProvidesKey<T> keyProvider, Resources resources) {
@@ -46,47 +53,12 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
         super(DEFAULT_PAGESIZE, resources != null ? resources : DEFAULT_RESOURCES);
     }
 
-    /**
-     * This method makes the DataGrid take up the entire space of the content or the height of the screen
-     * minus the height of stuff above it. This is useful for main content grids and detail tab grids, but NOT
-     * for grids in pop-up dialogs.
-     */
-    public void enableFullHeight() {
-        useFullHeight = true;
-    }
-
     @Override
     protected void onLoad() {
         super.onLoad();
         updateGridSize();
-        redraw();
     }
 
-    private void resizeGridToFullHeight() {
-        int top = getAbsoluteTop();
-        int windowHeight = Window.getClientHeight();
-        int contentHeight = this.getTableBodyElement().getOffsetHeight();
-        if (contentHeight == 0) {
-            contentHeight = this.getLoadingIndicator() != null ? LOADING_HEIGHT : NO_ITEMS_HEIGHT;
-        } else {
-            contentHeight += getGridHeaderHeight();
-        }
-        if (isHorizontalScrollbarVisible()) {
-            contentHeight += scrollbarThickness;
-        }
-        // This is to prevent scrolling in the grid without a visible scrollbar. The 3 works in FF and leaves a 1px
-        // gap in chrome. 2 is fine in Chrome but leaves the scrolling in FF.
-        contentHeight += 3;
-
-        int maxGridHeight = windowHeight - top;
-        maxGridHeight -= GRID_SUBTRACT;
-        if (top > 0 && top < windowHeight) {
-            super.setHeight(Math.min(maxGridHeight, contentHeight) + Unit.PX.getType());
-        }
-        redraw();
-    }
-
-    @Override
     public void setHeight(String height) {
         super.setHeight(height);
         redraw();
@@ -98,17 +70,32 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
         return tableScrollWidth != this.getElement().getScrollWidth() && tableScrollWidth != 0;
     }
 
-    private void resizeGridToContentHeight() {
-        int contentHeight = this.getTableBodyElement().getOffsetHeight();
-        if (contentHeight == 0) {
-            contentHeight = NO_ITEMS_HEIGHT;
-        } else {
-            contentHeight += getGridHeaderHeight();
+    private void resizeGridToContentHeight(int height) {
+        int top = getAbsoluteTop();
+        int maxGridHeight = Window.getClientHeight() - top - GRID_SUBTRACT;
+        int contentHeight = determineBrowserHeightAdjustment(height);
+        if (contentHeight > maxGridHeight) {
+            contentHeight = maxGridHeight;
         }
         if (contentHeight > 0) {
             super.setHeight(contentHeight + Unit.PX.getType());
         }
         redraw();
+    }
+
+    public int determineBrowserHeightAdjustment(int height) {
+        int contentHeight = height;
+        if (clientAgentType.isFirefox()) {
+            contentHeight += FF_HEIGHT_ADJUST;
+        } else if(clientAgentType.isIE()) {
+            contentHeight += IE_HEIGHT_ADJUST;
+        } else {
+            contentHeight += CHROME_HEIGHT_ADJUST;
+        }
+        if (isHorizontalScrollbarVisible()) {
+            contentHeight += scrollbarThickness;
+        }
+        return contentHeight;
     }
 
     private int getGridHeaderHeight() {
@@ -118,19 +105,22 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
     @Override
     public void setRowData(int start, final List<? extends T> values) {
         super.setRowData(start, values);
-        updateGridSize();
+        updateGridSize(values.size() * ROW_HEIGHT);
     }
 
     public void updateGridSize() {
-        Scheduler.get().scheduleDeferred(() -> {
-            if (!heightSet) {
-                if (useFullHeight) {
-                    resizeGridToFullHeight();
-                } else {
-                    resizeGridToContentHeight();
-                }
-            }
-        });
+        int rowCount = getRowCount();
+        int height = getLoadingIndicator() != null ? LOADING_HEIGHT : NO_ITEMS_HEIGHT;
+        if (rowCount > 0) {
+            height = rowCount * ROW_HEIGHT;
+        }
+        updateGridSize(height);
+    }
+
+    public void updateGridSize(int height) {
+        if (!heightSet) {
+            resizeGridToContentHeight(height + getGridHeaderHeight());
+        }
     }
 
     public void setLoadingState(LoadingState state) {

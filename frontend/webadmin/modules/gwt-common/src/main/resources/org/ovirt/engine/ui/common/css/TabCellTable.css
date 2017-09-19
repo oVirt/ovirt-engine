@@ -73,8 +73,13 @@
 }
 
 .cellTableFirstColumnHeader {
+    text-align: left;
+    height: 27px;
+    line-height: 28px;
+    white-space: nowrap;
+    position: relative;
+    border: 0;
     padding-left: 4px;
-    border-left: 0;
 }
 
 .cellTableLastColumnHeader {

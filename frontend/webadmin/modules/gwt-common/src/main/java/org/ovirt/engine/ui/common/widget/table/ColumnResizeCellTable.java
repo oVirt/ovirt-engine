@@ -70,9 +70,9 @@ import com.google.gwt.view.client.ProvidesKey;
 public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizableColumns<T>, ColumnController<T>,
     HasCleanup {
 
-    private static final String GRID_HIDDEN = "grid-hidden"; //$NON-NLS-1$
-    private static final String GRID_VISIBLE = "grid-visible"; //$NON-NLS-1$
-
+    private static final String GRID_HIDDEN = "grid-hidden"; // $NON-NLS-1$
+    private static final String GRID_VISIBLE = "grid-visible"; // $NON-NLS-1$
+    private static final String HIDE_ONE_ROW_SCROLL = "hide-one-row-scroll"; // $NON-NLS-1$
     /**
      * {@link #emptyNoWidthColumn} header that supports handling context menu events.
      */
@@ -202,6 +202,16 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
             };
         }
         return headerContextMenuHandler;
+    }
+
+    @Override
+    public void setRowData(int start, final List<? extends T> values) {
+        if (values.size() == 1) {
+            addStyleName(HIDE_ONE_ROW_SCROLL);
+        } else {
+            removeStyleName(HIDE_ONE_ROW_SCROLL);
+        }
+        super.setRowData(start, values);
     }
 
     @Override

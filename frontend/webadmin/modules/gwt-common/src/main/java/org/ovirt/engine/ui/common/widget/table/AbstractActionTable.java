@@ -178,7 +178,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
         };
 
-        this.table.enableFullHeight();
         // Can't do this in the onBrowserEvent, as GWT CellTable doesn't support double click.
         this.table.addDomHandler(event -> {
             SearchableListModel model = dataProvider.getModel();

@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.DataGridPopupTableResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
@@ -68,9 +69,14 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     private static final CellTableResources cellTableResources = GWT.create(CellTableResources.class);
     private static final int scrollbarThickness = WindowHelper.determineScrollbarThickness();
+    private static final ClientAgentType clientAgentType = new ClientAgentType();
 
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
+
+    private static final int CHROME_HEIGHT_ADJUST = 2;
+    private static final int FF_HEIGHT_ADJUST = 3;
+    private static final int IE_HEIGHT_ADJUST = 3;
 
     /**
      * Index of selection (check box) column, if {@linkplain #isSelectionColumnPresent present}.
@@ -273,12 +279,27 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     protected void resizeGridToContentHeight(int rowHeight) {
         // +2 for top and bottom border
-        int contentHeight = rowHeight + 2;
+        int contentHeight = determineBrowserHeighAdjustment(rowHeight);
         if (isHorizontalScrollbarVisible()) {
             contentHeight += scrollbarThickness;
         }
         super.setHeight(contentHeight + Unit.PX.getType());
         redraw();
+    }
+
+    public int determineBrowserHeighAdjustment(int height) {
+        int contentHeight = height;
+        if (clientAgentType.isFirefox()) {
+            contentHeight += FF_HEIGHT_ADJUST;
+        } else if(clientAgentType.isIE()) {
+            contentHeight += IE_HEIGHT_ADJUST;
+        } else {
+            contentHeight += CHROME_HEIGHT_ADJUST;
+        }
+        if (isHorizontalScrollbarVisible()) {
+            contentHeight += scrollbarThickness;
+        }
+        return contentHeight;
     }
 
     public int getGridHeaderHeight() {
