@@ -8,6 +8,8 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class VDSParametersBase {
 
+    private BrokerCommandCallback callback;
+
     private Set<EngineError> expectedEngineErrors = Collections.emptySet();
 
     public Set<EngineError> getExpectedEngineErrors() {
@@ -23,6 +25,15 @@ public class VDSParametersBase {
             tsb.append("expectedEngineErrors", getExpectedEngineErrors());
         }
         return tsb;
+    }
+
+    public VDSParametersBase withCallback(BrokerCommandCallback callback) {
+        this.callback = callback;
+        return this;
+    }
+
+    public BrokerCommandCallback getCallback() {
+        return callback;
     }
 
     @Override

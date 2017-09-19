@@ -5,6 +5,7 @@ public enum VDSCommandType {
     RemoveVds("org.ovirt.engine.core.vdsbroker"),
     FenceVds("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetStatsAsync("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Create("org.ovirt.engine.core.vdsbroker"),
     CreateBroker("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DestroyVm("org.ovirt.engine.core.vdsbroker"),
@@ -126,6 +127,7 @@ public enum VDSCommandType {
     Snapshot("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     UpdateVmInterface("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetHardwareInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetHardwareInfoAsync("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetLldp("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ExtendImageSize("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ReduceImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
@@ -247,7 +249,8 @@ public enum VDSCommandType {
     /**
      * Get Host capabilities
      */
-    GetCapabilities("org.ovirt.engine.core.vdsbroker.vdsbroker");
+    GetCapabilities("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetCapabilitiesAsync("org.ovirt.engine.core.vdsbroker.vdsbroker");
 
     String packageName;
 
