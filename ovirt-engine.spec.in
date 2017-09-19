@@ -300,6 +300,14 @@ Conflicts:	ipa-server
 # Userportal is retired
 Obsoletes:	%{name}-userportal
 
+# OVS/OVN stuff
+Requires:	pyOpenSSL
+Requires:	openvswitch
+Requires:	openvswitch-ovn-common
+Requires:	openvswitch-ovn-central
+Requires:	python-openvswitch
+Requires:	ovirt-provider-ovn
+
 %description
 %{ovirt_product_name} is a feature-rich server virtualization management
 system that provides advanced capabilities for managing the Open
@@ -430,6 +438,10 @@ Requires:       rh-postgresql95-postgresql-server
 Requires:       postgresql-server >= 9.5
 %endif
 Conflicts:	%{name} < 3.6.0
+
+# OVS/OVN stuff, for firewalld service files
+Requires:	openvswitch-ovn-central
+Requires:	ovirt-provider-ovn
 
 %description setup-plugin-ovirt-engine
 Setup and upgrade specific plugins for %{ovirt_product_name_short}

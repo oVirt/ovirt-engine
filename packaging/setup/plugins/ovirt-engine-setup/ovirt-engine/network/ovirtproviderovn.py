@@ -38,7 +38,6 @@ from otopi import util
 from ovirt_engine import configfile
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine.constants import Const
 from ovirt_engine_setup.engine.constants import Defaults
@@ -70,15 +69,6 @@ OvnDbConfig = namedtuple(
 @util.export
 class Plugin(plugin.PluginBase):
     """ovirt-provider-ovn plugin."""
-
-    OVN_PACKAGES = (
-        'pyOpenSSL',
-        'openvswitch',
-        'openvswitch-ovn-common',
-        'openvswitch-ovn-central',
-        'python-openvswitch',
-        'ovirt-provider-ovn',
-    )
 
     CONNECTION_TCP = 'tcp'
     CONNECTION_SSL = 'ssl'
@@ -263,22 +253,6 @@ class Plugin(plugin.PluginBase):
                 self._log.error('%s %s', pm, msg)
         return MyPMSink(self.logger)
 
-    def _setup_packages(self):
-        PM, MiniPM, MiniPMSinkBase = osetuputil.getPackageManager()
-        mpm = MiniPM(
-            sink=self._getSink(PM, MiniPMSinkBase),
-        )
-        with mpm.transaction():
-            self.logger.debug(
-                'Installing OVN packages using {pm}: {packages}'.format(
-                    pm=PM,
-                    packages=self.OVN_PACKAGES,
-                )
-            )
-            mpm.install(packages=self.OVN_PACKAGES)
-            if mpm.buildTransaction():
-                mpm.processTransaction()
-
     def _setup_firewalld_services(self):
         services = [
             s.strip()
@@ -340,9 +314,7 @@ class Plugin(plugin.PluginBase):
             dialog=self.dialog,
             name='ovirt-provider-ovn',
             note=_(
-                'Install and configure ovirt-provider-ovn? Please note that '
-                'this will cause an immediate installation\nof several OVN '
-                'packages that will not be rolled back in case of a failure. '
+                'Configure ovirt-provider-ovn '
                 '(@VALUES@) [@DEFAULT@]: '
             ),
             prompt=True,
@@ -697,7 +669,6 @@ class Plugin(plugin.PluginBase):
 
         if not self._enabled:
             return
-        self._setup_packages()
         self._setup_firewalld_services()
 
     def _print_commands(self, message, commands):
