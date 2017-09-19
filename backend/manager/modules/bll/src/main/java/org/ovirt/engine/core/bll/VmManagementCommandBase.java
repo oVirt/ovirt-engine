@@ -115,14 +115,6 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             return false;
         }
 
-        if (vmStaticData.isAutoStartup()
-                // VM has to be either migratable
-                && (vmStaticData.getMigrationSupport() != MigrationSupport.MIGRATABLE
-                // or have multiple hosts (no host means any host) in the pinning list
-                && vmStaticData.getDedicatedVmForVdsList().size() == 1)) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST.toString());
-            return false;
-        }
         return true;
     }
 
