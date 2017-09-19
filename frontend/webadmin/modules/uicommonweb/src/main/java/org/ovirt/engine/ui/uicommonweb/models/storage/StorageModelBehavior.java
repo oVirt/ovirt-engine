@@ -8,7 +8,6 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -83,7 +82,7 @@ public abstract class StorageModelBehavior extends Model {
         if (getModel().updatedStorageModels.size() == getModel().getStorageModels().size()) {
             getModel().updatedStorageModels.clear();
 
-            getModel().getHost().setItems(new ArrayList<VDS>());
+            getModel().getHost().setItems(new ArrayList<>());
             getModel().getHost().setSelectedItem(null);
 
             setStorageTypeItems();
