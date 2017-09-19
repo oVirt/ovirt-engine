@@ -15,6 +15,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.HttpUtils;
+import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturn;
@@ -74,6 +75,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VMNamesListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturn;
+import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
@@ -292,6 +294,16 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public void getCapabilities(BrokerCommandCallback callback) {
+        JsonRpcRequest request = new RequestBuilder("Host.getCapabilities").build();
+        try {
+            client.call(request, callback);
+        } catch (ClientConnectionException e) {
+            throw new TransportRunTimeException("Connection issues during send request", e);
+        }
+    }
+
+    @Override
     public VDSInfoReturn getHardwareInfo() {
         JsonRpcRequest request = new RequestBuilder("Host.getHardwareInfo").build();
         Map<String, Object> response =
@@ -300,11 +312,31 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public void getHardwareInfo(BrokerCommandCallback callback) {
+        JsonRpcRequest request = new RequestBuilder("Host.getHardwareInfo").build();
+        try {
+            client.call(request, callback);
+        } catch (ClientConnectionException e) {
+            throw new TransportRunTimeException("Connection issues during send request", e);
+        }
+    }
+
+    @Override
     public VDSInfoReturn getVdsStats() {
         JsonRpcRequest request = new RequestBuilder("Host.getStats").build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("info");
         return new VDSInfoReturn(response);
+    }
+
+    @Override
+    public void getVdsStats(BrokerCommandCallback callback) {
+        JsonRpcRequest request = new RequestBuilder("Host.getStats").build();
+        try {
+            client.call(request, callback);
+        } catch (ClientConnectionException e) {
+            throw new TransportRunTimeException("Connection issues during send request", e);
+        }
     }
 
     @Override

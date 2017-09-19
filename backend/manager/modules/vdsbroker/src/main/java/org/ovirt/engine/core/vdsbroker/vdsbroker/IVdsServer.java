@@ -33,6 +33,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
+import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 @SuppressWarnings("rawtypes")
 public interface IVdsServer {
@@ -74,9 +75,15 @@ public interface IVdsServer {
 
     VDSInfoReturn getCapabilities();
 
+    void getCapabilities(BrokerCommandCallback callback);
+
     VDSInfoReturn getHardwareInfo();
 
+    void getHardwareInfo(BrokerCommandCallback callback);
+
     VDSInfoReturn getVdsStats();
+
+    void getVdsStats(BrokerCommandCallback callback);
 
     StatusOnlyReturn setMOMPolicyParameters(Map<String, Object> key_value_store);
 
