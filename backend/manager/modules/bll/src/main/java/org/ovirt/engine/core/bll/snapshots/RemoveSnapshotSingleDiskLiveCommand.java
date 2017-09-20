@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -137,11 +136,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         case DESTROY_IMAGE_CHECK:
             nextCommand = buildDestroyCommand(ActionType.DestroyImageCheck, getActionType(),
                     new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()));
-            if (isInternalMerge() && isReduceVolumeSupported()) {
-                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.REDUCE_IMAGE);
-            } else {
-                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
-            }
+            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.REDUCE_IMAGE);
             break;
         case REDUCE_IMAGE:
             nextCommand = buildReduceImageCommand();
@@ -201,7 +196,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 getVdsId(),
                 getDiskImage().getStoragePoolId(),
                 getDiskImage().getStorageIds().get(0),
-                getActiveDiskImage().getId(), getDiskImage().getImageId(), true);
+                getActiveDiskImage().getId(),
+                getDiskImage().getImageId(),
+                getActiveDiskImage(),
+                true);
         parameters.setParentCommand(ActionType.RemoveSnapshotSingleDiskLive);
         parameters.setParentParameters(getParameters());
         return new Pair<>(ActionType.ReduceImage, parameters);
@@ -241,14 +239,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     private DiskImage getTargetImageInfoFromVdsm() {
         VmBlockJobType blockJobType = getParameters().getMergeStatusReturnValue().getBlockJobType();
         return getImageInfoFromVdsm(blockJobType == VmBlockJobType.PULL ? getDestinationDiskImage() : getDiskImage());
-    }
-
-    private boolean isReduceVolumeSupported() {
-        return FeatureSupported.isReduceVolumeSupported(getStoragePool().getCompatibilityVersion());
-    }
-
-    private boolean isInternalMerge() {
-        return !getActiveDiskImage().getParentId().equals(getDiskImage().getImageId());
     }
 
     @Override

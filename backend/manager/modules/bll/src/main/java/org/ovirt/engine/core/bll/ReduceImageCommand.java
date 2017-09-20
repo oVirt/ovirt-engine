@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -39,6 +40,18 @@ public class ReduceImageCommand<T extends ReduceImageCommandParameters> extends 
 
     @Override
     protected void executeCommand() {
+        if (!isReduceVolumeSupported()) {
+            log.info("Reduce image isn't supported in {}", getStoragePool().getCompatibilityVersion());
+            setSucceeded(true);
+            return;
+        }
+
+        if (!isInternalMerge()) {
+            log.info("Reduce image isn't supported for active image merge");
+            setSucceeded(true);
+            return;
+        }
+
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupId()));
 
         boolean prepareImageSucceeded = false;
@@ -125,6 +138,15 @@ public class ReduceImageCommand<T extends ReduceImageCommandParameters> extends 
     @Override
     protected AsyncTaskType getTaskType() {
         return AsyncTaskType.reduceImage;
+    }
+
+    private boolean isReduceVolumeSupported() {
+        setStoragePoolId(getParameters().getStoragePoolId());
+        return FeatureSupported.isReduceVolumeSupported(getStoragePool().getCompatibilityVersion());
+    }
+
+    private boolean isInternalMerge() {
+        return !getParameters().getActiveDiskImage().getParentId().equals(getParameters().getImageId());
     }
 
     private ReduceImageVDSCommandParameters creaeteReduceImageVDSCommandParameters() {

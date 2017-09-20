@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ReduceImageCommandParameters extends StorageDomainParametersBase {
@@ -9,6 +10,7 @@ public class ReduceImageCommandParameters extends StorageDomainParametersBase {
     private Guid runningVdsId;
     private Guid imageGroupId;
     private Guid imageId;
+    private DiskImage activeDiskImage;
     private boolean allowActive;
 
     public ReduceImageCommandParameters() {
@@ -20,12 +22,14 @@ public class ReduceImageCommandParameters extends StorageDomainParametersBase {
             Guid storageDomainId,
             Guid imageGroupId,
             Guid imageId,
+            DiskImage activeDiskImage,
             boolean allowActive) {
         super(storagePoolId, storageDomainId);
         this.spmId = spmId;
         this.runningVdsId = runningVdsId;
         this.imageGroupId = imageGroupId;
         this.imageId = imageId;
+        this.activeDiskImage = activeDiskImage;
         this.allowActive = allowActive;
     }
 
@@ -59,5 +63,9 @@ public class ReduceImageCommandParameters extends StorageDomainParametersBase {
 
     public Guid getRunningVdsId() {
         return runningVdsId;
+    }
+
+    public DiskImage getActiveDiskImage() {
+        return activeDiskImage;
     }
 }
