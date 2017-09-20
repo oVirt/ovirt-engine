@@ -154,6 +154,20 @@ class Plugin(plugin.PluginBase):
 
         return provider_id
 
+    def _set_default_network_provider_in_db(self):
+        self.environment[
+            oenginecons.EngineDBEnv.STATEMENT
+        ].execute(
+            statement="""
+                update cluster
+                    set default_network_provider_id=%(provider_id)s
+                    where default_network_provider_id is null
+            """,
+            args=dict(
+                provider_id=self.environment[OvnEnv.OVIRT_PROVIDER_ID],
+            ),
+        )
+
     def _generate_client_secret(self):
 
         def generatePassword():
@@ -775,6 +789,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        name=oenginecons.Stages.OVN_PROVIDER_OVN_DB,
         after=(
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
             oenginecons.Stages.CA_AVAILABLE,
@@ -794,6 +809,18 @@ class Plugin(plugin.PluginBase):
             OvnEnv.OVIRT_PROVIDER_ID
         ] = provider_id
         self._add_client_secret_to_db()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        after=(
+            oenginecons.Stages.OVN_PROVIDER_OVN_DB,
+        ),
+        condition=lambda self: (
+            self.environment.get(OvnEnv.OVIRT_PROVIDER_ID) is not None
+        )
+    )
+    def _set_default_network_provider(self):
+        self._set_default_network_provider_in_db()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,

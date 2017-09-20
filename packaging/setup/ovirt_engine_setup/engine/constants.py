@@ -391,6 +391,7 @@ class Stages(object):
 
     OVN_SERVICES_RESTART = 'osetup.ovn.services.restart'
     OVN_PROVIDER_SERVICE_RESTART = 'osetup.ovn.provider.service.restart'
+    OVN_PROVIDER_OVN_DB = 'osetup.ovn.provider.db'
 
 
 @util.export
