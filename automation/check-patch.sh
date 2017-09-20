@@ -1,5 +1,7 @@
 #!/bin/bash -xe
 
+source automation/jvm-opts.sh
+
 BUILD_UT=0
 RUN_DAO_TESTS=0
 BUILD_GWT=0
@@ -49,10 +51,7 @@ export BUILD_JAVA_OPTS_MAVEN="\
 export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS \
     -Dovirt.surefire.reportsDirectory=${PWD}/exported-artifacts/tests \
 "
-export BUILD_JAVA_OPTS_GWT="\
-    -Xms1G \
-    -Xmx4G \
-"
+export BUILD_JAVA_OPTS_GWT="$JVM_MEM_OPTS"
 
 # Set the location of the JDK that will be used for compilation:
 export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-1.8.0}"

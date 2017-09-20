@@ -1,5 +1,7 @@
 #!/bin/bash -xe
 
+source automation/jvm-opts.sh
+
 SUFFIX=".git$(git rev-parse --short HEAD)"
 
 if [ -d /root/.m2/repository/org/ovirt ]; then
@@ -19,10 +21,7 @@ export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS \
     -D gwt.userAgent=gecko1_8,safari \
 "
 
-export BUILD_JAVA_OPTS_GWT="\
-    -Xms1G \
-    -Xmx4G \
-"
+export BUILD_JAVA_OPTS_GWT="$JVM_MEM_OPTS"
 
 # Set the location of the JDK that will be used for compilation:
 export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-1.8.0}"
