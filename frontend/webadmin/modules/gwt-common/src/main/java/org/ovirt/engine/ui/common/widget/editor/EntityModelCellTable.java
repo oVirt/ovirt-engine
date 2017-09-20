@@ -241,8 +241,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         if (rowCount > 0) {
             height = rowCount * ROW_HEIGHT;
         }
-        final int newHeight = height;
-        updateGridSize(newHeight);
+        updateGridSize(height);
     }
 
     @Override

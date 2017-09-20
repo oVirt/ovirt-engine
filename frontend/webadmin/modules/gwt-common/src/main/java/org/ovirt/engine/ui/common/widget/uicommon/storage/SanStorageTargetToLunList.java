@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractScrollableTextColumn;
-import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractSanStorageList.SanStorageListTargetTableResources;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
@@ -30,19 +29,17 @@ import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetModel, ListModel> {
 
-    protected int treeScrollPosition;
-
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private LunModel selectedLunModel;
+    protected int treeScrollPosition;
 
     public SanStorageTargetToLunList(SanStorageModelBase model) {
         super(model);
@@ -59,7 +56,6 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     @Override
     protected void createSanStorageListWidget() {
         super.createSanStorageListWidget();
-
     }
 
     @Override
@@ -177,7 +173,8 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     @SuppressWarnings("unchecked")
     @Override
     protected TreeItem createLeafNode(ListModel leafModel) {
-        TreeItem item = new TreeItem();
+        final TreeItem item = new TreeItem();
+
         List<LunModel> items = (List<LunModel>) leafModel.getItems();
 
         if (hideLeaf || items.isEmpty()) {
@@ -286,9 +283,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             table.getSelectionModel().addSelectionChangeHandler(event -> model.updateLunWarningForDiscardAfterDelete());
         }
 
-        ScrollPanel panel = new ScrollPanel();
-        panel.add(table);
-        item.setWidget(panel);
+        item.setWidget(table);
 
         // Display LUNs as grayed-out if needed
         for (LunModel lunModel : items) {
@@ -296,6 +291,8 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 grayOutItem(lunModel.getGrayedOutReasons(), lunModel, table);
             }
         }
+
+        addOpenHandlerToTree(tree, item, table);
 
         return item;
     }

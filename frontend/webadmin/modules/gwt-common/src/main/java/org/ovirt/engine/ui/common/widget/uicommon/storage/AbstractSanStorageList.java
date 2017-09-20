@@ -21,6 +21,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,6 +34,8 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractSanStorageList<M extends EntityModel, L extends ListModel> extends Composite {
+
+    protected static final int ROW_HEIGHT = 25;
 
     @SuppressWarnings("rawtypes")
     interface WidgetUiBinder extends UiBinder<Widget, AbstractSanStorageList> {
@@ -170,6 +173,16 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
 
     public ScrollPanel getTreeContainer() {
         return treeContainer;
+    }
+
+    protected HandlerRegistration addOpenHandlerToTree(Tree tree, TreeItem item, EntityModelCellTable<ListModel<LunModel>> table) {
+        return tree.addOpenHandler(e -> {
+            TreeItem target = e.getTarget();
+            if (target != null && target.getChildCount() == 1 && target.getChild(0).equals(item)) {
+                table.updateGridSize(table.getVisibleItemCount() * ROW_HEIGHT + 1);
+                table.redraw();
+            }
+        });
     }
 
     protected abstract void createHeaderWidget();

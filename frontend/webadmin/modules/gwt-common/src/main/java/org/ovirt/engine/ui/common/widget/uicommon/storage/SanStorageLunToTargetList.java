@@ -27,7 +27,6 @@ import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -91,6 +90,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
         // Style table
         table.setWidth("100%"); //$NON-NLS-1$
+        // This was the height of the header
+        table.setHeight("23px"); // $NON-NLS-1$
 
         // Add table as header widget
         treeHeader.add(table);
@@ -120,8 +121,6 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 return ""; //$NON-NLS-1$
             }
         }, multiSelection ? selectAllHeader : null, "20px"); //$NON-NLS-1$
-        // This was the height of the header
-        table.setHeight("23px"); // $NON-NLS-1$
     }
 
     final IEventListener<PropertyChangedEventArgs> lunModelSelectedItemListener = (ev, sender, args) -> {
@@ -165,6 +164,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.asEditor().edit(listModel);
 
         table.setWidth("100%"); // $NON-NLS-1$
+        // This was the height of the header
+        table.setHeight("46px"); // $NON-NLS-1$
 
         rootModel.getPropertyChangedEvent().removeListener(lunModelSelectedItemListener);
         rootModel.getPropertyChangedEvent().addListener(lunModelSelectedItemListener, table);
@@ -190,7 +191,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         panel.setWidth("100%"); // $NON-NLS-1$
         panel.getElement().getStyle().setTableLayout(TableLayout.FIXED);
 
-        TreeItem item = new TreeItem(panel);
+        TreeItem item = new TreeItem(table);
 
         // Display LUNs as grayed-out if needed
         if (rootModel.getIsGrayedOut()) {
@@ -259,7 +260,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             return null;
         }
 
-        EntityModelCellTable<ListModel> table =
+        EntityModelCellTable<ListModel<LunModel>> table =
                 new EntityModelCellTable<>(false, (Resources) GWT.create(SanStorageListTargetTableResources.class), true);
 
         table.addColumn(new TextColumn<SanTargetModel>() {
@@ -297,9 +298,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
         table.setWidth("100%"); // $NON-NLS-1$
 
-        ScrollPanel panel = new ScrollPanel();
-        panel.add(table);
-        TreeItem item = new TreeItem(panel);
+        TreeItem item = new TreeItem(table);
+        addOpenHandlerToTree(tree, item, table);
         return item;
     }
 }
