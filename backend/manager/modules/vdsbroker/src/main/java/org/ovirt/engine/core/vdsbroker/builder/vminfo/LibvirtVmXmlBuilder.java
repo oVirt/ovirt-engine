@@ -577,7 +577,7 @@ public class LibvirtVmXmlBuilder {
         List<Integer> hugepageSizes = hostStatisticsSupplier.get().getHugePages().stream()
                 .map(HugePage::getSizeKB)
                 .collect(Collectors.toList());
-        if (!hugepageSizes.contains(hugepageSizes)) {
+        if (!hugepageSizes.contains(hugepageSize)) {
             switch(vm.getClusterArch().getFamily()) {
             case x86:
                 hugepageSize = DEFAULT_HUGEPAGESIZE_X86_64;
