@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +12,7 @@ import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.ErrorHandling;
+import org.ovirt.engine.api.model.ExternalProvider;
 import org.ovirt.engine.api.model.Ksm;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.MemoryOverCommit;
@@ -160,6 +162,17 @@ public class ClusterMapper {
 
         if (model.isSetGlusterTunedProfile()) {
             entity.setGlusterTunedProfile(model.getGlusterTunedProfile());
+        }
+
+        if (model.isSetExternalNetworkProviders()) {
+            List<ExternalProvider> externalNetworkProviders =
+                    model.getExternalNetworkProviders().getExternalProviders();
+            if (externalNetworkProviders.size() > 0) {
+                // Ignore everything but the first external provider, because engine's Cluster currently supports
+                // only a single external network provider
+                String providerId = externalNetworkProviders.get(0).getId();
+                entity.setDefaultNetworkProviderId(providerId == null ? null : GuidUtils.asGuid(providerId));
+            }
         }
         return entity;
     }

@@ -146,7 +146,6 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public ClusterExternalProvidersResource getExternalNetworkProvidersResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendClusterExternalNetworkProvidersResource(guid));
     }
 }
