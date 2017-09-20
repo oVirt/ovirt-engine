@@ -74,6 +74,19 @@ public class SortedListModel<T> extends ListModel<T> {
         return comparator != null;
     }
 
+    /**
+     * If {@code true}, a default {@link Comparator} will be used to ensure consistent
+     * order when rendering this model's items. This affects data grids which are either
+     * un-sorted, or sorted by a column that specifies a {@link Comparator} (client-side
+     * sorting).
+     * <p>
+     * Models that expect their items to be rendered in the same order as received from
+     * backend should override this method and return {@code false}.
+     */
+    public boolean useDefaultItemComparator() {
+        return true;
+    }
+
     @Override
     public void setItems(Collection<T> value) {
         Collection<T> sortedItems = sortItems(value);

@@ -129,7 +129,7 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
 
         if (items != null) {
             // Apply default item order, unless the items are already sorted
-            if (!getModel().hasItemsSorted()) {
+            if (getModel().useDefaultItemComparator() && !getModel().hasItemsSorted()) {
                 items.sort(defaultComparator);
             }
 

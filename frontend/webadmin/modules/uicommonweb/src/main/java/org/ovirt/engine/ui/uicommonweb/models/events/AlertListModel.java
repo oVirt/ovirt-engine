@@ -99,11 +99,10 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         return "AlertListModel"; //$NON-NLS-1$
     }
 
-
     @Override
-    public boolean hasItemsSorted() {
-        // Always return true to bypass the default sorting as we don't want this applied
-        // to alerts.
-        return true;
+    public boolean useDefaultItemComparator() {
+        // We want alerts to be rendered in the same order as received from backend.
+        return false;
     }
+
 }

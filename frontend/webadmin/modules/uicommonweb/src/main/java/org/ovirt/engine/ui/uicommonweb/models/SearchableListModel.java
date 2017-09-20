@@ -708,7 +708,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     @Override
-    public boolean hasItemsSorted() {
+    public final boolean hasItemsSorted() {
         return (sortBy != null) || super.hasItemsSorted();
     }
 
@@ -1027,4 +1027,5 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                     }
                 }));
     }
+
 }
