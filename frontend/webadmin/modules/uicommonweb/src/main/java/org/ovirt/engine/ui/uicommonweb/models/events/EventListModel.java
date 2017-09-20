@@ -180,14 +180,12 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
     }
 
     @Override
-    public boolean hasItemsSorted() {
-        // Always return true to bypass the default sorting as we don't want this applied
-        // to events.
-        return true;
+    public boolean useDefaultItemComparator() {
+        // We want events to be rendered in the same order as received from backend.
+        return false;
     }
 
     private void details() {
-
         AuditLog event = getSelectedItem();
 
         if (getWindow() != null || event == null) {

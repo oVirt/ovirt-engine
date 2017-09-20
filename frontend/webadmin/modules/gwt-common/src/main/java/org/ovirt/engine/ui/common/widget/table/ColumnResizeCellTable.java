@@ -833,8 +833,10 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
         // Ensure consistent item order with fallback comparator
         Comparator<? super T> columnComparator = sortableColumn.getComparator();
-        Comparator<? super T> realComparator = (columnComparator != null)
-                ? DefaultModelItemComparator.fallbackFor(columnComparator) : null;
+        Comparator<? super T> realComparator = columnComparator;
+        if (sortedModel.useDefaultItemComparator() && columnComparator != null) {
+            realComparator = DefaultModelItemComparator.fallbackFor(columnComparator);
+        }
 
         // If server-side sorting is supported by the model, but the column
         // uses Comparator for client-side sorting, use client-side sorting
