@@ -88,7 +88,7 @@ ENGINE_VERSION:=$(shell cat pom.xml | head -n 20 | grep '<version>' | head -n 1 
 PACKAGE_VERSION=$(ENGINE_VERSION)$(if $(MILESTONE),_$(MILESTONE))
 DISPLAY_VERSION=$(PACKAGE_VERSION)
 
-DEV_BUILD_FLAGS:=
+DEV_BUILD_FLAGS:=-P brand-source-maps
 ifneq ($(DEV_BUILD_GWT_DRAFT),0)
 DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) -P gwtdraft
 endif

@@ -17,12 +17,15 @@
   <name>oVirt Engine brand</name>
   <description>oVirt Engine default brand package</description>
 
+  <properties>
+    <brand.build.directory>${project.build.directory}/ovirt.brand</brand.build.directory>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
          <groupId>com.github.warmuuh</groupId>
          <artifactId>libsass-maven-plugin</artifactId>
-         <version>0.2.8-libsass_3.4.4</version>
          <executions>
            <execution>
              <phase>generate-resources</phase>
@@ -33,15 +36,14 @@
          </executions>
          <configuration>
            <outputStyle>compressed</outputStyle>
-           <inputPath>${basedir}/src/main/sass/</inputPath>
-           <outputPath>${basedir}/target/ovirt.brand/</outputPath>
+           <outputPath>${brand.build.directory}</outputPath>
+           <generateSourceMap>false</generateSourceMap>
          </configuration>
       </plugin>
 
-      <!-- override the default-resources copy to skip .sass files -->
+      <!-- override the default-resources copy to put resources in ovirt.brand/ -->
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven-resources-plugin.version}</version>
         <executions>
           <execution>
             <id>default-resources</id>
@@ -50,22 +52,36 @@
               <goal>resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/ovirt.brand/</outputDirectory>
+              <outputDirectory>${brand.build.directory}</outputDirectory>
               <resources>
                 <resource>
                   <directory>${basedir}/src/main/resources/</directory>
-                  <excludes>
-                    <exclude>**/*.sass</exclude>
-                  </excludes>
-                  <filtering>false</filtering>
                 </resource>
               </resources>
             </configuration>
           </execution>
         </executions>
       </plugin>
-
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>brand-source-maps</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.warmuuh</groupId>
+            <artifactId>libsass-maven-plugin</artifactId>
+            <configuration>
+              <generateSourceMap>true</generateSourceMap>
+              <sourceMapOutputPath>${brand.build.directory}</sourceMapOutputPath>
+              <embedSourceContentsInSourceMap>true</embedSourceContentsInSourceMap>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
