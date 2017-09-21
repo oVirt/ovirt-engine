@@ -2,6 +2,9 @@
 
 source automation/jvm-opts.sh
 
+MAVEN_OPTS="$MAVEN_OPTS $JVM_MEM_OPTS"
+export MAVEN_OPTS
+
 BUILD_UT=0
 RUN_DAO_TESTS=0
 

@@ -2,6 +2,9 @@
 
 source automation/jvm-opts.sh
 
+MAVEN_OPTS="$MAVEN_OPTS $JVM_MEM_OPTS"
+export MAVEN_OPTS
+
 SUFFIX=".git$(git rev-parse --short HEAD)"
 
 if [ -d /root/.m2/repository/org/ovirt ]; then
