@@ -2112,5 +2112,7 @@ public interface UIConstants extends Constants {
     String runningOnHost();
 
     String pinnedToHost();
+
+    String replaceBrickWarning();
 }
 
