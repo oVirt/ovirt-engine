@@ -7,11 +7,9 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.DataGridPopupTableResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
-import org.ovirt.engine.ui.common.widget.WindowHelper;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
 import org.ovirt.engine.ui.common.widget.table.HasColumns;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
@@ -24,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
@@ -68,26 +65,14 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     }
 
     private static final CellTableResources cellTableResources = GWT.create(CellTableResources.class);
-    private static final int scrollbarThickness = WindowHelper.determineScrollbarThickness();
-    private static final ClientAgentType clientAgentType = new ClientAgentType();
 
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
-
-    private static final int CHROME_HEIGHT_ADJUST = 2;
-    private static final int FF_HEIGHT_ADJUST = 3;
-    private static final int IE_HEIGHT_ADJUST = 3;
 
     /**
      * Index of selection (check box) column, if {@linkplain #isSelectionColumnPresent present}.
      */
     public static final int SELECTION_COLUMN_INDEX = 0;
-    // The height of the header + 1 empty row.
-    private static final int NO_ITEMS_HEIGHT = 55;
-    // The height needed to show the spinner properly centered.
-    private static final int LOADING_HEIGHT = 96;
-    // The height of a row of data in the grid. I wish I could dynamically detect this.
-    private static final int ROW_HEIGHT = 26;
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -243,7 +228,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     public void onLoad() {
         super.onLoad();
         int rowCount = getRowCount();
-        int height = getLoadingIndicator() != null ? LOADING_HEIGHT : NO_ITEMS_HEIGHT;
+        int height = getLoadingIndicator() != null ? LOADING_HEIGHT : ROW_HEIGHT;
         if (rowCount > 0) {
             height = rowCount * ROW_HEIGHT;
         }
@@ -261,49 +246,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     public void setRowData(int start, final List<? extends EntityModel> values) {
         super.setRowData(start, values);
         updateGridSize(values.size() * ROW_HEIGHT);
-    }
-
-    public void updateGridSize(final int rowHeight) {
-        Scheduler.get().scheduleDeferred(() -> {
-            int gridHeaderHeight = getGridHeaderHeight();
-            if (!isHeightSet && gridHeaderHeight > 0) {
-                resizeGridToContentHeight(rowHeight + gridHeaderHeight);
-            }
-        });
-    }
-
-    private boolean isHorizontalScrollbarVisible() {
-        int tableScrollWidth = this.getTableBodyElement().getScrollWidth();
-        return tableScrollWidth != this.getElement().getScrollWidth() && tableScrollWidth != 0;
-    }
-
-    protected void resizeGridToContentHeight(int rowHeight) {
-        // +2 for top and bottom border
-        int contentHeight = determineBrowserHeighAdjustment(rowHeight);
-        if (isHorizontalScrollbarVisible()) {
-            contentHeight += scrollbarThickness;
-        }
-        super.setHeight(contentHeight + Unit.PX.getType());
-        redraw();
-    }
-
-    public int determineBrowserHeighAdjustment(int height) {
-        int contentHeight = height;
-        if (clientAgentType.isFirefox()) {
-            contentHeight += FF_HEIGHT_ADJUST;
-        } else if(clientAgentType.isIE()) {
-            contentHeight += IE_HEIGHT_ADJUST;
-        } else {
-            contentHeight += CHROME_HEIGHT_ADJUST;
-        }
-        if (isHorizontalScrollbarVisible()) {
-            contentHeight += scrollbarThickness;
-        }
-        return contentHeight;
-    }
-
-    public int getGridHeaderHeight() {
-        return this.getTableHeadElement().getOffsetHeight();
     }
 
     public void addSelectionChangeHandler() {

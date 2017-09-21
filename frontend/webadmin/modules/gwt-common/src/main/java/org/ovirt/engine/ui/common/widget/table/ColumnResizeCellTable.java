@@ -16,8 +16,10 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.model.DefaultModelItemComparator;
 import org.ovirt.engine.ui.common.utils.JqueryUtils;
+import org.ovirt.engine.ui.common.widget.WindowHelper;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
@@ -33,10 +35,12 @@ import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableElement;
@@ -73,6 +77,21 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     private static final String GRID_HIDDEN = "grid-hidden"; // $NON-NLS-1$
     private static final String GRID_VISIBLE = "grid-visible"; // $NON-NLS-1$
     private static final String HIDE_ONE_ROW_SCROLL = "hide-one-row-scroll"; // $NON-NLS-1$
+
+    private static final int CHROME_HEIGHT_ADJUST = 2;
+    private static final int FF_HEIGHT_ADJUST = 3;
+    private static final int IE_HEIGHT_ADJUST = 3;
+
+    // The height of a row of data in the grid. I wish I could dynamically detect this.
+    protected static final int ROW_HEIGHT = 26;
+    // The minimum height needed to properly display the loading throbber.
+    protected static final int LOADING_HEIGHT = 96;
+
+    private static final ClientAgentType clientAgentType = new ClientAgentType();
+    protected static final int scrollbarThickness = WindowHelper.determineScrollbarThickness();
+
+    protected boolean isHeightSet = false;
+
     /**
      * {@link #emptyNoWidthColumn} header that supports handling context menu events.
      */
@@ -202,16 +221,6 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
             };
         }
         return headerContextMenuHandler;
-    }
-
-    @Override
-    public void setRowData(int start, final List<? extends T> values) {
-        if (values.size() == 1) {
-            addStyleName(HIDE_ONE_ROW_SCROLL);
-        } else {
-            removeStyleName(HIDE_ONE_ROW_SCROLL);
-        }
-        super.setRowData(start, values);
     }
 
     @Override
@@ -753,6 +762,61 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     @Override
     public void cleanup() {
+    }
+
+    protected boolean isHorizontalScrollbarVisible() {
+        int tableScrollWidth = this.getTableBodyElement().getScrollWidth();
+        return tableScrollWidth != this.getElement().getScrollWidth() && tableScrollWidth != 0;
+    }
+
+    protected int determineBrowserHeightAdjustment(int height) {
+        int contentHeight = height;
+        if (clientAgentType.isFirefox()) {
+            contentHeight += FF_HEIGHT_ADJUST;
+        } else if(clientAgentType.isIE()) {
+            contentHeight += IE_HEIGHT_ADJUST;
+        } else {
+            contentHeight += CHROME_HEIGHT_ADJUST;
+        }
+        return contentHeight;
+    }
+
+    public void updateGridSize(final int rowHeight) {
+        Scheduler.get().scheduleDeferred(() -> {
+            int gridHeaderHeight = getGridHeaderHeight();
+            if (!isHeightSet && gridHeaderHeight > 0) {
+                resizeGridToContentHeight(rowHeight + gridHeaderHeight);
+            }
+        });
+    }
+
+    protected void resizeGridToContentHeight(int rowHeight) {
+        int contentHeight = determineBrowserHeightAdjustment(rowHeight);
+        if (isHorizontalScrollbarVisible()) {
+            contentHeight += scrollbarThickness;
+        }
+        super.setHeight(contentHeight + Unit.PX.getType());
+        redraw();
+    }
+
+    public int getGridHeaderHeight() {
+        return this.getTableHeadElement().getOffsetHeight();
+    }
+
+    @Override
+    public void setRowData(int start, final List<? extends T> values) {
+        if (values.size() == 1) {
+            addStyleName(HIDE_ONE_ROW_SCROLL);
+        } else {
+            removeStyleName(HIDE_ONE_ROW_SCROLL);
+        }
+        super.setRowData(start, values);
+        int rowCount = values.size();
+        int height = ROW_HEIGHT;
+        if (rowCount > 0) {
+            height = rowCount * ROW_HEIGHT;
+        }
+        updateGridSize(height);
     }
 
 }

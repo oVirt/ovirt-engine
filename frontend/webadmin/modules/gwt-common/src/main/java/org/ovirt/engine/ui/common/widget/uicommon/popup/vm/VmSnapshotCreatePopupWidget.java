@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 import java.util.Collection;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -34,14 +35,13 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<SnapshotModel> {
 
     interface Driver extends UiCommonEditorDriver<SnapshotModel, VmSnapshotCreatePopupWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, VmSnapshotCreatePopupWidget> {
+    interface ViewUiBinder extends UiBinder<Container, VmSnapshotCreatePopupWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -62,10 +62,6 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     @UiField
     @Ignore
     Label disksTableLabel;
-
-    @UiField
-    @Ignore
-    ScrollPanel disksPanel;
 
     @UiField(provided = true)
     @Ignore
@@ -88,7 +84,6 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
         initEditors();
         initTables();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
@@ -114,12 +109,6 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
                 return diskImage.getDiskDescription();
             }
         }, constants.descriptionDisk(), "150px"); //$NON-NLS-1$
-    }
-
-    void localize() {
-        descriptionEditor.setLabel(constants.virtualMachineSnapshotCreatePopupDescriptionLabel());
-        memoryEditor.setLabel(constants.virtualMachineSnapshotCreatePopupMemoryLabel());
-        disksTableLabel.setText(constants.snapshotDisks());
     }
 
     @Override
