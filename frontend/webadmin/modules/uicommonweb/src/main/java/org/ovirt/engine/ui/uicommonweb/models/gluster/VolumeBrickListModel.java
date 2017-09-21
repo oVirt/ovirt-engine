@@ -189,7 +189,8 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         boolean allowAdvanced = true;
         boolean allowAdd = true;
 
-        if (volumeEntity == null || volumeEntity.getVolumeType().isDispersedType() || !volumeEntity.getVolumeType().isSupported()) {
+        if (volumeEntity == null || volumeEntity.getVolumeType().isDispersedType()
+                || !volumeEntity.getVolumeType().isSupported()) {
             allowRemove = false;
             allowAdd = false;
         }
@@ -198,29 +199,26 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             allowRemove = false;
             allowReplace = false;
             allowAdvanced = false;
-        }
-        else {
+        } else {
             if (getSelectedItems().size() == 1) {
-                allowReplace = true;
                 allowAdvanced = volumeEntity.isOnline() && getSelectedItems().get(0).isOnline();
-            }
-            else {
+            } else {
                 allowReplace = false;
                 allowAdvanced = false;
             }
             GlusterAsyncTask volumeTask = volumeEntity.getAsyncTask();
             if (volumeTask != null
-                    && (volumeTask.getStatus() == JobExecutionStatus.STARTED || volumeTask.getType() == GlusterTaskType.REMOVE_BRICK
-                            && volumeTask.getStatus() == JobExecutionStatus.FINISHED)) {
+                    && (volumeTask.getStatus() == JobExecutionStatus.STARTED
+                            || volumeTask.getType() == GlusterTaskType.REMOVE_BRICK
+                                    && volumeTask.getStatus() == JobExecutionStatus.FINISHED)) {
                 allowRemove = false;
                 allowReplace = false;
-            }
-            else if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
+            } else if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
                     || getSelectedItems().size() == volumeEntity.getBricks().size()) {
                 allowRemove = false;
-            }
-            else if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
-                    && (volumeEntity.getBricks().size() == VolumeListModel.REPLICATE_COUNT_DEFAULT || getSelectedItems().size() > 1)) {
+            } else if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
+                    && (volumeEntity.getBricks().size() == VolumeListModel.REPLICATE_COUNT_DEFAULT
+                            || getSelectedItems().size() > 1)) {
                 allowRemove = false;
             }
         }
@@ -280,8 +278,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             } else {
                 setItems(glusterVolumeEntity.getBricks());
             }
-        }
-        else {
+        } else {
             setItems(null);
         }
     }
@@ -370,7 +367,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
     private void addBricks() {
 
-        final VolumeBrickModel volumeBrickModel = (VolumeBrickModel)getWindow();
+        final VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
         final GlusterVolumeEntity volumeEntity = getEntity();
 
         volumeBrickModel.getReplicaCount().setEntity(volumeEntity.getReplicaCount());
@@ -449,9 +446,11 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             return;
         }
 
-        if (!VolumeBrickModel.validateBrickCount(volumeEntity.getVolumeType(), volumeEntity.getBricks().size()
-                + brickList.size(),
-                volumeBrickModel.getReplicaCountValue(), volumeBrickModel.getStripeCountValue(),
+        if (!VolumeBrickModel.validateBrickCount(volumeEntity.getVolumeType(),
+                volumeEntity.getBricks().size()
+                        + brickList.size(),
+                volumeBrickModel.getReplicaCountValue(),
+                volumeBrickModel.getStripeCountValue(),
                 false)) {
             volumeBrickModel.setMessage(VolumeBrickModel.getValidationFailedMsg(volumeEntity.getVolumeType(), false));
             return;
@@ -459,7 +458,8 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         if ((volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
                 || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
-                && !volumeBrickModel.validateReplicateBricks(volumeEntity.getReplicaCount(), volumeEntity.getBricks())) {
+                && !volumeBrickModel.validateReplicateBricks(volumeEntity.getReplicaCount(),
+                        volumeEntity.getBricks())) {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -480,8 +480,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().no());
             cancelCommand.setIsCancel(true);
             getConfirmWindow().getCommands().add(cancelCommand);
-        }
-        else {
+        } else {
             onAddBricksInternal();
         }
     }
@@ -503,9 +502,9 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         volumeBrickModel.startProgress();
 
         GlusterVolumeBricksActionParameters parameter = new GlusterVolumeBricksActionParameters(volumeEntity.getId(),
-                        brickList,
-                        volumeBrickModel.getReplicaCountValue(),
-                        volumeBrickModel.getStripeCountValue(),
+                brickList,
+                volumeBrickModel.getReplicaCountValue(),
+                volumeBrickModel.getStripeCountValue(),
                 volumeBrickModel.getForce().getEntity());
 
         Frontend.getInstance().runAction(VdcActionType.AddBricksToGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
@@ -591,8 +590,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                 removeBrickModel)) {
             removeBrickModel.setMigrationSupported(false);
             removeBrickModel.setMessage(removeBrickModel.getValidationMessage());
-        }
-        else {
+        } else {
             removeBrickModel.setMigrationSupported(volumeEntity.getVolumeType().isDistributedType());
             removeBrickModel.getMigrateData().setEntity(removeBrickModel.isMigrationSupported());
 
@@ -739,7 +737,8 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                 if (!selectedBricksToSubVolumesMap.containsKey(selectedBricksInSubVolume)) {
                     selectedBricksToSubVolumesMap.put(selectedBricksInSubVolume, 0);
                 }
-                selectedBricksToSubVolumesMap.put(selectedBricksInSubVolume, selectedBricksToSubVolumesMap.get(selectedBricksInSubVolume) + 1);
+                selectedBricksToSubVolumesMap.put(selectedBricksInSubVolume,
+                        selectedBricksToSubVolumesMap.get(selectedBricksInSubVolume) + 1);
             }
         }
 
@@ -751,8 +750,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                 removeBrickModel.setReplicaCount(removeBrickModel.getReplicaCount() - 1);
                 removeBrickModel.setReduceReplica(true);
                 return true;
-            }
-            else if (selectedBricksToSubVolumesMap.containsKey(replicaCount)) {
+            } else if (selectedBricksToSubVolumesMap.containsKey(replicaCount)) {
                 return true;
             }
             return false;
@@ -805,12 +803,10 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE) {
             parameter.setReplicaCount(volumeEntity.getReplicaCount() - 1);
-        }
-        else if (volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+        } else if (volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
             if (model.isReduceReplica()) {
                 parameter.setReplicaCount(volumeEntity.getReplicaCount() - 1);
-            }
-            else {
+            } else {
                 parameter.setReplicaCount(volumeEntity.getReplicaCount());
             }
         }
@@ -1042,6 +1038,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                             .getMessages()
                             .removeBrickStatusFailed(volumeEntity.getName()));
                 }
+
             }
         }),
                 volumeEntity.getClusterId(),
@@ -1136,6 +1133,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             statusModel.getStopRemoveBricksCommand().setIsExecutionAllowed(false);
         }
     }
+
     private void replaceBrick() {
         if (getWindow() != null) {
             return;
@@ -1173,8 +1171,49 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
     }
 
     private void onReplaceBrick() {
+        GlusterVolumeEntity volumeEntity = getEntity();
         ReplaceBrickModel replaceBrickModel = (ReplaceBrickModel) getWindow();
-        if (replaceBrickModel == null) {
+        GlusterBrickEntity existingBrick = getSelectedItem();
+        if (volumeEntity == null || replaceBrickModel == null || existingBrick == null) {
+            return;
+        }
+        VDS server = replaceBrickModel.getServers().getSelectedItem();
+        if (server == null) {
+            return;
+        }
+        String selectedHost = server.getHostName();
+        boolean isMultipleBricks = false;
+        if(volumeEntity.getBrickDirectories().contains(selectedHost) && !selectedHost.equals(existingBrick.getServerName())) {
+            isMultipleBricks = true;
+        }
+
+        if (volumeEntity.getVolumeType().isReplicatedType() && isMultipleBricks) {
+            ConfirmationModel model = new ConfirmationModel();
+            setConfirmWindow(model);
+            model.setTitle(ConstantsManager.getInstance().getConstants().replaceBrickTitle());
+            model.setMessage(ConstantsManager.getInstance().getConstants().replaceBrickWarning());
+            model.setHelpTag(HelpTag.replace_brick);
+            model.setHashName("replace brick"); //$NON-NLS-1$
+
+            UICommand yesCommand = new UICommand("OnReplaceConfirmation", VolumeBrickListModel.this); //$NON-NLS-1$
+            yesCommand.setTitle(ConstantsManager.getInstance().getConstants().yes());
+            model.getCommands().add(yesCommand);
+
+            UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().no());
+            cancelCommand.setIsCancel(true);
+            getConfirmWindow().getCommands().add(cancelCommand);
+        } else {
+            onReplaceConfirmation();
+        }
+    }
+
+    private void onReplaceConfirmation() {
+        cancelConfirmation();
+        ReplaceBrickModel replaceBrickModel = (ReplaceBrickModel) getWindow();
+        GlusterVolumeEntity volumeEntity = getEntity();
+        GlusterBrickEntity existingBrick = getSelectedItem();
+        if (replaceBrickModel == null || volumeEntity == null || existingBrick == null) {
             return;
         }
 
@@ -1182,26 +1221,16 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = getEntity();
-        if (volumeEntity == null) {
-            return;
-        }
-
-        GlusterBrickEntity existingBrick = getSelectedItem();
-        if (existingBrick == null) {
-            return;
-        }
-
         VDS server = replaceBrickModel.getServers().getSelectedItem();
-
+        if (server == null) {
+            return;
+        }
         GlusterBrickEntity newBrick = new GlusterBrickEntity();
         newBrick.setVolumeId(volumeEntity.getId());
         newBrick.setServerId(server.getId());
         newBrick.setServerName(server.getHostName());
         newBrick.setBrickDirectory(replaceBrickModel.getBrickDirectory().getEntity());
-
         replaceBrickModel.startProgress();
-
         GlusterVolumeReplaceBrickActionParameters parameter =
                 new GlusterVolumeReplaceBrickActionParameters(volumeEntity.getId(),
                         existingBrick,
@@ -1227,8 +1256,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
             public void onSuccess(Cluster returnValue) {
                 onShowBrickAdvancedDetails(volumeEntity);
             }
-        }),
-                volumeEntity.getClusterId());
+        }), volumeEntity.getClusterId());
     }
 
     private void onShowBrickAdvancedDetails(GlusterVolumeEntity volumeEntity) {
@@ -1335,6 +1363,8 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         } else if (command.getName().equals("CancelAll")) { //$NON-NLS-1$
             cancelConfirmation();
             setWindow(null);
+        }else if (command.getName().equals("OnReplaceConfirmation")) { //$NON-NLS-1$
+            onReplaceConfirmation();
         }
 
     }

@@ -2079,5 +2079,16 @@ public interface UIConstants extends Constants {
 
     String hcAddBrickWarning();
 
+    String forceRemoveProvider();
+
+    String forceRemoveCinderProvider();
+
+    String all();
+
+    String runningOnHost();
+
+    String pinnedToHost();
+
+    String replaceBrickWarning();
 }
 
