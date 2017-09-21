@@ -180,8 +180,11 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         // Boot protocol and IP info
         if (networkModel.isAttached()) {
-            insertHorizontalLine();
-            addBootProtoAndIpInfo(networkModel.getAttachedToNic().getOriginalIface());
+            if (networkModel.hasVlan() && networkModel.getVlanDevice() != null) {
+                addBootProtoAndIpInfo(networkModel.getVlanDevice());
+            } else if (!networkModel.hasVlan()) {
+                addBootProtoAndIpInfo(networkModel.getAttachedToNic().getOriginalIface());
+            }
         }
     }
 
@@ -233,6 +236,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     }
 
     private void addBootProtoAndIpInfo(VdsNetworkInterface iface) {
+        insertHorizontalLine();
         // IPv4
         addRow(templates.strongTextWithColor(constants.ipv4ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
         Ipv4BootProtocol ipv4BootProtocol = iface.getIpv4BootProtocol();
