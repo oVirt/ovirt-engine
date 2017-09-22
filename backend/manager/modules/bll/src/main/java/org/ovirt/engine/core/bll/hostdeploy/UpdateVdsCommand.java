@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -137,6 +138,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     @Override
     protected void executeCommand() {
+        getParameters().getVdsStaticData().setReinstallRequired(shouldVdsBeReinstalled());
         updateVdsData();
         if (needToUpdateVdsBroker()) {
             initializeVds();
@@ -209,6 +211,14 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         checkKdumpIntegrationStatus();
         updateAffinityLabels();
         setSucceeded(true);
+    }
+
+    private boolean shouldVdsBeReinstalled() {
+        VdsStatic vdsStatic = getParameters().getVdsStaticData();
+        VdsStatic oldVdsStatic = oldHost.getStaticData();
+        return vdsStatic.isReinstallRequired() ||
+                (vdsStatic.isPmKdumpDetection() && !oldVdsStatic.isPmKdumpDetection()) ||
+                !Objects.equals(vdsStatic.getCurrentKernelCmdline(), oldVdsStatic.getCurrentKernelCmdline());
     }
 
     @Override

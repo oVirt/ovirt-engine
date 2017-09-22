@@ -293,6 +293,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         return runVdsCommand(VDSCommandType.SetVdsStatus, parameters);
     }
 
+    protected void markVdsReinstalled() {
+        vdsStaticDao.updateReinstallRequired(getVds().getStaticData().getId(), false);
+    }
+
     protected String getErrorMessage(String msg) {
         return !StringUtils.isEmpty(msg) ? msg : String.format(
             "Please refer to %1$s/engine.log and log logs under %1$s/host-deploy/ for further details.",

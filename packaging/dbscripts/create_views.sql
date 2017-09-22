@@ -1824,7 +1824,8 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_static.kernel_cmdline AS kernel_cmdline,
     vds_static.last_stored_kernel_cmdline AS last_stored_kernel_cmdline,
     cluster.fencing_enabled AS fencing_enabled,
-    gluster_server.peer_status AS gluster_peer_status
+    gluster_server.peer_status AS gluster_peer_status,
+    vds_static.reinstall_required AS reinstall_required
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

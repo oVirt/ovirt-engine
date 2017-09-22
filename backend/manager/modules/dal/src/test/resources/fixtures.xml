@@ -2375,6 +2375,7 @@
         <column>host_provider_id</column>
         <column>kernel_cmdline</column>
         <column>last_stored_kernel_cmdline</column>
+        <column>reinstall_required</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>magenta-vdsc</value>
@@ -2397,6 +2398,7 @@
             <null />
             <value>{"current":"kvm-intel.nested=on vfio_iommu_type1.allow_unsafe_interrupts=on","parsable":true,"iommu":false,"kvmNested":true,"unsafeInterrupts":true,"pciRealloc":false}</value>
             <value>kvm-intel.nested=on</value>
+            <value>false</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -2420,6 +2422,7 @@
             <null />
             <value>{"current":"kvm-intel.nested=on vfio_iommu_type1.allow_unsafe_interrupts=on","parsable":true,"iommu":false,"kvmNested":true,"unsafeInterrupts":true,"pciRealloc":false}</value>
             <value>kvm-intel.nested=on</value>
+            <value>false</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
@@ -2443,6 +2446,7 @@
             <null />
             <value>{"current":"kvm-intel.nested=on vfio_iommu_type1.allow_unsafe_interrupts=on","parsable":true,"iommu":false,"kvmNested":true,"unsafeInterrupts":true,"pciRealloc":false}</value>
             <value>kvm-intel.nested=on</value>
+            <value>false</value>
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -2466,6 +2470,7 @@
             <null />
             <null />
             <null />
+            <value>false</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -2489,6 +2494,7 @@
             <null />
             <value>{}</value>
             <value></value>
+            <value>false</value>
         </row>
     </table>
 

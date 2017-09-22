@@ -103,7 +103,8 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 .addValue("host_provider_id", vds.getHostProviderId())
                 .addValue("openstack_network_provider_id", vds.getOpenstackNetworkProviderId())
                 .addValue("kernel_cmdline", KernelCmdlineColumn.fromVdsStatic(vds).toJson())
-                .addValue("last_stored_kernel_cmdline", vds.getLastStoredKernelCmdline());
+                .addValue("last_stored_kernel_cmdline", vds.getLastStoredKernelCmdline())
+                .addValue("reinstall_required", vds.isReinstallRequired());
     }
 
     @Override
@@ -146,6 +147,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         entity.setOpenstackNetworkProviderId(getGuid(rs, "openstack_network_provider_id"));
         KernelCmdlineColumn.fromJson(rs.getString("kernel_cmdline")).toVdsStatic(entity);
         entity.setLastStoredKernelCmdline(rs.getString("last_stored_kernel_cmdline"));
+        entity.setReinstallRequired(rs.getBoolean("reinstall_required"));
         return entity;
     };
 
@@ -171,6 +173,15 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 getCustomMapSqlParameterSource()
                         .addValue("vds_id", vdsStaticId)
                         .addValue("last_stored_kernel_cmdline", lastStoredKernelCmdline));
+    }
+
+    @Override
+    public void updateReinstallRequired(Guid vdsStaticId, boolean reinstallRequired) {
+        getCallsHandler().executeModification(
+                "UpdateVdsReinstallRequired",
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", vdsStaticId)
+                        .addValue("reinstall_required", reinstallRequired));
     }
 
     @Override

@@ -1551,4 +1551,8 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
     public void setGlusterPeerStatus(PeerStatus glusterPeerStatus) {
         this.glusterPeerStatus = glusterPeerStatus;
     }
+
+    public void setReinstallRequired(boolean reinstallRequired) {
+        vdsStatic.setReinstallRequired(reinstallRequired);
+    }
 }

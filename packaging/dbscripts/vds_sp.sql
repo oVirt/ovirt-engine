@@ -703,6 +703,23 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION UpdateVdsReinstallRequired (
+    v_vds_id UUID,
+    v_reinstall_required BOOLEAN
+    )
+RETURNS VOID
+    AS $PROCEDURE$
+BEGIN
+    BEGIN
+        UPDATE vds_static
+        SET reinstall_required = v_reinstall_required
+        WHERE vds_id = v_vds_id;
+    END;
+
+    RETURN;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION UpdateVdsStatic (
     v_host_name VARCHAR(255),
     v_free_text_comment TEXT,
@@ -726,7 +743,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsStatic (
     v_disable_auto_pm BOOLEAN,
     v_host_provider_id UUID,
     v_openstack_network_provider_id UUID,
-    v_kernel_cmdline TEXT
+    v_kernel_cmdline TEXT,
+    v_reinstall_required BOOLEAN
 )
     RETURNS VOID
     --The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -756,7 +774,8 @@ BEGIN
             ssh_port = v_ssh_port,
             ssh_username = v_ssh_username,
             disable_auto_pm = v_disable_auto_pm,
-            kernel_cmdline = v_kernel_cmdline
+            kernel_cmdline = v_kernel_cmdline,
+            reinstall_required = v_reinstall_required
         WHERE vds_id = v_vds_id;
     END;
 

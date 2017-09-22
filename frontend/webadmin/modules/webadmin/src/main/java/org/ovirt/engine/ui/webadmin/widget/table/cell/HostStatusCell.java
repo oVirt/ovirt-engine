@@ -87,7 +87,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
                 vds.getNetConfigDirty() == null ? false : vds.getNetConfigDirty().booleanValue();
         boolean showPMAlert = vds.getClusterSupportsVirtService() && !vds.isPmEnabled() && vds.isFencingEnabled();
         boolean showGlusterAlert = vds.getClusterSupportsGlusterService() && vds.getGlusterPeerStatus() != PeerStatus.CONNECTED;
-        if (showPMAlert || getnet_config_dirty || showGlusterAlert) {
+        if (showPMAlert || getnet_config_dirty || showGlusterAlert || vds.getStaticData().isReinstallRequired()) {
             sb.append(alertImageHtml);
         }
         sb.appendHtmlConstant("</div>"); //$NON-NLS-1$

@@ -173,11 +173,13 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
                 case Reboot:
                     markCurrentCmdlineAsStored();
+                    markVdsReinstalled();
                     setVdsStatus(VDSStatus.Reboot);
                     runSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
                     markCurrentCmdlineAsStored();
+                    markVdsReinstalled();
                     configureManagementNetwork();
                     if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
                         setVdsStatus(VDSStatus.Maintenance);

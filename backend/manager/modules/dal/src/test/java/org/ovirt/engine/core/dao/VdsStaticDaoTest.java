@@ -173,4 +173,10 @@ public class VdsStaticDaoTest extends BaseDaoTestCase {
         result.setNetworkName(networkName);
         return result;
     }
+
+    @Test
+    public void testUpdateVdsReinstallRequired() {
+        dao.updateReinstallRequired(existingVds.getId(), true);
+        assertTrue(dao.get(existingVds.getId()).isReinstallRequired());
+    }
 }
