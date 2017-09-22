@@ -100,4 +100,10 @@ public class VdsStaticDaoTest extends BaseGenericDaoTestCase<Guid, VdsStatic, Vd
                 VDSStatus.Up);
         assertTrue(resultBeforeStatusUpdate);
     }
+
+    @Test
+    public void testUpdateVdsReinstallRequired() {
+        dao.updateReinstallRequired(getExistingEntityId(), true);
+        assertTrue(dao.get(getExistingEntityId()).isReinstallRequired());
+    }
 }

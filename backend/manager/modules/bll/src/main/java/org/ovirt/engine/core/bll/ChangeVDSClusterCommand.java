@@ -220,6 +220,11 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         TransactionSupport.executeInNewTransaction(() -> {
             VdsStatic staticData = getVds().getStaticData();
             getCompensationContext().snapshotEntity(staticData);
+            // if the new cluster's firewall type is different from the old cluster's firewall type, a reinstall
+            // of the host is needed to reconfigure the firewall.
+            if (targetCluster.getFirewallType() != getSourceCluster().getFirewallType()) {
+                staticData.setReinstallRequired(true);
+            }
             staticData.setClusterId(targetClusterId);
             vdsStaticDao.update(staticData);
             getCompensationContext().stateChanged();

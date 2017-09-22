@@ -152,6 +152,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableVdsField
     private boolean kernelCmdlinePciRealloc;
 
+    private boolean reinstallRequired;
+
     public boolean isAutoRecoverable() {
         return autoRecoverable;
     }
@@ -430,6 +432,15 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.kernelCmdlinePciRealloc = kernelCmdlinePciRealloc;
     }
 
+
+    public boolean isReinstallRequired() {
+        return reinstallRequired;
+    }
+
+    public void setReinstallRequired(boolean reinstallRequired) {
+        this.reinstallRequired = reinstallRequired;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -457,7 +468,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 kernelCmdlineIommu,
                 kernelCmdlineKvmNested,
                 kernelCmdlinePciRealloc,
-                kernelCmdlineUnsafeInterrupts
+                kernelCmdlineUnsafeInterrupts,
+                reinstallRequired
         );
     }
 
@@ -495,6 +507,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(kernelCmdlineIommu, other.kernelCmdlineIommu)
                 && Objects.equals(kernelCmdlineKvmNested, other.kernelCmdlineKvmNested)
                 && Objects.equals(kernelCmdlinePciRealloc, other.kernelCmdlinePciRealloc)
-                && Objects.equals(kernelCmdlineUnsafeInterrupts, other.kernelCmdlineUnsafeInterrupts);
+                && Objects.equals(kernelCmdlineUnsafeInterrupts, other.kernelCmdlineUnsafeInterrupts)
+                && reinstallRequired == other.reinstallRequired;
     }
 }

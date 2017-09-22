@@ -70,6 +70,7 @@ import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -115,6 +116,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private GlusterVolumeDao glusterVolumeDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
 
     private List<VDS> allForCluster;
     private Cluster oldCluster;
@@ -255,6 +258,10 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         updateVms();
         updateTemplates();
 
+        if (getCluster().getFirewallType() != getPrevCluster().getFirewallType()) {
+            markHostsForReinstall();
+        }
+
         if (!failedUpgradeEntities.isEmpty()) {
             logFailedUpgrades();
             failValidation(Arrays.asList(EngineMessage.CLUSTER_CANNOT_UPDATE_CLUSTER_FAILED_TO_UPDATE_VMS),
@@ -275,6 +282,12 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         VmManager vmManager = resourceManager.getVmManager(vm.getId(), false);
         if (vmManager != null) {
             vmManager.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
+        }
+    }
+
+    private void markHostsForReinstall() {
+        for (VDS vds : allForCluster) {
+            vdsStaticDao.updateReinstallRequired(vds.getId(), true);
         }
     }
 

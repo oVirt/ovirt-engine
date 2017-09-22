@@ -35,6 +35,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -68,6 +69,8 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     private ProviderDao providerDao;
     @Inject
     private AlertDirector alertDirector;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -276,6 +279,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     private VDSReturnValue invokeSetHostStatus(SetVdsStatusVDSCommandParameters parameters) {
         return runVdsCommand(VDSCommandType.SetVdsStatus, parameters);
+    }
+
+    protected void markVdsReinstalled() {
+        vdsStaticDao.updateReinstallRequired(getVds().getStaticData().getId(), false);
     }
 
     protected String getErrorMessage(String msg) {

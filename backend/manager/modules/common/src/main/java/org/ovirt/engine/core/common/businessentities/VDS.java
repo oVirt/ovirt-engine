@@ -1597,4 +1597,8 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public void setInFenceFlow(boolean isInFenceFlow) {
         vdsDynamic.setInFenceFlow(isInFenceFlow);
     }
+
+    public void setReinstallRequired(boolean reinstallRequired) {
+        vdsStatic.setReinstallRequired(reinstallRequired);
+    }
 }

@@ -60,6 +60,13 @@ public interface VdsStaticDao extends GenericDao<VdsStatic, Guid> {
     void updateLastStoredKernelCmdline(Guid vdsStaticId, String lastStoredKernelCmdline);
 
     /**
+     * Separate update method for {@code reinstall_required} column
+     * @param vdsStaticId the vds static id
+     * @param reinstallRequired flag indicating if vds needs to be reinstalled
+     */
+    void updateReinstallRequired(Guid vdsStaticId, boolean reinstallRequired);
+
+    /**
      * Checks if exists a host with the given status in the cluster that do not have the network attached to its NIC's.
      *
      * @param clusterId cluster id

@@ -385,6 +385,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setPrettyName(rs.getString("pretty_name"));
         entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
         entity.setInFenceFlow(rs.getBoolean("in_fence_flow"));
+        entity.setReinstallRequired(rs.getBoolean("reinstall_required"));
         return entity;
     };
 

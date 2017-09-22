@@ -195,11 +195,13 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
                 case Reboot:
                     markCurrentCmdlineAsStored();
+                    markVdsReinstalled();
                     setVdsStatus(VDSStatus.Reboot);
                     runSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
                     markCurrentCmdlineAsStored();
+                    markVdsReinstalled();
 
                     // TODO: When more logic goes to ovirt-host-deploy role,
                     // this code should be moved to appropriate place, currently
