@@ -262,7 +262,13 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     protected IsWidget createIcon() {
         Span iconSpan = new Span();
         iconSpan.addStyleName(Styles.FONT_AWESOME_BASE);
-        iconSpan.addStyleName(IconType.CAMERA.getCssName());
+        if (SnapshotStatus.IN_PREVIEW.equals(getEntity().getStatus())) {
+            iconSpan.addStyleName(IconType.EYE.getCssName());
+        } else if (SnapshotStatus.LOCKED.equals(getEntity().getStatus())) {
+            iconSpan.addStyleName(IconType.LOCK.getCssName());
+        } else {
+            iconSpan.addStyleName(IconType.CAMERA.getCssName());
+        }
         iconSpan.addStyleName(PatternflyConstants.PF_LIST_VIEW_ICON_SM);
         iconPanel.add(iconSpan);
         return iconPanel;
