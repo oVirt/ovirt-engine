@@ -8,13 +8,27 @@
     xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+
     <ui:style>
         .hostNetworkProviderWidget {
             min-height: 464px;
         }
+
+        .inline {
+            display: inline-block;
+        }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.hostNetworkProviderWidget}">
+        <b:Row>
+            <b:Column size="SM_12">
+                <ge:EntityModelCheckBoxEditor ui:field="useClusterDefaultNetworkProvider"
+                                              label="{constants.useClusterDefaultNetworkProvider}"
+                                              usePatternFly="true"
+                                              addStyleNames="{style.inline}"/>
+            </b:Column>
+        </b:Row>
         <b:Row>
             <w:EntityModelWidgetWithInfo ui:field="networkProvider" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
         </b:Row>

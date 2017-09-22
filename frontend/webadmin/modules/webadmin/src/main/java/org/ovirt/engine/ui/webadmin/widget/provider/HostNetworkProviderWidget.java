@@ -6,10 +6,12 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.PatternFlyCompatible;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -47,6 +49,10 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField(provided = true)
+    @Path("useClusterDefaultNetworkProvider.entity")
+    EntityModelCheckBoxEditor useClusterDefaultNetworkProvider;
+
+    @UiField(provided = true)
     @WithElementId("networkProvider")
     public EntityModelWidgetWithInfo networkProvider;
 
@@ -78,6 +84,7 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
     @Inject
     public HostNetworkProviderWidget() {
 
+        useClusterDefaultNetworkProvider = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkProviderLabel = new EnableableFormLabel();
         networkProviderEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
         networkProvider = new EntityModelWidgetWithInfo(networkProviderLabel, networkProviderEditor);
@@ -118,6 +125,7 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
 
     @Override
     public void setUsePatternFly(boolean use) {
+        useClusterDefaultNetworkProvider.setUsePatternFly(use);
         networkProvider.setUsePatternFly(use);
         networkProviderTypeEditor.setUsePatternFly(use);
         providerPluginTypeEditor.setUsePatternFly(use);

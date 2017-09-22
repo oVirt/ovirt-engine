@@ -1679,6 +1679,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String manualNetworkProviderInstallRecomendation();
 
+    String useClusterDefaultNetworkProvider();
+
     String leaseStorageDomain();
 
     String emptyLeaseStorageDomain();
