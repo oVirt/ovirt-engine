@@ -240,13 +240,16 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         StringJoiner ipv4AddressJoiner = new StringJoiner(COMMA_DELIMITER);
         StringJoiner ipv6AddressJoiner = new StringJoiner(COMMA_DELIMITER);
         for (VmGuestAgentInterface guestAgentInterface: allGuestAgentData) {
-            if (guestAgentInterface.getIpv4Addresses() != null) {
-                ipv4AddressJoiner.add(
-                        String.join(COMMA_DELIMITER, guestAgentInterface.getIpv4Addresses()));
-            }
-            if (guestAgentInterface.getIpv6Addresses() != null) {
-                ipv6AddressJoiner.add(
-                        String.join(COMMA_DELIMITER, guestAgentInterface.getIpv6Addresses()));
+            if (guestAgentInterface.getMacAddress() != null
+                    && networkInterface.getMacAddress().equals(guestAgentInterface.getMacAddress())) {
+                if (guestAgentInterface.getIpv4Addresses() != null) {
+                    ipv4AddressJoiner.add(
+                            String.join(COMMA_DELIMITER, guestAgentInterface.getIpv4Addresses()));
+                }
+                if (guestAgentInterface.getIpv6Addresses() != null) {
+                    ipv6AddressJoiner.add(
+                            String.join(COMMA_DELIMITER, guestAgentInterface.getIpv6Addresses()));
+                }
             }
         }
         String ipv4Address = ipv4AddressJoiner.toString();
