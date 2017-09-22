@@ -812,16 +812,6 @@ common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 %endif
 
 %if 0%{?fedora}
-common/com/woorea/openstack/sdk/main/cinder-client.jar openstack-java-sdk/cinder-client.jar
-common/com/woorea/openstack/sdk/main/cinder-model.jar openstack-java-sdk/cinder-model.jar
-common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
-common/com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
-common/com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
-common/com/woorea/openstack/sdk/main/keystone-model.jar openstack-java-sdk/keystone-model.jar
-common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-client.jar
-common/com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
-common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
-common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/quartz/main/quartz.jar
 common/org/snmp4j/main/snmp4j.jar snmp4j.jar
