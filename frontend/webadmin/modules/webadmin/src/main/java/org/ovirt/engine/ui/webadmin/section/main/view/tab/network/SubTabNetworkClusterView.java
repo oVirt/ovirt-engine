@@ -56,7 +56,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         displayImage = safeHtmlFromTrustedString(resources.networkMonitor());
         migrationImage = safeHtmlFromTrustedString(resources.migrationNetwork());
         glusterNwImage = safeHtmlFromTrustedString(resources.glusterNetwork());
-        emptyImage = safeHtmlFromTrustedString(resources.networkEmpty());
+        emptyImage = SafeHtmlUtils.fromTrustedString(constants.empty());
         managementImage = safeHtmlFromTrustedString(resources.mgmtNetwork());
         defaultRouteImage = safeHtmlFromTrustedString(resources.defaultRouteNetwork());
 
