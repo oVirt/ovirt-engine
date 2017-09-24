@@ -88,7 +88,7 @@ public class VmDevicesConverter {
         result.addAll(parseDisks(document, devices));
         result.addAll(parseRedirs(document, devices));
         result.addAll(parseMemories(document, devices));
-        result.addAll(parseHostDevices(document, devices, hostId));
+        result.addAll(parseManagedHostDevices(document, devices, hostId));
         return result.stream()
                 .filter(map -> !map.isEmpty())
                 .toArray(Map[]::new);
@@ -230,7 +230,13 @@ public class VmDevicesConverter {
         return String.valueOf(intKbValue / 1024);
     }
 
-    private List<Map<String, Object>> parseHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId) {
+    /**
+     * This method processes managed host devices (those that are set by the engine).
+     * That means that the device should already exist in the database and can be correlated
+     * with one of the devices of the host. Host devices that were designed to be added as
+     * unmanaged devices, like mdev devices, are handled separately.
+     */
+    private List<Map<String, Object>> parseManagedHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.HOSTDEV);
         if (dbDevices.isEmpty()) {
             return Collections.emptyList();
@@ -247,25 +253,27 @@ public class VmDevicesConverter {
             if (hostAddress == null) {
                 continue;
             }
-            HostDevice hostDevice = addressToHostDevice.get(hostAddress);
 
-            Map<String, Object> dev = new HashMap<>();
-            dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
-            dev.put(VdsProperties.Address, parseAddress(node));
-            dev.put(VdsProperties.Alias, parseAlias(node));
-            dev.put(VdsProperties.Device, hostDevice.getDeviceName());
+            HostDevice hostDevice = addressToHostDevice.get(hostAddress);
+            if (hostDevice == null) {
+                continue;
+            }
 
             VmDevice dbDev = dbDevices.stream()
                     .filter(d -> d.getDevice().equals(hostDevice.getDeviceName()))
                     .findFirst()
                     .orElse(null);
-
             if (dbDev == null) {
                 log.warn("VM host device '{}' does not exist in the database, thus ignored",
                         hostDevice.getDeviceName());
                 continue;
             }
 
+            Map<String, Object> dev = new HashMap<>();
+            dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
+            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Alias, parseAlias(node));
+            dev.put(VdsProperties.Device, hostDevice.getDeviceName());
             dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
             dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
 
