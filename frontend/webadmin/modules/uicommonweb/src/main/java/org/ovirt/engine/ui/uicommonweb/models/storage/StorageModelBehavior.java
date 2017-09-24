@@ -95,7 +95,7 @@ public abstract class StorageModelBehavior extends Model {
     }
 
     public final void updateDataCenterAlert() {
-        EntityModel alert = getModel().getDataCenterAlert();
+        EntityModel<String> alert = getModel().getDataCenterAlert();
         alert.setIsAvailable(false);
         alert.setEntity("");
     }
