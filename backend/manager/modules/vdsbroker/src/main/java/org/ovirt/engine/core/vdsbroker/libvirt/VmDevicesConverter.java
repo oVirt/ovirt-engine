@@ -59,7 +59,13 @@ public class VmDevicesConverter {
     private static final String DEVICES_START_ELEMENT = "<devices>";
     private static final String DEVICES_END_ELEMENT = "</devices>";
 
+    private MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier;
+
     public Map<String, Object> convert(Guid vmId, Guid hostId, String xml) throws Exception {
+        addressToHostDeviceSupplier = new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
+                .stream()
+                .filter(device -> !device.getAddress().isEmpty())
+                .collect(Collectors.toMap(HostDevice::getAddress, device -> device)));
         String devicesXml = xml.substring(
                 xml.indexOf(DEVICES_START_ELEMENT),
                 xml.indexOf(DEVICES_END_ELEMENT) + DEVICES_END_ELEMENT.length());
@@ -89,6 +95,7 @@ public class VmDevicesConverter {
         result.addAll(parseRedirs(document, devices));
         result.addAll(parseMemories(document, devices));
         result.addAll(parseManagedHostDevices(document, devices, hostId));
+        result.addAll(parseUnmanagedHostDevices(document, devices, hostId));
         return result.stream()
                 .filter(map -> !map.isEmpty())
                 .toArray(Map[]::new);
@@ -230,6 +237,39 @@ public class VmDevicesConverter {
         return String.valueOf(intKbValue / 1024);
     }
 
+    private List<Map<String, Object>> parseUnmanagedHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId) {
+        List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.HOSTDEV);
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (XmlNode node : document.selectNodes("//*/hostdev")) {
+            Map<String, String> hostAddress = parseHostAddress(node);
+            if (hostAddress == null) {
+                continue;
+            }
+
+            if (addressToHostDeviceSupplier.get().containsKey(hostAddress)) {
+                // managed
+                continue;
+            }
+
+            String device = parseAttribute(node, TYPE);
+            VmDevice dbDev = dbDevices.stream()
+                    .filter(d -> d.getDevice().equals(device) && Objects.equals(d.getSpecParams(), hostAddress))
+                    .findFirst()
+                    .orElse(null);
+
+            Map<String, Object> dev = new HashMap<>();
+            dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
+            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Alias, parseAlias(node));
+            dev.put(VdsProperties.Device, device);
+            dev.put(VdsProperties.SpecParams, hostAddress);
+            dev.put(VdsProperties.DeviceId, dbDev != null ? dbDev.getId().getDeviceId().toString() : Guid.newGuid().toString());
+            result.add(dev);
+        }
+        return result;
+    }
+
     /**
      * This method processes managed host devices (those that are set by the engine).
      * That means that the device should already exist in the database and can be correlated
@@ -242,11 +282,6 @@ public class VmDevicesConverter {
             return Collections.emptyList();
         }
 
-        Map<Map<String, String>, HostDevice> addressToHostDevice = hostDeviceDao.getHostDevicesByHostId(hostId)
-                .stream()
-                .filter(dev -> !dev.getAddress().isEmpty())
-                .collect(Collectors.toMap(HostDevice::getAddress, device -> device));
-
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : document.selectNodes("//*/hostdev")) {
             Map<String, String> hostAddress = parseHostAddress(node);
@@ -254,8 +289,9 @@ public class VmDevicesConverter {
                 continue;
             }
 
-            HostDevice hostDevice = addressToHostDevice.get(hostAddress);
+            HostDevice hostDevice = addressToHostDeviceSupplier.get().get(hostAddress);
             if (hostDevice == null) {
+                // unmanaged
                 continue;
             }
 
@@ -581,6 +617,10 @@ public class VmDevicesConverter {
                 address.put(key, String.valueOf(val));
             }
         });
+        XmlAttribute uuidAttribute = addressNode.attributes.get("uuid");
+        if (uuidAttribute != null) {
+            address.put("uuid", uuidAttribute.getValue());
+        }
         return address;
     }
 
