@@ -118,11 +118,7 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
 
     @Override
     public CommandEntity createCommandEntity(Guid cmdId, ActionType actionType, ActionParametersBase params) {
-        CommandEntity cmdEntity = new CommandEntity();
-        cmdEntity.setId(cmdId);
-        cmdEntity.setCommandType(actionType);
-        cmdEntity.setCommandParameters(params);
-        return cmdEntity;
+        return coCoAsyncTaskHelper.createCommandEntity(cmdId, actionType, params);
     }
 
     @Override
@@ -205,7 +201,7 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
 
     @Override
     public List<AsyncTask> getAllAsyncTasksFromDb() {
-        return coCoAsyncTaskHelper.getAllAsyncTasksFromDb(this);
+        return coCoAsyncTaskHelper.getAllAsyncTasksFromDb();
     }
 
     @Override

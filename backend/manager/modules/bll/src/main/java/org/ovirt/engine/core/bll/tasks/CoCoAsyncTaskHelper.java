@@ -47,6 +47,8 @@ public class CoCoAsyncTaskHelper {
     @Inject
     private Instance<CommandCoordinator> coco;
     @Inject
+    private Instance<CommandsRepository> commandsRepositoryInstance;
+    @Inject
     private Instance<AsyncTaskManager> asyncTaskManager;
 
     /**
@@ -145,7 +147,7 @@ public class CoCoAsyncTaskHelper {
         }
     }
 
-    public List<AsyncTask> getAllAsyncTasksFromDb(CommandCoordinator coco) {
+    public List<AsyncTask> getAllAsyncTasksFromDb() {
         List<AsyncTask> asyncTasks = DbFacade.getInstance().getAsyncTaskDao().getAll();
         for (AsyncTask asyncTask : asyncTasks) {
             asyncTask.setRootCmdEntity(getCommandEntity(asyncTask.getRootCommandId()));
@@ -154,10 +156,18 @@ public class CoCoAsyncTaskHelper {
         return asyncTasks;
     }
 
+    public CommandEntity createCommandEntity(Guid cmdId, ActionType actionType, ActionParametersBase params) {
+        CommandEntity cmdEntity = new CommandEntity();
+        cmdEntity.setId(cmdId);
+        cmdEntity.setCommandType(actionType);
+        cmdEntity.setCommandParameters(params);
+        return cmdEntity;
+    }
+
     private CommandEntity getCommandEntity(Guid cmdId) {
-        CommandEntity cmdEntity = coco.get().getCommandEntity(cmdId);
+        CommandEntity cmdEntity = commandsRepositoryInstance.get().getCommandEntity(cmdId);
         if (cmdEntity == null) {
-            cmdEntity = coco.get().createCommandEntity(cmdId, ActionType.Unknown, new ActionParametersBase());
+            cmdEntity = createCommandEntity(cmdId, ActionType.Unknown, new ActionParametersBase());
         }
         return cmdEntity;
     }
@@ -324,7 +334,7 @@ public class CoCoAsyncTaskHelper {
                                                  ActionParametersBase parameters) {
         CommandEntity cmdEntity = coco.get().getCommandEntity(cmdId);
         if (cmdEntity == null) {
-            cmdEntity = coco.get().createCommandEntity(cmdId, actionType, parameters);
+            cmdEntity = createCommandEntity(cmdId, actionType, parameters);
             if (!Guid.isNullOrEmpty(cmdId)) {
                 cmdEntity.setCommandStatus(CommandStatus.ACTIVE);
                 coco.get().persistCommand(cmdEntity);

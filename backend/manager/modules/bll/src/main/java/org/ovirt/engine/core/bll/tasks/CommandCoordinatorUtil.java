@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -37,17 +38,17 @@ import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 public class CommandCoordinatorUtil implements BackendService {
 
     @Inject
-    private CommandCoordinator coco;
+    private Instance<CommandCoordinator> coco;
 
     @Inject
-    private AsyncTaskManager asyncTaskManager;
+    private Instance<AsyncTaskManager> asyncTaskManager;
 
     /**
      * Start polling the task identified by the vdsm task id
      * @param taskID The vdsm task id
      */
     public void startPollingTask(Guid taskID) {
-        asyncTaskManager.startPollingTask(taskID);
+        asyncTaskManager.get().startPollingTask(taskID);
     }
 
     /**
@@ -57,7 +58,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param sp the storage pool to retrieve running tasks from
      */
     public void addStoragePoolExistingTasks(StoragePool sp) {
-        asyncTaskManager.addStoragePoolExistingTasks(sp);
+        asyncTaskManager.get().addStoragePoolExistingTasks(sp);
     }
 
     /**
@@ -66,7 +67,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param type The action type
      */
     public boolean hasTasksForEntityIdAndAction(Guid id, ActionType type) {
-        return asyncTaskManager.hasTasksForEntityIdAndAction(id, type);
+        return asyncTaskManager.get().hasTasksForEntityIdAndAction(id, type);
     }
 
     /**
@@ -74,7 +75,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param storagePoolID Id of the storage pool
      */
     public boolean hasTasksByStoragePoolId(Guid storagePoolID) {
-        return asyncTaskManager.hasTasksByStoragePoolId(storagePoolID);
+        return asyncTaskManager.get().hasTasksByStoragePoolId(storagePoolID);
     }
 
     /**
@@ -82,7 +83,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param id The entity id
      */
     public boolean entityHasTasks(Guid id) {
-        return asyncTaskManager.entityHasTasks(id);
+        return asyncTaskManager.get().entityHasTasks(id);
     }
 
     /**
@@ -91,7 +92,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return List of async task status
      */
     public ArrayList<AsyncTaskStatus> pollTasks(java.util.ArrayList<Guid> taskIdList) {
-        return asyncTaskManager.pollTasks(taskIdList);
+        return asyncTaskManager.get().pollTasks(taskIdList);
     }
 
     /**
@@ -110,7 +111,7 @@ public class CommandCoordinatorUtil implements BackendService {
             ActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
-        return coco.createTask(taskId,
+        return coco.get().createTask(taskId,
                 command,
                 asyncTaskCreationInfo,
                 parentCommand,
@@ -130,7 +131,7 @@ public class CommandCoordinatorUtil implements BackendService {
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             ActionType parentCommand) {
-        return coco.concreteCreateTask(taskId,
+        return coco.get().concreteCreateTask(taskId,
                 command,
                 asyncTaskCreationInfo,
                 parentCommand);
@@ -141,7 +142,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param command The command whose vdsm tasks need to be cancelled
      */
     public void cancelTasks(final CommandBase<?> command) {
-        coco.cancelTasks(command);
+        coco.get().cancelTasks(command);
     }
 
     /**
@@ -149,7 +150,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param command The command whose vdsm tasks need to be reverted
      */
     public void revertTasks(final CommandBase<?> command) {
-        coco.revertTasks(command);
+        coco.get().revertTasks(command);
     }
 
     /**
@@ -164,7 +165,7 @@ public class CommandCoordinatorUtil implements BackendService {
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             ActionType parentCommand) {
-        return coco.getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
+        return coco.get().getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
     /**
@@ -177,7 +178,7 @@ public class CommandCoordinatorUtil implements BackendService {
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             ActionType parentCommand) {
-        return coco.createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
+        return coco.get().createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
     }
 
     /**
@@ -187,7 +188,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param message the message to be logged for the failure
      */
     public void logAndFailTaskOfCommandWithEmptyVdsmId(Guid taskId, String message) {
-        asyncTaskManager.logAndFailTaskOfCommandWithEmptyVdsmId(taskId, message);
+        asyncTaskManager.get().logAndFailTaskOfCommandWithEmptyVdsmId(taskId, message);
     }
 
     /**
@@ -196,7 +197,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The collection of user ids
      */
     public Collection<Guid> getUserIdsForVdsmTaskIds(ArrayList<Guid> tasksIDs) {
-        return asyncTaskManager.getUserIdsForVdsmTaskIds(tasksIDs);
+        return asyncTaskManager.get().getUserIdsForVdsmTaskIds(tasksIDs);
     }
 
     /**
@@ -204,7 +205,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param taskId The task id of the async task in the database
      */
     public void removeTaskFromDbByTaskId(Guid taskId) {
-        asyncTaskManager.removeTaskFromDbByTaskId(taskId);
+        asyncTaskManager.get().removeTaskFromDbByTaskId(taskId);
     }
 
     /**
@@ -212,7 +213,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The async task to be saved
      */
     public AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
-         return coco.getAsyncTaskFromDb(asyncTaskId);
+         return coco.get().getAsyncTaskFromDb(asyncTaskId);
     }
 
     /**
@@ -220,7 +221,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param asyncTask the async task to be saved in to the database
      */
     public void saveAsyncTaskToDb(AsyncTask asyncTask) {
-        coco.saveAsyncTaskToDb(asyncTask);
+        coco.get().saveAsyncTaskToDb(asyncTask);
     }
 
     /**
@@ -229,14 +230,14 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param cmdContext The CommandContext object associated with the command being persisted
      */
     public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
-        coco.persistCommand(cmdEntity, cmdContext);
+        coco.get().persistCommand(cmdEntity, cmdContext);
     }
 
     /**
      * Persist the command related entities in the database
      */
     public void persistCommandAssociatedEntities(Guid cmdId, Collection<SubjectEntity> subjectEntities) {
-        coco.persistCommandAssociatedEntities(buildCommandAssociatedEntities(cmdId, subjectEntities));
+        coco.get().persistCommandAssociatedEntities(buildCommandAssociatedEntities(cmdId, subjectEntities));
     }
 
     private Collection<CommandAssociatedEntity> buildCommandAssociatedEntities(Guid cmdId,
@@ -257,7 +258,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The list of child command ids
      */
     public List<Guid> getChildCommandIds(Guid commandId) {
-        return coco.getChildCommandIds(commandId);
+        return coco.get().getChildCommandIds(commandId);
     }
 
     /**
@@ -268,7 +269,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param status The status of the child command, can be null
      */
     public List<Guid> getChildCommandIds(Guid commandId, ActionType childActionType, CommandStatus status) {
-        return coco.getChildCommandIds(commandId, childActionType, status);
+        return coco.get().getChildCommandIds(commandId, childActionType, status);
     }
 
     /**
@@ -276,7 +277,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param engineSessionSeqId The id of the user's engine session
      */
     public List<Guid> getCommandIdsBySessionSeqId(long engineSessionSeqId) {
-        return coco.getCommandIdsBySessionSeqId(engineSessionSeqId);
+        return coco.get().getCommandIdsBySessionSeqId(engineSessionSeqId);
     }
 
     /**
@@ -285,7 +286,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The command entity for the command id
      */
     public CommandEntity getCommandEntity(Guid commandId) {
-        return coco.getCommandEntity(commandId);
+        return coco.get().getCommandEntity(commandId);
     }
 
     /**
@@ -295,7 +296,7 @@ public class CommandCoordinatorUtil implements BackendService {
      */
     @SuppressWarnings("unchecked")
     public <C extends CommandBase<?>> C retrieveCommand(Guid commandId) {
-        return (C) coco.retrieveCommand(commandId);
+        return (C) coco.get().retrieveCommand(commandId);
     }
 
     /**
@@ -303,7 +304,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param commandId The id of the command
      */
     public void removeCommand(Guid commandId) {
-        coco.removeCommand(commandId);
+        coco.get().removeCommand(commandId);
     }
 
     /**
@@ -311,7 +312,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param commandId The id of the command
      */
     public void removeAllCommandsInHierarchy(Guid commandId) {
-        coco.removeAllCommandsInHierarchy(commandId);
+        coco.get().removeAllCommandsInHierarchy(commandId);
     }
 
     /**
@@ -319,7 +320,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param cutoff The cutoff date
      */
     public void removeAllCommandsBeforeDate(DateTime cutoff) {
-        coco.removeAllCommandsBeforeDate(cutoff);
+        coco.get().removeAllCommandsBeforeDate(cutoff);
     }
 
     /**
@@ -328,7 +329,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The status of the command
      */
     public CommandStatus getCommandStatus(Guid commandId) {
-        return coco.getCommandStatus(commandId);
+        return coco.get().getCommandStatus(commandId);
     }
 
     /**
@@ -337,7 +338,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param status The new status of the command
      */
     public void updateCommandStatus(Guid commandId, CommandStatus status) {
-         coco.updateCommandStatus(commandId, status);
+         coco.get().updateCommandStatus(commandId, status);
     }
 
     /**
@@ -346,7 +347,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The async task command execution status
      */
     public CommandExecutionStatus getCommandExecutionStatus(Guid commandId) {
-        CommandEntity cmdEntity = coco.getCommandEntity(commandId);
+        CommandEntity cmdEntity = coco.get().getCommandEntity(commandId);
         return cmdEntity == null ? CommandExecutionStatus.UNKNOWN :
                 cmdEntity.isExecuted() ? CommandExecutionStatus.EXECUTED : CommandExecutionStatus.NOT_EXECUTED;
     }
@@ -356,7 +357,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param commandId The id of the command
      */
     public Map<String, Serializable> getCommandData(Guid commandId) {
-        CommandEntity cmdEntity = coco.getCommandEntity(commandId);
+        CommandEntity cmdEntity = coco.get().getCommandEntity(commandId);
         return cmdEntity == null ? new HashMap<>() : cmdEntity.getData();
     }
 
@@ -365,7 +366,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param commandId The id of the command
      */
     public void updateCommandData(Guid commandId, Map<String, Serializable> data) {
-        coco.updateCommandData(commandId, data);
+        coco.get().updateCommandData(commandId, data);
     }
 
     /**
@@ -373,7 +374,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @param commandId The id of the command
      */
     public void updateCommandExecuted(Guid commandId) {
-        coco.updateCommandExecuted(commandId);
+        coco.get().updateCommandExecuted(commandId);
     }
 
     /**
@@ -386,7 +387,7 @@ public class CommandCoordinatorUtil implements BackendService {
     public Future<ActionReturnValue> executeAsyncCommand(ActionType actionType,
             ActionParametersBase parameters,
             CommandContext cmdContext) {
-        return coco.executeAsyncCommand(actionType, parameters, cmdContext);
+        return coco.get().executeAsyncCommand(actionType, parameters, cmdContext);
     }
 
     /**
@@ -395,7 +396,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The list of command ids
      */
     public List<Guid> getCommandIdsByEntityId(Guid entityId) {
-        return coco.getCommandIdsByEntityId(entityId);
+        return coco.get().getCommandIdsByEntityId(entityId);
     }
 
     /**
@@ -404,7 +405,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The list of associated entities
      */
     public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
-        return coco.getCommandAssociatedEntities(cmdId);
+        return coco.get().getCommandAssociatedEntities(cmdId);
     }
 
     /**
@@ -413,7 +414,7 @@ public class CommandCoordinatorUtil implements BackendService {
      * @return The return value for the command
      */
     public ActionReturnValue getCommandReturnValue(Guid cmdId) {
-        CommandEntity cmdEnity = coco.getCommandEntity(cmdId);
+        CommandEntity cmdEnity = coco.get().getCommandEntity(cmdId);
         return cmdEnity == null ? null : cmdEnity.getReturnValue();
     }
 
@@ -426,6 +427,6 @@ public class CommandCoordinatorUtil implements BackendService {
      *            the subscribed command, which its callback will be invoked upon event
      */
     public void subscribe(String eventKey, CommandEntity commandEntity) {
-        coco.subscribe(eventKey, commandEntity);
+        coco.get().subscribe(eventKey, commandEntity);
     }
 }
