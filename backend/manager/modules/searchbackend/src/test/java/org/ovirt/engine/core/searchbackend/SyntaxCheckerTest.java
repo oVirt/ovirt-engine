@@ -322,6 +322,8 @@ public class SyntaxCheckerTest {
                 "SELECT * FROM ((SELECT distinct storage_domains_for_search.* FROM  storage_domains_for_search   WHERE Default LIKE ANY(string_to_array(storage_domains_for_search.storage_pool_name::text, ',')))  ORDER BY storage_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Storage: host.name = fake1",
                 "SELECT * FROM ((SELECT distinct storage_domains_for_search.* FROM  storage_domains_for_search   LEFT OUTER JOIN vds_with_tags ON storage_domains_for_search.id=vds_with_tags.storage_id    WHERE  vds_with_tags.vds_name LIKE fake1 )  ORDER BY storage_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+        testValidSql("Storage: datacenter != Default and datacenter != DC42",
+                "SELECT * FROM ((SELECT distinct storage_domains_for_search.* FROM  storage_domains_for_search   WHERE ( NOT Default  LIKE ANY(string_to_array(storage_domains_for_search.storage_pool_name::text, ',')) AND NOT DC42  LIKE ANY(string_to_array(storage_domains_for_search.storage_pool_name::text, ',')) ))  ORDER BY storage_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
