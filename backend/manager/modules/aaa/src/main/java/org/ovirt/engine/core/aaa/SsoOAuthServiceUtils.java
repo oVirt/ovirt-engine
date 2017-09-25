@@ -344,10 +344,10 @@ public class SsoOAuthServiceUtils {
         request.setHeader(FiltersHelper.Constants.HEADER_AUTHORIZATION, String.format("Basic %s", new String(encodedBytes)));
     }
 
-    private static Map<String, Object> buildMapWithError(String error_code, String error) {
+    private static Map<String, Object> buildMapWithError(String error, String error_description) {
         Map<String, Object> response = new HashMap<>();
+        response.put("error_description", error_description);
         response.put("error", error);
-        response.put("error_code", error_code);
         return response;
     }
 

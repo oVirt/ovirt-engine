@@ -67,18 +67,18 @@ public class SsoLogoutServlet extends HttpServlet {
         }
 
         Map<String, Object> revokeResponse =  SsoOAuthServiceUtils.revoke(token);
+        String error_description = (String) revokeResponse.get("error_description");
         String error = (String) revokeResponse.get("error");
-        String error_code = (String) revokeResponse.get("error_code");
-        if (StringUtils.isNotEmpty(error)) {
-            log.error("Unable to logout user: {}", error);
+        if (StringUtils.isNotEmpty(error_description)) {
+            log.error("Unable to logout user: {}", error_description);
         }
         String url = String.format("%s://%s:%s%s/oauth2-callback", request.getScheme(),
                 FiltersHelper.getRedirectUriServerName(request.getServerName()),
                 request.getServerPort(),
                 EngineLocalConfig.getInstance().getProperty("ENGINE_URI"));
         String redirectUri = new URLBuilder(url)
-                .addParameter("error", StringUtils.defaultIfEmpty(error, ""))
-                .addParameter("error_code", StringUtils.defaultIfEmpty(error_code, "")).build();
+                .addParameter("error_description", StringUtils.defaultIfEmpty(error_description, ""))
+                .addParameter("error", StringUtils.defaultIfEmpty(error, "")).build();
 
         if (session != null) {
             log.debug("Invalidating existing session");

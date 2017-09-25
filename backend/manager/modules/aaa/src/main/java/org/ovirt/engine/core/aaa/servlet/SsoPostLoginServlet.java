@@ -52,10 +52,10 @@ public class SsoPostLoginServlet extends HttpServlet {
         String profile = null;
         InitialContext ctx = null;
         try {
+            String error_description = request.getParameter("error_description");
             String error = request.getParameter("error");
-            String error_code = request.getParameter("error_code");
-            if (StringUtils.isNotEmpty(error) && StringUtils.isNotEmpty(error_code)){
-                throw new RuntimeException(String.format("%s: %s", error_code, error));
+            if (StringUtils.isNotEmpty(error_description) && StringUtils.isNotEmpty(error)){
+                throw new RuntimeException(String.format("%s: %s", error, error_description));
             }
             String code = request.getParameter("code");
             if (StringUtils.isEmpty(code)){
@@ -127,8 +127,8 @@ public class SsoPostLoginServlet extends HttpServlet {
                     request.getServerPort(),
                     EngineLocalConfig.getInstance().getProperty("ENGINE_URI"));
             response.sendRedirect(new URLBuilder(url)
-                    .addParameter("error", StringUtils.defaultIfEmpty(ex.getMessage(), "Internal Server error"))
-                    .addParameter("error_code", "server_error").build());
+                    .addParameter("error_description", StringUtils.defaultIfEmpty(ex.getMessage(), "Internal Server error"))
+                    .addParameter("error", "server_error").build());
         }
     }
 }
