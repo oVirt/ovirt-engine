@@ -28,6 +28,10 @@ public final class Config {
         return getConfigUtils().getValue(value, version);
     }
 
+    public static boolean valueExists(ConfigValues configValue, String version) {
+        return getConfigUtils().valueExists(configValue, version);
+    }
+
     public static void refresh() {
         getConfigUtils().refresh();
     }

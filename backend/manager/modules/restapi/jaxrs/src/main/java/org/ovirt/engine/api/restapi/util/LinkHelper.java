@@ -111,6 +111,7 @@ import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnectionExtension;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.api.model.SystemOption;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.UnmanagedNetwork;
@@ -245,6 +246,8 @@ import org.ovirt.engine.api.resource.StorageServerConnectionExtensionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionExtensionsResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
+import org.ovirt.engine.api.resource.SystemOptionResource;
+import org.ovirt.engine.api.resource.SystemOptionsResource;
 import org.ovirt.engine.api.resource.SystemPermissionsResource;
 import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.resource.TagResource;
@@ -774,6 +777,9 @@ public class LinkHelper {
 
         map = new LocationByParentMap(ExternalVmImportsResource.class, ExternalVmImportsResource.class);
         TYPES.put(ExternalVmImport.class, map);
+
+        map = new LocationByParentMap(SystemOptionResource.class, SystemOptionsResource.class);
+        TYPES.put(SystemOption.class, map);
     }
 
     /**

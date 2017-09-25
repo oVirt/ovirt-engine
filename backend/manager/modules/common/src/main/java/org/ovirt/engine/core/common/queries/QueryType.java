@@ -494,6 +494,8 @@ public enum QueryType implements Serializable {
 
     GetEntitiesWithLeaseByStorageId,
 
+    GetSystemOption(QueryAuthType.User),
+
     // Default type instead of having to null check
     Unknown(QueryAuthType.User);
 

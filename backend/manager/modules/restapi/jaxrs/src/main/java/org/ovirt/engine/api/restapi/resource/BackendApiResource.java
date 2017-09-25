@@ -636,7 +636,6 @@ public class BackendApiResource
 
     @Override
     public SystemOptionsResource getOptionsResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendSystemOptionsResource());
     }
 }

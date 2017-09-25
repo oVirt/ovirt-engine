@@ -1559,6 +1559,10 @@ public enum ConfigValues {
         return accessLevel == ClientAccessLevel.User;
     }
 
+    public ClientAccessLevel getAccessLevel() {
+        return accessLevel;
+    }
+
     public enum ClientAccessLevel {
         Internal,
         Admin,

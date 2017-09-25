@@ -59,10 +59,16 @@ public class DBConfigUtils extends ConfigUtilsBase {
     @Override
     public <T> T getValue(ConfigValues name, String version) {
         Map<String, T> values = getValuesForAllVersions(name);
-        if (values != null && values.containsKey(version)) {
+        if (valueExists(name, version)) {
             return values.get(version);
         }
         throw new IllegalArgumentException(name.toString() + " has no value for version: " + version);
+    }
+
+    @Override
+    public boolean valueExists(ConfigValues configValue, String version) {
+        Map<String, Object> values = getValuesForAllVersions(configValue);
+        return values != null && values.containsKey(version);
     }
 
     private static VdcOptionDao getVdcOptionDao() {
