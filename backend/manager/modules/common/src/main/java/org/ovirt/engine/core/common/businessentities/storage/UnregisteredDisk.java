@@ -12,11 +12,11 @@ public class UnregisteredDisk implements Queryable {
     private ArrayList<VmBase> vms;
 
     public UnregisteredDisk() {
-        this(new DiskImage(), new ArrayList<VmBase>());
+        this(new DiskImage(), new ArrayList<>());
     }
 
     public UnregisteredDisk(DiskImage diskImage) {
-        this(diskImage, new ArrayList<VmBase>());
+        this(diskImage, new ArrayList<>());
     }
 
     public UnregisteredDisk(DiskImage diskImage, ArrayList<VmBase> vms) {
