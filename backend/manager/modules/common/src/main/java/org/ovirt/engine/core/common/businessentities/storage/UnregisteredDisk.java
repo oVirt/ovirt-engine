@@ -8,6 +8,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class UnregisteredDisk implements Queryable {
 
+    private static final long serialVersionUID = 4832875872161477672L;
+
     private DiskImage diskImage;
     private ArrayList<VmBase> vms;
 
