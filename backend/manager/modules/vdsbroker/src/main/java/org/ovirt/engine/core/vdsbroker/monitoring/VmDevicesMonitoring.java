@@ -316,6 +316,10 @@ public class VmDevicesMonitoring {
                 new DevicesStatus(pair.getSecond(), fetchTime)));
     }
 
+    public void refreshVmDevices(Guid vmId) {
+        vmDevicesStatuses.remove(vmId);
+    }
+
     <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
         return resourceManager.runVdsCommand(commandType, parameters);
     }

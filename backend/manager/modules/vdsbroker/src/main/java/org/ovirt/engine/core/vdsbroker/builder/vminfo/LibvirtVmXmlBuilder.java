@@ -74,6 +74,7 @@ import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +125,8 @@ public class LibvirtVmXmlBuilder {
     private VdsStatisticsDao vdsStatisticsDao;
     @Inject
     private OsRepository osRepository;
+    @Inject
+    private VmDevicesMonitoring vmDevicesMonitoring;
 
     private String serialConsolePath;
     private boolean hypervEnabled;
@@ -717,6 +720,7 @@ public class LibvirtVmXmlBuilder {
 
         boolean spiceExists = false;
         boolean balloonExists = false;
+        boolean forceRefreshDevices = false;
         for (VmDevice device : devices) {
             if (!device.isPlugged()) {
                 continue;
@@ -802,6 +806,7 @@ public class LibvirtVmXmlBuilder {
                         log.info("skipping VM host device {} for VM {}, no corresponding host device was found",
                                 device.getDevice(), device.getVmId());
                     }
+                    forceRefreshDevices = true;
                     break;
                 }
                 writeHostDevice(device, hostDevice);
@@ -811,6 +816,10 @@ public class LibvirtVmXmlBuilder {
             default:
                 break;
             }
+        }
+
+        if (forceRefreshDevices) {
+            vmDevicesMonitoring.refreshVmDevices(vm.getId());
         }
 
         if (!balloonExists) {
