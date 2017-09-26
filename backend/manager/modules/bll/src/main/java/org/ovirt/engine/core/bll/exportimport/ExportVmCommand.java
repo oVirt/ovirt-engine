@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -248,13 +249,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
      * one is created specifically fo this validation - hence dummy.
      */
     protected List<DiskImage> createDiskDummiesForSpaceValidations(List<DiskImage> disksList) {
-        List<DiskImage> dummies = new ArrayList<>(disksList.size());
-        for (DiskImage image : disksList) {
-            Guid targetSdId = imageToDestinationDomainMap.get(image.getId());
-            DiskImage dummy = imagesHandler.createDiskImageWithExcessData(image, targetSdId);
-            dummies.add(dummy);
-        }
-        return dummies;
+        return disksList.stream().map(image -> imagesHandler.createDiskImageWithExcessData(image,
+                imageToDestinationDomainMap.get(image.getId()))).collect(Collectors.toList());
     }
 
     private List<DiskImage> getMemoryVolumes() {
@@ -264,10 +260,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(memorySize, metadataSize);
 
         //Set target domain in memory disks
-        ArrayList<Guid> sdId = new ArrayList<>(Collections.singletonList(getStorageDomainId()));
-        for (DiskImage diskImage : memoryDisksList) {
-            diskImage.setStorageIds(sdId);
-        }
+        memoryDisksList.stream().forEach(d -> d.setStorageIds(Collections.singletonList(getStorageDomainId())));
         return memoryDisksList;
     }
 
@@ -278,12 +271,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                     Collections.singleton(activeSnapshot) : Collections.emptyList();
         }
         else {
-            Map<String, Snapshot> memory2snapshot = new HashMap<>();
-            for (Snapshot snapshot : snapshotDao.getAll(getVmId())) {
-                memory2snapshot.put(snapshot.getMemoryVolume(), snapshot);
-            }
-            memory2snapshot.remove(StringUtils.EMPTY);
-            return memory2snapshot.values();
+            return snapshotDao.getAll(getVmId()).stream().filter(s -> !StringUtils.EMPTY.equals(s.getMemoryVolume()))
+                    .collect(Collectors.toList());
         }
     }
 
