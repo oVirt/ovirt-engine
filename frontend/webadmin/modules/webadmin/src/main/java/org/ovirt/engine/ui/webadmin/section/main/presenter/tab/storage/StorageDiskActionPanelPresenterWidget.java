@@ -67,8 +67,7 @@ public class StorageDiskActionPanelPresenterWidget extends
                 return getDetailModel().getResumeUploadCommand();
             }
         });
-        addActionButton(new WebAdminMenuBarButtonDefinition<Disk>(constants.uploadImage(), uploadActions),
-                uploadActions);
+        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.uploadImage(), uploadActions), uploadActions);
 
         // Download operations drop down
         List<ActionButtonDefinition<Disk>> downloadActions = new LinkedList<>();
