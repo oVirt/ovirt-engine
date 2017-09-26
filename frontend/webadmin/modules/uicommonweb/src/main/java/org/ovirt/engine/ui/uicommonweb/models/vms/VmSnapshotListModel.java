@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.template.UnitToAddVmTemplateParametersBuilder;
@@ -212,6 +212,20 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
         setVmDisks(new ArrayList<DiskImage>());
+
+        setComparator(new Comparator<Snapshot>() {
+            @Override
+            public int compare(Snapshot s1, Snapshot s2) {
+                int typeCompare = Boolean.compare(
+                        s1.getType() == SnapshotType.ACTIVE || s1.getType() == SnapshotType.PREVIEW,
+                        s2.getType() == SnapshotType.ACTIVE || s2.getType() == SnapshotType.PREVIEW);
+                if (typeCompare != 0) {
+                    return -1 * typeCompare;
+                }
+                // 's2' is on the left hand size of descending order
+                return s2.getCreationDate().compareTo(s1.getCreationDate());
+            }
+        });
     }
 
     @Override
@@ -219,7 +233,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         ArrayList<Snapshot> snapshots =
                 value != null ? Linq.<Snapshot> cast(value) : new ArrayList<Snapshot>();
 
-        Collections.sort(snapshots, Collections.reverseOrder(new SnapshotByCreationDateCommparer()));
         ArrayList<Snapshot> sortedSnapshots = new ArrayList<>();
 
         for (Snapshot snapshot : snapshots) {
@@ -230,14 +243,13 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             }
             snapshotModel.setEntity(snapshot);
 
-            if ((snapshot.getType() == SnapshotType.ACTIVE && getInType(SnapshotType.PREVIEW, snapshots) == null)
-                    || snapshot.getType() == SnapshotType.PREVIEW) {
-                sortedSnapshots.add(0, snapshot);
-            }
-            else if (snapshot.getType() == SnapshotType.REGULAR || snapshot.getType() == SnapshotType.STATELESS) {
+            // Remove active snapshot when in preview mode
+            if (snapshot.getType() != SnapshotType.ACTIVE || getInType(SnapshotType.PREVIEW, snapshots) == null) {
                 sortedSnapshots.add(snapshot);
             }
         }
+
+        Collections.sort(sortedSnapshots, comparator);
 
         if (getInPreview(sortedSnapshots) != null) {
             updatePreviewedDiskSnapshots(sortedSnapshots);
