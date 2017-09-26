@@ -109,49 +109,7 @@ public class OvfUtils {
 
         for (Entry<String, ByteBuffer> fileEntry : filesFromTar.entrySet()) {
             if (fileEntry.getKey().endsWith(OVF_FILE_EXT)) {
-                String ovfData = new String(fileEntry.getValue().array());
-                VmEntityType vmType = getVmEntityType(ovfData);
-                ArchitectureType archType = null;
-                Guid entityId = getEntityId(fileEntry.getKey());
-                String vmName = getEntityName(ovfData);
-                try {
-                    XmlDocument xmlDocument = new XmlDocument(ovfData);
-                    archType = getOsSection(xmlDocument);
-                    if (isExternalVM(xmlDocument)) {
-                        log.warn(
-                                "Retrieve an external OVF Entity from storage domain ID '{}' for entity ID '{}'," +
-                                        " entity name '{}' and VM Type of '{}'." +
-                                        " This OVF will be ignored since external VMs should not be restored.",
-                                storageDomainId,
-                                getEntityId(fileEntry.getKey()),
-                                getEntityName(ovfData),
-                                vmType.name());
-                        continue;
-                    }
-                    updateUnregisteredDisksWithVMs(unregisteredDisks, entityId, vmName, xmlDocument);
-                } catch (Exception e) {
-                    log.error("Could not parse VM's disks or architecture, file name: {}, content size: {}, error: {}",
-                            fileEntry.getKey(),
-                            ovfData.length(),
-                            e.getMessage());
-                    log.debug("Exception", e);
-                    continue;
-                }
-                // Creates an OVF entity data.
-                OvfEntityData ovfEntityData =
-                        createOvfEntityData(storageDomainId,
-                                ovfData,
-                                vmType,
-                                vmName,
-                                archType,
-                                entityId);
-                log.info(
-                        "Retrieve OVF Entity from storage domain ID '{}' for entity ID '{}', entity name '{}' and VM Type of '{}'",
-                        storageDomainId,
-                        getEntityId(fileEntry.getKey()),
-                        getEntityName(ovfData),
-                        vmType.name());
-                ovfEntityDataFromTar.add(ovfEntityData);
+                analyzeOvfFile(unregisteredDisks, storageDomainId, ovfEntityDataFromTar, fileEntry);
             } else {
                 log.info("File '{}' is not an OVF file, will be ignored.", fileEntry.getKey());
             }
@@ -183,6 +141,55 @@ public class OvfUtils {
             }
         }
         return memoryDiskIds;
+    }
+
+    private void analyzeOvfFile(List<UnregisteredDisk> unregisteredDisks,
+            Guid storageDomainId,
+            List<OvfEntityData> ovfEntityDataFromTar,
+            Entry<String, ByteBuffer> fileEntry) {
+        String ovfData = new String(fileEntry.getValue().array());
+        VmEntityType vmType = getVmEntityType(ovfData);
+        ArchitectureType archType = null;
+        Guid entityId = getEntityId(fileEntry.getKey());
+        String vmName = getEntityName(ovfData);
+        try {
+            XmlDocument xmlDocument = new XmlDocument(ovfData);
+            archType = getOsSection(xmlDocument);
+            if (isExternalVM(xmlDocument)) {
+                log.warn(
+                        "Retrieve an external OVF Entity from storage domain ID '{}' for entity ID '{}'," +
+                                " entity name '{}' and VM Type of '{}'." +
+                                " This OVF will be ignored since external VMs should not be restored.",
+                        storageDomainId,
+                        getEntityId(fileEntry.getKey()),
+                        getEntityName(ovfData),
+                        vmType.name());
+                return;
+            }
+            updateUnregisteredDisksWithVMs(unregisteredDisks, entityId, vmName, xmlDocument);
+        } catch (Exception e) {
+            log.error("Could not parse VM's disks or architecture, file name: {}, content size: {}, error: {}",
+                    fileEntry.getKey(),
+                    ovfData.length(),
+                    e.getMessage());
+            log.debug("Exception", e);
+            return;
+        }
+        // Creates an OVF entity data.
+        OvfEntityData ovfEntityData =
+                createOvfEntityData(storageDomainId,
+                        ovfData,
+                        vmType,
+                        vmName,
+                        archType,
+                        entityId);
+        log.info(
+                "Retrieve OVF Entity from storage domain ID '{}' for entity ID '{}', entity name '{}' and VM Type of '{}'",
+                storageDomainId,
+                getEntityId(fileEntry.getKey()),
+                getEntityName(ovfData),
+                vmType.name());
+        ovfEntityDataFromTar.add(ovfEntityData);
     }
 
     public boolean isExternalVM(XmlDocument xmlDocument) {
