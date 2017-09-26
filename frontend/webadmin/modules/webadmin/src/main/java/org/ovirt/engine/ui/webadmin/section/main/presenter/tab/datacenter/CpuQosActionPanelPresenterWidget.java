@@ -31,21 +31,21 @@ public class CpuQosActionPanelPresenterWidget extends DetailActionPanelPresenter
         addActionButton(new WebAdminButtonDefinition<CpuQos>(constants.newCpuQos()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
+                return getDetailModel().getNewCommand();
             }
         });
 
         addActionButton(new WebAdminButtonDefinition<CpuQos>(constants.editCpuQos()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
+                return getDetailModel().getEditCommand();
             }
         });
 
         addActionButton(new WebAdminButtonDefinition<CpuQos>(constants.removeQos()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
+                return getDetailModel().getRemoveCommand();
             }
         });
     }
