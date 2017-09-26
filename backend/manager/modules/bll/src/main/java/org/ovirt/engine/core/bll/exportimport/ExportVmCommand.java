@@ -316,7 +316,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     private boolean updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
         HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary = new HashMap<>();
-        ArrayList<DiskImage> AllVmImages = new ArrayList<>();
+        List<DiskImage> vmImages = new ArrayList<>();
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces != null) {
             // TODO remove this when the API changes
@@ -341,7 +341,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                     DiskImage fromVdsm = (DiskImage) vdsReturnValue.getReturnValue();
                     diskImage.setActualSizeInBytes(fromVdsm.getActualSizeInBytes());
                 }
-                AllVmImages.add(diskImage);
+                vmImages.add(diskImage);
                 imageGroupIds.add(disk.getId());
         }
 
@@ -350,7 +350,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-        String vmMeta = ovfManager.exportVm(vm, AllVmImages, clusterUtils.getCompatibilityVersion(vm));
+        String vmMeta = ovfManager.exportVm(vm, vmImages, clusterUtils.getCompatibilityVersion(vm));
 
         vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
