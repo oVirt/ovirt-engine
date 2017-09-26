@@ -19,22 +19,20 @@ function usage() {
     exit 1
 }
 
-function jbossHome() {
-    if [[ -z "${JBOSS_HOME}" ]]; then
-        JBOSS_HOME=/usr/share/ovirt-engine-wildfly/
-    fi
+if [[ -z "${JBOSS_HOME}" ]]; then
+    JBOSS_HOME=/usr/share/ovirt-engine-wildfly
+fi
 
-    if [[ ! -x ${JBOSS_HOME}/bin/jboss-cli.sh ]]; then
-        echo "jboss-cli.sh is missing. It should be reachable under "
-        echo "JBOSS_HOME/bin which is pointing to the installation "
-        echo "directory of the application server, typically "
-        echo "/usr/share/ovirt-engine-wildfly."
-        exit 1
-    fi
-}
+if [[ ! -x ${JBOSS_HOME}/bin/jboss-cli.sh ]]; then
+    echo "jboss-cli.sh is missing. It should be reachable under "
+    echo "JBOSS_HOME/bin which is pointing to the installation "
+    echo "directory of the application server, typically "
+    echo "/usr/share/ovirt-engine-wildfly."
+    exit 1
+fi
 
 
-(jbossHome && [[ $# -eq 2 ]]) || usage
+[[ $# -eq 2 ]] || usage
 
 read  -s -p "Password: " PASS
 
