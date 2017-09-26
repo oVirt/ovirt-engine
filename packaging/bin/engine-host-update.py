@@ -77,7 +77,7 @@ defaultPort = 443
 defaultUsername = 'admin@internal'
 
 # All timeouts are in seconds
-connectionTimeout = 10
+connectionTimeout = 30
 activationTimeout = 900
 maintenanceTimeout = 900
 waitForInstallTimeout = 90
