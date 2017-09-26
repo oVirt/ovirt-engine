@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -48,15 +49,15 @@ public class OvfManager {
     @Inject
     private OsRepository osRepository;
 
-    public String exportVm(VM vm, List<DiskImage> images, Version version) {
+    public String exportVm(VM vm, List<DiskImage> images, List<LunDisk> lunDisks, Version version) {
         updateBootOrderOnDevices(vm.getStaticData(), false);
         final OvfVmWriter vmWriter;
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuId = cpuFlagsManagerHandler.getCpuId(cluster.getCpuName(), cluster.getCompatibilityVersion());
-            vmWriter = new HostedEngineOvfWriter(vm, images, version, cluster.getEmulatedMachine(), cpuId, osRepository);
+            vmWriter = new HostedEngineOvfWriter(vm, images, lunDisks, version, cluster.getEmulatedMachine(), cpuId, osRepository);
         } else {
-            vmWriter = new OvfVmWriter(vm, images, version, osRepository);
+            vmWriter = new OvfVmWriter(vm, images, lunDisks, version, osRepository);
         }
         return vmWriter.build().getStringRepresentation();
     }
@@ -69,12 +70,13 @@ public class OvfManager {
     public void importVm(String ovfstring,
             VM vm,
             List<DiskImage> images,
+            List<LunDisk> luns,
             List<VmNetworkInterface> interfaces)
             throws OvfReaderException {
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, images, interfaces, osRepository);
+            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, images, luns, interfaces, osRepository);
             ovf.build();
             initIcons(vm.getStaticData());
         } catch (Exception ex) {

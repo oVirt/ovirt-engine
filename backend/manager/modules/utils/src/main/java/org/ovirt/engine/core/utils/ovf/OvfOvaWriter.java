@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +15,7 @@ public abstract class OvfOvaWriter extends OvfWriter {
     private OsRepository osRepository;
 
     public OvfOvaWriter(VmBase vmBase, List<DiskImage> images, Version version, OsRepository osRepository) {
-        super(vmBase, images, version);
+        super(vmBase, images, Collections.EMPTY_LIST, version);
         this.osRepository = osRepository;
     }
 

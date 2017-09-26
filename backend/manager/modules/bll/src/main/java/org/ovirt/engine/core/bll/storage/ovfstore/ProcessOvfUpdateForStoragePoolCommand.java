@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -44,6 +46,7 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -69,6 +72,8 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     private StorageDomainDao storageDomainDao;
     @Inject
     private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
     @Inject
@@ -323,7 +328,14 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
                     continue;
                 }
                 if (vm.getStaticData().getDbGeneration() == currentDbGeneration) {
-                    proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForVm(vm, vmsAndTemplateMetadata, vmImages));
+                    List<LunDisk> lunDisks = DisksFilter.filterLunDisks(vm.getDiskMap().values());
+                    for (LunDisk lun : lunDisks) {
+                        lun.getLun().setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId())));
+                    }
+                    proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForVm(vm,
+                            vmsAndTemplateMetadata,
+                            vmImages,
+                            lunDisks));
                     proccessedIdsInfo.add(vm.getId());
                     proccessedOvfGenerationsInfo.add(vm.getStaticData().getDbGeneration());
                     proccessDisksDomains(vm.getDiskList());

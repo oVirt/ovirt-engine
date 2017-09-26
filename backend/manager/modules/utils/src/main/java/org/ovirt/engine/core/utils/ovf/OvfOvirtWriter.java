@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -17,8 +19,12 @@ public abstract class OvfOvirtWriter extends OvfWriter {
 
     private OsRepository osRepository;
 
-    public OvfOvirtWriter(VmBase vmBase, List<DiskImage> images, Version version, OsRepository osRepository) {
-        super(vmBase, images, version);
+    public OvfOvirtWriter(VmBase vmBase,
+            List<DiskImage> images,
+            List<LunDisk> lunDisks,
+            Version version,
+            OsRepository osRepository) {
+        super(vmBase, images, lunDisks, version);
         this.osRepository = osRepository;
     }
 
@@ -32,6 +38,14 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeAttributeString(OVF_URI, "description", StringUtils.defaultString(image.getDescription()));
         _writer.writeAttributeString(OVF_URI, "disk_storage_type", image.getDiskStorageType().name());
         _writer.writeAttributeString(OVF_URI, "cinder_volume_type", StringUtils.defaultString(image.getCinderVolumeType()));
+    }
+
+    @Override
+    protected void writeFileForLunDisk(LunDisk lun) {
+        // Lun disk does not have image id, therefor the id will be preserved with the disk ID as identifier.
+        _writer.writeAttributeString(OVF_URI, "id", lun.getId().toString());
+        _writer.writeAttributeString(OVF_URI, "href", OvfParser.createLunFile(lun));
+        _writer.writeAttributeString(OVF_URI, "disk_storage_type", lun.getDiskStorageType().name());
     }
 
     @Override
@@ -93,6 +107,57 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeAttributeString(OVF_URI,
                 "wipe-after-delete",
                 String.valueOf(image.isWipeAfterDelete()));
+    }
+
+    @Override
+    protected void writeLunDisk(LunDisk lun) {
+        // Lun disk does not have image id, therefor the id will be preserved with the disk ID as identifier.
+        _writer.writeAttributeString(OVF_URI, "diskId", lun.getId().toString());
+        DiskVmElement dve = lun.getDiskVmElementForVm(vmBase.getId());
+        if (lun.getDiskAlias() != null) {
+            _writer.writeAttributeString(OVF_URI, "disk-alias", lun.getDiskAlias().toString());
+        }
+        if (lun.getDiskDescription() != null) {
+            _writer.writeAttributeString(OVF_URI, "disk-description", lun.getDiskDescription().toString());
+        }
+        if (FeatureSupported.passDiscardSupported(version)) {
+            _writer.writeAttributeString(OVF_URI, "pass-discard", String.valueOf(dve.isPassDiscard()));
+        }
+        _writer.writeAttributeString(OVF_URI, "fileRef", OvfParser.createLunFile(lun));
+        _writer.writeAttributeString(OVF_URI, "shareable", String.valueOf(lun.isShareable()));
+        _writer.writeAttributeString(OVF_URI, "boot", String.valueOf(dve.isBoot()));
+        _writer.writeAttributeString(OVF_URI, "disk-interface", dve.getDiskInterface().toString());
+        _writer.writeAttributeString(OVF_URI, "read-only", String.valueOf(dve.isReadOnly()));
+        _writer.writeAttributeString(OVF_URI, "scsi_reservation", String.valueOf(dve.isUsingScsiReservation()));
+        _writer.writeAttributeString(OVF_URI, "plugged", String.valueOf(dve.isPlugged()));
+        _writer.writeAttributeString(OVF_URI,
+                LUN_DISCARD_ZEROES_DATA,
+                String.valueOf(lun.getLun().getDiscardZeroesData()));
+        _writer.writeAttributeString(OVF_URI, LUN_DISCARD_MAX_SIZE, String.valueOf(lun.getLun().getDiscardMaxSize()));
+        _writer.writeAttributeString(OVF_URI, LUN_DEVICE_SIZE, String.valueOf(lun.getLun().getDeviceSize()));
+        _writer.writeAttributeString(OVF_URI, LUN_PRODUCT_ID, String.valueOf(lun.getLun().getProductId()));
+        _writer.writeAttributeString(OVF_URI, LUN_VENDOR_ID, String.valueOf(lun.getLun().getVendorId()));
+        _writer.writeAttributeString(OVF_URI, LUN_MAPPING, String.valueOf(lun.getLun().getLunMapping()));
+        _writer.writeAttributeString(OVF_URI, LUN_SERIAL, String.valueOf(lun.getLun().getSerial()));
+        _writer.writeAttributeString(OVF_URI, LUN_VOLUME_GROUP_ID, String.valueOf(lun.getLun().getVolumeGroupId()));
+        _writer.writeAttributeString(OVF_URI, LUN_ID, String.valueOf(lun.getLun().getLUNId()));
+        _writer.writeAttributeString(OVF_URI,
+                LUN_PHYSICAL_VOLUME_ID,
+                String.valueOf(lun.getLun().getPhysicalVolumeId()));
+        if (lun.getLun().getLunConnections() != null) {
+            for (StorageServerConnections conn : lun.getLun().getLunConnections()) {
+                _writer.writeStartElement(LUN_CONNECTION);
+                _writer.writeAttributeString(OVF_URI, LUNS_CONNECTION, conn.getConnection());
+                _writer.writeAttributeString(OVF_URI, LUNS_IQN, conn.getIqn());
+                _writer.writeAttributeString(OVF_URI, LUNS_PORT, conn.getPort());
+                _writer.writeAttributeString(XSI_URI, LUNS_STORAGE_TYPE, conn.getStorageType().name());
+                _writer.writeAttributeString(XSI_URI, LUNS_PORTAL, conn.getPortal());
+                // TODO: Username and password should be initilaized by the mapping file.
+                // conn.getUserName()
+                // conn.getPassword()
+                _writer.writeEndElement();
+            }
+        }
     }
 
     private void writeDiskParentRef(DiskImage image) {

@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -78,6 +79,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -107,6 +109,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
     @Inject
     private SnapshotsValidator snapshotsValidator;
     @Inject
@@ -317,6 +321,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private boolean updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
         HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary = new HashMap<>();
         List<DiskImage> vmImages = new ArrayList<>();
+        List<LunDisk> lunDisks = new ArrayList<>();
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces != null) {
             // TODO remove this when the API changes
@@ -349,8 +354,14 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             VmTemplate t = vmTemplateDao.get(vm.getVmtGuid());
             vm.setVmtName(t.getName());
         }
+
+        // TODO: Validate export
+        lunDisks.addAll(DisksFilter.filterLunDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE));
+        for (LunDisk lun : lunDisks) {
+            lun.getLun().setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId())));
+        }
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-        String vmMeta = ovfManager.exportVm(vm, vmImages, clusterUtils.getCompatibilityVersion(vm));
+        String vmMeta = ovfManager.exportVm(vm, vmImages, lunDisks, clusterUtils.getCompatibilityVersion(vm));
 
         vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
@@ -557,7 +568,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         ovfUpdateProcessHelper.loadVmData(getVm());
         ovfUpdateProcessHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,
-                ovfUpdateProcessHelper.getVmImagesFromDb(getVm()));
+                ovfUpdateProcessHelper.getVmImagesFromDb(getVm()),
+                new ArrayList<>());
         return ovfUpdateProcessHelper.executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
                 metaDictionary, getParameters().getStorageDomainId());
     }

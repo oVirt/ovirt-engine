@@ -88,4 +88,22 @@ public interface OvfProperties {
     String STOP_TIME = "StopTime";
     String BOOT_TIME = "BootTime";
     String DOWNTIME = "Downtime";
-}
+
+    // Luns
+    String LUN_DISCARD_ZEROES_DATA = "discard_zeroes_data";
+    String LUN_DISCARD_MAX_SIZE = "discard_max_size";
+    String LUN_DEVICE_SIZE = "device_size";
+    String LUN_PRODUCT_ID = "product_id";
+    String LUN_VENDOR_ID = "vendor_id";
+    String LUN_MAPPING = "lun_mapping";
+    String LUN_SERIAL = "serial";
+    String LUN_VOLUME_GROUP_ID = "volume_group_id";
+    String LUN_ID = "lun_id";
+    String LUN_PHYSICAL_VOLUME_ID = "physical_volume_id";
+    String LUN_CONNECTION = "Connection";
+    String LUNS_CONNECTION = "connection";
+    String LUNS_IQN = "iqn";
+    String LUNS_PORT = "port";
+    String LUNS_STORAGE_TYPE = "storage_type";
+    String LUNS_PORTAL = "portal";
+    }

@@ -115,7 +115,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         mcr.mockConfigValue(ConfigValues.MaxNumOfVmCpus, Version.ALL.get(0), 16);
 
         ArrayList<DiskImage> disks = new ArrayList<>(Arrays.asList(disk1, disk2));
-        String ovf = ovfManager.exportVm(vm, disks, Version.getLast());
+        String ovf = ovfManager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.getLast());
         Snapshot snap = new Snapshot();
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);
@@ -127,7 +127,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         String actualOvf = actual.getVmConfiguration();
 
         ArrayList<DiskImage> actualImages = new ArrayList<>();
-        ovfManager.importVm(actualOvf, new VM(), actualImages, new ArrayList<>());
+        ovfManager.importVm(actualOvf, new VM(), actualImages, Collections.EMPTY_LIST, new ArrayList<>());
         assertEquals("Wrong number of disks", 1, actualImages.size());
         assertEquals("Wrong disk", disk1, actualImages.get(0));
     }

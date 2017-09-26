@@ -1,15 +1,22 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
@@ -19,13 +26,16 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 public abstract class OvfOvirtReader extends OvfReader {
 
     private VmBase vmBase;
+    private String OVF_PREFIX = "ovf:";
+    private String XSI_PREFIX = "xsi:";
 
     public OvfOvirtReader(XmlDocument document,
             List<DiskImage> images,
+            List<LunDisk> luns,
             List<VmNetworkInterface> interfaces,
             VmBase vmBase,
             OsRepository osRepository) {
-        super(document, images, interfaces, vmBase, osRepository);
+        super(document, images, luns, interfaces, vmBase, osRepository);
         this.vmBase = vmBase;
     }
 
@@ -69,6 +79,46 @@ public abstract class OvfOvirtReader extends OvfReader {
         readGeneralData(virtualSystem);
     }
 
+    @Override
+    protected void readLunDisk(XmlNode node, LunDisk lun) {
+        lun.setDiskVmElements(Collections.singletonList(new DiskVmElement(lun.getId(), vmBase.getId())));
+        LUNs luns = new LUNs();
+        consumeReadXmlAttribute(node,
+                OVF_PREFIX + LUN_DISCARD_ZEROES_DATA,
+                val -> luns.setDiscardZeroesData(Boolean.parseBoolean(val)));
+        consumeReadXmlAttribute(node,
+                OVF_PREFIX + LUN_DISCARD_MAX_SIZE,
+                val -> luns.setDiscardMaxSize(Long.parseLong(val)));
+        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_DEVICE_SIZE, val -> luns.setDeviceSize(Integer.parseInt(val)));
+        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_PRODUCT_ID, val -> luns.setProductId(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_VENDOR_ID, val -> luns.setVendorId(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_MAPPING, val -> luns.setLunMapping(Integer.parseInt(val)));
+        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_SERIAL, val -> luns.setSerial(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_VOLUME_GROUP_ID, val -> luns.setVolumeGroupId(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_ID, val -> luns.setLUNId(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_PHYSICAL_VOLUME_ID, val -> luns.setPhysicalVolumeId(val));
+        // TODO: Check with several external LUNS.
+        ArrayList<StorageServerConnections> lunConnections = new ArrayList<>();
+        for (XmlNode connNode : selectNodes(node, LUN_CONNECTION)) {
+            StorageServerConnections conn = new StorageServerConnections();
+            consumeReadXmlAttribute(connNode, OVF_PREFIX + LUNS_CONNECTION, val -> conn.setConnection(val));
+            consumeReadXmlAttribute(connNode, OVF_PREFIX + LUNS_IQN, val -> conn.setIqn(val));
+            consumeReadXmlAttribute(connNode, OVF_PREFIX + LUNS_PORT, val -> conn.setPort(val));
+            consumeReadXmlAttribute(connNode,
+                    XSI_PREFIX + LUNS_STORAGE_TYPE,
+                    val -> conn.setStorageType(StorageType.valueOf(val)));
+            consumeReadXmlAttribute(connNode, XSI_PREFIX + LUNS_PORTAL, val -> conn.setPortal(val));
+            // TODO: Username and password should be initilaized by the mapping file.
+            // conn.setUsername(FromMap);
+            // conn.setPassword(FromMap);
+            lunConnections.add(conn);
+        }
+        luns.setLunConnections(lunConnections);
+        lun.setLun(luns);
+        DiskVmElement dve = lun.getDiskVmElementForVm(vmBase.getId());
+        initGeneralDiskAttributes(node, lun, dve);
+    }
+
     private XmlNode getNode(XmlNodeList nodeList, String attributeName, String attributeValue) {
         for (XmlNode section : nodeList) {
             String value = section.attributes.get(attributeName).getValue();
@@ -96,11 +146,18 @@ public abstract class OvfOvirtReader extends OvfReader {
             // image.
             if (node.attributes.get("ovf:disk_storage_type") != null) {
                 String diskStorageType = node.attributes.get("ovf:disk_storage_type").getValue();
-                if (diskStorageType != null && diskStorageType.equals(DiskStorageType.CINDER.name())) {
-                    disk = new CinderDisk();
-                    if (node.attributes.get("ovf:cinder_volume_type") != null) {
-                        String cinderVolumeType = node.attributes.get("ovf:cinder_volume_type").getValue();
-                        disk.setCinderVolumeType(cinderVolumeType);
+                if (diskStorageType != null) {
+                    if (diskStorageType.equals(DiskStorageType.LUN.name())) {
+                        LunDisk lun = new LunDisk();
+                        lun.setId(OvfParser.getImageGroupIdFromImageFile(node.attributes.get("ovf:href").getValue()));
+                        luns.add(lun);
+                        continue;
+                    } else if (diskStorageType.equals(DiskStorageType.CINDER.name())) {
+                        disk = new CinderDisk();
+                        if (node.attributes.get("ovf:cinder_volume_type") != null) {
+                            String cinderVolumeType = node.attributes.get("ovf:cinder_volume_type").getValue();
+                            disk.setCinderVolumeType(cinderVolumeType);
+                        }
                     }
                 }
             }
@@ -118,6 +175,7 @@ public abstract class OvfOvirtReader extends OvfReader {
         for (XmlNode node : list) {
             Guid guid = new Guid(node.attributes.get("ovf:diskId").getValue());
             _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().ifPresent(img -> readDisk(node, img));
+            luns.stream().filter(d -> d.getId().equals(guid)).findFirst().ifPresent(lun -> readLunDisk(node, lun));
         }
     }
 

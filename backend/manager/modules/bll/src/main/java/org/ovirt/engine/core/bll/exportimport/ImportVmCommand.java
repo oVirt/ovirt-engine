@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
@@ -39,10 +40,14 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.domain.LunHelper;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -71,12 +76,17 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -88,8 +98,10 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
+import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -98,6 +110,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -131,6 +144,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Inject
     private DiskProfileHelper diskProfileHelper;
     @Inject
+    private DiskLunMapDao diskLunMapDao;
+    @Inject
     private VmStaticDao vmStaticDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
@@ -149,9 +164,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Inject
     private DiskImageDao diskImageDao;
     @Inject
+    private LunHelper lunHelper;
+    @Inject
     private SnapshotDao snapshotDao;
     @Inject
     private ImportUtils importUtils;
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -230,6 +249,78 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         return validateAfterCloneVm(domainsMap);
+    }
+
+    private List<EngineMessage> validateLunDisk(LunDisk lunDisk) {
+        DiskValidator diskValidator = getDiskValidator(lunDisk);
+        LUNs lun = lunDisk.getLun();
+        StorageType storageType = StorageType.UNKNOWN;
+        if (lun.getLunConnections() != null && !lun.getLunConnections().isEmpty()) {
+            // We set the storage type based on the first connection since connections should be with the same
+            // storage type
+            storageType = lun.getLunConnections().get(0).getStorageType();
+        }
+        ValidationResult connectionsInLunResult = diskValidator.validateConnectionsInLun(storageType);
+        if (!connectionsInLunResult.isValid()) {
+            return connectionsInLunResult.getMessages();
+        }
+
+        ValidationResult lunAlreadyInUseResult = diskValidator.validateLunAlreadyInUse();
+        if (!lunAlreadyInUseResult.isValid()) {
+            return lunAlreadyInUseResult.getMessages();
+        }
+
+        DiskVmElementValidator diskVmElementValidator =
+                new DiskVmElementValidator(lunDisk, lunDisk.getDiskVmElementForVm(getVmId()));
+        ValidationResult virtIoScsiResult = isVirtIoScsiValid(getVm(), diskVmElementValidator);
+        if (!virtIoScsiResult.isValid()) {
+            return virtIoScsiResult.getMessages();
+        }
+
+        ValidationResult diskInterfaceResult = diskVmElementValidator.isDiskInterfaceSupported(getVm());
+        if (!diskInterfaceResult.isValid()) {
+            return diskInterfaceResult.getMessages();
+        }
+
+        Guid vdsId = vdsCommandsHelper.getHostForExecution(getStoragePoolId());
+        GetDeviceListVDSCommandParameters parameters =
+                new GetDeviceListVDSCommandParameters(vdsId,
+                        lun.getLunType(),
+                        false,
+                        Collections.singleton(lun.getLUNId()));
+        List<LUNs> lunFromStorage =
+                (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
+        if (lunFromStorage == null) {
+            return Arrays.asList(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
+        }
+
+        ValidationResult usingScsiReservationResult = diskValidator.isUsingScsiReservationValid(getVm(),
+                lunDisk.getDiskVmElementForVm(getVmId()),
+                lunDisk);
+        if (!usingScsiReservationResult.isValid()) {
+            return usingScsiReservationResult.getMessages();
+        }
+        return Collections.emptyList();
+    }
+
+    private ValidationResult isVirtIoScsiValid(VM vm, DiskVmElementValidator diskVmElementValidator) {
+        ValidationResult result = diskVmElementValidator.verifyVirtIoScsi(vm);
+        if (!result.isValid()) {
+            return result;
+        }
+
+        if (vm != null) {
+            if (!VmDeviceCommonUtils.isVirtIoScsiDeviceExists(getVm().getManagedVmDeviceMap().values())) {
+                return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
+            } else {
+                return diskVmElementValidator.isDiskInterfaceSupported(vm);
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    protected DiskValidator getDiskValidator(Disk disk) {
+        return new DiskValidator(disk);
     }
 
     private void initImportClonedVm() {
@@ -475,6 +566,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return failValidation(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
 
+        if (!validateLunDisksForVm(vmFromParams)) {
+            return false;
+        }
         if (getParameters().getCopyCollapse() && vmFromParams.getDiskMap() != null) {
             for (Disk disk : vmFromParams.getDiskMap().values()) {
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
@@ -539,6 +633,28 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return false;
         }
 
+        return true;
+    }
+
+    private boolean validateLunDisksForVm(VM vmFromParams) {
+        if (vmFromParams.getDiskMap() != null) {
+            List<LunDisk> lunDisks = DisksFilter.filterLunDisks(vmFromParams.getDiskMap().values());
+            for (LunDisk lunDisk : lunDisks) {
+                List<EngineMessage> lunValidationMessages = validateLunDisk(lunDisk);
+                if (lunValidationMessages.isEmpty()) {
+                    getVm().getDiskMap().put(lunDisk.getId(), lunDisk);
+                } else if (!getParameters().isAllowPartialImport()) {
+                    addValidationMessages(lunValidationMessages);
+                    return false;
+                } else {
+                    log.warn("Skipping validation for external LUN disk '{}' since partialImport flag is true." +
+                            " Invalid external LUN disk might reflect on the run VM process",
+                            lunDisk.getId());
+                    vmFromParams.getDiskMap().remove(lunDisk.getId());
+                    failedDisksToImportForAuditLog.putIfAbsent(lunDisk.getId(), lunDisk.getDiskAlias());
+                }
+            }
+        }
         return true;
     }
 
@@ -721,6 +837,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private void processImages(final boolean useCopyImages) {
         TransactionSupport.executeInNewTransaction(() -> {
             addVmImagesAndSnapshots();
+            addVmExternalLuns();
             addMemoryImages();
             updateSnapshotsFromExport();
             if (useCopyImages) {
@@ -871,6 +988,38 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             }
         }
         imageDao.update(diskImage.getImage());
+    }
+
+    protected void addVmExternalLuns() {
+        if (getParameters().getVm().getDiskMap() != null) {
+            List<LunDisk> lunDisks = DisksFilter.filterLunDisks(getParameters().getVm().getDiskMap().values());
+            for (LunDisk lun : lunDisks) {
+                StorageType storageType = StorageType.UNKNOWN;
+                if (lun.getLun().getLunConnections() != null && !lun.getLun().getLunConnections().isEmpty()) {
+                    // We set the storage type based on the first connection since connections should be with the same
+                    // storage type
+                    storageType = lun.getLun().getLunConnections().get(0).getStorageType();
+                }
+                lunHelper.proceedDirectLUNInDb(lun.getLun(), storageType);
+
+                // Only if the LUN disk does not exists in the setup add it.
+                if (baseDiskDao.get(lun.getId()) == null) {
+                    baseDiskDao.save(lun);
+                }
+                if (diskLunMapDao.get(new DiskLunMapId(lun.getId(), lun.getLun().getLUNId())) == null) {
+                    diskLunMapDao.save(new DiskLunMap(lun.getId(), lun.getLun().getLUNId()));
+                }
+
+                // Add disk VM element to attach the disk to the VM.
+                DiskVmElement diskVmElement = lun.getDiskVmElementForVm(getVmId());
+                diskVmElementDao.save(diskVmElement);
+                getVmDeviceUtils().addDiskDevice(
+                        getVmId(),
+                        lun.getId(),
+                        diskVmElement.isPlugged(),
+                        diskVmElement.isReadOnly());
+            }
+        }
     }
 
     protected void addVmImagesAndSnapshots() {

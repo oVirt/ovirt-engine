@@ -28,10 +28,12 @@ import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -45,6 +47,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
+import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
@@ -59,6 +62,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected OsRepository osRepository;
     protected List<DiskImage> _images;
+    protected List<LunDisk> luns;
     protected List<VmNetworkInterface> interfaces;
     protected XmlDocument _document;
     protected XmlNamespaceManager _xmlNS;
@@ -71,10 +75,12 @@ public abstract class OvfReader implements IOvfBuilder {
     public OvfReader(
             XmlDocument document,
             List<DiskImage> images,
+            List<LunDisk> luns,
             List<VmNetworkInterface> interfaces,
             VmBase vmBase,
             OsRepository osRepository) {
         _images = images;
+        this.luns = luns;
         this.interfaces = interfaces;
         _document = document;
         this.vmBase = vmBase;
@@ -157,6 +163,16 @@ public abstract class OvfReader implements IOvfBuilder {
         } else {
             image.setVolumeType(VolumeType.Unassigned);
         }
+        if (node.attributes.get("ovf:wipe-after-delete") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
+                image.setWipeAfterDelete(Boolean.parseBoolean(node.attributes.get("ovf:wipe-after-delete")
+                        .getValue()));
+            }
+        }
+        initGeneralDiskAttributes(node, image, dve);
+    }
+
+    protected void initGeneralDiskAttributes(XmlNode node, Disk disk, DiskVmElement dve) {
         if (node.attributes.get("ovf:disk-interface") != null) {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-interface").getValue())) {
                 dve.setDiskInterface(DiskInterface.valueOf(node.attributes.get("ovf:disk-interface")
@@ -170,29 +186,48 @@ public abstract class OvfReader implements IOvfBuilder {
                 dve.setBoot(Boolean.parseBoolean(node.attributes.get("ovf:boot").getValue()));
             }
         }
+        if (node.attributes.get("ovf:read-only") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:read-only").getValue())) {
+                dve.setReadOnly(Boolean.parseBoolean(node.attributes.get("ovf:read-only").getValue()));
+            }
+        }
         if (node.attributes.get("ovf:pass-discard") != null) {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:pass-discard").getValue())) {
                 dve.setPassDiscard(Boolean.parseBoolean(node.attributes.get("ovf:pass-discard").getValue()));
             }
         }
-        if (node.attributes.get("ovf:wipe-after-delete") != null) {
-            if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
-                image.setWipeAfterDelete(Boolean.parseBoolean(node.attributes.get("ovf:wipe-after-delete")
-                        .getValue()));
-            }
-        }
         if (node.attributes.get("ovf:disk-alias") != null) {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-alias").getValue())) {
-                image.setDiskAlias(String.valueOf(node.attributes.get("ovf:disk-alias")
+                disk.setDiskAlias(String.valueOf(node.attributes.get("ovf:disk-alias")
                         .getValue()));
             }
         }
         if (node.attributes.get("ovf:disk-description") != null) {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-description").getValue())) {
-                image.setDiskDescription(String.valueOf(node.attributes.get("ovf:disk-description")
+                disk.setDiskDescription(String.valueOf(node.attributes.get("ovf:disk-description")
                         .getValue()));
             }
         }
+        if (node.attributes.get("ovf:shareable") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:shareable").getValue())) {
+                disk.setShareable(Boolean.parseBoolean(node.attributes.get("ovf:shareable").getValue()));
+            }
+        }
+        if (node.attributes.get("ovf:scsi_reservation") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:scsi_reservation").getValue())) {
+                dve.setUsingScsiReservation(Boolean.parseBoolean(node.attributes.get("ovf:scsi_reservation").getValue()));
+            }
+        }
+        dve.setPlugged(Boolean.TRUE);
+        if (node.attributes.get("ovf:plugged") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:plugged").getValue())) {
+                dve.setPlugged(Boolean.parseBoolean(node.attributes.get("ovf:plugged").getValue()));
+            }
+        }
+    }
+
+    protected void readLunDisk(XmlNode node, LunDisk lun) {
+        // do nothing
     }
 
     protected VmDevice readManagedVmDevice(XmlNode node, Guid deviceId) {
@@ -579,6 +614,19 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected void consumeReadProperty(XmlNode content, String propertyKey, Consumer<String> then, Runnable orElse) {
         XmlNode node = selectSingleNode(content, propertyKey);
+        acceptNode(then, orElse, node);
+    }
+
+    protected void consumeReadXmlAttribute(XmlNode content, String propertyKey, Consumer<String> then) {
+        consumeReadXmlAttribute(content, propertyKey, then, null);
+    }
+
+    protected void consumeReadXmlAttribute(XmlNode content, String propertyKey, Consumer<String> then, Runnable orElse) {
+        XmlAttribute node = content.attributes.get(propertyKey);
+        acceptNode(then, orElse, node);
+    }
+
+    private void acceptNode(Consumer<String> then, Runnable orElse, XmlNode node) {
         if (node != null && StringUtils.isNotEmpty(node.innerText)) {
             then.accept(node.innerText);
             return;
@@ -780,6 +828,10 @@ public abstract class OvfReader implements IOvfBuilder {
         for (DiskImage disk : _images) {
             disk.getDiskVmElements().forEach(dve -> dve.setId(new VmDeviceId(disk.getId(), vmBase.getId())));
             disk.setDiskVmElements(disk.getDiskVmElements());
+        }
+        for (LunDisk lunDisk : luns) {
+            lunDisk.getDiskVmElements().forEach(dve -> dve.setId(new VmDeviceId(lunDisk.getId(), vmBase.getId())));
+            lunDisk.setDiskVmElements(lunDisk.getDiskVmElements());
         }
     }
 

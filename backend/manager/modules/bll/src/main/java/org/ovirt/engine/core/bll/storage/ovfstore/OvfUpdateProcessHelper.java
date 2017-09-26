@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -66,8 +67,9 @@ public class OvfUpdateProcessHelper {
      */
     public String buildMetadataDictionaryForVm(VM vm,
                                                   Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary,
-                                                  List<DiskImage> allVmImages) {
-        String vmMeta = generateVmMetadata(vm, allVmImages);
+                                                  List<DiskImage> allVmImages,
+                                                  List<LunDisk> lunDisks) {
+        String vmMeta = generateVmMetadata(vm, allVmImages, lunDisks);
         metaDictionary.put(
                 vm.getId(),
                 new KeyValuePairCompat<>
@@ -76,7 +78,9 @@ public class OvfUpdateProcessHelper {
     }
 
     protected String generateVmTemplateMetadata(VmTemplate template, List<DiskImage> allTemplateImages) {
-        return ovfManager.exportTemplate(template, allTemplateImages, clusterUtils.getCompatibilityVersion(template));
+        return ovfManager.exportTemplate(template,
+                allTemplateImages,
+                clusterUtils.getCompatibilityVersion(template));
     }
 
     /**
@@ -135,8 +139,8 @@ public class OvfUpdateProcessHelper {
         }
     }
 
-    protected String generateVmMetadata(VM vm, List<DiskImage> AllVmImages) {
-        return ovfManager.exportVm(vm, AllVmImages, clusterUtils.getCompatibilityVersion(vm));
+    protected String generateVmMetadata(VM vm, List<DiskImage> allVmImages, List<LunDisk> lunDisks) {
+        return ovfManager.exportVm(vm, allVmImages, lunDisks, clusterUtils.getCompatibilityVersion(vm));
     }
 
     /**

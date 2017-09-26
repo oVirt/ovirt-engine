@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -20,7 +21,7 @@ public class OvfTemplateReader extends OvfOvirtReader {
             List<DiskImage> images,
             List<VmNetworkInterface> interfaces,
             OsRepository osRepository) {
-        super(document, images, interfaces, vmTemplate, osRepository);
+        super(document, images, Collections.EMPTY_LIST, interfaces, vmTemplate, osRepository);
         _vmTemplate = vmTemplate;
     }
 

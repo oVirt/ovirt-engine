@@ -762,7 +762,7 @@ public class ImagesHandler {
                 VM vmSnapshot = new VM();
                 ArrayList<DiskImage> snapshotImages = new ArrayList<>();
 
-                ovfManager.importVm(snapConfig, vmSnapshot, snapshotImages, new ArrayList<>());
+                ovfManager.importVm(snapConfig, vmSnapshot, snapshotImages, Collections.EMPTY_LIST, new ArrayList<>());
 
                 // Remove the image from the disk list
                 Iterator<DiskImage> diskIter = snapshotImages.iterator();
@@ -784,7 +784,8 @@ public class ImagesHandler {
                 final Version compatibilityVersion =
                         Optional.ofNullable(vmSnapshot.getStaticData().getClusterCompatibilityVersionOrigin())
                         .orElse(Version.getLowest());
-                String newOvf = ovfManager.exportVm(vmSnapshot, snapshotImages, compatibilityVersion);
+                String newOvf =
+                        ovfManager.exportVm(vmSnapshot, snapshotImages, Collections.EMPTY_LIST, compatibilityVersion);
                 snapshot.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {

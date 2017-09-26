@@ -164,7 +164,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doAnswer(invocation -> {
             VM vm = (VM) invocation.getArguments()[0];
             return vm.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(), any());
+        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(), any(), any());
 
         doAnswer(invocation -> {
             VmTemplate template = (VmTemplate) invocation.getArguments()[0];

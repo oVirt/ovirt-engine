@@ -369,6 +369,16 @@ public class VmDeviceCommonUtils {
         return false;
     }
 
+    public static boolean isVirtIoScsiDeviceExists(Collection<VmDevice> devices) {
+        for (VmDevice device : devices) {
+            if (device.getType() == VmDeviceGeneralType.CONTROLLER
+                    && device.getDevice().equals(VmDeviceType.VIRTIOSCSI.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void addVideoDevice(VmBase vmBase) {
         if (vmBase.getDefaultDisplayType().getDefaultVmDeviceType() == null) {
             return;

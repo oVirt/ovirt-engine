@@ -141,10 +141,10 @@ public class OvfManagerTest {
         VM vm = createVM();
         vm.setDefaultDisplayType(DisplayType.cirrus);
         vm.setVmOs(DEFAULT_OS_ID);
-        String xml = manager.exportVm(vm, new ArrayList<>(), Version.getLast());
+        String xml = manager.exportVm(vm, new ArrayList<>(), Collections.EMPTY_LIST, Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
-        manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
+        manager.importVm(xml, newVm, new ArrayList<>(), Collections.EMPTY_LIST, new ArrayList<>());
         int graphicsDeviceCount = 0;
         for (VmDevice device : newVm.getManagedVmDeviceMap().values()) {
             if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
@@ -160,10 +160,10 @@ public class OvfManagerTest {
         VM vm = createVM();
         vm.setDefaultDisplayType(DisplayType.cirrus);
         vm.setVmOs(EXISTING_OS_ID);
-        String xml = manager.exportVm(vm, new ArrayList<>(), Version.getLast());
+        String xml = manager.exportVm(vm, new ArrayList<>(), Collections.EMPTY_LIST, Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
-        manager.importVm(xml, newVm, new ArrayList<>(), new ArrayList<>());
+        manager.importVm(xml, newVm, new ArrayList<>(), Collections.EMPTY_LIST, new ArrayList<>());
         int graphicsDeviceCount = 0;
         for (VmDevice device : newVm.getManagedVmDeviceMap().values()) {
             if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
@@ -177,12 +177,12 @@ public class OvfManagerTest {
     @Test
     public void testVmOvfImportWithoutDbGeneration() throws Exception {
         VM vm = createVM();
-        String xml = manager.exportVm(vm, new ArrayList<>(), Version.v3_6);
+        String xml = manager.exportVm(vm, new ArrayList<>(), Collections.EMPTY_LIST, Version.v3_6);
         assertNotNull(xml);
         final VM newVm = new VM();
         assertTrue(xml.contains("Generation"));
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
-        manager.importVm(replacedXml, newVm, new ArrayList<>(), new ArrayList<>());
+        manager.importVm(replacedXml, newVm, new ArrayList<>(), Collections.EMPTY_LIST, new ArrayList<>());
         assertVm(vm, newVm, 1);
     }
 
@@ -220,13 +220,13 @@ public class OvfManagerTest {
     public void testVmExportAndImportAndExportAgainSymmetrical() throws Exception {
         VM vm = createVM();
         ArrayList<DiskImage> disks = createDisksAndDiskVmElements(vm);
-        String xml = manager.exportVm(vm, disks, Version.v4_0);
+        String xml = manager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.v4_0);
         assertNotNull(xml);
 
         VM newVm = new VM();
         ArrayList<DiskImage> newDisks = new ArrayList<>();
-        manager.importVm(xml, newVm, newDisks, new ArrayList<>());
-        String newXml = manager.exportVm(vm, disks, Version.v4_0);
+        manager.importVm(xml, newVm, newDisks, Collections.EMPTY_LIST, new ArrayList<>());
+        String newXml = manager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.v4_0);
 
         assertEquals(deleteExportDateValueFromXml(xml), deleteExportDateValueFromXml(newXml));
     }
@@ -235,13 +235,13 @@ public class OvfManagerTest {
     public void testVmExportAndImportIdentical() throws Exception {
         VM vm = createVM();
         ArrayList<DiskImage> disks = createDisksAndDiskVmElements(vm);
-        String xml = manager.exportVm(vm, disks, Version.v4_0);
+        String xml = manager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.v4_0);
         assertNotNull(xml);
 
         VM newVm = new VM();
         ArrayList<DiskImage> newDisks = new ArrayList<>();
         ArrayList<VmNetworkInterface> newInterfaces = new ArrayList<>();
-        manager.importVm(xml, newVm, newDisks, newInterfaces);
+        manager.importVm(xml, newVm, newDisks, Collections.EMPTY_LIST, newInterfaces);
 
         assertVm(vm, newVm, vm.getDbGeneration());
         assertCollection(vm.getInterfaces(), newInterfaces);
@@ -278,12 +278,12 @@ public class OvfManagerTest {
     }
 
     private VM serializeAndDeserialize(VM inputVm) throws OvfReaderException {
-        String xml = manager.exportVm(inputVm, new ArrayList<>(), Version.v3_6);
+        String xml = manager.exportVm(inputVm, new ArrayList<>(), Collections.EMPTY_LIST, Version.v3_6);
         assertNotNull(xml);
         final VM resultVm = new VM();
         assertTrue(xml.contains("Generation"));
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
-        manager.importVm(replacedXml, resultVm, new ArrayList<>(), new ArrayList<>());
+        manager.importVm(replacedXml, resultVm, new ArrayList<>(), Collections.EMPTY_LIST, new ArrayList<>());
         return resultVm;
     }
 
@@ -362,6 +362,7 @@ public class OvfManagerTest {
         diskVmElement.setBoot(rnd.nextBoolean());
         diskVmElement.setDiskInterface(rnd.nextEnum(DiskInterface.class));
         diskVmElement.setReadOnly(false);
+        diskVmElement.setPlugged(true);
         disk.setDiskVmElements(Collections.singletonList(diskVmElement));
 
         return disk;

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -67,8 +68,9 @@ public class OvfHelper {
     public VM readVmFromOvf(String ovf) throws OvfReaderException {
         VM vm = new VM();
         ArrayList<DiskImage> diskImages = new ArrayList<>();
+        ArrayList<LunDisk> lunDisks = new ArrayList<>();
         ArrayList<VmNetworkInterface> interfaces  = new ArrayList<>();
-        ovfManager.importVm(ovf, vm, diskImages, interfaces);
+        ovfManager.importVm(ovf, vm, diskImages, lunDisks, interfaces);
 
         // add images
         vm.setImages(diskImages);
@@ -81,6 +83,9 @@ public class OvfHelper {
         for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
             List<DiskImage> list = entry.getValue();
             vm.getDiskMap().put(entry.getKey(), list.get(list.size() - 1));
+        }
+        for (LunDisk lunDisk : lunDisks) {
+            vm.getDiskMap().put(lunDisk.getId(), lunDisk);
         }
         return vm;
     }
@@ -126,6 +131,7 @@ public class OvfHelper {
     private String buildMetadataDictionaryForVm(VM vm) {
         List<DiskImage> allVmImages = new ArrayList<>();
         List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskList(), ONLY_SNAPABLE, ONLY_ACTIVE);
+        List<LunDisk> lunDisks = DisksFilter.filterLunDisks(vm.getDiskMap().values());
 
         for (DiskImage diskImage : filteredDisks) {
             List<DiskImage> images = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
@@ -133,7 +139,7 @@ public class OvfHelper {
             allVmImages.addAll(images);
         }
 
-        return ovfManager.exportVm(vm, allVmImages, clusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm, allVmImages, lunDisks, clusterUtils.getCompatibilityVersion(vm));
     }
 
     private void loadVmData(VM vm) {

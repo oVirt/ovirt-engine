@@ -445,7 +445,10 @@ public class SnapshotsManager {
         }
         populateDisksWithVmData(disks, vm.getId());
         disks.forEach(image -> image.setStorageIds(null));
-        return ovfManager.exportVm(vm, new ArrayList<>(disks), clusterUtils.getCompatibilityVersion(vm));
+        return ovfManager.exportVm(vm,
+                new ArrayList<>(disks),
+                Collections.EMPTY_LIST,
+                clusterUtils.getCompatibilityVersion(vm));
     }
 
     private void populateDisksWithVmData(List<? extends Disk> disks, Guid vmId) {
@@ -609,7 +612,7 @@ public class SnapshotsManager {
             }
             ArrayList<DiskImage> images = new ArrayList<>();
             ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
-            ovfManager.importVm(configuration, tempVM, images, interfaces);
+            ovfManager.importVm(configuration, tempVM, images, Collections.EMPTY_LIST, interfaces);
             for (DiskImage diskImage : images) {
                 DiskImage dbImage = diskImageDao.getSnapshotById(diskImage.getImageId());
                 if (dbImage != null) {

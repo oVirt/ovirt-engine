@@ -8,6 +8,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
@@ -64,6 +65,20 @@ public class OvfParser {
         }
         retVal += "/" + image.getImageId().toString();
         return retVal;
+    }
+
+    /**
+     * lunDisk is: /dev/mapper/[lun id]
+     *
+     * @param lun
+     *            - The lun disk which will be used to create the mapper string.
+     * @return - Represented guid of the lun mapper.
+     */
+    public static String createLunFile(LunDisk lun) {
+        if (lun.getId() != null) {
+            return lun.getId().toString();
+        }
+        return Guid.Empty.toString();
     }
 
     public static Guid getImageGroupIdFromImageFile(String imageFile) {

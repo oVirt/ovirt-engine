@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -33,14 +34,18 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
 public abstract class OvfWriter implements IOvfBuilder {
     private int _instanceId;
     protected List<DiskImage> _images;
+    protected List<LunDisk> lunDisks;
     protected XmlTextWriter _writer;
     protected XmlDocument _document;
     protected VmBase vmBase;
     protected Version version;
 
-    public OvfWriter(VmBase vmBase, List<DiskImage> images, Version version) {
+    public OvfWriter(VmBase vmBase, List<DiskImage> images, List<LunDisk> lunDisks, Version version) {
         _document = new XmlDocument();
         _images = images;
+
+        // We use a specific parameter for lunDisks to avoid any additional changes in other writer classes.
+        this.lunDisks = lunDisks;
         _writer = new XmlTextWriter();
         this.vmBase = vmBase;
         this.version = version;
@@ -79,10 +84,19 @@ public abstract class OvfWriter implements IOvfBuilder {
             writeFile(image);
             _writer.writeEndElement();
         });
+        lunDisks.forEach(lun -> {
+            _writer.writeStartElement("File");
+            writeFileForLunDisk(lun);
+            _writer.writeEndElement();
+        });
         _writer.writeEndElement();
     }
 
     protected abstract void writeFile(DiskImage image);
+
+    protected void writeFileForLunDisk(LunDisk lun) {
+        // do nothing
+    }
 
     protected void writeVmInit() {
         if (vmBase.getVmInit() != null) {
@@ -147,10 +161,19 @@ public abstract class OvfWriter implements IOvfBuilder {
             writeDisk(image);
             _writer.writeEndElement();
         });
+        lunDisks.forEach(lun -> {
+            _writer.writeStartElement("Disk");
+            writeLunDisk(lun);
+            _writer.writeEndElement();
+        });
         _writer.writeEndElement();
     }
 
     protected abstract void writeDisk(DiskImage image);
+
+    protected void writeLunDisk(LunDisk lun) {
+        // do nothing
+    }
 
     @Override
     public void buildVirtualSystem() {

@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Version;
@@ -25,6 +28,7 @@ public class HostedEngineOvfWriterTest {
 
     private VM vm;
     private ArrayList<DiskImage> images;
+    private List<LunDisk> luns;
     private String emulatedMachine;
     private Version version = Version.getLast();
     private String cpuId;
@@ -44,11 +48,13 @@ public class HostedEngineOvfWriterTest {
     public void setup() {
         initVm();
         images = new ArrayList<>();
+        luns = Collections.EMPTY_LIST;
         emulatedMachine = "pc";
         cpuId = "SandyBridge";
         underTest = new HostedEngineOvfWriter(
                 vm,
                 images,
+                luns,
                 version,
                 emulatedMachine,
                 cpuId,
@@ -65,7 +71,7 @@ public class HostedEngineOvfWriterTest {
     public void clusterEmulatedMachineIsNull() {
         emulatedMachine = null;
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId, osRepository))
+                () -> new HostedEngineOvfWriter(vm, images, luns, version, emulatedMachine, cpuId, osRepository))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining("emulated machine");
     }
@@ -80,7 +86,7 @@ public class HostedEngineOvfWriterTest {
     public void cpuIdIsNull() {
         cpuId = null;
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId, osRepository))
+                () -> new HostedEngineOvfWriter(vm, images, luns, version, emulatedMachine, cpuId, osRepository))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining("cpuId");
     }
@@ -89,7 +95,7 @@ public class HostedEngineOvfWriterTest {
     public void notHostedEngineVM() {
         vm.setOrigin(OriginType.OVIRT);
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId, osRepository))
+                () -> new HostedEngineOvfWriter(vm, images, luns, version, emulatedMachine, cpuId, osRepository))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessageContaining("Hosted Engine");
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -14,7 +15,7 @@ public class OvfTemplateWriter extends OvfOvirtWriter {
     protected VmTemplate vmTemplate;
 
     public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images, Version version, OsRepository osRepository) {
-        super(vmTemplate, images, version, osRepository);
+        super(vmTemplate, images, Collections.EMPTY_LIST, version, osRepository);
         this.vmTemplate = vmTemplate;
     }
 

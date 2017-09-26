@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class OvfOvaReader extends OvfReader {
             List<VmNetworkInterface> interfaces,
             VM vm,
             OsRepository osRepository) {
-        super(document, images, interfaces, vm.getStaticData(), osRepository);
+        super(document, images, Collections.EMPTY_LIST, interfaces, vm.getStaticData(), osRepository);
         this.vm = vm;
         fileIdToFileAttributes = new HashMap<>();
     }
