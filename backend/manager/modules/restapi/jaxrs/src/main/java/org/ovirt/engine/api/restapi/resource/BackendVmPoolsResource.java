@@ -15,6 +15,7 @@ import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -69,14 +70,19 @@ public class BackendVmPoolsResource
         int size = pool.isSetSize() ? pool.getSize() : 1;
 
         AddVmPoolParameters params = new AddVmPoolParameters(entity, vm, size);
-        params.setConsoleEnabled(!getConsoleDevicesForEntity(template.getId()).isEmpty());
+        params.setConsoleEnabled(pool.isSetVm() && pool.getVm().isSetConsole() && pool.getVm().getConsole().isSetEnabled() ?
+                pool.getVm().getConsole().isEnabled() : !getConsoleDevicesForEntity(template.getId()).isEmpty());
         params.setVirtioScsiEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, template.getId()).isEmpty());
         params.setSoundDeviceEnabled(pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getSoundDevicesForEntity(this, template.getId()).isEmpty());
+        params.setRngDevice(pool.isSetVm() && pool.getVm().isSetRngDevice() ?
+                RngDeviceMapper.map(pool.getVm().getRngDevice(), null) : params.getRngDevice());
         boolean balloonEnabled = pool.isSetVm() &&
                 pool.getVm().isSetMemoryPolicy() &&
                 pool.getVm().getMemoryPolicy().isSetBallooning() &&
                 pool.getVm().getMemoryPolicy().isBallooning();
         params.setBalloonEnabled(balloonEnabled);
+        params.getVmStaticData().setCustomProperties(pool.isSetVm() && pool.getVm().isSetCustomProperties() ?
+                CustomPropertiesParser.parse(pool.getVm().getCustomProperties().getCustomProperties()) : params.getVmStaticData().getCustomProperties());
 
         return performCreate(ActionType.AddVmPool,
                                params,

@@ -410,15 +410,15 @@ public class BackendVmsResource extends
         if (vm.isSetMemoryPolicy()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
         } else if (shouldCopyDevice(SimpleDependencyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(
-                vmStatic.getOsId(), cluster.getCompatibilityVersion()), templateId, instanceTypeId)) {
-            // it is not defined on the template
-            params.setBalloonEnabled(instanceTypeId != null ? !VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId) : null);
+                vmStatic.getOsId(), cluster.getCompatibilityVersion()), templateId, instanceTypeId)
+                && (instanceTypeId != null || templateId != null)) {
+            params.setBalloonEnabled(VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId != null ? instanceTypeId : templateId));
         }
 
         if (vm.isSetConsole()) {
             params.setConsoleEnabled(vm.getConsole().isEnabled());
-        } else if (instanceTypeId != null || templateId != null) {
-            params.setConsoleEnabled(instanceTypeId != null ? !getConsoleDevicesForEntity(instanceTypeId).isEmpty() : null);
+        } else if (templateId != null || instanceTypeId != null) {
+            params.setConsoleEnabled(!getConsoleDevicesForEntity(instanceTypeId != null ? instanceTypeId : templateId).isEmpty());
         }
 
         if (vm.isSetRngDevice()) {

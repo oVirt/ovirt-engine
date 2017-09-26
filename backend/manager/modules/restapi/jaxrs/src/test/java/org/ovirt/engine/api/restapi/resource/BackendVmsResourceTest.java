@@ -353,7 +353,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(2);
+        setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
@@ -438,7 +438,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(2);
+        setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
@@ -480,7 +480,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
-        setUpGetConsoleExpectations(2);
+        setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
@@ -525,6 +525,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAdd() throws Exception {
+        setUpGetConsoleExpectations(1);
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
@@ -551,6 +552,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAddPassTemplateByName() throws Exception {
+        setUpGetConsoleExpectations(1);
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Name", "DataCenterId" },
@@ -584,7 +586,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
-        setUpGetConsoleExpectations(2);
+        setUpGetConsoleExpectations(1, 2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
@@ -787,6 +789,7 @@ public class BackendVmsResourceTest
     public void testAddWithPlacementPolicySingleHostName() throws Exception {
         setUpAddVm();
         setUpGetHostByNameExpectations(1);
+        setUpGetConsoleExpectations(1);
         setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
@@ -814,6 +817,7 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithPlacementPolicySingleHostId() throws Exception {
         setUpAddVm();
+        setUpGetConsoleExpectations(1);
         setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
@@ -909,7 +913,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(2);
+        setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
@@ -958,7 +962,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetConsoleExpectations(2);
+        setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
@@ -1020,7 +1024,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
-        setUpGetConsoleExpectations(2);
+        setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
@@ -1077,7 +1081,7 @@ public class BackendVmsResourceTest
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
 
-        setUpGetConsoleExpectations(2);
+        setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
@@ -1225,6 +1229,7 @@ public class BackendVmsResourceTest
                 getTemplateEntity(1));
         setUpGetSoundcardExpectations(1);
         setUpGetRngDeviceExpectations(1);
+        setUpGetConsoleExpectations(1);
 
         setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
