@@ -796,7 +796,15 @@ public class LibvirtVmXmlBuilder {
             case CHANNEL:
                 break;
             case HOSTDEV:
-                writeHostDevice(new VmHostDevice(device), hostDevicesSupplier.get().get(device.getDevice()));
+                HostDevice hostDevice = hostDevicesSupplier.get().get(device.getDevice());
+                if (hostDevice == null) {
+                    if (!"mdev".equals(device.getDevice())) {
+                        log.info("skipping VM host device {} for VM {}, no corresponding host device was found",
+                                device.getDevice(), device.getVmId());
+                    }
+                    break;
+                }
+                writeHostDevice(device, hostDevice);
                 break;
             case UNKNOWN:
                 break;
@@ -1101,17 +1109,17 @@ public class LibvirtVmXmlBuilder {
                 : "";
     }
 
-    private void writeHostDevice(VmHostDevice device, HostDevice hostDevice) {
+    private void writeHostDevice(VmDevice device, HostDevice hostDevice) {
         switch (hostDevice.getCapability()) {
         case "pci":
-            writePciHostDevice(device, hostDevice);
+            writePciHostDevice(new VmHostDevice(device), hostDevice);
             break;
         case "usb":
         case "usb_device":
-            writeUsbHostDevice(device, hostDevice);
+            writeUsbHostDevice(new VmHostDevice(device), hostDevice);
             break;
         case "scsi":
-            writeScsiHostDevice(device, hostDevice);
+            writeScsiHostDevice(new VmHostDevice(device), hostDevice);
             break;
         default:
             log.warn("Skipping host device: {}", device.getDevice());
