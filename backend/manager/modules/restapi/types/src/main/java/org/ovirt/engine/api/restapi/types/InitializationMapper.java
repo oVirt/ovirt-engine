@@ -46,7 +46,7 @@ public class InitializationMapper {
         }
 
         if (model.isSetIpv6BootProtocol()) {
-            entity.setIpv6BootProtocol(Ipv6BootProtocolMapper.map(model.getBootProtocol()));
+            entity.setIpv6BootProtocol(Ipv6BootProtocolMapper.map(model.getIpv6BootProtocol()));
         }
 
         if (model.isSetIpv6()) {
