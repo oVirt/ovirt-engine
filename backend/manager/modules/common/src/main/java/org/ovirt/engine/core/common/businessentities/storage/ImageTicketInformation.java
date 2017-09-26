@@ -22,6 +22,10 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
 
     private String fileName;
 
+    private boolean active;
+
+    private Long transferred;
+
     @Override
     public Guid getId() {
         return id;
@@ -72,6 +76,22 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
         this.fileName = fileName;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public Long getTransferred() {
+        return transferred;
+    }
+
+    public void setTransferred(Long transferred) {
+        this.transferred = transferred;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -89,7 +109,9 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
                 && Objects.equals(url, other.url)
                 && Objects.equals(timeout, other.timeout)
                 && Objects.equals(transferTypes, other.transferTypes)
-                && Objects.equals(fileName, other.fileName);
+                && Objects.equals(fileName, other.fileName)
+                && Objects.equals(active, other.active)
+                && Objects.equals(transferred, other.transferred);
     }
 
     @Override
@@ -100,6 +122,8 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
                 url,
                 timeout,
                 transferTypes,
-                fileName);
+                fileName,
+                active,
+                transferred);
     }
 }

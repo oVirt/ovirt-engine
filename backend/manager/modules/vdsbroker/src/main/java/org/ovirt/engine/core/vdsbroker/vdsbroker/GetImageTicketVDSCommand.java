@@ -24,6 +24,10 @@ public class GetImageTicketVDSCommand<P extends GetImageTicketVDSCommandParamete
 
     private static final String FILENAME = "filename";
 
+    private static final String ACTIVE = "active";
+
+    private static final String TRANSFERRED = "transferred";
+
     private ImageTicketInformationReturn imageTicketInformationReturn;
 
     public GetImageTicketVDSCommand(P parameters) {
@@ -73,6 +77,12 @@ public class GetImageTicketVDSCommand<P extends GetImageTicketVDSCommandParamete
         }
         if (ticketInfoMap.containsKey(FILENAME)) {
             ticketInfo.setFileName((String) ticketInfoMap.get(FILENAME));
+        }
+        if (ticketInfoMap.containsKey(ACTIVE)) {
+            ticketInfo.setActive((Boolean) ticketInfoMap.get(ACTIVE));
+        }
+        if (ticketInfoMap.containsKey(TRANSFERRED)) {
+            ticketInfo.setTransferred(((Number) ticketInfoMap.get(TRANSFERRED)).longValue());
         }
 
         return ticketInfo;
