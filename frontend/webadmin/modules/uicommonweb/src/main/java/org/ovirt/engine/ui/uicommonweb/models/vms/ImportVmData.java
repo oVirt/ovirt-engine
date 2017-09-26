@@ -15,7 +15,7 @@ public class ImportVmData extends ImportEntityData<VM> {
     private String vmName;
 
     public ImportVmData(VM vm) {
-        setCollapseSnapshots(new EntityModel<>(true));
+        setCollapseSnapshots(new EntityModel<>(false));
 
         setEntity(vm);
         vmName = vm.getName();
