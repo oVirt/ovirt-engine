@@ -25,11 +25,8 @@
             padding-top: 15px;
         }
 
-        .headerElement {
-            background-color: #E5E5E5;
-        }
-
         .headerBottom {
+            border-bottom: 1px solid #D1D1D1;
             margin-bottom: 5px;
         }
 
@@ -41,10 +38,10 @@
     <d:SimpleDialogPanel width="800px" height="660px">
         <d:content>
             <b:Container fluid="true">
-                <b:Row addStyleNames="{style.topElement} {style.headerElement}">
+                <b:Row addStyleNames="{style.topElement}">
                     <e:ListModelListBoxEditor ui:field="dataCentersEditor" label="{constants.dataCenter}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
                 </b:Row>
-                <b:Row addStyleNames="{style.headerElement} {style.headerBottom}">
+                <b:Row addStyleNames="{style.headerBottom}">
                     <b:Column size="SM_6" addStyleNames="{style.nopadding}">
                         <e:ListModelListBoxEditor  ui:field="importSourcesEditor" label="{constants.importSource}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Column>
@@ -56,13 +53,13 @@
                 </b:Row>
                 <g:FlowPanel ui:field="exportPanel" visible="false">
                     <b:Row>
-                        <ge:StringEntityModelLabelEditor ui:field="exportDomainName" label="{constants.nameLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <ge:StringEntityModelLabelEditor ui:field="exportDomainName" label="{constants.nameLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelLabelEditor ui:field="exportDomainPath" label="{constants.pathStorageGeneral}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <ge:StringEntityModelLabelEditor ui:field="exportDomainPath" label="{constants.pathStorageGeneral}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelLabelEditor ui:field="exportDomainDescription" label="{constants.descriptionLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <ge:StringEntityModelLabelEditor ui:field="exportDomainDescription" label="{constants.descriptionLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
                         <b:Column size="SM_12">
@@ -111,10 +108,10 @@
                 </g:FlowPanel>
                 <g:FlowPanel ui:field="ovaPanel" visible="false">
                     <b:Row>
-                        <e:ListModelListBoxEditor ui:field="hostsEditor" label="{constants.ovaHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <e:ListModelListBoxEditor ui:field="hostsEditor" label="{constants.ovaHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="ovaPathEditor" label="{constants.ovaPath}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="ovaPathEditor" label="{constants.ovaPath}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
                         <b:Column size="SM_12">
@@ -124,10 +121,10 @@
                 </g:FlowPanel>
                 <g:FlowPanel ui:field="xenPanel" visible="false">
                     <b:Row>
-                        <w:EntityModelWidgetWithInfo ui:field="xenUriWithInfo" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <w:EntityModelWidgetWithInfo ui:field="xenUriWithInfo" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
-                        <e:ListModelListBoxEditor ui:field="xenProxyHostsEditor" label="{constants.proxyHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <e:ListModelListBoxEditor ui:field="xenProxyHostsEditor" label="{constants.proxyHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
                         <b:Column size="SM_12">
@@ -137,7 +134,7 @@
                 </g:FlowPanel>
                 <g:FlowPanel ui:field="kvmPanel" visible="false">
                     <b:Row>
-                        <w:EntityModelWidgetWithInfo ui:field="kvmUriWithInfo" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <w:EntityModelWidgetWithInfo ui:field="kvmUriWithInfo" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
                         <b:Column size="SM_12">
@@ -145,13 +142,13 @@
                         </b:Column>
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="kvmUsernameEditor" label="{constants.usernameProvider}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="kvmUsernameEditor" label="{constants.usernameProvider}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelPasswordBoxEditor ui:field="kvmPasswordEditor" label="{constants.passwordProvider}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <ge:StringEntityModelPasswordBoxEditor ui:field="kvmPasswordEditor" label="{constants.passwordProvider}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
-                        <e:ListModelListBoxEditor ui:field="kvmProxyHostsEditor" label="{constants.proxyHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                        <e:ListModelListBoxEditor ui:field="kvmProxyHostsEditor" label="{constants.proxyHost}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
                     </b:Row>
                     <b:Row>
                         <b:Column size="SM_12">

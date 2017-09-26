@@ -80,7 +80,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     private final HasDataListModelEditorAdapter<M, EntityModel> editorAdapter;
 
     private boolean selectionColumnPresent = false;
-    private boolean isHeightSet = false;
 
     /**
      * Create a new {@link EntityModelCellTable} with single selection mode.
@@ -240,12 +239,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         super.setHeight(height);
         redraw();
         isHeightSet = true;
-    }
-
-    @Override
-    public void setRowData(int start, final List<? extends EntityModel> values) {
-        super.setRowData(start, values);
-        updateGridSize(values.size() * ROW_HEIGHT);
     }
 
     public void addSelectionChangeHandler() {

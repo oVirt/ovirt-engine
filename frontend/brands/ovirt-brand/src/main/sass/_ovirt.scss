@@ -110,6 +110,10 @@ TODO: use SASS, break into tooltips.sass
     max-width: 620px !important;
 }
 
+.tooltip {
+    overflow-wrap: break-word;
+}
+
 [rel=tooltip] [disabled] {
     pointer-events: none;
 }
@@ -1434,3 +1438,4 @@ td.datePickerYear {
 .hide-one-row-scroll > div:nth-child(3) > div > div:nth-child(2) > div {
     position: relative !important;
 }
+

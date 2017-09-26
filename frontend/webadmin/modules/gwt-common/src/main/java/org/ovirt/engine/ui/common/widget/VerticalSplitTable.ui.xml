@@ -14,13 +14,6 @@
             font-weight: bold;
         }
 
-        .tables {
-            height: 225px;
-            border-style: solid;
-            border-width: thin;
-            border-color: gray;
-        }
-
         .buttons {
            margin: 15px;
         }
@@ -30,9 +23,7 @@
         <g:west size="335">
             <g:FlowPanel>
                 <g:Label ui:field="excludedTitle" addStyleNames="{style.headers}" />
-                    <g:ScrollPanel addStyleNames="{style.tables}">
-                        <e:EntityModelCellTable ui:field="excludedTable" />
-                    </g:ScrollPanel>
+                    <e:EntityModelCellTable ui:field="excludedTable" height="223px" />
             </g:FlowPanel>
         </g:west>
         <g:center size="30">
@@ -48,9 +39,7 @@
         <g:east size="335">
             <g:FlowPanel>
                 <g:Label ui:field="includedTitle" addStyleNames="{style.headers}" />
-                <g:ScrollPanel addStyleNames="{style.tables}">
-                    <e:EntityModelCellTable ui:field="includedTable" />
-                </g:ScrollPanel>
+                <e:EntityModelCellTable ui:field="includedTable" height="223px" />
             </g:FlowPanel>
         </g:east>
     </g:DockLayoutPanel>
