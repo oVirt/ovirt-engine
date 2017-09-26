@@ -206,6 +206,9 @@
                                     <e:ListModelListBoxEditor ui:field="firewallTypeEditor" label="{constants.clusterFirewallTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="defaultNetworkProviderEditor" label="{constants.clusterDefaultNetworkProviderLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
                                     <b:Column size="SM_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" label="{constants.clusterEnableOvirtServiceLabel}" removeFormGroup="true" usePatternFly="true" />
                                         <ge:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" label="{constants.clusterEnableGlusterServiceLabel}" removeFormGroup="true" usePatternFly="true" />

@@ -694,6 +694,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.setCompatibilityVersion(version);
         cluster.setRequiredSwitchTypeForCluster(model.getSwitchType().getSelectedItem());
         cluster.setFirewallType(model.getFirewallType().getSelectedItem());
+        if (model.getDefaultNetworkProvider().getSelectedItem() != null) {
+            cluster.setDefaultNetworkProviderId(model.getDefaultNetworkProvider().getSelectedItem().getId());
+        }
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());

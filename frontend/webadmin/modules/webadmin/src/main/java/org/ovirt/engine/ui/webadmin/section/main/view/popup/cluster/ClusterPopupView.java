@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -141,6 +142,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "firewallType.selectedItem")
     @WithElementId
     ListModelListBoxEditor<FirewallType> firewallTypeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "defaultNetworkProvider.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Provider> defaultNetworkProviderEditor;
 
     @UiField(provided = true)
     @Path(value = "architecture.selectedItem")
@@ -599,6 +605,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         switchTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<SwitchType>());
         firewallTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<FirewallType>());
+
+        defaultNetworkProviderEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Provider>() {
+            @Override
+            protected String renderNullSafe(Provider provider) {
+                return provider.getName();
+            }
+        });
 
         architectureEditor = new ListModelListBoxEditor<>(new EnumRenderer<ArchitectureType>() {
             @Override

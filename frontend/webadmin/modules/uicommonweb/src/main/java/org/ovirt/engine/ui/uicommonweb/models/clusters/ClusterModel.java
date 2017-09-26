@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -707,6 +709,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.firewallType = firewallType;
     }
 
+    private ListModel<Provider> defaultNetworkProvider;
+
+    public ListModel<Provider> getDefaultNetworkProvider() {
+        return defaultNetworkProvider;
+    }
+
+    public void setDefaultNetworkProvider(ListModel<Provider> defaultNetworkProvider) {
+        this.defaultNetworkProvider = defaultNetworkProvider;
+    }
+
     private EntityModel<Boolean> privateEnableTrustedService;
 
     private EntityModel<Boolean> privateEnableHaReservation;
@@ -1273,6 +1285,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setFirewallType(new ListModel<>());
         initFirewallType();
 
+        setDefaultNetworkProvider(new ListModel<>());
+        initDefaultNetworkProvider();
+
         setSwitchType(new ListModel<>());
         initSwitchType();
 
@@ -1406,6 +1421,22 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         } else {
             firewallType.setIsChangeable(true);
         }
+    }
+
+    private void initDefaultNetworkProvider() {
+        AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(result -> {
+            List<Provider> providers = (List) result;
+            providers.add(0, null);
+            getDefaultNetworkProvider().setItems(providers);
+            Cluster cluster = getEntity();
+            if (cluster != null) {
+                Provider defaultNetworkProvider = providers.stream()
+                        .filter(provider -> provider != null)
+                        .filter(provider -> provider.getId().equals(cluster.getDefaultNetworkProviderId()))
+                        .findFirst().orElse(null);
+                getDefaultNetworkProvider().setSelectedItem(defaultNetworkProvider);
+            }
+        }), ProviderType.OPENSTACK_NETWORK, ProviderType.EXTERNAL_NETWORK);
     }
 
     private void initSwitchType() {
