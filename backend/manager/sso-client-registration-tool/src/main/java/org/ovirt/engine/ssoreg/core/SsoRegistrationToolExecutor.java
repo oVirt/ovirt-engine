@@ -70,6 +70,14 @@ public class SsoRegistrationToolExecutor {
 
             log.debug("Version: {}-{} ({})", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
 
+            if((Boolean)argMap.get("help")) {
+                System.out.format("Usage: %s", parser.getUsage());
+                throw new ExitException("Help", 0);
+            } else if((Boolean)argMap.get("version")) {
+                System.out.format("%s-%s (%s)%n", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
+                throw new ExitException("Version", 0);
+            }
+
             if(!parser.getErrors().isEmpty()) {
                 for(Throwable t : parser.getErrors()) {
                     log.error(t.getMessage());
