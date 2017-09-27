@@ -7,18 +7,26 @@ import java.util.List;
  * A node in the 'Service' tree, which contains:
  * 1) The name of the resource class
  *      e.g: VmDisksResource
- * 2) The path section leading to it
+ * 2) A reference to the resource class
+ * 3) The type that this resource deals with (e.g: Disks)
+ * 4) The path section leading to it
  *      e.g: 'diskattachments'
- * 3) Name of getter-method for this service at this service's parent.
+ * 5) Name of getter-method for this service at this service's parent.
  *      e.g: 'getDiskAttachments'
- * 4) A list of Nodes, which are the child 'Services'.
- * 5) A list of 'actions', which are the actions of this service,
+ * 6) The parent of this node in the tree.
+ *      e.g: for VmDiskResource -> VmDisksResource
+ *           for VmDisksResource -> VmResource
+ * 7) A list of Nodes, which are the child 'Services'.
+ * 8) A list of 'actions', which are the actions of this service,
  *    consisting of the JAX-RS methods and special actions, e.g: 'start'
  */
 public class ServiceTreeNode {
 
     private String name;
+    private Class<?> resourceClass;
     private String path;
+    private Class<?> type;
+    private ServiceTreeNode parent;
 
     //only for 'collection' services (such as VmsService) a reference
     //to the sub-service representing the single-entity-context (such
@@ -67,7 +75,24 @@ public class ServiceTreeNode {
     public void setGetter(String getter) {
         this.getter = getter;
     }
-
+    public Class<?> getType() {
+        return type;
+    }
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
+    public ServiceTreeNode getParent() {
+        return parent;
+    }
+    public void setParent(ServiceTreeNode parent) {
+        this.parent = parent;
+    }
+    public Class<?> getResourceClass() {
+        return resourceClass;
+    }
+    public void setResourceClass(Class<?> resourceclass) {
+        this.resourceClass = resourceclass;
+    }
     /**
      * Checks whether or not this node contains the provided
      * action (purposely ignores case when comparing action names).
@@ -118,6 +143,10 @@ public class ServiceTreeNode {
             node.setName(name);
             return this;
         }
+        public Builder resourceClass(Class<?> resourceClass) {
+            node.setResourceClass(resourceClass);
+            return this;
+        }
         public Builder path(String path) {
             node.setPath(path);
             return this;
@@ -134,10 +163,15 @@ public class ServiceTreeNode {
             node.setGetter(getter);
             return this;
         }
+        public Builder type(Class<?> type) {
+            node.setType(type);
+            return this;
+        }
+        public Builder parent(ServiceTreeNode parent) {
+            node.setParent(parent);
+            return this;
+        }
         public ServiceTreeNode build() {
-            if (node.subServices!=null) {
-                node.setSon(node.getSubService("{id}"));
-            }
             return node;
         }
     }
@@ -152,7 +186,9 @@ public class ServiceTreeNode {
         String tabs = getTabs(tabNum);
         builder.append(tabs).append("name: ").append(name).append("\n")
         .append(tabs).append("path: ").append(path).append("\n")
+        .append(tabs).append("type: ").append(type==null ? "" : type.getSimpleName()).append("\n")
         .append(tabs).append("getter: ").append(getter).append("\n")
+        .append(tabs).append("parent: ").append(parent==null ? "" : parent.getName()).append("\n")
         .append(tabs).append("son: ").append(son==null ? "" : son.getName()).append("\n")
         .append(tabs).append("actions: ").append(printActions()).append("\n")
         .append(tabs).append("sub-services:\n").append(printSubServices(++tabNum)).append("\n");

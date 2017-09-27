@@ -2,11 +2,14 @@ package org.ovirt.engine.api.rsdl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -41,24 +44,41 @@ public class ServiceTree {
     }
 
     private static ServiceTreeNode buildNode(Class<?> resource) {
-        return buildNode(resource, "", "");
+        return buildNode(resource, "", "", null);
     }
 
     /**
      * Build the API tree
      */
-    private static ServiceTreeNode buildNode(Class<?> resource, String path, String getterMethod) {
+    private static ServiceTreeNode buildNode(Class<?> resource, String path, String getterMethod, ServiceTreeNode parent) {
         ServiceTreeNode node = new ServiceTreeNode.Builder()
                 .name(resource.getSimpleName())
+                .resourceClass(resource)
                 .path(path)
+                .type(inferType(resource))
+                .parent(parent)
                 .getter(getterMethod)
-                .subCollections(getSubServices(resource))
                 .actions(getActions(resource))
                 .build();
+        node.setSubServices(getSubServices(resource, node));
         if (!nodes.containsKey(resource)) {
             nodes.put(resource, node);
         }
+        if (node.getSubServices()!=null) {
+            node.setSon(node.getSubService("{id}"));
+        }
         return node;
+    }
+
+    /**
+     * Returns the type associated with this resource (e.g: for VmResource, the type is Vm)
+     * Type is inferred by finding the method annotated with @GET (should always exist)
+     * and examining it's return type.
+     */
+    private static Class<?> inferType(Class<?> resource) {
+        Optional<Method> method = Arrays.asList(resource.getMethods()).stream().filter
+                (x -> x.isAnnotationPresent(GET.class)).findFirst();
+        return method.isPresent() ? method.get().getReturnType() : null;
     }
 
     /**
@@ -66,13 +86,13 @@ public class ServiceTree {
      * For example, for VmResource this method should return getDisksResource(),
      * getCdRomsResource(), etc.
      */
-    public static List<ServiceTreeNode> getSubServices(Class<?> resource) {
+    public static List<ServiceTreeNode> getSubServices(Class<?> resource, ServiceTreeNode parent) {
         List<ServiceTreeNode> resources = new ArrayList<>();
         for (Method method : getMethods(resource, SUB_RESOURCES)) {
             Path path = method.getAnnotation(Path.class);
             if (!method.getReturnType().equals(ActionResource.class)
                     && !method.getReturnType().equals(CreationResource.class)) {
-                resources.add(buildNode(method.getReturnType(), path.value(), method.getName()));
+                resources.add(buildNode(method.getReturnType(), path.value(), method.getName(), parent));
             }
         }
         return resources;

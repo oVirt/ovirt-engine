@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.Clusters;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -100,7 +101,15 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     protected Clusters mapCollection(List<Cluster> entities) {
         Clusters collection = new Clusters();
         for (Cluster entity : entities) {
-            collection.getClusters().add(addLinks(populate(map(entity), entity)));
+            // Specifying LinkHelper.NO_PARENT to explicitly point link to API root:
+            //   <cluster href=".../api/clusters/xxx">
+            // rather than under datacenter:
+            //   <cluster href=".../api/datacenters/yyy/clusters/xxx">
+            //
+            // (The second option would be selected by default due to the fact that
+            // the cluster has a datacenter-id set in it. That is the current
+            // LinkHelper behavior)
+            collection.getClusters().add(addLinks(populate(map(entity), entity), LinkHelper.NO_PARENT));
         }
         return collection;
     }

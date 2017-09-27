@@ -16,6 +16,7 @@ import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterHooksResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResource;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -42,7 +43,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public org.ovirt.engine.api.model.Cluster get() {
-        return performGet(QueryType.GetClusterById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetClusterById, new IdQueryParameters(guid), LinkHelper.NO_PARENT);
     }
 
     @Override

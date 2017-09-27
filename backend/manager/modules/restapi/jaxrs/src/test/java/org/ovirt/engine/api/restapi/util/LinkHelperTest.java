@@ -153,7 +153,7 @@ public class LinkHelperTest {
         cluster.setDataCenter(new DataCenter());
         cluster.getDataCenter().setId(DATA_CENTER_ID);
 
-        LinkHelper.addLinks(cluster);
+        LinkHelper.addLinks(cluster, LinkHelper.NO_PARENT);
 
         assertEquals(CLUSTER_HREF, cluster.getHref());
         assertEquals(DATA_CENTER_HREF, cluster.getDataCenter().getHref());
