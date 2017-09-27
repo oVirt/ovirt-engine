@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -197,34 +198,32 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         setSnapshotsMap(new HashMap<>());
         setVmDisks(new ArrayList<>());
+
+        setComparator(Comparator.comparing(
+                (Snapshot s) -> s.getType() == SnapshotType.ACTIVE || s.getType() == SnapshotType.PREVIEW)
+                .thenComparing(Snapshot::getCreationDate)
+                .reversed());
     }
 
     @Override
     public void setItems(Collection<Snapshot> value) {
-        ArrayList<Snapshot> snapshots = value != null ? new ArrayList<>(value) : new ArrayList<>();
-
-        snapshots.sort(Linq.SnapshotByCreationDateCommparer.reversed());
-        ArrayList<Snapshot> sortedSnapshots = new ArrayList<>();
-        boolean hasNoPreviewSnapshot = snapshots.stream().noneMatch(s -> s.getType() == SnapshotType.PREVIEW);
-
-        for (Snapshot snapshot : snapshots) {
+        List<Snapshot> snapshots = value != null ? new ArrayList<>(value) : new ArrayList<>();
+        snapshots.forEach(snapshot -> {
             SnapshotModel snapshotModel = snapshotsMap.computeIfAbsent(snapshot.getId(), id -> new SnapshotModel());
             snapshotModel.setEntity(snapshot);
+        });
 
-            if ((snapshot.getType() == SnapshotType.ACTIVE && hasNoPreviewSnapshot)
-                    || snapshot.getType() == SnapshotType.PREVIEW) {
-                sortedSnapshots.add(0, snapshot);
-            }
-            else if (snapshot.getType() == SnapshotType.REGULAR || snapshot.getType() == SnapshotType.STATELESS) {
-                sortedSnapshots.add(snapshot);
-            }
-        }
+        // Filter active snapshot when in preview mode
+        boolean hasNoPreviewSnapshot = snapshots.stream().noneMatch(s -> s.getType() == SnapshotType.PREVIEW);
+        snapshots = snapshots.stream().filter(
+                snapshot -> snapshot.getType() != SnapshotType.ACTIVE || hasNoPreviewSnapshot
+        ).sorted(comparator).collect(Collectors.toList());
 
-        if (sortedSnapshots.stream().anyMatch(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW)) {
-            updatePreviewedDiskSnapshots(sortedSnapshots);
+        if (snapshots.stream().anyMatch(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW)) {
+            updatePreviewedDiskSnapshots(snapshots);
         }
         else {
-            updateItems(sortedSnapshots);
+            updateItems(snapshots);
         }
     }
 
