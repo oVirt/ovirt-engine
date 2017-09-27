@@ -204,7 +204,7 @@ public class VmBaseMapper {
             entity.setSsoMethod(SsoMapper.map(model.getSso(), null));
         }
         if (model.isSetType()) {
-            entity.setVmType(VmMapper.map(model.getType(), null));
+            entity.setVmType(mapVmType(model.getType()));
         }
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());
@@ -315,7 +315,7 @@ public class VmBaseMapper {
         }
 
         if (entity.getVmType() != null) {
-            model.setType(map(entity.getVmType(), null));
+            model.setType(mapVmType(entity.getVmType()));
         }
 
         if (entity.getOrigin() != null) {
@@ -431,8 +431,26 @@ public class VmBaseMapper {
         return type.name().toLowerCase();
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmType.class, to = VmType.class)
-    public static VmType map(org.ovirt.engine.core.common.businessentities.VmType type, VmType incoming) {
+    public static org.ovirt.engine.core.common.businessentities.VmType mapVmType(VmType type) {
+        if (type == null) {
+            return null;
+        }
+        switch (type) {
+        case DESKTOP:
+            return org.ovirt.engine.core.common.businessentities.VmType.Desktop;
+        case SERVER:
+            return org.ovirt.engine.core.common.businessentities.VmType.Server;
+        case HIGH_PERFORMANCE:
+            return org.ovirt.engine.core.common.businessentities.VmType.HighPerformance;
+        default:
+            throw new IllegalArgumentException("Unknown virtual machine type \"" + type + "\"");
+        }
+    }
+
+    public static VmType mapVmType(org.ovirt.engine.core.common.businessentities.VmType type) {
+        if (type == null) {
+            return null;
+        }
         switch (type) {
         case Desktop:
             return VmType.DESKTOP;
@@ -441,7 +459,7 @@ public class VmBaseMapper {
         case HighPerformance:
             return VmType.HIGH_PERFORMANCE;
         default:
-            return null;
+            throw new IllegalArgumentException("Unknown virtual machine type \"" + type + "\"");
         }
     }
 }

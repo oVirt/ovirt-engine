@@ -54,7 +54,6 @@ import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmStatus;
-import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
@@ -710,35 +709,6 @@ public class VmMapper extends VmBaseMapper {
             return ret;
         } else {
             return template;
-        }
-    }
-
-    @Mapping(from = VmType.class, to = org.ovirt.engine.core.common.businessentities.VmType.class)
-    public static org.ovirt.engine.core.common.businessentities.VmType map(VmType type,
-                                      org.ovirt.engine.core.common.businessentities.VmType incoming) {
-        switch (type) {
-        case DESKTOP:
-            return org.ovirt.engine.core.common.businessentities.VmType.Desktop;
-        case SERVER:
-            return org.ovirt.engine.core.common.businessentities.VmType.Server;
-        case HIGH_PERFORMANCE:
-            return org.ovirt.engine.core.common.businessentities.VmType.HighPerformance;
-        default:
-            return null;
-        }
-    }
-
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmType.class, to = VmType.class)
-    public static VmType map(org.ovirt.engine.core.common.businessentities.VmType type, VmType incoming) {
-        switch (type) {
-        case Desktop:
-            return VmType.DESKTOP;
-        case Server:
-            return VmType.SERVER;
-        case HighPerformance:
-            return VmType.HIGH_PERFORMANCE;
-        default:
-            return null;
         }
     }
 
