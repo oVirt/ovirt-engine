@@ -424,12 +424,11 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
 
         for (ChangeQuotaItemModel item : model.getItems()) {
-            ChangeQuotaItemModel itemModel = item;
-            DiskImage disk = itemModel.getEntity();
+            DiskImage disk = item.getEntity();
             ActionParametersBase parameters =
-                    new ChangeQuotaParameters(itemModel.getQuota().getSelectedItem().getId(),
+                    new ChangeQuotaParameters(item.getQuota().getSelectedItem().getId(),
                             disk.getId(),
-                            itemModel.getStorageDomainId(),
+                            item.getStorageDomainId(),
                             disk.getStoragePoolId());
             paramerterList.add(parameters);
         }
