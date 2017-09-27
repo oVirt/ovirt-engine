@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ReconcileVolumeChainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -58,8 +59,10 @@ public class MergeStatusCommand<T extends MergeParameters>
         } else {
             images = getVolumeChain();
         }
-        if (images == null) {
-            setCommandStatus(CommandStatus.FAILED);
+        if (images == null || images.isEmpty()) {
+            log.error("Failed to retrieve images list of VM {}. Retrying ...", getParameters().getVmId());
+            setSucceeded(true);
+            setCommandStatus(CommandStatus.ACTIVE);
             return;
         }
 
@@ -96,12 +99,17 @@ public class MergeStatusCommand<T extends MergeParameters>
     }
 
     private Set<Guid> getVolumeChain() {
-        List<String> vmIds = new ArrayList<>();
-        vmIds.add(getParameters().getVmId().toString());
-        Map[] vms = (Map[]) runVdsCommand(
-                VDSCommandType.FullList,
-                new FullListVDSCommandParameters(getParameters().getVdsId(), vmIds))
-                .getReturnValue();
+        Map[] vms = null;
+        try {
+            List<String> vmIds = new ArrayList<>();
+            vmIds.add(getParameters().getVmId().toString());
+            vms = (Map[]) runVdsCommand(
+                    VDSCommandType.FullList,
+                    new FullListVDSCommandParameters(getParameters().getVdsId(), vmIds))
+                    .getReturnValue();
+        } catch (EngineException e) {
+            log.error("Failed to retrieve images list of VM {}. Retrying ...", getParameters().getVmId(), e);
+        }
 
         if (vms == null || vms.length == 0) {
             log.error("Failed to retrieve VM information");
@@ -148,13 +156,18 @@ public class MergeStatusCommand<T extends MergeParameters>
                         getParameters().getImageId()
                 );
 
-        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.ReconcileVolumeChain,
-                parameters);
-        if (!vdsReturnValue.getSucceeded()) {
-            log.error("Unable to retrieve volume list during Live Merge recovery");
+        try {
+            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.ReconcileVolumeChain,
+                    parameters);
+            if (!vdsReturnValue.getSucceeded()) {
+                log.error("Unable to retrieve volume list during Live Merge recovery");
+                return null;
+            }
+            return new HashSet<>((List<Guid>) vdsReturnValue.getReturnValue());
+        } catch (EngineException e) {
+            log.error("Unable to retrieve volume list during Live Merge recovery", e);
             return null;
         }
-        return new HashSet<>((List<Guid>) vdsReturnValue.getReturnValue());
     }
 
     /**
