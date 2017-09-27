@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.constraints.Size;
@@ -39,10 +40,13 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     private Set<Guid> disks;
 
+    private Map<Guid, Guid> diskToImageIds;
+
     public CreateAllSnapshotsFromVmParameters() {
         needsLocking = true;
         saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
+        diskToImageIds = Collections.emptyMap();
     }
 
     public CreateAllSnapshotsFromVmParameters(Guid vmId, String description) {
@@ -51,6 +55,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
         needsLocking = true;
         saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
+        diskToImageIds = Collections.emptyMap();
     }
 
     public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory) {
@@ -116,5 +121,13 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     public void setCreatedSnapshotId(Guid createdSnapshotId) {
         this.createdSnapshotId = createdSnapshotId;
+    }
+
+    public Map<Guid, Guid> getDiskToImageIds() {
+        return diskToImageIds;
+    }
+
+    public void setDiskToImageIds(Map<Guid, Guid> diskToImageIds) {
+        this.diskToImageIds = diskToImageIds;
     }
 }

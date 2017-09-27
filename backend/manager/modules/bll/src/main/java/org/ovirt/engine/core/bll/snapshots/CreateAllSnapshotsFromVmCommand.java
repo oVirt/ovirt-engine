@@ -404,6 +404,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         result.setEntityInfo(getParameters().getEntityInfo());
         result.setParentCommand(getActionType());
         result.setParentParameters(getParameters());
+        result.setDestinationImageId(getParameters().getDiskToImageIds().get(image.getId()));
         if (getParameters().getDiskIdsToIgnoreInChecks().contains(image.getId())) {
             result.setLeaveLocked(true);
         }

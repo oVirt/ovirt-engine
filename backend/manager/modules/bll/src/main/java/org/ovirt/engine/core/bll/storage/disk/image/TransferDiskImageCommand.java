@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -214,14 +213,14 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        if (getParameters().getTransferType() == TransferType.Download) {
-            locks.put(getParameters().getImageGroupID().toString(),
+        if (getDiskImage() != null) {
+            locks.put(getDiskImage().getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED));
-            if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
-                List<VM> vms = vmDao.getVmsListForDisk(getParameters().getImageGroupID(), true);
-                vms.forEach(vm -> locks.put(vm.getId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)));
-            }
+        }
+        if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
+            List<VM> vms = vmDao.getVmsListForDisk(getDiskImage().getId(), true);
+            vms.forEach(vm -> locks.put(vm.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)));
         }
         return locks;
     }

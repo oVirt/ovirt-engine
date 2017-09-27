@@ -373,8 +373,11 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         log.error("Finalizing failed transfer. {}", getTransferDescription());
         stopImageTransferSession(context.entity);
         // Setting disk status to ILLEGAL only on upload failure
-        setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
-                ImageStatus.ILLEGAL : ImageStatus.OK);
+        // (only if not disk snapshot)
+        if (Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
+            setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
+                    ImageStatus.ILLEGAL : ImageStatus.OK);
+        }
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
         setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
     }

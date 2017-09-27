@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
@@ -57,7 +57,9 @@ public class BackendSnapshotsResource
             snapshotParams.setSaveMemory(snapshot.isPersistMemorystate());
         }
         if (snapshot.isSetDiskAttachments()) {
-            snapshotParams.setDiskIds(mapDisks(snapshot.getDiskAttachments()));
+            Map<Guid, Guid> diskToImageIds = mapDisks(snapshot.getDiskAttachments());
+            snapshotParams.setDiskIds(diskToImageIds.keySet());
+            snapshotParams.setDiskToImageIds(diskToImageIds);
         }
         return performCreate(ActionType.CreateAllSnapshotsFromVm,
                                snapshotParams,
@@ -65,18 +67,17 @@ public class BackendSnapshotsResource
                                block);
     }
 
-    private Set<Guid> mapDisks(DiskAttachments diskAttachments) {
-        Set<Guid> diskIds = null;
+    private Map<Guid, Guid> mapDisks(DiskAttachments diskAttachments) {
+        Map<Guid, Guid> diskToImageIds = null;
         if (diskAttachments.isSetDiskAttachments()) {
-            diskIds =
+            diskToImageIds =
                     diskAttachments.getDiskAttachments().stream()
                             .map(DiskAttachment::getDisk)
                             .filter(Objects::nonNull)
-                            .map(d -> (DiskImage) DiskMapper.map(d, null))
-                            .map(BaseDisk::getId)
-                            .collect(Collectors.toSet());
+                            .map(disk -> (DiskImage) DiskMapper.map(disk, null))
+                            .collect(Collectors.toMap(BaseDisk::getId, DiskImage::getImageId));
         }
-        return diskIds;
+        return diskToImageIds;
     }
 
     List<DiskImage> mapDisks(Disks disks) {

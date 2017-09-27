@@ -217,7 +217,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         for (Disk disk : disks) {
             DiskVmElement dve = disk.getDiskVmElements().iterator().next();
             AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(
-                    new DiskVmElement(disk.getId(), getVm().getId()), dve.isPlugged());
+                    dve, dve.isPlugged());
             ActionReturnValue
                     returnVal = runInternalAction(ActionType.AttachDiskToVm, params, cloneContextAndDetachFromParent());
             if (!returnVal.getSucceeded()) {
