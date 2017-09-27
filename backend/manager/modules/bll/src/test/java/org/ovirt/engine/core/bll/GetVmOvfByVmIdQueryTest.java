@@ -17,16 +17,28 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmIdParameters, GetVmOvfByVmIdQuery<GetVmOvfByVmIdParameters>> {
 
     @Mock
     private VmDao vmDao;
+
+    @Mock
+    private SnapshotDao snapshotDao;
+
+    @Mock
+    private VmDeviceDao vmDeviceDao;
+
+    @Mock
+    private VmDeviceUtils vmDeviceUtils;
 
     @Before
     @Override
