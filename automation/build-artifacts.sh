@@ -69,6 +69,8 @@ make dist
 rpmbuild \
     -D "_srcrpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
+    -D "release_suffix ${SUFFIX}" \
+    -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     -ts ./*.gz
 
 # install any build requirements
@@ -79,6 +81,10 @@ rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
     -D "release_suffix ${SUFFIX}" \
+    -D "ovirt_build_ut 0" \
+    -D "ovirt_build_all_user_agents 0" \
+    -D "ovirt_build_locales 0" \
+    -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     --rebuild output/*.src.rpm
 
 # Store any relevant artifacts in exported-artifacts for the ci system to
