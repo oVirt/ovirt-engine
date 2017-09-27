@@ -79,4 +79,12 @@ public class HostNetworkQosListModelTable extends AbstractModelBoundTableWidget<
         outAverageRealtimeColumn.makeSortable();
         getTable().addColumn(outAverageRealtimeColumn, constants.hostNetworkQosTabOutAverageRealtime(), "105px"); //$NON-NLS-1$
     }
+
+    @Override
+    public void addModelListeners() {
+        super.addModelListeners();
+        getTable().getSelectionModel().addSelectionChangeHandler(event ->
+            getModelProvider().setSelectedItems(getTable().getSelectedItems())
+        );
+    }
 }

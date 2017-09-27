@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.HostNetwo
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -34,6 +35,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool,
         StorageQos, DataCenterListModel, DataCenterStorageQosListModel>
         implements SubTabDataCenterQosPresenter.ViewDef {
+
+    private static final int BOTTOM_PADDING = 15;
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterQosView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -84,6 +87,7 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
             cpuHeader.setText(constants.dataCenterCpuQosSubTabLabel());
             container.add(cpuHeader);
             container.add(cpuTable);
+            container.getElement().getStyle().setPaddingBottom(BOTTOM_PADDING, Unit.PX);
         }
     }
 

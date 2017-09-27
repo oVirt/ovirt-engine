@@ -60,8 +60,9 @@ public class CpuQosListModelTable extends AbstractModelBoundTableWidget<CpuQos, 
 
     @Override
     public void addModelListeners() {
-        getTable().getSelectionModel().addSelectionChangeHandler(event -> {
-            getModelProvider().setSelectedItems(getTable().getSelectedItems());
-        });
+        super.addModelListeners();
+        getTable().getSelectionModel().addSelectionChangeHandler(event ->
+            getModelProvider().setSelectedItems(getTable().getSelectedItems())
+        );
     }
 }

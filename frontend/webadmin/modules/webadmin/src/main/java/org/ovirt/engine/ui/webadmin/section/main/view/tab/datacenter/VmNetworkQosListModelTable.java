@@ -98,4 +98,12 @@ public class VmNetworkQosListModelTable extends AbstractModelBoundTableWidget<Ne
         outBurstColumn.makeSortable();
         getTable().addColumn(outBurstColumn, constants.networkQoSOutboundBurst(), "100px"); //$NON-NLS-1$
     }
+
+    @Override
+    public void addModelListeners() {
+        super.addModelListeners();
+        getTable().getSelectionModel().addSelectionChangeHandler(event ->
+            getModelProvider().setSelectedItems(getTable().getSelectedItems())
+        );
+    }
 }

@@ -4,7 +4,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
@@ -18,8 +17,6 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
     private static final int GRID_SUBTRACT = 17;
 
     private static final Resources DEFAULT_RESOURCES = GWT.create(Resources.class);
-
-    private boolean heightSet = false;
 
     public ActionCellTable(ProvidesKey<T> keyProvider, Resources resources) {
         this(keyProvider, resources, ROW_HEIGHT + Unit.PX.getType());
@@ -44,23 +41,7 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
     public void setHeight(String height) {
         super.setHeight(height);
         redraw();
-        heightSet = true;
-    }
-
-    protected void resizeGridToContentHeight(int height) {
-        int top = getAbsoluteTop();
-        int maxGridHeight = Window.getClientHeight() - top - GRID_SUBTRACT;
-        int contentHeight = determineBrowserHeightAdjustment(height);
-        if (isHorizontalScrollbarVisible()) {
-            contentHeight += scrollbarThickness;
-        }
-        if (contentHeight > maxGridHeight) {
-            contentHeight = maxGridHeight;
-        }
-        if (contentHeight > 0) {
-            super.setHeight(contentHeight + Unit.PX.getType());
-        }
-        redraw();
+        isHeightSet = true;
     }
 
     public void updateGridSize() {
@@ -70,12 +51,6 @@ public class ActionCellTable<T> extends ElementIdCellTable<T> {
             height = rowCount * ROW_HEIGHT;
         }
         updateGridSize(height);
-    }
-
-    public void updateGridSize(int height) {
-        if (!heightSet) {
-            resizeGridToContentHeight(height + getGridHeaderHeight());
-        }
     }
 
     public void setLoadingState(LoadingState state) {
