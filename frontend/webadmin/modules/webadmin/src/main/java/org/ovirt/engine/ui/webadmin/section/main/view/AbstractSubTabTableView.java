@@ -30,6 +30,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsModel, D extends SearchableListModel>
     extends AbstractView implements AbstractSubTabPresenter.ViewDef<I> {
 
+    private static final String OBRAND_DETAIL_TAB = "obrand_detail_tab"; // $NON-NLS-1$
+
     private final SearchableDetailModelProvider<T, M, D> modelProvider;
 
     @WithElementId
@@ -43,6 +45,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         this.modelProvider = modelProvider;
         this.table = createActionTable();
         container.add(table);
+        container.addStyleName(OBRAND_DETAIL_TAB);
         generateIds();
     }
 
