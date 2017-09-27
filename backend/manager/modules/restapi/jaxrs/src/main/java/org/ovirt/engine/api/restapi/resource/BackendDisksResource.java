@@ -43,6 +43,12 @@ public class BackendDisksResource
         if (disk.isSetLunStorage() && disk.getLunStorage().isSetHost()) {
             params.setVdsId(getHostId(disk.getLunStorage().getHost()));
         }
+        if (disk.isSetId()) {
+            params.setUsePassedDiskId(true);
+        }
+        if (disk.isSetImageId()) {
+            params.setUsePassedImageId(true);
+        }
         return performCreate(ActionType.AddDisk, params,
                 new QueryIdResolver<Guid>(QueryType.GetDiskByDiskId, IdQueryParameters.class));
     }
