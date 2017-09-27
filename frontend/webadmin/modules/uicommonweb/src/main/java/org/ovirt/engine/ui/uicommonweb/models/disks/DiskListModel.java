@@ -255,7 +255,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
 
-        setDiskViewType(new EntityModel<DiskStorageType>());
+        setDiskViewType(new EntityModel<>());
         setDiskContentType(new EntityModel<>());
     }
 
@@ -635,7 +635,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     }
 
     private boolean isRemoveCommandAvailable() {
-        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<>();
 
         for (Disk disk : disks) {
             // check if the disk is template disk
@@ -661,7 +661,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     }
 
     private boolean isScanAlignmentCommandAvailable() {
-        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
+        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<>();
 
         for (Disk disk : disks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
