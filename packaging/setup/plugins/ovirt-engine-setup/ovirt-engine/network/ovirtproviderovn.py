@@ -162,6 +162,9 @@ class Plugin(plugin.PluginBase):
                 update cluster
                     set default_network_provider_id=%(provider_id)s
                     where default_network_provider_id is null
+                    and exists (
+                      select 1 from providers where id = %(provider_id)s
+                    )
             """,
             args=dict(
                 provider_id=self.environment[OvnEnv.OVIRT_PROVIDER_ID],
