@@ -396,11 +396,11 @@ public class LibvirtVmXmlBuilder {
         @SuppressWarnings("unchecked")
         Map<String, Object> numaTuneSetting = (Map<String, Object>) createInfo.get(VdsProperties.NUMA_TUNE);
         String nodeSet = (String) numaTuneSetting.get(VdsProperties.NUMA_TUNE_NODESET);
+        String mode = (String) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MODE);
         @SuppressWarnings("unchecked")
         List<Map<String, String>> memNodes = (List<Map<String, String>>) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MEMNODES);
         if (nodeSet != null || memNodes != null) {
             writer.writeStartElement("numatune");
-            String mode = (String) createInfo.get(VdsProperties.NUMA_TUNE_MODE);
 
             if (nodeSet != null) {
                 writer.writeStartElement("memory");
