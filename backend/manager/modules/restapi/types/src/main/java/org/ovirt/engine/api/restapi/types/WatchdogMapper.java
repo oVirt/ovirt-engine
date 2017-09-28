@@ -75,6 +75,8 @@ public class WatchdogMapper {
         switch (model) {
         case I6300ESB:
             return VmWatchdogType.i6300esb;
+        case DIAG288:
+            return VmWatchdogType.diag288;
         default:
             return null;
         }
@@ -84,6 +86,8 @@ public class WatchdogMapper {
         switch (model) {
         case i6300esb:
             return WatchdogModel.I6300ESB;
+        case diag288:
+            return WatchdogModel.DIAG288;
         default:
             return null;
         }
