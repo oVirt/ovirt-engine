@@ -88,7 +88,7 @@ public class CinderDisksValidator {
                             getStorageDomainDao().get(relatedCinderDisksByStorage.getStorageDomainId())
                                     .getStorageName();
                     return new ValidationResult(EngineMessage.CANNOT_ADD_CINDER_DISK_SNAPSHOT_LIMIT_EXCEEDED,
-                            String.format("$maxTotalSnapshots %d", limits.getAbsolute().getMaxTotalVolumes()),
+                            String.format("$maxTotalSnapshots %d", limits.getAbsolute().getMaxTotalSnapshots()),
                             String.format("$storageName %s", storageName));
                 }
             }
