@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -175,6 +176,7 @@ public class ImagesHandlerTest {
                         diskWithoutSnapshots)));
         DiskImage resultDisk =
                 result.stream().filter(diskImage -> diskImage.getId() == disk1.getId()).findFirst().orElse(null);
+        assertNotNull("resultDisk should hold a reference to DiskImage object", resultDisk);
         assertEquals("wrong number of disks returned", 2, result.size());
         assertEquals("wrong number of snapshots for disk1", 3, resultDisk.getSnapshots().size());
     }
