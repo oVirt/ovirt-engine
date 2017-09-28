@@ -438,6 +438,8 @@ public class VmBaseMapper {
             return VmType.DESKTOP;
         case Server:
             return VmType.SERVER;
+        case HighPerformance:
+            return VmType.HIGH_PERFORMANCE;
         default:
             return null;
         }

@@ -67,6 +67,7 @@ import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyUnitsResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
+import org.ovirt.engine.api.resource.SystemOptionsResource;
 import org.ovirt.engine.api.resource.SystemPermissionsResource;
 import org.ovirt.engine.api.resource.SystemResource;
 import org.ovirt.engine.api.resource.TagsResource;
@@ -631,5 +632,11 @@ public class BackendApiResource
     @Override
     public ClusterLevelsResource getClusterLevelsResource() {
         return inject(new BackendClusterLevelsResource());
+    }
+
+    @Override
+    public SystemOptionsResource getOptionsResource() {
+        // TODO: Implement this.
+        return null;
     }
 }

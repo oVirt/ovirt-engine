@@ -721,6 +721,8 @@ public class VmMapper extends VmBaseMapper {
             return org.ovirt.engine.core.common.businessentities.VmType.Desktop;
         case SERVER:
             return org.ovirt.engine.core.common.businessentities.VmType.Server;
+        case HIGH_PERFORMANCE:
+            return org.ovirt.engine.core.common.businessentities.VmType.HighPerformance;
         default:
             return null;
         }
@@ -733,6 +735,8 @@ public class VmMapper extends VmBaseMapper {
             return VmType.DESKTOP;
         case Server:
             return VmType.SERVER;
+        case HighPerformance:
+            return VmType.HIGH_PERFORMANCE;
         default:
             return null;
         }
