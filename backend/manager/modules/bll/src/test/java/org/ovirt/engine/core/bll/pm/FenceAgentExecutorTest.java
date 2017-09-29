@@ -39,7 +39,6 @@ public class FenceAgentExecutorTest {
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule();
 
-    @Mock
     private VDS vds;
 
     @Mock
@@ -58,7 +57,7 @@ public class FenceAgentExecutorTest {
 
     @Before
     public void setup() {
-        mockVds();
+        setUpVds();
         executor = spy(new FenceAgentExecutor(vds, new FencingPolicy()));
         doReturn(resourceManager).when(executor).getResourceManager();
         doReturn(proxyLocator).when(executor).getProxyLocator();
@@ -155,8 +154,9 @@ public class FenceAgentExecutorTest {
         verifyAuditFenceExecutionFailure(2);
     }
 
-    private void mockVds() {
-        when(vds.getId()).thenReturn(FENCECD_HOST_ID);
+    private void setUpVds() {
+        vds = new VDS();
+        vds.setId(FENCECD_HOST_ID);
     }
 
     private void mockProxyHost() {
