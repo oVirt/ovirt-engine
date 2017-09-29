@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,7 +12,9 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
@@ -39,7 +40,7 @@ public class FenceAgentExecutorTest {
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule();
 
-    private VDS vds;
+    private VDS vds = new VDS();
 
     @Mock
     private FenceProxyLocator proxyLocator;
@@ -53,15 +54,14 @@ public class FenceAgentExecutorTest {
     @Mock
     AuditLogDirector auditLogDirector;
 
-    private FenceAgentExecutor executor;
+    @Spy
+    @InjectMocks
+    private FenceAgentExecutor executor = new FenceAgentExecutor(vds, new FencingPolicy());
 
     @Before
     public void setup() {
         setUpVds();
-        executor = spy(new FenceAgentExecutor(vds, new FencingPolicy()));
-        doReturn(resourceManager).when(executor).getResourceManager();
         doReturn(proxyLocator).when(executor).getProxyLocator();
-        doReturn(auditLogDirector).when(executor).getAuditLogDirector();
         doReturn(realAgent).when(executor).createRealAgent(any(), any());
     }
 
@@ -155,7 +155,6 @@ public class FenceAgentExecutorTest {
     }
 
     private void setUpVds() {
-        vds = new VDS();
         vds.setId(FENCECD_HOST_ID);
     }
 

@@ -147,7 +147,7 @@ public class FenceAgentExecutor {
         FenceAgent realAgent = createRealAgent(agent, proxyHost);
         auditFenceActionExecution(action, realAgent, proxyHost);
 
-        VDSReturnValue retVal = getResourceManager().runVdsCommand(
+        VDSReturnValue retVal = resourceManager.runVdsCommand(
                 VDSCommandType.FenceVds,
                 new FenceVdsVDSCommandParameters(
                         proxyHost.getId(),
@@ -261,13 +261,13 @@ public class FenceAgentExecutor {
                 fencedHost.getHostName(),
                 realAgent,
                 fencingPolicy);
-        getAuditLogDirector().log(
+        auditLogDirector.log(
                 createAuditLogObject(action, realAgent, proxyHost),
                 AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_STARTED);
     }
 
     protected void auditFenceActionFailure(FenceActionType action, FenceAgent realAgent, VDS proxyHost) {
-        getAuditLogDirector().log(
+        auditLogDirector.log(
                 createAuditLogObject(action, realAgent, proxyHost),
                 AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED);
     }
@@ -296,13 +296,5 @@ public class FenceAgentExecutor {
             architectureType = vdsArchitectureHelper.getArchitecture(fencedHost.getStaticData());
         }
         return architectureType;
-    }
-
-    protected ResourceManager getResourceManager() {
-        return resourceManager;
-    }
-
-    protected AuditLogDirector getAuditLogDirector() {
-        return auditLogDirector;
     }
 }
