@@ -1307,6 +1307,13 @@ public enum ConfigValues {
     CockpitPort(ClientAccessLevel.Admin),
 
     /**
+     * Port the ovirt-cockpit-sso service is listening on.
+     *
+     */
+    @TypeConverterAttribute(String.class)
+    CockpitSSOPort(ClientAccessLevel.Admin),
+
+    /**
      * Interval in seconds after which is safe to check host storage lease status when host stopped responding
      * to monitoring
      */

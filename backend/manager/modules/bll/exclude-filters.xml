@@ -135,4 +135,10 @@
       <Class name="org.ovirt.engine.core.bll.MigrateVmCommand" />
       <Bug pattern="NP_BOOLEAN_RETURN_NULL" />
     </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.IsOvirtCockpitSSOStartedQuery" />
+       <Method name="executeQueryCommand" />
+       <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME" />
+     </Match>
 </FindBugsFilter>

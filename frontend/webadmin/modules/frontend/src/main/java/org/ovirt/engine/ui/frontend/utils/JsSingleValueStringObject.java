@@ -19,4 +19,8 @@ public abstract class JsSingleValueStringObject extends JavaScriptObject {
         return obj && obj.value;
     }-*/;
 
+    public static native String getProperty(String globalObjName, String property) /*-{
+        var obj = $wnd[globalObjName];
+        return obj && obj[property];
+    }-*/;
 }

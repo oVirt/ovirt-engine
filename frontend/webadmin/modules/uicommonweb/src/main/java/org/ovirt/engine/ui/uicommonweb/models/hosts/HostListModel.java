@@ -59,6 +59,8 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
+import org.ovirt.engine.ui.frontend.utils.JsSingleValueStringObject;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagAssigningModel;
@@ -1100,6 +1102,65 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     public void onHostConsole() {
+        AsyncDataProvider.getInstance().isOvirtCockpitSSOStarted(new AsyncQuery<>(
+                isStarted -> {
+                    if (isStarted) {
+                        openCockpitWithSSO();
+                    } else {
+                        openCockpitWithoutSSO();
+                    }
+                }));
+    }
+
+    private String getSsoToken() {
+        return JsSingleValueStringObject.getProperty("userInfo", "ssoToken");//$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private String getEngineSSORootUrl() {
+        String protocolSeparator = "://"; //$NON-NLS-1$
+        String engineSSOUrl = FrontendUrlUtils.getRootURL(); // like: https://engine.fqdn:8080/
+
+        if (engineSSOUrl.endsWith("/")) {//$NON-NLS-1$
+            engineSSOUrl = engineSSOUrl.substring(0, engineSSOUrl.lastIndexOf("/"));//$NON-NLS-1$
+        }
+
+        int index = engineSSOUrl.indexOf(protocolSeparator);
+        index = (index >= 0) ? index + protocolSeparator.length() : 0; // start of hostname
+        index = engineSSOUrl.indexOf(':', index); // start of port
+        if (index >= 0) {// port found
+            engineSSOUrl = engineSSOUrl.substring(0, index); // remove port number since SSO is served from different one
+        }
+
+        return engineSSOUrl;
+    }
+
+    private void openCockpitWithSSO() {
+        // https://[ENGINE_FQDN]:9986/=[OVIRT_HOST_UUID]/machines#access_token=[VALID_OVIRT_ACCESS_TOKEN]
+        String cockpitSSOPort = (String) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigValues.CockpitSSOPort);
+
+        String ssoToken = getSsoToken();
+        String engineSSOUrl = getEngineSSORootUrl();
+
+        for (VDS item : getSelectedItems()) { // open new browser-tab for every selected host
+            StringBuilder cockpitUrl = new StringBuilder();
+            cockpitUrl.append(engineSSOUrl); // like: https://[ENGINE_FQDN]
+            if (StringHelper.isNotNullOrEmpty(cockpitSSOPort)) {
+                cockpitUrl.append(':');
+                cockpitUrl.append(cockpitSSOPort);
+            }
+            cockpitUrl.append("/=");//$NON-NLS-1$
+            cockpitUrl.append(item.getId());
+            cockpitUrl.append("/machines#access_token=");//$NON-NLS-1$
+            cockpitUrl.append(ssoToken);
+
+            getLogger().info("About to open: " + cockpitUrl.toString());//$NON-NLS-1$
+            Window.open(cockpitUrl.toString(), "_blank", "");//$NON-NLS-1$
+        }
+    }
+
+    private void openCockpitWithoutSSO() {
+        // https://[HOST_FQDN]:9000
         String cockpitPort = (String) AsyncDataProvider.getInstance()
                 .getConfigValuePreConverted(ConfigValues.CockpitPort);
         for (VDS item : getSelectedItems()) { // open new browser-tab for every selected host
@@ -1112,6 +1173,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 cockpitUrl.append(cockpitPort);
             }
 
+            getLogger().info("About to open: " + cockpitUrl.toString());//$NON-NLS-1$
             Window.open(cockpitUrl.toString(), "_blank", "");//$NON-NLS-1$
         }
     }

@@ -253,6 +253,7 @@ public enum QueryType implements Serializable {
 
     // System
     GetSystemStatistics,
+    IsOvirtCockpitSSOStarted,
 
     // Bookmarks
     GetAllBookmarks,

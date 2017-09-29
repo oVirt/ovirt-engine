@@ -988,6 +988,12 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void isOvirtCockpitSSOStarted(AsyncQuery<Boolean> aQuery) {
+        aQuery.converterCallback = new DefaultValueConverter<>(Boolean.FALSE);
+        Frontend.getInstance().runQuery(QueryType.IsOvirtCockpitSSOStarted, new QueryParametersBase(), aQuery);
+    }
+
+
     public void getLabelList(AsyncQuery<List<Label>> aQuery) {
         aQuery.converterCallback = new SortListByNameConverter<>();
         Frontend.getInstance().runQuery(QueryType.GetAllLabels, new QueryParametersBase(), aQuery);
