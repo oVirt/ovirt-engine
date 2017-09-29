@@ -32,10 +32,10 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FenceAgentExecutorTest {
-    private static Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
-    private static Guid PROXY_HOST_ID = new Guid("44444444-4444-4444-4444-444444444444");
-    private static Guid SECOND_PROXY_HOST_ID = new Guid("77777777-7777-7777-7777-777777777777");
-    private static Guid FENCE_AGENT_ID = new Guid("55555555-5555-5555-5555-555555555555");
+    private static final Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
+    private static final Guid PROXY_HOST_ID = new Guid("44444444-4444-4444-4444-444444444444");
+    private static final Guid SECOND_PROXY_HOST_ID = new Guid("77777777-7777-7777-7777-777777777777");
+    private static final Guid FENCE_AGENT_ID = new Guid("55555555-5555-5555-5555-555555555555");
 
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
