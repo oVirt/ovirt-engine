@@ -106,7 +106,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.profileNameInterface()),
                     nic.getVnicProfileName(), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.typeInterface()),
-                    String.valueOf(VmInterfaceType.forValue(nic.getType())), dl);
+                    VmInterfaceType.forValue(nic.getType()).getDescription(), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()), nic.getMacAddress(), dl);
             addDetailItem(templates.sub(constants.rxRate(), constants.mbps()),
                     rateRenderer.render(new Double[] { nic.getStatistics().getReceiveRate(),
@@ -114,10 +114,6 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             addDetailItem(templates.sub(constants.txRate(), constants.mbps()),
                     rateRenderer.render(new Double[] { nic.getStatistics().getTransmitRate(),
                             nic.getSpeed().doubleValue() }), dl);
-            addDetailItem(templates.sub(constants.speedInterface(), constants.mbps()),
-                    nic.getStatistics().getTransmittedBytes() != null ?
-                    String.valueOf(nic.getStatistics().getTransmittedBytes()) :
-                        constants.notAvailableLabel(), dl);
             addDetailItem(templates.sub(constants.dropsInterface(), constants.pkts()),
                     String.valueOf(nic.getStatistics().getReceiveDropRate() != null ? nic.getStatistics().getReceiveDropRate() : ""
                             + nic.getStatistics().getTransmitDropRate()), dl);
