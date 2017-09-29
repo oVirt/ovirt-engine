@@ -129,7 +129,7 @@ void valueSpecifier() : {} {
 {
     < VALUE : ".value" >
 |   < DOT : "." >
-|   < VERSION : "3" "." ["0"-"9"] >
+|   < VERSION : ["3","4"] "." ["0"-"9"] >
 |   < WS : [" ", "\t"] >
 }
 
