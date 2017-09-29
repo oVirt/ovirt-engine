@@ -755,6 +755,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         VDS host = getSelectedItem();
         EditHostModel hostModel = new EditHostModel();
+        hostModel.setSelectedCluster(host);
         AsyncDataProvider.getInstance().getAllFenceAgentsByHostId(new AsyncQuery<>(retValue -> {
             ArrayList<FenceAgent> fenceAgents = new ArrayList<>();
             for (FenceAgent fenceAgent : retValue) {
@@ -767,7 +768,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
 
             hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis);
-            hostModel.setSelectedCluster(host);
             hostModel.onDataInitialized();
             hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
             hostModel.setHelpTag(HelpTag.edit_host);
