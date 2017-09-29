@@ -94,7 +94,8 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
 
         super.syncSearch();
 
-        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
+        Guid clusterId = getEntity().getId();
+        IdQueryParameters tempVar = new IdQueryParameters(clusterId);
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(QueryType.GetAllNetworksByClusterId, tempVar, new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
             final List<Network> newItems = returnValue.getReturnValue();
@@ -103,7 +104,7 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
                         .thenComparing(Network::getName, new LexoNumericComparator())
                     );
             for (Network network : newItems) {
-                network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
+                network.getCluster().setId(new NetworkClusterId(clusterId, network.getId()));
             }
             setItems(newItems);
         }));
