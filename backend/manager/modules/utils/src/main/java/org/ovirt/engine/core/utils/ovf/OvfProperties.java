@@ -35,6 +35,7 @@ public interface OvfProperties {
     String MIGRATION_DOWNTIME = "MigrationDowntime";
     String ORIGIN = "Origin";
     String VM_TYPE = "VmType";
+    String RESUME_BEHAVIOR = "ResumeBehavior";
     String KERNEL_PARAMS = "kernel_params";
     String KERNEL_URL = "kernel_url";
     String INITRD_URL = "initrd_url";

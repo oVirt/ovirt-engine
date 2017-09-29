@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -275,6 +276,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getGraphicsType().setIsChangeable(false);
             getUsbPolicy().setIsChangeable(false);
             getConsoleDisconnectAction().setIsChangeable(false);
+            getResumeBehavior().setIsChangeable(false);
             getNumOfMonitors().setIsChangeable(false);
             getIsSingleQxlEnabled().setIsChangeable(false);
             getIsSmartcardEnabled().setIsChangeable(false);
@@ -1028,6 +1030,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         lease = value;
     }
 
+    private NotChangableForVmInPoolListModel<VmResumeBehavior> resumeBehavior;
+
+    public ListModel<VmResumeBehavior> getResumeBehavior() {
+        return resumeBehavior;
+    }
+
+    public void setResumeBehavior(NotChangableForVmInPoolListModel<VmResumeBehavior> resumeBehavior) {
+        this.resumeBehavior = resumeBehavior;
+    }
+
     private NotChangableForVmInPoolListModel<EntityModel<BootSequence>> privateFirstBootDevice;
 
     public ListModel<EntityModel<BootSequence>> getFirstBootDevice() {
@@ -1565,6 +1577,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getCdAttached().setEntity(false);
 
         setLease(new NotChangableForVmInPoolListModel<StorageDomain>());
+        getLease().getSelectedItemChangedEvent().addListener(this);
+        setResumeBehavior(new NotChangableForVmInPoolListModel<VmResumeBehavior>());
         setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsHighlyAvailable().getEntityChangedEvent().addListener(this);
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -1895,6 +1909,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initMigrationMode();
         initVncKeyboardLayout();
         initConsoleDisconnectAction();
+        updateResumeBehavior();
         updateLabelList();
 
         behavior.initialize();
@@ -1987,6 +2002,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
                 compatibilityVersionChanged(sender, args);
                 headlessModeChanged();
+                updateResumeBehavior();
+            }
+            else if (sender == getLease()) {
+                updateResumeBehavior();
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
             if (sender == getDefaultHost()) {
@@ -2026,6 +2045,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 }
             } else if (sender == getIsHighlyAvailable()) {
                 behavior.updateMigrationAvailability();
+                updateResumeBehavior();
             } else if (sender == getOverrideMigrationDowntime()) {
                 overrideMigrationDowntimeChanged();
             } else if (sender == getOverrideMigrationPolicy()) {
@@ -2113,6 +2133,33 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void initConsoleDisconnectAction() {
         getConsoleDisconnectAction().setItems(Arrays.asList(ConsoleDisconnectAction.values()));
+    }
+
+    private void updateResumeBehavior() {
+        if (getSelectedCluster() == null) {
+            return;
+        }
+
+        getResumeBehavior().updateChangeability(ConfigValues.ResumeBehaviorSupported, getCompatibilityVersion());
+
+        if (!getResumeBehavior().getIsChangable()) {
+            getResumeBehavior().setSelectedItem(null);
+            return;
+        }
+
+        VmResumeBehavior prevSelected = getResumeBehavior().getSelectedItem();
+        boolean haWithLease = getIsHighlyAvailable().getEntity() != null &&
+                getIsHighlyAvailable().getEntity() &&
+                getLease().getIsAvailable() &&
+                getLease().getSelectedItem() != null;
+
+        if (haWithLease) {
+            getResumeBehavior().setItems(Arrays.asList(VmResumeBehavior.KILL), VmResumeBehavior.KILL);
+        } else {
+            getResumeBehavior().setItems(
+                    Arrays.asList(VmResumeBehavior.values()),
+                    prevSelected);
+        }
     }
 
     private void initUsbPolicy() {
@@ -2266,6 +2313,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initGraphicsConsoles();
 
         updateSoundCard();
+        updateResumeBehavior();
     }
 
     private void updateBootMenu() {

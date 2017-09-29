@@ -73,6 +73,7 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_small_icon_id UUID,
  v_large_icon_id UUID,
  v_console_disconnect_action VARCHAR(64),
+ v_resume_behavior VARCHAR(64),
  v_custom_compatibility_version VARCHAR(40),
  v_migration_policy_id UUID,
  v_lease_sd_id UUID)
@@ -162,6 +163,7 @@ BEGIN
         small_icon_id,
         large_icon_id,
         console_disconnect_action,
+        resume_behavior,
         custom_compatibility_version,
         migration_policy_id,
         lease_sd_id)
@@ -233,6 +235,7 @@ BEGIN
         v_small_icon_id,
         v_large_icon_id,
         v_console_disconnect_action,
+        v_resume_behavior,
         v_custom_compatibility_version,
         v_migration_policy_id,
         v_lease_sd_id);
@@ -324,6 +327,7 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_small_icon_id UUID,
  v_large_icon_id UUID,
  v_console_disconnect_action VARCHAR(64),
+ v_resume_behavior VARCHAR(64),
  v_custom_compatibility_version VARCHAR(40),
  v_migration_policy_id UUID,
  v_lease_sd_id UUID)
@@ -397,6 +401,7 @@ BEGIN
       small_icon_id = v_small_icon_id,
       large_icon_id = v_large_icon_id,
       console_disconnect_action = v_console_disconnect_action,
+      resume_behavior = v_resume_behavior,
       custom_compatibility_version = v_custom_compatibility_version,
       migration_policy_id = v_migration_policy_id,
       lease_sd_id = v_lease_sd_id

@@ -491,6 +491,9 @@
                   <e:ListModelListBoxEditor ui:field="leaseEditor" label="{constants.leaseStorageDomain}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
+                  <e:ListModelListBoxEditor ui:field="resumeBehavior" label="{constants.resumeBehavior}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
                   <b:Column size="SM_6">
                     <g:Label text="{constants.priorForRunMigrationQueueVmPopup}" addStyleNames="{style.sectionLabel}"/>
                   </b:Column>

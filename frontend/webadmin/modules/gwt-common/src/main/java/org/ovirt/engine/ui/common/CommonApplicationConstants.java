@@ -1740,4 +1740,6 @@ public interface CommonApplicationConstants extends Constants {
     String diskContentType();
 
     String memoryDisk();
+
+    String resumeBehavior();
 }

@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -118,8 +119,11 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private VmDao vmDao;
     @Inject
     private VdsStaticDao vdsStaticDao;
+    @Inject
+    private VmHandler vmHandler;
 
     private List<VDS> allForCluster;
+
     private Cluster oldCluster;
 
     private boolean isAddedToStoragePool = false;
@@ -154,10 +158,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     protected List<VmTemplate> filterTemplatesInClusterNeedUpdate() {
-        if (!VmRngDevice.Source.urandomRandomUpdateRequired(
-                oldCluster.getCompatibilityVersion(), getCluster().getCompatibilityVersion())) {
-            return Collections.emptyList();
-        }
         return vmTemplateDao.getAllForCluster(getCluster().getId()).stream()
                 .filter(template -> template.getCustomCompatibilityVersion() == null)
                 .sorted()
@@ -300,8 +300,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
              */
             updateParams.setLockProperties(LockProperties.create(LockProperties.Scope.None));
             updateParams.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
-            upgradeGraphicsDevices(vm, updateParams);
 
+            upgradeGraphicsDevices(vm, updateParams);
+            updateResumeBehavior(vm);
             updateRngDeviceIfNecessary(vm.getId(), vm.getCustomCompatibilityVersion(), updateParams);
 
             ActionReturnValue result = runInternalAction(
@@ -361,9 +362,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             parameters.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
 
             updateRngDeviceIfNecessary(template.getId(), template.getCustomCompatibilityVersion(), parameters);
-            if (!parameters.isUpdateRngDevice()) {
-                continue;
-            }
+            updateResumeBehavior(template);
 
             final ActionReturnValue result = runInternalAction(
                     ActionType.UpdateVmTemplate,
@@ -414,6 +413,10 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 paramVm.setDefaultDisplayType(DisplayType.vga);
             }
         }
+    }
+
+    private void updateResumeBehavior(VmBase vmBase) {
+        vmHandler.autoSelectResumeBehavior(vmBase, getCluster());
     }
 
     private String getEmulatedMachineOfHostInCluster(VDS vds) {

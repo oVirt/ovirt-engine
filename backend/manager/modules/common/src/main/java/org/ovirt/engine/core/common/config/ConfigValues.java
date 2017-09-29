@@ -1527,6 +1527,14 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     ContentType,
+    /**
+     * Determines if the resume behavior can be configured in this compatibility level.
+     *
+     * If the storage on which the VM has it's disks gets unavailable, the VM gets paused.
+     * The resume behavior determines what should happen in case the storage gets available again.
+     */
+    @TypeConverterAttribute(Boolean.class)
+    ResumeBehaviorSupported,
 
     Invalid;
 

@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -549,6 +550,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
         consumeReadProperty(content, ORIGIN, val -> vmBase.setOrigin(OriginType.forValue(Integer.parseInt(val))));
         consumeReadProperty(content, VM_TYPE, val -> vmBase.setVmType(VmType.forValue(Integer.parseInt(val))));
+        consumeReadProperty(content, RESUME_BEHAVIOR, val -> vmBase.setResumeBehavior(VmResumeBehavior.valueOf(val)));
         consumeReadProperty(content,
                 IS_SMARTCARD_ENABLED,
                 val -> vmBase.setSmartcardEnabled(Boolean.parseBoolean(val)));

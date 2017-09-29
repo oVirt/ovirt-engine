@@ -230,6 +230,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     getParameters().getGraphicsDevices(),
                     getMasterVmCompatibilityVersion());
 
+            vmHandler.autoSelectResumeBehavior(masterVm, getCluster());
+
             separateCustomProperties(masterVm);
         }
         if (getVm() != null) {
@@ -933,7 +935,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getConsoleDisconnectAction(),
                         getParameters().getMasterVm().getCustomCompatibilityVersion(),
                         getParameters().getMasterVm().getMigrationPolicyId(),
-                        getParameters().getMasterVm().getLeaseStorageDomainId()));
+                        getParameters().getMasterVm().getLeaseStorageDomainId(),
+                        getParameters().getMasterVm().getResumeBehavior()));
         updateVmIcons();
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());

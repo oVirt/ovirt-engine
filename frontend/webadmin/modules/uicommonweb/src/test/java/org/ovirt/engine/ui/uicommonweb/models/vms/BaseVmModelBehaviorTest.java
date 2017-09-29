@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
@@ -54,6 +55,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setSmallIconId(SMALL_ICON_ID);
         vm.setNumOfIoThreads(NUM_OF_IO_THREADS);
         vm.setConsoleDisconnectAction(ConsoleDisconnectAction.LOCK_SCREEN);
+        vm.setResumeBehavior(VmResumeBehavior.KILL);
     }
 
     @Before
@@ -139,6 +141,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertEquals(LARGE_ICON_DATA, model.getIcon().getEntity().getIcon());
         assertEquals(LARGE_OS_DEFAULT_ICON_DATA, model.getIcon().getEntity().getOsDefaultIcon());
         assertEquals(ConsoleDisconnectAction.LOCK_SCREEN, model.getConsoleDisconnectAction().getSelectedItem());
+        assertEquals(VmResumeBehavior.KILL, model.getResumeBehavior().getSelectedItem());
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder} */

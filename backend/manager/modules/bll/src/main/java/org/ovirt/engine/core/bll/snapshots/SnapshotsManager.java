@@ -649,6 +649,7 @@ public class SnapshotsManager {
                 vm.setDedicatedVmForVdsList(oldVmStatic.getDedicatedVmForVdsList());
             }
             vmHandler.updateMaxMemorySize(vm.getStaticData(), vm.getCompatibilityVersion());
+            vmHandler.autoSelectResumeBehavior(vm.getStaticData(), vm.getCompatibilityVersion());
             validateQuota(vm);
             return true;
         } catch (OvfReaderException e) {

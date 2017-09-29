@@ -556,6 +556,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (getParameters().getCopyCollapse()) {
             getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         }
+
+        vmHandler.autoSelectResumeBehavior(getVm().getStaticData(), getCluster());
+
         vmStaticDao.save(getVm().getStaticData());
         getCompensationContext().snapshotNewEntity(getVm().getStaticData());
     }

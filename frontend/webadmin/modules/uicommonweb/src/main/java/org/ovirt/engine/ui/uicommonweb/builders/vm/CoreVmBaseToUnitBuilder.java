@@ -31,6 +31,7 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
         model.getAutoConverge().setSelectedItem(vm.getAutoConverge());
         model.getMigrateCompressed().setSelectedItem(vm.getMigrateCompressed());
         model.getConsoleDisconnectAction().setSelectedItem(vm.getConsoleDisconnectAction());
+        model.getResumeBehavior().setSelectedItem(vm.getResumeBehavior());
         if (!Objects.equals(model.getCustomCompatibilityVersion().getSelectedItem(), vm.getCustomCompatibilityVersion())) {
             // this has to be updated only if really changed since it triggers a refresh of the whole dialog including this
             // builder leading to an infinite recursion

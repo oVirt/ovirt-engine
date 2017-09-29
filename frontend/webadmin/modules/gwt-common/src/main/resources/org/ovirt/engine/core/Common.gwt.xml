@@ -196,6 +196,7 @@
         <include name="common/businessentities/VmStatic.java" />
         <include name="common/businessentities/VmStatistics.java" />
         <include name="common/businessentities/VMStatus.java" />
+        <include name="common/businessentities/VmResumeBehavior.java" />
         <include name="common/businessentities/VmTemplate.java" />
         <include name="common/businessentities/VmTemplateStatus.java" />
         <include name="common/businessentities/VmType.java" />

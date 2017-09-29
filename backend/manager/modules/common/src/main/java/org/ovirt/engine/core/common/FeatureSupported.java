@@ -215,6 +215,14 @@ public class FeatureSupported {
     }
 
     /**
+     * @param version Compatibility version to check for.
+     * @return {@code true} if configuration of the resume behavior is supported.
+     */
+    public static boolean isResumeBehaviorSupported(Version version) {
+        return supportedInConfig(ConfigValues.ResumeBehaviorSupported, version);
+    }
+
+    /**
      * Firewalld is supported for host if it supports cluster version 4.2.
      *
      * @param vds the host we are insterested in

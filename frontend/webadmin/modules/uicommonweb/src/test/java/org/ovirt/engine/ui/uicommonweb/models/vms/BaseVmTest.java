@@ -93,6 +93,7 @@ public class BaseVmTest {
         when(adp.osNameExists(OS_TYPE)).thenReturn(true);
         when(adp.getMaxVmNameLength()).thenReturn(64);
         when(adp.getOsDefaultIconId(OS_TYPE, false)).thenReturn(LARGE_OS_DEFAULT_ICON_ID);
+        when(adp.getConfigValuePreConverted(ConfigValues.ResumeBehaviorSupported, CLUSTER_VERSION.toString())).thenReturn(true);
     }
 
 }

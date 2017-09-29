@@ -1695,5 +1695,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String DiskContentType___MEMORY_METADATA_VOLUME();
 
     String DiskContentType___ISO();
+
+    String ResumeBehavior___AUTO_RESUME();
+
+    String ResumeBehavior___LEAVE_PAUSED();
+
+    String ResumeBehavior___KILL();
+
 }
 

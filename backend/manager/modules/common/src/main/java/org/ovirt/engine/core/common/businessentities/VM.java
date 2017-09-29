@@ -1763,4 +1763,11 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.hasIllegalImages = hasIllegalImages;
     }
 
+    public VmResumeBehavior getResumeBehavior() {
+        return vmStatic.getResumeBehavior();
+    }
+
+    public void setResumeBehavior(VmResumeBehavior resumeBehavior) {
+        vmStatic.setResumeBehavior(resumeBehavior);
+    }
 }

@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -742,6 +743,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<StorageDomain> leaseEditor;
 
     @UiField(provided = true)
+    @Path("resumeBehavior.selectedItem")
+    @WithElementId("resumeBehavior")
+    public ListModelListBoxEditor<VmResumeBehavior> resumeBehavior;
+
+    @UiField(provided = true)
     @Ignore
     public EntityModelDetachableWidget isHighlyAvailableEditorWithDetachable;
 
@@ -1036,6 +1042,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 return domain != null ? domain.getName() : constants.emptyLeaseStorageDomain();
             }
         });
+
+        resumeBehavior = new ListModelListBoxEditor<>(new EnumRenderer<VmResumeBehavior>() {
+            @Override
+            public String render(VmResumeBehavior object) {
+                if (object == null) {
+                    return super.render(VmResumeBehavior.AUTO_RESUME);
+                }
+
+                return super.render(object);
+            }
+        }, new ModeSwitchingVisibilityRenderer());
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

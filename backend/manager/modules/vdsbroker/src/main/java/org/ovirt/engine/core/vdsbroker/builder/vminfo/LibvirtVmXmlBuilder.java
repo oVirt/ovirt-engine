@@ -714,7 +714,14 @@ public class LibvirtVmXmlBuilder {
         writeDiskMetadata();
         writeRunAndPauseMetadata();
         writePayloadMetadata();
+        writeResumeBehaviorMetadata();
         writer.writeEndElement();
+    }
+
+    private void writeResumeBehaviorMetadata() {
+        if (FeatureSupported.isResumeBehaviorSupported(vm.getCompatibilityVersion())) {
+            writer.writeElement("resumeBehavior", String.valueOf(vm.getResumeBehavior()).toLowerCase());
+        }
     }
 
     private void writeRunAndPauseMetadata() {

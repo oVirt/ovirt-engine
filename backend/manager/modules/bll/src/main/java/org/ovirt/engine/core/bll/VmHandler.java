@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -1031,6 +1032,25 @@ public class VmHandler implements BackendService {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SMARTCARD_NOT_SUPPORTED_WITHOUT_USB);
         }
         return ValidationResult.VALID;
+    }
+
+    public void autoSelectResumeBehavior(VmBase vmBase, Cluster cluster) {
+        if (cluster == null) {
+            return;
+        }
+
+        autoSelectResumeBehavior(vmBase, cluster.getCompatibilityVersion());
+    }
+
+    public void autoSelectResumeBehavior(VmBase vmBase, Version clusterVersion) {
+        Version version = CompatibilityVersionUtils.getEffective(vmBase.getCustomCompatibilityVersion(), () -> clusterVersion);
+
+        if (FeatureSupported.isResumeBehaviorSupported(version)) {
+            if (vmBase.isAutoStartup() && vmBase.getLeaseStorageDomainId() != null) {
+                // since 4.2 the only supported resume behavior for HA vms with lease is kill
+                vmBase.setResumeBehavior(VmResumeBehavior.KILL);
+            }
+        }
     }
 
     /**

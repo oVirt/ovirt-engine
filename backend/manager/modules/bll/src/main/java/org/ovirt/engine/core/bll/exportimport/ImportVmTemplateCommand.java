@@ -478,6 +478,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
 
         getVmTemplate().setStatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
+        vmHandler.autoSelectResumeBehavior(getVmTemplate(), getCluster());
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;

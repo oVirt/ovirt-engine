@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -31,6 +32,7 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
         // no cluster data - init list to 'use cluster default' option
         getModel().getEmulatedMachine().setItems(Arrays.asList("")); //$NON-NLS-1$
         getModel().getCustomCpu().setItems(Arrays.asList("")); //$NON-NLS-1$
+        getModel().getResumeBehavior().setItems(Arrays.asList(VmResumeBehavior.values()));
     }
 
     protected void initDisplayTypes(DisplayType selected, UnitVmModel.GraphicsTypes selectedGrahicsTypes) {

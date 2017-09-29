@@ -117,6 +117,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getParameters().getVmTemplateData(),
                 getCluster(),
                 getParameters().getGraphicsDevices());
+        vmHandler.autoSelectResumeBehavior(getParameters().getVmTemplateData(), getCluster());
     }
 
     @Override

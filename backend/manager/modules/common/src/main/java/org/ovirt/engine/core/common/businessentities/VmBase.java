@@ -359,6 +359,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private Guid leaseStorageDomainId;
 
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
+    private VmResumeBehavior resumeBehavior;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<>();
@@ -385,6 +390,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         vNumaNodeList = new ArrayList<>();
         customProperties = "";
         consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
+        resumeBehavior = VmResumeBehavior.AUTO_RESUME;
     }
 
     @EditableVmField
@@ -566,7 +572,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getConsoleDisconnectAction(),
                 vmBase.getCustomCompatibilityVersion(),
                 vmBase.getMigrationPolicyId(),
-                vmBase.getLeaseStorageDomainId());
+                vmBase.getLeaseStorageDomainId(),
+                vmBase.getResumeBehavior());
     }
 
     public VmBase(
@@ -634,7 +641,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             ConsoleDisconnectAction consoleDisconnectAction,
             Version customCompatibilityVersion,
             Guid migrationPolicyId,
-            Guid leaseStorageDomainId) {
+            Guid leaseStorageDomainId,
+            VmResumeBehavior resumeBehavior) {
         this();
         this.name = name;
         this.id = id;
@@ -701,6 +709,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.customCompatibilityVersion = customCompatibilityVersion;
         this.migrationPolicyId = migrationPolicyId;
         this.leaseStorageDomainId = leaseStorageDomainId;
+        this.resumeBehavior = resumeBehavior;
     }
 
     @Override
@@ -1112,7 +1121,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 smallIconId,
                 largeIconId,
                 consoleDisconnectAction,
-                customCompatibilityVersion
+                customCompatibilityVersion,
+                resumeBehavior
         );
     }
 
@@ -1179,6 +1189,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(smallIconId, other.smallIconId)
                 && Objects.equals(largeIconId, other.largeIconId)
                 && Objects.equals(consoleDisconnectAction, other.consoleDisconnectAction)
+                && Objects.equals(resumeBehavior, other.resumeBehavior)
                 && Objects.equals(customCompatibilityVersion, other.customCompatibilityVersion);
     }
 
@@ -1505,4 +1516,13 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     public int compareTo(VmBase other) {
         return id.compareTo(other.id);
     }
+
+    public VmResumeBehavior getResumeBehavior() {
+        return resumeBehavior;
+    }
+
+    public void setResumeBehavior(VmResumeBehavior resumeBehavior) {
+        this.resumeBehavior = resumeBehavior;
+    }
+
 }
