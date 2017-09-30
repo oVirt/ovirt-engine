@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -164,12 +165,12 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doAnswer(invocation -> {
             VM vm = (VM) invocation.getArguments()[0];
             return vm.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(), any(), any());
+        }).when(ovfUpdateProcessHelper).generateVmMetadata(any(), any());
 
         doAnswer(invocation -> {
-            VmTemplate template = (VmTemplate) invocation.getArguments()[0];
+            VmTemplate template = (VmTemplate) ((FullEntityOvfData) invocation.getArguments()[0]).getVmBase();
             return template.getId().toString();
-        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any(), any());
+        }).when(ovfUpdateProcessHelper).generateVmTemplateMetadata(any());
 
         doAnswer(invocation -> {
             List<Guid> neededIds = (List<Guid>) invocation.getArguments()[0];

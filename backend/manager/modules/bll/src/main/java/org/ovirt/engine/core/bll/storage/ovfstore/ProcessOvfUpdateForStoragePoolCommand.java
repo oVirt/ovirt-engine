@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
@@ -332,10 +333,12 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
                     for (LunDisk lun : lunDisks) {
                         lun.getLun().setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId())));
                     }
+                    FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
+                    fullEntityOvfData.setDiskImages(vmImages);
+                    fullEntityOvfData.setLunDisks(lunDisks);
                     proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForVm(vm,
                             vmsAndTemplateMetadata,
-                            vmImages,
-                            lunDisks));
+                            fullEntityOvfData));
                     proccessedIdsInfo.add(vm.getId());
                     proccessedOvfGenerationsInfo.add(vm.getStaticData().getDbGeneration());
                     proccessDisksDomains(vm.getDiskList());

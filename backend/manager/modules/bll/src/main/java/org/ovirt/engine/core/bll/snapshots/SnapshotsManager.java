@@ -446,9 +446,10 @@ public class SnapshotsManager {
         }
         populateDisksWithVmData(disks, vm.getId());
         disks.forEach(image -> image.setStorageIds(null));
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
+        fullEntityOvfData.setDiskImages(disks);
         return ovfManager.exportVm(vm,
-                new ArrayList<>(disks),
-                Collections.EMPTY_LIST,
+                fullEntityOvfData,
                 clusterUtils.getCompatibilityVersion(vm));
     }
 

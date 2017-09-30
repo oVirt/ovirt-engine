@@ -1,12 +1,9 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -14,9 +11,9 @@ import org.ovirt.engine.core.compat.Version;
 public class OvfTemplateWriter extends OvfOvirtWriter {
     protected VmTemplate vmTemplate;
 
-    public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images, Version version, OsRepository osRepository) {
-        super(vmTemplate, images, Collections.EMPTY_LIST, version, osRepository);
-        this.vmTemplate = vmTemplate;
+    public OvfTemplateWriter(FullEntityOvfData fullEntityOvfData, Version version, OsRepository osRepository) {
+        super(fullEntityOvfData, version, osRepository);
+        this.vmTemplate = (VmTemplate) fullEntityOvfData.getVmBase();
     }
 
     @Override

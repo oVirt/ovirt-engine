@@ -14,12 +14,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -50,22 +47,22 @@ public class OvfManager {
     @Inject
     private OsRepository osRepository;
 
-    public String exportVm(VM vm, List<DiskImage> images, List<LunDisk> lunDisks, Version version) {
+    public String exportVm(VM vm, FullEntityOvfData fullEntityOvfData, Version version) {
         updateBootOrderOnDevices(vm.getStaticData(), false);
         final OvfVmWriter vmWriter;
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuId = cpuFlagsManagerHandler.getCpuId(cluster.getCpuName(), cluster.getCompatibilityVersion());
-            vmWriter = new HostedEngineOvfWriter(vm, images, lunDisks, version, cluster.getEmulatedMachine(), cpuId, osRepository);
+            vmWriter = new HostedEngineOvfWriter(vm, fullEntityOvfData, version, cluster.getEmulatedMachine(), cpuId, osRepository);
         } else {
-            vmWriter = new OvfVmWriter(vm, images, lunDisks, version, osRepository);
+            vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, osRepository);
         }
         return vmWriter.build().getStringRepresentation();
     }
 
-    public String exportTemplate(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
-        updateBootOrderOnDevices(vmTemplate, true);
-        return new OvfTemplateWriter(vmTemplate, images, version, osRepository).build().getStringRepresentation();
+    public String exportTemplate(FullEntityOvfData fullEntityOvfData, Version version) {
+        updateBootOrderOnDevices(fullEntityOvfData.getVmBase(), true);
+        return new OvfTemplateWriter(fullEntityOvfData, version, osRepository).build().getStringRepresentation();
     }
 
     public void importVm(String ovfstring,

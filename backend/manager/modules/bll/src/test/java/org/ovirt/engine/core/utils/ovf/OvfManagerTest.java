@@ -142,7 +142,7 @@ public class OvfManagerTest {
         VM vm = createVM();
         vm.setDefaultDisplayType(DisplayType.cirrus);
         vm.setVmOs(DEFAULT_OS_ID);
-        String xml = manager.exportVm(vm, new ArrayList<>(), Collections.EMPTY_LIST, Version.getLast());
+        String xml = manager.exportVm(vm, new FullEntityOvfData(vm), Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
@@ -162,7 +162,7 @@ public class OvfManagerTest {
         VM vm = createVM();
         vm.setDefaultDisplayType(DisplayType.cirrus);
         vm.setVmOs(EXISTING_OS_ID);
-        String xml = manager.exportVm(vm, new ArrayList<>(), Collections.EMPTY_LIST, Version.getLast());
+        String xml = manager.exportVm(vm,  new FullEntityOvfData(vm), Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
@@ -180,7 +180,7 @@ public class OvfManagerTest {
     @Test
     public void testVmOvfImportWithoutDbGeneration() throws Exception {
         VM vm = createVM();
-        String xml = manager.exportVm(vm, new ArrayList<>(), Collections.EMPTY_LIST, Version.v3_6);
+        String xml = manager.exportVm(vm,  new FullEntityOvfData(vm), Version.v3_6);
         assertNotNull(xml);
         final VM newVm = new VM();
         assertTrue(xml.contains("Generation"));
@@ -193,7 +193,7 @@ public class OvfManagerTest {
     @Test
     public void testTemplateOvfCreation() throws Exception {
         VmTemplate template = createVmTemplate();
-        String xml = manager.exportTemplate(template, new ArrayList<>(), Version.v3_6);
+        String xml = manager.exportTemplate(new FullEntityOvfData(template), Version.v3_6);
         assertNotNull(xml);
         final VmTemplate newtemplate = new VmTemplate();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newtemplate);
@@ -225,13 +225,17 @@ public class OvfManagerTest {
     public void testVmExportAndImportAndExportAgainSymmetrical() throws Exception {
         VM vm = createVM();
         ArrayList<DiskImage> disks = createDisksAndDiskVmElements(vm);
-        String xml = manager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.v4_0);
+        FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vm);
+        fullEntityOvfDataForExport.setDiskImages(disks);
+        String xml = manager.exportVm(vm, fullEntityOvfDataForExport, Version.v4_0);
         assertNotNull(xml);
 
         VM newVm = new VM();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
         manager.importVm(xml, newVm, fullEntityOvfData);
-        String newXml = manager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.v4_0);
+        FullEntityOvfData fullEntityOvfDataForExportResult = new FullEntityOvfData(vm);
+        fullEntityOvfDataForExportResult.setDiskImages(disks);
+        String newXml = manager.exportVm(vm, fullEntityOvfDataForExportResult, Version.v4_0);
 
         assertEquals(deleteExportDateValueFromXml(xml), deleteExportDateValueFromXml(newXml));
     }
@@ -240,7 +244,9 @@ public class OvfManagerTest {
     public void testVmExportAndImportIdentical() throws Exception {
         VM vm = createVM();
         ArrayList<DiskImage> disks = createDisksAndDiskVmElements(vm);
-        String xml = manager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.v4_0);
+        FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vm);
+        fullEntityOvfDataForExport.setDiskImages(disks);
+        String xml = manager.exportVm(vm, fullEntityOvfDataForExport, Version.v4_0);
         assertNotNull(xml);
 
         VM newVm = new VM();
@@ -282,7 +288,7 @@ public class OvfManagerTest {
     }
 
     private VM serializeAndDeserialize(VM inputVm) throws OvfReaderException {
-        String xml = manager.exportVm(inputVm, new ArrayList<>(), Collections.EMPTY_LIST, Version.v3_6);
+        String xml = manager.exportVm(inputVm,  new FullEntityOvfData(inputVm), Version.v3_6);
         assertNotNull(xml);
         final VM resultVm = new VM();
         assertTrue(xml.contains("Generation"));

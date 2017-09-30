@@ -8,8 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -18,8 +17,8 @@ public class OvfVmWriter extends OvfOvirtWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
     private VM vm;
 
-    public OvfVmWriter(VM vm, List<DiskImage> images, List<LunDisk> lunDisks, Version version, OsRepository osRepository) {
-        super(vm.getStaticData(), images, lunDisks, version, osRepository);
+    public OvfVmWriter(VM vm, FullEntityOvfData fullEntityOvfData, Version version, OsRepository osRepository) {
+        super(fullEntityOvfData, version, osRepository);
         this.vm = vm;
     }
 

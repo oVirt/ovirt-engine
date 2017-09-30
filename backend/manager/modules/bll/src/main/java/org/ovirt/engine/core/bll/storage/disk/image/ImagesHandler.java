@@ -786,8 +786,10 @@ public class ImagesHandler {
                 final Version compatibilityVersion =
                         Optional.ofNullable(vmSnapshot.getStaticData().getClusterCompatibilityVersionOrigin())
                         .orElse(Version.getLowest());
+                FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vmSnapshot);
+                fullEntityOvfDataForExport.setDiskImages(snapshotImages);
                 String newOvf =
-                        ovfManager.exportVm(vmSnapshot, snapshotImages, Collections.EMPTY_LIST, compatibilityVersion);
+                        ovfManager.exportVm(vmSnapshot, fullEntityOvfDataForExport, compatibilityVersion);
                 snapshot.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {

@@ -116,7 +116,9 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         mcr.mockConfigValue(ConfigValues.MaxNumOfVmCpus, Version.ALL.get(0), 16);
 
         ArrayList<DiskImage> disks = new ArrayList<>(Arrays.asList(disk1, disk2));
-        String ovf = ovfManager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.getLast());
+        FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vm);
+        fullEntityOvfDataForExport.setDiskImages(disks);
+        String ovf = ovfManager.exportVm(vm, fullEntityOvfDataForExport, Version.getLast());
         Snapshot snap = new Snapshot();
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);

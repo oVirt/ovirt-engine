@@ -136,7 +136,10 @@ public class OvfHelper {
             allVmImages.addAll(images);
         }
 
-        return ovfManager.exportVm(vm, allVmImages, lunDisks, clusterUtils.getCompatibilityVersion(vm));
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
+        fullEntityOvfData.setDiskImages(allVmImages);
+        fullEntityOvfData.setLunDisks(lunDisks);
+        return ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
     }
 
     private void loadVmData(VM vm) {

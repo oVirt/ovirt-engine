@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -66,10 +66,9 @@ public class OvfUpdateProcessHelper {
      * Adds the given vm metadata to the given map
      */
     public String buildMetadataDictionaryForVm(VM vm,
-                                                  Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary,
-                                                  List<DiskImage> allVmImages,
-                                                  List<LunDisk> lunDisks) {
-        String vmMeta = generateVmMetadata(vm, allVmImages, lunDisks);
+            Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary,
+            FullEntityOvfData fullEntityOvfData) {
+        String vmMeta = generateVmMetadata(vm, fullEntityOvfData);
         metaDictionary.put(
                 vm.getId(),
                 new KeyValuePairCompat<>
@@ -77,10 +76,9 @@ public class OvfUpdateProcessHelper {
         return vmMeta;
     }
 
-    protected String generateVmTemplateMetadata(VmTemplate template, List<DiskImage> allTemplateImages) {
-        return ovfManager.exportTemplate(template,
-                allTemplateImages,
-                clusterUtils.getCompatibilityVersion(template));
+    protected String generateVmTemplateMetadata(FullEntityOvfData fullEntityOvfData) {
+        return ovfManager.exportTemplate(fullEntityOvfData,
+                clusterUtils.getCompatibilityVersion(fullEntityOvfData.getVmBase()));
     }
 
     /**
@@ -89,7 +87,9 @@ public class OvfUpdateProcessHelper {
     public String buildMetadataDictionaryForTemplate(VmTemplate template,
                                                         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
         List<DiskImage> allTemplateImages = template.getDiskList();
-        String templateMeta = generateVmTemplateMetadata(template, allTemplateImages);
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
+        fullEntityOvfData.setDiskImages(allTemplateImages);
+        String templateMeta = generateVmTemplateMetadata(fullEntityOvfData);
         metaDictionary.put(template.getId(), new KeyValuePairCompat<>(
                 templateMeta, allTemplateImages.stream().map(BaseDisk::getId).collect(Collectors.toList())));
         return templateMeta;
@@ -139,8 +139,8 @@ public class OvfUpdateProcessHelper {
         }
     }
 
-    protected String generateVmMetadata(VM vm, List<DiskImage> allVmImages, List<LunDisk> lunDisks) {
-        return ovfManager.exportVm(vm, allVmImages, lunDisks, clusterUtils.getCompatibilityVersion(vm));
+    protected String generateVmMetadata(VM vm, FullEntityOvfData fullEntityOvfData) {
+        return ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
     }
 
     /**

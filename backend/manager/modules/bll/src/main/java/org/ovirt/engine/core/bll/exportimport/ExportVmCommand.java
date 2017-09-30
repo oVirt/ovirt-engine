@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -348,7 +349,10 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         lunDisks.forEach(lun -> lun.getLun()
                 .setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId()))));
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-        String vmMeta = ovfManager.exportVm(vm, vmImages, lunDisks, clusterUtils.getCompatibilityVersion(vm));
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
+        fullEntityOvfData.setDiskImages(vmImages);
+        fullEntityOvfData.setLunDisks(lunDisks);
+        String vmMeta = ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
 
         vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
@@ -552,10 +556,11 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     protected void updateVmInSpm() {
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
         ovfUpdateProcessHelper.loadVmData(getVm());
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(getVm());
+        fullEntityOvfData.setDiskImages(ovfUpdateProcessHelper.getVmImagesFromDb(getVm()));
         ovfUpdateProcessHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,
-                ovfUpdateProcessHelper.getVmImagesFromDb(getVm()),
-                new ArrayList<>());
+                fullEntityOvfData);
         ovfUpdateProcessHelper.executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
                 metaDictionary, getParameters().getStorageDomainId());
     }

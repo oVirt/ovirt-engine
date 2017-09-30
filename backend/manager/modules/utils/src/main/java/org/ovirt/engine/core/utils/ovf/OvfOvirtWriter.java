@@ -5,9 +5,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -19,12 +19,13 @@ public abstract class OvfOvirtWriter extends OvfWriter {
 
     private OsRepository osRepository;
 
-    public OvfOvirtWriter(VmBase vmBase,
-            List<DiskImage> images,
-            List<LunDisk> lunDisks,
+    public OvfOvirtWriter(FullEntityOvfData fullEntityOvfData,
             Version version,
             OsRepository osRepository) {
-        super(vmBase, images, lunDisks, version);
+        super(fullEntityOvfData.getVmBase(),
+                fullEntityOvfData.getDiskImages(),
+                fullEntityOvfData.getLunDisks(),
+                version);
         this.osRepository = osRepository;
     }
 
