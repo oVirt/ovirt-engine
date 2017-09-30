@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Red Hat, Inc.
+Copyright (c) 2016-2017 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ public class LocalConfig {
     private static final String DEPRECATED_VERSIONS = "ENGINE_API_DEPRECATED_VERSIONS";
     private static final String DEFAULT_VERSION = "ENGINE_API_DEFAULT_VERSION";
     private static final String FILTER_BY_DEFAULT = "ENGINE_API_FILTER_BY_DEFAULT";
+    private static final String EXPLORER_DIRECTORY = "ENGINE_API_EXPLORER_DIRECTORY";
 
     // Reference to the engine local configuration, as that is what is used to actually read the configuration:
     private EngineLocalConfig config;
@@ -100,5 +101,12 @@ public class LocalConfig {
      */
     public boolean getFilterByDefault() {
         return config.getBoolean(FILTER_BY_DEFAULT);
+    }
+
+    /**
+     * Returns the absolute path name of the directory that contains the API explorer application.
+     */
+    public String getExplorerDirectory() {
+        return config.getProperty(EXPLORER_DIRECTORY);
     }
 }

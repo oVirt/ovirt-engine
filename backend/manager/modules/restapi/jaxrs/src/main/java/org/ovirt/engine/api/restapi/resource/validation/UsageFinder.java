@@ -8,6 +8,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.restapi.invocation.Current;
+import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.rsdl.ServiceTree;
 import org.ovirt.engine.api.rsdl.ServiceTreeNode;
 
@@ -38,11 +40,11 @@ public class UsageFinder {
         //Get the prefix of the link, with or without 's' appended to the
         //entity name, according to whether this action is on a single entity
         //or on the collection context, e.g:
-        // .../api/model.html#services/vm/methods/start    //action on *vm*
-        // .../api/model.html#services/vms/methods/add     //action on *vms*
-        // .../api/model.html#services/vm/methods/update   //action on *vm*
-        // .../api/model.html#services/vm/methods/remove   //action on *vm*
-        String link = getLinkPrefix(uriInfo, node, lastPathSegment.getPath(), httpMethod);
+        // .../apidoc#services/vm/methods/start    //action on *vm*
+        // .../apidoc#services/vms/methods/add     //action on *vms*
+        // .../apidoc#services/vm/methods/update   //action on *vm*
+        // .../apidoc#services/vm/methods/remove   //action on *vm*
+        String link = getLinkPrefix(node);
         if (isAction(node, lastPathSegment.getPath())) {
             link += camelCaseToDash(getAction(node, lastPathSegment.getPath()));
         } else {
@@ -73,9 +75,14 @@ public class UsageFinder {
                 .orElse(null);
     }
 
-    private String getLinkPrefix(UriInfo uriInfo, ServiceTreeNode node, String lastPathSegment, String httpMethod) {
-        String linkPrefix = uriInfo.getBaseUri().toString() + "model#services/" + processNodeName(node) + "/methods/";
-        return linkPrefix;
+    private String getLinkPrefix(ServiceTreeNode node) {
+        Current current = CurrentManager.get();
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(current.getRoot());
+        buffer.append("/ovirt-engine/apidoc#services/");
+        buffer.append(processNodeName(node));
+        buffer.append("/methods/");
+        return buffer.toString();
     }
 
     private String processNodeName(ServiceTreeNode node) {

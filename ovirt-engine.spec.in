@@ -234,6 +234,7 @@ Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
 Requires:	ovirt-js-dependencies
 Requires:	ovirt-ansible-roles >= 1.1.0
+Requires:	ovirt-engine-api-explorer
 
 # Metrics stuff
 Requires:	collectd

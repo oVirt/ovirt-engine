@@ -419,6 +419,18 @@ ENGINE_API_DEPRECATED_VERSIONS="3:4.0:4.3"
 ENGINE_API_FILTER_BY_DEFAULT="true"
 
 #
+# Directory where the API explorer application is available. If this is
+# not empty, and the directory exists, then the static documentation in
+# the '/ovirt-engine/apidoc' URL will be replaced by the content of that
+# directory.
+#
+# Note that the default value is empty. The actual value will be usually
+# set by an additional configuration file provided by the package that
+# contains the explorer application.
+#
+ENGINE_API_EXPLORER_DIRECTORY=""
+
+#
 # Specify custom krb5.conf file (if empty the default is /etc/krb5.conf)
 #
 AAA_KRB5_CONF_FILE=
