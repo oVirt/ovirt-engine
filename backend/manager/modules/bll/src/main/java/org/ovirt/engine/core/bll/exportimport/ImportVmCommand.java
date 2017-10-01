@@ -1065,6 +1065,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));
         memoryDisk.setStoragePoolId(guids.get(1));
         memoryDisk.setCreationDate(snapshot.getCreationDate());
+        memoryDisk.setActive(true);
         return memoryDisk;
     }
 
@@ -1081,6 +1082,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));
         memoryDisk.setStoragePoolId(guids.get(1));
         memoryDisk.setCreationDate(snapshot.getCreationDate());
+        memoryDisk.setActive(true);
         return memoryDisk;
     }
 
