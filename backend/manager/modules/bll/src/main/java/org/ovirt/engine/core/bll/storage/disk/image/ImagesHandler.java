@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
@@ -761,8 +762,9 @@ public class ImagesHandler {
             if (snapshot.isVmConfigurationAvailable() && snapConfig != null) {
                 VM vmSnapshot = new VM();
                 ArrayList<DiskImage> snapshotImages = new ArrayList<>();
-
-                ovfManager.importVm(snapConfig, vmSnapshot, snapshotImages, Collections.EMPTY_LIST, new ArrayList<>());
+                FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vmSnapshot);
+                fullEntityOvfData.setDiskImages(snapshotImages);
+                ovfManager.importVm(snapConfig, vmSnapshot, fullEntityOvfData);
 
                 // Remove the image from the disk list
                 Iterator<DiskImage> diskIter = snapshotImages.iterator();

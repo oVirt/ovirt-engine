@@ -487,7 +487,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     private boolean validateMemoryTakenInSupportedVersion() {
         VM vmFromSnapshot = null;
         try {
-            vmFromSnapshot = ovfHelper.readVmFromOvf(getDstSnapshot().getVmConfiguration());
+            vmFromSnapshot = ovfHelper.readVmFromOvf(getDstSnapshot().getVmConfiguration()).getVm();
         } catch (OvfReaderException e) {
             // should never happen since the OVF was created by us
             log.error("Failed to parse a given ovf configuration: {}", e.getMessage());

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,13 +28,11 @@ public class OvfVmReader extends OvfOvirtReader {
 
     public OvfVmReader(XmlDocument document,
             VM vm,
-            List<DiskImage> images,
-            List<LunDisk> luns,
-            List<VmNetworkInterface> interfaces,
+            FullEntityOvfData fullEntityOvfData,
             OsRepository osRepository) {
-        super(document, images, luns, interfaces, vm.getStaticData(), osRepository);
+        super(document, fullEntityOvfData, osRepository);
         _vm = vm;
-        _vm.setInterfaces(interfaces);
+        _vm.setInterfaces(fullEntityOvfData.getInterfaces());
     }
 
     @Override

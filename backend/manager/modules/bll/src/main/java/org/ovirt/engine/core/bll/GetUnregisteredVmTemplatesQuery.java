@@ -22,7 +22,7 @@ public class GetUnregisteredVmTemplatesQuery<P extends IdQueryParameters> extend
         List<VmTemplate> vmTemplates = new ArrayList<>();
         for (OvfEntityData ovf : entityList) {
             try {
-                vmTemplates.add(ovfHelper.readVmTemplateFromOvf(ovf.getOvfData()));
+                vmTemplates.add(ovfHelper.readVmTemplateFromOvf(ovf.getOvfData()).getVmTemplate());
             } catch (OvfReaderException e) {
                 log.debug("failed to parse a given ovf configuration: \n" + ovf.getOvfData(), e);
                 getQueryReturnValue().setExceptionString("failed to parse a given ovf configuration "

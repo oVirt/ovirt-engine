@@ -33,7 +33,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
         for (String ovf : ovfList) {
             try {
                 if (ovfHelper.isOvfTemplate(ovf)) {
-                    VmTemplate vmTemplate = ovfHelper.readVmTemplateFromOvf(ovf);
+                    VmTemplate vmTemplate = ovfHelper.readVmTemplateFromOvf(ovf).getVmTemplate();
                     List<DiskImage> templateDisks = new ArrayList<>(vmTemplate.getDiskTemplateMap().values());
                     templateDisksMap.put(vmTemplate, templateDisks);
                 }

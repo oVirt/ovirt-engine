@@ -144,7 +144,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             try {
                 // We should get only one entity, since we fetched the entity with a specific Storage Domain
                 ovfEntityData = ovfEntityDataList.get(0);
-                vmFromConfiguration = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
+                vmFromConfiguration = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData()).getVm();
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 mapVnicProfiles(vmFromConfiguration.getInterfaces());
                 getParameters().setVm(vmFromConfiguration);

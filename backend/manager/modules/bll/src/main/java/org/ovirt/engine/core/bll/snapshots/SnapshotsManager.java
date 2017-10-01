@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -612,7 +613,8 @@ public class SnapshotsManager {
             }
             ArrayList<DiskImage> images = new ArrayList<>();
             ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
-            ovfManager.importVm(configuration, tempVM, images, Collections.EMPTY_LIST, interfaces);
+            FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(tempVM);
+            ovfManager.importVm(configuration, tempVM, fullEntityOvfData);
             for (DiskImage diskImage : images) {
                 DiskImage dbImage = diskImageDao.getSnapshotById(diskImage.getImageId());
                 if (dbImage != null) {
@@ -667,7 +669,7 @@ public class SnapshotsManager {
         }
 
         try {
-            return Optional.of(ovfHelper.readVmFromOvf(snapshot.getVmConfiguration()));
+            return Optional.of(ovfHelper.readVmFromOvf(snapshot.getVmConfiguration()).getVm());
         } catch (OvfReaderException e) {
             throw new RuntimeException(e);
         }

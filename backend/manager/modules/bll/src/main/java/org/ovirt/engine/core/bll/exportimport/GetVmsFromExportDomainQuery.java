@@ -31,7 +31,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         for (String ovf : ovfList) {
             try {
                 if (!ovfHelper.isOvfTemplate(ovf)) {
-                    vms.add(ovfHelper.readVmFromOvf(ovf));
+                    vms.add(ovfHelper.readVmFromOvf(ovf).getVm());
                 }
             } catch (OvfReaderException ex) {
                 auditLogOvfLoadError(ex.getName(), ex.getMessage());

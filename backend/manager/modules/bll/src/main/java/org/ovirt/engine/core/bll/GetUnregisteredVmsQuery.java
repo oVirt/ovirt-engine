@@ -22,7 +22,7 @@ public class GetUnregisteredVmsQuery<P extends IdQueryParameters> extends GetUnr
         List<VM> vmList = new ArrayList<>();
         for (OvfEntityData ovf : entityList) {
             try {
-                VM vm = ovfHelper.readVmFromOvf(ovf.getOvfData());
+                VM vm = ovfHelper.readVmFromOvf(ovf.getOvfData()).getVm();
 
                 // Setting the rest of the VM attributes which are not in the OVF.
                 vm.setClusterCompatibilityVersion(ovf.getLowestCompVersion());

@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
@@ -69,14 +70,12 @@ public class OvfManager {
 
     public void importVm(String ovfstring,
             VM vm,
-            List<DiskImage> images,
-            List<LunDisk> luns,
-            List<VmNetworkInterface> interfaces)
+            FullEntityOvfData fullEntityOvfData)
             throws OvfReaderException {
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, images, luns, interfaces, osRepository);
+            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, fullEntityOvfData, osRepository);
             ovf.build();
             initIcons(vm.getStaticData());
         } catch (Exception ex) {
@@ -85,18 +84,17 @@ public class OvfManager {
             throw new OvfReaderException(message);
         }
         Guid id = vm.getStaticData().getId();
-        interfaces.forEach(iface -> iface.setVmId(id));
+        fullEntityOvfData.getInterfaces().forEach(iface -> iface.setVmId(id));
     }
 
-    public void importTemplate(String ovfstring, VmTemplate vmTemplate,
-            List<DiskImage> images, List<VmNetworkInterface> interfaces)
+    public void importTemplate(String ovfstring, FullEntityOvfData fullEntityOvfData)
             throws OvfReaderException {
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfTemplateReader(new XmlDocument(ovfstring), vmTemplate, images, interfaces, osRepository);
+            ovf = new OvfTemplateReader(new XmlDocument(ovfstring), fullEntityOvfData, osRepository);
             ovf.build();
-            initIcons(vmTemplate);
+            initIcons(fullEntityOvfData.getVmBase());
         } catch (Exception ex) {
             String message = generateOvfReaderErrorMessage(ovf, ex);
             logOvfLoadError(message, ovfstring);

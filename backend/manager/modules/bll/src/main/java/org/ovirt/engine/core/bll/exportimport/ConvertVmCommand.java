@@ -242,7 +242,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     private VM readVmFromOvf(String ovf) {
         try {
-            return ovfHelper.readVmFromOvf(ovf);
+            return ovfHelper.readVmFromOvf(ovf).getVm();
         } catch (OvfReaderException e) {
             log.debug("failed to parse a given ovf configuration: \n " + ovf, e);
             auditLog(this, AuditLogType.IMPORTEXPORT_INVALID_OVF);

@@ -21,8 +21,8 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -61,31 +61,30 @@ public class OvfHelper {
     private ClusterUtils clusterUtils;
 
     /**
-     * parses a given ovf to a vm, intialized with images and interfaces.
-     * @return
-     *        VM that represents the given ovf data
+     * parses a given ovf to a vm, initialize all the extra data related to it such as images, interfaces, cluster,
+     * LUNS, etc..
+     *
+     * @return FullEntityOvfData that represents the given ovf data
      */
-    public VM readVmFromOvf(String ovf) throws OvfReaderException {
+    public FullEntityOvfData readVmFromOvf(String ovf) throws OvfReaderException {
         VM vm = new VM();
-        ArrayList<DiskImage> diskImages = new ArrayList<>();
-        ArrayList<LunDisk> lunDisks = new ArrayList<>();
-        ArrayList<VmNetworkInterface> interfaces  = new ArrayList<>();
-        ovfManager.importVm(ovf, vm, diskImages, lunDisks, interfaces);
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
+        ovfManager.importVm(ovf, vm, fullEntityOvfData);
 
         // add images
-        vm.setImages(diskImages);
+        vm.setImages((ArrayList) fullEntityOvfData.getDiskImages());
         // add interfaces
-        vm.setInterfaces(interfaces);
+        vm.setInterfaces(fullEntityOvfData.getInterfaces());
 
         // add disk map
         Map<Guid, List<DiskImage>> images = ImagesHandler
-                .getImagesLeaf(diskImages);
+                .getImagesLeaf(fullEntityOvfData.getDiskImages());
         for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
             List<DiskImage> list = entry.getValue();
             vm.getDiskMap().put(entry.getKey(), list.get(list.size() - 1));
         }
-        lunDisks.forEach(lunDisk -> vm.getDiskMap().put(lunDisk.getId(), lunDisk));
-        return vm;
+        fullEntityOvfData.getLunDisks().forEach(lunDisk -> vm.getDiskMap().put(lunDisk.getId(), lunDisk));
+        return fullEntityOvfData;
     }
 
     /**
@@ -93,17 +92,17 @@ public class OvfHelper {
      * @return
      *        VmTemplate that represents the given ovf data
      */
-    public VmTemplate readVmTemplateFromOvf(String ovf) throws OvfReaderException {
-        ArrayList<DiskImage> diskImages = new ArrayList<>();
-        ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
+    public FullEntityOvfData readVmTemplateFromOvf(String ovf) throws OvfReaderException {
+
         VmTemplate template = new VmTemplate();
-        ovfManager.importTemplate(ovf, template, diskImages, interfaces);
-        template.setInterfaces(interfaces);
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
+        ovfManager.importTemplate(ovf, fullEntityOvfData);
+        template.setInterfaces(fullEntityOvfData.getInterfaces());
         // add disk map
-        for (DiskImage disk : diskImages) {
+        for (DiskImage disk : fullEntityOvfData.getDiskImages()) {
             template.getDiskTemplateMap().put(disk.getId(), disk);
         }
-        return template;
+        return fullEntityOvfData;
     }
 
     public String generateOvfConfigurationForVm(VM vm) {

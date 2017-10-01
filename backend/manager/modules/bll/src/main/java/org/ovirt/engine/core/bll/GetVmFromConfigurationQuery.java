@@ -20,7 +20,7 @@ public class GetVmFromConfigurationQuery<P extends GetVmFromConfigurationQueryPa
     protected void executeQueryCommand() {
         if (ConfigurationType.OVF.equals(getParameters().getConfigurationType())) {
             try {
-                getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOvf(getParameters().getVmConfiguration()));
+                getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOvf(getParameters().getVmConfiguration()).getVm());
                 getQueryReturnValue().setSucceeded(true);
             } catch (OvfReaderException e) {
                 log.debug("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);

@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -126,10 +127,11 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         Snapshot actual = imagesHandler.prepareSnapshotConfigWithAlternateImage(snap, disk2.getImageId(), null, ovfManager);
         String actualOvf = actual.getVmConfiguration();
 
-        ArrayList<DiskImage> actualImages = new ArrayList<>();
-        ovfManager.importVm(actualOvf, new VM(), actualImages, Collections.EMPTY_LIST, new ArrayList<>());
-        assertEquals("Wrong number of disks", 1, actualImages.size());
-        assertEquals("Wrong disk", disk1, actualImages.get(0));
+        VM emptyVm = new VM();
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(emptyVm);
+        ovfManager.importVm(actualOvf, emptyVm, fullEntityOvfData);
+        assertEquals("Wrong number of disks", 1, fullEntityOvfData.getDiskImages().size());
+        assertEquals("Wrong disk", disk1, fullEntityOvfData.getDiskImages().get(0));
     }
 
     private static DiskImage addTestDisk(VM vm, Guid snapshotId) {

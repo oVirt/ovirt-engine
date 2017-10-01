@@ -2,18 +2,17 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -25,17 +24,19 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 
 public abstract class OvfOvirtReader extends OvfReader {
 
-    private VmBase vmBase;
     private static final String COLON = ":";
+    protected FullEntityOvfData fullEntityOvfData;
 
     public OvfOvirtReader(XmlDocument document,
-            List<DiskImage> images,
-            List<LunDisk> luns,
-            List<VmNetworkInterface> interfaces,
-            VmBase vmBase,
+            FullEntityOvfData fullEntityOvfData,
             OsRepository osRepository) {
-        super(document, images, luns, interfaces, vmBase, osRepository);
-        this.vmBase = vmBase;
+        super(document,
+                fullEntityOvfData.getDiskImages(),
+                fullEntityOvfData.getLunDisks(),
+                fullEntityOvfData.getInterfaces(),
+                fullEntityOvfData.getVmBase(),
+                osRepository);
+        this.fullEntityOvfData = fullEntityOvfData;
     }
 
     @Override
@@ -47,10 +48,10 @@ public abstract class OvfOvirtReader extends OvfReader {
     @Override
     public void buildVirtualSystem() {
         XmlNode virtualSystem = selectSingleNode(_document, "//*/Content");
-        consumeReadProperty(virtualSystem, NAME, val -> vmBase.setName(val));
+        consumeReadProperty(virtualSystem, NAME, val -> fullEntityOvfData.getVmBase().setName(val));
 
         // set ovf version to the ovf object
-        vmBase.setOvfVersion(getVersion());
+        fullEntityOvfData.getVmBase().setOvfVersion(getVersion());
 
         XmlNodeList list = selectNodes(virtualSystem, "Section");
         if (list != null) {
@@ -58,9 +59,9 @@ public abstract class OvfOvirtReader extends OvfReader {
             XmlNode node = getNode(list, "xsi:type", "ovf:OperatingSystemSection_Type");
             if (node != null) {
                 readOsSection(node);
-                if (!osRepository.isLinux(vmBase.getOsId())
-                        || vmBase.getDefaultDisplayType() != DisplayType.qxl) {
-                    vmBase.setSingleQxlPci(false);
+                if (!osRepository.isLinux(fullEntityOvfData.getVmBase().getOsId())
+                        || fullEntityOvfData.getVmBase().getDefaultDisplayType() != DisplayType.qxl) {
+                    fullEntityOvfData.getVmBase().setSingleQxlPci(false);
                 }
             }
 
@@ -80,7 +81,7 @@ public abstract class OvfOvirtReader extends OvfReader {
 
     @Override
     protected void readLunDisk(XmlNode node, LunDisk lun) {
-        lun.setDiskVmElements(Collections.singletonList(new DiskVmElement(lun.getId(), vmBase.getId())));
+        lun.setDiskVmElements(Collections.singletonList(new DiskVmElement(lun.getId(), fullEntityOvfData.getVmBase().getId())));
         LUNs luns = new LUNs();
         consumeReadXmlAttribute(node,
                 OVF_PREFIX + COLON + LUN_DISCARD_ZEROES_DATA,
@@ -113,7 +114,7 @@ public abstract class OvfOvirtReader extends OvfReader {
         }
         luns.setLunConnections(lunConnections);
         lun.setLun(luns);
-        DiskVmElement dve = lun.getDiskVmElementForVm(vmBase.getId());
+        DiskVmElement dve = lun.getDiskVmElementForVm(fullEntityOvfData.getVmBase().getId());
         initGeneralDiskAttributes(node, lun, dve);
     }
 
@@ -242,11 +243,11 @@ public abstract class OvfOvirtReader extends OvfReader {
     }
 
     protected void readOsSection(XmlNode section) {
-        vmBase.setId(new Guid(section.attributes.get("ovf:id").getValue()));
+        fullEntityOvfData.getVmBase().setId(new Guid(section.attributes.get("ovf:id").getValue()));
         XmlNode node = selectSingleNode(section, "Description");
         if (node != null) {
             int osId = osRepository.getOsIdByUniqueName(node.innerText);
-            vmBase.setOsId(osId);
+            fullEntityOvfData.getVmBase().setOsId(osId);
             setClusterArch(osRepository.getArchitectureFromOS(osId));
         } else {
             setClusterArch(ArchitectureType.undefined);

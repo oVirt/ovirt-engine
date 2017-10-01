@@ -1,13 +1,9 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
@@ -17,12 +13,10 @@ public class OvfTemplateReader extends OvfOvirtReader {
     protected VmTemplate _vmTemplate;
 
     public OvfTemplateReader(XmlDocument document,
-            VmTemplate vmTemplate,
-            List<DiskImage> images,
-            List<VmNetworkInterface> interfaces,
-            OsRepository osRepository) {
-        super(document, images, Collections.EMPTY_LIST, interfaces, vmTemplate, osRepository);
-        _vmTemplate = vmTemplate;
+                             FullEntityOvfData fullEntityOvfData,
+                             OsRepository osRepository) {
+        super(document, fullEntityOvfData, osRepository);
+        _vmTemplate = (VmTemplate) fullEntityOvfData.getVmBase();
     }
 
     @Override

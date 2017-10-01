@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -144,7 +145,8 @@ public class OvfManagerTest {
         String xml = manager.exportVm(vm, new ArrayList<>(), Collections.EMPTY_LIST, Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
-        manager.importVm(xml, newVm, new ArrayList<>(), Collections.EMPTY_LIST, new ArrayList<>());
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
+        manager.importVm(xml, newVm, fullEntityOvfData);
         int graphicsDeviceCount = 0;
         for (VmDevice device : newVm.getManagedVmDeviceMap().values()) {
             if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
@@ -163,7 +165,8 @@ public class OvfManagerTest {
         String xml = manager.exportVm(vm, new ArrayList<>(), Collections.EMPTY_LIST, Version.getLast());
         assertNotNull(xml);
         final VM newVm = new VM();
-        manager.importVm(xml, newVm, new ArrayList<>(), Collections.EMPTY_LIST, new ArrayList<>());
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
+        manager.importVm(xml, newVm, fullEntityOvfData);
         int graphicsDeviceCount = 0;
         for (VmDevice device : newVm.getManagedVmDeviceMap().values()) {
             if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
@@ -182,7 +185,8 @@ public class OvfManagerTest {
         final VM newVm = new VM();
         assertTrue(xml.contains("Generation"));
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
-        manager.importVm(replacedXml, newVm, new ArrayList<>(), Collections.EMPTY_LIST, new ArrayList<>());
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
+        manager.importVm(replacedXml, newVm, fullEntityOvfData);
         assertVm(vm, newVm, 1);
     }
 
@@ -192,7 +196,8 @@ public class OvfManagerTest {
         String xml = manager.exportTemplate(template, new ArrayList<>(), Version.v3_6);
         assertNotNull(xml);
         final VmTemplate newtemplate = new VmTemplate();
-        manager.importTemplate(xml, newtemplate, new ArrayList<>(), new ArrayList<>());
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newtemplate);
+        manager.importTemplate(xml, fullEntityOvfData);
         assertEquals("imported template is different than expected", newtemplate, template);
         assertEquals("imported db generation is different than expected", template.getDbGeneration(), newtemplate.getDbGeneration());
     }
@@ -224,8 +229,8 @@ public class OvfManagerTest {
         assertNotNull(xml);
 
         VM newVm = new VM();
-        ArrayList<DiskImage> newDisks = new ArrayList<>();
-        manager.importVm(xml, newVm, newDisks, Collections.EMPTY_LIST, new ArrayList<>());
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
+        manager.importVm(xml, newVm, fullEntityOvfData);
         String newXml = manager.exportVm(vm, disks, Collections.EMPTY_LIST, Version.v4_0);
 
         assertEquals(deleteExportDateValueFromXml(xml), deleteExportDateValueFromXml(newXml));
@@ -239,13 +244,12 @@ public class OvfManagerTest {
         assertNotNull(xml);
 
         VM newVm = new VM();
-        ArrayList<DiskImage> newDisks = new ArrayList<>();
-        ArrayList<VmNetworkInterface> newInterfaces = new ArrayList<>();
-        manager.importVm(xml, newVm, newDisks, Collections.EMPTY_LIST, newInterfaces);
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
+        manager.importVm(xml, newVm, fullEntityOvfData);
 
         assertVm(vm, newVm, vm.getDbGeneration());
-        assertCollection(vm.getInterfaces(), newInterfaces);
-        assertCollection(disks, newDisks,
+        assertCollection(vm.getInterfaces(), fullEntityOvfData.getInterfaces());
+        assertCollection(disks, fullEntityOvfData.getDiskImages(),
                 diskPair -> diskPair.getFirst().getDiskVmElementForVm(vm.getId()).
                         equals(diskPair.getSecond().getDiskVmElementForVm(vm.getId())));
     }
@@ -283,7 +287,8 @@ public class OvfManagerTest {
         final VM resultVm = new VM();
         assertTrue(xml.contains("Generation"));
         String replacedXml = xml.replaceAll("Generation", "test_replaced");
-        manager.importVm(replacedXml, resultVm, new ArrayList<>(), Collections.EMPTY_LIST, new ArrayList<>());
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(resultVm);
+        manager.importVm(replacedXml, resultVm, fullEntityOvfData);
         return resultVm;
     }
 

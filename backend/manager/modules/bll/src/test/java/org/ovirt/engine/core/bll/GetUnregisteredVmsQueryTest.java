@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
@@ -95,7 +96,7 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
         when(unregisteredOVFDataDaoMock.getByEntityIdAndStorageDomain(newVmGuid, storageDomainId)).thenReturn(expectedResultQuery1);
 
         // Mock OVF
-        when(ovfHelperMock.readVmFromOvf(ovfData)).thenReturn(vmReturnForOvf);
-        when(ovfHelperMock.readVmFromOvf(ovfData2)).thenReturn(vmReturnForOvf2);
+        when(ovfHelperMock.readVmFromOvf(ovfData)).thenReturn(new FullEntityOvfData(vmReturnForOvf));
+        when(ovfHelperMock.readVmFromOvf(ovfData2)).thenReturn(new FullEntityOvfData(vmReturnForOvf2));
     }
 }
