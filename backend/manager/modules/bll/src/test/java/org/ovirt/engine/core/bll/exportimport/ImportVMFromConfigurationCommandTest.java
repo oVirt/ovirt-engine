@@ -30,7 +30,7 @@ import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
-import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -60,7 +60,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Spy
     @InjectMocks
-    private ImportVmFromConfigurationCommand<ImportVmParameters> cmd =
+    private ImportVmFromConfigurationCommand<ImportVmFromConfParameters> cmd =
             new ImportVmFromConfigurationCommand<>(createParametersWhenImagesExistOnTargetStorageDomain(), null);
 
     private ImportValidator validator;
@@ -170,8 +170,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
     }
 
-    private ImportVmParameters createParametersWhenImagesExistOnTargetStorageDomain() {
-        ImportVmParameters params = new ImportVmParameters(emptyList(), true);
+    private ImportVmFromConfParameters createParametersWhenImagesExistOnTargetStorageDomain() {
+        ImportVmFromConfParameters params = new ImportVmFromConfParameters(emptyList(), true);
         params.setContainerId(vmId);
         params.setStorageDomainId(storageDomainId);
         params.setClusterId(clusterId);

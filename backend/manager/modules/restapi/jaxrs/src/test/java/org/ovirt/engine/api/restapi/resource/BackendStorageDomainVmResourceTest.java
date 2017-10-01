@@ -22,6 +22,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -300,9 +301,10 @@ public class BackendStorageDomainVmResourceTest
 
     public void doTestRegister(org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) throws Exception {
         setUriInfo(setUpActionExpectations(ActionType.ImportVmFromConfiguration,
-                                           ImportVmParameters.class,
-                                           new String[] { "ContainerId", "StorageDomainId", "ClusterId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
-                                           new Object[] { VM_ID, GUIDS[3], GUIDS[1], importAsNewEntity, true}));
+                ImportVmFromConfParameters.class,
+                new String[] { "ContainerId", "StorageDomainId", "ClusterId", "ImportAsNewEntity",
+                        "ImagesExistOnTargetStorageDomain" },
+                new Object[] { VM_ID, GUIDS[3], GUIDS[1], importAsNewEntity, true }));
 
         Action action = new Action();
         action.setCluster(cluster);

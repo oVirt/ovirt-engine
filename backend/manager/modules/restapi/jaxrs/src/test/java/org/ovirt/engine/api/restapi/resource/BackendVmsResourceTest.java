@@ -35,7 +35,7 @@ import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
-import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -625,7 +625,7 @@ public class BackendVmsResourceTest
                 returnedVM);
         Guid newId = GUIDS[3];
         setUpCreationExpectations(ActionType.ImportVmFromConfiguration,
-                ImportVmParameters.class,
+                ImportVmFromConfParameters.class,
                 new String[] { "Vm", "ClusterId", "ImportAsNewEntity" },
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()), true},
                 true,
@@ -669,7 +669,7 @@ public class BackendVmsResourceTest
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
                 returnedVM);
         setUpCreationExpectations(ActionType.ImportVmFromConfiguration,
-                ImportVmParameters.class,
+                ImportVmFromConfParameters.class,
                 new String[] { "Vm", "ClusterId", "ImportAsNewEntity"},
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()), false},
                 true,
@@ -717,7 +717,7 @@ public class BackendVmsResourceTest
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
                 returnedVM);
         setUpCreationExpectations(ActionType.ImportVmFromConfiguration,
-                ImportVmParameters.class,
+                ImportVmFromConfParameters.class,
                 new String[] { "Vm", "ClusterId" },
                 new Object[] { returnedVM, GUIDS[1] },
                 true,
@@ -758,7 +758,7 @@ public class BackendVmsResourceTest
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
                 returnedVM);
         setUriInfo(setUpActionExpectations(ActionType.ImportVmFromConfiguration,
-                ImportVmParameters.class,
+                ImportVmFromConfParameters.class,
                 new String[] { "Vm", "ClusterId" },
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId())},
                 valid,

@@ -63,7 +63,7 @@ import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
-import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -286,7 +286,7 @@ public class BackendVmsResource extends
         VmMapper.map(vm, vmConfiguration.getStaticData());
 
         Guid clusterId = namedCluster(vm) ? getCluster(vm).getId() : asGuid(vm.getCluster().getId());
-        ImportVmParameters parameters = new ImportVmParameters();
+        ImportVmFromConfParameters parameters = new ImportVmFromConfParameters();
         parameters.setVm(vmConfiguration);
         parameters.setClusterId(clusterId);
         if (initialization.isSetRegenerateIds()) {

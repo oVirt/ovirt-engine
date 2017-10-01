@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
-import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> extends ImportVmCommand<T> {
+public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParameters> extends ImportVmCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private Collection<Disk> vmDisksToAttach;

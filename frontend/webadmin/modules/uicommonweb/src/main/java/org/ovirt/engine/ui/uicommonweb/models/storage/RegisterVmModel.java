@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -246,7 +246,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
             VM vm = registerVmData.getEntity();
             Cluster cluster = registerVmData.getCluster().getSelectedItem();
 
-            ImportVmParameters params = new ImportVmParameters(
+            ImportVmFromConfParameters params = new ImportVmFromConfParameters(
                     getExternalVnicProfileMappings(cluster),
                     registerVmData.getReassignMacs().getEntity());
             params.setContainerId(vm.getId());
