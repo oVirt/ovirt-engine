@@ -86,7 +86,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     @Spy
     @InjectMocks
-    private ImportVmTemplateCommand command =
+    private ImportVmTemplateCommand<ImportVmTemplateParameters> command =
             new ImportVmTemplateCommand(createParameters(), CommandContext.createContext(""));
 
     @Test

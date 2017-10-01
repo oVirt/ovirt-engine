@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -20,7 +20,7 @@ public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate, Impor
             VmTemplate vmTemplate = entityData.getEntity();
             Cluster cluster = entityData.getCluster().getSelectedItem();
 
-            ImportVmTemplateParameters params = new ImportVmTemplateParameters();
+            ImportVmTemplateFromConfParameters params = new ImportVmTemplateFromConfParameters();
             params.setContainerId(vmTemplate.getId());
             params.setStorageDomainId(getStorageDomainId());
             params.setImagesExistOnTargetStorageDomain(true);

@@ -9,6 +9,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainTemplateResource;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -53,7 +54,7 @@ public class BackendStorageDomainTemplateResource
     @Override
     public Response register(Action action) {
         validateParameters(action, "cluster.id|name");
-        ImportVmTemplateParameters params = new ImportVmTemplateParameters();
+        ImportVmTemplateFromConfParameters params = new ImportVmTemplateFromConfParameters();
         params.setContainerId(guid);
         params.setStorageDomainId(parent.getStorageDomainId());
         params.setClusterId(getClusterId(action));

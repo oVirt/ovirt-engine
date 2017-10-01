@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
-public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplateParameters> extends ImportVmTemplateCommand {
+public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplateFromConfParameters> extends ImportVmTemplateCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private Map<Guid, String> failedDisksToImportForAuditLog = new HashMap<>();
@@ -71,7 +71,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         super(commandId);
     }
 
-    public ImportVmTemplateFromConfigurationCommand(ImportVmTemplateParameters parameters, CommandContext commandContext) {
+    public ImportVmTemplateFromConfigurationCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 

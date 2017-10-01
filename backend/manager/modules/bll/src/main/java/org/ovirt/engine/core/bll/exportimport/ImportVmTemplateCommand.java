@@ -79,7 +79,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmTemplateParameters>
+public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> extends MoveOrCopyTemplateCommand<T>
         implements QuotaStorageDependent {
 
     /**
@@ -127,7 +127,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private Guid sourceDomainId = Guid.Empty;
     private Guid sourceTemplateId;
 
-    public ImportVmTemplateCommand(ImportVmTemplateParameters parameters, CommandContext commandContext) {
+    public ImportVmTemplateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmTemplate(parameters.getVmTemplate());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
