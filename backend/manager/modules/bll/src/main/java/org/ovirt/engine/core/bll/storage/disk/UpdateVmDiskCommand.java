@@ -138,6 +138,8 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     @Inject
     private SnapshotDao snapshotDao;
     @Inject
+    private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
+    @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public UpdateVmDiskCommand(T parameters, CommandContext commandContext) {
@@ -548,7 +550,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     private String getJsonDiskDescription() throws IOException {
-        return MetadataDiskDescriptionHandler.getInstance().generateJsonDiskDescription(getParameters().getDiskInfo());
+        return metadataDiskDescriptionHandler.generateJsonDiskDescription(getParameters().getDiskInfo());
     }
 
     protected void updateDiskProfile() {

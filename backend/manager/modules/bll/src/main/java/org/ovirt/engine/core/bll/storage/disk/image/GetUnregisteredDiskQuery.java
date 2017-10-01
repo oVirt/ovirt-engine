@@ -38,6 +38,9 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
     @Inject
     private ImagesHandler imagesHandler;
 
+    @Inject
+    private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
+
     public GetUnregisteredDiskQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }
@@ -100,8 +103,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         }
         if (StringUtils.isNotEmpty(newDiskImage.getDescription())) {
             try {
-                MetadataDiskDescriptionHandler.getInstance()
-                        .enrichDiskByJsonDescription(newDiskImage.getDescription(), newDiskImage);
+                metadataDiskDescriptionHandler.enrichDiskByJsonDescription(newDiskImage.getDescription(), newDiskImage);
             } catch (IOException | DecoderException e) {
                 log.warn("Could not parse the description ({}) of disk ID '{}'. The description is expected to be in "
                                 + "JSON format.", newDiskImage.getDescription(), newDiskImage.getId());

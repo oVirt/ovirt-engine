@@ -134,7 +134,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private VmDao vmDao;
     @Inject
     private OvfUtils ovfUtils;
-
+    @Inject
+    private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
     @Inject
     protected StorageHelperDirector storageHelperDirector;
 
@@ -739,7 +740,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected String getJsonDiskDescription(Disk disk) {
         try {
-            return MetadataDiskDescriptionHandler.getInstance().generateJsonDiskDescription(disk);
+            return metadataDiskDescriptionHandler.generateJsonDiskDescription(disk);
         } catch (IOException e) {
             log.error("Exception while generating json for disk. ERROR: '{}'", e);
             return StringUtils.EMPTY;

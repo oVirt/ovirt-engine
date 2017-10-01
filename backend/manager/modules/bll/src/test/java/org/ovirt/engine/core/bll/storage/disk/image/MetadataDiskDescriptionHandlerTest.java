@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,16 +8,15 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
@@ -29,13 +26,12 @@ public class MetadataDiskDescriptionHandlerTest {
     private static int DISK_ALIAS_MAX_LENGTH = 194;
 
     private DiskImage disk;
-    private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private AuditLogDirector auditLogDirector;
+
+    @InjectMocks
+    private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
@@ -43,8 +39,6 @@ public class MetadataDiskDescriptionHandlerTest {
     @Before
     public void setUp() {
         disk = new DiskImage();
-        metadataDiskDescriptionHandler = spy(MetadataDiskDescriptionHandler.getInstance());
-        doReturn(auditLogDirector).when(metadataDiskDescriptionHandler).getAuditLogDirector();
     }
 
     @Test
@@ -151,16 +145,16 @@ public class MetadataDiskDescriptionHandlerTest {
                 generateEncodingJsonEntry(3));
     }
 
-    private static String generateDiskAliasJsonEntry(String diskAlias) {
-        return MetadataDiskDescriptionHandler.getInstance().generateJsonField("DiskAlias", diskAlias);
+    private String generateDiskAliasJsonEntry(String diskAlias) {
+        return metadataDiskDescriptionHandler.generateJsonField("DiskAlias", diskAlias);
     }
 
-    private static String generateDiskDescriptionJsonEntry(String diskDescription) {
-        return MetadataDiskDescriptionHandler.getInstance().generateJsonField("DiskDescription", diskDescription);
+    private String generateDiskDescriptionJsonEntry(String diskDescription) {
+        return metadataDiskDescriptionHandler.generateJsonField("DiskDescription", diskDescription);
     }
 
-    private static String generateEncodingJsonEntry(int encoding) {
-        return MetadataDiskDescriptionHandler.getInstance().generateJsonField("Enc", String.valueOf(encoding));
+    private String generateEncodingJsonEntry(int encoding) {
+        return metadataDiskDescriptionHandler.generateJsonField("Enc", String.valueOf(encoding));
     }
 
     private static String generateRandomString(int stringLength) {
@@ -177,10 +171,10 @@ public class MetadataDiskDescriptionHandlerTest {
                 metadataDiskDescriptionHandler.generateJsonDiskDescription(disk));
     }
 
-    private static void assertDiskDescriptionDecoding(Disk disk) throws Exception {
+    private void assertDiskDescriptionDecoding(Disk disk) throws Exception {
         Disk diskToEnrich = new DiskImage();
-        MetadataDiskDescriptionHandler.getInstance().enrichDiskByJsonDescription(
-                MetadataDiskDescriptionHandler.getInstance().generateJsonDiskDescription(disk), diskToEnrich);
+        metadataDiskDescriptionHandler.enrichDiskByJsonDescription(
+                metadataDiskDescriptionHandler.generateJsonDiskDescription(disk), diskToEnrich);
         assertEquals(diskToEnrich, disk);
     }
 }

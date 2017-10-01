@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
@@ -17,12 +20,11 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.JsonHelper;
 
+@Singleton
 public class MetadataDiskDescriptionHandler {
 
-    private static final MetadataDiskDescriptionHandler instance = new MetadataDiskDescriptionHandler();
     private static final String DISK_ALIAS = "DiskAlias";
     private static final String DISK_DESCRIPTION = "DiskDescription";
     private static final String DISK_ENCODING = "Enc";
@@ -44,12 +46,8 @@ public class MetadataDiskDescriptionHandler {
      */
     private static final int METADATA_DESCRIPTION_MAX_LENGTH = 208;
 
-    private MetadataDiskDescriptionHandler() {
-    }
-
-    public static MetadataDiskDescriptionHandler getInstance() {
-        return instance;
-    }
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     /**
      * Creates and returns a Json string containing the disk alias, description and encoding.
@@ -210,7 +208,7 @@ public class MetadataDiskDescriptionHandler {
     private void auditLogDiskFieldTruncated(String diskAlias, String fieldName) {
         AuditLogable logable = createDiskEvent(diskAlias);
         logable.addCustomValue("DiskFieldName", fieldName);
-        getAuditLogDirector().log(logable, AuditLogType.FAILED_TO_STORE_ENTIRE_DISK_FIELD_IN_DISK_DESCRIPTION_METADATA);
+        auditLogDirector.log(logable, AuditLogType.FAILED_TO_STORE_ENTIRE_DISK_FIELD_IN_DISK_DESCRIPTION_METADATA);
     }
 
     private void auditLogDiskFieldTruncatedAndOthersWereLost(String diskAlias,
@@ -219,24 +217,20 @@ public class MetadataDiskDescriptionHandler {
         AuditLogable logable = createDiskEvent(diskAlias);
         logable.addCustomValue("DiskFieldName", fieldName);
         logable.addCustomValue("DiskFieldsNames", diskFieldsNames);
-        getAuditLogDirector().log(logable,
+        auditLogDirector.log(logable,
                 AuditLogType.FAILED_TO_STORE_ENTIRE_DISK_FIELD_AND_REST_OF_FIELDS_IN_DISK_DESCRIPTION_METADATA);
     }
 
     private void auditLogFailedToStoreDiskFields(String diskAlias, String diskFieldsNames) {
         AuditLogable logable = createDiskEvent(diskAlias);
         logable.addCustomValue("DiskFieldsNames", diskFieldsNames);
-        getAuditLogDirector().log(logable, AuditLogType.FAILED_TO_STORE_DISK_FIELDS_IN_DISK_DESCRIPTION_METADATA);
+        auditLogDirector.log(logable, AuditLogType.FAILED_TO_STORE_DISK_FIELDS_IN_DISK_DESCRIPTION_METADATA);
     }
 
     private AuditLogable createDiskEvent(String diskAlias) {
         AuditLogable logable = new AuditLogableImpl();
         logable.addCustomValue("DiskAlias", diskAlias);
         return logable;
-    }
-
-    protected AuditLogDirector getAuditLogDirector() {
-        return Injector.get(AuditLogDirector.class);
     }
 
     public void enrichDiskByJsonDescription(String jsonDiskDescription, Disk disk)
