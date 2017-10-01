@@ -564,7 +564,10 @@ public class ImagesHandler {
         // Update diskImages snapshots
         images.forEach(diskImage -> {
             if (!diskImage.getActive()) {
-                diskImagesMap.get(diskImage.getId()).getSnapshots().add(diskImage);
+                DiskImage activeImage = diskImagesMap.get(diskImage.getId());
+                if (activeImage != null) {
+                    activeImage.getSnapshots().add(diskImage);
+                }
             }
         });
 
