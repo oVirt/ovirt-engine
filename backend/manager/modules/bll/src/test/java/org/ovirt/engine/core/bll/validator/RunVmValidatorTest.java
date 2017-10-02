@@ -32,7 +32,6 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -49,7 +48,6 @@ import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -67,16 +65,11 @@ public class RunVmValidatorTest {
             mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_64_BIT)
             );
 
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
-
     @Spy
     @InjectMocks
     private RunVmValidator runVmValidator = new RunVmValidator();
     @Mock
     private SnapshotsValidator snapshotValidator;
-    @Mock
-    private DiskHandler diskHandler;
 
     @Before
     public void setup() throws InitializationException {
