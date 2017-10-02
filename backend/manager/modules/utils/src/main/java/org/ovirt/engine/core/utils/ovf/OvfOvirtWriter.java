@@ -97,6 +97,8 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeAttributeString(OVF_URI, "volume-format", image.getVolumeFormat().toString());
         _writer.writeAttributeString(OVF_URI, "volume-type", image.getVolumeType().toString());
         _writer.writeAttributeString(OVF_URI, "disk-interface", dve.getDiskInterface().toString());
+        _writer.writeAttributeString(OVF_URI, "read-only", String.valueOf(dve.isReadOnly()));
+        _writer.writeAttributeString(OVF_URI, "shareable", String.valueOf(image.isShareable()));
         _writer.writeAttributeString(OVF_URI, "boot", String.valueOf(dve.isBoot()));
         if (FeatureSupported.passDiscardSupported(version)) {
             _writer.writeAttributeString(OVF_URI, "pass-discard", String.valueOf(dve.isPassDiscard()));
