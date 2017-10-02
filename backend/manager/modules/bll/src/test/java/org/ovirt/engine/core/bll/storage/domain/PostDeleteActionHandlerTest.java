@@ -9,7 +9,6 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,25 +21,16 @@ import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PostDeleteActionHandlerTest {
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
-
     @Spy
     @InjectMocks
     private PostDeleteActionHandler postDeleteActionHandler;
 
     @Mock
     private DiskVmElementDao diskVmElementDao;
-
-    @Mock
-    private AuditLogableBase auditLogableBase;
 
     @Mock
     private AuditLogDirector auditLogDirector;
@@ -135,7 +125,6 @@ public class PostDeleteActionHandlerTest {
         ParametersWithPostDeleteAction params =
                 new ParametersWithPostDeleteAction(false, storageDomain.getDiscardAfterDelete());
 
-        injectorRule.bind(AuditLogableBase.class, auditLogableBase);
         doReturn(diskAttachedToAtLeastOneVmWithEnableDiscard)
                 .when(postDeleteActionHandler).diskVmElementWithPassDiscardExists(any());
 
