@@ -47,6 +47,7 @@ public interface OvfProperties {
     String GENERATION = "Generation";
     String CUSTOM_COMPATIBILITY_VERSION = "CustomCompatibilityVersion";
     String CLUSTER_COMPATIBILITY_VERSION = "ClusterCompatibilityVersion";
+    String CLUSTER_NAME = "ClusterName";
     String NAME = "Name";
     String TEMPLATE_ID = "TemplateId";
     String TEMPLATE_NAME = "TemplateName";

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.compat.Version;
 
 public abstract class OvfOvirtWriter extends OvfWriter {
 
+    protected FullEntityOvfData fullEntityOvfData;
     private OsRepository osRepository;
 
     public OvfOvirtWriter(FullEntityOvfData fullEntityOvfData,
@@ -27,6 +28,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
                 fullEntityOvfData.getLunDisks(),
                 version);
         this.osRepository = osRepository;
+        this.fullEntityOvfData = fullEntityOvfData;
     }
 
     @Override

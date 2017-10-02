@@ -17,6 +17,7 @@ public class FullEntityOvfData implements Serializable {
     private List<LunDisk> lunDisks = new ArrayList<>();
     private List<VmNetworkInterface> interfaces = new ArrayList<>();
     private VmBase vmBase = new VmBase();
+    private String clusterName = "";
 
     public FullEntityOvfData() {
     }
@@ -24,21 +25,25 @@ public class FullEntityOvfData implements Serializable {
     public FullEntityOvfData(VM vm) {
         this.setVm(vm);
         this.setVmBase(vm.getStaticData());
+        this.setClusterName(vm.getClusterName());
     }
 
     public FullEntityOvfData(VmTemplate vmTemplate) {
         this.setVmTemplate(vmTemplate);
         this.setVmBase(vmTemplate);
+        this.setClusterName(vmTemplate.getClusterName());
     }
 
     public FullEntityOvfData(List<DiskImage> diskImages,
             List<LunDisk> lunDisks,
             List<VmNetworkInterface> interfaces,
-            VmBase vmBase) {
+            VmBase vmBase,
+            String clusterName) {
         this.diskImages = diskImages;
         this.lunDisks = lunDisks;
         this.interfaces = interfaces;
         this.vmBase = vmBase;
+        this.clusterName = clusterName;
     }
 
     public VmBase getVmBase() {
@@ -89,6 +94,14 @@ public class FullEntityOvfData implements Serializable {
         this.interfaces = interfaces;
     }
 
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -102,7 +115,8 @@ public class FullEntityOvfData implements Serializable {
                 && Objects.equals(diskImages, other.diskImages)
                 && Objects.equals(lunDisks, other.lunDisks)
                 && Objects.equals(interfaces, other.interfaces)
-                && Objects.equals(vmBase, other.vmBase);
+                && Objects.equals(vmBase, other.vmBase)
+                && Objects.equals(clusterName, other.clusterName);
     }
 
     @Override
@@ -112,7 +126,8 @@ public class FullEntityOvfData implements Serializable {
                 diskImages,
                 lunDisks,
                 interfaces,
-                vmBase
+                vmBase,
+                clusterName
                 );
     }
 }

@@ -350,6 +350,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                 .setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId()))));
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
+        fullEntityOvfData.setClusterName(vm.getClusterName());
         fullEntityOvfData.setDiskImages(vmImages);
         fullEntityOvfData.setLunDisks(lunDisks);
         String vmMeta = ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
@@ -557,6 +558,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
         ovfUpdateProcessHelper.loadVmData(getVm());
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(getVm());
+        fullEntityOvfData.setClusterName(getVm().getClusterName());
         fullEntityOvfData.setDiskImages(ovfUpdateProcessHelper.getVmImagesFromDb(getVm()));
         ovfUpdateProcessHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,

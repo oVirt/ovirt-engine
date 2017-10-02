@@ -27,6 +27,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
         super.writeGeneralData();
         _writer.writeElement(TEMPLATE_ID, vm.getVmtGuid().toString());
         _writer.writeElement(TEMPLATE_NAME, vm.getVmtName());
+        _writer.writeElement(CLUSTER_NAME, fullEntityOvfData.getClusterName());
         if (vm.getInstanceTypeId() != null ) {
             _writer.writeElement(INSTANCE_TYPE_ID, vm.getInstanceTypeId().toString());
         }

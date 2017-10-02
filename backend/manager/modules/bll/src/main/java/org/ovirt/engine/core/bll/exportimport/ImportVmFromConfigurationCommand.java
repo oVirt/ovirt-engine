@@ -29,8 +29,10 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -54,6 +56,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     @Inject
     private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
 
+    @Inject
+    private ClusterDao clusterDao;
     @Inject
     private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;
     @Inject
@@ -144,7 +148,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             try {
                 // We should get only one entity, since we fetched the entity with a specific Storage Domain
                 ovfEntityData = ovfEntityDataList.get(0);
-                vmFromConfiguration = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData()).getVm();
+                FullEntityOvfData fullEntityOvfData = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
+                vmFromConfiguration = fullEntityOvfData.getVm();
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 mapVnicProfiles(vmFromConfiguration.getInterfaces());
                 getParameters().setVm(vmFromConfiguration);
