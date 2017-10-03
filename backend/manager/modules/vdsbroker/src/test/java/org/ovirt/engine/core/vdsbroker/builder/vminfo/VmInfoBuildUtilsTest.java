@@ -49,6 +49,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
@@ -98,6 +99,8 @@ public class VmInfoBuildUtilsTest {
     private VmNicFilterParameterDao vmNicFilterParameterDao;
     @Mock
     private ClusterFeatureDao clusterFeatureDao;
+    @Mock
+    private VmNumaNodeDao vmNumaNodeDao;
     @Mock
     private AuditLogDirector auditLogDirector;
     @Mock

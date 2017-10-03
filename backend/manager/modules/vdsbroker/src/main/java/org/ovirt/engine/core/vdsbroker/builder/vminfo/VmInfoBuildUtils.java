@@ -2,10 +2,14 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -32,10 +37,13 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -68,6 +76,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
@@ -75,6 +84,7 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
+import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -106,6 +116,7 @@ public class VmInfoBuildUtils {
     private final VmNicFilterParameterDao vmNicFilterParameterDao;
     private final AuditLogDirector auditLogDirector;
     private final ClusterFeatureDao clusterFeatureDao;
+    private final VmNumaNodeDao vmNumaNodeDao;
     private final OsRepository osRepository;
 
     @Inject
@@ -120,6 +131,7 @@ public class VmInfoBuildUtils {
             NetworkClusterDao networkClusterDao,
             AuditLogDirector auditLogDirector,
             ClusterFeatureDao clusterFeatureDao,
+            VmNumaNodeDao vmNumaNodeDao,
             OsRepository osRepository) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
@@ -131,6 +143,7 @@ public class VmInfoBuildUtils {
         this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
         this.auditLogDirector = Objects.requireNonNull(auditLogDirector);
         this.clusterFeatureDao = Objects.requireNonNull(clusterFeatureDao);
+        this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
         this.osRepository = Objects.requireNonNull(osRepository);
     }
 
@@ -862,5 +875,150 @@ public class VmInfoBuildUtils {
         .filter(f -> f.getFeature().getName().equals(featureName))
         .findAny()
         .isPresent();
+    }
+
+    /**
+     * Calculate and generates a string list of pCPUs to use in libvirt xml for IO threads and emulator threads pinning.
+     * Used for High Performance VM types only.
+     * In case the VM type is not "High performance" or in case prerequisites are not set, null value is returned.
+     *
+     * @param vm a VM to which iothreads and emulator threads pinning is calculated
+     * @param hostNumaNodesSupplier a list of the assigned VM's host NUMA nodes
+     * @param vdsCpuThreads number of Logical CPU Cores
+     * @return a string list of pCPUs ids to pin to
+     */
+    public String getIoThreadsAndEmulatorPinningCpus(VM vm, MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier, int vdsCpuThreads) {
+        if (vm.getVmType() != VmType.HighPerformance) {
+            return null;
+        }
+
+        final String cpuPinning = vm.getCpuPinning();
+        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
+        Optional<VmNumaNode> pinnedVmNumaNode = vmNumaNodes.stream().filter(d -> !d.getVdsNumaNodeList().isEmpty()).findAny();
+
+        if (StringUtils.isEmpty(cpuPinning) || !pinnedVmNumaNode.isPresent() || vm.getNumOfIoThreads() == 0) {
+            String msgReason1 = StringUtils.isEmpty(cpuPinning) ? "CPU Pinning topology is not set": "";
+            String msgReason2 = vm.getNumOfIoThreads() == 0 ? "IO Threads is not enabled": "";
+            String msgReason3 = !pinnedVmNumaNode.isPresent() ? "vm's virtual NUMA nodes are not pinned to host's NUMA nodes": "";
+            String finalMsgReason = Arrays.asList(msgReason1, msgReason2, msgReason3).stream().filter(r -> !r.isEmpty()).collect(Collectors.joining(", ")) + ".";
+
+            log.warn("No IO thread(s) pinning and Emulator thread(s) pinning for High Performance VM {} {} due to wrong configuration: {}",
+                    vm.getName(), vm.getId(), finalMsgReason);
+            return null;
+        }
+
+        return findCpusToPinIoAndEmulator(vm, hostNumaNodesSupplier, vdsCpuThreads);
+    }
+
+    private String findCpusToPinIoAndEmulator(VM vm, MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier, int vdsCpuThreads) {
+        List<VdsNumaNode> vdsNumaNodes = hostNumaNodesSupplier.get();
+        Set<Integer> vdsPinnedCpus = getAllPinnedPCpus(vm.getCpuPinning());
+        VdsNumaNode mostPinnedPnumaNode = vdsNumaNodes.isEmpty() ? null : vdsNumaNodes.get(0);
+        int maxNumOfPinnedCpusForNode = 0;
+
+        // Go over all Host's NUMA nodes and find the node with most pinned CPU's in order to pin the
+        // IO threads and emulator threads to
+        for (VdsNumaNode pNode : vdsNumaNodes) {
+            if (pNode.getCpuIds().isEmpty()) {
+                continue;
+            }
+            int numOfPinnedCpus = CollectionUtils.intersection(pNode.getCpuIds(), vdsPinnedCpus).size();
+            if (maxNumOfPinnedCpusForNode < numOfPinnedCpus) {
+                maxNumOfPinnedCpusForNode = numOfPinnedCpus;
+                mostPinnedPnumaNode = pNode;
+            }
+        }
+
+        // Prepare the list of one or two CPUs to pin Io and emulator threads to
+        List<Integer> retCpusList = new LinkedList<>();
+        if (mostPinnedPnumaNode == null || mostPinnedPnumaNode.getCpuIds().isEmpty()) {
+            // in case no NUMA node found or no CPU's for the NUMA node,
+            // set pinned CPU's to be {0,1} or just {0) (depends on the number of CPUs in host)
+            retCpusList.add(0);
+            if (vdsCpuThreads > 1) {
+                retCpusList.add(1);
+            }
+        } else {
+            retCpusList.add(mostPinnedPnumaNode.getCpuIds().get(0));
+            if (mostPinnedPnumaNode.getCpuIds().size() > 1) {
+                retCpusList.add(mostPinnedPnumaNode.getCpuIds().get(1));
+            }
+        }
+
+        String overridenPinCpus = getOverriddenPinnedCpusList(vdsPinnedCpus, retCpusList);
+        if (!overridenPinCpus.isEmpty()) {
+            log.warn("IO thread(s), Emulator thread(s) and few CPU thread(s) are pinned to the same physical CPU(s): [{}], for High Performance "
+                            + "VM {} {}. Please consider changing the CPU pinning topology to avoid that overlapping.",
+                    overridenPinCpus, vm.getName(), vm.getId());
+        }
+
+        return retCpusList.size() == 2 ?
+                retCpusList.get(0) + "," + retCpusList.get(1) :
+                retCpusList.get(0).toString();
+    }
+
+    // collect all pinned cpus and merge them into one set
+    private static Set<Integer> getAllPinnedPCpus(String cpuPinning) {
+        final Set<Integer> pinnedCpus = new LinkedHashSet<>();
+        for (final String rule : cpuPinning.split("_")) {
+            pinnedCpus.addAll(parsePCpuPinningNumbers(rule.split("#")[1]));
+        }
+        return pinnedCpus;
+    }
+
+    private static Collection<Integer> parsePCpuPinningNumbers(final String text) {
+        try {
+            Set<Integer> include = new HashSet<>();
+            Set<Integer> exclude = new HashSet<>();
+            String[] splitText = text.split(",");
+            for (String section : splitText) {
+                if (section.startsWith("^")) {
+                    exclude.add(Integer.parseInt(section.substring(1)));
+                } else if (section.contains("-")) {
+                    // include range
+                    String[] numbers = section.split("-");
+                    int start = Integer.parseInt(numbers[0]);
+                    int end = Integer.parseInt(numbers[1]);
+                    List<Integer> range = createRange(start, end);
+                    if (range != null) {
+                        include.addAll(range);
+                    } else {
+                        return Arrays.asList();
+                    }
+                } else {
+                    // include one
+                    include.add(Integer.parseInt(section));
+                }
+            }
+            include.removeAll(exclude);
+            return include;
+        } catch (NumberFormatException ex) {
+            return Arrays.asList();
+        }
+    }
+
+    private static List<Integer> createRange(int start, int end) {
+        if (start >= 0 && start < end) {
+            List<Integer> returnList = new LinkedList<>();
+            for (int i = start; i <= end; i++) {
+                returnList.add(i);
+            }
+            return returnList;
+        } else {
+            return null;
+        }
+    }
+
+    // Get list of pCPUs used both for CPU pinning and IO/emulator pinning
+    private String getOverriddenPinnedCpusList(Set<Integer> vdsPinnedCpus, List<Integer> ioEmulatorPinnedCpus) {
+        List<Integer> overriddenCpus = (List<Integer>)CollectionUtils.intersection(vdsPinnedCpus, ioEmulatorPinnedCpus);
+
+        if (overriddenCpus.isEmpty()) {
+            return "";
+        } else {
+            return overriddenCpus.size() == 2 ?
+                    overriddenCpus.get(0) + "," + overriddenCpus.get(1) :
+                    overriddenCpus.get(0).toString();
+        }
     }
 }

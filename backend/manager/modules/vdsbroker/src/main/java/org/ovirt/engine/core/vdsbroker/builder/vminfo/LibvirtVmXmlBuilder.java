@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -64,6 +65,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -125,6 +127,8 @@ public class LibvirtVmXmlBuilder {
     @Inject
     private VdsStatisticsDao vdsStatisticsDao;
     @Inject
+    private VdsNumaNodeDao vdsNumaNodeDao;
+    @Inject
     private OsRepository osRepository;
     @Inject
     private VmDevicesMonitoring vmDevicesMonitoring;
@@ -142,8 +146,10 @@ public class LibvirtVmXmlBuilder {
 
     private Map<String, Object> createInfo;
     private VM vm;
+    private int vdsCpuThreads;
     private MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier;
     private MemoizingSupplier<VdsStatistics> hostStatisticsSupplier;
+    private MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
     private Map<String, Map<String, Object>> diskMetadata;
@@ -154,11 +160,13 @@ public class LibvirtVmXmlBuilder {
             VM vm,
             Guid hostId,
             VmDevice payload,
+            int vdsCpuThreads,
             boolean volatileRun,
             Map<Guid, String> passthroughVnicToVfMap) {
         this.createInfo = createInfo;
         this.vm = vm;
         this.payload = payload;
+        this.vdsCpuThreads = vdsCpuThreads;
         this.volatileRun = volatileRun;
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
         payloadIndex = -1;
@@ -169,6 +177,7 @@ public class LibvirtVmXmlBuilder {
                 .stream()
                 .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device)));
         hostStatisticsSupplier = new MemoizingSupplier<>(() -> vdsStatisticsDao.get(hostId));
+        hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(hostId));
     }
 
     @PostConstruct
@@ -333,6 +342,22 @@ public class LibvirtVmXmlBuilder {
         if (vm.getCpuShares() > 0) {
             writer.writeElement("shares", String.valueOf(vm.getCpuShares()));
         }
+
+        // iothreadpin + emulatorpin
+        String ioEmulatorCpus = vmInfoBuildUtils.getIoThreadsAndEmulatorPinningCpus(vm, hostNumaNodesSupplier, vdsCpuThreads);
+        if (ioEmulatorCpus != null) {
+            for (int i = 0; i < vm.getNumOfIoThreads(); i++) {
+                writer.writeStartElement("iothreadpin");
+                writer.writeAttributeString("iothread", String.valueOf(i+1));
+                writer.writeAttributeString("cpuset", ioEmulatorCpus);
+                writer.writeEndElement();
+            }
+
+            writer.writeStartElement("emulatorpin");
+            writer.writeAttributeString("cpuset", ioEmulatorCpus);
+            writer.writeEndElement();
+        }
+
         writer.writeEndElement();
     }
 
