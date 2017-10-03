@@ -5,8 +5,6 @@ source automation/jvm-opts.sh
 MAVEN_OPTS="$MAVEN_OPTS $JVM_MEM_OPTS"
 export MAVEN_OPTS
 
-SUFFIX=".git$(git rev-parse --short HEAD)"
-
 if [ -d /root/.m2/repository/org/ovirt ]; then
     echo "Deleting ovirt folder from maven cache"
     rm -rf /root/.m2/repository/org/ovirt
@@ -69,21 +67,19 @@ make dist
 rpmbuild \
     -D "_srcrpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
-    -D "release_suffix ${SUFFIX}" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     -ts ./*.gz
 
 # install any build requirements
 yum-builddep output/*src.rpm
 
-# build minimal rpms for CI
+# build release rpms
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
-    -D "release_suffix ${SUFFIX}" \
-    -D "ovirt_build_ut 0" \
-    -D "ovirt_build_all_user_agents 0" \
-    -D "ovirt_build_locales 0" \
+    -D "ovirt_build_ut 1" \
+    -D "ovirt_build_all_user_agents 1" \
+    -D "ovirt_build_locales 1" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     --rebuild output/*.src.rpm
 
