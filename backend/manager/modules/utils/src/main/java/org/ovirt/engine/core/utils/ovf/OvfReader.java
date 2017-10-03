@@ -67,7 +67,6 @@ public abstract class OvfReader implements IOvfBuilder {
     protected List<VmNetworkInterface> interfaces;
     protected XmlDocument _document;
     protected XmlNamespaceManager _xmlNS;
-    private static final int BYTES_IN_GB = 1024 * 1024 * 1024;
     public static final String EmptyName = "[Empty Name]";
     private String version;
     private final VmBase vmBase;

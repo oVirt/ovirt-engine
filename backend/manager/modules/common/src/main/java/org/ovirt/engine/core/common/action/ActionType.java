@@ -30,6 +30,8 @@ public enum ActionType {
     ExportVm(23, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     ExportVmTemplate(24, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     RestoreStatelessVm(25, QuotaDependency.NONE),
+    ExportOva(26, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    CreateOva(27, QuotaDependency.NONE),
     AddVmInterface(28, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmInterface(30, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
@@ -189,6 +191,7 @@ public enum ActionType {
     CreateAllTemplateDisksFromSnapshot(251, QuotaDependency.NONE),
     UpdateVolume(253, QuotaDependency.NONE),
     UpdateAllTemplateDisks(254, QuotaDependency.NONE),
+    CreateAllOvaDisks(255, QuotaDependency.NONE),
 
     // VmPoolCommands
     AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),

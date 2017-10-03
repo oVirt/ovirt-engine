@@ -37,7 +37,7 @@ public abstract class OvfOvaWriter extends OvfWriter {
     protected void writeDisk(DiskImage image) {
         DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
         _writer.writeAttributeString(OVF_URI, "diskId", image.getId().toString());
-        _writer.writeAttributeString(OVF_URI, "capacity", String.valueOf(image.getSize()));
+        _writer.writeAttributeString(OVF_URI, "capacity", String.valueOf(convertBytesToGigabyte(image.getSize())));
         _writer.writeAttributeString(OVF_URI, "capacityAllocationUnits", "byte * 2^30");
         _writer.writeAttributeString(OVF_URI, "populatedSize", String.valueOf(image.getActualSizeInBytes()));
         _writer.writeAttributeString(OVF_URI, "parentRef", "");

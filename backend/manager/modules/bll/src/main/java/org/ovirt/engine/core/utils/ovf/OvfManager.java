@@ -65,6 +65,10 @@ public class OvfManager {
         return new OvfTemplateWriter(fullEntityOvfData, version, osRepository).build().getStringRepresentation();
     }
 
+    public String exportOva(VM vm, FullEntityOvfData fullEntityOvfData, Version version) {
+        return new OvfOvaVmWriter(vm, fullEntityOvfData, version, osRepository).build().getStringRepresentation();
+    }
+
     public void importVm(String ovfstring,
             VM vm,
             FullEntityOvfData fullEntityOvfData)

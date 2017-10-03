@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -966,12 +967,12 @@ public class ImagesHandler {
                 isImageInitialSizeSupported(storageDomainDao.get(dstDomain).getStorageType());
     }
 
-    public void prepareImage(Guid storagePoolId,
+    public VDSReturnValue prepareImage(Guid storagePoolId,
                                     Guid newStorageDomainID,
                                     Guid newImageGroupId,
                                     Guid newImageId,
                                     Guid vdsId) {
-        resourceManager.runVdsCommand(VDSCommandType.PrepareImage, new PrepareImageVDSCommandParameters(vdsId,
+        return resourceManager.runVdsCommand(VDSCommandType.PrepareImage, new PrepareImageVDSCommandParameters(vdsId,
                 storagePoolId,
                 newStorageDomainID,
                 newImageGroupId,

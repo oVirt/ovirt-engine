@@ -621,4 +621,8 @@ public abstract class OvfWriter implements IOvfBuilder {
             return "";
         }
     }
+
+    protected int convertBytesToGigabyte(long bytes) {
+        return (int) Math.ceil((double) bytes / BYTES_IN_GB);
+    }
 }
