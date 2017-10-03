@@ -97,14 +97,15 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
      * the main proceedCommandExecution() loop has persisted the updated child list.
      */
     protected void syncChildCommandList(RemoveSnapshotSingleDiskParameters parameters) {
+        // Both ColdMergeSnapshotSingleDiskCommand and RemoveSnapshotSingleDiskLiveCommand, hold
+        // a list of the executed children. The list is constructed based on the number of children
+        // provided by CoCo. The number of children will also be incremented if child commands fail.
+        // In this method, we build a mapping between the command step and the command Id. As the last
+        // command in the children command list is the current step being executed, we always put that
+        // command as the value of the current step.
         List<Guid> childCommandIds = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
         if (childCommandIds.size() != parameters.getChildCommands().size()) {
-            for (Guid id : childCommandIds) {
-                if (!parameters.getChildCommands().containsValue(id)) {
-                    parameters.getChildCommands().put(parameters.getCommandStep(), id);
-                    break;
-                }
-            }
+            parameters.getChildCommands().put(parameters.getCommandStep(), childCommandIds.get(childCommandIds.size()-1));
         }
     }
 

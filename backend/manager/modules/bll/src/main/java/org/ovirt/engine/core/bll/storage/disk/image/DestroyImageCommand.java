@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -13,8 +13,13 @@ import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
+import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -41,24 +46,37 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
     protected void executeCommand() {
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupId()));
 
-        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-
-        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage,
-                createVDSParameters());
+        VDSReturnValue vdsReturnValue = null;
+        try {
+            vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage, createVDSParameters());
+        } catch (EngineException e) {
+            log.error("Failed to delete image {}/{}", getParameters().getImageGroupId(),
+                    getParameters().getImageList().stream().findFirst().get(), e);
+            if (!getParameters().isLiveMerge()) {
+                throw e;
+            }
+        }
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
-            getParameters().setVdsmTaskIds(new ArrayList<>());
+            Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
             Guid result = createTask(taskId, vdsReturnValue.getCreationInfo(), getParameters().getParentCommand(),
-                            VdcObjectType.Storage, getParameters().getStorageDomainId());
-            getReturnValue().getInternalVdsmTaskIdList().add(result);
-            getReturnValue().getVdsmTaskIdList().add(result);
-            getParameters().getVdsmTaskIds().add(result);
-            setSucceeded(vdsReturnValue.getSucceeded());
+                    VdcObjectType.Storage, getParameters().getStorageDomainId());
+            getTaskIdList().add(result);
             log.info("Successfully started task to remove orphaned volumes resulting from live merge");
         } else {
-            setSucceeded(false);
-            setCommandStatus(CommandStatus.FAILED);
+            log.info("Retrying deleting image {}/{}", getParameters().getImageGroupId(),
+                    getParameters().getImageList().stream().findFirst().get());
+            MergeStatusReturnValue returnValue = new MergeStatusReturnValue(VmBlockJobType.COMMIT,
+                    new HashSet<>(getParameters().getImageList()));
+            getReturnValue().setActionReturnValue(returnValue);
+            // At this point, we know that this command was executed during live merge and it is safe to do
+            // the casting in the next line.
+            ((RemoveSnapshotSingleDiskParameters) getParameters().getParentParameters()).
+                    setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
         }
+
+        setSucceeded(true);
+        setCommandStatus(CommandStatus.SUCCEEDED);
     }
 
     private VDSParametersBase createVDSParameters() {

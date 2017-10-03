@@ -53,6 +53,10 @@ public class DestroyImageParameters extends StorageDomainParametersBase {
         return force;
     }
 
+    public boolean isLiveMerge() {
+        return getParentParameters().getCommandType() == VdcActionType.RemoveSnapshotSingleDiskLive;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)

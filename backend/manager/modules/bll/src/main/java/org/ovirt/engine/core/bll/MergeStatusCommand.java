@@ -14,10 +14,13 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ReconcileVolumeChainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -58,8 +61,13 @@ public class MergeStatusCommand<T extends MergeParameters>
         } else {
             images = getVolumeChain();
         }
-        if (images == null) {
-            setCommandStatus(CommandStatus.FAILED);
+        if (images == null || images.isEmpty()) {
+            log.error("Failed to retrieve images list of VM {}. Retrying ...", getParameters().getVmId());
+            setCommandStatus(CommandStatus.SUCCEEDED);
+            setSucceeded(true);
+            // As this command is executed only during live merge flow, the following casting is safe.
+            ((RemoveSnapshotSingleDiskParameters) getParameters().getParentParameters()).
+                    setNextCommandStep(RemoveSnapshotSingleDiskStep.MERGE_STATUS);
             return;
         }
 
@@ -96,12 +104,17 @@ public class MergeStatusCommand<T extends MergeParameters>
     }
 
     private Set<Guid> getVolumeChain() {
-        List<String> vmIds = new ArrayList<>();
-        vmIds.add(getParameters().getVmId().toString());
-        Map[] vms = (Map[]) runVdsCommand(
+        Map[] vms = null;
+        try {
+            List<String> vmIds = new ArrayList<>();
+            vmIds.add(getParameters().getVmId().toString());
+            vms = (Map[]) runVdsCommand(
                 VDSCommandType.FullList,
                 new FullListVDSCommandParameters(getParameters().getVdsId(), vmIds))
                 .getReturnValue();
+        } catch (EngineException e) {
+            log.error("Failed to retrieve images list of VM {}. Retrying ...", getParameters().getVmId(), e);
+        }
 
         if (vms == null || vms.length == 0) {
             log.error("Failed to retrieve VM information");
@@ -148,13 +161,18 @@ public class MergeStatusCommand<T extends MergeParameters>
                         getParameters().getImageId()
                 );
 
-        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.ReconcileVolumeChain,
-                parameters);
-        if (!vdsReturnValue.getSucceeded()) {
-            log.error("Unable to retrieve volume list during Live Merge recovery");
+        try {
+            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.ReconcileVolumeChain,
+                    parameters);
+            if (!vdsReturnValue.getSucceeded()) {
+                log.error("Unable to retrieve volume list during Live Merge recovery");
+                return null;
+            }
+            return new HashSet<>((List<Guid>) vdsReturnValue.getReturnValue());
+        } catch (EngineException e) {
+            log.error("Unable to retrieve volume list during Live Merge recovery", e);
             return null;
         }
-        return new HashSet<>((List<Guid>) vdsReturnValue.getReturnValue());
     }
 
     /**

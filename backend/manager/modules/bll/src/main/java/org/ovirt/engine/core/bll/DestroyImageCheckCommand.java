@@ -9,11 +9,14 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.SPMGetVolumeInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
@@ -33,11 +36,19 @@ public class DestroyImageCheckCommand<T extends DestroyImageParameters>
 
         if (failedGuids.isEmpty()) {
             log.info("Requested images were successfully removed");
-            setSucceeded(true);
             persistCommand(getParameters().getParentCommand());
         } else {
             log.error("The following images were not removed: {}", failedGuids);
+            // If this command is executed during live merge, set the next command to DESTROY_IMAGE_CHECK
+            // in order to retry executing it.
+            if (getParameters().isLiveMerge()) {
+                // As this command is executed only during live merge flow, the following casting is safe.
+                ((RemoveSnapshotSingleDiskParameters) getParameters().getParentParameters()).
+                        setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK);
+            }
         }
+        setCommandStatus(CommandStatus.SUCCEEDED);
+        setSucceeded(true);
     }
 
     protected List<Guid> getFailedVolumeIds() {
