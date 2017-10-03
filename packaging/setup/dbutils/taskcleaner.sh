@@ -22,6 +22,7 @@
 #  should be cleaned as well.
 ###############################################################################################################
 
+. "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")"/bin/engine-prolog.sh
 . "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
@@ -113,6 +114,10 @@ __EOF__
 		[ "${answer}" = "y" ] || die "Please contact support for further assistance."
 	fi
 }
+
+if [ -n "$sclenv" ]; then
+	. scl_source enable ${sclenv}
+fi
 
 [ -n "${DBFUNC_DB_USER}" ] || die "Please specify user name"
 [ -n "${DBFUNC_DB_DATABASE}" ] || die "Please specify database"
