@@ -1,13 +1,14 @@
 #!/bin/sh
 
 . "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")"/bin/engine-prolog.sh
+. "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")"/bin/generate-pgpass.sh
 . "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
 	dbfunc_cleanup
+	pgPassCleanup
 }
 trap cleanup 0
-dbfunc_init
 
 usage() {
 	cat << __EOF__
@@ -16,10 +17,6 @@ Usage: $0 [options] [ENTITIES]
     -h            - This help text.
     -v            - Turn on verbosity                         (WARNING: lots of output)
     -l LOGFILE    - The logfile for capturing output          (def. ${DBFUNC_LOGFILE})
-    -s HOST       - The database servername for the database  (def. ${DBFUNC_DB_HOST})
-    -p PORT       - The database port for the database        (def. ${DBFUNC_DB_PORT})
-    -u USER       - The username for the database             (def. ${DBFUNC_DB_USER})
-    -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
     -t TYPE       - The object type {all | vm | template | disk | snapshot}
                     If "all" is used then no ENTITIES are expected.
     -r            - Recursive, unlocks all disks under the selected vm/template.
@@ -192,16 +189,17 @@ RECURSIVE=
 QUERY=
 IMPLICIT=
 
-while getopts hvl:s:p:u:d:t:rqi option; do
+DBFUNC_DB_HOST="${ENGINE_DB_HOST}"
+DBFUNC_DB_PORT="${ENGINE_DB_PORT}"
+DBFUNC_DB_USER="${ENGINE_DB_USER}"
+DBFUNC_DB_DATABASE="${ENGINE_DB_DATABASE}"
+
+while getopts hvl:t:rqi option; do
 	case $option in
 		\?) usage; exit 1;;
 		h) usage; exit 0;;
 		v) DBFUNC_VERBOSE=1;;
 		l) DBFUNC_LOGFILE="${OPTARG}";;
-		s) DBFUNC_DB_HOST="${OPTARG}";;
-		p) DBFUNC_DB_PORT="${OPTARG}";;
-		u) DBFUNC_DB_USER="${OPTARG}";;
-		d) DBFUNC_DB_DATABASE="${OPTARG}";;
 		t) TYPE="${OPTARG}";;
 		r) RECURSIVE=1;;
 		q) QUERY=1;;
@@ -221,6 +219,10 @@ fi
 if [ -n "$sclenv" ]; then
 	. scl_source enable ${sclenv}
 fi
+
+generatePgPass
+DBFUNC_DB_PGPASSFILE="${MYPGPASS}"
+dbfunc_init
 
 # Install fn_db_unlock_all procedure
 dbfunc_psql_die --file="$(dirname "$0")/unlock_entity.sql" > /dev/null
