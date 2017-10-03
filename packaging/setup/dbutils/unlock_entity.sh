@@ -85,16 +85,8 @@ entity_unlock() {
 	fi
 }
 
-#Displays locked entities
-entity_query() {
-	local object_type="$1"
-	local LOCKED=2
-	local TEMPLATE_LOCKED=1
-	local IMAGE_LOCKED=15;
-	local SNAPSHOT_LOCKED=LOCKED
-	local CMD
-	if [ "${object_type}" = "vm" ]; then
-		dbfunc_psql_die --command="
+query_vm() {
+	dbfunc_psql_die --command="
 			select
 				vm_name as vm_name
 			from
@@ -132,8 +124,10 @@ entity_query() {
 				a.vm_guid = b.vm_id and
 				status ilike '${SNAPSHOT_LOCKED}';
 		"
-	elif [ "${object_type}" = "template" ]; then
-		dbfunc_psql_die --command="
+}
+
+query_template() {
+	dbfunc_psql_die --command="
 			select vm_name as template_name
 			from vm_static
 			where template_status = ${TEMPLATE_LOCKED};
@@ -156,8 +150,10 @@ entity_query() {
 					where is_plugged
 				);
 		"
-	elif [ "${object_type}" = "disk" ]; then
-		dbfunc_psql_die --command="
+}
+
+query_disk() {
+	dbfunc_psql_die --command="
 			select
 				vm_id as entity_id,
 				disk_id
@@ -171,8 +167,10 @@ entity_query() {
 				imagestatus = ${LOCKED} and
 				is_plugged;
 		"
-	elif [ "${object_type}" = "snapshot" ]; then
-		dbfunc_psql_die --command="
+}
+
+query_snapshot() {
+	dbfunc_psql_die --command="
 			select
 				vm_id as entity_id,
 				snapshot_id
@@ -181,6 +179,33 @@ entity_query() {
 			where
 				status ilike '${SNAPSHOT_LOCKED}';
 		"
+}
+
+#Displays locked entities
+entity_query() {
+	local object_type="$1"
+	local LOCKED=2
+	local TEMPLATE_LOCKED=1
+	local IMAGE_LOCKED=15;
+	local SNAPSHOT_LOCKED=LOCKED
+
+	if [ "${object_type}" = "vm" ]; then
+		query_vm
+	elif [ "${object_type}" = "template" ]; then
+		query_template
+	elif [ "${object_type}" = "disk" ]; then
+		query_disk
+	elif [ "${object_type}" = "snapshot" ]; then
+		query_snapshot
+	elif [ "${object_type}" = "all" ]; then
+		echo "Locked VMs:"
+		query_vm
+		echo "Locked templates:"
+		query_template
+		echo "Locked disks:"
+		query_disk
+		echo "Locked snapshots:"
+		query_snapshot
 	fi
 }
 
