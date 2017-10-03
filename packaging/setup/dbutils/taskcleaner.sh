@@ -23,13 +23,14 @@
 ###############################################################################################################
 
 . "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")"/bin/engine-prolog.sh
+. "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")"/bin/generate-pgpass.sh
 . "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
 	dbfunc_cleanup
+	pgPassCleanup
 }
 trap cleanup 0
-dbfunc_init
 
 #Using two variables for sql commands in order to control command priority where data should be removed first from
 #business_entity_snapshot and step table before removing it from the async_tasks table.
@@ -57,10 +58,6 @@ Usage: $0 [options]
     -h            - This help text.
     -v            - Turn on verbosity                         (WARNING: lots of output)
     -l LOGFILE    - The logfile for capturing output          (def. ${DBFUNC_LOGFILE})
-    -s HOST       - The database servername for the database  (def. ${DBFUNC_DB_HOST})
-    -p PORT       - The database port for the database        (def. ${DBFUNC_DB_PORT})
-    -u USER       - The username for the database             (def. ${DBFUNC_DB_USER})
-    -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
     -t TASK_ID    - Removes a task by its Task ID.
     -c COMMAND_ID - Removes all tasks related to the given Command Id.
     -T            - Removes/Displays all commands that have running tasks
@@ -77,16 +74,12 @@ Usage: $0 [options]
 __EOF__
 }
 
-while getopts hvl:s:p:u:d:t:c:zZrRCJAToq option; do
+while getopts hvl:t:c:zZrRCJAToq option; do
 	case "${option}" in
 		\?) usage; exit 1;;
 		h) usage; exit 0;;
 		v) DBFUNC_VERBOSE=1;;
 		l) DBFUNC_LOGFILE="${OPTARG}";;
-		s) DBFUNC_DB_HOST="${OPTARG}";;
-		p) DBFUNC_DB_PORT="${OPTARG}";;
-		d) DBFUNC_DB_DATABASE="${OPTARG}";;
-		u) DBFUNC_DB_USER="${OPTARG}";;
 		t) TASK_ID="${OPTARG}";;
 		c) COMMAND_ID="${OPTARG}";;
 		z) ZOMBIES_ONLY=1;;
@@ -119,8 +112,14 @@ if [ -n "$sclenv" ]; then
 	. scl_source enable ${sclenv}
 fi
 
-[ -n "${DBFUNC_DB_USER}" ] || die "Please specify user name"
-[ -n "${DBFUNC_DB_DATABASE}" ] || die "Please specify database"
+DBFUNC_DB_HOST="${ENGINE_DB_HOST}"
+DBFUNC_DB_PORT="${ENGINE_DB_PORT}"
+DBFUNC_DB_USER="${ENGINE_DB_USER}"
+DBFUNC_DB_DATABASE="${ENGINE_DB_DATABASE}"
+
+generatePgPass
+DBFUNC_DB_PGPASSFILE="${MYPGPASS}"
+dbfunc_init
 
 dbfunc_psql_die --command="select exists (select * from information_schema.tables where table_schema = 'public' and table_name = 'command_entities');" | grep "t"
 
