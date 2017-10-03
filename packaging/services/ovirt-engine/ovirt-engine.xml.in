@@ -634,12 +634,16 @@
             redirect-socket="redirect"/>
         {% endif %}
 
-        <!-- Configure the compression filter so that it will compress all the
-             HTML static content and the output of the RESTAPI: -->
         <host name="default-host" alias="localhost">
+          <!-- Configure the compression filter so that it will compress all the
+               HTML static content and the output of the RESTAPI: -->
           <filter-ref
               name="gzip"
               predicate='regex(pattern="(text/(css|html|javascript|json|xml))|(application/(json|xml))(;.*)?", value=%{o,content-type}, full-match=true)'/>
+          <!-- Redirect the old user portal to the new user portal: -->
+          <filter-ref
+              name="web-ui"
+              predicate='regex(pattern="/ovirt-engine/userportal(/.*$)?")'/>
         </host>
       </server>
 
@@ -648,9 +652,11 @@
         <websockets/>
       </servlet-container>
 
-      <!-- Enable the gzip compression filter: -->
       <filters>
+        <!-- Enable the gzip compression filter: -->
         <gzip name="gzip"/>
+        <!-- Rule to redirect to the new user portal: -->
+        <rewrite name="web-ui" redirect="true" target="/ovirt-engine/web-ui"/>
       </filters>
     </subsystem>
 
