@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
@@ -27,6 +26,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class HostVmListModel extends VmListModel<VDS> {
+
+    private HostVmFilter viewFilterType;
 
     @Inject
     public HostVmListModel(final VmGeneralModel vmGeneralModel,
@@ -65,10 +66,8 @@ public class HostVmListModel extends VmListModel<VDS> {
     @Override
     public void search() {
         // Override standard search query mechanism.
-        // During the migration, the VM should be visible on source host (Migrating From), and also
-        // on destination host (Migrating To)
         if (getEntity() != null) {
-            AsyncDataProvider.getInstance().getVmsRunningOnOrMigratingToVds(new SetRawItemsAsyncQuery(), getEntity().getId());
+            viewFilterType.executeQuery(getEntity().getId(), new SetRawItemsAsyncQuery());
         } else {
             setItems(new ArrayList<VM>());
         }
@@ -91,4 +90,12 @@ public class HostVmListModel extends VmListModel<VDS> {
         }
     }
 
+    public HostVmFilter getViewFilterType() {
+        return viewFilterType;
+    }
+
+    public void setViewFilterType(HostVmFilter viewFilterType) {
+        this.viewFilterType = viewFilterType;
+        search();
+    }
 }

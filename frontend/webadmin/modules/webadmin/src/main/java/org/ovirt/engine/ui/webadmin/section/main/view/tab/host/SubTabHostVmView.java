@@ -1,18 +1,22 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmFilter;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -24,6 +28,10 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+
 
 public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListModel<Void>, HostVmListModel>
         implements SubTabHostVmPresenter.ViewDef {
@@ -34,16 +42,39 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private ViewRadioGroup<HostVmFilter> viewRadioGroup;
+
     @Inject
     public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
         super(modelProvider);
+
         initTable();
+        getTable().setTableOverhead(createOverheadPanel());
+        onFilterChange(viewRadioGroup.getSelectedValue());
         initWidget(getTableContainer());
     }
 
     @Override
     protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
+    }
+
+    private FlowPanel createOverheadPanel() {
+        Label label = new Label();
+        label.setText(constants.vms() + ":"); //$NON-NLS-1$
+        label.addStyleName(Styles.PULL_LEFT);
+        label.getElement().getStyle().setMarginTop(3, Style.Unit.PX);
+        label.getElement().getStyle().setMarginRight(5, Style.Unit.PX);
+
+        viewRadioGroup = new ViewRadioGroup<>(Arrays.asList(HostVmFilter.values()));
+        viewRadioGroup.setSelectedValue(HostVmFilter.ALL);
+        viewRadioGroup.addChangeHandler(selection -> onFilterChange(selection));
+
+        FlowPanel overheadPanel = new FlowPanel();
+        overheadPanel.add(label);
+        overheadPanel.add(viewRadioGroup);
+
+        return overheadPanel;
     }
 
     void initTable() {
@@ -159,6 +190,10 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         uptimeColumn.makeSortable();
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "110px"); //$NON-NLS-1$
+    }
+
+    private void onFilterChange(HostVmFilter selected) {
+        getDetailModel().setViewFilterType(selected);
     }
 
     abstract class ResourceConsumptionComparator implements Comparator<VM> {

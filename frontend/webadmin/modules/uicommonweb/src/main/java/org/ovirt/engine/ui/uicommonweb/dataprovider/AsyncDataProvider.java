@@ -2009,6 +2009,14 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getVmsPinnedToHost(AsyncQuery<List<VM>> aQuery, Guid id) {
+        aQuery.converterCallback = new ListConverter<>();
+
+        Frontend.getInstance().runQuery(QueryType.GetVmsPinnedToHost,
+                new IdQueryParameters(id),
+                aQuery);
+    }
+
     public void getVmsFromExternalServer(AsyncQuery aQuery,
             Guid dataCenterId,
             Guid vdsId,

@@ -2110,5 +2110,11 @@ public interface UIConstants extends Constants {
     String forceRemoveProvider();
 
     String forceRemoveCinderProvider();
+
+    String all();
+
+    String runningOnHost();
+
+    String pinnedToHost();
 }
 

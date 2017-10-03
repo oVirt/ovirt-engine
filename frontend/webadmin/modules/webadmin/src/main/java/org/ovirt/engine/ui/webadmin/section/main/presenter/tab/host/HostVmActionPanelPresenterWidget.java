@@ -32,6 +32,19 @@ public class HostVmActionPanelPresenterWidget extends
 
     @Override
     protected void initializeButtons() {
+        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.runVm(),
+                IconType.PLAY) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRunCommand();
+            }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.runVm());
+            }
+        });
+
         addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
                 IconType.MOON_O) {
             @Override

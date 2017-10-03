@@ -1,0 +1,68 @@
+package org.ovirt.engine.ui.uicommonweb.models.hosts;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.uicommonweb.ViewFilter;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
+public enum HostVmFilter implements ViewFilter<HostVmFilter> {
+    ALL(ConstantsManager.getInstance().getConstants().all()) {
+        @Override
+        public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
+            HashSet<VM> resultSet = new HashSet<>();
+            int[] callCount = {2};
+
+            AsyncCallback<List<VM>> callback = vmList -> {
+                resultSet.addAll(vmList);
+                callCount[0] -= 1;
+                if (callCount[0] == 0) {
+                    aQuery.getAsyncCallback().onSuccess(new ArrayList<>(resultSet));
+                }
+            };
+
+            RUNNING_ON_HOST.executeQuery(hostId, new AsyncQuery<>(callback));
+            PINNED_TO_HOST.executeQuery(hostId, new AsyncQuery<>(callback));
+        }
+    },
+
+    RUNNING_ON_HOST(ConstantsManager.getInstance().getConstants().runningOnHost()) {
+        @Override
+        public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
+            // During the migration, the VM should be visible on source host (Migrating From), and also
+            // on destination host (Migrating To)
+            AsyncDataProvider.getInstance().getVmsRunningOnOrMigratingToVds(aQuery, hostId);
+        }
+    },
+
+    PINNED_TO_HOST(ConstantsManager.getInstance().getConstants().pinnedToHost()) {
+        @Override
+        public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
+            AsyncDataProvider.getInstance().getVmsPinnedToHost(aQuery, hostId);
+        }
+    };
+
+    private String text;
+
+    HostVmFilter(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public HostVmFilter getValue() {
+        return this;
+    }
+
+    public abstract void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery);
+}
