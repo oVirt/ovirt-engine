@@ -75,7 +75,6 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -573,32 +572,21 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     protected boolean validateDestDomainsSpaceRequirements() {
-        Map<Guid, List<DiskImage>> storageDomainsImagesMap = new HashMap<>();
+        Guid destDomainId = getParameters().getTargetStorageDomainId();
+        DiskImage diskImage = getDiskImageByImageId(getParameters().getImageId());
+        Guid storagePoolId = diskImage.getStoragePoolId();
+        StorageDomain destDomain = getStorageDomainById(destDomainId, storagePoolId);
 
-        MultiValueMapUtils.addToMap(getParameters().getTargetStorageDomainId(),
-                    getDiskImageByImageId(getParameters().getImageId()),
-                    storageDomainsImagesMap);
+        if (!isStorageDomainWithinThresholds(destDomain)) {
+            return false;
+        }
 
-        for (Map.Entry<Guid, List<DiskImage>> entry : storageDomainsImagesMap.entrySet()) {
-            Guid destDomainId = entry.getKey();
-            List<DiskImage> disksList = entry.getValue();
-            Guid storagePoolId = disksList.get(0).getStoragePoolId();
-            StorageDomain destDomain = getStorageDomainById(destDomainId, storagePoolId);
+        List<DiskImage> allImageSnapshots = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
+        diskImage.getSnapshots().addAll(allImageSnapshots);
 
-            if (!isStorageDomainWithinThresholds(destDomain)) {
-                return false;
-            }
-
-            for (DiskImage diskImage : disksList) {
-                List<DiskImage> allImageSnapshots = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
-
-                diskImage.getSnapshots().addAll(allImageSnapshots);
-            }
-
-            StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destDomain);
-            if (!validate(storageDomainValidator.hasSpaceForClonedDisks(disksList))) {
-                return false;
-            }
+        StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destDomain);
+        if (!validate(storageDomainValidator.hasSpaceForClonedDisks(Collections.singleton(diskImage)))) {
+            return false;
         }
 
         return true;
