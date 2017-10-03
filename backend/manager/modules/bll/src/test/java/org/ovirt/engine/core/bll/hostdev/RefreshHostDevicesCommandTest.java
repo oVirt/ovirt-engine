@@ -43,7 +43,7 @@ public class RefreshHostDevicesCommandTest {
             }},
             new HostDevice() {{
                 setDeviceName("worse");
-                setParentDeviceName(null);
+                setParentDeviceName("no parent");
             }},
             new HostDevice() {{
                 setDeviceName("child_of_worse");
