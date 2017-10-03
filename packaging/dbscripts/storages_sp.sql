@@ -944,6 +944,15 @@ BEGIN
         INNER JOIN image_storage_domain_map
             ON i.image_guid = image_storage_domain_map.image_id
         WHERE image_storage_domain_map.storage_domain_id != v_storage_domain_id;
+
+        -- Add VMs with direct luns as part of entity ids with disks on other storage domains.
+        INSERT INTO ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE
+        SELECT DISTINCT vm_static.vm_guid
+        FROM vm_static
+        INNER JOIN vm_device vd
+            ON vd.vm_id = vm_static.vm_guid
+        INNER JOIN disk_lun_map dlm
+            ON dlm.disk_id = vd.device_id;
     END;
 
     BEGIN
