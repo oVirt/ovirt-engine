@@ -1,5 +1,6 @@
 #!/bin/sh
 
+. "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")"/bin/engine-prolog.sh
 . "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
@@ -215,6 +216,10 @@ IDS="$@"
 if [ "${TYPE}" != "all" ]; then
     [ -z "${IDS}" -a -z "${QUERY}" ] && die "Please specify ids or query"
     [ -n "${IDS}" -a -n "${QUERY}" ] && die "Please specify one ids or query"
+fi
+
+if [ -n "$sclenv" ]; then
+	. scl_source enable ${sclenv}
 fi
 
 # Install fn_db_unlock_all procedure
