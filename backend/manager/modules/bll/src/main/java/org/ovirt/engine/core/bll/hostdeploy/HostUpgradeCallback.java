@@ -166,6 +166,7 @@ public class HostUpgradeCallback implements CommandCallback {
         upgradeParams.setoVirtIsoFile(parameters.getoVirtIsoFile());
         upgradeParams.setParentCommand(ActionType.UpgradeHost);
         upgradeParams.setParentParameters(parameters);
+        upgradeParams.setReboot(parameters.isReboot());
         return upgradeParams;
     }
 

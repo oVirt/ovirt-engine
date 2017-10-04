@@ -6,12 +6,12 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 public class VdsInstallException extends RuntimeException {
     private VDSStatus status;
 
-    VdsInstallException(VDSStatus status, String message) {
+    public VdsInstallException(VDSStatus status, String message) {
         super(message);
         this.status = status;
     }
 
-    VdsInstallException(VDSStatus status, String message, Exception cause) {
+    public VdsInstallException(VDSStatus status, String message, Exception cause) {
         super(message, cause);
         this.status = status;
     }

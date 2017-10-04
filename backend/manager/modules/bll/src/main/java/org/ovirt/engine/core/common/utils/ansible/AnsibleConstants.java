@@ -40,4 +40,14 @@ public class AnsibleConstants {
      * This is name of file which executes the host-deploy via Ansible.
      */
     public static final String HOST_DEPLOY_PLAYBOOK = "ovirt-host-deploy.yml";
+
+    /**
+     * This is name of file which executes the host-upgrade via Ansible.
+     */
+    public static final String HOST_UPGRADE_PLAYBOOK = "ovirt-host-upgrade.yml";
+
+    /**
+     * This is name of callback plugin which is used to run update in check mode.
+     */
+    public static final String HOST_UPGRADE_CALLBACK_PLUGIN = "hostupgradeplugin";
 }

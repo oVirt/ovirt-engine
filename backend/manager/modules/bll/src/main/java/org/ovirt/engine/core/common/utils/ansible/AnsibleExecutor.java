@@ -26,7 +26,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +51,8 @@ public class AnsibleExecutor {
      * @throws InterruptedException
      *            when the execution of the command fails
      */
-    public AnsibleReturnCode runCommand(AnsibleCommandBuilder command) throws IOException, InterruptedException {
-        return runCommand(command, ANSIBLE_PLAYBOOK_TIMEOUT);
+    public AnsibleReturnValue runCommand(AnsibleCommandBuilder command, Pair<String, String> ... envVars) throws IOException, InterruptedException {
+        return runCommand(command, ANSIBLE_PLAYBOOK_TIMEOUT, true, envVars);
     }
 
     /**
@@ -67,20 +69,23 @@ public class AnsibleExecutor {
      * @throws InterruptedException
      *            when the execution of the command fails
      */
-    public AnsibleReturnCode runCommand(AnsibleCommandBuilder command, int timeout)
-        throws IOException, InterruptedException {
+    public AnsibleReturnValue runCommand(
+        AnsibleCommandBuilder command,
+        int timeout,
+        boolean redirectErrorStream,
+        Pair<String, String> ... envVars
+    ) throws IOException, InterruptedException {
         log.trace("Enter AnsibleExecutor::runCommand");
+        AnsibleReturnValue returnValue = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
         if (Files.notExists(Paths.get(command.playbook()))) {
             log.warn(
                 "Playbook '{}' does not exist, please ensure that ovirt-ansible-roles package is properly installed.",
                 command.playbook()
             );
-            return AnsibleReturnCode.ERROR;
+            return returnValue;
         }
 
         Path inventoryFile = null;
-        AnsibleReturnCode returnCode = AnsibleReturnCode.UNEXPECTED_ERROR;
-
         try {
             // Create a temporary inventory file if user didn't specified it:
             inventoryFile = createInventoryFile(command);
@@ -91,27 +96,37 @@ public class AnsibleExecutor {
             List<String> ansibleCommand = command.build();
             File logFile = command.logFile();
             ProcessBuilder ansibleProcessBuilder = new ProcessBuilder()
-                .redirectErrorStream(true)
-                .redirectOutput(logFile)
+                .redirectErrorStream(redirectErrorStream)
                 .command(ansibleCommand)
                 .directory(command.playbookDir().toFile());
+
+            if (command.enableLogging()) {
+                ansibleProcessBuilder.redirectOutput(logFile);
+            }
 
             // Set environment variables:
             ansibleProcessBuilder.environment()
                 .put("ANSIBLE_CONFIG", Paths.get(command.playbookDir().toString(), "ansible.cfg").toString());
+            for (Pair<String, String> envVar : envVars) {
+                ansibleProcessBuilder.environment().put(envVar.getFirst(), envVar.getSecond());
+            }
 
             // Execute the command:
             Process ansibleProcess = ansibleProcessBuilder.start();
             ansibleProcess.waitFor(timeout, TimeUnit.MINUTES);
-            returnCode = AnsibleReturnCode.values()[ansibleProcess.exitValue()];
+            returnValue.setAnsibleReturnCode(AnsibleReturnCode.values()[ansibleProcess.exitValue()]);
+
+            if (!command.enableLogging()) {
+                returnValue.setStdout(IOUtils.toString(ansibleProcess.getInputStream()));
+            }
             ansibleProcess.destroy();
         } finally {
-            log.info("Ansible playbook command has exited with value: {}", returnCode);
+            log.info("Ansible playbook command has exited with value: {}", returnValue.getAnsibleReturnCode());
             removeFile(inventoryFile);
         }
 
         log.trace("Exit AnsibleExecutor::runCommand");
-        return returnCode;
+        return returnValue;
     }
 
     /**

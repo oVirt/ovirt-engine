@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.host.AvailableUpdatesFinder;
+import org.ovirt.engine.core.bll.host.HostUpgradeManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -50,9 +53,23 @@ public class HostUpdatesChecker {
         try {
             updatesResult = availableUpdatesFinder.checkForUpdates(host);
             if (updatesResult.isUpdatesAvailable()) {
-                String message = updatesResult.getAvailablePackages() == null ? "found updates."
-                        : String.format("found updates for packages %s",
-                                StringUtils.join(updatesResult.getAvailablePackages(), ", "));
+                List<String> availablePackages = updatesResult.getAvailablePackages();
+                String message;
+                if (availablePackages.size() > HostUpgradeManager.MAX_NUM_OF_DISPLAYED_UPDATES) {
+                    message = String.format(
+                        "%1$s and %2$s others. To see all packages check engine.log.",
+                        StringUtils.join(
+                            availablePackages.subList(0, HostUpgradeManager.MAX_NUM_OF_DISPLAYED_UPDATES),
+                            ", "
+                        ),
+                        availablePackages.size() - HostUpgradeManager.MAX_NUM_OF_DISPLAYED_UPDATES
+                    );
+                } else {
+                    message = String.format(
+                        "found updates for packages %s",
+                        StringUtils.join(updatesResult.getAvailablePackages(), ", ")
+                    );
+                }
                 auditLog.addCustomValue("Message", message);
             } else {
                 auditLog.addCustomValue("Message", "no updates found.");

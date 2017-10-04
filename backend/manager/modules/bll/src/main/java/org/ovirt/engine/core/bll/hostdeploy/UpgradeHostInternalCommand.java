@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.HostConnectivityChecker;
-import org.ovirt.engine.core.bll.host.HostUpgradeManager;
 import org.ovirt.engine.core.bll.host.Updateable;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -37,6 +36,8 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
     private HostedEngineHelper hostedEngineHelper;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private Updateable upgradeManager;
 
     private boolean haMaintenanceFailed;
 
@@ -71,9 +72,8 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
         if (vdsType == VDSType.VDS || vdsType == VDSType.oVirtNode) {
             try {
                 setVdsStatus(VDSStatus.Installing);
-                Updateable upgradeManager = new HostUpgradeManager();
                 upgradeManager.update(getVds());
-                if (vdsType == VDSType.oVirtNode) {
+                if (vdsType == VDSType.oVirtNode || getParameters().isReboot()) {
                     VdsActionParameters params = new VdsActionParameters(getVds().getId());
                     params.setPrevVdsStatus(getParameters().getInitialStatus());
                     ActionReturnValue returnValue = runInternalAction(ActionType.SshHostReboot,
@@ -81,7 +81,7 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                             ExecutionHandler.createInternalJobContext());
                     if (!returnValue.getSucceeded()) {
                         setVdsStatus(VDSStatus.InstallFailed);
-                        log.error("Engine failed to restart via ssh ovirt-node host '{}' ('{}') after upgrade",
+                        log.error("Engine failed to restart via ssh host '{}' ('{}') after upgrade",
                                 getVds().getName(),
                                 getVds().getId());
                         return;

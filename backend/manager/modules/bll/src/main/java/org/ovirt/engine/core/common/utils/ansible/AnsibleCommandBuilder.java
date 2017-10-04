@@ -55,6 +55,8 @@ public class AnsibleCommandBuilder {
     private String limit;
     private Path inventoryFile;
     private String playbook;
+    private boolean checkMode;
+    private boolean enableLogging;
 
     // Logging:
     private File logFile;
@@ -68,10 +70,16 @@ public class AnsibleCommandBuilder {
 
     public AnsibleCommandBuilder() {
         cluster = "unspecified";
+        enableLogging = true;
         verboseLevel = AnsibleVerbosity.LEVEL0;
         config = EngineLocalConfig.getInstance();
         playbookDir = Paths.get(config.getUsrDir().getPath(), "..", "ovirt-ansible-roles", "playbooks");
         privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");
+    }
+
+    public AnsibleCommandBuilder checkMode(boolean checkMode) {
+        this.checkMode = checkMode;
+        return this;
     }
 
     public AnsibleCommandBuilder verboseLevel(AnsibleVerbosity verboseLevel) {
@@ -144,6 +152,11 @@ public class AnsibleCommandBuilder {
         return logFile;
     }
 
+    public AnsibleCommandBuilder enableLogging(boolean enableLogging) {
+        this.enableLogging = enableLogging;
+        return this;
+    }
+
     public Path inventoryFile() {
         return inventoryFile;
     }
@@ -180,6 +193,10 @@ public class AnsibleCommandBuilder {
         return logFileSuffix;
     }
 
+    public boolean enableLogging() {
+        return enableLogging;
+    }
+
     /**
      * The generated command will look like:
      *
@@ -200,6 +217,10 @@ public class AnsibleCommandBuilder {
             );
         }
 
+        if (checkMode) {
+            ansibleCommand.add("--check");
+        }
+
         if (privateKey != null) {
             ansibleCommand.add(String.format("--private-key=%1$s", privateKey));
         }
@@ -218,7 +239,7 @@ public class AnsibleCommandBuilder {
                 .forEach(ansibleCommand::add);
         }
 
-        if (logFile == null) {
+        if (logFile == null && enableLogging) {
             logFile = Paths.get(
                 config.getLogDir().toString(),
                 logFileDirectory != null ? logFileDirectory : AnsibleExecutor.DEFAULT_LOG_DIRECTORY,
