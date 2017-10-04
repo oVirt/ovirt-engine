@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -44,12 +46,14 @@ import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -93,6 +97,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     private DiskDao diskDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -151,20 +157,31 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         vmStaticDao.incrementDbGeneration(getVm().getId());
         endActionOnDisks();
 
+        boolean succeeded = false;
         if (getVm() != null) {
             vmHandler.unlockVm(getVm(), getCompensationContext());
-            restoreVmConfigFromSnapshot();
-
-            // disks and configuration is restored, let's set CCV if the snapshot originates in older Cluster version
-            if (!updateClusterCompatibilityVersionToOldCluster(false)) {
-                log.warn("Failed to set the Cluster Compatibility Version to the cluster version the snapshot originates from.");
+            try {
+                restoreVmConfigFromSnapshot();
+                // disks and configuration is restored, let's set CCV if the snapshot originates in older Cluster version
+                if (!updateClusterCompatibilityVersionToOldCluster(false)) {
+                    log.warn("Failed to set the Cluster Compatibility Version to the cluster version the snapshot originates from.");
+                }
+                succeeded = true;
+            } catch (EngineException ex) {
+                getReturnValue().setEndActionTryAgain(false);
+                log.error("Unable to restore VM configuration from snapshot: {}, undoing preview.",
+                        ExceptionUtils.getRootCauseMessage(ex));
+                commandCoordinatorUtil.executeAsyncCommand(ActionType.RestoreAllSnapshots,
+                        new RestoreAllSnapshotsParameters(getVm().getId(), SnapshotActionEnum.UNDO),
+                        CommandContext.createContext(getParameters().getSessionId()));
             }
         } else {
             setCommandShouldBeLogged(false);
             log.warn("VM is null, not performing endAction");
+            succeeded = true;
         }
 
-        setSucceeded(true);
+        setSucceeded(succeeded);
     }
 
     private void restoreVmConfigFromSnapshot() {
