@@ -1657,6 +1657,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String hostedEngineDeploymentAction();
 
+    String hostRestartAfterUpgrade();
+
     String imageFormat();
 
     String imageBackingFile();

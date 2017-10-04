@@ -9,9 +9,15 @@ public class UpgradeHostParameters extends VdsActionParameters {
     private static final long serialVersionUID = 3142278762372841895L;
     private VDSStatus initialStatus;
     private String oVirtIsoFile;
+    private boolean reboot;
 
     public UpgradeHostParameters(Guid hostId) {
+        this(hostId, true);
+    }
+
+    public UpgradeHostParameters(Guid hostId, boolean reboot) {
         super(hostId);
+        this.reboot = reboot;
     }
 
     public UpgradeHostParameters() {
@@ -31,5 +37,13 @@ public class UpgradeHostParameters extends VdsActionParameters {
 
     public void setoVirtIsoFile(String oVirtIsoFile) {
         this.oVirtIsoFile = oVirtIsoFile;
+    }
+
+    public boolean isReboot() {
+        return reboot;
+    }
+
+    public void setReboot(boolean reboot) {
+        this.reboot = reboot;
     }
 }

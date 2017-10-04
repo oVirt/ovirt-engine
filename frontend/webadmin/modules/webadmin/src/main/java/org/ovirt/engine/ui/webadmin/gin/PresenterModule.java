@@ -60,6 +60,7 @@ import org.ovirt.engine.ui.common.presenter.QuotaBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.TemplateBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.VnicProfileBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.HostUpgradePopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.ActionPanelView;
 import org.ovirt.engine.ui.common.view.DetailActionPanelView;
 import org.ovirt.engine.ui.common.view.ExpandAllButtonView;
@@ -69,6 +70,7 @@ import org.ovirt.engine.ui.common.view.QuotaBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.TemplateBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.VnicProfileBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.popup.HostMaintenanceConfirmationPopupView;
+import org.ovirt.engine.ui.common.view.popup.HostUpgradePopupView;
 import org.ovirt.engine.ui.common.widget.MenuDetailsProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
@@ -1627,6 +1629,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(HostMaintenanceConfirmationPopupPresenterWidget.class,
                 HostMaintenanceConfirmationPopupPresenterWidget.ViewDef.class,
                 HostMaintenanceConfirmationPopupView.class);
+        bindPresenterWidget(HostUpgradePopupPresenterWidget.class,
+            HostUpgradePopupPresenterWidget.ViewDef.class,
+            HostUpgradePopupView.class);
 
         // Storage
         bindPresenterWidget(StoragePopupPresenterWidget.class,

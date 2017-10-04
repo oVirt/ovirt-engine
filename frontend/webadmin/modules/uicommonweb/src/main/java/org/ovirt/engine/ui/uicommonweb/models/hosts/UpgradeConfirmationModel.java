@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -17,8 +18,22 @@ public class UpgradeConfirmationModel extends ConfirmationModel {
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final VDS host;
 
+    private EntityModel<Boolean> reboot;
+
+    public EntityModel<Boolean> getReboot() {
+        return reboot;
+    }
+
+    public void setReboot(EntityModel<Boolean> reboot) {
+        this.reboot = reboot;
+    }
+
     public UpgradeConfirmationModel(final VDS host) {
         this.host = host;
+        setReboot(new EntityModel<>());
+        getReboot().setEntity(true);
+        getReboot().setIsAvailable(true);
+        getReboot().setIsChangeable(true);
     }
 
     @Override
@@ -52,7 +67,7 @@ public class UpgradeConfirmationModel extends ConfirmationModel {
             return;
         }
 
-        UpgradeHostParameters params = new UpgradeHostParameters(host.getId());
+        UpgradeHostParameters params = new UpgradeHostParameters(host.getId(), getReboot().getEntity().booleanValue());
         invokeHostUpgrade(params);
     }
 
