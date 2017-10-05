@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.NicConfiguration;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TimeZone;
+import org.ovirt.engine.api.model.VmStorageErrorResumeBehaviour;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -31,6 +32,7 @@ public class TemplateMapperTest
     @Override
     protected Template postPopulate(Template from) {
         from.setType(MappingTestHelper.shuffle(VmType.class));
+        from.setStorageErrorResumeBehaviour(MappingTestHelper.shuffle(VmStorageErrorResumeBehaviour.class));
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
         List<BootDevice> devices = from.getOs().getBoot().getDevices().getDevices();
         for (int i = 0; i < devices.size(); i++) {

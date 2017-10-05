@@ -23,6 +23,7 @@ import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmBase;
+import org.ovirt.engine.api.model.VmStorageErrorResumeBehaviour;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -206,6 +207,9 @@ public class VmBaseMapper {
         if (model.isSetType()) {
             entity.setVmType(mapVmType(model.getType()));
         }
+        if (model.isSetStorageErrorResumeBehaviour()) {
+            entity.setResumeBehavior(mapResumeBehavior(model.getStorageErrorResumeBehaviour()));
+        }
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());
         }
@@ -316,6 +320,10 @@ public class VmBaseMapper {
 
         if (entity.getVmType() != null) {
             model.setType(mapVmType(entity.getVmType()));
+        }
+
+        if (entity.getResumeBehavior() != null) {
+            model.setStorageErrorResumeBehaviour(mapResumeBehavior(entity.getResumeBehavior()));
         }
 
         if (entity.getOrigin() != null) {
@@ -429,6 +437,39 @@ public class VmBaseMapper {
     @Mapping(from = OriginType.class, to = String.class)
     public static String map(OriginType type, String incoming) {
         return type.name().toLowerCase();
+    }
+
+    public static org.ovirt.engine.core.common.businessentities.VmResumeBehavior mapResumeBehavior(VmStorageErrorResumeBehaviour resumeBehavior) {
+        if (resumeBehavior == null) {
+            return null;
+        }
+        switch (resumeBehavior) {
+            case AUTO_RESUME:
+                return org.ovirt.engine.core.common.businessentities.VmResumeBehavior.AUTO_RESUME;
+            case LEAVE_PAUSED:
+                return org.ovirt.engine.core.common.businessentities.VmResumeBehavior.LEAVE_PAUSED;
+            case KILL:
+                return org.ovirt.engine.core.common.businessentities.VmResumeBehavior.KILL;
+            default:
+                throw new IllegalArgumentException("Unknown resume behavior \"" + resumeBehavior + "\"");
+        }
+    }
+
+    public static VmStorageErrorResumeBehaviour mapResumeBehavior(org.ovirt.engine.core.common.businessentities.VmResumeBehavior resumeBehavior) {
+        if (resumeBehavior == null) {
+            return null;
+        }
+
+        switch (resumeBehavior) {
+            case AUTO_RESUME:
+                return VmStorageErrorResumeBehaviour.AUTO_RESUME;
+            case LEAVE_PAUSED:
+                return VmStorageErrorResumeBehaviour.LEAVE_PAUSED;
+            case KILL:
+                return VmStorageErrorResumeBehaviour.KILL;
+            default:
+                throw new IllegalArgumentException("Unknown resume behavior \"" + resumeBehavior + "\"");
+        }
     }
 
     public static org.ovirt.engine.core.common.businessentities.VmType mapVmType(VmType type) {

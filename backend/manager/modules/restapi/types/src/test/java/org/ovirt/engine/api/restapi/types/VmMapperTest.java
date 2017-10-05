@@ -28,6 +28,7 @@ import org.ovirt.engine.api.model.VcpuPins;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
+import org.ovirt.engine.api.model.VmStorageErrorResumeBehaviour;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -76,6 +77,7 @@ public class VmMapperTest extends
     @Override
     protected Vm postPopulate(Vm from) {
         from.setType(MappingTestHelper.shuffle(VmType.class));
+        from.setStorageErrorResumeBehaviour(MappingTestHelper.shuffle(VmStorageErrorResumeBehaviour.class));
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
         from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class));
         from.getPayloads().getPayloads().get(0).setType(MappingTestHelper.shuffle(VmDeviceType.class));
