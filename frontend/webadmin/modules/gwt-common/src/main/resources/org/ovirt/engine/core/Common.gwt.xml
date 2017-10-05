@@ -112,6 +112,8 @@
         <include name="common/businessentities/network/NetworkFilter.java"/>
         <include name="common/businessentities/network/VmNicFilterParameter.java" />
         <include name="common/businessentities/network/ExternalVnicProfileMapping.java"/>
+        <include name="common/businessentities/network/Tlv.java" />
+        <include name="common/businessentities/network/TlvSpecificType.java" />
 
         <include name="common/businessentities/Commented.java" />
         <include name="common/businessentities/Queryable.java" />

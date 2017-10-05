@@ -1040,6 +1040,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String ipv6GatewayOutOfSyncPopUp();
 
+    String linkLayerInfo();
+
+    String noImportantLLDP();
+
+    String fetchingLldpInfo();
+
+    String noLldpInfoAvailable();
+
     String outAverageLinkShareOutOfSyncPopUp();
 
     String outAverageUpperLimitOutOfSyncPopUp();

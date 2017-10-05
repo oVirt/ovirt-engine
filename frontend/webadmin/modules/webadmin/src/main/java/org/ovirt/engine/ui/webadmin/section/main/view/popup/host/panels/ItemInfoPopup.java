@@ -1,18 +1,23 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
+import org.ovirt.engine.core.common.businessentities.network.Tlv;
+import org.ovirt.engine.core.common.businessentities.network.TlvSpecificType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
@@ -229,10 +234,47 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         }
         if (nic instanceof BondNetworkInterfaceModel) {
             addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());
+        } else {
+            addLldpInfo(nic);
         }
         if (nic.isVf()) {
             addRow(constants.physicalFunction(), nic.getPhysicalFunction());
         }
+    }
+
+    private void addLldpInfo(NetworkInterfaceModel nic) {
+        HostSetupNetworksModel model = nic.getSetupModel();
+        Guid id = nic.getOriginalIface().getId();
+        List<Tlv> tlvs = model.getNetworkTlvsByGuid(id);
+        insertHorizontalLine();
+        addRow(templates.strongTextWithColor(constants.linkLayerInfo(), WHITE_TEXT_COLOR));
+
+        if (tlvs != null && !tlvs.isEmpty()) {
+            List<Tlv> filteredTlvs = tlvs.stream().filter(this::isTlvImportant).collect(Collectors.toList());
+            if (!filteredTlvs.isEmpty()) {
+                filteredTlvs.stream().forEach(tlv -> tlv.getProperties().entrySet().stream()
+                        .forEach(entry -> addRow(entry.getKey(), entry.getValue())));
+            } else {
+                addRow(SafeHtmlUtils.fromSafeConstant(constants.noImportantLLDP()));
+            }
+        } else {
+            if (model.isNetworkTlvsPresent(id)) {
+                addRow(SafeHtmlUtils.fromSafeConstant(constants.noLldpInfoAvailable()));
+            } else {
+                addRow(SafeHtmlUtils.fromSafeConstant(constants.fetchingLldpInfo()));
+            }
+        }
+    }
+
+    private boolean isTlvImportant(Tlv tlv) {
+        return TlvSpecificType.PortDescription.isSameAsTlv(tlv)
+                || TlvSpecificType.SystemName.isSameAsTlv(tlv)
+                || TlvSpecificType.VlanName.isSameAsTlv(tlv)
+                || TlvSpecificType.PortVlanID.isSameAsTlv(tlv)
+                || TlvSpecificType.PortAndProtocolVlanID.isSameAsTlv(tlv)
+                || TlvSpecificType.MaximumFrameSize.isSameAsTlv(tlv)
+                || TlvSpecificType.LinkAggregation802_1.isSameAsTlv(tlv)
+                || TlvSpecificType.LinkAggregation802_3.isSameAsTlv(tlv);
     }
 
     private void addBootProtoAndIpInfo(VdsNetworkInterface iface) {

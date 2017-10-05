@@ -30,9 +30,11 @@ import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
+import org.ovirt.engine.core.common.businessentities.network.Tlv;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
@@ -130,6 +132,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private Map<String, LogicalNetworkModel> networkModelByName;
 
     private Map<String, NetworkLabelModel> networkLabelModelByLabel = new HashMap<>();
+
+    private Map<Guid, List<Tlv>> networkTlvsByGuid;
 
     private final NewNetworkLabelModel newLabelModel;
 
@@ -243,6 +247,20 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     public List<NetworkLabelModel> getLabelModels() {
         return new ArrayList<>(networkLabelModelByLabel.values());
+    }
+
+    public List<Tlv> getNetworkTlvsByGuid(Guid guid) {
+        if (networkTlvsByGuid != null) {
+            return networkTlvsByGuid.get(guid);
+        }
+        return null;
+    }
+
+    public boolean isNetworkTlvsPresent(Guid guid) {
+        if (networkTlvsByGuid != null) {
+            return networkTlvsByGuid.containsKey(guid);
+        }
+        return false;
     }
 
     public Event<EventArgs> getNicsChangedEvent() {
@@ -1001,6 +1019,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     allBonds = returnValue.getReturnValue();
 
+                    queryTLVInformation();
+
                     initNetworkModels();
                     initNicModels();
 
@@ -1038,6 +1058,31 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             // chain the network attachments query
             queryNetworkAttachments();
         }));
+    }
+
+    private void queryTLVInformation() {
+        List<QueryType> queryTypes = new ArrayList<>();
+        List<QueryParametersBase> queryParameters = new ArrayList<>();
+
+        allExistingNics.stream().forEach(nic -> {
+            queryTypes.add(QueryType.GetTlvsByHostNicId);
+            queryParameters.add(new IdQueryParameters(nic.getId()));
+        });
+
+        Frontend.getInstance().runMultipleQueries(queryTypes, queryParameters, result -> {
+            networkTlvsByGuid = new HashMap<>();
+            List<QueryReturnValue> returnValues = result.getReturnValues();
+            for (int index = 0; index < result.getReturnValues().size(); index++) {
+                IdQueryParameters param = (IdQueryParameters) result.getParameters().get(index);
+                List<Tlv> tlvs = returnValues.get(index).getReturnValue();
+                if (param != null) {
+                    networkTlvsByGuid.put(param.getId(), tlvs);
+                }
+            }
+            if (getProgress() == null) {
+                redraw();
+            }
+        });
     }
 
     private void queryNetworkAttachments() {
