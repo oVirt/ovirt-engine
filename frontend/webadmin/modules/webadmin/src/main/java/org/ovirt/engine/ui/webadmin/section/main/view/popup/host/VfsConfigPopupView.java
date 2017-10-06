@@ -137,8 +137,11 @@ public class VfsConfigPopupView extends AbstractModelBoundPopupView<VfsConfigMod
     }
 
     private void updateAllowedNetworksPanelVisibility(final VfsConfigModel model) {
-        allowedNetworksPanel.setVisible(AllNetworksSelector.specificNetworks == model.getAllNetworksAllowed()
-                .getSelectedItem());
+        boolean visible = AllNetworksSelector.specificNetworks == model.getAllNetworksAllowed().getSelectedItem();
+        allowedNetworksPanel.setVisible(visible);
+        if (visible) {
+            refreshNetworksTable();
+        }
     }
 
     @Override
