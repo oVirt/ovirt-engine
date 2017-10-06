@@ -93,6 +93,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
             serviceLoader.load(CertificationValidityChecker.class);
             serviceLoader.load(HostUpdatesCheckerService.class);
+            serviceLoader.load(IPTablesDeprecationNotifier.class);
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;

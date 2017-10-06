@@ -1418,7 +1418,9 @@ public enum AuditLogType {
     CLUSTER_CANNOT_UPDATE_VM_COMPATIBILITY_VERSION(12005, AuditLogSeverity.ERROR),
 
     // API deprecation warning, at most once each day:
-    DEPRECATED_API(13000, AuditLogSeverity.WARNING, AuditLogTimeInterval.DAY.getValue());
+    DEPRECATED_API(13000, AuditLogSeverity.WARNING, AuditLogTimeInterval.DAY.getValue()),
+
+    DEPRECATED_IPTABLES_FIREWALL(13001, AuditLogSeverity.WARNING);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.
