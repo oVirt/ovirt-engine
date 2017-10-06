@@ -212,20 +212,8 @@ select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefau
 
 select fn_db_add_config_value('HostDevicePassthroughCapabilities', 'pci,scsi,usb_device', 'general');
 
--- A list of system required packages to be checked and updated on the host
-select fn_db_add_config_value_for_versions_up_to('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli','3.6');
-select fn_db_add_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli','4.0');
-select fn_db_add_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli,collectd,collectd-disk,collectd-netlink,collectd-write_http,fluentd,rubygem-fluent-plugin-rewrite-tag-filter,rubygem-fluent-plugin-secure-forward,rubygem-fluent-plugin-collectd-nest,rubygem-fluent-plugin-viaq_data_model','4.1');
-select fn_db_add_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-imageio-common,ovirt-imageio-daemon,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-client,collectd,collectd-disk,collectd-netlink,collectd-write_http,fluentd,rubygem-fluent-plugin-rewrite-tag-filter,rubygem-fluent-plugin-secure-forward,rubygem-fluent-plugin-collectd-nest,rubygem-fluent-plugin-viaq_data_model','4.2');
-
--- A comma delimited list of package names provided by the user for availability check and update for the host
-select fn_db_add_config_value('UserPackageNamesForCheckUpdate','','general');
-
 -- The internal between checking for new updates availability for the host
 select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
-
--- A list of system required packages to be checked and updated on a ovirt-node
-select fn_db_add_config_value('OvirtNodePackageNamesForCheckUpdate','ovirt-node-ng-image-update','general');
 
 -- Refresh rate (in hours) for available certification check
 select fn_db_add_config_value('CertificationValidityCheckTimeInHours','24','general');

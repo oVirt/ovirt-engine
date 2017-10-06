@@ -1385,28 +1385,6 @@ public enum ConfigValues {
     HostDevicePassthroughCapabilities(ClientAccessLevel.Admin),
 
     /**
-     * A comma delimited list of package names for checking if updates are available for the host
-     */
-    @TypeConverterAttribute(List.class)
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    PackageNamesForCheckUpdate,
-
-    /**
-     * A comma delimited list of package names provided by the user for checking if updates are available for the host,
-     * and for updating in addition to {@code HostPackageNamesForCheckUpdate}
-     */
-    @TypeConverterAttribute(List.class)
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    UserPackageNamesForCheckUpdate,
-
-    /**
-     * A comma delimited list of package names for checking if updates are available for ovirt-node
-     */
-    @TypeConverterAttribute(List.class)
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    OvirtNodePackageNamesForCheckUpdate,
-
-    /**
      * The interval in hours of checking for available updates on the host.
      */
     @TypeConverterAttribute(Double.class)
