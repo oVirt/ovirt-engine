@@ -20,7 +20,7 @@ public class VmInterfacePopupView extends AbstractModelBoundWidgetPopupView<VmIn
     public VmInterfacePopupView(EventBus eventBus) {
         super(eventBus,
                 new NetworkInterfacePopupWidget(eventBus), "650px", //$NON-NLS-1$
-                "415px"); //$NON-NLS-1$
+                "515px"); //$NON-NLS-1$
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
     }
