@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
@@ -18,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -40,6 +42,10 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+
+    @UiField
+    @Ignore
+    AlertPanel automaticNeutronAgentInstallWarning;
 
     @UiField(provided = true)
     EntityModelWidgetWithInfo mappings;
@@ -91,6 +97,12 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
         messagingServerPort.setLabel(constants.messagingServerPort());
         messagingServerUsername.setLabel(constants.messagingServerUsername());
         messagingServerPassword.setLabel(constants.messagingServerPassword());
+
+        automaticNeutronAgentInstallWarning.setType(AlertPanel.Type.WARNING);
+        automaticNeutronAgentInstallWarning.addMessage(SafeHtmlUtils.fromSafeConstant(
+                constants.automaticNetworkProviderInstallWarning()));
+        automaticNeutronAgentInstallWarning.addMessage(SafeHtmlUtils.fromSafeConstant(
+                constants.manualNetworkProviderInstallRecomendation()));
 
         driver.initialize(this);
     }

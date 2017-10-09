@@ -5,6 +5,7 @@
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:pa="urn:import:org.ovirt.engine.ui.common.widget.panel"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
@@ -15,6 +16,11 @@
     </ui:style>
 
     <g:FlowPanel>
+        <b:Row>
+            <b:Column size="SM_12">
+                <pa:AlertPanel ui:field="automaticNeutronAgentInstallWarning"/>
+            </b:Column>
+        </b:Row>
         <b:Row>
             <w:EntityModelWidgetWithInfo ui:field="mappings" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
         </b:Row>

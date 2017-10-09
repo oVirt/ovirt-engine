@@ -8,31 +8,13 @@
     xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
-
     <ui:style>
-        .warningLabel {
-            color: red;
-            margin-bottom: 10px
-        }
-
         .hostNetworkProviderWidget {
             min-height: 464px;
         }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.hostNetworkProviderWidget}">
-        <b:Row>
-            <b:Column size="LG_12">
-                <g:Label text="{constants.automaticNetworkProviderInstallWarning}" addStyleNames="{style.warningLabel}"/>
-            </b:Column>
-        </b:Row>
-        <b:Row>
-            <b:Column size="LG_12">
-                <g:Label text="{constants.manualNetworkProviderInstallRecomendation}" addStyleNames="{style.warningLabel}"/>
-            </b:Column>
-        </b:Row>
-
         <b:Row>
             <w:EntityModelWidgetWithInfo ui:field="networkProvider" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
         </b:Row>
