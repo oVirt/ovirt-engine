@@ -1702,5 +1702,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ResumeBehavior___KILL();
 
+    String AuditLogType___GLUSTER_VOLUME_REBALANCE_START_DETECTED_FROM_CLI();
+
+    String AuditLogType___START_REMOVING_GLUSTER_VOLUME_BRICKS_DETECTED_FROM_CLI();
 }
 
