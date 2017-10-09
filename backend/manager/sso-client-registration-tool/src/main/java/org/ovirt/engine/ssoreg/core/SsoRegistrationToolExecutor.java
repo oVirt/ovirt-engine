@@ -164,8 +164,8 @@ public class SsoRegistrationToolExecutor {
     private static String encode(Map<String, Object> args, String clientSecret)
             throws IOException, GeneralSecurityException {
         return EnvelopePBE.encode((String) args.get("encoding-algorithm"),
-                Integer.parseInt((String) args.get("key-size")),
-                Integer.parseInt((String) args.get("iterations")),
+                Integer.parseInt((String) args.get("encoding-keysize")),
+                Integer.parseInt((String) args.get("encoding-iterations")),
                 null,
                 clientSecret);
     }
