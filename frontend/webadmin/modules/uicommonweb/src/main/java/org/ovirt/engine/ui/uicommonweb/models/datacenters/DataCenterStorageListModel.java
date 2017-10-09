@@ -254,7 +254,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery<>(list -> {
                 ArrayList<EntityModel> models;
                 models = new ArrayList<>();
-                Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
+                Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<>();
                 for (StorageDomain a : list) {
                     if (items1.stream().noneMatch(new Linq.IdPredicate<>(a.getId()))) {
                         EntityModel tempVar = new EntityModel();
@@ -271,7 +271,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(list -> {
                 ArrayList<EntityModel> models = new ArrayList<>();
                 boolean addToList;
-                Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
+                Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<>();
                 for (StorageDomain a : list) {
                     addToList = false;
                     if (a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached ||
@@ -492,9 +492,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         }
 
         // A list of 'detach' action parameters
-        setpb_detach(new ArrayList<ActionParametersBase>());
+        setpb_detach(new ArrayList<>());
         // A list of 'remove' action parameters
-        setpb_remove(new ArrayList<ActionParametersBase>());
+        setpb_remove(new ArrayList<>());
         String localStorgaeDC = null;
         for (StorageDomain a : getSelectedItems()) {
             // For local storage - remove; otherwise - detach
@@ -595,9 +595,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     private void updateActionAvailability() {
-        Collection<StorageDomain> items = getItems() != null ? getItems() : new ArrayList<StorageDomain>();
+        Collection<StorageDomain> items = getItems() != null ? getItems() : new ArrayList<>();
         List<StorageDomain> selectedItems =
-                getSelectedItems() != null ? getSelectedItems() : new ArrayList<StorageDomain>();
+                getSelectedItems() != null ? getSelectedItems() : new ArrayList<>();
         getAttachStorageCommand().setIsExecutionAllowed(true);
 
         boolean isMasterPresent = false;
