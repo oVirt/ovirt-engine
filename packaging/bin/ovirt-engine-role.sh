@@ -22,11 +22,6 @@ Interesting roles:
 __EOF__
 }
 
-cleanup() {
-	[ -n "${MYTEMP}" ] && rm -fr "${MYTEMP}" ]
-}
-trap cleanup 0
-
 COMMAND=
 USER_NAME=
 AUTHZ_NAME=
