@@ -146,7 +146,8 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
                 && validate(validator.rngSourcesAllowed())
                 && validateClusterPolicy(null)
                 && validateManagementNetwork()
-                && validate(validator.memoryOptimizationConfiguration());
+                && validate(validator.memoryOptimizationConfiguration())
+                && validateDefaultNetworkProvider();
     }
 
     @Override

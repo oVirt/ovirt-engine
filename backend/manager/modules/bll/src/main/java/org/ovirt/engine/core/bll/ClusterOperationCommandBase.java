@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.AddClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
+import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationPa
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -47,6 +49,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnClusterOperationParameters> extends
         ClusterCommandBase<T> {
@@ -75,6 +78,8 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
     private InterfaceDao interfaceDao;
     @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
+    @Inject
+    private ProviderDao providerDao;
 
     private Network managementNetwork;
 
@@ -353,4 +358,20 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
     }
 
     protected abstract boolean validateInputManagementNetwork(NetworkClusterValidatorBase networkClusterValidator);
+
+    boolean validateDefaultNetworkProvider() {
+        Guid defaultNetworkProviderId = getCluster().getDefaultNetworkProviderId();
+        if ( defaultNetworkProviderId == null ) {
+            return true;
+        } else {
+            return validateNetworkProvider(providerDao.get(defaultNetworkProviderId));
+        }
+    }
+
+    private boolean validateNetworkProvider(Provider provider) {
+        NetworkProviderValidator networkProviderValidator = new NetworkProviderValidator(provider);
+
+        return validate(networkProviderValidator.providerIsSet())
+                && validate(networkProviderValidator.providerTypeIsNetwork());
+    }
 }
