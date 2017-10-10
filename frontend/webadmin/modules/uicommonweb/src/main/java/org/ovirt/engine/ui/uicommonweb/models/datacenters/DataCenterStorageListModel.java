@@ -38,100 +38,100 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public class DataCenterStorageListModel extends SearchableListModel<StoragePool, StorageDomain> {
 
-    private UICommand privateAttachStorageCommand;
+    private UICommand attachStorageCommand;
 
     public UICommand getAttachStorageCommand() {
-        return privateAttachStorageCommand;
+        return attachStorageCommand;
     }
 
     private void setAttachStorageCommand(UICommand value) {
-        privateAttachStorageCommand = value;
+        attachStorageCommand = value;
     }
 
-    private UICommand privateAttachISOCommand;
+    private UICommand attachISOCommand;
 
     public UICommand getAttachISOCommand() {
-        return privateAttachISOCommand;
+        return attachISOCommand;
     }
 
     private void setAttachISOCommand(UICommand value) {
-        privateAttachISOCommand = value;
+        attachISOCommand = value;
     }
 
-    private UICommand privateAttachBackupCommand;
+    private UICommand attachBackupCommand;
 
     public UICommand getAttachBackupCommand() {
-        return privateAttachBackupCommand;
+        return attachBackupCommand;
     }
 
     private void setAttachBackupCommand(UICommand value) {
-        privateAttachBackupCommand = value;
+        attachBackupCommand = value;
     }
 
-    private UICommand privateDetachCommand;
+    private UICommand detachCommand;
 
     public UICommand getDetachCommand() {
-        return privateDetachCommand;
+        return detachCommand;
     }
 
     private void setDetachCommand(UICommand value) {
-        privateDetachCommand = value;
+        detachCommand = value;
     }
 
-    private UICommand privateActivateCommand;
+    private UICommand activateCommand;
 
     public UICommand getActivateCommand() {
-        return privateActivateCommand;
+        return activateCommand;
     }
 
     private void setActivateCommand(UICommand value) {
-        privateActivateCommand = value;
+        activateCommand = value;
     }
 
-    private UICommand privateMaintenanceCommand;
+    private UICommand maintenanceCommand;
 
     public UICommand getMaintenanceCommand() {
-        return privateMaintenanceCommand;
+        return maintenanceCommand;
     }
 
     private void setMaintenanceCommand(UICommand value) {
-        privateMaintenanceCommand = value;
+        maintenanceCommand = value;
     }
 
     public void setEntity(StoragePool value) {
         super.setEntity(value);
     }
 
-    private StorageDomainType privateStorageDomainType = StorageDomainType.values()[0];
+    private StorageDomainType storageDomainType = StorageDomainType.values()[0];
 
     public StorageDomainType getStorageDomainType() {
-        return privateStorageDomainType;
+        return storageDomainType;
     }
 
     public void setStorageDomainType(StorageDomainType value) {
-        privateStorageDomainType = value;
+        storageDomainType = value;
     }
 
     // A list of 'detach' action parameters
-    private ArrayList<ActionParametersBase> privatepb_detach;
+    private ArrayList<ActionParametersBase> detachParams;
 
-    private ArrayList<ActionParametersBase> getpb_detach() {
-        return privatepb_detach;
+    private ArrayList<ActionParametersBase> getDetachParams() {
+        return detachParams;
     }
 
-    private void setpb_detach(ArrayList<ActionParametersBase> value) {
-        privatepb_detach = value;
+    private void setDetachParams(ArrayList<ActionParametersBase> value) {
+        detachParams = value;
     }
 
     // A list of 'remove' action parameters
-    private ArrayList<ActionParametersBase> privatepb_remove;
+    private ArrayList<ActionParametersBase> removeParams;
 
-    private ArrayList<ActionParametersBase> getpb_remove() {
-        return privatepb_remove;
+    private ArrayList<ActionParametersBase> getRemoveParams() {
+        return removeParams;
     }
 
-    private void setpb_remove(ArrayList<ActionParametersBase> value) {
-        privatepb_remove = value;
+    private void setRemoveParams(ArrayList<ActionParametersBase> value) {
+        removeParams = value;
     }
 
     private ArrayList<StorageDomain> selectedStorageDomains;
@@ -492,26 +492,26 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         }
 
         // A list of 'detach' action parameters
-        setpb_detach(new ArrayList<>());
+        setDetachParams(new ArrayList<>());
         // A list of 'remove' action parameters
-        setpb_remove(new ArrayList<>());
+        setRemoveParams(new ArrayList<>());
         String localStorgaeDC = null;
         for (StorageDomain a : getSelectedItems()) {
             // For local storage - remove; otherwise - detach
             if (a.getStorageType() == StorageType.LOCALFS && a.getStorageDomainType() != StorageDomainType.ISO) {
-                getpb_remove().add(new RemoveStorageDomainParameters(a.getId()));
+                getRemoveParams().add(new RemoveStorageDomainParameters(a.getId()));
                 localStorgaeDC = a.getStoragePoolName();
             }
             else {
-                getpb_detach().add(new DetachStorageDomainFromPoolParameters(a.getId(), getEntity().getId()));
+                getDetachParams().add(new DetachStorageDomainFromPoolParameters(a.getId(), getEntity().getId()));
             }
         }
 
         confirmModel.startProgress();
 
-        if (getpb_remove().size() > 0) {
+        if (getRemoveParams().size() > 0) {
             AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery<>(locaVds -> {
-                for (ActionParametersBase item : getpb_remove()) {
+                for (ActionParametersBase item : getRemoveParams()) {
                     ((RemoveStorageDomainParameters) item).setVdsId(locaVds != null ? locaVds.getId() : null);
                     ((RemoveStorageDomainParameters) item).setDoFormat(confirmModel.getForce().getEntity());
                 }
@@ -525,7 +525,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void postDetach(Model model) {
-        Frontend.getInstance().runMultipleAction(ActionType.RemoveStorageDomain, getpb_remove(),
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveStorageDomain, getRemoveParams(),
                 outerResult -> {
 
                     Object[] array = (Object[]) outerResult.getState();
@@ -540,7 +540,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
                             }, localModel1);
 
-                }, new Object[] { model, getpb_detach() });
+                }, new Object[] { model, getDetachParams() });
     }
 
     public void cancel() {
