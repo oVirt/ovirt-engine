@@ -77,6 +77,14 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     }
 
     private boolean isColdReboot() {
-        return getVm().isRunOnce() || getVm().isNextRunConfigurationExists();
+        boolean coldReboot = (getVm().isRunOnce() && getVm().isVolatileRun()) || getVm().isNextRunConfigurationExists();
+
+        log.info("VM '{}' is performing {} reboot; run once: '{}', running as volatile: '{}', has next run configuration: '{}'",
+                getVm().getName(),
+                coldReboot ? "cold" : "warm",
+                getVm().isRunOnce(),
+                getVm().isVolatileRun(),
+                getVm().isNextRunConfigurationExists());
+        return coldReboot;
     }
 }

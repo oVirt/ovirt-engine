@@ -70,6 +70,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         if (getParameters().getBootSequence() != null) {
             getVm().setBootSequence(getParameters().getBootSequence());
         }
+        getVm().setVolatileRun(getParameters().isVolatileRun());
         getVm().setInitrdUrl(getParameters().getInitrdUrl());
         getVm().setKernelUrl(getParameters().getKernelUrl());
         getVm().setKernelParams(getParameters().getKernelParams());

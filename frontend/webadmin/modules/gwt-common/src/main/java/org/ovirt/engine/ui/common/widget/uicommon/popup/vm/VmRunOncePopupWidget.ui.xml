@@ -283,6 +283,6 @@
             </g:DisclosurePanel>
         </g:FlowPanel>
     </g:ScrollPanel>
-    <w:EntityModelWidgetWithInfo ui:field="volatileRunEditorWithInfo" addStyleNames="{style.volatileRun}" usePatternFly="true" labelColSize="SM_3" />
+    <w:EntityModelWidgetWithInfo ui:field="volatileRunEditorWithInfo" addStyleNames="{style.volatileRun}" usePatternFly="true" labelColSize="SM_6" />
   </g:FlowPanel>
 </ui:UiBinder>

@@ -60,6 +60,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private boolean runOnce;
     @UnchangeableByVdsm
+    private boolean volatileRun;
+    @UnchangeableByVdsm
     private String cpuName;
     @UnchangeableByVdsm
     private GuestAgentStatus guestAgentStatus;
@@ -115,6 +117,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 lastWatchdogEvent,
                 lastWatchdogAction,
                 runOnce,
+                volatileRun,
                 cpuName,
                 guestAgentStatus,
                 currentCd,
@@ -172,6 +175,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(lastWatchdogEvent, other.lastWatchdogEvent)
                 && Objects.equals(lastWatchdogAction, other.lastWatchdogAction)
                 && runOnce == other.runOnce
+                && volatileRun == other.volatileRun
                 && Objects.equals(cpuName, other.cpuName)
                 && Objects.equals(guestAgentStatus, other.guestAgentStatus)
                 && Objects.equals(currentCd, other.currentCd)
@@ -300,6 +304,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestOsTimezoneName = template.getGuestOsTimezoneName();
         guestOsTimezoneOffset = template.getGuestOsTimezoneOffset();
         guestContainers = template.getGuestContainers();
+        volatileRun = template.isVolatileRun();
     }
 
     public String getAppList() {
@@ -521,6 +526,15 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     public void setRunOnce(boolean runOnce) {
         this.runOnce = runOnce;
     }
+
+    public boolean isVolatileRun() {
+        return volatileRun;
+    }
+
+    public void setVolatileRun(boolean volatileRun) {
+        this.volatileRun = volatileRun;
+    }
+
     public String getCpuName() {
         return cpuName;
     }

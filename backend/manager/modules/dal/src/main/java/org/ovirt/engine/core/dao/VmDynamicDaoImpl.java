@@ -178,6 +178,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("last_watchdog_event", vm.getLastWatchdogEvent())
                 .addValue("last_watchdog_action", vm.getLastWatchdogAction())
                 .addValue("is_run_once", vm.isRunOnce())
+                .addValue("volatile_run", vm.isVolatileRun())
                 .addValue("cpu_name", vm.getCpuName())
                 .addValue("guest_agent_status", vm.getGuestAgentStatus().getValue())
                 .addValue("current_cd", vm.getCurrentCd())
@@ -257,6 +258,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
         entity.setLastWatchdogAction(rs.getString("last_watchdog_action"));
         entity.setRunOnce(rs.getBoolean("is_run_once"));
+        entity.setVolatileRun(rs.getBoolean("volatile_run"));
         entity.setCpuName(rs.getString("cpu_name"));
         entity.setGuestAgentStatus(GuestAgentStatus.forValue(rs.getInt("guest_agent_status")));
         entity.setCurrentCd(rs.getString("current_cd"));

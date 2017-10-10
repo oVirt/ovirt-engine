@@ -5,12 +5,8 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class VmOperationCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> {
-
-    private static final Logger log = LoggerFactory.getLogger(VmOperationCommandBase.class);
 
     /**
      * Constructor for command creation when compensation is applied on startup

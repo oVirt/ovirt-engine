@@ -1345,6 +1345,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         return vmDynamic.isRunOnce();
     }
 
+    public boolean isVolatileRun() {
+        return vmDynamic.isVolatileRun();
+    }
+
+    public void setVolatileRun(boolean useWarmReboot) {
+        vmDynamic.setVolatileRun(useWarmReboot);
+    }
+
     public boolean isUseHostCpuFlags() {
         return vmStatic.isUseHostCpuFlags();
     }
