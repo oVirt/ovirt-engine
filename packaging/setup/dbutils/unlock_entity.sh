@@ -96,7 +96,7 @@ query_vm() {
 				a.vm_guid = b.vm_guid and
 				status = ${IMAGE_LOCKED};
 
-			select
+			select distinct
 				vm_name as vm_name,
 				image_group_id as disk_id
 			from
@@ -128,7 +128,7 @@ query_template() {
 			from vm_static
 			where template_status = ${TEMPLATE_LOCKED};
 
-			select
+			select distinct
 				vm_name as template_name,
 				image_group_id as disk_id
 			from
@@ -146,7 +146,7 @@ query_template() {
 
 query_disk() {
 	dbfunc_psql_die --command="
-			select
+			select distinct
 				vm_id as entity_id,
 				disk_id
 			from
