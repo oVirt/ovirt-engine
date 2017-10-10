@@ -127,6 +127,7 @@ public enum QueryType implements Serializable {
     GetDefaultManagementNetwork,
     GetManagementNetworkCandidates,
     GetTlvsByHostNicId,
+    GetMultipleTlvsByHostId,
 
     // External network providers
     GetAllExternalNetworksOnProvider,
