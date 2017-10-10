@@ -21,6 +21,7 @@ Usage: $0 [options] [ENTITIES]
                     If "all" is used then no ENTITIES are expected.
     -r            - Recursive, unlocks all disks under the selected vm/template.
     -q            - Query db and display a list of the locked entites.
+    -c            - Show column names.
     ENTITIES      - The list of object names in case of vm/template, UUIDs in case of a disk
 
     NOTE: This utility access the database and should have the
@@ -147,7 +148,7 @@ query_template() {
 query_disk() {
 	dbfunc_psql_die --command="
 			select distinct
-				vm_id as entity_id,
+				vm_id,
 				disk_id
 			from
 				base_disks a,
@@ -164,7 +165,7 @@ query_disk() {
 query_snapshot() {
 	dbfunc_psql_die --command="
 			select
-				vm_id as entity_id,
+				vm_id,
 				snapshot_id
 			from
 				snapshots a
@@ -211,7 +212,7 @@ DBFUNC_DB_PORT="${ENGINE_DB_PORT}"
 DBFUNC_DB_USER="${ENGINE_DB_USER}"
 DBFUNC_DB_DATABASE="${ENGINE_DB_DATABASE}"
 
-while getopts hvl:t:rqi option; do
+while getopts hvl:t:rqic option; do
 	case $option in
 		\?) usage; exit 1;;
 		h) usage; exit 0;;
@@ -221,6 +222,7 @@ while getopts hvl:t:rqi option; do
 		r) RECURSIVE=1;;
 		q) QUERY=1;;
 		i) IMPLICIT=1;;
+		c) DBFUNC_SHOW_HEADERS=1;;
 	esac
 done
 

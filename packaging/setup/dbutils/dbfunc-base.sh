@@ -5,6 +5,7 @@ DBFUNC_DB_PORT="${DBFUNC_DB_PORT:-5432}"
 #DBFUNC_DB_USER=
 #DBFUNC_DB_DATABASE=
 #DBFUNC_DB_PGPASSFILE=
+#DBFUNC_SHOW_HEADERS=
 
 PSQL="${PSQL:-psql}"
 PG_DUMP="${PG_DUMP:-pg_dump}"
@@ -28,9 +29,10 @@ dbfunc_cleanup() {
 }
 
 dbfunc_psql_raw() {
+	local format=$(if [ -n "${DBFUNC_SHOW_HEADERS}" ]; then echo "footer=off"; else echo "tuples_only=on"; fi)
 	LC_ALL="C" "${PSQL}" \
 		-w \
-		--pset=tuples_only=on \
+		--pset=${format} \
 		--set ON_ERROR_STOP=1 \
 		${DBFUNC_LOGFILE:+--log-file="${DBFUNC_LOGFILE}"} \
 		--host="${DBFUNC_DB_HOST}" \
