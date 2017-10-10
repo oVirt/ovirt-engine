@@ -1,6 +1,7 @@
 #!/bin/sh
 
-. "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
+# Attention: This script is using trap for cleaning up files in tmp.
+# If you have own trap, don't forget to call pgPassCleanup.
 
 [[ -z $ENGINE_DB_HOST ]]     || \
 [[ -z $ENGINE_DB_PORT ]]     || \
@@ -20,7 +21,7 @@ ${ENGINE_DB_HOST}:${ENGINE_DB_PORT}:${ENGINE_DB_DATABASE}:${ENGINE_DB_USER}:${pa
 __EOF__
 }
 
-cleanup() {
+pgPassCleanup() {
 	[ -n "${MYTEMP}" ] && rm -fr "${MYTEMP}" ]
 }
-trap cleanup 0
+trap pgPassCleanup 0
