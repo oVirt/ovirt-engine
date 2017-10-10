@@ -149,7 +149,7 @@ class Plugin(plugin.PluginBase):
         )
         self.environment.setdefault(
             oengcommcons.ProvisioningEnv.POSTGRES_EXTRA_CONFIG_ITEMS,
-            []
+            ()
         )
 
     @plugin.event(
@@ -158,9 +158,7 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         self.environment[
             oengcommcons.ProvisioningEnv.POSTGRES_EXTRA_CONFIG_ITEMS
-        ].extend(
-            self._pg_conf_items()
-        )
+        ] += self._pg_conf_items()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
