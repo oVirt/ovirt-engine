@@ -8,6 +8,7 @@ import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.ClusterEnabledFeaturesResource;
+import org.ovirt.engine.api.resource.ClusterExternalProvidersResource;
 import org.ovirt.engine.api.resource.ClusterNetworksResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.NetworkFiltersResource;
@@ -141,5 +142,11 @@ public class BackendClusterResource<P extends BackendClustersResource>
     @Override
     public ClusterEnabledFeaturesResource getEnabledFeaturesResource() {
        return inject(new BackendClusterEnabledFeaturesResource(guid));
+    }
+
+    @Override
+    public ClusterExternalProvidersResource getExternalNetworkProvidersResource() {
+        // TODO: Implement this.
+        return null;
     }
 }

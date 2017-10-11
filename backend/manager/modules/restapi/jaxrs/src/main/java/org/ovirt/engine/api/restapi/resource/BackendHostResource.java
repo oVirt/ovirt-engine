@@ -23,6 +23,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
+import org.ovirt.engine.api.resource.ExternalNetworkProviderConfigurationsResource;
 import org.ovirt.engine.api.resource.FenceAgentsResource;
 import org.ovirt.engine.api.resource.HostDevicesResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
@@ -732,5 +733,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public AssignedAffinityLabelsResource getAffinityLabelsResource() {
         return inject(new BackendAssignedAffinityLabelsResource(id, VDS::new));
+    }
+
+    @Override
+    public ExternalNetworkProviderConfigurationsResource getExternalNetworkProviderConfigurationsResource() {
+        // TODO: Implement this.
+        return null;
     }
 }
