@@ -113,28 +113,28 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     // A list of 'detach' action parameters
-    private ArrayList<ActionParametersBase> detachParams;
+    private List<ActionParametersBase> detachParams;
 
-    private ArrayList<ActionParametersBase> getDetachParams() {
+    private List<ActionParametersBase> getDetachParams() {
         return detachParams;
     }
 
-    private void setDetachParams(ArrayList<ActionParametersBase> value) {
+    private void setDetachParams(List<ActionParametersBase> value) {
         detachParams = value;
     }
 
     // A list of 'remove' action parameters
-    private ArrayList<ActionParametersBase> removeParams;
+    private List<ActionParametersBase> removeParams;
 
-    private ArrayList<ActionParametersBase> getRemoveParams() {
+    private List<ActionParametersBase> getRemoveParams() {
         return removeParams;
     }
 
-    private void setRemoveParams(ArrayList<ActionParametersBase> value) {
+    private void setRemoveParams(List<ActionParametersBase> value) {
         removeParams = value;
     }
 
-    private ArrayList<StorageDomain> selectedStorageDomains;
+    private List<StorageDomain> selectedStorageDomains;
 
     public DataCenterStorageListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
@@ -174,7 +174,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void onMaintenance() {
-        ArrayList<ActionParametersBase> pb = new ArrayList<>();
+        List<ActionParametersBase> pb = new ArrayList<>();
         for (StorageDomain a : getSelectedItems()) {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
@@ -195,7 +195,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         model.setHashName("maintenance_storage_domain"); //$NON-NLS-1$
         setWindow(model);
 
-        ArrayList<String> items = new ArrayList<>();
+        List<String> items = new ArrayList<>();
         for (Object selected : getSelectedItems()) {
             items.add(((StorageDomain) selected).getName());
         }
@@ -209,7 +209,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void activate() {
-        ArrayList<ActionParametersBase> pb = new ArrayList<>();
+        List<ActionParametersBase> pb = new ArrayList<>();
         for (StorageDomain a : getSelectedItems()) {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
@@ -252,7 +252,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
         if (storageType == StorageDomainType.ISO) {
             AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery<>(list -> {
-                ArrayList<EntityModel> models;
+                List<EntityModel> models;
                 models = new ArrayList<>();
                 Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<>();
                 for (StorageDomain a : list) {
@@ -269,7 +269,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         else {
 
             AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(list -> {
-                ArrayList<EntityModel> models = new ArrayList<>();
+                List<EntityModel> models = new ArrayList<>();
                 boolean addToList;
                 Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<>();
                 for (StorageDomain a : list) {
@@ -313,7 +313,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
     }
 
-    private void postAttachInternal(ArrayList<EntityModel> models) {
+    private void postAttachInternal(List<EntityModel> models) {
         ListModel listModel = (ListModel) getWindow();
         listModel.setItems(models);
 
@@ -338,7 +338,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
     public void onAttach() {
         ListModel<EntityModel<StorageDomain>> model = (ListModel<EntityModel<StorageDomain>>) getWindow();
-        ArrayList<StorageDomain> selectedDataStorageDomains = new ArrayList<>();
+        List<StorageDomain> selectedDataStorageDomains = new ArrayList<>();
 
         if (getEntity() == null) {
             cancel();
@@ -412,7 +412,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void executeAttachStorageDomains() {
-        ArrayList<ActionParametersBase> pb = new ArrayList<>();
+        List<ActionParametersBase> pb = new ArrayList<>();
         for (StorageDomain storageDomain : selectedStorageDomains) {
             pb.add(new AttachStorageDomainToPoolParameters(storageDomain.getId(), getEntity().getId()));
         }
@@ -432,7 +432,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         model.setHashName("detach_storage"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
 
-        ArrayList<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         boolean shouldAddressWarnning = false;
         for (StorageDomain item : getSelectedItems()) {
             list.add(item.getStorageName());
@@ -530,8 +530,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
                     Object[] array = (Object[]) outerResult.getState();
                     ConfirmationModel localModel1 = (ConfirmationModel) array[0];
-                    ArrayList<ActionParametersBase> parameters =
-                            (ArrayList<ActionParametersBase>) array[1];
+                    List<ActionParametersBase> parameters = (List<ActionParametersBase>) array[1];
                     Frontend.getInstance().runMultipleAction(ActionType.DetachStorageDomainFromPool, parameters,
                             innerResult -> {
                                 ConfirmationModel localModel2 = (ConfirmationModel) innerResult.getState();
