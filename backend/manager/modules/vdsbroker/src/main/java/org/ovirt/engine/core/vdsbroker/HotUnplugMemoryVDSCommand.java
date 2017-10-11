@@ -16,7 +16,10 @@ public class HotUnplugMemoryVDSCommand<P extends HotUnplugMemoryVDSCommand.Param
     protected void executeVdsBrokerCommand() {
         try {
             status = getBroker().hotUnplugMemory(
-                    MemoryUtils.createHotplugMemoryParamsMap(getParameters().getMemoryDeviceToUnplug(), true));
+                    MemoryUtils.createHotplugMemoryParamsMap(
+                            getParameters().getMemoryDeviceToUnplug(),
+                            true,
+                            getParameters().getMinAllocatedMemoryMb()));
             proceedProxyReturnValue();
         } catch (RuntimeException e) {
             setVdsRuntimeErrorAndReport(e);
@@ -29,13 +32,20 @@ public class HotUnplugMemoryVDSCommand<P extends HotUnplugMemoryVDSCommand.Param
 
         private final VmDevice memoryDeviceToUnplug;
 
-        public Params(Guid vdsId, VmDevice memoryDeviceToUnplug) {
+        private final int minAllocatedMemoryMb;
+
+        public Params(Guid vdsId, VmDevice memoryDeviceToUnplug, int minAllocatedMemoryMb) {
             super(vdsId);
             this.memoryDeviceToUnplug = memoryDeviceToUnplug;
+            this.minAllocatedMemoryMb = minAllocatedMemoryMb;
         }
 
         public VmDevice getMemoryDeviceToUnplug() {
             return memoryDeviceToUnplug;
+        }
+
+        public int getMinAllocatedMemoryMb() {
+            return minAllocatedMemoryMb;
         }
     }
 }

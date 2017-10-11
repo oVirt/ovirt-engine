@@ -94,6 +94,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             hotsetAllowed = true,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
+    @Min(1)
     private int memSizeMb;
 
     /**
@@ -440,6 +441,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             hotsetAllowed = true,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
+    @Min(0)
     private int minAllocatedMem;
 
     @CopyOnNewVersion

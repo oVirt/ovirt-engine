@@ -286,6 +286,7 @@ public enum AuditLogType {
     MEMORY_HOT_UNPLUG_SUCCESSFULLY_REQUESTED(2046),
     MEMORY_HOT_UNPLUG_FAILED(2047, AuditLogSeverity.ERROR),
     FAILED_HOT_SET_MEMORY_NOT_DIVIDABLE(2048, AuditLogSeverity.ERROR),
+    MEMORY_HOT_UNPLUG_SUCCESSFULLY_REQUESTED_PLUS_MEMORY_INFO(2049),
 
     // Used only from SQL script, therefor should not have severity & message
     USER_RUN_UNLOCK_ENTITY_SCRIPT(2024),

@@ -18,15 +18,10 @@ public class MemoryUtils {
      * @param vmDevice memory device
      */
     public static Map<String, Object> createHotplugMemoryParamsMap(VmDevice vmDevice, boolean copyAlias, int minAllocatedMem) {
-        Map<String, Object> data = createHotplugMemoryParamsMap(vmDevice, copyAlias);
-        data.put("memGuaranteedSize", minAllocatedMem);
-        return data;
-    }
-
-    public static Map<String, Object> createHotplugMemoryParamsMap(VmDevice vmDevice, boolean copyAlias) {
         Map<String, Object> data = new HashMap<>();
         data.put("vmId", vmDevice.getVmId().toString());
         data.put("memory", createVmMemoryDeviceMap(vmDevice, copyAlias));
+        data.put("memGuaranteedSize", minAllocatedMem);
         return data;
     }
 
