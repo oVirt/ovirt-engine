@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,9 @@ public class HostUpgradeCallback implements CommandCallback {
 
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     /**
      * The callback is being polling till the host move to maintenance or failed to do so.
@@ -58,6 +63,7 @@ public class HostUpgradeCallback implements CommandCallback {
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
+        auditLogDirector.log(commandCoordinatorUtil.retrieveCommand(cmdId), AuditLogType.HOST_UPGRADE_FAILED);
         commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
@@ -97,6 +103,7 @@ public class HostUpgradeCallback implements CommandCallback {
             if (isMaintenanceCommandExecuted(childCmdIds)) {
                 log.error("Host '{}' failed to move to maintenance mode. Upgrade process is terminated.",
                         getHostName(parameters.getVdsId()));
+                auditLogDirector.log(rootCommand, AuditLogType.VDS_MAINTENANCE_FAILED);
                 rootCommand.setCommandStatus(CommandStatus.FAILED);
             }
 

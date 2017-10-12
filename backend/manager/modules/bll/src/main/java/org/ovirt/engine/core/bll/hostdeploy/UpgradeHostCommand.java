@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
 import java.util.Collections;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -15,7 +13,6 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
@@ -64,22 +61,9 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
     protected void executeCommand() {
         VDSStatus statusBeforeUpgrade = getVds().getStatus();
         if (statusBeforeUpgrade != VDSStatus.Maintenance) {
-            Future<ActionReturnValue> maintenanceCmd =
-                    commandCoordinatorUtil.executeAsyncCommand(ActionType.MaintenanceNumberOfVdss,
-                            createMaintenanceParams(),
-                            cloneContext());
-
-            ActionReturnValue result;
-            try {
-                result = maintenanceCmd.get();
-                if (!result.getSucceeded()) {
-                    propagateFailure(result);
-                    return;
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Exception", e);
-                return;
-            }
+            commandCoordinatorUtil.executeAsyncCommand(ActionType.MaintenanceNumberOfVdss,
+                    createMaintenanceParams(),
+                    cloneContext());
         }
 
         setSucceeded(true);
