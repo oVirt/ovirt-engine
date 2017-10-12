@@ -50,16 +50,10 @@ public class DiskVmElementValidator {
      * Verifies Virtio-SCSI interface validity.
      */
     public ValidationResult isVirtIoScsiValid(VM vm) {
-        if (vm != null && DiskInterface.VirtIO_SCSI != diskVmElement.getDiskInterface()) {
-            return ValidationResult.VALID;
+        ValidationResult result = verifyVirtIoScsi(vm);
+        if (!result.isValid()) {
+            return result;
         }
-
-        if (disk.getSgio() != null) {
-            if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
-                return new ValidationResult(EngineMessage.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
-            }
-        }
-
         if (vm != null) {
             if (!isVirtioScsiControllerAttached(vm.getId())) {
                 return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
@@ -70,6 +64,19 @@ public class DiskVmElementValidator {
             }
         }
 
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult verifyVirtIoScsi(VM vm) {
+        if (vm != null && DiskInterface.VirtIO_SCSI != diskVmElement.getDiskInterface()) {
+            return ValidationResult.VALID;
+        }
+
+        if (disk.getSgio() != null) {
+            if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+                return new ValidationResult(EngineMessage.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
+            }
+        }
         return ValidationResult.VALID;
     }
 
