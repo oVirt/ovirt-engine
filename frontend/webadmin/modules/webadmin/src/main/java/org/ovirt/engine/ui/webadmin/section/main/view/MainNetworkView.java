@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainNetworkPresenter;
+import org.ovirt.engine.ui.webadmin.widget.renderer.MtuRenderer;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 
@@ -39,6 +40,8 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
     private final SafeHtml emptyImage;
 
     private AbstractLinkColumn<NetworkView> providerColumn;
+
+    private MtuRenderer mtuRenderer = new MtuRenderer();
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -171,6 +174,15 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
         };
         providerColumn.makeSortable(NetworkConditionFieldAutoCompleter.PROVIDER_NAME);
         getTable().ensureColumnVisible(providerColumn, constants.providerNetwork(), virtMode, "200px"); //$NON-NLS-1$
+
+        AbstractTextColumn<NetworkView> mtuColumn = new AbstractTextColumn<NetworkView>() {
+            @Override
+            public String getValue(NetworkView object) {
+                return mtuRenderer.render(object.getMtu());
+            }
+        };
+        mtuColumn.makeSortable(NetworkConditionFieldAutoCompleter.MTU);
+        getTable().addColumn(mtuColumn, constants.mtuNetwork(), "120px"); //$NON-NLS-1$
     }
 
     @Override
