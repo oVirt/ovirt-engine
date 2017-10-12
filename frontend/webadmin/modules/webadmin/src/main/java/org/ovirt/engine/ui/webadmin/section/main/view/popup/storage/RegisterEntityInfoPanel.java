@@ -9,7 +9,9 @@ import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,7 +24,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
@@ -107,59 +108,70 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         disksTable = new EntityModelCellTable<>(false, true);
         disksTable.enableColumnResizing();
 
-        disksTable.addColumn(new DiskImageStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
-
-        AbstractTextColumn<DiskImage> aliasColumn = new AbstractTextColumn<DiskImage>() {
+        AbstractTextColumn<Disk> aliasColumn = new AbstractTextColumn<Disk>() {
             @Override
-            public String getValue(DiskImage object) {
+            public String getValue(Disk object) {
                 return object.getDiskAlias();
             }
         };
         disksTable.addColumn(aliasColumn, constants.aliasDisk(), "80px"); //$NON-NLS-1$
 
-        AbstractDiskSizeColumn<DiskImage> sizeColumn = new AbstractDiskSizeColumn<DiskImage>() {
+        AbstractDiskSizeColumn<Disk> sizeColumn = new AbstractDiskSizeColumn<Disk>() {
             @Override
-            protected Long getRawValue(DiskImage object) {
+            protected Long getRawValue(Disk object) {
                 return object.getSize();
             }
         };
         disksTable.addColumn(sizeColumn, constants.provisionedSizeDisk(), "80px"); //$NON-NLS-1$
 
-        AbstractDiskSizeColumn<DiskImage> actualSizeColumn = new AbstractDiskSizeColumn<DiskImage>() {
+        AbstractDiskSizeColumn<Disk> actualSizeColumn = new AbstractDiskSizeColumn<Disk>() {
             @Override
-            protected Long getRawValue(DiskImage object) {
-                return object.getActualSizeInBytes();
+            protected Long getRawValue(Disk object) {
+                return (object.getDiskStorageType() != DiskStorageType.LUN) ? ((DiskImage) object).getActualSizeInBytes()
+                        : 0;
             }
         };
         disksTable.addColumn(actualSizeColumn, constants.sizeDisk(), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumn<DiskImage> allocationColumn = new AbstractEnumColumn<DiskImage, VolumeType>() {
+        AbstractTextColumn<Disk> allocationColumn = new AbstractEnumColumn<Disk, VolumeType>() {
             @Override
-            protected VolumeType getRawValue(DiskImage object) {
-                return VolumeType.forValue(object.getVolumeType().getValue());
+            protected VolumeType getRawValue(Disk object) {
+                return (object.getDiskStorageType() != DiskStorageType.LUN) ? VolumeType.forValue(((DiskImage) object).getVolumeType()
+                        .getValue())
+                        : VolumeType.Unassigned;
             }
         };
         disksTable.addColumn(allocationColumn, constants.allocationDisk(), "110px"); //$NON-NLS-1$
 
-        AbstractTextColumn<DiskImage> statusColumn = new AbstractEnumColumn<DiskImage, ImageStatus>() {
+        AbstractTextColumn<Disk> statusColumn = new AbstractEnumColumn<Disk, ImageStatus>() {
             @Override
-            protected ImageStatus getRawValue(DiskImage object) {
-                return object.getImageStatus();
+            protected ImageStatus getRawValue(Disk object) {
+                return (object.getDiskStorageType() != DiskStorageType.LUN) ? ((DiskImage) object).getImageStatus()
+                        : ImageStatus.OK;
             }
         };
         disksTable.addColumn(statusColumn, constants.statusDisk(), "65px"); //$NON-NLS-1$
 
-        AbstractTextColumn<DiskImage> dateCreatedColumn = new AbstractFullDateTimeColumn<DiskImage>() {
+        AbstractTextColumn<Disk> diskStorageTypeColumn = new AbstractTextColumn<Disk>() {
             @Override
-            protected Date getRawValue(DiskImage object) {
-                return object.getCreationDate();
+            public String getValue(Disk object) {
+                return object.getDiskStorageType().toString();
+            }
+        };
+        disksTable.addColumn(diskStorageTypeColumn, constants.storageTypeDisk(), "100px"); //$NON-NLS-1$
+
+        AbstractTextColumn<Disk> dateCreatedColumn = new AbstractFullDateTimeColumn<Disk>() {
+            @Override
+            protected Date getRawValue(Disk object) {
+                return (object.getDiskStorageType() != DiskStorageType.LUN) ? ((DiskImage) object).getCreationDate()
+                        : null;
             }
         };
         disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<DiskImage> descriptionColumn = new AbstractTextColumn<DiskImage>() {
+        AbstractTextColumn<Disk> descriptionColumn = new AbstractTextColumn<Disk>() {
             @Override
-            public String getValue(DiskImage object) {
+            public String getValue(Disk object) {
                 return object.getDiskDescription();
             }
         };
@@ -175,13 +187,16 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         disksTable.setEmptyTableWidget(new NoItemsLabel());
     }
 
-    private Column<DiskImage, String> getDiskQuotaColumn() {
+    private Column<Disk, String> getDiskQuotaColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
 
-        AbstractColumn<DiskImage, String> column = new AbstractColumn<DiskImage, String>(customSelectionCell) {
+        AbstractColumn<Disk, String> column = new AbstractColumn<Disk, String>(customSelectionCell) {
             @Override
-            public String getValue(DiskImage disk) {
+            public String getValue(Disk disk) {
+                if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+                    return null;
+                }
                 List<Quota> quotas = (List<Quota>) registerEntityModel.getStorageQuota().getItems();
                 if (quotas == null || quotas.isEmpty()) {
                     return constants.empty();
