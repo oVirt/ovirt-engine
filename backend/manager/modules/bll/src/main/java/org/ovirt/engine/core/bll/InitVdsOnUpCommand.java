@@ -190,7 +190,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private void refreshHostDeviceList() {
         try {
-            runInternalAction(ActionType.RefreshHostDevices, new VdsActionParameters(getVdsId()));
+            CommandContext ctx = cloneContext();
+            ctx.getExecutionContext().setJobRequired(false);
+            runInternalAction(ActionType.RefreshHostDevices, new VdsActionParameters(getVdsId()), ctx);
         } catch (EngineException e) {
             log.error("Could not refresh host devices for host '{}'", getVds().getName());
         }
@@ -235,7 +237,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             connectPoolSucceeded = true;
         } else {
             ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(getStoragePool(), getVds());
-            runInternalAction(ActionType.ConnectHostToStoragePoolServers, params);
+            CommandContext ctx = cloneContext();
+            ctx.getExecutionContext().setJobRequired(false);
+            runInternalAction(ActionType.ConnectHostToStoragePoolServers, params, ctx);
             EventResult connectResult = connectHostToPool();
             if (connectResult != null) {
                 returnValue = connectResult.isSuccess();

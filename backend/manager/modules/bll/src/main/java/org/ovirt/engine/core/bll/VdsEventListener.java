@@ -336,7 +336,9 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public boolean vdsUpEvent(final VDS vds) {
         HostStoragePoolParametersBase params = new HostStoragePoolParametersBase(vds);
-        boolean isSucceeded = backend.runInternalAction(ActionType.InitVdsOnUp, params).getSucceeded();
+        CommandContext commandContext = new CommandContext(new EngineContext()).withoutExecutionContext();
+        commandContext.getExecutionContext().setJobRequired(true);
+        boolean isSucceeded = backend.runInternalAction(ActionType.InitVdsOnUp, params, commandContext).getSucceeded();
         if (isSucceeded) {
             ThreadPoolUtil.execute(() -> {
                 try {

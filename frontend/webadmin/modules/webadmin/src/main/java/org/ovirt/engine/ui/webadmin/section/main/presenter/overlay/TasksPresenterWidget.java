@@ -1,9 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.overlay;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification;
@@ -28,6 +33,12 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
     private final TaskModelProvider taskModelProvider;
 
     private Set<String> runningTasks = new HashSet<>();
+
+    private static final List<ActionType> ACTION_TYPE_WHITELIST = Collections.unmodifiableList(Arrays.asList(
+            ActionType.InitVdsOnUp
+    ));
+
+    private static Date lastNotificationDate = new Date();
 
     @Inject
     public TasksPresenterWidget(EventBus eventBus, ViewDef view, TaskModelProvider taskModelProvider) {
@@ -60,13 +71,16 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
                     } else if (JobExecutionStatus.FINISHED.equals(job.getStatus())
                             || JobExecutionStatus.FAILED.equals(job.getStatus())
                             || JobExecutionStatus.ABORTED.equals(job.getStatus())) {
-                        if (runningTasks.contains(id)) {
+                        if (runningTasks.contains(id) ||
+                                (ACTION_TYPE_WHITELIST.contains(job.getActionType()) &&
+                                        job.getEndTime().after(lastNotificationDate))) {
                             ToastNotification notification = ToastNotification.createNotification(
                                     getPrefixText(job.getStatus()) + " " + job.getDescription());//$NON-NLS-1$
                             notification.setStatus(getNotificationStatus(job.getStatus()));
                         }
                         runningTasks.remove(id);
                     }
+                    lastNotificationDate = new Date();
                 });
             }
 
