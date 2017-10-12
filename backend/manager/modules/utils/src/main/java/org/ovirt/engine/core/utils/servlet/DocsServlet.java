@@ -108,6 +108,7 @@ public class DocsServlet extends FileServlet {
 
     private void setLangPageShown(HttpServletResponse response, boolean value) {
         Cookie cookie = new Cookie(LANG_PAGE_SHOWN, Boolean.toString(value));
+        cookie.setSecure(true);
         // Scope this cookie to the (root) application context URL
         cookie.setPath(getServletContext().getContextPath());
         cookie.setHttpOnly(true);

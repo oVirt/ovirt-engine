@@ -76,6 +76,7 @@ public class LocaleFilter implements Filter {
             final Locale userLocale) {
         // Detected locale doesn't match the default locale, set a cookie.
         Cookie cookie = new Cookie(LocaleFilter.LOCALE, userLocale.toString());
+        cookie.setSecure(true);
         cookie.setPath(ROOT_PATH);
         cookie.setMaxAge(Integer.MAX_VALUE); // Doesn't expire.
         cookie.setHttpOnly(true);
