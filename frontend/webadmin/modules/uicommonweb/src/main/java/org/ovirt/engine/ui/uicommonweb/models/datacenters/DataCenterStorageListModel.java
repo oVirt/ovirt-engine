@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -174,10 +175,10 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void onMaintenance() {
-        List<ActionParametersBase> pb = new ArrayList<>();
-        for (StorageDomain a : getSelectedItems()) {
-            pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
-        }
+        List<ActionParametersBase> pb = getSelectedItems()
+                .stream()
+                .map(sd -> new StorageDomainPoolParametersBase(sd.getId(), getEntity().getId()))
+                .collect(Collectors.toList());
 
         final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
         confirmationModel.startProgress();
@@ -195,10 +196,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         model.setHashName("maintenance_storage_domain"); //$NON-NLS-1$
         setWindow(model);
 
-        List<String> items = new ArrayList<>();
-        for (Object selected : getSelectedItems()) {
-            items.add(((StorageDomain) selected).getName());
-        }
+        List<String> items = getSelectedItems().stream().map(StorageDomain::getName).collect(Collectors.toList());
         model.setItems(items);
 
         UICommand maintenance = UICommand.createDefaultOkUiCommand("OnMaintenance", this); //$NON-NLS-1$
@@ -209,10 +207,10 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void activate() {
-        List<ActionParametersBase> pb = new ArrayList<>();
-        for (StorageDomain a : getSelectedItems()) {
-            pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
-        }
+        List<ActionParametersBase> pb = getSelectedItems()
+                .stream()
+                .map(sd -> new StorageDomainPoolParametersBase(sd.getId(), getEntity().getId()))
+                .collect(Collectors.toList());
 
         Frontend.getInstance().runMultipleAction(ActionType.ActivateStorageDomain, pb);
     }
@@ -252,18 +250,13 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
         if (storageType == StorageDomainType.ISO) {
             AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery<>(list -> {
-                List<EntityModel> models;
-                models = new ArrayList<>();
-                Collection<StorageDomain> items1 = getItems() != null ? getItems() : new ArrayList<>();
-                for (StorageDomain a : list) {
-                    if (items1.stream().noneMatch(new Linq.IdPredicate<>(a.getId()))) {
-                        EntityModel tempVar = new EntityModel();
-                        tempVar.setEntity(a);
-                        models.add(tempVar);
-                    }
-                }
+                Collection<StorageDomain> currItems = getItems() != null ? getItems() : new ArrayList<>();
+                List<EntityModel> models = list
+                        .stream()
+                        .filter(a -> currItems.stream().noneMatch(new Linq.IdPredicate<>(a.getId())))
+                        .map(EntityModel::new)
+                        .collect(Collectors.toList());
                 postAttachInternal(models);
-
             }));
         }
         else {
@@ -368,10 +361,10 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                         setWindow(null);
                         setWindow(confirmationModel);
 
-                        List<String> stoageDomainNames = new ArrayList<>();
-                        for (StorageDomainStatic domain : attachedStorageDomains) {
-                            stoageDomainNames.add(domain.getStorageName());
-                        }
+                        List<String> stoageDomainNames = attachedStorageDomains
+                                .stream()
+                                .map(StorageDomainStatic::getStorageName)
+                                .collect(Collectors.toList());
                         confirmationModel.setItems(stoageDomainNames);
 
                         confirmationModel.setTitle(ConstantsManager.getInstance()
@@ -412,10 +405,10 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void executeAttachStorageDomains() {
-        List<ActionParametersBase> pb = new ArrayList<>();
-        for (StorageDomain storageDomain : selectedStorageDomains) {
-            pb.add(new AttachStorageDomainToPoolParameters(storageDomain.getId(), getEntity().getId()));
-        }
+        List<ActionParametersBase> pb = selectedStorageDomains
+                .stream()
+                .map(sd -> new AttachStorageDomainToPoolParameters(sd.getId(), getEntity().getId()))
+                .collect(Collectors.toList());
         Frontend.getInstance().runMultipleAction(ActionType.AttachStorageDomainToPool, pb);
         cancel();
     }
@@ -462,22 +455,15 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     private String getLocalStoragesFormattedString() {
-        StringBuilder localStorages = new StringBuilder();
-        for (StorageDomain a : getSelectedItems()) {
-            if (a.getStorageType() == StorageType.LOCALFS) {
-                localStorages.append(a.getStorageName()).append(", "); //$NON-NLS-1$
-            }
-        }
-        return localStorages.substring(0, localStorages.length() - 2);
+        return getSelectedItems()
+                .stream()
+                .filter(a -> a.getStorageType() == StorageType.LOCALFS)
+                .map(StorageDomain::getStorageName)
+                .collect(Collectors.joining(", ")); //$NON-NLS-1$
     }
 
     private boolean containsLocalStorage(ConfirmationModel model) {
-        for (StorageDomain a : getSelectedItems()) {
-            if (a.getStorageType() == StorageType.LOCALFS) {
-                return true;
-            }
-        }
-        return false;
+        return getSelectedItems().stream().anyMatch(sd -> sd.getStorageType() == StorageType.LOCALFS);
     }
 
     public void onDetach() {
