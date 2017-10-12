@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -217,27 +216,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         LunDisk lunDisk = (LunDisk) getParameters().getDiskInfo();
         LUNs lun = lunDisk.getLun();
 
-        switch (lun.getLunType()) {
-        case UNKNOWN:
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE);
-        case ISCSI:
-            if (lun.getLunConnections() == null || lun.getLunConnections().isEmpty()) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
-            }
-
-            for (StorageServerConnections conn : lun.getLunConnections()) {
-                if (StringUtils.isEmpty(conn.getIqn()) || StringUtils.isEmpty(conn.getConnection())
-                        || StringUtils.isEmpty(conn.getPort())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
-                }
-            }
-            break;
-        default:
-            break;
+        if (!validate(diskValidator.validateConnectionsInLun(lun.getLunType()))) {
+            return false;
         }
-
-        if (diskLunMapDao.getDiskIdByLunId(lun.getLUNId()) != null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
+        if (!validate(diskValidator.validateLunAlreadyInUse())) {
+            return false;
         }
 
         if (getVm() != null && !(validate(new VmValidator(getVm()).vmNotLocked()) && isVmNotInPreviewSnapshot())) {

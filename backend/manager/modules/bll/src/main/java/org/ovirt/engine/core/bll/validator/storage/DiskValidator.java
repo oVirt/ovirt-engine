@@ -4,14 +4,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -19,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
@@ -71,6 +75,40 @@ public class DiskValidator {
             }
         }
         return  ValidationResult.VALID;
+    }
+
+    public ValidationResult validateConnectionsInLun(StorageType storageType) {
+        if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+            switch (storageType) {
+                case UNKNOWN:
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE);
+                case ISCSI:
+                    LUNs luns = ((LunDisk)disk).getLun();
+                    if (luns.getLunConnections() == null || luns.getLunConnections().isEmpty()) {
+                        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
+                    }
+
+                    for (StorageServerConnections conn : luns.getLunConnections()) {
+                        if (StringUtils.isEmpty(conn.getIqn()) || StringUtils.isEmpty(conn.getConnection())
+                                || StringUtils.isEmpty(conn.getPort())) {
+                            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateLunAlreadyInUse() {
+        if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+            if (Injector.get(DiskLunMapDao.class).getDiskIdByLunId(((LunDisk) disk).getLun().getLUNId()) != null) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
+            }
+        }
+        return ValidationResult.VALID;
     }
 
     public ValidationResult validRemovableHostedEngineDisks(VM vm) {

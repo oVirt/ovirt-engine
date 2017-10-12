@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -362,12 +363,14 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(false).when(command).isSoundDeviceEnabled(any());
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).validateQuota();
+        mockDiskLunMap(null);
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
                 .when(quotaManager).getDefaultQuotaIfNull(any(), any());
 
         injectorRule.bind(OsRepository.class, osRepository);
+        injectorRule.bind(DiskLunMapDao.class, diskLunMapDao);
     }
 
     /**
@@ -461,6 +464,10 @@ public class AddDiskCommandTest extends BaseCommandTest {
      */
     private StorageDomain mockStorageDomain(Guid storageId) {
         return mockStorageDomain(storageId, StorageType.UNKNOWN);
+    }
+
+    private void mockDiskLunMap(DiskLunMap diskLunMap) {
+        when(diskLunMapDao.getDiskIdByLunId(any())).thenReturn(diskLunMap);
     }
 
     private StorageDomain mockStorageDomain(Guid storageId, StorageType storageType) {
