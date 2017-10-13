@@ -39,7 +39,7 @@ public class IsOvirtCockpitSSOStartedQuery<P extends QueryParametersBase> extend
             String pid = readLine(PID_FILE);
             if (pid != null) {
                 String cmdline = readCmdline(pid.trim());
-                result = cmdline.contains(OVIRT_COCKPIT_SSO);
+                result = cmdline == null ? false : cmdline.contains(OVIRT_COCKPIT_SSO);
 
                 if (!result) {
                     log.info("ovirt-cockpit-sso is not running. Found '{}' PID with command line: '{}'", pid, cmdline);
