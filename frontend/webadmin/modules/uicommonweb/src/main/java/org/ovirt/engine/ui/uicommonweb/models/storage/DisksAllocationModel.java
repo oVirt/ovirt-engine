@@ -165,9 +165,9 @@ public class DisksAllocationModel extends EntityModel {
     private boolean isTargetAvailable = true;
 
     public DisksAllocationModel() {
-        setImageToDestinationDomainMap(new HashMap<Guid, DiskImage>());
+        setImageToDestinationDomainMap(new HashMap<>());
 
-        setDynamicWarning(new EntityModel<String>());
+        setDynamicWarning(new EntityModel<>());
         getDynamicWarning().setIsAvailable(false);
 
         setDiskAllocationTargetEnabled(new EntityModel<>(false));
