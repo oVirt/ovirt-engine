@@ -14,10 +14,14 @@
       float: left;
     }
 
+    .overrideCheckboxInfoAdjust {
+      margin-top: 2px;
+      margin-left: -6px;
+    }
   </ui:style>
 
   <g:FlowPanel addStyleNames="{style.container}">
-    <w:EntityModelWidgetWithInfo ui:field="overrideSerialNumberPolicyWithInfo" />
+    <w:EntityModelWidgetWithInfo ui:field="overrideSerialNumberPolicyWithInfo" addInfoIconStyleName="{style.overrideCheckboxInfoAdjust}" />
     <g:FlowPanel addStyleNames="container {style.container}">
         <e:EnumRadioEditor ui:field="serialNumberPolicy"/>
     </g:FlowPanel>

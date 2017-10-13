@@ -149,4 +149,8 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
     public boolean isEnabled() {
         return label.isEnabled();
     }
+
+    public void setAddInfoIconStyleName(String styleName) {
+        infoIcon.addStyleName(styleName);
+    }
 }
