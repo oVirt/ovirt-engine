@@ -20,7 +20,7 @@ limitations under the License.
 
   <deployment>
     <dependencies>
-      <module name="org.ovirt.engine.api.restapi-jaxrs" annotations="true"/>
+      <module name="org.ovirt.engine.api.restapi-jaxrs"/>
     </dependencies>
   </deployment>
 
