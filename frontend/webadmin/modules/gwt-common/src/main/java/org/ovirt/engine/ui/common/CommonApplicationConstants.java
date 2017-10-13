@@ -1758,4 +1758,8 @@ public interface CommonApplicationConstants extends Constants {
     String versionAboutLabel();
 
     String fencingOptionsLabel();
+
+    String ovaHost();
+
+    String ovaDir();
 }

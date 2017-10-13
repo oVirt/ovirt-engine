@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+
+    <ui:style>
+        .messagePanel {
+            color: #CD2127;
+        }
+
+    </ui:style>
+
+    <b:Container fluid="true">
+        <b:Row>
+            <e:ListModelListBoxEditor ui:field="proxyEditor" label="{constants.ovaHost}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="pathEditor" label="{constants.ovaDir}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.name}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
+        </b:Row>
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
+            </b:Column>
+        </b:Row>
+    </b:Container>
+
+</ui:UiBinder>

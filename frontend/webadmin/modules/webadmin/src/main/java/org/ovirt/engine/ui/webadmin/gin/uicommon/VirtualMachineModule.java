@@ -72,6 +72,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttach
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskSparsifyPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
@@ -108,6 +109,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
+            final Provider<VmExportOvaPopupPresenterWidget> exportOvaPopupProvider,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createSnapshotPopupProvider,
             final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
             final Provider<VmPopupPresenterWidget> newVmPopupProvider,
@@ -161,6 +163,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return consolePopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
                             return cloneVmProvider.get();
+                        } else if (lastExecutedCommand == getModel().getExportOvaCommand()) {
+                            return exportOvaPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getImportVmCommand()
                                 || windowModel instanceof ImportVmsModel) {
                             return importVmsProvider.get();

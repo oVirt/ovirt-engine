@@ -229,6 +229,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttach
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskSparsifyPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmHighPerformanceConfigurationPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
@@ -509,6 +510,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskAttachPopup
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskSparsifyPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportOvaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmHighPerformanceConfigurationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
@@ -1750,6 +1752,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmExportPopupPresenterWidget.class,
                 VmExportPopupPresenterWidget.ViewDef.class,
                 VmExportPopupView.class);
+
+        // OVA Export
+        bindPresenterWidget(VmExportOvaPopupPresenterWidget.class,
+                VmExportOvaPopupPresenterWidget.ViewDef.class,
+                VmExportOvaPopupView.class);
 
         // VM Remove
         bindPresenterWidget(VmRemovePopupPresenterWidget.class,

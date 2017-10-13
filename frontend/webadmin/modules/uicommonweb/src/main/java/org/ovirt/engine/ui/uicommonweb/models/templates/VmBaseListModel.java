@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -37,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ExportOvaModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.HasDiskWindow;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -97,6 +99,17 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         // this is done on the background - the window is not visible anymore
         getcurrentVm().setId(vmId);
         model.getInstanceImages().executeDiskModifications(getcurrentVm());
+    }
+
+    protected void postExportOvaGetHosts(List<VDS> hosts) {
+        ExportOvaModel model = (ExportOvaModel) getWindow();
+        model.getProxy().setItems(hosts);
+        model.getProxy().setSelectedItem(Linq.firstOrNull(hosts));
+
+        model.getCommands().add(UICommand.createDefaultOkUiCommand("OnExportOva", this)); //$NON-NLS-1$
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
+
+        model.stopProgress();
     }
 
     protected void export() {
@@ -248,6 +261,10 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
     }
 
     protected void setupExportModel(ExportVmModel model) {
+        // no-op by default. Override if needed.
+    }
+
+    protected void setupExportOvaModel(ExportOvaModel model) {
         // no-op by default. Override if needed.
     }
 

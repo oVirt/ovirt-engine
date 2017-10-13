@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.action.ExportOvaParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -31,8 +33,10 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWithStatusForExclusiveLock;
@@ -272,6 +276,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void setExportCommand(UICommand value) {
         privateExportCommand = value;
+    }
+
+    private UICommand privateExportOvaCommand;
+
+    public UICommand getExportOvaCommand() {
+        return privateExportOvaCommand;
+    }
+
+    private void setExportOvaCommand(UICommand value) {
+        privateExportOvaCommand = value;
     }
 
     private UICommand privateCreateSnapshotCommand;
@@ -524,6 +538,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
         setRunOnceCommand(new UICommand("RunOnce", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
+        setExportOvaCommand(new UICommand("ExportOva", this)); //$NON-NLS-1$
         setCreateSnapshotCommand(new UICommand("CreateSnapshot", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
         setRetrieveIsoImagesCommand(new UICommand("RetrieveIsoImages", this)); //$NON-NLS-1$
@@ -1117,6 +1132,43 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.setTitle(constants.exportVirtualMachineTitle());
         model.setHelpTag(HelpTag.export_virtual_machine);
         model.setHashName("export_virtual_machine"); //$NON-NLS-1$
+    }
+
+    @Override
+    protected void setupExportOvaModel(ExportOvaModel model) {
+        super.setupExportOvaModel(model);
+        model.setTitle(constants.exportVirtualMachineAsOvaTitle());
+        model.setHelpTag(HelpTag.export_virtual_machine);
+        model.setHashName("export_virtual_machine"); //$NON-NLS-1$
+    }
+
+    public void onExportOva() {
+        ExportOvaModel model = (ExportOvaModel) getWindow();
+        if (!model.validate()) {
+            return;
+        }
+
+        model.startProgress();
+
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
+        for (Object item : getSelectedItems()) {
+            VM vm = (VM) item;
+            ExportOvaParameters parameters = new ExportOvaParameters();
+            parameters.setEntityId(vm.getId());
+            parameters.setEntityType(VmEntityType.VM);
+            parameters.setProxyHostId(model.getProxy().getSelectedItem().getId());
+            parameters.setDirectory(model.getPath().getEntity());
+            parameters.setName(model.getName().getEntity());
+
+            list.add(parameters);
+        }
+
+        Frontend.getInstance().runMultipleAction(ActionType.ExportOva, list,
+                result -> {
+                    ExportOvaModel localModel = (ExportOvaModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
+                }, model);
     }
 
     public void onExport() {
@@ -1975,6 +2027,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.RunVmOnce));
         getExportCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ExportVm));
+        getExportOvaCommand().setIsExecutionAllowed(vmsSelected
+                && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ExportVm));
         getCreateSnapshotCommand().setIsExecutionAllowed(singleVmSelected
                 && !getSelectedItem().isStateless() && !getSelectedItem().isPreviewSnapshot()
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.CreateAllSnapshotsFromVm));
@@ -2097,6 +2151,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             runOnce();
         } else if (command == getExportCommand()) {
             export();
+        } else if (command == getExportOvaCommand()) {
+            exportOva();
         }
         else if (command == getCreateSnapshotCommand()) {
             createSnapshot();
@@ -2137,6 +2193,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
         else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
             onExport();
+        }
+        else if ("OnExportOva".equals(command.getName())) { //$NON-NLS-1$
+            onExportOva();
         }
         else if ("OnExportNoTemplates".equals(command.getName())) { //$NON-NLS-1$
             onExportNoTemplates();
@@ -2198,6 +2257,28 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             }
             saveOrUpdateVM(model);
         }
+    }
+
+    protected void exportOva() {
+        VM selectedEntity = (VM) getSelectedItem();
+        if (selectedEntity == null) {
+            return;
+        }
+
+        if (getWindow() != null) {
+            return;
+        }
+
+        ExportOvaModel model = getSelectedItems().size() == 1 ? new ExportOvaModel(selectedEntity.getName())
+                : new ExportOvaModel();
+        setWindow(model);
+        model.startProgress();
+        setupExportOvaModel(model);
+        AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery<>(
+                hosts -> postExportOvaGetHosts(hosts.stream()
+                        .filter(host -> host.getStatus() == VDSStatus.Up)
+                        .collect(Collectors.toList()))
+                ), extractStoragePoolIdNullSafe(selectedEntity));
     }
 
     private void importVms() {
@@ -2464,5 +2545,35 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     @Override
     protected Guid extractStoragePoolIdNullSafe(VM entity) {
         return entity.getStoragePoolId();
+    }
+
+    protected void exportOva2() {
+        VM selectedEntity = getSelectedItem();
+        if (selectedEntity == null) {
+            return;
+        }
+
+        if (getWindow() != null) {
+            return;
+        }
+
+//        ExportOvaModel model = (ExportOvaModel) getWindow();
+//        ArrayList<ActionParametersBase> list = new ArrayList<>();
+//        for (Object item : getSelectedItems()) {
+//            VM a = (VM) item;
+//            MoveOrCopyParameters parameters = new MoveOrCopyParameters(a.getId(), storageDomainId);
+//            parameters.setForceOverride(model.getForceOverride().getEntity());
+//            parameters.setCopyCollapse(model.getCollapseSnapshots().getEntity());
+//            parameters.setTemplateMustExists(false);
+//
+//            list.add(parameters);
+//        }
+//
+//        model.startProgress();
+
+        ExportOvaParameters parameters = new ExportOvaParameters();
+        parameters.setEntityType(VmEntityType.VM);
+        parameters.setEntityId(selectedEntity.getId());
+        Frontend.getInstance().runAction(ActionType.ExportOva, parameters);
     }
 }
