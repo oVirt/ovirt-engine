@@ -26,7 +26,7 @@
         .isPluggedEditor {
             float: right;
             margin-top: -8px;
-            width: 140px;
+            width: 180px;
         }
 
         .attachDiskPanel {
