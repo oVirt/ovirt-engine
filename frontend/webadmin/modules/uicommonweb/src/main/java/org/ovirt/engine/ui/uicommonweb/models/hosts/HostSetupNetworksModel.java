@@ -315,6 +315,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     }
                     sourceListModel.setConfirmWindow(null);
                     setBondOptions(createOrUpdateBondParameter, bondDialogModel);
+                    redraw();
                 }
             };
         } else if (item instanceof NetworkInterfaceModel) {
@@ -337,6 +338,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         }
                         sourceListModel.setConfirmWindow(null);
                         commitVfsConfigChanges(hostNicVfsConfig, vfsConfigPopupModel);
+                        redraw();
                     }
                 };
             }
@@ -449,6 +451,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     networkAttachment.setDnsResolverConfiguration(networkAttachmentModel.getDnsConfigurationModel().flush());
 
                     sourceListModel.setConfirmWindow(null);
+                    redraw();
                 }
             };
         }

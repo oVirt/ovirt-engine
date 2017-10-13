@@ -200,17 +200,21 @@ public interface InterfacePropertiesAccessor {
 
         @Override
         public String getIpv4Address() {
-            return networkAttachmentModel.getIpv4Address().getEntity();
+            return networkAttachmentModel.getIpv4Address() != null ?
+                    networkAttachmentModel.getIpv4Address().getEntity() : null;
         }
 
         @Override
         public String getIpv4Netmask() {
-            return networkAttachmentModel.getIpv4Subnet().getEntity();
+            return networkAttachmentModel.getIpv4Subnet() != null ?
+                    networkAttachmentModel.getIpv4Subnet().getEntity() : null;
         }
 
         @Override
         public String getIpv4Gateway() {
-            return networkAttachmentModel.getIpv4Gateway().getEntity();
+            return networkAttachmentModel.getIpv4Gateway() != null ?
+                    networkAttachmentModel.getIpv4Gateway().getEntity() :
+                    null;
         }
 
         @Override
@@ -220,17 +224,23 @@ public interface InterfacePropertiesAccessor {
 
         @Override
         public String getIpv6Address() {
-            return networkAttachmentModel.getIpv6Address().getEntity();
+            return networkAttachmentModel.getIpv6Address() != null ?
+                    networkAttachmentModel.getIpv6Address().getEntity() :
+                    null;
         }
 
         @Override
         public Integer getIpv6Prefix() {
-            return networkAttachmentModel.getIpv6Prefix().getEntity();
+            return networkAttachmentModel.getIpv6Prefix() != null ?
+                    networkAttachmentModel.getIpv6Prefix().getEntity() :
+                    null;
         }
 
         @Override
         public String getIpv6Gateway() {
-            return networkAttachmentModel.getIpv6Gateway().getEntity();
+            return networkAttachmentModel.getIpv6Gateway() != null ?
+                    networkAttachmentModel.getIpv6Gateway().getEntity() :
+                    null;
         }
 
         @Override
@@ -240,12 +250,16 @@ public interface InterfacePropertiesAccessor {
 
         @Override
         public boolean isQosOverridden() {
-            return networkAttachmentModel.getQosOverridden().getEntity();
+            return networkAttachmentModel.getQosOverridden() != null ?
+                    networkAttachmentModel.getQosOverridden().getEntity() :
+                    false;
         }
 
         @Override
         public HostNetworkQos getHostNetworkQos() {
-            return networkAttachmentModel.getQosModel().getEntity();
+            return networkAttachmentModel.getQosModel() != null ?
+                    networkAttachmentModel.getQosModel().getEntity() :
+                    null;
         }
 
         @Override
@@ -305,14 +319,15 @@ public interface InterfacePropertiesAccessor {
         }
 
         private boolean shouldTakeIpv4DataFromNic() {
-            if (Ipv4BootProtocol.DHCP == getIpv4BootProtocol()) {
+            if (Ipv4BootProtocol.DHCP == getIpv4BootProtocol() && nic != null) {
                 return true;
             }
             return false;
         }
 
         private boolean shouldTakeIpv6DataFromNic() {
-            if (Ipv6BootProtocol.DHCP == getIpv6BootProtocol() || Ipv6BootProtocol.AUTOCONF == getIpv6BootProtocol()) {
+            if ((Ipv6BootProtocol.DHCP == getIpv6BootProtocol() || Ipv6BootProtocol.AUTOCONF == getIpv6BootProtocol())
+                    && nic != null) {
                 return true;
             }
             return false;

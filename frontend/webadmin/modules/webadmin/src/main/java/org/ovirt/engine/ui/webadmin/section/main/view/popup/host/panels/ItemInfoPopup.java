@@ -3,6 +3,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
+import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -186,11 +189,13 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         // Boot protocol and IP info
         if (networkModel.isAttached()) {
-            if (networkModel.hasVlan() && networkModel.getVlanDevice() != null) {
-                addBootProtoAndIpInfo(networkModel.getVlanDevice());
-            } else if (!networkModel.hasVlan()) {
-                addBootProtoAndIpInfo(networkModel.getAttachedToNic().getOriginalIface());
-            }
+            IpConfiguration ipConfiguration = networkModel.getNetworkAttachment().getIpConfiguration();
+            addBootProtoAndIpInfo(ipConfiguration != null && ipConfiguration.hasIpv4PrimaryAddressSet() ?
+                            ipConfiguration.getIpv4PrimaryAddress() :
+                            null,
+                    ipConfiguration != null && ipConfiguration.hasIpv6PrimaryAddressSet() ?
+                            ipConfiguration.getIpv6PrimaryAddress() :
+                            null);
         }
     }
 
@@ -281,23 +286,48 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     }
 
     private void addBootProtoAndIpInfo(VdsNetworkInterface iface) {
+        IPv4Address ipv4 = new IPv4Address();
+        ipv4.setBootProtocol(iface.getIpv4BootProtocol());
+        ipv4.setAddress(iface.getIpv4Address());
+        ipv4.setNetmask(iface.getIpv4Subnet());
+        ipv4.setGateway(iface.getIpv4Gateway());
+
+        IpV6Address ipv6 = new IpV6Address();
+        ipv6.setBootProtocol(iface.getIpv6BootProtocol());
+        ipv6.setAddress(iface.getIpv6Address());
+        ipv6.setPrefix(iface.getIpv6Prefix());
+        ipv6.setGateway(iface.getIpv6Gateway());
+
+        addBootProtoAndIpInfo(ipv4, ipv6);
+    }
+
+    private void addBootProtoAndIpInfo(IPv4Address ipv4, IpV6Address ipv6) {
         insertHorizontalLine();
+
         // IPv4
         addRow(templates.strongTextWithColor(constants.ipv4ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
-        Ipv4BootProtocol ipv4BootProtocol = iface.getIpv4BootProtocol();
-        addRow(constants.bootProtocolItemInfo(), IPV4_RENDERER.render(ipv4BootProtocol));
-        addNonNullOrEmptyValueRow(constants.addressItemInfo(), iface.getIpv4Address());
-        addNonNullOrEmptyValueRow(constants.subnetItemInfo(), iface.getIpv4Subnet());
-        addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), iface.getIpv4Gateway());
+        if (ipv4 != null) {
+            Ipv4BootProtocol ipv4BootProtocol = ipv4.getBootProtocol();
+            addRow(constants.bootProtocolItemInfo(), IPV4_RENDERER.render(ipv4BootProtocol));
+            addNonNullOrEmptyValueRow(constants.addressItemInfo(), ipv4.getAddress());
+            addNonNullOrEmptyValueRow(constants.subnetItemInfo(), ipv4.getNetmask());
+            addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), ipv4.getGateway());
+        } else {
+            addRow(SafeHtmlUtils.fromSafeConstant(constants.notAvailableLabel()));
+        }
 
-        //IPv6
+        // IPv6
         addRow(templates.strongTextWithColor(constants.ipv6ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
-        Ipv6BootProtocol ipv6BootProtocol = iface.getIpv6BootProtocol();
-        addRow(constants.bootProtocolItemInfo(), IPV6_RENDERER.render(ipv6BootProtocol));
-        addNonNullOrEmptyValueRow(constants.addressItemInfo(), iface.getIpv6Address());
-        addNonNullOrEmptyValueRow(constants.prefixItemInfo(),
-                iface.getIpv6Prefix() != null ? iface.getIpv6Prefix().toString() : null);
-        addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), iface.getIpv6Gateway());
+        if (ipv6 != null) {
+            Ipv6BootProtocol ipv6BootProtocol = ipv6.getBootProtocol();
+            addRow(constants.bootProtocolItemInfo(), IPV6_RENDERER.render(ipv6BootProtocol));
+            addNonNullOrEmptyValueRow(constants.addressItemInfo(), ipv6.getAddress());
+            addNonNullOrEmptyValueRow(constants.prefixItemInfo(),
+                    ipv6.getPrefix() != null ? ipv6.getPrefix().toString() : null);
+            addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), ipv6.getGateway());
+        } else {
+            addRow(SafeHtmlUtils.fromSafeConstant(constants.notAvailableLabel()));
+        }
     }
 
     private void addNonNullOrEmptyValueRow(String label, String value) {
