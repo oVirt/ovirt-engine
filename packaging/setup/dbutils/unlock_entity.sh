@@ -108,11 +108,7 @@ query_vm() {
 				b.vm_guid = c.vm_id and
 				imagestatus = ${LOCKED} and
 				entity_type ilike 'VM' and
-				image_group_id in (
-					select device_id
-					from vm_device
-					where is_plugged
-				);
+				is_plugged;
 
 			select
 				vm_name as vm_name,
@@ -144,11 +140,7 @@ query_template() {
 				b.vm_guid = c.vm_id and
 				imagestatus = ${LOCKED} and
 				entity_type ilike 'TEMPLATE' and
-				image_group_id in (
-					select device_id
-					from vm_device
-					where is_plugged
-				);
+				is_plugged;
 		"
 }
 
