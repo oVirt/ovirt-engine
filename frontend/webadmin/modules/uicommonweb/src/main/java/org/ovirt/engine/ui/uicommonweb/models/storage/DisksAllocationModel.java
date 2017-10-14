@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -300,7 +299,7 @@ public class DisksAllocationModel extends EntityModel {
         for (DiskModel diskModel : disks) {
             StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
             DiskImage diskImage = (DiskImage) diskModel.getDisk();
-            diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomain.getId())));
+            diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomain.getId())));
             diskImage.setDiskAlias(diskModel.getAlias().getEntity());
             DiskProfile diskProfile = diskModel.getDiskProfile().getSelectedItem();
             diskImage.setDiskProfileId(diskProfile != null ? diskProfile.getId() : null);
