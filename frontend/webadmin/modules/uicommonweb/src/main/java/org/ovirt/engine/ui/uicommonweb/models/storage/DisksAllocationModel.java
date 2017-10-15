@@ -116,7 +116,7 @@ public class DisksAllocationModel extends EntityModel {
 
     public void sortDisks() {
         if (disks != null) {
-            Collections.sort(disks, Comparator.comparing(d -> d.getDisk().getDiskAlias()));
+            disks.sort(Comparator.comparing(d -> d.getDisk().getDiskAlias()));
             onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }
