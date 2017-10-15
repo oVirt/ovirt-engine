@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Version;
 
@@ -72,6 +73,8 @@ public class OvfVmWriter extends OvfOvirtWriter {
             _writer.writeElement(BOOT_TIME, OvfParser.localDateToUtcDateString(vm.getBootTime()));
             _writer.writeElement(DOWNTIME, String.valueOf(vm.getDowntime()));
         }
+
+        writeAffinityGroups();
     }
 
     private void writeLogEvent(String name, String value) {
@@ -129,4 +132,23 @@ public class OvfVmWriter extends OvfOvirtWriter {
 
         _writer.writeEndElement();
     }
+
+    private void writeAffinityGroups() {
+        List<AffinityGroup> affinityGroups = fullEntityOvfData.getAffinityGroups();
+        if (affinityGroups == null || affinityGroups.isEmpty()) {
+            return;
+        }
+
+        _writer.writeStartElement("Section");
+        _writer.writeAttributeString(XSI_URI, "type", "ovf:AffinityGroupsSection_Type");
+
+        affinityGroups.forEach(affinityGroup -> {
+            _writer.writeStartElement(OvfProperties.AFFINITY_GROUP);
+            _writer.writeAttributeString(OVF_URI, "name", affinityGroup.getName());
+            _writer.writeEndElement();
+        });
+
+        _writer.writeEndElement();
+    }
+
 }

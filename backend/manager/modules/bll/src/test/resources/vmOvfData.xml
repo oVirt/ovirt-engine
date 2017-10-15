@@ -41,6 +41,9 @@
             <Info>Guest Operating System</Info>
             <Description>Unassigned</Description>
         </Section>
+        <Section xsi:type="ovf:AffinityGroupsSection_Type">
+            <AffinityGroup ovf:name="aff1"></AffinityGroup>
+        </Section>
         <Section xsi:type="ovf:VirtualHardwareSection_Type">
             <Info>1 CPU, 1024 Memeory</Info>
             <System>

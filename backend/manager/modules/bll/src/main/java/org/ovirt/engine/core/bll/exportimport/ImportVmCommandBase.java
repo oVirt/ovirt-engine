@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -455,6 +456,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     protected void executeVmCommand() {
         try {
             addVmToDb();
+            addVmToAffinityGroups();
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
@@ -465,6 +467,14 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getVm());
+    }
+
+    public void addVmToAffinityGroups() {
+        // Left empty to override in ImportVmFromConfiguration
+    }
+
+    protected List<AffinityGroup> mapAffinityGroups() {
+        return Collections.EMPTY_LIST;
     }
 
     private void reportExternalMacs() {

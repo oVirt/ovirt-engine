@@ -74,6 +74,11 @@ public abstract class OvfOvirtReader extends OvfReader {
             if (node != null) {
                 readSnapshotsSection(node);
             }
+
+            node = getNode(list, "xsi:type", "ovf:AffinityGroupsSection_Type");
+            if (node != null) {
+                readAffinityGroupsSection(node);
+            }
         }
 
         readGeneralData(virtualSystem);
@@ -131,6 +136,10 @@ public abstract class OvfOvirtReader extends OvfReader {
 
     protected void readSnapshotsSection(@SuppressWarnings("unused") XmlNode section) {
         // The snapshot section only has meaning for VMs, and is overridden in OvfVmReader.
+    }
+
+    protected void readAffinityGroupsSection(@SuppressWarnings("unused") XmlNode section) {
+        // The affinity group section only has meaning for VMs, and is overridden in OvfVmReader.
     }
 
     @Override

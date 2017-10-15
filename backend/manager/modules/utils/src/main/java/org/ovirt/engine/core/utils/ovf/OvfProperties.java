@@ -107,4 +107,7 @@ public interface OvfProperties {
     String LUNS_PORT = "port";
     String LUNS_STORAGE_TYPE = "storage_type";
     String LUNS_PORTAL = "portal";
+
+    // Affinity groups
+    String AFFINITY_GROUP = "AffinityGroup";
     }

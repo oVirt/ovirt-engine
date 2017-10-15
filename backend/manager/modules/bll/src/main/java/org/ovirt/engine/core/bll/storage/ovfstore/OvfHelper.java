@@ -24,11 +24,13 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
@@ -59,6 +61,9 @@ public class OvfHelper {
 
     @Inject
     private ClusterUtils clusterUtils;
+
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     /**
      * parses a given ovf to a vm, initialize all the extra data related to it such as images, interfaces, cluster,
@@ -129,6 +134,7 @@ public class OvfHelper {
         List<DiskImage> allVmImages = new ArrayList<>();
         List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskList(), ONLY_SNAPABLE, ONLY_ACTIVE);
         List<LunDisk> lunDisks = DisksFilter.filterLunDisks(vm.getDiskMap().values());
+        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
 
         for (DiskImage diskImage : filteredDisks) {
             List<DiskImage> images = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
@@ -139,6 +145,7 @@ public class OvfHelper {
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
         fullEntityOvfData.setDiskImages(allVmImages);
         fullEntityOvfData.setLunDisks(lunDisks);
+        fullEntityOvfData.setAffinityGroups(affinityGroups);
         return ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
     }
 

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 
 public class FullEntityOvfData implements Serializable {
     private VM vm;
@@ -18,6 +19,7 @@ public class FullEntityOvfData implements Serializable {
     private List<VmNetworkInterface> interfaces = new ArrayList<>();
     private VmBase vmBase = new VmBase();
     private String clusterName = "";
+    private List<AffinityGroup> affinityGroups = new ArrayList<>();
 
     public FullEntityOvfData() {
     }
@@ -38,12 +40,14 @@ public class FullEntityOvfData implements Serializable {
             List<LunDisk> lunDisks,
             List<VmNetworkInterface> interfaces,
             VmBase vmBase,
-            String clusterName) {
+            String clusterName,
+            List<AffinityGroup> affinityGroups) {
         this.diskImages = diskImages;
         this.lunDisks = lunDisks;
         this.interfaces = interfaces;
         this.vmBase = vmBase;
         this.clusterName = clusterName;
+        this.affinityGroups = affinityGroups;
     }
 
     public VmBase getVmBase() {
@@ -102,6 +106,14 @@ public class FullEntityOvfData implements Serializable {
         this.clusterName = clusterName;
     }
 
+    public List<AffinityGroup> getAffinityGroups() {
+        return affinityGroups;
+    }
+
+    public void setAffinityGroups(List<AffinityGroup> affinityGroups) {
+        this.affinityGroups = affinityGroups;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -116,7 +128,8 @@ public class FullEntityOvfData implements Serializable {
                 && Objects.equals(lunDisks, other.lunDisks)
                 && Objects.equals(interfaces, other.interfaces)
                 && Objects.equals(vmBase, other.vmBase)
-                && Objects.equals(clusterName, other.clusterName);
+                && Objects.equals(clusterName, other.clusterName)
+                && Objects.equals(affinityGroups, other.affinityGroups);
     }
 
     @Override
@@ -127,7 +140,7 @@ public class FullEntityOvfData implements Serializable {
                 lunDisks,
                 interfaces,
                 vmBase,
-                clusterName
-                );
+                clusterName,
+                affinityGroups);
     }
 }

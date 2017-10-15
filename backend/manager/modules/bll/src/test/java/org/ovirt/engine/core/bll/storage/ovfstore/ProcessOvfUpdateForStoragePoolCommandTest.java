@@ -62,6 +62,7 @@ import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
@@ -98,6 +99,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Mock
     private ClusterDao clusterDao;
+
+    @Mock
+    private AffinityGroupDao affinityGroupDao;
 
     @Spy
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
@@ -308,6 +312,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(vmGuids).when(vmAndTemplatesGenerationsDao).getVmsIdsForOvfUpdate(poolId);
         doReturn(templatesGuids).when(vmAndTemplatesGenerationsDao).getVmTemplatesIdsForOvfUpdate(poolId);
         doReturn(removedGuids).when(vmAndTemplatesGenerationsDao).getIdsForOvfDeletion(poolId);
+        doReturn(Collections.EMPTY_LIST).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
         pool.setStatus(StoragePoolStatus.Up);
     }
 

@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
@@ -175,6 +176,20 @@ public class OvfVmReader extends OvfOvirtReader {
 
             snapshots.add(snapshot);
         }
+    }
+
+    @Override
+    protected void readAffinityGroupsSection(XmlNode section) {
+        XmlNodeList list = selectNodes(section, OvfProperties.AFFINITY_GROUP);
+        List<AffinityGroup> affinityGroups = new ArrayList<>();
+        for (XmlNode node : list) {
+            String affinityGroupName = node.attributes.get("ovf:name").innerText;
+            AffinityGroup affinityGroup = new AffinityGroup();
+            affinityGroup.setName(affinityGroupName);
+            affinityGroups.add(affinityGroup);
+        }
+
+        fullEntityOvfData.setAffinityGroups(affinityGroups);
     }
 
     @Override

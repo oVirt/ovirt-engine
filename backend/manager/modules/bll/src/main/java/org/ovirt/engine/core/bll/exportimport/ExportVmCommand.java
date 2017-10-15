@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -84,6 +85,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -124,6 +126,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     @Inject
     private ClusterUtils clusterUtils;
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
@@ -313,6 +317,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         List<DiskImage> vmImages = new ArrayList<>();
         List<LunDisk> lunDisks = new ArrayList<>();
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
+        List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
         if (interfaces != null) {
             // TODO remove this when the API changes
             interfaces.clear();
@@ -353,6 +358,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         fullEntityOvfData.setClusterName(vm.getClusterName());
         fullEntityOvfData.setDiskImages(vmImages);
         fullEntityOvfData.setLunDisks(lunDisks);
+        fullEntityOvfData.setAffinityGroups(affinityGroups);
         String vmMeta = ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
 
         vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
@@ -560,6 +566,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(getVm());
         fullEntityOvfData.setClusterName(getVm().getClusterName());
         fullEntityOvfData.setDiskImages(ovfUpdateProcessHelper.getVmImagesFromDb(getVm()));
+        fullEntityOvfData.setAffinityGroups(affinityGroupDao.getAllAffinityGroupsByVmId(getVmId()));
         ovfUpdateProcessHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,
                 fullEntityOvfData);

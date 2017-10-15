@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -52,6 +53,7 @@ import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
@@ -79,6 +81,8 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     private VmTemplateDao vmTemplateDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     private int itemsCountPerUpdate;
     private List<Guid> proccessedIdsInfo;
@@ -333,9 +337,12 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
                     for (LunDisk lun : lunDisks) {
                         lun.getLun().setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId())));
                     }
+
+                    List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
                     FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
                     fullEntityOvfData.setDiskImages(vmImages);
                     fullEntityOvfData.setLunDisks(lunDisks);
+                    fullEntityOvfData.setAffinityGroups(affinityGroups);
                     proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForVm(vm,
                             vmsAndTemplateMetadata,
                             fullEntityOvfData));

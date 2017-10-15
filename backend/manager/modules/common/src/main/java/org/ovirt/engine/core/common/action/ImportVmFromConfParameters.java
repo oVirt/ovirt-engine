@@ -2,10 +2,12 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImportVmFromConfParameters extends ImportVmParameters implements ImportFromConfParameters {
@@ -17,6 +19,8 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     private Map<String, String> affinityGroupMap;
     private Map<String, String> affinityLabelMap;
     private Map<String, Object> externalLunMap;
+
+    private List<AffinityGroup> affinityGroups;
 
     public ImportVmFromConfParameters() {
         this(Collections.emptyList(), false);
@@ -94,5 +98,13 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     @Override
     public void setExternalLunMap(Map<String, Object> externalLunMap) {
         this.externalLunMap = externalLunMap;
+    }
+
+    public List<AffinityGroup> getAffinityGroups() {
+        return affinityGroups;
+    }
+
+    public void setAffinityGroups(List<AffinityGroup> affinityGroups) {
+        this.affinityGroups = affinityGroups;
     }
 }

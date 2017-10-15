@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -33,11 +35,13 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +71,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
     @Inject
     private UnregisteredDisksDao unregisteredDisksDao;
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -159,6 +165,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
+                getParameters().setAffinityGroups(fullEntityOvfData.getAffinityGroups());
 
                 // For quota, update disks when required
                 if (getParameters().getDiskMap() != null) {
@@ -204,6 +211,50 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                             .forEach(conn -> conn.setStorageType(lunDisk.getLun().getLunType()));
                 }
             }
+        });
+    }
+
+    @Override
+    protected List<AffinityGroup> mapAffinityGroups() {
+        List<AffinityGroup> affinityGroups = new ArrayList<>();
+        Map<String, String> affinityGroupMap = getParameters().getAffinityGroupMap();
+        getParameters().getAffinityGroups().forEach(affinityGroup -> {
+            AffinityGroup originalAffinityGroup = affinityGroupDao.getByName(affinityGroup.getName());
+
+            if (affinityGroupMap != null) {
+                String destName = affinityGroupMap.get(affinityGroup.getName());
+                if (destName != null) {
+                    AffinityGroup destAffinityGroup = affinityGroupDao.getByName(destName);
+                    addAffinityGroup(affinityGroups, destAffinityGroup, originalAffinityGroup);
+                } else {
+                    addAffinityGroup(affinityGroups, originalAffinityGroup, null);
+                }
+            } else {
+                addAffinityGroup(affinityGroups, originalAffinityGroup, null);
+            }
+        });
+
+        return affinityGroups;
+    }
+
+    private void addAffinityGroup(List<AffinityGroup> affinityGroups,
+                                  AffinityGroup affinityGroup,
+                                  AffinityGroup alternativeAffinityGroup) {
+        if (affinityGroup != null) {
+            affinityGroups.add(affinityGroup);
+        } else if (alternativeAffinityGroup != null) {
+            affinityGroups.add(alternativeAffinityGroup);
+        }
+    }
+
+    @Override
+    public void addVmToAffinityGroups() {
+        mapAffinityGroups().forEach(affinityGroup -> {
+            affinityGroup.setClusterId(getParameters().getClusterId());
+            Set<Guid> vmIds = new HashSet<>(affinityGroup.getVmIds());
+            vmIds.add(getParameters().getVm().getId());
+            affinityGroup.setVmIds(vmIds.stream().collect(Collectors.toList()));
+            affinityGroupDao.update(affinityGroup);
         });
     }
 
