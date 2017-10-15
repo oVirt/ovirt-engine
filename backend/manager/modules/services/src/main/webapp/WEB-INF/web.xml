@@ -6,11 +6,25 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
+  <!-- context params needed for branding -->
+  <context-param>
+    <param-name>obrandThemePath</param-name>
+    <param-value>/theme</param-value>
+  </context-param>
+  <context-param>
+    <param-name>obrandResourcePath</param-name>
+    <param-value>/theme-resource</param-value>
+  </context-param>
+  <!-- app name key for branding resources -->
+  <context-param>
+    <param-name>applicationName</param-name>
+    <param-value>webadmin</param-value>
+  </context-param>
+
   <filter>
     <filter-name>LocaleFilter</filter-name>
     <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
   </filter>
-
   <filter-mapping>
     <filter-name>LocaleFilter</filter-name>
     <url-pattern>/*</url-pattern>
@@ -47,6 +61,18 @@
   <filter-mapping>
     <filter-name>EnforceAuthFilter</filter-name>
     <url-pattern>/hystrix.stream</url-pattern>
+  </filter-mapping>
+
+  <!-- Branding Filter, passes branding information to jsps -->
+  <filter>
+    <filter-name>BrandingFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>BrandingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>ERROR</dispatcher>
   </filter-mapping>
 
   <servlet>
