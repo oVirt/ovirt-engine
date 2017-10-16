@@ -33,7 +33,7 @@ public class EventMapper {
         model.setDescription(entity.getMessage());
 
         boolean idValid = entity.getUserId()!=null && !entity.getUserId().equals(Guid.Empty);
-        boolean nameValid = entity.getUserName()!=null;
+        boolean nameValid = !StringUtils.isEmpty(entity.getUserName());
 
         if (idValid || nameValid) {
             User user = new User();
@@ -47,7 +47,7 @@ public class EventMapper {
         }
 
         idValid = entity.getVmId()!=null && !entity.getVmId().equals(Guid.Empty);
-        nameValid = entity.getVmName()!=null;
+        nameValid = !StringUtils.isEmpty(entity.getVmName());
 
         if (idValid || nameValid) {
             Vm vm = new Vm();
@@ -61,7 +61,7 @@ public class EventMapper {
         }
 
         idValid = entity.getStorageDomainId()!=null && !entity.getStorageDomainId().equals(Guid.Empty);
-        nameValid = entity.getStorageDomainName()!=null;
+        nameValid = !StringUtils.isEmpty(entity.getStorageDomainName());
 
         if (idValid || nameValid) {
             StorageDomain sd = new StorageDomain();
@@ -75,7 +75,7 @@ public class EventMapper {
         }
 
         idValid = entity.getVdsId()!=null && !entity.getVdsId().equals(Guid.Empty);
-        nameValid = entity.getVdsName()!=null;
+        nameValid = !StringUtils.isEmpty(entity.getVdsName());
 
         if (idValid || nameValid) {
             Host host = new Host();
@@ -89,7 +89,7 @@ public class EventMapper {
         }
 
         idValid = entity.getVmTemplateId()!=null && !entity.getVmTemplateId().equals(Guid.Empty);
-        nameValid = entity.getVmTemplateName()!=null;
+        nameValid = !StringUtils.isEmpty(entity.getVmTemplateName());
 
         if (idValid || nameValid) {
             Template template = new Template();
@@ -103,7 +103,7 @@ public class EventMapper {
         }
 
         idValid = entity.getClusterId()!=null && !entity.getClusterId().equals(Guid.Empty);
-        nameValid = entity.getClusterName()!=null;
+        nameValid = !StringUtils.isEmpty(entity.getClusterName());
 
         if (idValid || nameValid) {
             Cluster cluster = new Cluster();
@@ -117,7 +117,7 @@ public class EventMapper {
         }
 
         idValid = entity.getStoragePoolId()!=null && !entity.getStoragePoolId().equals(Guid.Empty);
-        nameValid = entity.getStoragePoolName()!=null;
+        nameValid = !StringUtils.isEmpty(entity.getStoragePoolName());
 
         if (idValid || nameValid) {
             DataCenter dataCenter = new DataCenter();
