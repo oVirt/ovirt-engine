@@ -470,7 +470,7 @@ public class StorageModel extends Model {
 
     public void postUpdateHost(Collection<VDS> hosts) {
         // Filter hosts
-        hosts = Linq.where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));
+        hosts = Linq.where(hosts, new Linq.StatusPredicate<>(VDSStatus.Up));
 
         VDS oldSelectedItem = getHost().getSelectedItem();
         VDS selectedItem = null;

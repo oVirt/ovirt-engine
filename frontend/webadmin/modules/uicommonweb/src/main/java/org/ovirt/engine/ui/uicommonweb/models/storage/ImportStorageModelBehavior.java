@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class ImportStorageModelBehavior extends StorageModelBehavior {
     @Override
     public List<StoragePool> filterDataCenter(List<StoragePool> source) {
-        return Linq.where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.Up));
+        return Linq.where(source, new Linq.StatusPredicate<>(StoragePoolStatus.Up));
     }
 
     @Override

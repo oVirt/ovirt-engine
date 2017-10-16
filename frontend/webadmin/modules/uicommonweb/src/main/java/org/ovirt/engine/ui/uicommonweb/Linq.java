@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Nameable;
@@ -22,10 +23,6 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
@@ -186,29 +183,16 @@ public final class Linq {
 
     }
 
-    public static class DataCenterStatusPredicate implements Predicate<StoragePool> {
-        private StoragePoolStatus status = StoragePoolStatus.values()[0];
+    public static class StatusPredicate<S extends Enum<S>> implements Predicate<BusinessEntityWithStatus<?, S>> {
+        private S status;
 
-        public DataCenterStatusPredicate(StoragePoolStatus status) {
+        public StatusPredicate(S status) {
             this.status = status;
         }
 
         @Override
-        public boolean test(StoragePool source) {
+        public boolean test(BusinessEntityWithStatus<?, S> source) {
             return source.getStatus() == status;
-        }
-    }
-
-    public static class HostStatusPredicate implements Predicate<VDS> {
-        private VDSStatus status = VDSStatus.values()[0];
-
-        public HostStatusPredicate(VDSStatus status) {
-            this.status = status;
-        }
-
-        @Override
-        public boolean test(VDS source) {
-            return source.getStatus().equals(status);
         }
     }
 
