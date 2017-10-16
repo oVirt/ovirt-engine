@@ -13,7 +13,7 @@ public class HotUnplugMemoryParameters extends VmOperationParameterBase {
     }
 
     /** Just to please GWT */
-    private HotUnplugMemoryParameters() {
+    protected HotUnplugMemoryParameters() {
     }
 
     public Guid getDeviceId() {

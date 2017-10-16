@@ -499,6 +499,7 @@ public enum ActionType {
 
     // Vm devices
     HotUnplugMemory(2400, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    HotUnplugMemoryWithoutVmUpdate(2401, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
 
     // Audit Log
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),

@@ -463,4 +463,15 @@ public class VmDeviceCommonUtils {
         }
     }
 
+    /**
+     * Libvirt doesn't specify what values of xml snippet it actually uses to identify memory device to hot unplug. Thus
+     * all values need to be provided to build complete xml representation of memory device.
+     */
+    public static boolean isMemoryDeviceHotUnpluggable(VmDevice memoryDevice) {
+        if (!isMemory(memoryDevice)) {
+            throw new IllegalArgumentException("Memory device expected but device " + memoryDevice + " obtained.");
+        }
+        return getSpecParamsIntValue(memoryDevice, SPEC_PARAM_SIZE).isPresent()
+                && getSpecParamsIntValue(memoryDevice, SPEC_PARAM_NODE).isPresent();
+    }
 }

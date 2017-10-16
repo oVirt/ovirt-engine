@@ -18,6 +18,7 @@ import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.HotSetAmountOfMemoryParameters;
 import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
+import org.ovirt.engine.core.common.action.HotUnplugMemoryWithoutVmUpdateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
@@ -86,6 +88,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.common.vdscommands.LeaseVDSParameters;
@@ -105,6 +108,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
@@ -113,6 +117,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
 
     private static final Base64 BASE_64 = new Base64(0, null);
+    private static final String AUDIT_LOG_MEMORY_HOT_UNPLUG_OPTIONS = "memoryHotUnplugOptions";
+    private static final String AUDIT_LOG_OLD_MEMORY_MB = "oldMemoryMb";
+    private static final String AUDIT_LOG_NEW_MEMORY_MB = "newMemoryMB";
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -475,22 +482,105 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return;
         }
 
-        if (!VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm)) {
+        if (VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm)) {
+            final int memoryAddedMb = newAmountOfMemory - currentMemory;
+            final int factor = Config.<Integer>getValue(ConfigValues.HotPlugMemoryBlockSizeMb);
+            final boolean memoryDividable = memoryAddedMb % factor == 0;
+            if (!memoryDividable) {
+                addCustomValue("memoryAdded", String.valueOf(memoryAddedMb));
+                addCustomValue("requiredFactor", String.valueOf(factor));
+                auditLogDirector.log(this, AuditLogType.FAILED_HOT_SET_MEMORY_NOT_DIVIDABLE);
+                newVmStatic.setMemSizeMb(currentMemory);
+                return;
+            }
+
+            hotSetMemory(currentMemory, newAmountOfMemory);
             return;
         }
 
-        final int memoryAddedMb = newAmountOfMemory - currentMemory;
-        final int factor = Config.<Integer>getValue(ConfigValues.HotPlugMemoryBlockSizeMb);
-        final boolean memoryDividable = memoryAddedMb % factor == 0;
-        if (!memoryDividable) {
-            addCustomValue("memoryAdded", String.valueOf(memoryAddedMb));
-            addCustomValue("requiredFactor", String.valueOf(factor));
-            auditLogDirector.log(this, AuditLogType.FAILED_HOT_SET_MEMORY_NOT_DIVIDABLE);
-            newVmStatic.setMemSizeMb(currentMemory);
+        if (currentMemory > newAmountOfMemory) {
+            hotUnplugMemory(newVm);
+        }
+    }
+
+    /**
+     * Hot unplug of largest memory device that is smaller or equal to requested memory decrement.
+     *
+     * <p>The decrement is computed as 'memory of VM in DB' - 'memory of VM from Params'. However user sees value from
+     * next run snapshot in the Edit VM dialog.</p>
+     *
+     * <p>No matter if the memory hot unplug succeeds or not, the next run snapshot always contains values requested by
+     * user, not values rounded to the size of memory device.</p>
+     */
+    private void hotUnplugMemory(VM newVm) {
+        final List<VmDevice> vmMemoryDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                getVmId(),
+                VmDeviceGeneralType.MEMORY,
+                VmDeviceType.MEMORY);
+        final int oldMemoryMb = oldVm.getMemSizeMb();
+        final int oldMinMemoryMb = oldVm.getMinAllocatedMem();
+        final List<VmDevice> memoryDevicesToUnplug = MemoryUtils.computeMemoryDevicesToHotUnplug(
+                vmMemoryDevices, oldMemoryMb, getParameters().getVm().getMemSizeMb());
+        if (memoryDevicesToUnplug.isEmpty()) {
+            logNoDeviceToHotUnplug(vmMemoryDevices);
+
+            // Hosted Engine doesn't use next-run snapshots. Instead it requires the configuration for next run to be stored
+            // in vm_static table.
+            if (!oldVm.isHostedEngine()) {
+                newVmStatic.setMemSizeMb(oldMemoryMb);
+                newVmStatic.setMinAllocatedMem(oldMinMemoryMb);
+            }
             return;
         }
 
-        hotSetMemory(currentMemory, newAmountOfMemory);
+        final int totalHotUnpluggedMemoryMb = memoryDevicesToUnplug.stream()
+                .mapToInt(deviceToHotUnplug -> {
+                    final ActionReturnValue hotUnplugReturnValue = runInternalAction(
+                            ActionType.HotUnplugMemoryWithoutVmUpdate,
+                            new HotUnplugMemoryWithoutVmUpdateParameters(
+                                    deviceToHotUnplug.getId(),
+                                    newVm.getMinAllocatedMem()),
+                            cloneContextAndDetachFromParent());
+                    return hotUnplugReturnValue.getSucceeded()
+                            ? VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(deviceToHotUnplug).get()
+                            : 0;
+                })
+                .sum();
+
+        // Hosted Engine doesn't use next-run snapshots. Instead it requires the configuration for next run to be stored
+        // in vm_static table.
+        if (!oldVm.isHostedEngine()) {
+            newVmStatic.setMemSizeMb(oldMemoryMb - totalHotUnpluggedMemoryMb);
+            newVmStatic.setMinAllocatedMem(totalHotUnpluggedMemoryMb > 0 // at least one hot unplug succeeded
+                    ? newVm.getMinAllocatedMem()
+                    : oldMinMemoryMb);
+        }
+    }
+
+    private void logNoDeviceToHotUnplug(List<VmDevice> vmMemoryDevices) {
+        final AuditLogType message = vmMemoryDevices.isEmpty()
+                ? AuditLogType.NO_MEMORY_DEVICE_TO_HOT_UNPLUG
+                : AuditLogType.NO_SUITABLE_MEMORY_DEVICE_TO_HOT_UNPLUG;
+        if (!vmMemoryDevices.isEmpty()) {
+            final int originalMemoryMb = oldVm.getMemSizeMb();
+            addCustomValue(AUDIT_LOG_OLD_MEMORY_MB, String.valueOf(originalMemoryMb));
+            addCustomValue(AUDIT_LOG_NEW_MEMORY_MB, String.valueOf(getParameters().getVm().getMemSizeMb()));
+            final String unplugOptions = vmMemoryDevices.stream()
+                    .filter(VmDeviceCommonUtils::isMemoryDeviceHotUnpluggable)
+                    .map(device -> VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(device).get())
+                    .map(deviceSize -> String.format(
+                            "%dMB (%dMB)",
+                            deviceSize,
+                            memoryAfterHotUnplug(originalMemoryMb, deviceSize)))
+                    .collect(Collectors.joining(", "));
+            addCustomValue(AUDIT_LOG_MEMORY_HOT_UNPLUG_OPTIONS, unplugOptions);
+        }
+        auditLogDirector.log(this, message);
+    }
+
+    private int memoryAfterHotUnplug(int originalMemory, int memoryDeviceSize) {
+        final int decrementedSize = originalMemory - memoryDeviceSize;
+        return decrementedSize > 0 ? decrementedSize : originalMemory;
     }
 
     /**
@@ -1060,6 +1150,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
+        final boolean isMemoryHotUnplug = vmFromDB.getMemSizeMb() > vmFromParams.getMemSizeMb()
+                && isHotSetEnabled();
+        if (isMemoryHotUnplug
+                && !FeatureSupported.hotUnplugMemory(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
+            return failValidation(
+                    EngineMessage.ACTION_TYPE_FAILED_MEMORY_HOT_UNPLUG_NOT_SUPPORTED_FOR_COMPAT_VERSION_AND_ARCH,
+                    ReplacementUtils.createSetVariableString(
+                            "compatibilityVersion", getVm().getCompatibilityVersion()),
+                    ReplacementUtils.createSetVariableString(
+                            "architecture", getVm().getClusterArch()));
+        }
+
         return true;
     }
 
@@ -1323,5 +1425,4 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 .collect(Collectors.toList());
         labelDao.updateLabelsForVm(getVmId(), labelIds);
     }
-
 }

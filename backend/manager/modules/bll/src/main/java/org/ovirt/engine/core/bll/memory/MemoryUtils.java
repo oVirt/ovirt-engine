@@ -1,13 +1,18 @@
 package org.ovirt.engine.core.bll.memory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.stream.Collector;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -15,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MemoryUtils {
@@ -161,5 +167,54 @@ public class MemoryUtils {
 
     public static String generateMemoryDiskDescription(VM vm, String snapshotDescription) {
         return String.format(MEMORY_DISK_DESCRIPTION, snapshotDescription, vm.getName(), vm.getId());
+    }
+
+    /**
+     * It computes memory devices to hot unplug. Total size of selected devices is always <= requested memory decrement.
+     *
+     * Simplified solution of rucksack problem.
+     */
+    public static List<VmDevice> computeMemoryDevicesToHotUnplug(
+            List<VmDevice> vmMemoryDevices,
+            int currentMemoryMb,
+            int desiredMemoryMb) {
+        final int memoryToHotUnplugMb = currentMemoryMb - desiredMemoryMb;
+        final List<VmDevice> memoryDevicesToUnplug = vmMemoryDevices.stream()
+                .filter(VmDeviceCommonUtils::isMemoryDeviceHotUnpluggable)
+                .filter(memoryDevice ->
+                        memoryToHotUnplugMb >= VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(memoryDevice).get())
+                .sorted(Comparator.comparing(
+                        (VmDevice memoryDevice) -> VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(memoryDevice).get())
+                        .reversed())
+                .collect(Collector.of(
+                        ArrayList::new,
+                        new GreedyMemoryDeviceAccumulator(memoryToHotUnplugMb),
+                        (listA, listB) -> {
+                            listA.addAll(listB);
+                            return listA;
+                        }));
+        return memoryDevicesToUnplug;
+    }
+
+    /**
+     * It selects devices until the sum of size of selected devices is larger than {@link #memorySizeMax}.
+     */
+    private static class GreedyMemoryDeviceAccumulator implements BiConsumer<List<VmDevice>, VmDevice> {
+
+        private final int memorySizeMax;
+        private int selectedDevicesTotalSize = 0;
+
+        private GreedyMemoryDeviceAccumulator(int memorySizeMax) {
+            this.memorySizeMax = memorySizeMax;
+        }
+
+        @Override
+        public void accept(List<VmDevice> sum, VmDevice memoryDevice) {
+            final int deviceSizeMb = VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(memoryDevice).get();
+            if (selectedDevicesTotalSize + deviceSizeMb <= memorySizeMax) {
+                sum.add(memoryDevice);
+                selectedDevicesTotalSize += deviceSizeMb;
+            }
+        }
     }
 }
