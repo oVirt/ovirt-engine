@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -123,8 +122,7 @@ public class SnapshotVmConfigurationHelper {
         // image data is written to OVF
         Map<Guid, DiskImage> imagesInDbMap = ImagesHandler.getDiskImagesByIdMap(imagesInDb);
         for (DiskImage fromConfigImg : vm.getImages()) {
-            if (fromConfigImg.getDiskStorageType() == DiskStorageType.IMAGE
-                    && !imagesInDbMap.containsKey(fromConfigImg.getImageId())) {
+            if (!imagesInDbMap.containsKey(fromConfigImg.getImageId())) {
                 log.debug("Image '{}' of Disk '{}' cannot be found in database. This image will be returned as ILLEGAL from the query",
                         fromConfigImg.getImageId(),
                         fromConfigImg.getId());
