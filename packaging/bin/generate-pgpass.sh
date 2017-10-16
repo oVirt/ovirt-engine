@@ -1,7 +1,5 @@
 #!/bin/sh
 
-. "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
-
 [[ -z $ENGINE_DB_HOST ]]     || \
 [[ -z $ENGINE_DB_PORT ]]     || \
 [[ -z $ENGINE_DB_USER ]]     || \
