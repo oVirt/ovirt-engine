@@ -1,0 +1,73 @@
+/***************************************************
+oVirt base common css file
+landing page (welcome), login (sso), docs, 404, etc
+****************************************************/
+
+.login-pf body {
+    background-color: #131822;
+    background-image: none;
+}
+
+.login-pf .ovirt-container {
+    font-size: 13px;
+}
+
+.container-pad {
+    padding-left: 100px !important;
+    padding-top: 50px !important;
+    padding-bottom: 60px !important
+}
+
+#welcome-section {
+    position: absolute;
+    top: -76px;
+    left: 100px;
+}
+
+#welcome-section-login {
+    position: absolute;
+    top: -50px;
+    left: 100px;
+}
+
+#welcome-band-top {
+    margin-top: 15px;
+}
+
+#welcome-title {
+    position: relative;
+    top: -4px;
+    font-size: 14px;
+    font-weight: 400;
+    float: left;
+}
+
+#welcome-version-text {
+    position: relative;
+    top: 8px;
+    margin-left: 30px;
+    color: #bbb;
+    float: left;
+}
+
+#welcome-app-title {
+    position: relative;
+    top: -3px;
+    left: 10px;
+    float: left;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  #welcome-app-title {
+    display: none;
+  }
+}
+
+#welcome-app-title .pipe {
+    color: #bbb;
+    font-size: 18px;
+    font-weight: 100;
+    padding-right: 8px;
+}

@@ -22,7 +22,7 @@
     </context-param>
     <context-param>
         <param-name>applicationName</param-name>
-        <param-value>welcome</param-value>
+        <param-value>common</param-value>
     </context-param>
 
     <!-- Branding Servlet -->

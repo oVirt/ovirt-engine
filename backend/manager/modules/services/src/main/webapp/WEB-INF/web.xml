@@ -18,7 +18,7 @@
   <!-- app name key for branding resources -->
   <context-param>
     <param-name>applicationName</param-name>
-    <param-value>webadmin</param-value>
+    <param-value>common</param-value>
   </context-param>
 
   <filter>

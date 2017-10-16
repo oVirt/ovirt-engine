@@ -17,7 +17,10 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +90,11 @@ public class BrandingTheme {
      * Post fix for denoting css files.
      */
     private static final String CSS_POST_FIX = "_css"; //$NON-NLS-1$
+
+    /**
+     * Css file reference pattern.
+     */
+    private static final Pattern CSS_REF_PATTERN = Pattern.compile("^\\{(.*)}$"); //$NON-NLS-1$
 
     private static final String[] TEMPLATE_REPLACE_VALUES = {"true", "false"}; //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -202,17 +210,30 @@ public class BrandingTheme {
      * @return A {@code List} of filenames
      */
     public List<String> getThemeStylesheets(String applicationName) {
-        List<String> ret = null;
-        final String cssFiles = brandingProperties.getProperty(applicationName + CSS_POST_FIX);
-        if (cssFiles == null) {
+        String inputCssFiles = brandingProperties.getProperty(applicationName + CSS_POST_FIX);
+        if (inputCssFiles == null) {
             log.warn("Theme '{}' has no property defined for key '{}'", //$NON-NLS-1$
-                    this.getPath(), applicationName + CSS_POST_FIX);
+                    getPath(), applicationName + CSS_POST_FIX);
+            return null;
         }
-        else {
-            // comma-delimited list
-            ret = Arrays.asList(cssFiles.split("\\s*,\\s*")); //$NON-NLS-1$
+
+        // comma-delimited list
+        List<String> inputCssList = Arrays.asList(inputCssFiles.split("\\s*,\\s*")); //$NON-NLS-1$
+
+        // list containing expanded "{applicationName}" references
+        List<String> expandedCssList = new ArrayList<>();
+
+        for (String cssFileOrRef : inputCssList) {
+            Matcher refMatcher = CSS_REF_PATTERN.matcher(cssFileOrRef);
+            if (refMatcher.matches()) {
+                List<String> refExpanded = getThemeStylesheets(refMatcher.group(1));
+                expandedCssList.addAll(refExpanded);
+            } else {
+                expandedCssList.add(cssFileOrRef);
+            }
         }
-        return ret;
+
+        return expandedCssList;
     }
 
     /**
@@ -368,9 +389,11 @@ public class BrandingTheme {
 
     @Override
     public String toString() {
-        return "Path to theme: " + getPath() + ", User portal css: " //$NON-NLS-1$ //$NON-NLS-2$
-        + getThemeStylesheets("webadmin") + ", Welcome page css: " //$NON-NLS-1$ //$NON-NLS-2$
-        + getThemeStylesheets("welcome"); //$NON-NLS-1$
+        return ToStringBuilder.forInstance(this)
+                .append("Path to theme", getPath()) //$NON-NLS-1$
+                .append("webadmin css", getThemeStylesheets("webadmin")) //$NON-NLS-1$ //$NON-NLS-2$
+                .append("welcome css", getThemeStylesheets("welcome")) //$NON-NLS-1$ //$NON-NLS-2$
+                .build();
     }
 
 }
