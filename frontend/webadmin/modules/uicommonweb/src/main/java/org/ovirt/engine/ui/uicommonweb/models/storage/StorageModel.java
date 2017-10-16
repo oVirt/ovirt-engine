@@ -612,19 +612,33 @@ public class StorageModel extends Model {
     }
 
     private void updateBackup() {
-        if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
-                || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
+        if (getCurrentStorageItem() != null && getAvailableStorageTypeItems().getSelectedItem() != null) {
+            boolean isStorageDomainUnattached =
+                    getDataCenter().getSelectedItem().getId().equals(UnassignedDataCenterId);
+            if (isStorageDomainUnattached) {
+                if (getCurrentStorageItem().getRole().isDataDomain()) {
+                    getBackup().setIsAvailable(true);
+                    getBackup().setEntity(isNewStorage() ? false : getStorage().isBackup());
+                } else {
                     getBackup().setIsAvailable(false);
                     getBackup().setEntity(false);
-                    return;
+                }
+            } else if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
+                    || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
+                getBackup().setIsAvailable(false);
+                getBackup().setEntity(false);
+            } else {
+                boolean backupSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                        ConfigValues.BackupSupported,
+                        getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
+
+                getBackup().setIsAvailable(backupSupported);
+                getBackup().setEntity(isNewStorage() ? false : getStorage().isBackup());
+            }
+        } else {
+            getBackup().setIsAvailable(false);
+            getBackup().setEntity(false);
         }
-        boolean backupSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigValues.BackupSupported,
-                getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
-
-        getBackup().setIsAvailable(backupSupported);
-        getBackup().setEntity(isNewStorage() ? false : getStorage().isBackup());
-
     }
 
     public boolean validate() {
