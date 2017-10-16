@@ -110,10 +110,6 @@ class Plugin(plugin.PluginBase):
         _args_base = (
             oenginecons.FileLocations.OVIRT_ENGINE_TASKCLEANER,
             '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
-            '-u', self.environment[oenginecons.EngineDBEnv.USER],
-            '-s', self.environment[oenginecons.EngineDBEnv.HOST],
-            '-p', str(self.environment[oenginecons.EngineDBEnv.PORT]),
-            '-d', self.environment[oenginecons.EngineDBEnv.DATABASE],
             '-q',
         )
         envPwd = {
@@ -340,10 +336,6 @@ class Plugin(plugin.PluginBase):
             oenginecons.FileLocations.OVIRT_ENGINE_UNLOCK_ENTITY,
             '-t', 'all',
             '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
-            '-u', self.environment[oenginecons.EngineDBEnv.USER],
-            '-s', self.environment[oenginecons.EngineDBEnv.HOST],
-            '-p', str(self.environment[oenginecons.EngineDBEnv.PORT]),
-            '-d', self.environment[oenginecons.EngineDBEnv.DATABASE],
             '-i',
         )
         envPwd = {
