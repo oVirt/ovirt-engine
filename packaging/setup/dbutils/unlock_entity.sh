@@ -1,7 +1,7 @@
 #!/bin/sh
 
 . "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")"/bin/engine-prolog.sh
-. "$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")"/bin/generate-pgpass.sh
+. "$(dirname "$(readlink -f "$0")")"/generate-pgpass.sh
 . "$(dirname "$0")/dbfunc-base.sh"
 
 cleanup() {
