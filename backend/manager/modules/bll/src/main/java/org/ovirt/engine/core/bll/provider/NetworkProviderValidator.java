@@ -59,6 +59,12 @@ public class NetworkProviderValidator extends ProviderValidator {
                 .when(provider.getType() != ProviderType.OPENSTACK_NETWORK);
     }
 
+    public ValidationResult providerTypeIsNetwork() {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NOT_NETWORK)
+                .unless(provider.getType() == ProviderType.OPENSTACK_NETWORK ||
+                        provider.getType() == ProviderType.EXTERNAL_NETWORK);
+    }
+
     public ValidationResult networkMappingsProvided(String networkMappings) {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MISSING_NETWORK_MAPPINGS)
                 .when(StringUtils.isBlank(networkMappings)
