@@ -160,6 +160,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (action.isSetImage()) {
             params.setoVirtIsoFile(action.getImage());
         }
+        if (action.isSetReboot()) {
+            params.setReboot(action.isReboot());
+        }
 
         return doAction(ActionType.UpgradeHost, params, action);
     }
