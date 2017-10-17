@@ -438,7 +438,7 @@ Requires:       rh-postgresql95-postgresql-server
 %else
 Requires:       postgresql-server >= 9.5
 %endif
-Conflicts:	%{name} < 3.6.0
+Conflicts:	%{name} < 4.1.7
 
 # OVS/OVN stuff, for firewalld service files
 Requires:	openvswitch-ovn-central
