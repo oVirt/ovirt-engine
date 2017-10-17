@@ -28,19 +28,6 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
     private OpenstackNetworkProviderProperties properties;
 
     @Test
-    public void validOpenstackProviderType() {
-        when(provider.getType()).thenReturn(ProviderType.OPENSTACK_NETWORK);
-        assertThat(validator.providerTypeIsOpenstack(), isValid());
-    }
-
-    @Test
-    public void invalidOpenstackProviderType() {
-        when(provider.getType()).thenReturn(NON_NETWORK_PROVIDER_TYPE);
-        assertThat(validator.providerTypeIsOpenstack(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH));
-    }
-
-    @Test
     public void validNetworkProviderType() {
         when(provider.getType()).thenReturn(ProviderType.OPENSTACK_NETWORK);
         assertThat(validator.providerTypeIsNetwork(), isValid());
