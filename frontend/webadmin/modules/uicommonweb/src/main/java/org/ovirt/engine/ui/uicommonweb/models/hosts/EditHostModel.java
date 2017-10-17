@@ -18,6 +18,7 @@ public class EditHostModel extends HostModel {
 
     public EditHostModel() {
         getExternalHostProviderEnabled().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
+        setPasswordSectionViewable(false);
     }
 
     @Override

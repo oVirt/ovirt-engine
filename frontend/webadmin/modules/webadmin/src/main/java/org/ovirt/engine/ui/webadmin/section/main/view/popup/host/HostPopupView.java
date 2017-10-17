@@ -63,6 +63,7 @@ import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -724,22 +725,30 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
         }));
 
-        rbPassword.setValue(true);
-        rbPassword.setFocus(true);
+        if (object.isPasswordSectionViewable()) {
+            rbPassword.setValue(true);
+            rbPassword.setFocus(true);
 
-        displayPassPkWindow(true);
-        fetchSshFingerprint.hideLabel();
-        object.setAuthenticationMethod(AuthenticationMethod.Password);
-
-        rbPassword.addFocusHandler(event -> {
-            object.setAuthenticationMethod(AuthenticationMethod.Password);
             displayPassPkWindow(true);
-        });
+            fetchSshFingerprint.hideLabel();
+            object.setAuthenticationMethod(AuthenticationMethod.Password);
 
-        rbPublicKey.addFocusHandler(event -> {
+            rbPassword.addFocusHandler(event -> {
+                object.setAuthenticationMethod(AuthenticationMethod.Password);
+                displayPassPkWindow(true);
+            });
+
+            rbPublicKey.addFocusHandler(event -> {
+                object.setAuthenticationMethod(AuthenticationMethod.PublicKey);
+                displayPassPkWindow(false);
+            });
+        } else {
+            passwordSection.getElement().getStyle().setDisplay(Display.NONE);
+            rbPublicKey.getElement().getStyle().setDisplay(Display.NONE);
+            rbPublicKeyLabel.setStyleName(OvirtCss.LABEL_DISABLED);
+
             object.setAuthenticationMethod(AuthenticationMethod.PublicKey);
-            displayPassPkWindow(false);
-        });
+        }
 
         updateHostsButton.setResource(resources.searchButtonImage());
 

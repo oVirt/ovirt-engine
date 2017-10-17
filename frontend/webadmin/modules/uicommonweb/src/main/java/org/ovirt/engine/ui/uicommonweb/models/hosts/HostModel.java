@@ -173,6 +173,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         privateUserPassword = value;
     }
 
+    private boolean isPasswordSectionViewable;
+
+    public boolean isPasswordSectionViewable() {
+        return isPasswordSectionViewable;
+    }
+
+    public void setPasswordSectionViewable(boolean passwordSectionViewable) {
+        isPasswordSectionViewable = passwordSectionViewable;
+    }
+
     private EntityModel<String> privatePublicKey;
 
     public EntityModel<String> getPublicKey() {
@@ -768,6 +778,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         updateLabelList();
 
         setHostedEngineWarning(new EntityModel<String>(constants.hostedEngineDeploymentCompatibilityWarning()));
+
+        setPasswordSectionViewable(true);
     }
 
     private void updatePmModels() {
