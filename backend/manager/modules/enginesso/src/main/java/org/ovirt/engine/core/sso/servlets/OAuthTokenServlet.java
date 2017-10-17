@@ -47,7 +47,7 @@ public class OAuthTokenServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             log.debug("Entered OAuthTokenServlet Query String: {}, Parameters : {}",
-                    request.getQueryString(),
+                    maskPassword(request.getQueryString()),
                     SsoUtils.getRequestParameters(request));
             String grantType = SsoUtils.getRequestParameter(request,
                     SsoConstants.JSON_GRANT_TYPE,
@@ -245,5 +245,11 @@ public class OAuthTokenServlet extends HttpServlet {
             }
         }
         return authSeqList;
+    }
+
+    private String maskPassword(String queryString) {
+        return StringUtils.isNotEmpty(queryString) ?
+                queryString.replaceAll("password=[^&]+", "password=***") :
+                queryString;
     }
 }
