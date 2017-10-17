@@ -307,7 +307,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         return !getDisksBasedOnImage().isEmpty();
     }
 
-    private boolean updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
+    private void updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
         HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary = new HashMap<>();
         List<DiskImage> vmImages = new ArrayList<>();
         List<LunDisk> lunDisks = new ArrayList<>();
@@ -355,8 +355,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
         tempVar.setStorageDomainId(storageDomainId);
-        return runVdsCommand(VDSCommandType.UpdateVM, tempVar)
-                .getSucceeded();
+        runVdsCommand(VDSCommandType.UpdateVM, tempVar);
     }
 
     @Override
@@ -552,14 +551,14 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         }
     }
 
-    protected boolean updateVmInSpm() {
+    protected void updateVmInSpm() {
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
         ovfUpdateProcessHelper.loadVmData(getVm());
         ovfUpdateProcessHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,
                 ovfUpdateProcessHelper.getVmImagesFromDb(getVm()),
                 new ArrayList<>());
-        return ovfUpdateProcessHelper.executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
+        ovfUpdateProcessHelper.executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
                 metaDictionary, getParameters().getStorageDomainId());
     }
 
