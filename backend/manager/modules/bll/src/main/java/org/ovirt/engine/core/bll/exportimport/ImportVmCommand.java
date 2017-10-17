@@ -186,12 +186,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         setStoragePoolId(getParameters().getStoragePoolId());
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         if (getParameters().getVm() != null && getVm().getDiskMap() != null) {
-            imageList = new ArrayList<>();
-            for (Disk disk : getVm().getDiskMap().values()) {
-                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    imageList.add((DiskImage) disk);
-                }
-            }
+            imageList = getVm().getDiskMap().values().stream().filter(DisksFilter.ONLY_IMAGES)
+                    .map(DiskImage.class::cast).collect(Collectors.toList());
         }
         ensureDomainMap(imageList, getParameters().getDestDomainId());
     }
@@ -330,9 +326,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         getVm().setName(getParameters().getVm().getName());
         getVm().setStoragePoolId(getParameters().getStoragePoolId());
         getParameters().setVm(getVm());
-        for (VmNic iface : getVm().getInterfaces()) {
-            iface.setId(Guid.newGuid());
-        }
+        getVm().getInterfaces().forEach(iface -> iface.setId(Guid.newGuid()));
     }
 
     protected boolean validateBeforeCloneVm(Map<Guid, StorageDomain> domainsMap) {
@@ -483,11 +477,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getImages());
-        for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
-            Guid id = entry.getKey();
-            List<DiskImage> diskList = entry.getValue();
-            getVm().getDiskMap().put(id, getActiveVolumeDisk(diskList));
-        }
+        images.entrySet().stream().forEach(e -> getVm().getDiskMap().put(e.getKey(), getActiveVolumeDisk(e.getValue())));
 
         return true;
     }
@@ -510,13 +500,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     protected VM getVmFromExportDomain(Guid vmId) {
-        for (VM vm : getVmsFromExportDomain()) {
-            if (vmId.equals(vm.getId())) {
-                return vm;
-            }
-        }
-
-        return null;
+        return getVmsFromExportDomain().stream().filter(v -> vmId.equals(v.getId())).findFirst().orElse(null);
     }
 
     /**
@@ -759,16 +743,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 new GetAllFromExportDomainQueryParameters(getParameters().getStoragePoolId(),
                         getParameters().getSourceDomainId()));
 
-        if (qRetVal.getSucceeded()) {
-            Map<VmTemplate, ?> templates = qRetVal.getReturnValue();
-
-            for (VmTemplate template : templates.keySet()) {
-                if (getParameters().getVm().getVmtGuid().equals(template.getId())) {
-                    return true;
-                }
-            }
+        if (!qRetVal.getSucceeded()) {
+            return false;
         }
-        return false;
+
+        Map<VmTemplate, ?> templates = qRetVal.getReturnValue();
+        return templates.keySet().stream().anyMatch(t -> getParameters().getVm().getVmtGuid().equals(t.getId()));
     }
 
     protected boolean checkTemplateInStorageDomain() {
@@ -1422,13 +1402,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected boolean setAndValidateDiskProfiles() {
         if (getParameters().getVm().getDiskMap() != null) {
-            Map<DiskImage, Guid> map = new HashMap<>();
-            for (Disk disk : getDisksForDiskProfileValidation()) {
-                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    DiskImage diskImage = (DiskImage) disk;
-                    map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
-                }
-            }
+            Map<DiskImage, Guid> map = getDisksForDiskProfileValidation().stream().filter(DisksFilter.ONLY_IMAGES)
+                    .collect(Collectors.toMap(DiskImage.class::cast, d -> imageToDestinationDomainMap.get(d.getId())));
             return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
