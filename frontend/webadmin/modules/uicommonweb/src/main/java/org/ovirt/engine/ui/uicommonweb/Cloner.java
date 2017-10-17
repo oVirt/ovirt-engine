@@ -90,12 +90,9 @@ public final class Cloner {
         vm.setDedicatedVmForVdsList(instance.getDedicatedVmForVdsList());
         vm.setDefaultBootSequence(instance.getDefaultBootSequence());
         vm.setDefaultDisplayType(instance.getDefaultDisplayType());
-        // TODO: 1. DiskList is an array - CopyTo should be considered (if it can be converted to java, otherwise a
-        // simple loop is needed)
-        // TODO: 2. it is also read only in serialization, so not sure why it is cloned. it is manipulated via
-        // addDriveToImageMap
-        // vm.DiskList = instance.DiskList;
+        vm.setDiskMap(instance.getDiskMap());
         vm.setDiskSize(instance.getDiskSize());
+        vm.setImages(instance.getImages());
         // TODO: this is also an object, so needs to be cloned as well. while it is only accessed via VM.DiskMap, which
         // creates a dictionary
         // from it - actually the DiskImage's themselves are probably sharing the same reference...
@@ -204,6 +201,9 @@ public final class Cloner {
         vm.setGuestOsTimezoneOffset(instance.getGuestOsTimezoneOffset());
         vm.setQuotaId(instance.getQuotaId());
         vm.setQuotaName(instance.getQuotaName());
+        vm.setManagedDeviceMap(instance.getManagedVmDeviceMap());
+        vm.setUnmanagedDeviceList(instance.getUnmanagedDeviceList());
+        vm.setRuntimeDeviceCustomProperties(instance.getRuntimeDeviceCustomProperties());
         return vm;
     }
 
