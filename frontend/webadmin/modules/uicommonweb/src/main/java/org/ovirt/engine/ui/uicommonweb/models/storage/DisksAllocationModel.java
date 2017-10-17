@@ -342,7 +342,7 @@ public class DisksAllocationModel extends EntityModel {
     }
 
     private void updateDisks(Object sender) {
-        StorageDomain storageDomain = (StorageDomain) ((ListModel) sender).getSelectedItem();
+        StorageDomain storageDomain = ((ListModel<StorageDomain>) sender).getSelectedItem();
         if (storageDomain != null) {
             for (DiskModel innerDisk : disks) {
                 if (innerDisk.getStorageDomain().equals(sender)) {
@@ -370,7 +370,7 @@ public class DisksAllocationModel extends EntityModel {
 
         boolean isModelValid = true;
         for (DiskModel diskModel : getDisks()) {
-            ListModel diskStorageDomains = diskModel.getStorageDomain();
+            ListModel<StorageDomain> diskStorageDomains = diskModel.getStorageDomain();
             if (!diskStorageDomains.getItems().iterator().hasNext() || diskStorageDomains.getSelectedItem() == null) {
                 diskModel.getStorageDomain().getInvalidityReasons().add(
                         constants.storageDomainMustBeSpecifiedInvalidReason());
