@@ -9,6 +9,12 @@ import org.ovirt.engine.core.utils.lock.AcquireWriteLock;
  */
 public interface WriteMacPool {
     /**
+     * @return true if there are enough free MACs in the pool.
+     */
+    @AcquireWriteLock
+    boolean canAllocateMacAddresses(int macs);
+
+    /**
      * @return free MAC from pool.
      * @throws org.ovirt.engine.core.common.errors.EngineException if mac address cannot be allocated.
      */

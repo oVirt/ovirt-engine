@@ -689,7 +689,20 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
         }
 
+        if(!canRestoreVmConfigFromSnapshot()) {
+            return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+        }
+
         return true;
+    }
+
+    private boolean canRestoreVmConfigFromSnapshot() {
+        Snapshot snapshot = getSnapshot();
+        return snapshot.getType() == SnapshotType.PREVIEW ?
+                getSnapshotsManager().canRestoreVmConfigurationFromSnapshot(getVm(),
+                        snapshot,
+                        new VmInterfaceManager(getMacPool()))
+                : true;
     }
 
     @Override

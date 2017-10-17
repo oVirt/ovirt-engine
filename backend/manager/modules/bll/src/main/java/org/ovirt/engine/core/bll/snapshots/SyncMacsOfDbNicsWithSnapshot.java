@@ -40,6 +40,23 @@ public class SyncMacsOfDbNicsWithSnapshot {
         return nics.stream().map(NetworkInterface::getMacAddress).filter(Objects::nonNull);
     }
 
+    public boolean canSyncNics(List<? extends NetworkInterface> currentDbNics,
+           List<? extends NetworkInterface> snapshotedNics) {
+        CountMacUsageDifference macUsageDifference = new CountMacUsageDifference(vmNicsToMacAddresses(currentDbNics),
+                vmNicsToMacAddresses(snapshotedNics),
+                macsInSnapshotAreExpectedToBeAlreadyAllocated);
+
+        List<String> macsToBeAdded = macUsageDifference.getMissingMacs();
+
+        if (macsToBeAdded.isEmpty()) {
+            return true;
+        }
+
+        List<String> macsToBeRemoved = macUsageDifference.getExtraMacs();
+        int numOfMacsToAdd = macsToBeAdded.size() - macsToBeRemoved.size();
+        return numOfMacsToAdd > 0 ? macPool.canAllocateMacAddresses(numOfMacsToAdd) : true;
+    }
+
     public void sync(List<? extends NetworkInterface> currentDbNics, List<? extends NetworkInterface> snapshotedNics) {
         CountMacUsageDifference macUsageDifference = new CountMacUsageDifference(vmNicsToMacAddresses(currentDbNics),
                 vmNicsToMacAddresses(snapshotedNics),

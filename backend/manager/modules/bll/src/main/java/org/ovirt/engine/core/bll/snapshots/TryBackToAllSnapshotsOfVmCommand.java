@@ -185,6 +185,12 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         setSucceeded(succeeded);
     }
 
+    private boolean canRestoreVmConfigFromSnapshot() {
+        return getSnapshotsManager().canRestoreVmConfigurationFromSnapshot(getVm(),
+                getDstSnapshot(),
+                new VmInterfaceManager(getMacPool()));
+    }
+
     private void restoreVmConfigFromSnapshot() {
         snapshotDao.updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.IN_PREVIEW);
         snapshotDao.updateStatus(snapshotDao.getId(getVm().getId(),
@@ -490,6 +496,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             return false;
         }
 
+        if(!canRestoreVmConfigFromSnapshot()) {
+            return failValidation(EngineMessage.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+        }
         return true;
     }
 

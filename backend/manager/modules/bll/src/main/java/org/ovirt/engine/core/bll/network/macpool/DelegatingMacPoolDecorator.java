@@ -59,6 +59,11 @@ public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     }
 
     @Override
+    public boolean canAllocateMacAddresses(int numberOfAddresses) {
+        return getAvailableMacsCount() >= numberOfAddresses;
+    }
+
+    @Override
     public boolean isMacInRange(String mac) {
         return macPool.isMacInRange(mac);
     }

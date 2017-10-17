@@ -492,6 +492,34 @@ public class SnapshotsManager {
         }
     }
 
+    public boolean canRestoreVmConfigurationFromSnapshot(VM vm,
+           Snapshot snapshot,
+           VmInterfaceManager vmInterfaceManager) {
+        if (snapshot.getVmConfiguration() == null) {
+            return false;
+        }
+
+        VM tempVM = new VM();
+        if (vm.getDynamicData() != null) {
+            tempVM.setDynamicData(vm.getDynamicData());
+        }
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(tempVM);
+        try {
+            ovfManager.importVm(snapshot.getVmConfiguration(), tempVM, fullEntityOvfData);
+        } catch (OvfReaderException e) {
+            log.error("Failed to import VM from the configuration '{}': {}",
+                    snapshot.getVmConfiguration(),
+                    e.getMessage());
+            log.debug("Exception", e);
+            return false;
+        }
+        boolean macsInSnapshotAreExpectedToBeAlreadyAllocated = SnapshotType.STATELESS.equals(snapshot.getType());
+        return canSynchronizeNics(vm,
+                vmInterfaceManager,
+                fullEntityOvfData.getInterfaces(),
+                macsInSnapshotAreExpectedToBeAlreadyAllocated);
+    }
+
     /**
      * Attempt to read the configuration that is stored in the snapshot, and restore the VM from it.<br>
      * The NICs and Disks will be restored from the configuration (if available).<br>
@@ -689,6 +717,16 @@ public class SnapshotsManager {
                 vm.setQuotaId(null);
             }
         }
+    }
+
+    public boolean canSynchronizeNics(VM snapshotedVm,
+           VmInterfaceManager vmInterfaceManager,
+           List<VmNetworkInterface> interfaces,
+           boolean macsInSnapshotAreExpectedToBeAlreadyAllocated) {
+        MacPool macPool = vmInterfaceManager.getMacPool();
+        List<VmNic> dbNics = vmNicDao.getAllForVm(snapshotedVm.getId());
+        return new SyncMacsOfDbNicsWithSnapshot(macPool, auditLogDirector, macsInSnapshotAreExpectedToBeAlreadyAllocated)
+                .canSyncNics(dbNics, interfaces);
     }
 
     /**

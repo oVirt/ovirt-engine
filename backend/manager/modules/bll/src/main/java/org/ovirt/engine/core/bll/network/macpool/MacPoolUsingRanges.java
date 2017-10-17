@@ -166,6 +166,10 @@ public final class MacPoolUsingRanges implements MacPool {
         }
     }
 
+    public boolean canAllocateMacAddresses(int numberOfAddresses) {
+        return macsStorage.getAvailableMacsCount() >= numberOfAddresses;
+    }
+
     @Override
     public List<String> allocateMacAddresses(int numberOfAddresses) {
         log.debug("Allocating {} mac addresses from {}.", numberOfAddresses, this);
