@@ -84,9 +84,7 @@ public class OvfHelper {
             List<DiskImage> list = entry.getValue();
             vm.getDiskMap().put(entry.getKey(), list.get(list.size() - 1));
         }
-        for (LunDisk lunDisk : lunDisks) {
-            vm.getDiskMap().put(lunDisk.getId(), lunDisk);
-        }
+        lunDisks.forEach(lunDisk -> vm.getDiskMap().put(lunDisk.getId(), lunDisk));
         return vm;
     }
 

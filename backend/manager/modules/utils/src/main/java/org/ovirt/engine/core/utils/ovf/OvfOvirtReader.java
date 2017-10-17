@@ -26,8 +26,7 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 public abstract class OvfOvirtReader extends OvfReader {
 
     private VmBase vmBase;
-    private String OVF_PREFIX = "ovf:";
-    private String XSI_PREFIX = "xsi:";
+    private static final String COLON = ":";
 
     public OvfOvirtReader(XmlDocument document,
             List<DiskImage> images,
@@ -84,30 +83,29 @@ public abstract class OvfOvirtReader extends OvfReader {
         lun.setDiskVmElements(Collections.singletonList(new DiskVmElement(lun.getId(), vmBase.getId())));
         LUNs luns = new LUNs();
         consumeReadXmlAttribute(node,
-                OVF_PREFIX + LUN_DISCARD_ZEROES_DATA,
+                OVF_PREFIX + COLON + LUN_DISCARD_ZEROES_DATA,
                 val -> luns.setDiscardZeroesData(Boolean.parseBoolean(val)));
         consumeReadXmlAttribute(node,
-                OVF_PREFIX + LUN_DISCARD_MAX_SIZE,
+                OVF_PREFIX + COLON + LUN_DISCARD_MAX_SIZE,
                 val -> luns.setDiscardMaxSize(Long.parseLong(val)));
-        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_DEVICE_SIZE, val -> luns.setDeviceSize(Integer.parseInt(val)));
-        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_PRODUCT_ID, val -> luns.setProductId(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_VENDOR_ID, val -> luns.setVendorId(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_MAPPING, val -> luns.setLunMapping(Integer.parseInt(val)));
-        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_SERIAL, val -> luns.setSerial(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_VOLUME_GROUP_ID, val -> luns.setVolumeGroupId(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_ID, val -> luns.setLUNId(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + LUN_PHYSICAL_VOLUME_ID, val -> luns.setPhysicalVolumeId(val));
-        // TODO: Check with several external LUNS.
+        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_DEVICE_SIZE, val -> luns.setDeviceSize(Integer.parseInt(val)));
+        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_PRODUCT_ID, val -> luns.setProductId(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_VENDOR_ID, val -> luns.setVendorId(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_MAPPING, val -> luns.setLunMapping(Integer.parseInt(val)));
+        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_SERIAL, val -> luns.setSerial(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_VOLUME_GROUP_ID, val -> luns.setVolumeGroupId(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_ID, val -> luns.setLUNId(val));
+        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_PHYSICAL_VOLUME_ID, val -> luns.setPhysicalVolumeId(val));
         ArrayList<StorageServerConnections> lunConnections = new ArrayList<>();
         for (XmlNode connNode : selectNodes(node, LUN_CONNECTION)) {
             StorageServerConnections conn = new StorageServerConnections();
-            consumeReadXmlAttribute(connNode, OVF_PREFIX + LUNS_CONNECTION, val -> conn.setConnection(val));
-            consumeReadXmlAttribute(connNode, OVF_PREFIX + LUNS_IQN, val -> conn.setIqn(val));
-            consumeReadXmlAttribute(connNode, OVF_PREFIX + LUNS_PORT, val -> conn.setPort(val));
+            consumeReadXmlAttribute(connNode, OVF_PREFIX + COLON + LUNS_CONNECTION, val -> conn.setConnection(val));
+            consumeReadXmlAttribute(connNode, OVF_PREFIX + COLON + LUNS_IQN, val -> conn.setIqn(val));
+            consumeReadXmlAttribute(connNode, OVF_PREFIX + COLON + LUNS_PORT, val -> conn.setPort(val));
             consumeReadXmlAttribute(connNode,
-                    XSI_PREFIX + LUNS_STORAGE_TYPE,
+                    XSI_PREFIX + COLON + LUNS_STORAGE_TYPE,
                     val -> conn.setStorageType(StorageType.valueOf(val)));
-            consumeReadXmlAttribute(connNode, XSI_PREFIX + LUNS_PORTAL, val -> conn.setPortal(val));
+            consumeReadXmlAttribute(connNode, XSI_PREFIX + COLON + LUNS_PORTAL, val -> conn.setPortal(val));
             // TODO: Username and password should be initilaized by the mapping file.
             // conn.setUsername(FromMap);
             // conn.setPassword(FromMap);

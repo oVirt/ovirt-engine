@@ -628,8 +628,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 if (lunValidationMessages.isEmpty()) {
                     getVm().getDiskMap().put(lunDisk.getId(), lunDisk);
                 } else if (!getParameters().isAllowPartialImport()) {
-                    addValidationMessages(lunValidationMessages);
-                    return false;
+                    return failValidation(lunValidationMessages);
                 } else {
                     log.warn("Skipping validation for external LUN disk '{}' since partialImport flag is true." +
                             " Invalid external LUN disk might reflect on the run VM process",

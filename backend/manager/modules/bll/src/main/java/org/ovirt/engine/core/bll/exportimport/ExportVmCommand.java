@@ -344,11 +344,9 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             vm.setVmtName(t.getName());
         }
 
-        // TODO: Validate export
         lunDisks.addAll(DisksFilter.filterLunDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE));
-        for (LunDisk lun : lunDisks) {
-            lun.getLun().setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId())));
-        }
+        lunDisks.forEach(lun -> lun.getLun()
+                .setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId()))));
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         String vmMeta = ovfManager.exportVm(vm, vmImages, lunDisks, clusterUtils.getCompatibilityVersion(vm));
 
