@@ -1184,7 +1184,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
                 snapshot.getVmConfiguration(),
                 snapshot.getVmId(), snapshot.getId());
-        DiskImage memoryDisk = MemoryUtils.createMemoryDisk(
+        DiskImage memoryDisk = MemoryUtils.createSnapshotMemoryDisk(
                 vm,
                 sd.getStorageType(),
                 vmOverheadCalculator, MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
@@ -1204,7 +1204,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (sd == null) {
             return null;
         }
-        DiskImage memoryDisk = MemoryUtils.createMetadataDisk(MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
+        DiskImage memoryDisk = MemoryUtils.createSnapshotMetadataDisk(MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
         memoryDisk.setId(guids.get(4));
         memoryDisk.setImageId(guids.get(5));
         memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));

@@ -95,7 +95,7 @@ public class MemoryUtils {
         return image;
     }
 
-    public static DiskImage createMetadataDisk(String diskDescription) {
+    private static DiskImage createMetadataDisk(String diskDescription) {
         DiskImage image = new DiskImage();
         image.setSize(MemoryUtils.METADATA_SIZE_IN_BYTES);
         image.setVolumeType(VolumeType.Preallocated);
@@ -122,7 +122,7 @@ public class MemoryUtils {
         return image;
     }
 
-    public static DiskImage createMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator, String diskDescription) {
+    private static DiskImage createMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator, String diskDescription) {
         DiskImage image = new DiskImage();
         image.setSize(vmOverheadCalculator.getSnapshotMemorySizeInBytes(vm));
         image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
