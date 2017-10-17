@@ -165,6 +165,7 @@ public final class Cloner {
         vm.setFqdn(instance.getFqdn());
         vm.setLastStartTime(instance.getLastStartTime());
         vm.setVmMemSizeMb(instance.getVmMemSizeMb());
+        vm.setMaxMemorySizeMb(instance.getMaxMemorySizeMb());
         vm.setName(instance.getName());
         vm.setVmOs(instance.getVmOsId());
         vm.setVmType(instance.getVmType());
@@ -434,6 +435,7 @@ public final class Cloner {
         obj.setFailBack(instance.isFailBack());
         obj.setStateless(instance.isStateless());
         obj.setMemSizeMb(instance.getMemSizeMb());
+        obj.setMaxMemorySizeMb(instance.getMaxMemorySizeMb());
         obj.setName(instance.getName());
         obj.setNiceLevel(instance.getNiceLevel());
         obj.setNumOfMonitors(instance.getNumOfMonitors());
