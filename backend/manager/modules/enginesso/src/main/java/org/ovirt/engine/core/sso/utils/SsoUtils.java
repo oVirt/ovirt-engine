@@ -251,7 +251,9 @@ public class SsoUtils {
             String paramName;
             while (paramNames.hasMoreElements()) {
                 paramName = paramNames.nextElement();
-                value.append(String.format("%s = %s, ", paramName, getRequestParameter(request, paramName)));
+                value.append(String.format("%s = %s, ",
+                        paramName,
+                        "password".equals(paramName) ? "***" : getRequestParameter(request, paramName)));
             }
         } catch (Exception ex) {
             log.debug("Unable to get parameters from request");
