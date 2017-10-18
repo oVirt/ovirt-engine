@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -85,6 +86,7 @@ public class MemoryUtils {
     public static DiskImage createSnapshotMetadataDisk(String diskDescription) {
         DiskImage image = createMetadataDisk(diskDescription);
         image.setDiskAlias(VM_SNAPSHOT_METADATA_DISK_ALIAS);
+        image.setImageStatus(ImageStatus.OK);
         return image;
     }
 
@@ -112,6 +114,7 @@ public class MemoryUtils {
     public static DiskImage createSnapshotMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator, String diskDescription) {
         DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator, diskDescription);
         image.setDiskAlias(VM_SNAPSHOT_MEMORY_DISK_ALIAS);
+        image.setImageStatus(ImageStatus.OK);
         return image;
     }
 
