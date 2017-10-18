@@ -54,7 +54,7 @@ public class DiskVmElementValidator {
         if (!result.isValid()) {
             return result;
         }
-        if (vm != null) {
+        if (vm != null && DiskInterface.VirtIO_SCSI == diskVmElement.getDiskInterface()) {
             if (!isVirtioScsiControllerAttached(vm.getId())) {
                 return new ValidationResult(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED);
             }
