@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -625,10 +626,21 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_RESTORE_FROM_SNAPSHOT_START
-                    : AuditLogType.USER_FAILED_RESTORE_FROM_SNAPSHOT;
+            if (getSucceeded()) {
+                if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
+                    return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_START;
+                }
+                return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_START;
+            }
+            if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
+                return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_FINISH_FAILURE;
+            }
+            return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_FINISH_FAILURE;
         default:
-            return AuditLogType.USER_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
+            if (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO) {
+                return AuditLogType.USER_UNDO_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
+            }
+            return AuditLogType.USER_COMMIT_RESTORE_FROM_SNAPSHOT_FINISH_SUCCESS;
         }
     }
 
