@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.network.NetworkIcon;
 
@@ -149,6 +150,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         Column column = new Column(ColumnSize.MD_12);
         content.add(column);
         RxTxRateRenderer rateRenderer = new RxTxRateRenderer();
+        RxTxTotalRenderer totalRenderer = new RxTxTotalRenderer();
 
         DListElement dl = Document.get().createDLElement();
         dl.addClassName(DL_HORIZONTAL);
@@ -160,13 +162,9 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
                 rateRenderer.render(new Double[] { networkInterface.getStatistics().getTransmitRate(),
                         networkInterface.getSpeed().doubleValue() }), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.rxTotal()),
-                networkInterface.getStatistics().getReceivedBytes() != null ?
-                String.valueOf(networkInterface.getStatistics().getReceivedBytes()) :
-                    constants.notAvailableLabel(), dl);
+                totalRenderer.render(networkInterface.getStatistics().getReceivedBytes()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.txTotal()),
-                networkInterface.getStatistics().getTransmittedBytes() != null ?
-                        String.valueOf(networkInterface.getStatistics().getTransmittedBytes()) :
-                            constants.notAvailableLabel(), dl);
+                totalRenderer.render(networkInterface.getStatistics().getTransmittedBytes()), dl);
         addDetailItem(templates.sub(constants.dropsInterface(), constants.pkts()),
                 String.valueOf(networkInterface.getStatistics().getReceiveDropRate()
                         + networkInterface.getStatistics().getTransmitDropRate()), dl);

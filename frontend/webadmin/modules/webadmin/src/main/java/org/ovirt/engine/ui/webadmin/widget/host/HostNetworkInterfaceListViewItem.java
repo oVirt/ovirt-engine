@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractIconTypeColumn;
 import org.ovirt.engine.ui.common.widget.table.header.IconTypeHeader;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
@@ -55,6 +56,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     protected static final RxTxRateRenderer rateRenderer = new RxTxRateRenderer();
+    protected static final RxTxTotalRenderer totalRenderer = new RxTxTotalRenderer();
     private static final int MAX_LOGICAL_NETWORKS = 1000;
     private static final String ICON_COLOR = "#363636"; // $NON-NLS-1$
     private static final String EXPANSION_CONTAINER = "expansion-container"; // $NON-NLS-1$
@@ -175,9 +177,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         rxCol.add(divider);
         dl = Document.get().createDLElement();
         addReverseDetailItem(templates.sub(constants.rxTotal(), constants.bytes()),
-                hostInterface.getRxTotal() != null ?
-                        String.valueOf(hostInterface.getRxTotal()) :
-                            constants.notAvailableLabel(), dl);
+                totalRenderer.render(hostInterface.getRxTotal()), dl);
         dl.addClassName(Styles.PULL_LEFT);
         rxCol.getElement().appendChild(dl);
         return rxCol;
@@ -196,9 +196,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         txCol.add(divider);
         dl = Document.get().createDLElement();
         addReverseDetailItem(templates.sub(constants.txTotal(), constants.bytes()),
-                hostInterface.getTxTotal() != null ?
-                        String.valueOf(hostInterface.getTxTotal()) :
-                            constants.notAvailableLabel(), dl);
+                totalRenderer.render(hostInterface.getTxTotal()), dl);
         dl.addClassName(Styles.PULL_LEFT);
         txCol.getElement().appendChild(dl);
         return txCol;

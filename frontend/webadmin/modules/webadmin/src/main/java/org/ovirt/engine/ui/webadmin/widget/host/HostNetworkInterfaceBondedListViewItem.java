@@ -151,9 +151,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         TextColumn<HostInterface> rxTotal = new TextColumn<HostInterface>() {
             @Override
             public String getValue(HostInterface hostInterface) {
-                return hostInterface.getRxTotal() != null ?
-                        String.valueOf(hostInterface.getRxTotal()) :
-                            constants.notAvailableLabel();
+                return totalRenderer.render(hostInterface.getRxTotal());
             }
         };
         slavesTable.addColumn(rxTotal, templates.sub(constants.rxTotal(), constants.mbps()));
@@ -161,9 +159,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         TextColumn<HostInterface> txTotal = new TextColumn<HostInterface>() {
             @Override
             public String getValue(HostInterface hostInterface) {
-                return hostInterface.getTxTotal() != null ?
-                        String.valueOf(hostInterface.getTxTotal()) :
-                            constants.notAvailableLabel();
+                return totalRenderer.render(hostInterface.getTxTotal());
             }
         };
         slavesTable.addColumn(txTotal, templates.sub(constants.txTotal(), constants.mbps()));

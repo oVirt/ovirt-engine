@@ -13,8 +13,9 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
+import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractRenderedTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -50,6 +51,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final RxTxTotalRenderer totalRenderer = new RxTxTotalRenderer();
 
     @Inject
     public SubTabNetworkHostView(SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider) {
@@ -195,16 +197,16 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> totalRxColumn =
-            new AbstractNullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractRenderedTextColumn<PairQueryable<VdsNetworkInterface, VDS>, Number> totalRxColumn =
+            new AbstractRenderedTextColumn<PairQueryable<VdsNetworkInterface, VDS>, Number>(totalRenderer) {
                 @Override
                 protected Number getRawValue(PairQueryable<VdsNetworkInterface, VDS> object) {
                     return object.getFirst() == null ? null : object.getFirst().getStatistics().getReceivedBytes();
                 }
             };
 
-    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> totalTxColumn =
-            new AbstractNullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractRenderedTextColumn<PairQueryable<VdsNetworkInterface, VDS>, Number> totalTxColumn =
+            new AbstractRenderedTextColumn<PairQueryable<VdsNetworkInterface, VDS>, Number>(totalRenderer) {
                 @Override
                 protected Number getRawValue(PairQueryable<VdsNetworkInterface, VDS> object) {
                     return object.getFirst() == null ? null : object.getFirst().getStatistics().getTransmittedBytes();

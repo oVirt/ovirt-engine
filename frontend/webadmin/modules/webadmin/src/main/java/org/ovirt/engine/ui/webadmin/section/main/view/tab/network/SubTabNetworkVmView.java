@@ -11,7 +11,8 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
+import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractRenderedTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
@@ -40,6 +41,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final RxTxTotalRenderer totalRenderer = new RxTxTotalRenderer();
 
     @Inject
     public SubTabNetworkVmView(SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> modelProvider) {
@@ -190,16 +192,16 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
                 }
             };
 
-    private final AbstractNullableNumberColumn<PairQueryable<VmNetworkInterface, VM>> totalRxColumn =
-            new AbstractNullableNumberColumn<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number> totalRxColumn =
+            new AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number>(totalRenderer) {
         @Override
         protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
             return object.getFirst() == null ? null : object.getFirst().getStatistics().getReceivedBytes();
         }
     };
 
-    private final AbstractNullableNumberColumn<PairQueryable<VmNetworkInterface, VM>> totalTxColumn =
-            new AbstractNullableNumberColumn<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number> totalTxColumn =
+            new AbstractRenderedTextColumn<PairQueryable<VmNetworkInterface, VM>, Number>(totalRenderer) {
         @Override
         protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
             return object.getFirst() == null ? null : object.getFirst().getStatistics().getTransmittedBytes();
