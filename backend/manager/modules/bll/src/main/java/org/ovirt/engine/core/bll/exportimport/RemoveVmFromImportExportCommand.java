@@ -8,15 +8,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RemoveVmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.memory.MemoryImageRemoverFromExportDomain;
+import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -41,9 +43,9 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.di.Injector;
 
 @NonTransactiveCommandAttribute
 public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T>{
@@ -116,7 +118,6 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     protected void executeVmCommand() {
         removeVmInSpm();
         removeDiskImages();
-        removeMemoryImages();
 
         setSucceeded(true);
     }
@@ -124,11 +125,38 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     private void removeDiskImages() {
         List<DiskImage> images =
                 DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
+        boolean shouldWipe = false;
         for (DiskImage image : images) {
             image.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
             image.setStoragePoolId(getParameters().getStoragePoolId());
+            shouldWipe |= image.isWipeAfterDelete();
         }
+
+        Set<String> allMemoryVolumes = MemoryUtils.getMemoryVolumesFromSnapshots(getVm().getSnapshots());
+        for (String memoryVolumes : allMemoryVolumes) {
+            if (!StringUtils.isEmpty(memoryVolumes)) {
+                List<Guid> guids = Guid.createGuidListFromString(memoryVolumes);
+
+                DiskImage memoryDisk = createMemoryDisk(guids.get(2), guids.get(3), shouldWipe);
+                images.add(memoryDisk);
+
+                DiskImage metadataDisk = createMemoryDisk(guids.get(4), guids.get(5), shouldWipe);
+                images.add(metadataDisk);
+            }
+        }
+
         removeVmImages(images);
+    }
+
+    private DiskImage createMemoryDisk(Guid diskId, Guid imageId, boolean shouldWipe) {
+        DiskImage disk = new DiskImage();
+        disk.setId(diskId);
+        disk.setImageId(imageId);
+        disk.setStoragePoolId(getParameters().getStoragePoolId());
+        disk.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
+        disk.setWipeAfterDelete(shouldWipe);
+        disk.setActive(true);
+        return disk;
     }
 
     private boolean removeVmInSpm() {
@@ -141,12 +169,6 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
                 getParameters().getStoragePoolId(),
                 getVmId(),
                 getParameters().getStorageDomainId());
-    }
-
-    private void removeMemoryImages() {
-        Injector.injectMembers(new MemoryImageRemoverFromExportDomain(getVm(), this,
-                getParameters().getStoragePoolId(), getParameters().getStorageDomainId()))
-                .remove();
     }
 
     @Override
