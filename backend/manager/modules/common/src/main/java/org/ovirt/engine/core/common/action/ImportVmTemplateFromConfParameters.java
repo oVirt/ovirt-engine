@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.common.action;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParameters implements Serializable, ImportParameters {
+public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParameters implements ImportFromConfParameters {
     private static final long serialVersionUID = -2440515728742118922L;
 
     private Map<String, String> clusterMap;
@@ -21,48 +20,60 @@ public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParamete
         super(storagePoolId, sourceDomainId, destDomainId, clusterId, template);
     }
 
+    @Override
     public Map<String, String> getClusterMap() {
         return clusterMap;
     }
 
+    @Override
     public void setClusterMap(Map<String, String> clusterMap) {
         this.clusterMap = clusterMap;
     }
 
+    @Override
     public Map<String, Object> getRoleMap() {
         return roleMap;
     }
 
+    @Override
     public void setRoleMap(Map<String, Object> roleMap) {
         this.roleMap = roleMap;
     }
 
+    @Override
     public Map<String, String> getDomainMap() {
         return domainMap;
     }
 
+    @Override
     public void setDomainMap(Map<String, String> domainMap) {
         this.domainMap = domainMap;
     }
 
+    @Override
     public Map<String, String> getAffinityGroupMap() {
         return null;
     }
 
+    @Override
     public void setAffinityGroupMap(Map<String, String> affinityGroupMap) {
     }
 
+    @Override
     public Map<String, String> getAffinityLabelMap() {
         return null;
     }
 
+    @Override
     public void setAffinityLabelMap(Map<String, String> affinityLabelMap) {
     }
 
+    @Override
     public Map<String, Object> getExternalLunMap() {
         return null;
     }
 
+    @Override
     public void setExternalLunMap(Map<String, Object> externalLunMap) {
     }
 
