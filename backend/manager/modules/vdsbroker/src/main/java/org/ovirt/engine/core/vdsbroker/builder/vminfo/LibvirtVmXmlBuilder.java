@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -135,7 +136,7 @@ public class LibvirtVmXmlBuilder {
     private String cdInterface;
     private int payloadIndex;
     private int cdRomIndex;
-    private VmDevice runOncePayload;
+    private VmDevice payload;
     private boolean volatileRun;
     private Map<Guid, String> passthroughVnicToVfMap;
 
@@ -146,17 +147,18 @@ public class LibvirtVmXmlBuilder {
 
     private Map<String, Map<String, Object>> vnicMetadata;
     private Map<String, Map<String, Object>> diskMetadata;
+    private Pair<String, VmPayload> payloadMetadata;
 
     public LibvirtVmXmlBuilder(
             Map<String, Object> createInfo,
             VM vm,
             Guid hostId,
-            VmDevice runOncePayload,
+            VmDevice payload,
             boolean volatileRun,
             Map<Guid, String> passthroughVnicToVfMap) {
         this.createInfo = createInfo;
         this.vm = vm;
-        this.runOncePayload = runOncePayload;
+        this.payload = payload;
         this.volatileRun = volatileRun;
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
         payloadIndex = -1;
@@ -645,6 +647,26 @@ public class LibvirtVmXmlBuilder {
         });
     }
 
+    private void writePayloadMetadata() {
+        if (payloadMetadata != null) {
+            writer.writeStartElement(OVIRT_VM_URI, "device");
+            writer.writeAttributeString("devtype", "disk");
+            writer.writeAttributeString("name", payloadMetadata.getFirst());
+            writer.writeStartElement(OVIRT_VM_URI, "payload");
+            if (payloadMetadata.getSecond().getVolumeId() != null) {
+                writer.writeElement(OVIRT_VM_URI, "volId", payloadMetadata.getSecond().getVolumeId());
+            }
+            payloadMetadata.getSecond().getFiles().forEach((path, data) -> {
+                writer.writeStartElement(OVIRT_VM_URI, "file");
+                writer.writeAttributeString("path", path);
+                writer.writeRaw(data);
+                writer.writeEndElement();
+            });
+            writer.writeEndElement();
+            writer.writeEndElement();
+        }
+    }
+
     private void writeQosMetadata() {
         writer.writeStartElement(OVIRT_TUNE_URI, "qos");
         writer.writeEndElement();
@@ -658,6 +680,7 @@ public class LibvirtVmXmlBuilder {
         writeNetworkInterfaceMetadata();
         writeDiskMetadata();
         writeRunAndPauseMetadata();
+        writePayloadMetadata();
         writer.writeEndElement();
     }
 
@@ -698,6 +721,7 @@ public class LibvirtVmXmlBuilder {
         List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vm.getId());
         // replacement of some devices in run-once mode should eventually be done by the run-command
         devices = overrideDevicesForRunOnce(devices);
+        devices = processPayload(devices);
 
         writer.writeStartElement("devices");
 
@@ -845,6 +869,16 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
+    private List<VmDevice> processPayload(List<VmDevice> devices) {
+        if (payload != null) {
+            devices = devices.stream()
+                    .filter(dev -> !VmPayload.isPayload(dev.getSpecParams()))
+                    .collect(Collectors.toList());
+            devices.add(payload);
+        }
+        return devices;
+    }
+
     private List<VmDevice> overrideDevicesForRunOnce(List<VmDevice> devices) {
         if (!vm.isRunOnce()) {
             return devices;
@@ -879,13 +913,6 @@ public class LibvirtVmXmlBuilder {
 
                 devices.addAll(vmInfoBuildUtils.createGraphicsDevices(infos, specParamsFromVm, vm.getId()));
             }
-        }
-
-        if (runOncePayload != null) {
-            devices = devices.stream()
-                    .filter(dev -> !VmPayload.isPayload(dev.getSpecParams()))
-                    .collect(Collectors.toList());
-            devices.add(runOncePayload);
         }
 
         // the user may specify floppy path while there is no device in the database
@@ -1679,7 +1706,8 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
 
         writer.writeStartElement("target");
-        writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(VdsProperties.Fdc, 0)); // IDE slot 2 is reserved by VDSM to CDROM
+        String name = vmInfoBuildUtils.makeDiskName(VdsProperties.Fdc, 0);  // IDE slot 2 is reserved by VDSM to CDROM
+        writer.writeAttributeString("dev", name);
         writer.writeAttributeString("bus", VdsProperties.Fdc);
         writer.writeEndElement();
 
@@ -1687,6 +1715,7 @@ public class LibvirtVmXmlBuilder {
 
         writeAddress(device);
 
+        payloadMetadata = new Pair<>(name, new VmPayload(device));
         writer.writeEndElement();
     }
 
@@ -1718,7 +1747,8 @@ public class LibvirtVmXmlBuilder {
             payloadIndex = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
 
             writer.writeStartElement("target");
-            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, payloadIndex));
+            String name = vmInfoBuildUtils.makeDiskName(cdInterface, payloadIndex);
+            writer.writeAttributeString("dev", name);
             writer.writeAttributeString("bus", cdInterface);
             writer.writeEndElement();
 
@@ -1729,6 +1759,7 @@ public class LibvirtVmXmlBuilder {
                 writeAddress(vmInfoBuildUtils.createAddressForScsiDisk(0, index));
             }
 
+            payloadMetadata = new Pair<>(name, new VmPayload(device));
             writer.writeEndElement();
         });
 

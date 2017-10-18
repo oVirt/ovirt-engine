@@ -54,7 +54,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
                     createInfo,
                     vm,
                     getVds().getId(),
-                    getRunOncePayload(),
+                    getPayload(),
                     getParameters().isVolatileRun(),
                     getParameters().getPassthroughVnicToVfMap()));
             String libvirtXml = builder.build();
@@ -146,7 +146,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         }
     }
 
-    private VmDevice getRunOncePayload() {
+    private VmDevice getPayload() {
         switch (getParameters().getInitializationType()) {
         case Sysprep:
             String sysPrepContent = sysprepHandler.getSysPrep(
@@ -172,7 +172,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
 
         case None:
         default:
-            return null;
+            return getParameters().getVmPayload();
         }
     }
 }
