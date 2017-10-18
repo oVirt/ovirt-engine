@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -150,6 +151,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 ovfEntityData = ovfEntityDataList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
                 vmFromConfiguration = fullEntityOvfData.getVm();
+                mapCluster(fullEntityOvfData.getClusterName());
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 mapVnicProfiles(vmFromConfiguration.getInterfaces());
                 getParameters().setVm(vmFromConfiguration);
@@ -173,6 +175,19 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private void mapVnicProfiles(List<VmNetworkInterface> vnics) {
         vnics.forEach(vnic ->
                 importedNetworkInfoUpdater.updateNetworkInfo(vnic, getParameters().getExternalVnicProfileMappings()));
+    }
+
+    private void mapCluster(String clusterName) {
+        if (getParameters().getClusterMap() != null) {
+            String clusterDest = getParameters().getClusterMap().get(clusterName);
+            Cluster cluster = clusterDao.getByName(clusterDest);
+            if (cluster == null) {
+                cluster = clusterDao.getByName(clusterName);
+            }
+            if (cluster != null) {
+                getParameters().setClusterId(cluster.getId());
+            }
+        }
     }
 
     private static ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {

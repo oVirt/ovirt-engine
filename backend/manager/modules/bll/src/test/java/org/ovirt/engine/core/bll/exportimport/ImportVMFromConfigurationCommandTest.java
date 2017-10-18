@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -70,6 +71,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
+
+    @Mock
+    private ClusterDao clusterDao;
 
     @Mock
     private ExternalVmMacsFinder externalVmMacsFinder;
@@ -195,6 +199,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
             ovfEntityDataList.add(resultOvfEntityData);
         }
         when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntityDataList);
+        when(clusterDao.getByName(any())).thenReturn(null);
     }
 
     private OvfEntityData getOvfEntityData() {
