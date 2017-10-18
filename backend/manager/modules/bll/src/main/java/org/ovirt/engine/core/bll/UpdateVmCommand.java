@@ -271,7 +271,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (getVm().isRunningOrPaused() && !getVm().isHostedEngine()) {
-            if (!vmHandler.copyNonEditableFieldsToDestination(oldVm.getStaticData(), newVmStatic, isHotSetEnabled())) {
+            if (!vmHandler.copyNonEditableFieldsToDestination(
+                    oldVm.getStaticData(), newVmStatic, isHotSetEnabled(), getParameters().isMemoryHotUnplugEnabled())) {
                 // fail update vm if some fields could not be copied
                 throw new EngineException(EngineError.FAILED_UPDATE_RUNNING_VM);
             }
@@ -517,6 +518,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      * user, not values rounded to the size of memory device.</p>
      */
     private void hotUnplugMemory(VM newVm) {
+        if (!getParameters().isMemoryHotUnplugEnabled()) {
+            return;
+        }
         final List<VmDevice> vmMemoryDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 getVmId(),
                 VmDeviceGeneralType.MEMORY,
@@ -1160,7 +1164,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         final boolean isMemoryHotUnplug = vmFromDB.getMemSizeMb() > vmFromParams.getMemSizeMb()
-                && isHotSetEnabled();
+                && isHotSetEnabled()
+                && getParameters().isMemoryHotUnplugEnabled();
         if (isMemoryHotUnplug
                 && !FeatureSupported.hotUnplugMemory(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
             return failValidation(
@@ -1227,7 +1232,26 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         getVm().getStatus(),
                         isHotSetEnabled())
                 || !vmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters())
-                || isClusterLevelChange();
+                || isClusterLevelChange()
+                || memoryNextRunSnapshotRequired();
+    }
+
+    /**
+     * Annotation {@link org.ovirt.engine.core.common.businessentities.EditableVmField} defines {@link VmBase#memSizeMb}
+     * as hot settable however the snapshot is needed
+     * <ul>
+     *     <li>while increasing memory since hotplug is only allowed for certain values (multiples of 256MiB by default)
+     *     </li>
+     *     <li>while decreasing memory since hot unplug is only allowed from REST (not allowed from Edit VM dialog)</li>
+     *     <li>when VM is not in state {@link VMStatus#Up} or {@link VMStatus#Down} since memory hot (un)plugs can only
+     *     be done in state Up</li>
+     * </ul>
+     * @return true if next run snapshot is needed because of memory change
+     */
+    private boolean memoryNextRunSnapshotRequired() {
+        final VM oldVm = getVm();
+        return VMStatus.Down != getVm().getStatus()
+                && oldVm.getMemSizeMb() != getParameters().getVm().getMemSizeMb();
     }
 
     private boolean isClusterLevelChange() {

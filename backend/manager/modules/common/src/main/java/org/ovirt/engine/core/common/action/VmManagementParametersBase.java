@@ -81,6 +81,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     private String vmLargeIcon;
     private Version clusterLevelChangeFromVersion;
 
+    /**
+     * Extra flag to allow memory hot unplug. Memory hot unplug requires both this flag and {@link #applyChangesLater}
+     * to be set or unset, respectively.
+     *
+     * <p>Hot unplug memory should only be allowed from REST API.</p>
+     */
+    private boolean memoryHotUnplugEnabled;
+
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.BALLOON, type = VmDeviceType.MEMBALLOON)
     private Boolean balloonEnabled;
 
@@ -333,5 +341,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase
 
     public void setClusterLevelChangeFromVersion(Version clusterLevelChangeFromVersion) {
         this.clusterLevelChangeFromVersion = clusterLevelChangeFromVersion;
+    }
+
+    public boolean isMemoryHotUnplugEnabled() {
+        return memoryHotUnplugEnabled;
+    }
+
+    public void setMemoryHotUnplugEnabled(boolean memoryHotUnplugEnabled) {
+        this.memoryHotUnplugEnabled = memoryHotUnplugEnabled;
     }
 }

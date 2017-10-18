@@ -255,8 +255,27 @@ public class VmHandler implements BackendService {
         return updateVmsStatic.isFieldUpdatable(status, fieldName, null);
     }
 
-    public boolean copyNonEditableFieldsToDestination(VmStatic source, VmStatic destination, boolean hotSetEnabled) {
-        return updateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
+    public boolean copyNonEditableFieldsToDestination(
+            VmStatic source,
+            VmStatic destination,
+            boolean hotSetEnabled,
+            boolean hotMemoryUnplug) {
+        final boolean succeeded =
+                updateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
+        if (!succeeded) {
+            return false;
+        }
+        /*
+        org.ovirt.engine.core.common.businessentities.EditableVmField annotation can't express dependency on
+        `hotMemoryUnplug` parameter. Done manually.
+         */
+        if (source.getMemSizeMb() > destination.getMemSizeMb()
+                && hotSetEnabled
+                && !hotMemoryUnplug) {
+            destination.setMemSizeMb(source.getMemSizeMb());
+            destination.setMinAllocatedMem(source.getMinAllocatedMem());
+        }
+        return true;
     }
 
     public ValidationResult verifyMacPool(int nicsCount, MacPool macPool) {

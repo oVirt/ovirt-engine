@@ -572,6 +572,7 @@ public class BackendVmResource
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 
             params.setApplyChangesLater(isNextRunRequested());
+            params.setMemoryHotUnplugEnabled(true);
 
             if (incoming.isSetPayloads()) {
                 if (incoming.isSetPayloads() && incoming.getPayloads().isSetPayloads()) {
