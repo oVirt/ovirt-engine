@@ -2100,10 +2100,6 @@ public class VdsBrokerObjectsBuilder {
 
                 Map<String, Object> nicProperties = entry.getValue();
                 if (nicProperties != null) {
-                    if (nicProperties.get("speed") != null) {
-                        Object speed = nicProperties.get("speed");
-                        nic.setSpeed((Integer) speed);
-                    }
                     nic.setMacAddress((String) nicProperties.get("hwaddr"));
                     // if we get "permhwaddr", we are a part of a bond and we use that as the mac address
                     String mac = (String) nicProperties.get("permhwaddr");
@@ -2144,6 +2140,11 @@ public class VdsBrokerObjectsBuilder {
 
         Map<String, Object> nicProperties = ifaceEntry.getValue();
         if (nicProperties != null) {
+            Object speed = nicProperties.get("speed");
+            if (speed != null) {
+                iface.setSpeed((Integer) speed);
+            }
+
             iface.setIpv4Address(extractAddress(nicProperties));
             iface.setIpv4Subnet(extractSubnet(nicProperties));
 
