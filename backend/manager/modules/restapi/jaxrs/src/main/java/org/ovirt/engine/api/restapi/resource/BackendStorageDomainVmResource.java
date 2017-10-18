@@ -16,6 +16,7 @@ import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainVmDiskAttachmentsResource;
 import org.ovirt.engine.api.resource.StorageDomainVmResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.api.restapi.types.ExternalRegistrationConfigurationMapper;
 import org.ovirt.engine.api.restapi.types.ExternalVnicProfileMappingMapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -70,6 +71,7 @@ public class BackendStorageDomainVmResource
         validateVnicMappings(action);
 
         ImportVmFromConfParameters params = new ImportVmFromConfParameters(getVnicProfileMappings(action), getReassignBadMacs(action));
+        ExternalRegistrationConfigurationMapper.mapFromModel(action.getRegistrationConfiguration(), params);
         params.setContainerId(guid);
         params.setStorageDomainId(parent.getStorageDomainId());
         params.setClusterId(getClusterId(action));
