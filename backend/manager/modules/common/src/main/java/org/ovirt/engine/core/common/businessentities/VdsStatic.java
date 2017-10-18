@@ -152,6 +152,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableVdsField
     private boolean kernelCmdlinePciRealloc;
 
+    @EditableVdsField
     private boolean reinstallRequired;
 
     public boolean isAutoRecoverable() {
