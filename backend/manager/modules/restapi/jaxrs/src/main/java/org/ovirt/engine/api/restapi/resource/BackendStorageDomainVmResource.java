@@ -8,6 +8,12 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.RegistrationAffinityGroupMapping;
+import org.ovirt.engine.api.model.RegistrationAffinityLabelMapping;
+import org.ovirt.engine.api.model.RegistrationClusterMapping;
+import org.ovirt.engine.api.model.RegistrationDomainMapping;
+import org.ovirt.engine.api.model.RegistrationLunMapping;
+import org.ovirt.engine.api.model.RegistrationRoleMapping;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.model.VnicProfileMapping;
@@ -68,7 +74,15 @@ public class BackendStorageDomainVmResource
     @Override
     public Response register(Action action) {
         validateParameters(action, "cluster.id|name");
-        validateVnicMappings(action);
+        if (action.isSetRegistrationConfiguration()) {
+            validateVnicMappings(action);
+            validateClusterMappings(action);
+            validateRoleMappings(action);
+            validateDomainMappings(action);
+            validateAffinityGroupMappings(action);
+            validateAffinityLabelMappings(action);
+            validateLunMappings(action);
+        }
 
         ImportVmFromConfParameters params = new ImportVmFromConfParameters(getVnicProfileMappings(action), getReassignBadMacs(action));
         ExternalRegistrationConfigurationMapper.mapFromModel(action.getRegistrationConfiguration(), params);
@@ -117,6 +131,124 @@ public class BackendStorageDomainVmResource
         }
 
         return doAction(ActionType.ImportVm, params, action);
+    }
+
+    private void validateClusterMappings(Action action) {
+        if (action.getRegistrationConfiguration().isSetClusterMappings()
+                && action.getRegistrationConfiguration().getClusterMappings().isSetRegistrationClusterMappings()) {
+            action.getRegistrationConfiguration()
+                    .getClusterMappings()
+                    .getRegistrationClusterMappings()
+                    .forEach(this::validateClusterMapping);
+        }
+    }
+
+    private void validateClusterMapping(RegistrationClusterMapping mapping) {
+        if (!mapping.isSetFrom()) {
+            badRequest("Cluster name is missing from source.");
+        }
+        if (!mapping.isSetTo()) {
+            badRequest("Cluster name is missing from destination.");
+        }
+    }
+
+    private void validateRoleMappings(Action action) {
+        if (action.getRegistrationConfiguration().isSetRoleMappings()
+                && action.getRegistrationConfiguration().getRoleMappings().isSetRegistrationRoleMappings()) {
+            action.getRegistrationConfiguration()
+                    .getRoleMappings()
+                    .getRegistrationRoleMappings()
+                    .forEach(this::validateRoleMapping);
+        }
+    }
+
+    private void validateRoleMapping(RegistrationRoleMapping mapping) {
+        if (!mapping.isSetFrom()) {
+            badRequest("Role name is missing from source.");
+        }
+        if (!mapping.isSetTo()) {
+            badRequest("Role is missing from destination.");
+        }
+    }
+
+    private void validateAffinityGroupMappings(Action action) {
+        if (action.getRegistrationConfiguration().isSetAffinityGroupMappings()
+                && action.getRegistrationConfiguration()
+                        .getAffinityGroupMappings()
+                        .isSetRegistrationAffinityGroupMappings()) {
+            action.getRegistrationConfiguration()
+                    .getAffinityGroupMappings()
+                    .getRegistrationAffinityGroupMappings()
+                    .forEach(this::validateAffinityGroupMapping);
+        }
+    }
+
+    private void validateAffinityGroupMapping(RegistrationAffinityGroupMapping mapping) {
+        if (!mapping.isSetFrom()) {
+            badRequest("AffinityGroup name is missing from source.");
+        }
+        if (!mapping.isSetTo()) {
+            badRequest("AffinityGroup name is missing from destination.");
+        }
+    }
+
+    private void validateAffinityLabelMappings(Action action) {
+        if (action.getRegistrationConfiguration().isSetAffinityLabelMappings()
+                && action.getRegistrationConfiguration()
+                        .getAffinityLabelMappings()
+                        .isSetRegistrationAffinityLabelMappings()) {
+            action.getRegistrationConfiguration()
+                    .getAffinityLabelMappings()
+                    .getRegistrationAffinityLabelMappings()
+                    .forEach(this::validateAffinityLabelMapping);
+        }
+    }
+
+    private void validateAffinityLabelMapping(RegistrationAffinityLabelMapping mapping) {
+        if (!mapping.isSetFrom()) {
+            badRequest("AffinityLabel name is missing from source.");
+        }
+        if (!mapping.isSetTo()) {
+            badRequest("AffinityLabel name is missing from destination.");
+        }
+    }
+
+    private void validateDomainMappings(Action action) {
+        if (action.getRegistrationConfiguration().isSetDomainMappings()
+                && action.getRegistrationConfiguration().getDomainMappings().isSetRegistrationDomainMappings()) {
+            action.getRegistrationConfiguration()
+                    .getDomainMappings()
+                    .getRegistrationDomainMappings()
+                    .forEach(this::validateDomainMapping);
+        }
+    }
+
+    private void validateDomainMapping(RegistrationDomainMapping mapping) {
+        if (!mapping.isSetFrom()) {
+            badRequest("Domain name is missing from source.");
+        }
+        if (!mapping.isSetTo()) {
+            badRequest("Domain name is missing from destination.");
+        }
+    }
+
+    private void validateLunMappings(Action action) {
+        if (action.getRegistrationConfiguration().isSetLunMappings()
+                && action.getRegistrationConfiguration().getLunMappings().isSetRegistrationLunMappings()) {
+            action.getRegistrationConfiguration()
+                    .getLunMappings()
+                    .getRegistrationLunMappings()
+                    .forEach(this::validateLunMapping);
+        }
+    }
+
+    private void validateLunMapping(RegistrationLunMapping mapping) {
+        if (!mapping.isSetFrom()) {
+            badRequest("Lun id is missing from source.");
+        }
+        if (!mapping.isSetTo()) {
+            badRequest("Lun is missing from destination.");
+        }
     }
 
     private void validateVnicMappings(Action action) {
