@@ -333,8 +333,17 @@ public class SsoUtils {
 
     public static SsoSession getSsoSession(HttpServletRequest request) {
         SsoContext ssoContext = getSsoContext(request);
-        SsoSession ssoSession = request.getSession(false) == null ?
-                null : (SsoSession) request.getSession().getAttribute(SsoConstants.OVIRT_SSO_SESSION);
+        SsoSession ssoSession;
+        String ssoToken = request.getParameter("sso_token");
+        if (StringUtils.isNotEmpty(ssoToken) && getSsoContext(request).getSsoSession(ssoToken) != null) {
+            ssoSession = getSsoContext(request).getSsoSession(ssoToken);
+            HttpSession session = request.getSession(true);
+            session.setAttribute(SsoConstants.OVIRT_SSO_SESSION, ssoSession);
+            ssoSession.setHttpSession(session);
+        } else {
+            ssoSession = request.getSession(false) == null ?
+                    null : (SsoSession) request.getSession().getAttribute(SsoConstants.OVIRT_SSO_SESSION);
+        }
         // If the session has expired, attempt to extract the session from SsoContext persisted session
         if (ssoSession == null) {
             try {

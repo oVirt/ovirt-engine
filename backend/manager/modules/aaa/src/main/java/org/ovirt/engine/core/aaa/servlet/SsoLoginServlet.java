@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
@@ -45,13 +46,19 @@ public class SsoLoginServlet extends HttpServlet {
                 request.getServerPort(),
                 postActionUrl);
 
-        String url = new URLBuilder(FiltersHelper.getEngineSsoUrl(request), "/oauth/authorize")
+        URLBuilder urlBuilder = new URLBuilder(FiltersHelper.getEngineSsoUrl(request), "/oauth/authorize")
                 .addParameter("client_id", EngineLocalConfig.getInstance().getProperty("ENGINE_SSO_CLIENT_ID"))
                 .addParameter("response_type", "code")
                 .addParameter("app_url", request.getParameter("app_url"))
                 .addParameter("engine_url", FiltersHelper.getEngineUrl(request))
                 .addParameter("redirect_uri", redirectUri)
-                .addParameter("scope", scope).build();
+                .addParameter("scope", scope);
+
+        if (StringUtils.isNotEmpty(request.getParameter("sso_token"))) {
+            urlBuilder.addParameter("sso_token", request.getParameter("sso_token"));
+        }
+
+        String url = urlBuilder.build();
 
         log.debug("Redirecting to '{}'", url);
 
