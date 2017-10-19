@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,7 +42,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
         // if user queries host statistics before host installation completed, null values are possible (therefore added checks).
         long memTotal = entity.getPhysicalMemMb()==null ? 0 : entity.getPhysicalMemMb() * Mb;
         long memUsed = (s==null || s.getUsageMemPercent()==null) ? 0 : memTotal * s.getUsageMemPercent() / 100;
-        return asList(setDatum(clone(MEM_TOTAL),   memTotal),
+        List<Statistic> statistics = asList(setDatum(clone(MEM_TOTAL),   memTotal),
                       setDatum(clone(MEM_USED),    memUsed),
                       setDatum(clone(MEM_FREE),    memTotal-memUsed),
                       setDatum(clone(MEM_SHARED),  (s==null || s.getMemShared()==null) ? 0 : s.getMemShared()*Mb),
@@ -57,6 +58,21 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
                       setDatum(clone(CPU_IDLE),    (s==null || s.getCpuIdle()==null) ? 0 : s.getCpuIdle()),
                       setDatum(clone(CPU_LOAD),    (s==null || s.getCpuLoad()==null) ? 0 : s.getCpuLoad()/100),
                       setDatum(clone(BOOT_TIME),   (s==null || s.getBootTime()==null) ? 0 : s.getBootTime()));
+
+        if (s != null) {
+            s.getHugePages().stream()
+                .filter(page -> page.getAmount() != null)
+                .map(this::createHugePagesFree)
+                .forEach(statistics::add);
+        }
+
+        return statistics;
+    }
+
+    private Statistic createHugePagesFree(HugePage page) {
+        return setDatum(
+                create("hugepages." + page.getSizeKB() + ".free", "Amount of free huge pages of the given size", GAUGE, NONE, INTEGER),
+                page.getAmount());
     }
 
     public Statistic adopt(Statistic statistic) {
