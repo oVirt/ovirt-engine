@@ -12,9 +12,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.CreateSnapshotCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
-import org.ovirt.engine.core.common.action.CreateVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -134,24 +132,6 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
 
         parameters.setImageInitialSizeInBytes(Optional.ofNullable(getInitialSize()).orElse(0L));
         return parameters;
-    }
-
-    private CreateVolumeParameters getCreateVolumeParameters() {
-        CreateVolumeParameters createVolumeParameters =
-                new CreateVolumeParameters(getParameters().getStoragePoolId(),
-                        getParameters().getStorageDomainId(),
-                        getImageGroupId(),
-                        getDestinationImageId(),
-                        Guid.Empty, Guid.Empty,
-                        getParameters().getDiskInfo().getSize(),
-                        getInitialSize(),
-                        getParameters().getDiskInfo().getVolumeFormat(),
-                        getParameters().getDiskInfo().getVolumeType(),
-                        getJsonDiskDescription(getParameters().getDiskInfo()));
-        createVolumeParameters.setParentCommand(getActionType());
-        createVolumeParameters.setParentParameters(getParameters());
-        createVolumeParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        return createVolumeParameters;
     }
 
     @Override
