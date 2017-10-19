@@ -358,7 +358,7 @@ Requires:	mailcap
 Requires:	mod_ssl
 Requires:	novnc
 Requires:	openssh
-Requires:	vdsm-jsonrpc-java >= 1.4.6
+Requires:	vdsm-jsonrpc-java >= 1.4.8
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.6.3
