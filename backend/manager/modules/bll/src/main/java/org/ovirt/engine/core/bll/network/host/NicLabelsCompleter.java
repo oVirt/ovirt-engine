@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
@@ -68,7 +68,9 @@ public class NicLabelsCompleter {
     }
 
     private void initLabelsToNetworks() {
-        labelToNetworks = clusterNetworks.stream().collect(Collectors.groupingBy(Network::getLabel));
+        for (Network network : clusterNetworks) {
+            labelToNetworks.computeIfAbsent(network.getLabel(), k -> new ArrayList<>()).add(network);
+        }
     }
 
     private void completeNetworkAttachmentsByRemovedLabels() {
