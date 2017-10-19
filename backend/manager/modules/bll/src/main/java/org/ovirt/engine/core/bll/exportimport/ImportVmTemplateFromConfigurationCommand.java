@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -165,6 +166,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 ovfEntityData = ovfEntityList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmTemplateFromOvf(ovfEntityData.getOvfData());
                 vmTemplateFromConfiguration = fullEntityOvfData.getVmTemplate();
+                mapCluster(fullEntityOvfData.getClusterName());
                 vmTemplateFromConfiguration.setClusterId(getParameters().getClusterId());
                 setVmTemplate(vmTemplateFromConfiguration);
                 setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
@@ -188,6 +190,20 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         }
         setClusterId(getParameters().getClusterId());
         setStoragePoolId(getCluster().getStoragePoolId());
+    }
+
+    // TODO: Move to one method which will be used also for ImportVmFromConfigurationCommand
+    private void mapCluster(String clusterName) {
+        if (getParameters().getClusterMap() != null) {
+            String clusterDest = getParameters().getClusterMap().get(clusterName);
+            Cluster cluster = clusterDao.getByName(clusterDest);
+            if (cluster == null) {
+                cluster = clusterDao.getByName(clusterName);
+            }
+            if (cluster != null) {
+                getParameters().setClusterId(cluster.getId());
+            }
+        }
     }
 
     @Override
