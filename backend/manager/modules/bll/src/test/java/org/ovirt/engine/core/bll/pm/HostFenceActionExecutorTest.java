@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,19 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HostFenceActionExecutorTest {
+    private static Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
+
+    @Mock
+    DbFacade dbFacade;
+
+    @Mock
+    FenceAgentDao fenceAgentDao;
+
     @Mock
     VDS fencedHost;
 
@@ -42,7 +53,12 @@ public class HostFenceActionExecutorTest {
 
     @Before
     public void setup() {
+        when(dbFacade.getFenceAgentDao()).thenReturn(fenceAgentDao);
+
+        when(fencedHost.getId()).thenReturn(FENCECD_HOST_ID);
+
         executor = spy(new HostFenceActionExecutor(fencedHost, new FencingPolicy()));
+        doReturn(dbFacade).when(executor).getDbFacade();
         doReturn(agentExecutor1).doReturn(agentExecutor2).when(executor).createFenceActionExecutor(any());
     }
 
@@ -252,11 +268,11 @@ public class HostFenceActionExecutorTest {
 
     protected void mockFenceAgents() {
         fenceAgents = create2SequentialFenceAgents();
-        doReturn(fenceAgents).when(fencedHost).getFenceAgents();
+        when(fenceAgentDao.getFenceAgentsForHost(fencedHost.getId())).thenReturn(fenceAgents);
     }
 
     protected void mockFenceAgent() {
         fenceAgents = createSingleAgentList(1);
-        doReturn(fenceAgents).when(fencedHost).getFenceAgents();
+        when(fenceAgentDao.getFenceAgentsForHost(fencedHost.getId())).thenReturn(fenceAgents);
     }
 }

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * It manages:
@@ -49,7 +50,8 @@ public class HostFenceActionExecutor {
      * @return result of the action
      */
     public FenceOperationResult fence(FenceActionType fenceAction) {
-        if (fencedHost.getFenceAgents() == null || fencedHost.getFenceAgents().isEmpty()) {
+        List<FenceAgent> fenceAgents = getDbFacade().getFenceAgentDao().getFenceAgentsForHost(fencedHost.getId());
+        if (fenceAgents == null || fenceAgents.isEmpty()) {
             return new FenceOperationResult(
                     Status.ERROR,
                     PowerStatus.UNKNOWN,
@@ -57,7 +59,7 @@ public class HostFenceActionExecutor {
                             "Invalid fence agents defined for host '%s'.",
                             fencedHost.getHostName()));
         }
-        return fence(fenceAction, fencedHost.getFenceAgents());
+        return fence(fenceAction, fenceAgents);
     }
 
     /**
@@ -120,5 +122,10 @@ public class HostFenceActionExecutor {
         } else {
             return new ConcurrentAgentsFenceActionExecutor(fencedHost, fenceAgents, fencingPolicy);
         }
+    }
+
+    // TODO Investigate if injection is possible
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
     }
 }
