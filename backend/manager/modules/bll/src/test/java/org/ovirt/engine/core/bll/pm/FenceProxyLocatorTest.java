@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
@@ -54,6 +55,9 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     @Mock
     private VdsDao vdsDao;
 
+    @Mock
+    private FenceAgentDao fenceAgentDao;
+
     private VdsFenceOptions vdsFenceOptions;
 
     private VDS fencedHost;
@@ -61,9 +65,11 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     @Before
     public void setup() {
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);
+        when(dbFacade.getFenceAgentDao()).thenReturn(fenceAgentDao);
 
         mockVdsFenceOptions(true);
         mockFencedHost();
+        mockFenceAgents();
     }
 
     @After
@@ -308,7 +314,6 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
         when(fencedHost.getClusterId()).thenReturn(FENCED_HOST_CLUSTER_ID);
         when(fencedHost.getStoragePoolId()).thenReturn(FENCED_HOST_DATACENTER_ID);
         when(fencedHost.getHostName()).thenReturn("fencedHost");
-        when(fencedHost.getFenceAgents()).thenReturn(Collections.singletonList(createFenceAgent(FENCECD_HOST_ID, "ipmilan")));
     }
 
     private void mockProxySourcesForFencedHost(List<FenceProxySourceType> fenceProxySources) {
@@ -371,6 +376,11 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     private void mockVdsFenceOptions(boolean agentsCompatibleWithProxy) {
         vdsFenceOptions = mock(VdsFenceOptions.class);
         when(vdsFenceOptions.isAgentSupported(any())).thenReturn(agentsCompatibleWithProxy);
+    }
+
+    private void mockFenceAgents() {
+        when(fenceAgentDao.getFenceAgentsForHost(FENCECD_HOST_ID))
+                .thenReturn(Collections.singletonList(createFenceAgent(FENCECD_HOST_ID, "ipmilan")));
     }
 
     private boolean shouldHostBeUnreachable(VDSStatus status) {

@@ -139,7 +139,7 @@ public class FenceProxyLocator {
     protected boolean areAgentsVersionCompatible(VDS proxyCandidate) {
         VdsFenceOptions options = createVdsFenceOptions(proxyCandidate.getClusterCompatibilityVersion().getValue());
         boolean compatible = true;
-        for (FenceAgent agent : fencedHost.getFenceAgents()) {
+        for (FenceAgent agent : getDbFacade().getFenceAgentDao().getFenceAgentsForHost(fencedHost.getId())) {
             if (!options.isAgentSupported(agent.getType())) {
                 compatible = false;
                 break;
