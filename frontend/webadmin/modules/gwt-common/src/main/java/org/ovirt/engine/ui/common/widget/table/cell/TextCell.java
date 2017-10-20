@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -105,7 +106,7 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
     }
 
     @Override
-    public SafeHtml getTooltip(String value, Element parent) {
+    public SafeHtml getTooltip(String value, Element parent, NativeEvent event) {
         if (value != null) {
             SafeHtml safeHtmlValue = SafeHtmlUtils.fromString(value);
             if (maxTextLength >= 0) {

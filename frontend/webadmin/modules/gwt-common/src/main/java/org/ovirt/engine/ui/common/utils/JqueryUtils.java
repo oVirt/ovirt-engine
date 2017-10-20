@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.utils;
 
+import com.google.gwt.dom.client.Element;
+
 /**
  * A collection of native functions for executing jQuery code.
  * <p>
@@ -12,6 +14,13 @@ public class JqueryUtils {
      */
     public static native String getTextFromHtml(String html) /*-{
         return $wnd.jQuery($wnd.jQuery.parseHTML(html)).text();
+    }-*/;
+
+    /**
+     * Return index of the given element, relative to its sibling elements.
+     */
+    public static native int index(Element elm) /*-{
+        return $wnd.jQuery(elm).index();
     }-*/;
 
 }

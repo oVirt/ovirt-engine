@@ -112,6 +112,14 @@ public final class ElementTooltipUtils {
         return (tooltip != null) ? tooltip.asString() : "";
     }
 
+    private static native void replaceTooltipContent(String elementId, String html) /*-{
+        var $e = $wnd.jQuery('#' + elementId);
+        $e.attr('data-tooltip-content', html);
+        $e.attr('data-original-title', html);
+        $e.tooltip('show');
+
+   }-*/;
+
     private static native boolean isPopupContentElement(Element e) /*-{
         var popupContentSelector = '.' + @org.ovirt.engine.ui.common.view.AbstractPopupView::POPUP_CONTENT_STYLE_NAME;
         return $wnd.jQuery(e).closest(popupContentSelector).length > 0;
@@ -284,6 +292,8 @@ public final class ElementTooltipUtils {
             if (!hasTooltip(parentTableCellElement)) {
                 setTooltipOnElement(parentTableCellElement, tooltip,
                         new TooltipConfig().setForceShow().markAsCellWidgetTooltip());
+            } else if (!sameTooltipOnElement(parentTableCellElement, tooltip)) {
+                replaceTooltipContent(parentTableCellElement.getId(), getTooltipHtmlString(tooltip));
             }
 
             // Prevent other cell widget tooltips from hanging open.

@@ -38,7 +38,7 @@ public abstract class AbstractCell<C> extends com.google.gwt.cell.client.Abstrac
     public void onBrowserEvent(Context context, Element parent, C value, NativeEvent event, ValueUpdater<C> valueUpdater) {
         SafeHtml tooltip = getTooltip(value);
         if (tooltip == null) {
-            tooltip = getTooltip(value, parent);
+            tooltip = getTooltip(value, parent, event);
         }
 
         ElementTooltipUtils.handleCellEvent(event, parent, tooltip);
@@ -55,9 +55,10 @@ public abstract class AbstractCell<C> extends com.google.gwt.cell.client.Abstrac
     }
 
     /**
-     * Alternative {@code getTooltip}, in case we need access to the DOM element.
+     * Alternative {@code getTooltip}, in case we need access to the DOM element and/or the native
+     * event that triggered the tooltip.
      */
-    public SafeHtml getTooltip(C value, Element parent) {
+    public SafeHtml getTooltip(C value, Element parent, NativeEvent event) {
         return getTooltip(value);
     }
 

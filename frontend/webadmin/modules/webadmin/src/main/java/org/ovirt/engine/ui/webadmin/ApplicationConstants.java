@@ -3388,5 +3388,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String logicalNetwork();
 
     String slave();
+
+    String hostHasDisabledPowerManagment();
+
+    String hostNetConfigurationDirty();
+
+    String hostGlusterIssues();
+
+    String hostReinstallRequired();
+
+    String hostHasNoDefaultRoute();
 }
 
