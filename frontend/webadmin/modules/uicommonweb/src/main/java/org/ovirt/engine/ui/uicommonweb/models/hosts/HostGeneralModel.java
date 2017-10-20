@@ -918,7 +918,25 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
 
         setLogicalCores(vds.getCpuThreads());
-        setOnlineCores(vds.getOnlineCpus() == null ? vds.getOnlineCpus() : vds.getOnlineCpus().replaceAll(",", ", ")); //$NON-NLS-1$ //$NON-NLS-2$
+
+        String onlineCores = vds.getOnlineCpus();
+        if (onlineCores != null) {
+            onlineCores = Arrays.stream(onlineCores.split(",")) //$NON-NLS-1$
+                .sorted(
+                    (s1, s2) -> {
+                        Integer i1;
+                        Integer i2;
+                        try {
+                            i1 = Integer.parseInt(s1);
+                            i2 = Integer.parseInt(s2);
+                        } catch (NumberFormatException ex) {
+                            return s1.compareTo(s2);
+                        }
+                        return i1.compareTo(i2);
+                    })
+                .collect(Collectors.joining(", ")); //$NON-NLS-1$
+        }
+        setOnlineCores(onlineCores);
     }
 
     private void updateAlerts() {
