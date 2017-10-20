@@ -35,6 +35,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -55,6 +56,8 @@ public class PmHealthCheckManager implements BackendService {
     private AuditLogDirector auditLogDirector;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private FenceAgentDao fenceAgentDao;
     @Inject
     private AlertDirector alertDirector;
     @Inject
@@ -127,7 +130,8 @@ public class PmHealthCheckManager implements BackendService {
      */
     private PmHealth checkPMHealth(VDS host) {
         PmHealth pmHealth = new PmHealth(host);
-        AgentsIterator iterator = PowerManagementHelper.getAgentsIterator(host.getFenceAgents());
+        AgentsIterator iterator = PowerManagementHelper.getAgentsIterator(
+                fenceAgentDao.getFenceAgentsForHost(host.getId()));
 
         // In each step of the loop deal with the agents with the next 'order' (one or more). Write info into PmHealth.
         while (iterator.hasNext()) {
