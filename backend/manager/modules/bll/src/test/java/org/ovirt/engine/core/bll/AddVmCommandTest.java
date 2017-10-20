@@ -24,19 +24,16 @@ import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OsType;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Strict.class)
@@ -51,9 +48,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
         mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"))
     );
-
-    @Mock
-    private QuotaDao quotaDao;
 
     @Override
     protected AddVmCommand<AddVmParameters> createCommand() {
@@ -190,28 +184,10 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     }
 
     @Test
-    public void testValidQuota() {
-        Guid quotaId = Guid.newGuid();
+    public void testValidateQuota() {
+        cmd.validateQuota(Guid.newGuid());
 
-        Quota quota = new Quota();
-        quota.setId(quotaId);
-
-        when(quotaDao.getById(quotaId)).thenReturn(quota);
-
-        quota.setStoragePoolId(storagePool.getId());
-
-        cmd.getParameters().getVm().setQuotaId(quotaId);
-
-        assertTrue(cmd.validateQuota(quotaId));
-        assertTrue(cmd.getReturnValue().getValidationMessages().isEmpty());
-    }
-
-    @Test
-    public void testNonExistingQuota() {
-        Guid quotaId = Guid.newGuid();
-        cmd.getParameters().getVm().setQuotaId(quotaId);
-
-        assertFalse(cmd.validateQuota(quotaId));
-        ValidateTestUtils.assertValidationMessages("", cmd, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+        verify(quotaValidator, times(1)).isValid();
+        verify(quotaValidator, times(1)).isDefinedForStoragePool(any());
     }
 }

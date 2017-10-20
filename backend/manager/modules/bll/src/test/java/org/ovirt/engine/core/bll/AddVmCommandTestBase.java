@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -101,6 +102,9 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     @Mock
     VmValidationUtils vmValidationUtils;
 
+    @Mock
+    protected QuotaValidator quotaValidator;
+
     @Spy
     @InjectMocks
     VmHandler vmHandler;
@@ -136,6 +140,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected void mockOtherDependencies() {
         doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any());
+        doReturn(quotaValidator).when(cmd).createQuotaValidator(any());
     }
 
     protected void generateStorageToDisksMap() {

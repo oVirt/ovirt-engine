@@ -12,6 +12,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -32,11 +34,11 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -65,7 +67,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -106,9 +107,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private VdsDao vdsDao;
 
     @Mock
-    private QuotaDao quotaDao;
-
-    @Mock
     private OsRepository osRepository;
 
     @Mock
@@ -119,6 +117,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private SnapshotsValidator snapshotsValidator;
+
+    @Mock
+    private QuotaValidator quotaValidator;
 
     /**
      * The command under test.
@@ -810,47 +811,26 @@ public class AddDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testExistingQuota() {
-        Quota quota = new Quota();
-        quota.setId(Guid.newGuid());
-
-        DiskImage img = new DiskImage();
-        img.setQuotaId(quota.getId());
-
-        command.getParameters().setDiskInfo(img);
-
+    public void testValidateQuota() {
         Guid storageId = Guid.newGuid();
         command.getParameters().setStorageDomainId(storageId);
-
-        StoragePool pool = mockStoragePool();
-        command.setStoragePoolId(pool.getId());
-        quota.setStoragePoolId(pool.getId());
 
         mockVm();
         mockEntities(storageId);
 
-        when(quotaDao.getById(quota.getId())).thenReturn(quota);
+        Guid quotaId = Guid.newGuid();
+        ((DiskImage)command.getParameters().getDiskInfo()).setQuotaId(quotaId);
 
+        doReturn(ValidationResult.VALID).when(quotaValidator).isValid();
+        doReturn(ValidationResult.VALID).when(quotaValidator).isDefinedForStoragePool(any(Guid.class));
+        doReturn(quotaValidator).when(command).createQuotaValidator(any(Guid.class));
         doCallRealMethod().when(command).validateQuota();
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
-    }
 
-    @Test
-    public void testNonExistingQuota() {
-        DiskImage img = new DiskImage();
-        img.setQuotaId(Guid.newGuid());
-        command.getParameters().setDiskInfo(img);
-
-        Guid storageId = Guid.newGuid();
-        command.getParameters().setStorageDomainId(storageId);
-
-        mockEntities(storageId);
-        mockVm();
-
-        doCallRealMethod().when(command).validateQuota();
-
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+        verify(command, times(1)).createQuotaValidator(quotaId);
+        verify(quotaValidator, times(1)).isValid();
+        verify(quotaValidator, times(1)).isDefinedForStoragePool(any());
     }
 
     @Test

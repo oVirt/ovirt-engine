@@ -31,6 +31,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
+import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -43,9 +44,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.OsType;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -66,7 +65,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -108,7 +106,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Mock
-    private QuotaDao quotaDao;
+    private QuotaValidator quotaValidator;
     @Mock
     private DiskVmElementDao diskVmElementDao;
     @Mock
@@ -202,6 +200,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         doReturn(vmDeviceUtils).when(command).getVmDeviceUtils();
         doReturn(numaValidator).when(command).getNumaValidator();
+        doReturn(quotaValidator).when(command).createQuotaValidator(any());
 
         command.init();
     }
@@ -547,33 +546,11 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testValidQuota() {
-        Guid quotaId = Guid.newGuid();
+    public void testValidateQuota() {
+        command.validateQuota(Guid.newGuid());
 
-        Quota quota = new Quota();
-        quota.setId(quotaId);
-
-        when(quotaDao.getById(quotaId)).thenReturn(quota);
-
-        StoragePool storagePool = new StoragePool();
-        storagePool.setId(Guid.newGuid());
-
-        quota.setStoragePoolId(storagePool.getId());
-        command.setStoragePool(storagePool);
-
-        command.getParameters().getVm().setQuotaId(quotaId);
-
-        assertTrue(command.validateQuota(quotaId));
-        assertTrue(command.getReturnValue().getValidationMessages().isEmpty());
-    }
-
-    @Test
-    public void testNonExistingQuota() {
-        prepareVmToPassValidate();
-        vmStatic.setQuotaId(Guid.newGuid());
-
-        assertFalse(command.validateQuota(vmStatic.getQuotaId()));
-        ValidateTestUtils.assertValidationMessages("", command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+        verify(quotaValidator, times(1)).isValid();
+        verify(quotaValidator, times(1)).isDefinedForStoragePool(any());
     }
 
     private void mockVmValidator() {

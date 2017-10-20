@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -19,6 +18,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
+import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -449,21 +448,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected boolean validateQuota(Guid quotaId) {
-        if (quotaId == null || Guid.Empty.equals(quotaId)) {
-            // QuotaManager will use default quota if the id is null or empty
-            return true;
-        }
-
-        Quota quota = quotaDao.getById(quotaId);
-        if (quota == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
-        }
-
-        if (!Objects.equals(quota.getStoragePoolId(), getStoragePoolId())) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
-        }
-
-        return true;
+        // QuotaManager will use default quota if the id is null or empty
+        QuotaValidator validator = createQuotaValidator(quotaId);
+        return validate(validator.isValid()) &&
+                validate(validator.isDefinedForStoragePool(getStoragePoolId()));
     }
 
     protected String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId, Guid vdsId) {
@@ -513,5 +501,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected String getIsoPrefix(Guid storagePoolId, Guid vdsId) {
         return (String) runVdsCommand(VDSCommandType.IsoPrefix,
                 new VdsAndPoolIDVDSParametersBase(vdsId, storagePoolId)).getReturnValue();
+    }
+
+    public QuotaValidator createQuotaValidator(Guid quotaId) {
+        return QuotaValidator.createInstance(quotaId, true);
     }
 }

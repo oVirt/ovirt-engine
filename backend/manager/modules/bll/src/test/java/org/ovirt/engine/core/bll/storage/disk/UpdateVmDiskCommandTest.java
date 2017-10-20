@@ -36,13 +36,13 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -72,7 +72,6 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -111,7 +110,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainDao storageDomainDao;
     @Mock
-    private QuotaDao quotaDao;
+    private QuotaValidator quotaValidator;
     @Mock
     private DiskValidator diskValidator;
     @Mock
@@ -678,39 +677,26 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testExistingQuota() {
-        Quota quota = new Quota();
-        quota.setId(Guid.newGuid());
-
-        when(quotaDao.getById(any())).thenReturn(null);
-        when(quotaDao.getById(quota.getId())).thenReturn(quota);
-
+    public void testValidateQuota() {
         when(diskDao.get(any())).thenReturn(createDiskImage());
 
-        ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(quota.getId());
+        Guid quotaId = Guid.newGuid();
+        ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(quotaId);
         initializeCommand();
 
         StoragePool pool = mockStoragePool();
         command.setStoragePoolId(pool.getId());
-        quota.setStoragePoolId(pool.getId());
 
+        doReturn(ValidationResult.VALID).when(quotaValidator).isValid();
+        doReturn(ValidationResult.VALID).when(quotaValidator).isDefinedForStoragePool(any(Guid.class));
+        doReturn(quotaValidator).when(command).createQuotaValidator(any(Guid.class));
         doCallRealMethod().when(command).validateQuota();
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
-    }
 
-    @Test
-    public void testNonExistingQuota() {
-        when(quotaDao.getById(any())).thenReturn(null);
-
-        when(diskDao.get(any())).thenReturn(createDiskImage());
-
-        ((DiskImage) command.getParameters().getDiskInfo()).setQuotaId(Guid.newGuid());
-        initializeCommand();
-
-        doCallRealMethod().when(command).validateQuota();
-
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
+        verify(command, times(1)).createQuotaValidator(quotaId);
+        verify(quotaValidator, times(1)).isValid();
+        verify(quotaValidator, times(1)).isDefinedForStoragePool(pool.getId());
     }
 
     private void mockToUpdateDiskVm(VM vm) {
