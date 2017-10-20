@@ -7,6 +7,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,8 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,8 +46,17 @@ public class FenceValidatorTest {
     @Mock
     private BackendInternal backend;
 
+    @Mock
+    private DbFacade dbFacade;
+
+    @Mock
+    private FenceAgentDao fenceAgentDao;
+
     @Before
     public void setup() {
+        when(dbFacade.getFenceAgentDao()).thenReturn(fenceAgentDao);
+
+        doReturn(dbFacade).when(validator).getDbFacade();
         doReturn(proxyLocator).when(validator).getProxyLocator(any());
         doReturn(backend).when(validator).getBackend();
     }
@@ -135,7 +147,7 @@ public class FenceValidatorTest {
         cluster.setCompatibilityVersion(Version.getLast());
         FenceAgent agent = new FenceAgent();
         agent.setType("Some_Type");
-        vds.getFenceAgents().add(agent);
+        when(fenceAgentDao.getFenceAgentsForHost(vds.getId())).thenReturn(Collections.singletonList(agent));
         List<String> messages = new LinkedList<>();
         boolean result = validator.isPowerManagementEnabledAndLegal(vds, cluster, messages);
         assertFalse(result);
@@ -152,7 +164,7 @@ public class FenceValidatorTest {
         cluster.setCompatibilityVersion(Version.getLast());
         FenceAgent agent = new FenceAgent();
         agent.setType("apc");
-        vds.getFenceAgents().add(agent);
+        when(fenceAgentDao.getFenceAgentsForHost(vds.getId())).thenReturn(Collections.singletonList(agent));
         List<String> messages = new LinkedList<>();
         mcr.mockConfigValue(ConfigValues.VdsFenceType, Version.getLast(), "apc");
         mcr.mockConfigValue(ConfigValues.CustomVdsFenceType, "apc");

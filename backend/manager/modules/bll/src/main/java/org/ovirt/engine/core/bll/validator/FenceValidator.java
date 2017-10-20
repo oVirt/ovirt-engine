@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Regex;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
 
 public class FenceValidator {
@@ -45,7 +46,9 @@ public class FenceValidator {
     }
 
     public boolean isPowerManagementEnabledAndLegal(VDS vds, Cluster cluster, List<String> messages) {
-        if (!(vds.isPmEnabled() && isPowerManagementLegal(vds.getFenceAgents(), cluster, messages))) {
+        if (!(vds.isPmEnabled()
+                && isPowerManagementLegal(
+                        getDbFacade().getFenceAgentDao().getFenceAgentsForHost(vds.getId()), cluster, messages))) {
             messages.add(EngineMessage.VDS_FENCE_DISABLED.name());
             return false;
         } else {
@@ -103,4 +106,8 @@ public class FenceValidator {
         return Backend.getInstance();
     }
 
+    // TODO Investigate if injection is possible
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
+    }
 }
