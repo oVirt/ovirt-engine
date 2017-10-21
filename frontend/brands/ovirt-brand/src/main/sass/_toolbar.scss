@@ -1,0 +1,52 @@
+/***************************************
+Toolbar
+****************************************/
+
+@media (max-width: 1088px) {
+    .toolbar-pf .form-group:last-child {
+        padding-left: 0;
+    }
+}
+
+.toolbar-pf .toolbar-pf-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+}
+
+.toolbar-pf .form-group, .toolbar-pf .form-group:last-child {
+    margin-bottom: 10px;
+}
+
+.toolbar-pf .form-group:last-child {
+    margin-bottom: 10px;
+    padding-left: 0;
+    margin-left: auto;
+}
+
+.toolbar-pf .toolbar-pf-actions .toolbar-pf-filter {
+    flex: 1;
+    min-width: 25%;
+    max-width: 600px;
+    border-right: 0;
+}
+
+@media (max-width: 1240px) {
+    .toolbar-pf .toolbar-pf-actions .toolbar-pf-filter {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}
+
+.toolbar-pf .toolbar-pf-actions .toolbar-pf-filter .input-group .input-group-btn .btn+.btn {
+    margin-left: -1px;
+}
+
+.toolbar-pf .toolbar-pf-actions .form-group:last-child .dropdown-kebab-pf {
+    margin-right: 15px;
+}
+
+.toolbar-pf .form-group:last-child {
+    margin-bottom: 10px;
+}

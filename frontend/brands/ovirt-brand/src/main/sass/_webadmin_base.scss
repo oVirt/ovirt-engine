@@ -155,3 +155,19 @@ here. Please create new partials when it makes sense.
     float: left;
 }
 
+.quickswitch > i {
+    color: #0088ce;
+}
+
+.quickswitch {
+    margin-left: 9px;
+}
+
+.list-view-pf .list-group-item.active:hover {
+    background-color: #def3ff;
+}
+
+.nav-pf-vertical-collapsible-menus .secondary-nav-item-pf .active .secondary-collapse-toggle-pf {
+    opacity: 1;
+    pointer-events: all;
+}

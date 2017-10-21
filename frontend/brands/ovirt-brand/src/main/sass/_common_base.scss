@@ -12,6 +12,15 @@ landing page (welcome), login (sso), docs, 404, etc
     font-size: 13px;
 }
 
+.login-pf .container {
+    width: 100%;
+}
+
+/* custom top border */
+.navbar-pf-vertical {
+    border-top: 4px solid #00659c !important;
+}
+
 .container-pad {
     padding-left: 100px !important;
     padding-top: 50px !important;
@@ -60,9 +69,9 @@ landing page (welcome), login (sso), docs, 404, etc
 }
 
 @media (max-width: 768px) {
-  #welcome-app-title {
-    display: none;
-  }
+    #welcome-app-title {
+        display: none;
+    }
 }
 
 #welcome-app-title .pipe {

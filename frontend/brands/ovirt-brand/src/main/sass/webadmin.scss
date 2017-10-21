@@ -1,10 +1,10 @@
 /* webadmin.css entry point */
 
 @import 'branding_webadmin';
-@import 'patternfly-ovirt-overrides';
 @import 'ovirt-patternfly-compat'; /* eventually remove */
 @import 'gwt-standard';
 @import 'webadmin_base';
 @import 'alerts';
 @import 'tables';
+@import 'toolbar';
 @import 'tooltips';
