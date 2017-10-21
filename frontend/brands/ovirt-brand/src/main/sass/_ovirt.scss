@@ -49,10 +49,6 @@ Widgets -- cells and columns
 TODO: use SASS, break into widgets.scss
 ****************************************/
 
-label[for=LoginFormView_userName], label[for=LoginFormView_password], label[for=LoginFormView_profile] {
-    color: #fff;
-}
-
 .labelEnabled {
     color: #333333;
 }
