@@ -21,6 +21,13 @@ landing page (welcome), login (sso), docs, 404, etc
     border-top: 4px solid #00659c !important;
 }
 
+.nav-pf-vertical, .nav-pf-secondary-nav, .nav-pf-tertiary-nav {
+    /* 60 is the current PatternFly default. That assumes a navbar-pf-vertical height of
+       2px, but we use 4px (see rule directly above this one)
+    */
+    top: 60px + 2px;
+}
+
 .container-pad {
     padding-left: 100px !important;
     padding-top: 50px !important;
