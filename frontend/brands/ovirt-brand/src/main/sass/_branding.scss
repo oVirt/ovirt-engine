@@ -1,4 +1,10 @@
-/* classes used to brand (logos, colors, etc) common pages, welcome app, sso, etc. */
+/*******************************************************
+classes used to brand (logos, colors, etc) everything --
+welcome app, sso, webadmin, etc. Please make sure
+everything in here uses the "obrand_" prefix. These
+classes are designed to be drop-in replaced (cascaded
+over) by other installed brands.
+*/
 
 .obrand_loginPageLogo {
     background-image: url(images/ovirt_logo.png);
@@ -74,4 +80,40 @@
     height: 100%;
     border-top: 4px solid #00659c;
     background-repeat: no-repeat;
+}
+
+.obrand_mastheadLogo {
+    background-image: url(images/ovirt_masthead_logo.png);
+    width: 272px;
+    height: 16px;
+    position: relative;
+    top: 6px;
+    border: 0px;
+    display: inline !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.obrand_mastheadBackground {
+    background-image: url(images/ovirt_masthead_bg.png);
+    background-size: cover;
+}
+
+.obrand_aboutBackground {
+    width: 565px;
+    height: 355px;
+    background-image: url(images/ovirt_about_bg.png);
+}
+
+.obrand_aboutApplicationLogo {
+    background-image: url(images/ovirt_logo.png);
+    width: 80px;
+    height: 30px;
+    border: 0px;
+    display: block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: right;
+    position: relative;
+    top: 140px;
 }

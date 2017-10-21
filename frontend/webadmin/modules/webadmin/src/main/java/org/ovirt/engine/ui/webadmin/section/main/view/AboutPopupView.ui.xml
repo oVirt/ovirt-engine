@@ -46,7 +46,7 @@
         }
     </ui:style>
 
-    <d:OVirtBootstrapModal width="565px" height="355px" addStyleNames="obrand_webadminAboutBackground">
+    <d:OVirtBootstrapModal width="565px" height="355px" addStyleNames="obrand_aboutBackground">
         <b:Container addStyleNames="{style.container}" fluid="true">
             <b:Row>
                 <b:Column size="SM_12">
@@ -77,7 +77,7 @@
             </b:Row>
             <b:Row>
                 <b:Column size="SM_12">
-                    <g:Label ui:field="logo" addStyleNames="obrand_webadminAboutApplicationLogo" />
+                    <g:Label ui:field="logo" addStyleNames="obrand_aboutApplicationLogo" />
                 </b:Column>
             </b:Row>
         </b:Container>

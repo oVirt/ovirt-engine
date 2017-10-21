@@ -17,11 +17,11 @@
     </ui:style>
 
     <g:HTMLPanel>
-    <b:Navbar ui:field="mainNavBar" addStyleNames="obrand_webadminMastheadBackground navbar-pf-vertical">
+    <b:Navbar ui:field="mainNavBar" addStyleNames="obrand_mastheadBackground navbar-pf-vertical">
         <b:NavbarHeader>
              <b:NavbarCollapseButton />
              <b:NavbarBrand addStyleNames="obrand_headerLogoLink" ui:field="logoLink" >
-                 <img class="obrand_webadminMastheadLogo" src="clear.cache.gif" />
+                 <img class="obrand_mastheadLogo" src="clear.cache.gif" />
              </b:NavbarBrand>
         </b:NavbarHeader>
         <b:NavbarCollapse>

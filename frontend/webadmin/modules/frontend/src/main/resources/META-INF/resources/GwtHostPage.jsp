@@ -62,7 +62,7 @@
                 align-items: center;
             }
         </style>
-        <nav class="navbar navbar-pf-vertical obrand_webadminMastheadBackground" role="navigation">
+        <nav class="navbar navbar-pf-vertical obrand_mastheadBackground" role="navigation">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse">
                     <span class="icon-bar"></span>
@@ -70,7 +70,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a href="javascript:;" class="navbar-brand obrand_headerLogoLink">
-                    <img class="obrand_webadminMastheadLogo" src="clear.cache.gif">
+                    <img class="obrand_mastheadLogo" src="clear.cache.gif">
                 </a>
             </div>
         </nav>
