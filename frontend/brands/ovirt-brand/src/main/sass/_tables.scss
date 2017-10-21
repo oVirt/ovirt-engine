@@ -1,0 +1,20 @@
+/***************************************
+Tables (grids)
+****************************************/
+
+.aat-table.aat-hide-header thead {
+  display: none;
+}
+
+.aat-header.aat-hide-body tbody {
+  display: none;
+}
+
+.grid-visible {
+    border: none;
+}
+
+.grid-hidden {
+    border: none !important;
+    width: 0 !important;
+}

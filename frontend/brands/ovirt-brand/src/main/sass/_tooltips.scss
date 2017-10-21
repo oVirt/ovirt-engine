@@ -1,0 +1,35 @@
+/***************************************
+Tooltips
+****************************************/
+
+.tooltip-w220 .tooltip-inner {
+    max-width: 220px !important;
+}
+
+.tooltip-w320 .tooltip-inner {
+    max-width: 320px !important;
+}
+
+.tooltip-w420 .tooltip-inner {
+    max-width: 420px !important;
+}
+
+.tooltip-w520 .tooltip-inner {
+    max-width: 520px !important;
+}
+
+.tooltip-w620 .tooltip-inner {
+    max-width: 620px !important;
+}
+
+.tooltip {
+    overflow-wrap: break-word;
+}
+
+[rel=tooltip] [disabled] {
+    pointer-events: none;
+}
+
+.hasTooltip {
+    border-bottom: 1px dotted #000;
+}

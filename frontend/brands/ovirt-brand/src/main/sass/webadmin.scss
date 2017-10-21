@@ -3,5 +3,9 @@
 @import 'webadmin_legacy';
 @import 'branding_webadmin';
 @import 'patternfly-ovirt-overrides';
-@import 'ovirt-patternfly-compat';
-@import 'ovirt';
+@import 'ovirt-patternfly-compat'; /* eventually remove */
+@import 'gwt-standard';
+@import 'webadmin_base';
+@import 'alerts';
+@import 'tables';
+@import 'tooltips';
