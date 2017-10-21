@@ -1124,3 +1124,32 @@ td.datePickerYear {
   background: #d0e4f6 url(../../gwt/standard/images/splitPanelThumb.png) center center no-repeat;
   cursor: row-resize;
 }
+
+
+/*************************************************
+custom overrides
+**************************************************/
+
+a.gwt-InlineHyperlink,a.gwt-Anchor {
+    outline: none;
+    text-decoration: none;
+}
+
+.gwt-PushButton {
+    outline: none;
+}
+
+.gwt-ListBox {
+    background-color: white;
+    color: #000000;
+}
+
+.gwt-ListBox:disabled {
+    background-color: #F6F6F5;
+    color: #888888;
+}
+
+/* Changed glass pane z-index to match bootstrap zindex-modal-background */
+.gwt-PopupPanelGlass {
+    z-index: 1040;
+}

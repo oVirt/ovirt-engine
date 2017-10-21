@@ -2,6 +2,14 @@
 Tables (grids)
 ****************************************/
 
+.cellTableDisabledRow {
+    color: #bababa;
+}
+
+.cellTableSelectedRow.cellTableDisabledRow {
+    color: white;
+}
+
 .aat-table.aat-hide-header thead {
   display: none;
 }
@@ -18,3 +26,4 @@ Tables (grids)
     border: none !important;
     width: 0 !important;
 }
+
