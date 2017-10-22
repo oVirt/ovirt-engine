@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.pm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -126,6 +127,7 @@ public class HostFenceActionExecutorTest {
 
         FenceOperationResult result = executor.getFenceAgentStatus(createFenceAgent(1));
 
+        assertNotNull(result);
         assertEquals(Status.SUCCESS, result.getStatus());
         assertEquals(PowerStatus.ON, result.getPowerStatus());
     }
@@ -142,6 +144,7 @@ public class HostFenceActionExecutorTest {
 
         FenceOperationResult result = executor.getFenceAgentStatus(createFenceAgent(1));
 
+        assertNotNull(result);
         assertEquals(Status.ERROR, result.getStatus());
         assertEquals(PowerStatus.UNKNOWN, result.getPowerStatus());
     }
