@@ -64,6 +64,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -121,6 +122,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private VdsStaticDao vdsStaticDao;
     @Inject
     private VmHandler vmHandler;
+    @Inject
+    private DbFacade dbFacade;
 
     private List<VDS> allForCluster;
 
@@ -509,7 +512,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
             if (oldCluster.getStoragePoolId() != null) {
                 ClusterValidator validator = new ClusterValidator(
-                        getDbFacade(), oldCluster, getCpuFlagsManagerHandler());
+                        dbFacade, oldCluster, getCpuFlagsManagerHandler());
                 if (!validate(validator.dataCenterVersionMismatch())) {
                     result = false;
                     addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
@@ -727,7 +730,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         ClusterValidator clusterValidator = new ClusterValidator(
-                getDbFacade(),
+                dbFacade,
                 getCluster(),
                 cpuFlagsManagerHandler);
 

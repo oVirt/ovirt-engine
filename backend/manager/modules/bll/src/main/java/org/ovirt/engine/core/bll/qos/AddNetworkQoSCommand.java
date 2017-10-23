@@ -16,7 +16,7 @@ public class AddNetworkQoSCommand extends AddQosCommand<NetworkQoS, NetworkQosVa
 
     @Override
     protected NetworkQoSDao getQosDao() {
-        return getDbFacade().getNetworkQosDao();
+        return dbFacade.getNetworkQosDao();
     }
 
     @Override

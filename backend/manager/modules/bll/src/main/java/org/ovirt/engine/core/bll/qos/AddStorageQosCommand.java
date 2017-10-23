@@ -15,7 +15,7 @@ public class AddStorageQosCommand extends AddQosCommand<StorageQos, QosValidator
 
     @Override
     protected QosDao<StorageQos> getQosDao() {
-        return getDbFacade().getStorageQosDao();
+        return dbFacade.getStorageQosDao();
     }
 
     @Override

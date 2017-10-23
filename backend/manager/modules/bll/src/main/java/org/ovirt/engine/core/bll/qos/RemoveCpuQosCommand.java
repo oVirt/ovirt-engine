@@ -24,7 +24,7 @@ public class RemoveCpuQosCommand extends RemoveQosCommandBase<CpuQos, QosValidat
 
     @Override
     protected QosDao<CpuQos> getQosDao() {
-        return getDbFacade().getCpuQosDao();
+        return dbFacade.getCpuQosDao();
     }
 
     @Override

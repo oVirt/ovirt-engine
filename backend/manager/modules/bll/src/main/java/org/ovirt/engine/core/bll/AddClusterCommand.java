@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
@@ -43,6 +44,8 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     private ClusterDao clusterDao;
     @Inject
     private NetworkClusterDao networkClusterDao;
+    @Inject
+    private DbFacade dbFacade;
 
     public AddClusterCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -128,7 +131,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     @Override
     protected boolean validate() {
         final ClusterValidator validator = new ClusterValidator(
-                getDbFacade(), getCluster(), getCpuFlagsManagerHandler());
+                dbFacade, getCluster(), getCpuFlagsManagerHandler());
 
         return validate(validator.nameNotUsed())
                 && validate(validator.cpuTypeSupportsVirtService())

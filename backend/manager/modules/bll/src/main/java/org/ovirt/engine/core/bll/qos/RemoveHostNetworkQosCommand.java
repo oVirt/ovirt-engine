@@ -25,7 +25,7 @@ public class RemoveHostNetworkQosCommand extends RemoveQosCommandBase<HostNetwor
     @Override
     protected HostNetworkQosDao getQosDao() {
         //might NOT be replaced with injection; superclass constructor accesses this and thus this dao would be null.
-        return getDbFacade().getHostNetworkQosDao();
+        return dbFacade.getHostNetworkQosDao();
     }
 
     @Override

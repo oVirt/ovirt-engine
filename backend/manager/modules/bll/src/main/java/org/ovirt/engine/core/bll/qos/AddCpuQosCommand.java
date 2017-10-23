@@ -15,7 +15,7 @@ public class AddCpuQosCommand extends AddQosCommand<CpuQos, QosValidator<CpuQos>
 
     @Override
     protected QosDao<CpuQos> getQosDao() {
-        return getDbFacade().getCpuQosDao();
+        return dbFacade.getCpuQosDao();
     }
 
     @Override

@@ -15,7 +15,7 @@ public class RemoveNetworkQoSCommand extends RemoveQosCommandBase<NetworkQoS, Ne
 
     @Override
     protected QosDao<NetworkQoS> getQosDao() {
-        return getDbFacade().getNetworkQosDao();
+        return dbFacade.getNetworkQosDao();
     }
 
     @Override

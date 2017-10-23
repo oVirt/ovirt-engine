@@ -73,6 +73,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -101,6 +102,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private VdsDao vdsDao;
     @Inject
     private DiskDao diskDao;
+    @Inject
+    private HostNetworkQosDao hostNetworkQosDao;
 
     /** The VDS that the VM is going to migrate to */
     private VDS destinationVds;
@@ -483,8 +486,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      * @return `null` if it can't be obtained, value in Mbps otherwise
      */
     private Integer getQosBandwidth(Guid clusterId) {
-        final HostNetworkQos migrationHostNetworkQos = getDbFacade().getHostNetworkQosDao()
-                .getHostNetworkQosOfMigrationNetworkByClusterId(clusterId);
+        final HostNetworkQos migrationHostNetworkQos = hostNetworkQosDao
+            .getHostNetworkQosOfMigrationNetworkByClusterId(clusterId);
         if (migrationHostNetworkQos == null) {
             return null;
         }

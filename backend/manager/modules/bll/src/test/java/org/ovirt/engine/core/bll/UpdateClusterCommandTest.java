@@ -602,7 +602,6 @@ public class UpdateClusterCommandTest {
         cmd.getParameters().setCluster(group);
         cmd.setClusterId(group.getId());
 
-        doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(clusterDao).when(dbFacadeMock).getClusterDao();
         doReturn(storagePoolDao).when(dbFacadeMock).getStoragePoolDao();
         doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any());

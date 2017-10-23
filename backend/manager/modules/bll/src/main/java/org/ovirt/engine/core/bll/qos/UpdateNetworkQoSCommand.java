@@ -16,7 +16,7 @@ public class UpdateNetworkQoSCommand extends UpdateQosCommandBase<NetworkQoS, Ne
 
     @Override
     protected QosDao<NetworkQoS> getQosDao() {
-        return getDbFacade().getNetworkQosDao();
+        return dbFacade.getNetworkQosDao();
     }
 
     @Override

@@ -21,7 +21,7 @@ public class UpdateStorageQosCommand extends UpdateQosCommandBase<StorageQos, Qo
 
     @Override
     protected QosDao<StorageQos> getQosDao() {
-        return getDbFacade().getStorageQosDao();
+        return dbFacade.getStorageQosDao();
     }
 
     @Override
