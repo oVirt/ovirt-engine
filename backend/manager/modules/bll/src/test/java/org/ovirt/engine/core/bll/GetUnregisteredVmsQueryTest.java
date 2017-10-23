@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -27,7 +29,9 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
     Guid storageDomainId = Guid.newGuid();
     VmEntityType entityType = VmEntityType.VM;
     Guid newVmGuid = Guid.newGuid();
+    VMStatus vmStatus = VMStatus.Up;
     Guid newVmGuid2 = Guid.newGuid();
+    VMStatus vmStatus2 = VMStatus.Down;
 
     @Mock
     private OvfHelper ovfHelperMock;
@@ -47,6 +51,9 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
         @SuppressWarnings("unchecked")
         List<VM> result = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of VMs in result", 2, result.size());
+        result.forEach(vm -> {
+            assertTrue(vm.getId().equals(newVmGuid) ? vm.getStatus() == vmStatus : vm.getStatus() == vmStatus2);
+        });
     }
 
     private void mockQueryParameters() {
@@ -69,6 +76,7 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
                         storageDomainId,
                         ovfData,
                         null);
+        ovfEntityData.setStatus(vmStatus);
         List<OvfEntityData> expectedResultQuery1 = new ArrayList<>();
         expectedResultQuery1.add(ovfEntityData);
         List<OvfEntityData> expectedResult = new ArrayList<>();
@@ -86,6 +94,7 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
                         storageDomainId,
                         ovfData2,
                         null);
+        ovfEntityData2.setStatus(vmStatus2);
         expectedResult.add(ovfEntityData2);
         List<OvfEntityData> expectedResultQuery2 = new ArrayList<>();
         expectedResultQuery2.add(ovfEntityData);
