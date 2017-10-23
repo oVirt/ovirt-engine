@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,12 +19,14 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.archivers.tar.TarInMemoryExport;
+import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
@@ -98,7 +101,7 @@ public class OvfUtils {
         List<OvfEntityData> ovfEntityDataFromTar = new ArrayList<>();
         InputStream is = new ByteArrayInputStream(tar);
 
-        log.info("Start fetching OVF files from tar file");
+        log.info("Start fetching files from tar file");
         Map<String, ByteBuffer> filesFromTar;
         try (TarInMemoryExport memoryTar = new TarInMemoryExport(is)) {
             filesFromTar = memoryTar.unTar();
@@ -107,16 +110,30 @@ public class OvfUtils {
                     storageDomainId), e);
         }
 
+        Entry<String, ByteBuffer> metaDataFileEntry = null;
         for (Entry<String, ByteBuffer> fileEntry : filesFromTar.entrySet()) {
             if (fileEntry.getKey().endsWith(OVF_FILE_EXT)) {
                 analyzeOvfFile(unregisteredDisks, storageDomainId, ovfEntityDataFromTar, fileEntry);
+            } else if (fileEntry.getKey().equals(OvfInfoFileConstants.MetaDataFileName)) {
+                metaDataFileEntry = fileEntry;
             } else {
                 log.info("File '{}' is not an OVF file, will be ignored.", fileEntry.getKey());
             }
         }
+        analyzeOvfMetaDataFile(storageDomainId, ovfEntityDataFromTar, metaDataFileEntry);
         log.info("Finish to fetch OVF files from tar file. The number of OVF entities are {}",
                 ovfEntityDataFromTar.size());
         return ovfEntityDataFromTar;
+    }
+
+    private void analyzeOvfMetaDataFile(Guid storageDomainId, List<OvfEntityData> ovfEntityDataFromTar, Entry<String, ByteBuffer> metaDataFileEntry) {
+        if (metaDataFileEntry != null) {
+            log.info("Start to analyze metadata file '{}'.", metaDataFileEntry.getKey());
+            initStorageOvfExtraData(storageDomainId, ovfEntityDataFromTar, metaDataFileEntry.getValue());
+            log.info("Finish to analyze metadata File '{}'.", metaDataFileEntry.getKey());
+        } else {
+            log.debug("No metadata file found in tar file");
+        }
     }
 
     public Set<Guid> fetchMemoryDisks(XmlDocument xmlDocument) {
@@ -141,6 +158,42 @@ public class OvfUtils {
             }
         }
         return memoryDiskIds;
+    }
+
+    private void initStorageOvfExtraData(Guid storageDomainId,
+            List<OvfEntityData> ovfEntityDataFromTar,
+            ByteBuffer metaDataBuffer) {
+        Map<String, Object> diskDescriptionMap;
+        String storageMetaData = new String(metaDataBuffer.array());
+        try {
+            diskDescriptionMap = JsonHelper.jsonToMap(storageMetaData);
+        } catch (IOException e) {
+            log.error("Failed to convert storage ovf extra data from json to map: '{}'.", storageMetaData);
+            e.printStackTrace();
+            return;
+        }
+        setVmsStatus(storageDomainId, diskDescriptionMap, ovfEntityDataFromTar);
+    }
+
+    private void setVmsStatus(Guid storageDomainId,
+            Map<String, Object> diskDescriptionMap,
+            List<OvfEntityData> ovfEntityDataFromTar) {
+        Map<Guid, VMStatus> vmsStatusesMap = new HashMap<>();
+        Map<String, Object> vmsStatus = (Map<String, Object>) diskDescriptionMap.get(OvfInfoFileConstants.VmStatus);
+        if (vmsStatus == null) {
+            log.error("VMs status could not be fetched from metadata json file for storage id '{}'.", storageDomainId);
+        } else {
+            for (Map.Entry<String, Object> entry : vmsStatus.entrySet()) {
+
+                log.debug("VM '{}' fetched from metadata json file with status '{}' for storage domain id '{}.",
+                        entry.getKey(),
+                        entry.getValue(),
+                        storageDomainId);
+                vmsStatusesMap.put(Guid.createGuidFromString(entry.getKey()),
+                        VMStatus.forValue((Integer) entry.getValue()));
+            }
+        }
+        ovfEntityDataFromTar.forEach(ovfEntity -> ovfEntity.setStatus(vmsStatusesMap.get(ovfEntity.getEntityId())));
     }
 
     private void analyzeOvfFile(List<UnregisteredDisk> unregisteredDisks,

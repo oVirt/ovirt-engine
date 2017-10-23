@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -56,7 +57,8 @@ public class UnregisteredOVFDataDaoImpl extends BaseDao implements UnregisteredO
                                         .getValue() : null)
                         .addValue("storage_domain_id", ovfEntityData.getStorageDomainId())
                         .addValue("ovf_data", ovfEntityData.getOvfData())
-                        .addValue("ovf_extra_data", ovfEntityData.getOvfExtraData()));
+                        .addValue("ovf_extra_data", ovfEntityData.getOvfExtraData())
+                        .addValue("status", ovfEntityData.getStatus()));
     }
 
     private static final RowMapper<OvfEntityData> ovfEntityDataRowMapper = (rs, rowNum) -> {
@@ -69,6 +71,7 @@ public class UnregisteredOVFDataDaoImpl extends BaseDao implements UnregisteredO
         entity.setStorageDomainId(getGuid(rs, "storage_domain_id"));
         entity.setOvfData(rs.getString("ovf_data"));
         entity.setOvfExtraData(rs.getString("ovf_extra_data"));
+        entity.setStatus(VMStatus.forValue(rs.getInt("status")));
         return entity;
     };
 }

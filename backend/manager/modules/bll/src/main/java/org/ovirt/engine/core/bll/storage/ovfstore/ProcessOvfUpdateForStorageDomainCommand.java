@@ -188,18 +188,18 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         return buildJson(data, true);
     }
 
-    private String generateMetaDataFile(List<Guid> vmAndTemplatesIds) {
+    private Map<String, Object> generateMetaDataFile(List<Guid> vmAndTemplatesIds) {
         Map<String, Object> data = new HashMap<>();
         addVmsStatus(vmAndTemplatesIds, data);
-        return buildJson(data, true);
+        return data;
     }
 
     private void addVmsStatus(List<Guid> vmAndTemplatesIds, Map<String, Object> data) {
-        Map<String, String> vmsStatus = new HashMap<>();
+        Map<String, Object> vmsStatus = new HashMap<>();
         for (Guid vmId : vmAndTemplatesIds) {
             VmDynamic vmDynamic = vmDynamicDao.get(vmId);
             if (vmDynamic.getStatus() != VMStatus.Down) {
-                vmsStatus.put(vmId.toString(), vmDynamic.getStatus().toString());
+                vmsStatus.put(vmId.toString(), vmDynamic.getStatus().getValue());
                 log.debug("OVF_STORE - Add vm id '{}' with status: '{}'",
                         vmId,
                         vmDynamic.getStatus());
@@ -227,8 +227,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         try (InMemoryTar inMemoryTar = new InMemoryTar(bufferedOutputStream)) {
             inMemoryTar.addTarEntry(generateInfoFileData().getBytes(),
                     OvfInfoFileConstants.InfoFileName);
-            inMemoryTar.addTarEntry(generateMetaDataFile(vmAndTemplatesIds).getBytes(),
-                    OvfInfoFileConstants.MetaDataFileName);
+            Map<String, Object> metaDataForEntities = generateMetaDataFile(vmAndTemplatesIds);
             int i = 0;
             while (i < vmAndTemplatesIds.size()) {
                 int size =
@@ -242,7 +241,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
                 }
             }
 
-            List<Pair<Guid, String>> unprocessedOvfData = retrieveUnprocessedUnregisteredOvfData(processedIds);
+            List<Pair<Guid, String>> unprocessedOvfData = retrieveUnprocessedUnregisteredOvfData(processedIds, metaDataForEntities);
+            inMemoryTar.addTarEntry(buildJson(metaDataForEntities, true).getBytes(), OvfInfoFileConstants.MetaDataFileName);
             buildFilesForOvfs(unprocessedOvfData, inMemoryTar);
         } catch (Exception e) {
             throw new RuntimeException(String.format("Exception while building in memory tar of the OVFs of domain %s",
@@ -252,7 +252,9 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         return bufferedOutputStream.toByteArray();
     }
 
-    private List<Pair<Guid, String>> retrieveUnprocessedUnregisteredOvfData(Set<Guid> processedIds) {
+    private List<Pair<Guid, String>> retrieveUnprocessedUnregisteredOvfData(Set<Guid> processedIds,
+            Map<String, Object> metaDataForEntities) {
+        Map<String, Object> statusMap = (Map<String, Object>) metaDataForEntities.get(OvfInfoFileConstants.VmStatus);
         List<OvfEntityData> ovfList = unregisteredOVFDataDao.getAllForStorageDomainByEntityType(
                 getParameters().getStorageDomainId(), null);
         List<Pair<Guid, String>> ovfData = new LinkedList<>();
@@ -261,8 +263,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
                 Pair<Guid, String> data = new Pair<>(ovfEntityData.getEntityId(), ovfEntityData.getOvfData());
                 ovfData.add(data);
             }
+            statusMap.putIfAbsent(ovfEntityData.getEntityId().toString(), ovfEntityData.getStatus().getValue());
         }
-
         return ovfData;
     }
 

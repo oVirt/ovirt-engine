@@ -106,6 +106,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         } else {
             super.executeVmCommand();
         }
+        vmStaticDao.incrementDbGeneration(getVm().getId());
         removeMemoryDisksIfNeeded(hiberVol);
     }
 
@@ -125,7 +126,6 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         }
 
         getVm().setStatus(VMStatus.Down);
-        vmStaticDao.incrementDbGeneration(getVm().getId());
         snapshotDao.removeMemoryFromActiveSnapshot(getVmId());
         vmDynamicDao.update(getVm().getDynamicData());
         setSucceeded(true);

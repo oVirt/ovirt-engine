@@ -16,6 +16,7 @@ public class OvfEntityData implements Queryable {
     private Guid storageDomainId;
     private String ovfData;
     private String ovfExtraData;
+    private VMStatus status;
 
     public OvfEntityData(Guid entityId,
             String entityName,
@@ -108,6 +109,14 @@ public class OvfEntityData implements Queryable {
         this.lowestCompVersion = lowestCompVersion;
     }
 
+    public VMStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VMStatus status) {
+        this.status = status;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -118,7 +127,8 @@ public class OvfEntityData implements Queryable {
                 lowestCompVersion,
                 ovfData,
                 ovfExtraData,
-                storageDomainId
+                storageDomainId,
+                status
         );
     }
 
@@ -138,7 +148,8 @@ public class OvfEntityData implements Queryable {
                 && Objects.equals(lowestCompVersion, other.lowestCompVersion)
                 && Objects.equals(ovfData, other.ovfData)
                 && Objects.equals(ovfExtraData, other.ovfExtraData)
-                && Objects.equals(storageDomainId, other.storageDomainId);
+                && Objects.equals(storageDomainId, other.storageDomainId)
+                && Objects.equals(status, other.status);
     }
 
 }

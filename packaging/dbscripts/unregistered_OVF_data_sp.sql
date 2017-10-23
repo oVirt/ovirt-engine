@@ -10,7 +10,8 @@ CREATE OR REPLACE FUNCTION InsertOVFDataForEntities (
     v_lowest_comp_version VARCHAR(40),
     v_storage_domain_id UUID,
     v_ovf_data TEXT,
-    v_ovf_extra_data TEXT
+    v_ovf_extra_data TEXT,
+    v_status INTEGER
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -22,7 +23,8 @@ BEGIN
         lowest_comp_version,
         storage_domain_id,
         ovf_extra_data,
-        ovf_data
+        ovf_data,
+        status
         )
     VALUES (
         v_entity_guid,
@@ -32,7 +34,8 @@ BEGIN
         v_lowest_comp_version,
         v_storage_domain_id,
         v_ovf_extra_data,
-        v_ovf_data
+        v_ovf_data,
+        v_status
         );
 
     UPDATE unregistered_ovf_of_entities u
