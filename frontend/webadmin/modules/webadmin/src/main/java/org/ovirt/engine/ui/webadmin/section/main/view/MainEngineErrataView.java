@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.ErrataTableView;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -37,22 +36,13 @@ public class MainEngineErrataView extends AbstractMainWithDetailsTableView<Errat
     interface MainEngineErrataViewUiBinder extends UiBinder<Widget, MainEngineErrataView> {
     }
 
-    interface Style extends CssResource {
-        String filterPanel();
-    }
-
     @UiField
     public FlowPanel tablePanel;
 
     @UiField
     AlertPanel errorMessagePanel;
 
-    @UiField
-    Style style;
-
     protected ErrataFilterPanel errataFilterPanel;
-
-    protected DetailsTransitionHandler<Erratum> detailsTransitionHandler;
 
     private static MainEngineErrataViewUiBinder uiBinder = GWT.create(MainEngineErrataViewUiBinder.class);
 
@@ -61,9 +51,6 @@ public class MainEngineErrataView extends AbstractMainWithDetailsTableView<Errat
         super(modelProvider);
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
-
-        // configure the table columns -- share config with ErrataTableView
-        ErrataTableView.initErrataGrid(getTable());
 
         initWidget(uiBinder.createAndBindUi(this));
         errorMessagePanel.setVisible(false);
@@ -80,7 +67,6 @@ public class MainEngineErrataView extends AbstractMainWithDetailsTableView<Errat
     private void initFilterPanel() {
         errataFilterPanel = new ErrataFilterPanel();
         errataFilterPanel.init(true, true, true);
-        errataFilterPanel.addStyleName(style.filterPanel());
     }
 
     public void clearErrorMessage() {
@@ -104,6 +90,8 @@ public class MainEngineErrataView extends AbstractMainWithDetailsTableView<Errat
 
     @Override
     public void setDetailPlaceTransitionHandler(DetailsTransitionHandler<Erratum> handler) {
-        this.detailsTransitionHandler = handler;
+        super.setDetailPlaceTransitionHandler(handler);
+        // configure the table columns -- share config with ErrataTableView
+        ErrataTableView.initErrataGrid(getTable(), true, transitionHandler);
     }
 }

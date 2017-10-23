@@ -14,13 +14,16 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.HasColumns;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractIconTypeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.AbstractErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ErrataFilterValue;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHandler;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -133,11 +136,16 @@ public class ErrataTableView extends ResizeComposite {
         return selectionModel.getSelectedObject();
     }
 
+    public static void initErrataGrid(HasColumns grid) {
+        initErrataGrid(grid, false, null);
+    }
+
     /**
      * Setup the columns in the errata grid. This configuration is also used in MainEngineErrataView.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static void initErrataGrid(HasColumns grid) {
+    public static void initErrataGrid(HasColumns grid, boolean isEngineErrataView,
+            final DetailsTransitionHandler<Erratum> transitionHandler) {
         grid.enableColumnResizing();
         AbstractIconTypeColumn<Erratum> errataTypeColumn = new AbstractIconTypeColumn<Erratum>() {
             @Override
@@ -205,13 +213,32 @@ public class ErrataTableView extends ResizeComposite {
         dateIssuedColumn.makeSortable();
         grid.addColumn(dateIssuedColumn, constants.errataDateIssued(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Erratum> errataIdColumn = new AbstractTextColumn<Erratum>() {
+        AbstractTextColumn<Erratum> errataIdColumn;
 
-            @Override
-            public String getValue(Erratum erratum) {
-                return erratum.getId();
-            }
-        };
+        if (!isEngineErrataView) {
+            errataIdColumn = new AbstractTextColumn<Erratum>() {
+
+                @Override
+                public String getValue(Erratum erratum) {
+                    return erratum.getId();
+                }
+            };
+        } else {
+            errataIdColumn = new AbstractLinkColumn<Erratum>(new FieldUpdater<Erratum, String>() {
+
+                @Override
+                public void update(int index, Erratum erratum, String value) {
+                    //The link was clicked, now fire an event to switch to details.
+                    transitionHandler.handlePlaceTransition(true);
+                }
+
+            }) {
+                @Override
+                public String getValue(Erratum erratum) {
+                    return erratum.getId();
+                }
+            };
+        }
         errataIdColumn.makeSortable();
         grid.addColumn(errataIdColumn, constants.errataId(), "115px"); //$NON-NLS-1$
         AbstractTextColumn<Erratum> titleColumn = new AbstractTextColumn<Erratum>() {

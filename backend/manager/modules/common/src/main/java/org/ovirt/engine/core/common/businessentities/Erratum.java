@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
  * <p>
  * @see http://www.katello.org/docs//user_guide/errata/index.html
  */
-public class Erratum implements Queryable, BusinessEntity<String> {
+public class Erratum implements Queryable, BusinessEntity<String>, Nameable {
 
     private static final long serialVersionUID = 1297381071010863377L;
 
@@ -120,6 +120,11 @@ public class Erratum implements Queryable, BusinessEntity<String> {
 
     public void setPackages(List<String> packages) {
         this.packages = packages;
+    }
+
+    @Override
+    public String getName() {
+        return getId();
     }
 
     @Override
@@ -226,5 +231,4 @@ public class Erratum implements Queryable, BusinessEntity<String> {
 
         return builder.toString();
     }
-
 }

@@ -7,21 +7,15 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.MainEngineErrataView.Style">
-    .alertPanel {
-        margin-left: 20px;
-        margin-top: 15px;
-    }
-
-    /* used in .java file */
-    .filterPanel {
-        position: relative;
-        top: -28px;
-    }
+    <ui:style>
+        .alertPanel {
+            margin-left: 20px;
+            margin-top: 15px;
+        }
     </ui:style>
 
     <g:FlowPanel>
-        <g:FlowPanel ui:field="tablePanel" />
+        <g:FlowPanel ui:field="tablePanel" visible="false" />
         <p:AlertPanel ui:field="errorMessagePanel" addStyleNames="col-sm-11 {style.alertPanel}" />
     </g:FlowPanel>
 

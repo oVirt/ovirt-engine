@@ -36,9 +36,9 @@
     <g:FlowPanel>
         <b:Container fluid="true" ui:field="tableOverheadContainer" addStyleNames="toolbar-pf {style.tableOverhead}" visible="false">
             <b:Row>
-                <b:Column size="SM_12">
+                <g:FlowPanel>
                     <g:SimplePanel ui:field="tableOverhead"></g:SimplePanel>
-                </b:Column>
+                </g:FlowPanel>
             </b:Row>
         </b:Container>
         <g:FlowPanel ui:field="controlsContainer" addStyleNames="content-view-pf-pagination table-view-pf-pagination clearfix">
