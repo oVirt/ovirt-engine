@@ -172,6 +172,11 @@ class FileLocations(object):
         'rhev-guest-tools-iso',
     )
 
+    RHV_GUEST_TOOLS_DIR = os.path.join(
+        DATADIR,
+        'rhv-guest-tools-iso',
+    )
+
     OVIRT_GUEST_TOOLS_DIR = os.path.join(
         DATADIR,
         'ovirt-guest-tools-iso',
