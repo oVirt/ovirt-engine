@@ -5,8 +5,11 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAP
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,15 +21,19 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -64,6 +71,12 @@ public class OvfHelper {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
+
+    @Inject
+    private DbUserDao dbUserDao;
+
+    @Inject
+    private PermissionDao permissionDao;
 
     /**
      * parses a given ovf to a vm, initialize all the extra data related to it such as images, interfaces, cluster,
@@ -135,6 +148,7 @@ public class OvfHelper {
         List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskList(), ONLY_SNAPABLE, ONLY_ACTIVE);
         List<LunDisk> lunDisks = DisksFilter.filterLunDisks(vm.getDiskMap().values());
         List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
+        Set<DbUser> dbUsers = new HashSet<>(dbUserDao.getAllForVm(vm.getId()));
 
         for (DiskImage diskImage : filteredDisks) {
             List<DiskImage> images = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
@@ -146,7 +160,21 @@ public class OvfHelper {
         fullEntityOvfData.setDiskImages(allVmImages);
         fullEntityOvfData.setLunDisks(lunDisks);
         fullEntityOvfData.setAffinityGroups(affinityGroups);
+        fullEntityOvfData.setDbUsers(dbUsers);
+        populateUserToRoles(fullEntityOvfData, vm.getId());
         return ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
+    }
+
+    public void populateUserToRoles(FullEntityOvfData fullEntityOvfData, Guid entityId) {
+        Map<String, Set<String>> userToRoles = new HashMap<>();
+        fullEntityOvfData.getDbUsers().forEach(dbUser -> {
+            Set<String> roles = new HashSet<>();
+            List<Permission> permissions = permissionDao.getAllForAdElementAndObjectId(dbUser.getId(), entityId);
+            permissions.forEach(permission -> roles.add(permission.getRoleName()));
+            userToRoles.put(dbUser.getLoginName(), roles);
+        });
+
+        fullEntityOvfData.setUserToRoles(userToRoles);
     }
 
     private void loadVmData(VM vm) {

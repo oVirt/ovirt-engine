@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -45,6 +47,7 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -83,6 +86,10 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdatePa
     private VmDao vmDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private OvfHelper ovfHelper;
 
     private int itemsCountPerUpdate;
     private List<Guid> proccessedIdsInfo;
@@ -341,10 +348,13 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdatePa
                     }
 
                     List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
+                    Set<DbUser> dbUsers = new HashSet<>(dbUserDao.getAllForVm(vm.getId()));
                     FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
                     fullEntityOvfData.setDiskImages(vmImages);
                     fullEntityOvfData.setLunDisks(lunDisks);
                     fullEntityOvfData.setAffinityGroups(affinityGroups);
+                    fullEntityOvfData.setDbUsers(dbUsers);
+                    ovfHelper.populateUserToRoles(fullEntityOvfData, vm.getId());
                     proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForVm(vm,
                             vmsAndTemplateMetadata,
                             fullEntityOvfData));

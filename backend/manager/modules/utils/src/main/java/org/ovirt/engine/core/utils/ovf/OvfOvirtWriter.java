@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
@@ -178,4 +181,37 @@ public abstract class OvfOvirtWriter extends OvfWriter {
     protected String getDriveHostResource(DiskImage image) {
         return OvfParser.createImageFile(image);
     }
+
+    @Override
+    protected void writeGeneralData() {
+        super.writeGeneralData();
+        writeUserData();
+    }
+
+    private void writeUserData() {
+        Set<DbUser> dbUsers = fullEntityOvfData.getDbUsers();
+        if (dbUsers.isEmpty()) {
+            return;
+        }
+
+        _writer.writeStartElement("Section");
+        _writer.writeAttributeString(XSI_URI, "type", "ovf:UserDomainsSection_Type");
+
+        dbUsers.forEach(dbUser -> {
+            _writer.writeStartElement(OvfProperties.USER);
+            _writer.writeElement(OvfProperties.USER_DOMAIN, String.format("%s@%s", dbUser.getName(), dbUser.getDomain()));
+            _writer.writeStartElement(OvfProperties.USER_ROLES);
+            Set<String> roles = fullEntityOvfData.getUserToRoles().getOrDefault(dbUser.getLoginName(), Collections.emptySet());
+            roles.forEach(role -> _writer.writeElement(OvfProperties.ROLE_NAME, role));
+
+            // Close the <UserRoles> element
+            _writer.writeEndElement();
+
+            // Close the <User> element
+            _writer.writeEndElement();
+        });
+
+        _writer.writeEndElement();
+    }
+
 }

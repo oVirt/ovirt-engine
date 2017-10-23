@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
@@ -28,7 +29,10 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
+import org.ovirt.engine.core.common.businessentities.Permission;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -39,6 +43,9 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -73,6 +80,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private PermissionDao permissionDao;
+    @Inject
+    private RoleDao roleDao;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -166,6 +179,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setAffinityGroups(fullEntityOvfData.getAffinityGroups());
+                getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
+                getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
 
                 // For quota, update disks when required
                 if (getParameters().getDiskMap() != null) {
@@ -259,6 +274,58 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
             vmIds.add(getParameters().getVm().getId());
             affinityGroup.setVmIds(new ArrayList<>(vmIds));
             affinityGroupDao.update(affinityGroup);
+        });
+    }
+
+    @Override
+    protected void mapDbUsers() {
+        Map<String, String> userDomainsMap = getParameters().getDomainMap();
+        getParameters().getDbUsers().forEach(dbUser -> {
+            DbUser originalDbUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), dbUser.getDomain());
+
+            if (userDomainsMap != null) {
+                String destDomain = userDomainsMap.get(dbUser.getDomain());
+
+                if (destDomain != null) {
+                    DbUser destDbUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), destDomain);
+                    if (destDbUser != null) {
+                        addPermissionsForUser(destDbUser, getParameters().getUserToRoles());
+                    }
+                } else if (originalDbUser != null) {
+                    addPermissionsForUser(originalDbUser, getParameters().getUserToRoles());
+                }
+            } else if (originalDbUser != null) {
+                addPermissionsForUser(originalDbUser, getParameters().getUserToRoles());
+            }
+        });
+
+    }
+
+    private void addPermissionsForUser(DbUser dbUser, Map<String, Set<String>> userToRoles) {
+        addPermissions(dbUser, userToRoles.getOrDefault(dbUser.getLoginName(), Collections.EMPTY_SET));
+    }
+
+    private void addPermissions(DbUser dbUser, Set<String> roles) {
+        Map<String, Object> roleMap = getParameters().getRoleMap();
+        roles.forEach(roleName -> {
+            Permission permission = null;
+            Role originalRole = roleDao.getByName(roleName);
+            if (roleMap != null) {
+                Role destRoleName = (Role) roleMap.get(roleName);
+
+                if (destRoleName != null) {
+                    Role destRole = roleDao.getByName(destRoleName.getName());
+                    permission = new Permission(dbUser.getId(), destRole.getId(), getVmId(), VdcObjectType.VM);
+                } else if (originalRole != null) {
+                    permission = new Permission(dbUser.getId(), originalRole.getId(), getVmId(), VdcObjectType.VM);
+                }
+            } else if (originalRole != null) {
+                permission = new Permission(dbUser.getId(), originalRole.getId(), getVmId(), VdcObjectType.VM);
+            }
+
+            if (permission != null) {
+                permissionDao.save(permission);
+            }
         });
     }
 

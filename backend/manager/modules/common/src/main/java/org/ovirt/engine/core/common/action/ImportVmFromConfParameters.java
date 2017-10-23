@@ -2,10 +2,13 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,6 +24,8 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     private Map<String, Object> externalLunMap;
 
     private List<AffinityGroup> affinityGroups;
+    private Set<DbUser> dbUsers;
+    private Map<String, Set<String>> userToRoles  = new HashMap<>();
 
     public ImportVmFromConfParameters() {
         this(Collections.emptyList(), false);
@@ -106,5 +111,21 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
 
     public void setAffinityGroups(List<AffinityGroup> affinityGroups) {
         this.affinityGroups = affinityGroups;
+    }
+
+    public Set<DbUser> getDbUsers() {
+        return dbUsers;
+    }
+
+    public void setDbUsers(Set<DbUser> dbUsers) {
+        this.dbUsers = dbUsers;
+    }
+
+    public Map<String, Set<String>> getUserToRoles() {
+        return userToRoles;
+    }
+
+    public void setUserToRoles(Map<String, Set<String>> userToRoles) {
+        this.userToRoles = userToRoles;
     }
 }

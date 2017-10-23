@@ -463,6 +463,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         try {
             addVmToDb();
             addVmToAffinityGroups();
+            mapDbUsers();
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
@@ -481,6 +482,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     protected List<AffinityGroup> mapAffinityGroups() {
         return Collections.EMPTY_LIST;
+    }
+
+    protected void mapDbUsers() {
+        // Left empty to be overridden by ImportVmFromConfiguration
     }
 
     private void reportExternalMacs() {

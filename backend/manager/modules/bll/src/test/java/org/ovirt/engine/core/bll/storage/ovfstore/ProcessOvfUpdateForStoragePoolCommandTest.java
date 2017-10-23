@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -54,6 +55,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -102,6 +105,15 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Mock
     private AffinityGroupDao affinityGroupDao;
+
+    @Mock
+    private DbUserDao dbUserDao;
+
+    @Mock
+    private PermissionDao permissionDao;
+
+    @Mock
+    private OvfHelper ovfHelper;
 
     @Spy
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
@@ -313,6 +325,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(templatesGuids).when(vmAndTemplatesGenerationsDao).getVmTemplatesIdsForOvfUpdate(poolId);
         doReturn(removedGuids).when(vmAndTemplatesGenerationsDao).getIdsForOvfDeletion(poolId);
         doReturn(Collections.EMPTY_LIST).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(new DbUser()).when(dbUserDao).getByUsernameAndDomain(any(), any());
+        doReturn(Collections.EMPTY_LIST).when(permissionDao).getAllForAdElementAndObjectId(any(), any());
         pool.setStatus(StoragePoolStatus.Up);
     }
 

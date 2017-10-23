@@ -2,12 +2,17 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 
@@ -20,6 +25,8 @@ public class FullEntityOvfData implements Serializable {
     private VmBase vmBase = new VmBase();
     private String clusterName = "";
     private List<AffinityGroup> affinityGroups = new ArrayList<>();
+    private Set<DbUser> dbUsers = new HashSet<>();
+    private Map<String, Set<String>> userToRoles = new HashMap<>();
 
     public FullEntityOvfData() {
     }
@@ -41,13 +48,17 @@ public class FullEntityOvfData implements Serializable {
             List<VmNetworkInterface> interfaces,
             VmBase vmBase,
             String clusterName,
-            List<AffinityGroup> affinityGroups) {
+            List<AffinityGroup> affinityGroups,
+            Set<DbUser> dbUsers,
+            Map<String, Set<String>> userToRoles) {
         this.diskImages = diskImages;
         this.lunDisks = lunDisks;
         this.interfaces = interfaces;
         this.vmBase = vmBase;
         this.clusterName = clusterName;
         this.affinityGroups = affinityGroups;
+        this.dbUsers = dbUsers;
+        this.userToRoles = userToRoles;
     }
 
     public VmBase getVmBase() {
@@ -114,6 +125,22 @@ public class FullEntityOvfData implements Serializable {
         this.affinityGroups = affinityGroups;
     }
 
+    public Set<DbUser> getDbUsers() {
+        return dbUsers;
+    }
+
+    public void setDbUsers(Set<DbUser> dbUsers) {
+        this.dbUsers = dbUsers;
+    }
+
+    public Map<String, Set<String>> getUserToRoles() {
+        return userToRoles;
+    }
+
+    public void setUserToRoles(Map<String, Set<String>> userToRoles) {
+        this.userToRoles = userToRoles;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -129,7 +156,9 @@ public class FullEntityOvfData implements Serializable {
                 && Objects.equals(interfaces, other.interfaces)
                 && Objects.equals(vmBase, other.vmBase)
                 && Objects.equals(clusterName, other.clusterName)
-                && Objects.equals(affinityGroups, other.affinityGroups);
+                && Objects.equals(affinityGroups, other.affinityGroups)
+                && Objects.equals(dbUsers, other.dbUsers)
+                && Objects.equals(userToRoles, other.userToRoles);
     }
 
     @Override
@@ -141,6 +170,8 @@ public class FullEntityOvfData implements Serializable {
                 interfaces,
                 vmBase,
                 clusterName,
-                affinityGroups);
+                affinityGroups,
+                dbUsers,
+                userToRoles);
     }
 }

@@ -2,11 +2,16 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -79,6 +84,11 @@ public abstract class OvfOvirtReader extends OvfReader {
             if (node != null) {
                 readAffinityGroupsSection(node);
             }
+
+            node = getNode(list, "xsi:type", "ovf:UserDomainsSection_Type");
+            if (node != null) {
+                readUserDomainsSection(node);
+            }
         }
 
         readGeneralData(virtualSystem);
@@ -124,6 +134,31 @@ public abstract class OvfOvirtReader extends OvfReader {
 
     protected void readAffinityGroupsSection(@SuppressWarnings("unused") XmlNode section) {
         // The affinity group section only has meaning for VMs, and is overridden in OvfVmReader.
+    }
+
+    protected void readUserDomainsSection(@SuppressWarnings("unused") XmlNode section) {
+        XmlNodeList list = selectNodes(section, OvfProperties.USER);
+        Set<DbUser> dbUsers = new HashSet<>();
+        Map<String, Set<String>> userToRoles = new HashMap<>();
+        for (XmlNode node : list) {
+            String userDomain =
+                    selectSingleNode(node, OvfProperties.USER_DOMAIN, _xmlNS).innerText;
+            DbUser dbUser = new DbUser();
+            dbUser.setLoginName(userDomain.split("@")[0]);
+            dbUser.setDomain(userDomain.split("@")[1]);
+            dbUsers.add(dbUser);
+            XmlNode rolesElement = selectSingleNode(node, OvfProperties.USER_ROLES);
+            XmlNodeList roleNodes = selectNodes(rolesElement, OvfProperties.ROLE_NAME);
+            Set<String> roleNames = new HashSet<>();
+            for (XmlNode roleNode : roleNodes) {
+                String roleName = roleNode.innerText;
+                roleNames.add(roleName);
+            }
+            userToRoles.put(dbUser.getLoginName(), roleNames);
+        }
+
+        fullEntityOvfData.setDbUsers(dbUsers);
+        fullEntityOvfData.setUserToRoles(userToRoles);
     }
 
     @Override

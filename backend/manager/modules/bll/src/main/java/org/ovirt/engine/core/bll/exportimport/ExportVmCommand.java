@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -28,6 +30,7 @@ import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -53,6 +56,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -78,6 +82,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -128,6 +133,10 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private ClusterUtils clusterUtils;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private DbUserDao dbUserDao;
+    @Inject
+    private OvfHelper ovfHelper;
 
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
@@ -309,6 +318,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         List<LunDisk> lunDisks = new ArrayList<>();
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
+        Set<DbUser> dbUsers = new HashSet<>(dbUserDao.getAllForVm(vm.getId()));
         if (interfaces != null) {
             // TODO remove this when the API changes
             interfaces.clear();
@@ -350,6 +360,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         fullEntityOvfData.setDiskImages(vmImages);
         fullEntityOvfData.setLunDisks(lunDisks);
         fullEntityOvfData.setAffinityGroups(affinityGroups);
+        fullEntityOvfData.setDbUsers(dbUsers);
+        ovfHelper.populateUserToRoles(fullEntityOvfData, vm.getId());
         String vmMeta = ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
 
         vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
@@ -552,6 +564,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         fullEntityOvfData.setClusterName(getVm().getClusterName());
         fullEntityOvfData.setDiskImages(ovfUpdateProcessHelper.getVmImagesFromDb(getVm()));
         fullEntityOvfData.setAffinityGroups(affinityGroupDao.getAllAffinityGroupsByVmId(getVmId()));
+        fullEntityOvfData.setDbUsers(new HashSet<>(dbUserDao.getAllForVm(getVmId())));
+        ovfHelper.populateUserToRoles(fullEntityOvfData, getVmId());
         ovfUpdateProcessHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,
                 fullEntityOvfData);

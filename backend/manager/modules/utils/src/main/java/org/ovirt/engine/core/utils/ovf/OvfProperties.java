@@ -102,4 +102,10 @@ public interface OvfProperties {
 
     // Affinity groups
     String AFFINITY_GROUP = "AffinityGroup";
-    }
+
+    // Users
+    String USER = "User";
+    String USER_DOMAIN = "UserDomain";
+    String USER_ROLES = "UserRoles";
+    String ROLE_NAME = "RoleName";
+}
