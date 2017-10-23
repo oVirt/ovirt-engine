@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -163,6 +165,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                     vmFromConfiguration.setDiskMap(getParameters().getDiskMap());
                     vmFromConfiguration.setImages(getDiskImageListFromDiskMap(getParameters().getDiskMap()));
                 }
+                mapExternalLunDisks(DisksFilter.filterLunDisks(vmFromConfiguration.getDiskMap().values()));
             } catch (OvfReaderException e) {
                 log.error("Failed to parse a given ovf configuration: {}:\n{}",
                         e.getMessage(),
@@ -188,6 +191,20 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 getParameters().setClusterId(cluster.getId());
             }
         }
+    }
+
+    private void mapExternalLunDisks(List<LunDisk> luns) {
+        luns.forEach(lunDisk -> {
+            if (getParameters().getExternalLunMap() != null) {
+                LunDisk targetLunDisk = (LunDisk) getParameters().getExternalLunMap().get(lunDisk.getId().toString());
+                if (targetLunDisk != null) {
+                    lunDisk.setLun(targetLunDisk.getLun());
+                    lunDisk.getLun()
+                            .getLunConnections()
+                            .forEach(conn -> conn.setStorageType(lunDisk.getLun().getLunType()));
+                }
+            }
+        });
     }
 
     private static ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {
