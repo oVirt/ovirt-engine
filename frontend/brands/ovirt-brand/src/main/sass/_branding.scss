@@ -6,6 +6,10 @@ classes are designed to be drop-in replaced (cascaded
 over) by other installed brands.
 */
 
+.obrand_topBorder {
+    border-top: 4px solid #00659c !important;
+}
+
 .obrand_loginPageLogo {
     background-image: url(images/ovirt_logo.png);
     width: 80px;
