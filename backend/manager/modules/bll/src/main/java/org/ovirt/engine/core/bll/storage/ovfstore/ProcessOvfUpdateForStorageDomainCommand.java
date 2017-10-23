@@ -436,7 +436,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     @Override
     protected void executeCommand() {
         int missingDiskCount = getMissingDiskCount();
-        if (missingDiskCount == 0) {
+        if (missingDiskCount <= 0) {
             setOvfUpdateStep(OvfUpdateStep.OVF_UPLOAD);
             updateOvfStoreContent();
         } else {
