@@ -135,20 +135,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeAttributeString(OVF_URI, "read-only", String.valueOf(dve.isReadOnly()));
         _writer.writeAttributeString(OVF_URI, "scsi_reservation", String.valueOf(dve.isUsingScsiReservation()));
         _writer.writeAttributeString(OVF_URI, "plugged", String.valueOf(dve.isPlugged()));
-        _writer.writeAttributeString(OVF_URI,
-                LUN_DISCARD_ZEROES_DATA,
-                String.valueOf(lun.getLun().getDiscardZeroesData()));
-        _writer.writeAttributeString(OVF_URI, LUN_DISCARD_MAX_SIZE, String.valueOf(lun.getLun().getDiscardMaxSize()));
-        _writer.writeAttributeString(OVF_URI, LUN_DEVICE_SIZE, String.valueOf(lun.getLun().getDeviceSize()));
-        _writer.writeAttributeString(OVF_URI, LUN_PRODUCT_ID, String.valueOf(lun.getLun().getProductId()));
-        _writer.writeAttributeString(OVF_URI, LUN_VENDOR_ID, String.valueOf(lun.getLun().getVendorId()));
-        _writer.writeAttributeString(OVF_URI, LUN_MAPPING, String.valueOf(lun.getLun().getLunMapping()));
-        _writer.writeAttributeString(OVF_URI, LUN_SERIAL, String.valueOf(lun.getLun().getSerial()));
-        _writer.writeAttributeString(OVF_URI, LUN_VOLUME_GROUP_ID, String.valueOf(lun.getLun().getVolumeGroupId()));
         _writer.writeAttributeString(OVF_URI, LUN_ID, String.valueOf(lun.getLun().getLUNId()));
-        _writer.writeAttributeString(OVF_URI,
-                LUN_PHYSICAL_VOLUME_ID,
-                String.valueOf(lun.getLun().getPhysicalVolumeId()));
         if (lun.getLun().getLunConnections() != null) {
             for (StorageServerConnections conn : lun.getLun().getLunConnections()) {
                 _writer.writeStartElement(LUN_CONNECTION);
@@ -157,9 +144,6 @@ public abstract class OvfOvirtWriter extends OvfWriter {
                 _writer.writeAttributeString(OVF_URI, LUNS_PORT, conn.getPort());
                 _writer.writeAttributeString(XSI_URI, LUNS_STORAGE_TYPE, conn.getStorageType().name());
                 _writer.writeAttributeString(XSI_URI, LUNS_PORTAL, conn.getPortal());
-                // TODO: Username and password should be initilaized by the mapping file.
-                // conn.getUserName()
-                // conn.getPassword()
                 _writer.writeEndElement();
             }
         }

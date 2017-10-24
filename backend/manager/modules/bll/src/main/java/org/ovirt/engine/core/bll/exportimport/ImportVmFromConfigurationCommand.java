@@ -172,6 +172,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                     vmFromConfiguration.setDiskMap(getParameters().getDiskMap());
                     vmFromConfiguration.setImages(getDiskImageListFromDiskMap(getParameters().getDiskMap()));
                 }
+                // Note: The VM's OVF does not preserve the username and password for the LUN's connection.
+                // Therefore to achieve a simple VM registration the iSCSI storage server should not use
+                // credentials, although if the user will use the mapping attribute, one can set the credentials through
+                // there.
                 mapExternalLunDisks(DisksFilter.filterLunDisks(vmFromConfiguration.getDiskMap().values()));
             } catch (OvfReaderException e) {
                 log.error("Failed to parse a given ovf configuration: {}:\n{}",

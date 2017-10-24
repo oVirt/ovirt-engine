@@ -88,20 +88,7 @@ public abstract class OvfOvirtReader extends OvfReader {
     protected void readLunDisk(XmlNode node, LunDisk lun) {
         lun.setDiskVmElements(Collections.singletonList(new DiskVmElement(lun.getId(), fullEntityOvfData.getVmBase().getId())));
         LUNs luns = new LUNs();
-        consumeReadXmlAttribute(node,
-                OVF_PREFIX + COLON + LUN_DISCARD_ZEROES_DATA,
-                val -> luns.setDiscardZeroesData(Boolean.parseBoolean(val)));
-        consumeReadXmlAttribute(node,
-                OVF_PREFIX + COLON + LUN_DISCARD_MAX_SIZE,
-                val -> luns.setDiscardMaxSize(Long.parseLong(val)));
-        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_DEVICE_SIZE, val -> luns.setDeviceSize(Integer.parseInt(val)));
-        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_PRODUCT_ID, val -> luns.setProductId(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_VENDOR_ID, val -> luns.setVendorId(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_MAPPING, val -> luns.setLunMapping(Integer.parseInt(val)));
-        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_SERIAL, val -> luns.setSerial(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_VOLUME_GROUP_ID, val -> luns.setVolumeGroupId(val));
         consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_ID, val -> luns.setLUNId(val));
-        consumeReadXmlAttribute(node, OVF_PREFIX + COLON + LUN_PHYSICAL_VOLUME_ID, val -> luns.setPhysicalVolumeId(val));
         ArrayList<StorageServerConnections> lunConnections = new ArrayList<>();
         for (XmlNode connNode : selectNodes(node, LUN_CONNECTION)) {
             StorageServerConnections conn = new StorageServerConnections();
@@ -112,9 +99,6 @@ public abstract class OvfOvirtReader extends OvfReader {
                     XSI_PREFIX + COLON + LUNS_STORAGE_TYPE,
                     val -> conn.setStorageType(StorageType.valueOf(val)));
             consumeReadXmlAttribute(connNode, XSI_PREFIX + COLON + LUNS_PORTAL, val -> conn.setPortal(val));
-            // TODO: Username and password should be initilaized by the mapping file.
-            // conn.setUsername(FromMap);
-            // conn.setPassword(FromMap);
             lunConnections.add(conn);
         }
         luns.setLunConnections(lunConnections);

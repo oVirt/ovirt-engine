@@ -284,9 +284,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                         lun.getLunType(),
                         false,
                         Collections.singleton(lun.getLUNId()));
-        List<LUNs> lunFromStorage =
-                (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
-        if (lunFromStorage == null) {
+        if (validateLunExistsAndInitDeviceData(lun, parameters)) {
             return Arrays.asList(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
         }
 
@@ -297,6 +295,25 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return usingScsiReservationResult.getMessages();
         }
         return Collections.emptyList();
+    }
+
+    private boolean validateLunExistsAndInitDeviceData(LUNs lun, GetDeviceListVDSCommandParameters parameters) {
+        List<LUNs> lunFromStorage =
+                (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
+        if (lunFromStorage == null || lunFromStorage.isEmpty()) {
+            return true;
+        } else {
+            LUNs luns = lunFromStorage.get(0);
+            lun.setSerial(luns.getSerial());
+            lun.setLunMapping(luns.getLunMapping());
+            lun.setVendorId(luns.getVendorId());
+            lun.setProductId(luns.getProductId());
+            lun.setProductId(luns.getProductId());
+            lun.setDiscardMaxSize(luns.getDiscardMaxSize());
+            lun.setDiscardZeroesData(luns.getDiscardZeroesData());
+            lun.setPvSize(luns.getPvSize());
+        }
+        return false;
     }
 
     private ValidationResult isVirtIoScsiValid(VM vm, DiskVmElementValidator diskVmElementValidator) {
