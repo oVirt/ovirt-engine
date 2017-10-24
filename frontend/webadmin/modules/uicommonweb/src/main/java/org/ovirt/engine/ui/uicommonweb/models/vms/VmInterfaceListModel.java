@@ -130,24 +130,28 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         }), vm.getId());
     }
 
-    private void updateNetworkFilterParameterMap(List<VmNetworkInterface> vmInfaces) {
+    private void updateNetworkFilterParameterMap(List<VmNetworkInterface> vmInterfaces) {
         List<QueryType> queryTypes = new ArrayList<>();
         List<QueryParametersBase> queryParametersBases = new ArrayList<>();
 
-        vmInfaces.stream().forEach(iface -> {
+        vmInterfaces.stream().forEach(iface -> {
             queryTypes.add(QueryType.GetVmInterfaceFilterParametersByVmInterfaceId);
             queryParametersBases.add(new IdQueryParameters(iface.getId()));
         });
 
         final IFrontendMultipleQueryAsyncCallback callback = multiResult -> {
-            Map<Guid, List<VmNicFilterParameter>> networkFilterMap = new HashMap<>(vmInfaces.size());
+            Map<Guid, List<VmNicFilterParameter>> networkFilterMap = new HashMap<>(vmInterfaces.size());
             for (int i = 0; i < multiResult.getReturnValues().size(); i++) {
                 List<VmNicFilterParameter> params = multiResult.getReturnValues().get(i).getReturnValue();
-                networkFilterMap.put(vmInfaces.get(i).getId(), params);
+                networkFilterMap.put(vmInterfaces.get(i).getId(), params);
             }
             setMapNicFilterParameter(networkFilterMap);
-            setItems(vmInfaces);
+            setItems(vmInterfaces);
         };
+
+        if (vmInterfaces.isEmpty()) {
+            setItems(vmInterfaces);
+        }
 
         Frontend.getInstance().runMultipleQueries(queryTypes, queryParametersBases, callback);
     }
