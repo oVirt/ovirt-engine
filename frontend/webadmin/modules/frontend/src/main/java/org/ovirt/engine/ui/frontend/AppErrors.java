@@ -243,8 +243,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_DISK_IS_LOCKED();
 
-    String ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN();
-
     String ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED();
 
     String ACTION_TYPE_FAILED_DISKS_ILLEGAL();

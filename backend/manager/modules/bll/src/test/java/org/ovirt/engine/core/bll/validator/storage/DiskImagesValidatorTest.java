@@ -257,29 +257,6 @@ public class DiskImagesValidatorTest {
     }
 
     @Test
-    public void isVolumeChainLimitExceededInvalid() {
-        List<DiskImage> diskImages = new ArrayList<>();
-        diskImages.add(new DiskImage());
-        diskImages.add(new DiskImage());
-        diskImages.add(new DiskImage());
-        when(diskImageDao.getAllSnapshotsForImageGroup(disk1.getId())).thenReturn(diskImages);
-        doReturn(3).when(validator).getMaxVolumeChain();
-        assertThat(validator.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN));
-    }
-
-    @Test
-    public void isVolumeChainLimitExceeded() {
-        List<DiskImage> diskImages = new ArrayList<>();
-        diskImages.add(new DiskImage());
-        diskImages.add(new DiskImage());
-        diskImages.add(new DiskImage());
-        when(diskImageDao.getAllSnapshotsForImageGroup(disk1.getId())).thenReturn(diskImages);
-        doReturn(4).when(validator).getMaxVolumeChain();
-        assertThat(validator.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain(), isValid());
-    }
-
-    @Test
     public void diskImagesSnapshotsNotAttachedToOtherVmsOneDiskSnapshotAttached() {
         List<VmDevice> createdDevices = prepareForCheckingIfDisksSnapshotsAttachedToOtherVms();
         createdDevices.get(1).setSnapshotId(Guid.newGuid());

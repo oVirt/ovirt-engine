@@ -246,18 +246,6 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testImagesExceededNumberOfVolumesInChain() {
-        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
-        doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN)).when(diskImagesValidator)
-                .diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_MAXIMUM_LIMIT_OF_VOLUMES_IN_CHAIN.name()));
-    }
-
-    @Test
     public void testImagesLocked() {
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
@@ -363,11 +351,5 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         newDiskImage.setStorageIds(new ArrayList<>());
         diskList.add(newDiskImage);
         return diskList;
-    }
-
-    private static DiskImage getNewDiskImage() {
-        DiskImage diskImage = new DiskImage();
-        diskImage.setId(Guid.newGuid());
-        return diskImage;
     }
 }

@@ -707,9 +707,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         // Initialize validators.
         VmValidator vmValidator = createVmValidator();
         StoragePoolValidator spValidator = createStoragePoolValidator();
-        DiskImagesValidator diskImagesValidatorForChain =
-                createDiskImageValidator(DisksFilter.filterImageDisks(getDisksList(), ONLY_NOT_SHAREABLE,
-                        ONLY_SNAPABLE, ONLY_ACTIVE));
         if (!(validateVM(vmValidator) && validate(spValidator.isUp())
                 && validate(vmValidator.vmNotIlegal())
                 && validate(vmValidator.vmNotLocked())
@@ -717,7 +714,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 && validate(snapshotsValidator.vmNotInPreview(getVmId()))
                 && validate(vmValidator.vmNotDuringMigration())
                 && validate(vmValidator.vmNotRunningStateless())
-                && validate(diskImagesValidatorForChain.diskImagesHaveNotExceededMaxNumberOfVolumesInImageChain())
                 && (!getParameters().isSaveMemory() || validate(vmValidator.vmNotHavingPciPassthroughDevices())))) {
             return false;
         }

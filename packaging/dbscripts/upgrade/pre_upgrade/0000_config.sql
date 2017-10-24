@@ -389,7 +389,6 @@ select fn_db_add_config_value('SchedulerOverBookingThreshold','10','general');
 select fn_db_add_config_value('UploadFileMaxTimeInMinutes','5','general');
 select fn_db_add_config_value('RetrieveDataMaxTimeInMinutes','5','general');
 select fn_db_add_config_value('StorageDomainOvfStoreCount','2','general');
-select fn_db_add_config_value('MaxImagesInChain','90','general');
 --Handling Organization Name
 select fn_db_add_config_value('OrganizationName','oVirt','general');
 select fn_db_add_config_value('OriginType','OVIRT','general');
