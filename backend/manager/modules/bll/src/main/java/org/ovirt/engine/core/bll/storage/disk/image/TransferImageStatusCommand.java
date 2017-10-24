@@ -10,12 +10,17 @@ import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.vdscommands.GetImageTicketVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class TransferImageStatusCommand<T extends TransferImageStatusParameters> extends CommandBase<T> {
 
@@ -24,6 +29,9 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
 
     @Inject
     private ImageTransferUpdater imageTransferUpdater;
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     public TransferImageStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -50,6 +58,18 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
         }
 
         if (entity != null) {
+            if (entity.getVdsId() != null && entity.getImagedTicketId() != null &&
+                    FeatureSupported.getImageTicketSupported(
+                            storagePoolDao.getForVds(entity.getVdsId()).getCompatibilityVersion())) {
+                ImageTicketInformation ticketInfo =
+                        (ImageTicketInformation) runVdsCommand(VDSCommandType.GetImageTicket,
+                                new GetImageTicketVDSCommandParameters(entity.getVdsId(), entity.getImagedTicketId()))
+                                .getReturnValue();
+                if (getParameters().getUpdates() == null) {
+                    getParameters().setUpdates(new ImageTransfer());
+                }
+                getParameters().getUpdates().setBytesSent(ticketInfo.getTransferred());
+            }
             // Always update; this serves as a keepalive
             entity = imageTransferUpdater.updateEntity(getParameters().getUpdates(), entity.getId(), false);
         } else {
