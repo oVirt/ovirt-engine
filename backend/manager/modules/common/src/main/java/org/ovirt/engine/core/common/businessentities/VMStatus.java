@@ -30,7 +30,7 @@ public enum VMStatus implements Identifiable {
         }
     }
 
-    private VMStatus(int value) {
+    VMStatus(int value) {
         this.value = value;
     }
 
