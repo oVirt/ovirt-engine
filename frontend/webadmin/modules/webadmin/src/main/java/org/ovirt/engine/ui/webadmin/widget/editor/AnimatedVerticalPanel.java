@@ -58,4 +58,9 @@ public class AnimatedVerticalPanel extends VerticalPanel {
         }, ADD_DELAY);
     }
 
+    @Override
+    public void clear() {
+        super.clear();
+        pendingWidgtes.clear();
+    }
 }
