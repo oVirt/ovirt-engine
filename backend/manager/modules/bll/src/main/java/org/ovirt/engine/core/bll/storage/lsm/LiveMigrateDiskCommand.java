@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -43,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -70,7 +68,6 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
-import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -112,8 +109,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     private DiskDao diskDao;
     @Inject
     private StorageDomainDao storageDomainDao;
-    @Inject
-    private DiskVmElementDao diskVmElementDao;
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -621,11 +616,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     protected boolean isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(Guid imageId) {
         return validate(createDiskValidator(getDiskImageByImageId(imageId)).isDiskPluggedToAnyNonDownVm(true));
     }
-
-    protected DiskVmElementValidator createDiskVmElementValidator(Guid diskId, Guid vmId) {
-        return new DiskVmElementValidator(diskDao.get(diskId), diskVmElementDao.get(new VmDeviceId(diskId, vmId)));
-    }
-
 
     protected StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {
         return new StorageDomainValidator(storageDomain);
