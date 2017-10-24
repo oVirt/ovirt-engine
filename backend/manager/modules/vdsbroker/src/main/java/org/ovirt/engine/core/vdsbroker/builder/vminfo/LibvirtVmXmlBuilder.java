@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -321,6 +322,13 @@ public class LibvirtVmXmlBuilder {
                 writer.writeAttributeString("memory", String.valueOf(Integer.parseInt((String) vmNumaNode.get(VdsProperties.VM_NUMA_NODE_MEM)) * 1024));
                 writer.writeEndElement();
             }
+            writer.writeEndElement();
+        }
+
+        if (vm.getVmType() == VmType.HighPerformance) {
+            writer.writeStartElement("cache");
+            writer.writeAttributeString("level", "3");
+            writer.writeAttributeString("mode", "emulate");
             writer.writeEndElement();
         }
 
