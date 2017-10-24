@@ -120,7 +120,12 @@ class Plugin(plugin.PluginBase):
                                             '%s=%s:%s\n' % (
                                                 k,
                                                 common.typeName(v),
-                                                '\n'.join(v)
+                                                '\n '.join(v)
+                                                # We want the next lines to be
+                                                # indented, so that
+                                                # configparser will treat them
+                                                # as a single multi-line value.
+                                                # So we join with '\n '.
                                                 if isinstance(v, list)
                                                 else v,
                                             )
