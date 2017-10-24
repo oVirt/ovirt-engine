@@ -41,7 +41,9 @@ class Plugin(plugin.PluginBase):
         def __init__(self):
             self.external_truststore = \
                 oenginecons.FileLocations.EXTERNAL_TRUSTSTORE
-            self.tmp_external_truststore = tempfile.mkstemp()
+            self.tmp_external_truststore = tempfile.mkstemp(
+                dir=os.path.dirname(self.external_truststore)
+            )
 
         def __str__(self):
             return _("External_truststore Remove Transaction")
