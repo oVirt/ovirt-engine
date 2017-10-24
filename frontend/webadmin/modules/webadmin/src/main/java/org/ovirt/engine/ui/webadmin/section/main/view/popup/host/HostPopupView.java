@@ -65,7 +65,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextDecoration;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
@@ -503,6 +502,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                 return messages.hostDataCenter(model.getStoragePoolName());
             }
 
+            @Override
             public Comparator<Cluster> getComparator() {
                 return new DataCenterClusterComparator();
             }
@@ -729,16 +729,16 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             rbPassword.setValue(true);
             rbPassword.setFocus(true);
 
-            displayPassPkWindow(true);
             fetchSshFingerprint.hideLabel();
             object.setAuthenticationMethod(AuthenticationMethod.Password);
+            displayPassPkWindow(true);
 
-            rbPassword.addFocusHandler(event -> {
+            rbPassword.addClickHandler(event -> {
                 object.setAuthenticationMethod(AuthenticationMethod.Password);
                 displayPassPkWindow(true);
             });
 
-            rbPublicKey.addFocusHandler(event -> {
+            rbPublicKey.addClickHandler(event -> {
                 object.setAuthenticationMethod(AuthenticationMethod.PublicKey);
                 displayPassPkWindow(false);
             });
@@ -818,13 +818,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private void displayPassPkWindow(boolean isPasswordVisible) {
-        if (isPasswordVisible) {
-            passwordEditor.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-            publicKeyEditor.getElement().getStyle().setVisibility(Visibility.HIDDEN);
-        } else {
-            passwordEditor.getElement().getStyle().setVisibility(Visibility.HIDDEN);
-            publicKeyEditor.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-        }
+        passwordEditor.setVisible(isPasswordVisible);
+        publicKeyEditor.setVisible(!isPasswordVisible);
     }
 
     private void initExpander() {
