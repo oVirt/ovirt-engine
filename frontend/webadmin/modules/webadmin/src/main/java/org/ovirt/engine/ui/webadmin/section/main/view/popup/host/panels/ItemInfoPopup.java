@@ -50,6 +50,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private static final String BACKGROUND_COLOR = "#333333";//$NON-NLS-1$
     private static final String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
     private static final String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$
+    private static final String BOND_OPTIONS_IP_SEPARATOR = ","; //$NON-NLS-1$
 
     private SafeHtml mgmtNetworkImage = safeHtmlFromTrustedString(resources.mgmtNetwork());
     private SafeHtml vmImage = safeHtmlFromTrustedString(resources.networkVm());
@@ -233,7 +234,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             addBootProtoAndIpInfo(entity);
         }
         if (nic instanceof BondNetworkInterfaceModel) {
-            addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());
+            addRow(constants.bondOptionsItemInfo(),
+                    entity.getBondOptions()
+                            .replace(BOND_OPTIONS_IP_SEPARATOR, BOND_OPTIONS_IP_SEPARATOR + " ")); //$NON-NLS-1$
         } else {
             addLldpInfo(nic);
         }
