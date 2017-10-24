@@ -185,13 +185,19 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     }
 
     public void updateKebabVisibleState() {
-        boolean hasVisibleItems = actionKebab.hasMenuItems();
+        boolean hasVisibleItems = actionKebab.hasMenuItems() && anyMenuItemVisible();
         actionKebab.setVisible(hasVisibleItems);
         if (!hasVisibleItems) {
             mainContainer.addStyleName(HIDDEN_KEBAB);
         } else {
             mainContainer.removeStyleName(HIDDEN_KEBAB);
         }
+    }
+
+    private boolean anyMenuItemVisible() {
+        return actionItemMap.values().stream().anyMatch(actionButton ->
+            actionKebab.containsMenuItem(actionButton) && actionButton.asWidget().isVisible()
+        );
     }
 
     @Override

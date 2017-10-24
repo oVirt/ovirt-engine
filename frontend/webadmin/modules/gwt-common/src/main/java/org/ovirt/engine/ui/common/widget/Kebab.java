@@ -68,6 +68,10 @@ public class Kebab extends ButtonGroup {
         kebabMenu.add(actionButton);
     }
 
+    public boolean containsMenuItem(ActionButton actionButton) {
+        return kebabMenu.getWidgetIndex(actionButton) > -1;
+    }
+
     public boolean hasMenuItems() {
         return kebabMenu.getWidgetCount() > 0;
     }
