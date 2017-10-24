@@ -303,7 +303,7 @@ public class Snapshot implements Queryable, BusinessEntityWithStatus<Guid, Snaps
         IN_PREVIEW
     }
 
-    public static enum SnapshotType {
+    public enum SnapshotType {
         REGULAR,
         ACTIVE,
         STATELESS,
