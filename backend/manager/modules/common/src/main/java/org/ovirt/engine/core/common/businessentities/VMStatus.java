@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VMStatus implements Identifiable {
     Unassigned(-1),
@@ -22,7 +23,7 @@ public enum VMStatus implements Identifiable {
     PoweringDown(16);
 
     private int value;
-    private static final HashMap<Integer, VMStatus> valueToStatus = new HashMap<>();
+    private static final Map<Integer, VMStatus> valueToStatus = new HashMap<>();
 
     static {
         for (VMStatus status : values()) {
