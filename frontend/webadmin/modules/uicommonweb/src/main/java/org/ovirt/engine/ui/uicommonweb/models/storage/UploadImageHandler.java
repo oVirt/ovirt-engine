@@ -8,8 +8,12 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -77,10 +81,11 @@ public class UploadImageHandler {
     private AuditLogType auditLogType;
     private int failedPollAttempts;
     private int failedFinalizationAttempts;
-    private String transferToken;
-    private String vdsId;
+    private Guid imageTicketId;
+    private Guid vdsId;
     private Guid diskId;
     private Element fileUploadElement;
+    private Boolean getImageTicketSupported;
 
     private Event<EventArgs> uploadFinishedEvent =
             new Event<>("UploadFinished", UploadImageHandler.class); //$NON-NLS-1$
@@ -158,19 +163,19 @@ public class UploadImageHandler {
         this.uploadState = UploadState.valueOf(uploadState);
     }
 
-    public String getTransferToken() {
-        return transferToken;
+    public Guid getImageTicketId() {
+        return imageTicketId;
     }
 
-    public void setTransferToken(String transferToken) {
-        this.transferToken = transferToken;
+    public void setImageTicketId(Guid imageTicketId) {
+        this.imageTicketId = imageTicketId;
     }
 
-    public String getVdsId() {
+    public Guid getVdsId() {
         return vdsId;
     }
 
-    public void setVdsId(String vdsId) {
+    public void setVdsId(Guid vdsId) {
         this.vdsId = vdsId;
     }
 
@@ -180,6 +185,22 @@ public class UploadImageHandler {
 
     public void setFileUploadElement(Element fileUploadElement) {
         this.fileUploadElement = fileUploadElement;
+    }
+
+    public Boolean getGetImageTicketSupported() {
+        if (getImageTicketSupported == null) {
+            Frontend.getInstance().runQuery(QueryType.GetVdsByVdsId, new IdQueryParameters(getVdsId()),
+                    new AsyncQuery<QueryReturnValue>(returnValue -> {
+                        VDS vds = returnValue.getReturnValue();
+                        setGetImageTicketSupported(AsyncDataProvider.getInstance().isGetImageTicketSupported(
+                                vds.getClusterCompatibilityVersion()));
+                    }));
+        }
+        return getImageTicketSupported;
+    }
+
+    public void setGetImageTicketSupported(boolean getImageTicketSupported) {
+        this.getImageTicketSupported = getImageTicketSupported;
     }
 
     public void setDiskId(Guid diskId) {
@@ -257,9 +278,8 @@ public class UploadImageHandler {
             log.info("Polling for status"); //$NON-NLS-1$
             TransferImageStatusParameters statusParameters = new TransferImageStatusParameters(getCommandId());
 
-            // TODO: temp updates from UI until updates from VDSM are implemented
             ImageTransfer updates = new ImageTransfer();
-            updates.setBytesSent(getBytesSent());
+            updateBytesSent(updates);
             updates.setMessage(getProgressStr());
             statusParameters.setUpdates(updates);
 
@@ -267,6 +287,13 @@ public class UploadImageHandler {
                     this::respondToPollStatus);
             return isContinuePolling();
         }, POLLING_DELAY_MS);
+    }
+
+    private void updateBytesSent(ImageTransfer updates) {
+        if (getVdsId() != null && getImageTicketId() != null && Boolean.FALSE.equals(getGetImageTicketSupported())) {
+            // Old engines update the bytesSent here, new engines update it in TransferImageCommand.
+            updates.setBytesSent(getBytesSent());
+        }
     }
 
     private void respondToPollStatus(FrontendActionAsyncResult result) {
@@ -286,9 +313,9 @@ public class UploadImageHandler {
 
                 case TRANSFERRING:
                     if (getUploadState() == UploadState.NEW) {
-                        setVdsId(rv.getVdsId().toString());
+                        setVdsId(rv.getVdsId());
                         setDiskId(rv.getDiskId());
-                        setTransferToken(rv.getImagedTicketId().toString());
+                        setImageTicketId(rv.getImagedTicketId());
                         String proxyURI = rv.getProxyUri();
                         String signedTicket = rv.getSignedTicket();
 
@@ -301,7 +328,7 @@ public class UploadImageHandler {
                         setUploadState(UploadState.INITIALIZING);
                         setProgressStr("Uploading from byte " + getBytesSent()); //$NON-NLS-1$
                         startUpload(getFileUploadElement(), proxyURI,
-                                getTransferToken(), getBytesSent(), getBytesEndOffset(), signedTicket,
+                                getImageTicketId().toString(), getBytesSent(), getBytesEndOffset(), signedTicket,
                                 chunkSizeKB, xhrTimeoutSec, xhrRetryIntervalSec, maxRetries);
                     }
                     break;

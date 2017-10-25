@@ -3255,4 +3255,8 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(QueryType.GetFenceAgentsByVdsId, new IdQueryParameters(hostId), aQuery);
     }
+
+    public boolean isGetImageTicketSupported(Version clusterVersion) {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.GetImageTicketSupported, clusterVersion.getValue());
+    }
 }
