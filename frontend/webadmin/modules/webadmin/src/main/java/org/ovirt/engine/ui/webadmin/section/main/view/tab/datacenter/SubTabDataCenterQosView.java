@@ -27,8 +27,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.HostNetwo
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -189,6 +191,24 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
         };
         writeIopsColumn.makeSortable();
         getTable().addColumn(writeIopsColumn, constants.storageQosIopsWrite(), "105px"); //$NON-NLS-1$
+    }
+
+    @Override
+    public void onAttach() {
+        super.onAttach();
+        // This might look strange as I also have a call to resizeContainerToHeight from the presenter onReveal.
+        // However for some reason the absoluteTop is reported wrong the first time that method is called.
+        // To mitigate that problem, I have both onReveal and onAttach which will call resizeContainerToHeight twice
+        // when the detail tab is revealed, the second which will report the absolute height correctly and make it
+        // work correctly.
+        resizeContainerToHeight();
+    }
+
+    @Override
+    public void resizeContainerToHeight() {
+        int height = Window.getClientHeight() - getTableContainer().asWidget().getAbsoluteTop();
+        getTableContainer().asWidget().getElement().getStyle().setHeight(height, Unit.PX);
+        getTableContainer().asWidget().getElement().getStyle().setOverflow(Overflow.AUTO);
     }
 
     @Override

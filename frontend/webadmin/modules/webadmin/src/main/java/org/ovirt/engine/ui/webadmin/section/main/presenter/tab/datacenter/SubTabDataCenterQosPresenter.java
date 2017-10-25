@@ -28,11 +28,25 @@ public class SubTabDataCenterQosPresenter
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<StoragePool> {
+        void resizeContainerToHeight();
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
     static TabData getTabData() {
         return DetailTabDataIndex.DATACENTER_QOS;
+    }
+
+    @Override
+    public void onBind() {
+        super.onBind();
+        registerHandler(getView().addWindowResizeHandler(e -> {
+            getView().resizeContainerToHeight();
+        }));
+    }
+
+    @Override
+    public void onReveal() {
+        getView().resizeContainerToHeight();
     }
 
     @Inject
