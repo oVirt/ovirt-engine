@@ -41,6 +41,7 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.EngineWorkingMode;
@@ -154,6 +155,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private ExecutionHandler executionHandler;
     @Inject
     private TagsDirector tagsDirector;
+    @Inject
+    private MacPoolPerCluster macPoolPerCluster;
 
     @Inject
     private Instance<BackendActionExecutor> actionExecutor;
@@ -258,6 +261,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // invocation on the proxy, as it is called by setup method which is @PostConstruct - the initialized flag
         // makes sure that initialization occurs only once per class (which is ok, as this is a @Service)
         if (firstInitialization) {
+            macPoolPerCluster.logFreeMacs();
             // In case of a server termination that had uncompleted compensation-aware related commands
             // we have to get all those commands and call compensate on each
             compensate();

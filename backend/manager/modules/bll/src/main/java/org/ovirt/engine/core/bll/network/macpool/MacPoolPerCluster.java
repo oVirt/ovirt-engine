@@ -8,9 +8,7 @@ import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -24,8 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-@Startup
-@DependsOn("Backend")
 public class MacPoolPerCluster {
 
     @Inject
@@ -197,5 +193,13 @@ public class MacPoolPerCluster {
 
     protected AutoCloseableLock readLockResource() {
         return new AutoCloseableLock(lockObj.readLock());
+    }
+
+    public void logFreeMacs() {
+        macPools.values()
+                .stream()
+                .forEach(macPool -> log.info("Mac pool {} has {} available free macs",
+                        macPool.getId(),
+                        macPool.getAvailableMacsCount()));
     }
 }
