@@ -85,6 +85,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 removeVnicProfiles();
             }
 
+            if (networkNameChanged()) {
+                updateDefaultVnicProfileName(getOldNetwork().getName());
+            }
+
             return null;
         });
 
@@ -93,6 +97,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         setSucceeded(true);
+    }
+
+    private boolean networkNameChanged() {
+        return !getOldNetwork().getName().equals(getNetworkName());
     }
 
     private void applyNetworkChangesToHosts() {
@@ -239,11 +247,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
 
             ValidationResult result = networkNotUsedByHosts();
-            if (!result.isValid()) {
-                return result;
-            }
-
-            result = networkNotUsedByVms();
             if (!result.isValid()) {
                 return result;
             }

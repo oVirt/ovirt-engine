@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -45,6 +46,19 @@ public abstract class NetworkCommon<T extends ActionParametersBase> extends Comm
             getCompensationContext().snapshotEntity(vnicProfile);
             vnicProfileDao.remove(vnicProfile.getId());
         }
+    }
+
+    protected void updateDefaultVnicProfileName(String oldVnicProfileName) {
+        Optional<VnicProfile> defaultVnicProfileOption = vnicProfileDao.getAllForNetwork(getNetwork().getId())
+                .stream()
+                .filter(profile -> profile.getName().equals(oldVnicProfileName))
+                .findFirst();
+        if (defaultVnicProfileOption.isPresent()) {
+            VnicProfile defaultVnicProfile = defaultVnicProfileOption.get();
+            defaultVnicProfile.setName(getNetworkName());
+            vnicProfileDao.update(defaultVnicProfile);
+        }
+
     }
 
     @Override
