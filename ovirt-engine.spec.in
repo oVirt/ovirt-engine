@@ -232,6 +232,7 @@ Requires:	ws-commons-util
 Requires:	xmlrpc-client
 Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
+Requires:	ovirt-cockpit-sso
 Requires:	ovirt-js-dependencies
 Requires:	ovirt-ansible-roles >= 1.1.0
 Requires:	ovirt-engine-api-explorer
