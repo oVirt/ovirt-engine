@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -194,6 +195,15 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         // Images list without those that are excluded from preview
         final List<DiskImage> filteredImages = (List<DiskImage>) CollectionUtils.subtract(
                 images, getImagesExcludedFromPreview(images, previousActiveSnapshotId, newActiveSnapshotId));
+
+        if (log.isInfoEnabled()) {
+            log.info("Previewing snapshot {} with the disks:\n{}", getSnapshotName(),
+                    filteredImages.stream()
+                            .map(disk -> String.format("%s (%s) to imageId %s",
+                                    disk.getName(), disk.getId().toString(), disk.getImageId().toString()))
+                                    .collect(Collectors.joining("\n")));
+        }
+
         final List<CinderDisk> cinderDisks = new ArrayList<>();
         TransactionSupport.executeInNewTransaction(() -> {
             getCompensationContext().snapshotEntity(previousActiveSnapshot);
