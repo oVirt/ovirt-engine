@@ -166,7 +166,7 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
                     } else {
                         setPath(null);
                     }
-                }), storageDomain.getStorage(), true);
+                }), storageDomain.getStorage(), false);
             }
             else {
                 setPath(null);
