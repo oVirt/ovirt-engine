@@ -612,11 +612,9 @@ public class SnapshotsManager {
             if (vm.getDynamicData() != null) {
                 tempVM.setDynamicData(vm.getDynamicData());
             }
-            ArrayList<DiskImage> images = new ArrayList<>();
-            ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
             FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(tempVM);
             ovfManager.importVm(configuration, tempVM, fullEntityOvfData);
-            for (DiskImage diskImage : images) {
+            for (DiskImage diskImage : fullEntityOvfData.getDiskImages()) {
                 DiskImage dbImage = diskImageDao.getSnapshotById(diskImage.getImageId());
                 if (dbImage != null) {
                     diskImage.setStorageIds(dbImage.getStorageIds());
@@ -626,8 +624,8 @@ public class SnapshotsManager {
 
             vm.setStaticData(tempVM.getStaticData());
             IconUtils.preserveIcons(vm.getStaticData(), oldVmStatic);
-            vm.setImages(images);
-            vm.setInterfaces(interfaces);
+            vm.setImages((ArrayList<DiskImage>) fullEntityOvfData.getDiskImages());
+            vm.setInterfaces(fullEntityOvfData.getInterfaces());
 
             // These fields are not saved in the OVF, so get them from the current VM.
             vm.setIsoPath(oldVmStatic.getIsoPath());

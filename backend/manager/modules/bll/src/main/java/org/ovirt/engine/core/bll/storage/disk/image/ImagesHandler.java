@@ -761,13 +761,11 @@ public class ImagesHandler {
 
             if (snapshot.isVmConfigurationAvailable() && snapConfig != null) {
                 VM vmSnapshot = new VM();
-                ArrayList<DiskImage> snapshotImages = new ArrayList<>();
                 FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vmSnapshot);
-                fullEntityOvfData.setDiskImages(snapshotImages);
                 ovfManager.importVm(snapConfig, vmSnapshot, fullEntityOvfData);
 
                 // Remove the image from the disk list
-                Iterator<DiskImage> diskIter = snapshotImages.iterator();
+                Iterator<DiskImage> diskIter = fullEntityOvfData.getDiskImages().iterator();
                 while (diskIter.hasNext()) {
                     DiskImage imageInList = diskIter.next();
                     if (imageInList.getImageId().equals(oldImageId)) {
@@ -780,14 +778,14 @@ public class ImagesHandler {
                 if (newImage != null) {
                     log.debug("Adding image '{}' to vmSnapshot '{}'", newImage.getImageId(), snapshot.getId());
                     newImage.setDiskVmElements(Collections.singletonList(diskVmElementDao.get(new VmDeviceId(newImage.getId(), vmSnapshot.getId()))));
-                    snapshotImages.add(newImage);
+                    fullEntityOvfData.getDiskImages().add(newImage);
                 }
 
                 final Version compatibilityVersion =
                         Optional.ofNullable(vmSnapshot.getStaticData().getClusterCompatibilityVersionOrigin())
                         .orElse(Version.getLowest());
                 FullEntityOvfData fullEntityOvfDataForExport = new FullEntityOvfData(vmSnapshot);
-                fullEntityOvfDataForExport.setDiskImages(snapshotImages);
+                fullEntityOvfDataForExport.setDiskImages(fullEntityOvfData.getDiskImages());
                 String newOvf =
                         ovfManager.exportVm(vmSnapshot, fullEntityOvfDataForExport, compatibilityVersion);
                 snapshot.setVmConfiguration(newOvf);
