@@ -11,14 +11,14 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTest<Job, org.ovirt.engine.core.common.job.Job, BackendJobsResource> {
 
     public BackendJobsResourceTest() {
-        super(new BackendJobsResource(), null, "");
+        super(new BackendJobsResource(), SearchType.Job, "Jobs : ");
     }
 
 
@@ -31,20 +31,6 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
     @Ignore
     @Override
     public void testQuery() throws Exception {
-    }
-
-
-    @Override
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        assertEquals("", query);
-
-        setUpEntityQueryExpectations(QueryType.GetAllJobs,
-                                    QueryParametersBase.class,
-                                     new String[] { },
-                                     new Object[] { },
-                                     setUpJobs(),
-                                     failure);
-
     }
 
     @Override

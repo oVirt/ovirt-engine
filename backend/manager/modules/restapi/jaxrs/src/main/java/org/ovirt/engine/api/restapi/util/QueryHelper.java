@@ -31,6 +31,7 @@ import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
@@ -73,6 +74,7 @@ public class QueryHelper {
         map.put(GlusterVolume.class, getName("Volumes"));
         map.put(Disk.class, getName("Disks"));
         map.put(Network.class, getName("Networks"));
+        map.put(Job.class, getName("Jobs"));
 
         return Collections.unmodifiableMap(map);
     }

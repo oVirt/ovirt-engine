@@ -148,4 +148,9 @@ public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
         return getCallsHandler().executeRead
                 ("CheckIfJobHasTasks", SingleColumnRowMapper.newInstance(Boolean.class), parameterSource);
     }
+
+    @Override
+    public List<Job> getAllWithQuery(String query) {
+        return getJdbcTemplate().query(query, createEntityRowMapper());
+    }
 }

@@ -34,6 +34,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         verbs.add(SearchObjects.INSTANCE_TYPE_PLU_OBJ_NAME);
         verbs.add(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME);
         verbs.add(SearchObjects.SESSION_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.JOB_PLU_OBJ_NAME);
 
         buildCompletions();
         verbs.add(SearchObjects.VM_OBJ_NAME);
@@ -51,6 +52,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         verbs.add(SearchObjects.INSTANCE_TYPE_OBJ_NAME);
         verbs.add(SearchObjects.IMAGE_TYPE_OBJ_NAME);
         verbs.add(SearchObjects.SESSION_OBJ_NAME);
+        verbs.add(SearchObjects.JOB_OBJ_NAME);
 
         requiresFullTable.put(SearchObjects.VDC_USER_ROLE_SEARCH, true);
 
@@ -438,6 +440,12 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "engine_sessions",
                             "id",
                             "user_name ASC, id"));
+                    put(SearchObjects.JOB_OBJ_NAME, new EntitySearchInfo(null,
+                            new JobConditionFieldAutoCompleter(),
+                            "job",
+                            "job",
+                            "job_id",
+                            "start_time ASC"));
                 }
             });
 
@@ -465,6 +473,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             put(SearchObjects.NETWORK_PLU_OBJ_NAME, SearchObjects.NETWORK_OBJ_NAME);
             put(SearchObjects.PROVIDER_PLU_OBJ_NAME, SearchObjects.PROVIDER_OBJ_NAME);
             put(SearchObjects.SESSION_PLU_OBJ_NAME, SearchObjects.SESSION_OBJ_NAME);
+            put(SearchObjects.JOB_PLU_OBJ_NAME, SearchObjects.JOB_OBJ_NAME);
         }
     });
 

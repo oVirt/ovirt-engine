@@ -10,6 +10,7 @@ import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.JobsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -23,7 +24,12 @@ public class BackendJobsResource extends AbstractBackendCollectionResource<Job, 
 
     @Override
     public Jobs list() {
-        List<org.ovirt.engine.core.common.job.Job> jobs = getBackendCollection(QueryType.GetAllJobs, new QueryParametersBase());
+        List<org.ovirt.engine.core.common.job.Job> jobs;
+        if (isFiltered()) {
+            jobs = getBackendCollection(QueryType.GetAllJobs, new QueryParametersBase());
+        } else {
+            jobs = getBackendCollection(SearchType.Job);
+        }
         return mapCollection(jobs);
     }
 

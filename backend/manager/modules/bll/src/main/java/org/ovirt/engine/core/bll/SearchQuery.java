@@ -65,6 +65,7 @@ import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.SearchDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -150,6 +151,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     private ImageTransferDao imageTransferDao;
 
     @Inject
+    private JobDao jobDao;
+
+    @Inject
     private DirectoryUtils directoryUtils;
 
     @Inject
@@ -226,6 +230,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         case ImageTransfer:
             returnValue = searchImageTransfer();
             break;
+        case Job:
+            returnValue = searchJobs();
         default:
             log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
             break;
@@ -416,6 +422,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<ImageTransfer> searchImageTransfer() {
         return genericSearch(imageTransferDao, false);
+    }
+
+    private List<? extends Queryable> searchJobs() {
+        return genericSearch(jobDao, false);
     }
 
     private void injectSessionInfo(EngineSession engineSession) {

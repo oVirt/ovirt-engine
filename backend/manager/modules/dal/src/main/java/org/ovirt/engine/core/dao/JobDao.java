@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface JobDao extends GenericDao<Job, Guid> {
+public interface JobDao extends GenericDao<Job, Guid>, SearchDao<Job> {
 
     /**
      * Checks if the {@link Job} with the given id exists or not.
