@@ -77,7 +77,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements HostResource {
@@ -565,19 +564,18 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     private Response getFenceStatus(Action action) {
-        VDSReturnValue result = getEntity(
-                VDSReturnValue.class,
+        FenceOperationResult result = getEntity(
+                FenceOperationResult.class,
                 QueryType.GetVdsFenceStatus,
                 new IdQueryParameters(guid),
                 guid.toString());
-        FenceOperationResult fenceResult = (FenceOperationResult) result.getReturnValue();
-        if (fenceResult.getStatus() == Status.SUCCESS) {
+        if (result.getStatus() == Status.SUCCESS) {
             PowerManagement pm = new PowerManagement();
-            pm.setStatus(convertPowerStatus(fenceResult.getPowerStatus()));
+            pm.setStatus(convertPowerStatus(result.getPowerStatus()));
             action.setPowerManagement(pm);
             return actionSuccess(action);
         } else {
-            return handleFailure(action, fenceResult.getMessage());
+            return handleFailure(action, result.getMessage());
         }
     }
 

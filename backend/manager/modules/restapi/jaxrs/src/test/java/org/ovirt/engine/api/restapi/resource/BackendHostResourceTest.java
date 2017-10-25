@@ -60,7 +60,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -526,9 +525,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testFenceStatus() throws Exception {
-        VDSReturnValue retVal = new VDSReturnValue();
-        retVal.setSucceeded(true);
-        retVal.setReturnValue(new FenceOperationResult(FenceOperationResult.Status.SUCCESS, PowerStatus.ON));
+        FenceOperationResult retVal = new FenceOperationResult(FenceOperationResult.Status.SUCCESS, PowerStatus.ON);
         setUpEntityQueryExpectations(QueryType.GetVdsFenceStatus,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -543,13 +540,8 @@ public class BackendHostResourceTest
 
     @Test
     public void testFenceStatusFailure() throws Exception {
-        VDSReturnValue retVal = new VDSReturnValue();
-        retVal.setSucceeded(true);
-        retVal.setReturnValue(
-                new FenceOperationResult(
-                        FenceOperationResult.Status.ERROR,
-                        PowerStatus.UNKNOWN,
-                        "some_error"));
+        FenceOperationResult retVal =
+                new FenceOperationResult(FenceOperationResult.Status.ERROR, PowerStatus.UNKNOWN, "some_error");
         setUpEntityQueryExpectations(QueryType.GetVdsFenceStatus,
                 IdQueryParameters.class,
                 new String[] { "Id" },
