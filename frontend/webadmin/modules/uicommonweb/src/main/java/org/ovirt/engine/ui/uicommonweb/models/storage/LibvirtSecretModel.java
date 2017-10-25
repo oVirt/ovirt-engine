@@ -32,11 +32,11 @@ public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
     private EntityModel<String> providerId;
 
     public LibvirtSecretModel() {
-        setUuid(new EntityModel<String>());
-        setValue(new EntityModel<String>());
-        setUsageType(new ListModel<LibvirtSecretUsageType>());
-        setDescription(new EntityModel<String>());
-        setProviderId(new EntityModel<String>());
+        setUuid(new EntityModel<>());
+        setValue(new EntityModel<>());
+        setUsageType(new ListModel<>());
+        setDescription(new EntityModel<>());
+        setProviderId(new EntityModel<>());
 
         ArrayList<LibvirtSecretUsageType> libvirtSecretUsageTypeList =
                 AsyncDataProvider.getInstance().getLibvirtSecretUsageTypeList();
