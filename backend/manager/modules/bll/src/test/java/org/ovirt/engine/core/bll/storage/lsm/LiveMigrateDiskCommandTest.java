@@ -104,6 +104,7 @@ LiveMigrateDiskCommandTest extends BaseCommandTest {
     private void initSpyCommand() {
         doReturn(true).when(command).validateDestDomainsSpaceRequirements();
         doReturn(true).when(command).validateCreateAllSnapshotsFromVmCommand();
+        doReturn(true).when(command).validateQuota();
         doReturn(ActionType.LiveMigrateDisk).when(command).getActionType();
     }
 

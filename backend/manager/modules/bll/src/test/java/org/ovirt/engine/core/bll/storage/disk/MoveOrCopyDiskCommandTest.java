@@ -4,8 +4,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -19,6 +22,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -67,6 +71,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private StorageDomainValidator storageDomainValidator;
     @Mock
     private DiskValidator diskValidator;
+    @Mock
+    private QuotaValidator quotaValidator;
 
     /**
      * The command under test.
@@ -262,6 +268,44 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         assertFalse(command.validatePassDiscardSupportedForDestinationStorageDomain());
     }
 
+    @Test
+    public void validateSourceQuota() {
+        initializeCommand(new DiskImage(), VmEntityType.VM);
+        initSrcStorageDomain();
+        initDestStorageDomain(StorageType.NFS);
+        mockQuotaValidator();
+
+        doCallRealMethod().when(command).validateQuota();
+
+        Guid quotaId = Guid.newGuid();
+        command.getImage().setQuotaId(quotaId);
+
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+
+        verify(command, times(1)).createQuotaValidator(quotaId);
+        verify(quotaValidator, times(1)).isValid();
+        verify(quotaValidator, times(1)).isDefinedForStorageDomain(any(Guid.class));
+    }
+
+    @Test
+    public void validatDestinationQuota() {
+        initializeCommand(new DiskImage(), VmEntityType.VM);
+        initSrcStorageDomain();
+        initDestStorageDomain(StorageType.NFS);
+        mockQuotaValidator();
+
+        doCallRealMethod().when(command).validateQuota();
+
+        Guid quotaId = Guid.newGuid();
+        command.getParameters().setQuotaId(quotaId);
+
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+
+        verify(command, times(1)).createQuotaValidator(quotaId);
+        verify(quotaValidator, times(1)).isValid();
+        verify(quotaValidator, times(1)).isDefinedForStorageDomain(any(Guid.class));
+    }
+
     protected void initVmForSpace() {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
@@ -305,6 +349,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
         doReturn(ActionType.MoveOrCopyDisk).when(command).getActionType();
+        doReturn(true).when(command).validateQuota();
         command.init();
     }
 
@@ -313,5 +358,11 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
         doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
         when(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSd(any())).thenReturn(validationResult);
+    }
+
+    private void mockQuotaValidator() {
+        doReturn(ValidationResult.VALID).when(quotaValidator).isValid();
+        doReturn(ValidationResult.VALID).when(quotaValidator).isDefinedForStorageDomain(any(Guid.class));
+        doReturn(quotaValidator).when(command).createQuotaValidator(any(Guid.class));
     }
 }

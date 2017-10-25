@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.CopyImageGroupCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -159,6 +160,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && checkCanBeMoveInVm()
                 && checkIfNeedToBeOverride()
                 && setAndValidateDiskProfiles()
+                && validateQuota()
                 && validatePassDiscardSupportedForDestinationStorageDomain();
     }
 
@@ -318,6 +320,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void executeCommand() {
+        // Use old quota, if no new quota is set
+        if (getDestinationQuotaId() == null) {
+            getParameters().setQuotaId(getImage().getQuotaId());
+        }
+
         if (isUnregisteredDiskExistsForCopyTemplate()) {
             addDiskMapping();
             return;
@@ -552,6 +559,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 getParameters().getStorageDomainId()), getCurrentUser()));
     }
 
+    public boolean validateQuota() {
+        Guid quotaId = getDestinationQuotaId() != null ? getDestinationQuotaId() : getImage().getQuotaId();
+
+        QuotaValidator validator = createQuotaValidator(quotaId);
+        return validate(validator.isValid()) &&
+                validate(validator.isDefinedForStorageDomain(getParameters().getStorageDomainId()));
+    }
+
     protected boolean validatePassDiscardSupportedForDestinationStorageDomain() {
         if (isMoveOperation() ||
                 (isCopyOperation() && isTemplate())) {
@@ -627,5 +642,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private boolean isCopyOperation() {
         return ImageOperation.Copy == getParameters().getOperation();
+    }
+
+    protected QuotaValidator createQuotaValidator(Guid quotaId) {
+        return QuotaValidator.createInstance(quotaId, false);
     }
 }
