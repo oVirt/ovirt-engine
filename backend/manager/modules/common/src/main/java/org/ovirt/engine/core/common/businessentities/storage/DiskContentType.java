@@ -10,7 +10,8 @@ public enum DiskContentType implements Identifiable {
     DATA(0, "DATA"),
     OVF_STORE(1, "OVFS"),
     MEMORY_DUMP_VOLUME(2, "MEMD"),
-    MEMORY_METADATA_VOLUME(3, "MEMM");
+    MEMORY_METADATA_VOLUME(3, "MEMM"),
+    ISO(4, "ISOF");
 
     public static final String LEGACY_DISK_TYPE = "2";
 

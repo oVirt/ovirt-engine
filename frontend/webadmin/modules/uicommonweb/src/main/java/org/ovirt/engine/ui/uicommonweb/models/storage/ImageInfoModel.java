@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -21,6 +22,8 @@ public class ImageInfoModel extends EntityModel<String> {
     private QemuCompat qcowCompat;
     private Boolean backingFile;
     private Boolean fileLoaded = false;
+    private DiskContentType contentType;
+    private String fileName;
 
     public VolumeFormat getFormat() {
         return format;
@@ -70,6 +73,22 @@ public class ImageInfoModel extends EntityModel<String> {
         this.fileLoaded = fileLoaded;
     }
 
+    public DiskContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(DiskContentType contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     public native void initialize(Element imageFileUploadElement) /*-{
         var self = this;
 
@@ -87,25 +106,37 @@ public class ImageInfoModel extends EntityModel<String> {
                     // can't open the file
                     return;
                 }
-                var headerStr = readString(header.slice(0, 4));
+                var isQcow = readString(header.slice(0, 4)) == "QFI\xfb";
                 var info = {};
-                info.format = headerStr == "QFI\xfb" ? "COW" : "RAW";
+                info.format = isQcow ? "COW" : "RAW";
                 info.actualSize = toGB(file.size);
                 info.virtualSize = 0;
                 info.backingFile = false;
                 info.fileLoaded = true;
+                info.contentType = 'DATA';
 
-                if (info.format == "COW") {
+                if (isQcow) {
                     var version = readUint32(header.slice(4, 8));
                     info.qcowCompat = version == 2 ? "0.10" : version == 3 ? "1.1" : "";
                     var backingFileOffset = readUint64(header.slice(8, 16));
                     info.backingFile = backingFileOffset != 0;
                     info.virtualSize = toGB(readUint64(header.slice(24, 32)));
+                } else {
+                    // An ISO file contains the literal 'CD001' in offset 8001h
+                    var isISO = readString(header.slice(0x8001, 0x8001 + 5)) == "CD001";
+                    if (isISO) {
+                        info.contentType = 'ISO';
+                        info.fileName = file.name;
+                        info.virtualSize = info.actualSize;
+                    }
                 }
+
                 self.@org.ovirt.engine.ui.uicommonweb.models.storage.ImageInfoModel::updateModel(*) (
-                    info.format, info.actualSize, info.virtualSize, info.qcowCompat, info.backingFile, info.fileLoaded);
+                    info.format, info.actualSize, info.virtualSize, info.qcowCompat, info.backingFile, info.fileLoaded,
+                    info.contentType, info.fileName);
             };
-            var blob = file.slice(0, 32);
+            // An ISO file contains the literal 'CD001' in offset 8001h thus 8006h bytes needed to be read
+            var blob = file.slice(0, 0x8001 + 5);
             reader.readAsArrayBuffer(blob);
         };
 
@@ -132,13 +163,15 @@ public class ImageInfoModel extends EntityModel<String> {
     }-*/;
 
     public void updateModel(String format, int actualSize, int virtualSize, String qcowCompat,
-                            boolean backingFile, boolean fileLoaded) {
+                            boolean backingFile, boolean fileLoaded, String contentType, String fileName) {
         setFormat(VolumeFormat.valueOf(format));
         setActualSize(actualSize);
         setVirtualSize(virtualSize);
         setQcowCompat(QemuCompat.forValue(qcowCompat));
         setBackingFile(backingFile);
         setFileLoaded(fileLoaded);
+        setContentType(DiskContentType.valueOf(contentType));
+        setFileName(fileName);
 
         getEntityChangedEvent().raise(this, EventArgs.EMPTY);
     }
@@ -150,6 +183,8 @@ public class ImageInfoModel extends EntityModel<String> {
         setQcowCompat(null);
         setBackingFile(null);
         setFileLoaded(false);
+        setContentType(null);
+        setFileName(null);
 
         setIsValid(true);
         getInvalidityReasons().clear();

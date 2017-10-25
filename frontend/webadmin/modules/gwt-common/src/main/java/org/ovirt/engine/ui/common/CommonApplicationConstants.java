@@ -1665,6 +1665,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String imageQcowCompat();
 
+    String imageContent();
+
     String imageActualSize();
 
     String imageVirtualSize();

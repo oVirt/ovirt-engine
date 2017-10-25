@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
@@ -196,6 +197,20 @@ public class UploadImageModel extends Model implements ICommandTarget {
     @Override
     public void initialize() {
         getDiskModel().initialize();
+        imageInfoModel.getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (imageInfoModel.getContentType() == DiskContentType.ISO) {
+                getDiskModel().getAlias().setEntity(imageInfoModel.getFileName());
+                getDiskModel().getDescription().setEntity(imageInfoModel.getFileName());
+                getDiskModel().getSize().setEntity(imageInfoModel.getActualSize());
+                getDiskModel().getSize().setIsChangeable(false);
+            }
+            else {
+                getDiskModel().getAlias().setEntity(null);
+                getDiskModel().getDescription().setEntity(null);
+                getDiskModel().getSize().setEntity(null);
+                getDiskModel().getSize().setIsChangeable(true);
+            }
+        });
     }
 
     @Override
@@ -230,6 +245,10 @@ public class UploadImageModel extends Model implements ICommandTarget {
             diskImage.setVolumeType(AsyncDataProvider.getInstance().getVolumeType(
                     diskImage.getVolumeFormat(),
                     getDiskModel().getStorageDomain().getSelectedItem().getStorageType()));
+            diskImage.setContentType(getImageInfoModel().getContentType());
+            if (getImageInfoModel().getContentType() == DiskContentType.ISO) {
+                diskImage.setSize(getImageSize());
+            }
             return true;
         } else {
             setIsValid(false);

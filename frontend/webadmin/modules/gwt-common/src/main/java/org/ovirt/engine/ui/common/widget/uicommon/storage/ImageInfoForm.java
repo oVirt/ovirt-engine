@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -29,6 +30,7 @@ public class ImageInfoForm extends AbstractModelBoundFormWidget<ImageInfoModel> 
     EnumTextBoxLabel<VolumeFormat> format = new EnumTextBoxLabel<>();
     DiskSizeLabel<Integer> actualSize = new DiskSizeLabel<>(SizeConverter.SizeUnit.GiB);
     DiskSizeLabel<Integer> virtualSize = new DiskSizeLabel<>(SizeConverter.SizeUnit.GiB);
+    EnumTextBoxLabel<DiskContentType> contentType = new EnumTextBoxLabel<>();
     EnumTextBoxLabel<ImageInfoModel.QemuCompat> qcowCompat = new EnumTextBoxLabel<>();
     BooleanLabel backingFile = new BooleanLabel(constants.yes(), constants.no());
 
@@ -60,13 +62,19 @@ public class ImageInfoForm extends AbstractModelBoundFormWidget<ImageInfoModel> 
                 return getModel().getFormat() == VolumeFormat.COW;
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.imageQcowCompat(), qcowCompat, 0, 1) {
+        formBuilder.addFormItem(new FormItem(constants.imageContent(), contentType, 0, 1) {
+            @Override
+            public boolean getIsAvailable() {
+                return getModel().getFileLoaded();
+            }
+        });
+        formBuilder.addFormItem(new FormItem(constants.imageQcowCompat(), qcowCompat, 1, 1) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getFormat() == VolumeFormat.COW;
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.imageBackingFile(), backingFile, 1, 1) {
+        formBuilder.addFormItem(new FormItem(constants.imageBackingFile(), backingFile, 2, 1) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getFormat() == VolumeFormat.COW;
