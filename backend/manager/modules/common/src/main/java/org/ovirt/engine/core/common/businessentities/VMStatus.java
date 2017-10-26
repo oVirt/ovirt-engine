@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum VMStatus implements Identifiable {
     Unassigned(-1),
@@ -23,13 +25,8 @@ public enum VMStatus implements Identifiable {
     PoweringDown(16);
 
     private int value;
-    private static final Map<Integer, VMStatus> valueToStatus = new HashMap<>();
-
-    static {
-        for (VMStatus status : values()) {
-            valueToStatus.put(status.getValue(), status);
-        }
-    }
+    private static final Map<Integer, VMStatus> valueToStatus =
+            Stream.of(values()).collect(Collectors.toMap(VMStatus::getValue, Function.identity()));
 
     VMStatus(int value) {
         this.value = value;
