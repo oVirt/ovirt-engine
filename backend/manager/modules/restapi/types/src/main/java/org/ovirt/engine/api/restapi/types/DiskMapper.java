@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
@@ -203,6 +204,13 @@ public class DiskMapper {
         if (entity.getQuotaId()!=null) {
             Quota quota = new Quota();
             quota.setId(entity.getQuotaId().toString());
+
+            // Add DataCenter to the quota, so links are properly created
+            if (entity.getStoragePoolId() != null) {
+                quota.setDataCenter(new DataCenter());
+                quota.getDataCenter().setId(entity.getStoragePoolId().toString());
+            }
+
             model.setQuota(quota);
         }
         if (entity.getDiskProfileId() != null) {
