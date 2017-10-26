@@ -1037,29 +1037,29 @@ public interface CommonApplicationConstants extends Constants {
 
     String formatSanImStorage();
 
-    String imageUploadUnknown();
+    String imageTransferUnknown();
 
-    String imageUploadInitializing();
+    String imageTransferInitializing();
 
-    String imageUploadResuming();
+    String imageTransferResuming();
 
     String imageUploadTransferring();
 
     String imageTransferringViaAPI();
 
-    String imageUploadPausedSystem();
+    String imageTransferPausedSystem();
 
-    String imageUploadPausedUser();
+    String imageTransferPausedUser();
 
-    String imageUploadCancelled();
+    String imageTransferCancelled();
 
-    String imageUploadFinalizingSuccess();
+    String imageTransferFinalizingSuccess();
 
-    String imageUploadFinalizingFailure();
+    String imageTransferFinalizingFailure();
 
-    String imageUploadFinishedSuccess();
+    String imageTransferFinishedSuccess();
 
-    String imageUploadFinishedFailure();
+    String imageTransferFinishedFailure();
 
     String imageTransferringViaBrowser();
 

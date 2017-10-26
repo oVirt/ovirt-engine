@@ -54,11 +54,11 @@ public class DiskTransferProgressColumn extends AbstractProgressBarColumn<Disk> 
         if (disk.getImageTransferPhase() != null) {
             switch (disk.getImageTransferPhase()) {
             case UNKNOWN:
-                return constants.imageUploadUnknown();
+                return constants.imageTransferUnknown();
             case INITIALIZING:
-                return constants.imageUploadInitializing();
+                return constants.imageTransferInitializing();
             case RESUMING:
-                return constants.imageUploadResuming();
+                return constants.imageTransferResuming();
             case TRANSFERRING:
                 if (disk.getImageTransferBytesTotal() != 0
                         && disk.getImageTransferBytesSent() == 0) {
@@ -81,22 +81,22 @@ public class DiskTransferProgressColumn extends AbstractProgressBarColumn<Disk> 
                             (int) (disk.getImageTransferBytesTotal() / SizeConverter.BYTES_IN_MB));
                 }
             case PAUSED_SYSTEM:
-                return constants.imageUploadPausedSystem();
+                return constants.imageTransferPausedSystem();
             case PAUSED_USER:
-                return constants.imageUploadPausedUser();
+                return constants.imageTransferPausedUser();
             case CANCELLED:
-                return constants.imageUploadCancelled();
+                return constants.imageTransferCancelled();
             case FINALIZING_SUCCESS:
-                return constants.imageUploadFinalizingSuccess();
+                return constants.imageTransferFinalizingSuccess();
             case FINALIZING_FAILURE:
-                return constants.imageUploadFinalizingFailure();
+                return constants.imageTransferFinalizingFailure();
             case FINISHED_SUCCESS:
-                return constants.imageUploadFinishedSuccess();
+                return constants.imageTransferFinishedSuccess();
             case FINISHED_FAILURE:
-                return constants.imageUploadFinishedFailure();
+                return constants.imageTransferFinishedFailure();
             }
         }
-        return constants.imageUploadUnknown();
+        return constants.imageTransferUnknown();
     }
 
     @Override
