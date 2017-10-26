@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.LldpInfo;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.network.Tlv;
 import org.ovirt.engine.core.common.businessentities.network.TlvSpecificType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -257,21 +257,26 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private void addLldpInfo(NetworkInterfaceModel nic) {
         HostSetupNetworksModel model = nic.getSetupModel();
-        Guid id = nic.getOriginalIface().getId();
-        List<Tlv> tlvs = model.getNetworkTlvsByGuid(id);
+        String name = nic.getOriginalIface().getName();
+        LldpInfo lldpInfo = model.getNetworkLldpByName(name);
         insertHorizontalLine();
         addRow(templates.strongTextWithColor(constants.linkLayerInfo(), WHITE_TEXT_COLOR));
 
-        if (tlvs != null && !tlvs.isEmpty()) {
-            List<Tlv> filteredTlvs = tlvs.stream().filter(this::isTlvImportant).collect(Collectors.toList());
-            if (!filteredTlvs.isEmpty()) {
-                filteredTlvs.stream().forEach(tlv -> tlv.getProperties().entrySet().stream()
-                        .forEach(entry -> addRow(entry.getKey(), entry.getValue())));
+        if (lldpInfo != null) {
+            if (lldpInfo.isEnabled()) {
+                List<Tlv> filteredTlvs =
+                        lldpInfo.getTlvs().stream().filter(this::isTlvImportant).collect(Collectors.toList());
+                if (!filteredTlvs.isEmpty()) {
+                    filteredTlvs.stream().forEach(tlv -> tlv.getProperties().entrySet().stream()
+                            .forEach(entry -> addRow(entry.getKey(), entry.getValue())));
+                } else {
+                    addRow(SafeHtmlUtils.fromSafeConstant(constants.noImportantLLDP()));
+                }
             } else {
-                addRow(SafeHtmlUtils.fromSafeConstant(constants.noImportantLLDP()));
+                addRow(SafeHtmlUtils.fromSafeConstant(constants.lldpInfoDisabled()));
             }
         } else {
-            if (model.isNetworkTlvsPresent(id)) {
+            if (model.isNetworkTlvsPresent(name)) {
                 addRow(SafeHtmlUtils.fromSafeConstant(constants.noLldpInfoAvailable()));
             } else {
                 addRow(SafeHtmlUtils.fromSafeConstant(constants.fetchingLldpInfo()));

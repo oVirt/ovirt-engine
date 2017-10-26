@@ -27,14 +27,13 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
+import org.ovirt.engine.core.common.businessentities.network.LldpInfo;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
-import org.ovirt.engine.core.common.businessentities.network.Tlv;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
@@ -133,7 +132,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private Map<String, NetworkLabelModel> networkLabelModelByLabel = new HashMap<>();
 
-    private Map<Guid, List<Tlv>> networkTlvsByGuid;
+    private Map<String, LldpInfo> networkLldpInfoByName;
 
     private final NewNetworkLabelModel newLabelModel;
 
@@ -249,16 +248,16 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return new ArrayList<>(networkLabelModelByLabel.values());
     }
 
-    public List<Tlv> getNetworkTlvsByGuid(Guid guid) {
-        if (networkTlvsByGuid != null) {
-            return networkTlvsByGuid.get(guid);
+    public LldpInfo getNetworkLldpByName(String name) {
+        if (networkLldpInfoByName != null) {
+            return networkLldpInfoByName.get(name);
         }
         return null;
     }
 
-    public boolean isNetworkTlvsPresent(Guid guid) {
-        if (networkTlvsByGuid != null) {
-            return networkTlvsByGuid.containsKey(guid);
+    public boolean isNetworkTlvsPresent(String name) {
+        if (networkLldpInfoByName != null) {
+            return networkLldpInfoByName.containsKey(name);
         }
         return false;
     }
@@ -1064,28 +1063,15 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private void queryTLVInformation() {
-        List<QueryType> queryTypes = new ArrayList<>();
-        List<QueryParametersBase> queryParameters = new ArrayList<>();
-
-        allExistingNics.stream().forEach(nic -> {
-            queryTypes.add(QueryType.GetTlvsByHostNicId);
-            queryParameters.add(new IdQueryParameters(nic.getId()));
-        });
-
-        Frontend.getInstance().runMultipleQueries(queryTypes, queryParameters, result -> {
-            networkTlvsByGuid = new HashMap<>();
-            List<QueryReturnValue> returnValues = result.getReturnValues();
-            for (int index = 0; index < result.getReturnValues().size(); index++) {
-                IdQueryParameters param = (IdQueryParameters) result.getParameters().get(index);
-                List<Tlv> tlvs = returnValues.get(index).getReturnValue();
-                if (param != null) {
-                    networkTlvsByGuid.put(param.getId(), tlvs);
-                }
-            }
-            if (getProgress() == null) {
-                redraw();
-            }
-        });
+        Frontend.getInstance()
+                .runQuery(QueryType.GetMultipleTlvsByHostId,
+                        new IdQueryParameters(getEntity().getId()),
+                        new AsyncQuery<QueryReturnValue>(result -> {
+                            networkLldpInfoByName = result.getReturnValue();
+                            if (getProgress() == null) {
+                                redraw();
+                            }
+                        }));
     }
 
     private void queryNetworkAttachments() {

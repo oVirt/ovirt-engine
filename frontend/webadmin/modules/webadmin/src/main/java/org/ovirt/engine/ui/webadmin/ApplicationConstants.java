@@ -1044,6 +1044,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String noImportantLLDP();
 
+    String lldpInfoDisabled();
+
     String fetchingLldpInfo();
 
     String noLldpInfoAvailable();
