@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
@@ -39,6 +39,7 @@ public class FenceProxyModel extends EntityModel<FenceProxySourceType> {
         if (getWindow() != null) {
             return;
         }
+        this.currentProxies = currentProxies;
         FenceProxyModel newModel = new FenceProxyModel();
         newModel.setCurrentProxies(deepCopy(currentProxies));
         setWindow(newModel);
@@ -124,27 +125,23 @@ public class FenceProxyModel extends EntityModel<FenceProxySourceType> {
      */
     private void onOk() {
         FenceProxyModel windowModel = (FenceProxyModel) getWindow();
-        ListModel<FenceProxyModel> currentModels = windowModel.getCurrentProxies();
         FenceProxyModel selectedModel = windowModel.getAvailableProxies().getSelectedItem();
         setEntity(selectedModel.getEntity());
-        Collection<FenceProxyModel> items = currentModels.getItems();
-        currentModels.setItems(null);
-        currentModels.setItems(items);
         setWindow(null);
+        List<FenceProxyModel> currentModels = currentProxies.getItemsAsList();
+        currentProxies.setItems(Collections.emptyList());
+        currentProxies.setItems(currentModels);
     }
 
     /**
      * Action to take when user clicked cancel in the pop-up.
      */
     private void cancel() {
-        FenceProxyModel windowModel = (FenceProxyModel) getWindow();
-        ListModel<FenceProxyModel> currentModels = windowModel.getCurrentProxies();
-        //Set to null to force events to fire.
-        Collection<FenceProxyModel> items = currentModels.getItems();
-        currentModels.setItems(null);
-        items.remove(this);
-        currentModels.setItems(items);
         setWindow(null);
+        List<FenceProxyModel> currentModels = currentProxies.getItemsAsList();
+        currentModels.remove(this);
+        currentProxies.setItems(Collections.emptyList());
+        currentProxies.setItems(currentModels);
     }
 
     public void warnUserOnLimit() {

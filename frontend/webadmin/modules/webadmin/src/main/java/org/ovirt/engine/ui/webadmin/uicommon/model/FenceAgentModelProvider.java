@@ -24,8 +24,8 @@ public class FenceAgentModelProvider extends TabModelProvider<FenceAgentModel> {
 
     public void initializeModel(FenceAgentModel model) {
         if (!model.isInitialized()) {
-            initializeModelHandlers(model);
             model.setInitialized();
+            initializeModelHandlers(model);
         }
     }
 

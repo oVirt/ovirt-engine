@@ -24,8 +24,8 @@ public class FenceProxyModelProvider extends TabModelProvider<FenceProxyModel> {
 
     public void initializeModel(FenceProxyModel model) {
         if (!model.isInitialized()) {
-            initializeModelHandlers(model);
             model.setInitialized();
+            initializeModelHandlers(model);
         }
     }
 
