@@ -101,7 +101,10 @@ public abstract class Disk extends BaseDisk {
                 templateVersionNames,
                 vmEntityType,
                 numberOfVms,
-                logicalName
+                logicalName,
+                imageTransferPhase,
+                imageTransferBytesSent,
+                imageTransferBytesTotal
         );
     }
 
@@ -119,6 +122,9 @@ public abstract class Disk extends BaseDisk {
                 && Objects.equals(vmNames, other.vmNames)
                 && Objects.equals(templateVersionNames, other.templateVersionNames)
                 && Objects.equals(logicalName, other.logicalName)
+                && imageTransferPhase == other.imageTransferPhase
+                && Objects.equals(imageTransferBytesSent, other.imageTransferBytesSent)
+                && Objects.equals(imageTransferBytesTotal, other.imageTransferBytesTotal)
                 && vmEntityType == other.vmEntityType
                 && numberOfVms == other.numberOfVms;
     }
