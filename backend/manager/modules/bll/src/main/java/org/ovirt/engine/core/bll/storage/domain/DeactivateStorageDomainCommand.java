@@ -145,14 +145,14 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             if (!isNoRunningVmsWithLeasesExist()) {
                 return false;
             }
-        }
 
-        if (!isRunningVmsWithIsoAttached()) {
-            return false;
-        }
-        if (!getParameters().getIsInternal() &&
-                !vmDao.getAllActiveForStorageDomain(getStorageDomain().getId()).isEmpty()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
+            if (!isRunningVmsWithIsoAttached()) {
+                return false;
+            }
+
+            if (!vmDao.getAllActiveForStorageDomain(getStorageDomain().getId()).isEmpty()) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
+            }
         }
         if (getStoragePool().getSpmVdsId() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
@@ -215,7 +215,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     protected boolean isRunningVmsWithIsoAttached() {
-        if (!getParameters().getIsInternal() && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
+        if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
             List<String> vmNames = getVmsWithAttachedISO();
             if (!vmNames.isEmpty()) {
                 return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED,
