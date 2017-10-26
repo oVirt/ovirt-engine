@@ -992,6 +992,9 @@ public class VmAnalyzer {
             if (nic.getIpv4Addresses() != null) {
                 ips.addAll(nic.getIpv4Addresses());
             }
+            if (nic.getIpv6Addresses() != null) {
+                ips.addAll(nic.getIpv6Addresses());
+            }
         }
         return ips.isEmpty() ? null : String.join(" ", ips);
     }
