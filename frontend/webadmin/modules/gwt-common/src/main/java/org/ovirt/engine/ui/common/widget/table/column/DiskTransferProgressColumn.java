@@ -8,13 +8,13 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-public class DiskUploadImageProgressColumn extends AbstractProgressBarColumn<Disk> {
+public class DiskTransferProgressColumn extends AbstractProgressBarColumn<Disk> {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
     private static final ProgressBarColors color = ProgressBarColors.GREEN;
 
-    public DiskUploadImageProgressColumn() {
+    public DiskTransferProgressColumn() {
     }
 
     @Override

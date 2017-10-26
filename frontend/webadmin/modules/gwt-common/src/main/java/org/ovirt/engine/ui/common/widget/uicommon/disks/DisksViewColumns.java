@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskProgressColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
-import org.ovirt.engine.ui.common.widget.table.column.DiskUploadImageProgressColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskTransferProgressColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
@@ -362,7 +362,7 @@ public class DisksViewColumns {
     }
 
     public static final AbstractColumn<Disk, Disk> getStatusColumn(String sortBy) {
-        DiskUploadImageProgressColumn uploadImageProgressColumn = new DiskUploadImageProgressColumn();
+        DiskTransferProgressColumn uploadImageProgressColumn = new DiskTransferProgressColumn();
         DiskProgressColumn diskProgressColumn = new DiskProgressColumn();
 
         List<HasCell<Disk, ?>> list = new ArrayList<>();

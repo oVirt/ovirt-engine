@@ -5,7 +5,7 @@ import java.util.HashMap;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum ImageTransferPhase implements Identifiable {
-    // Note: when adding/changing values, add text lookup to DiskUploadImageProgressColumn
+    // Note: when adding/changing values, add text lookup to DiskTransferProgressColumn
     UNKNOWN(0, "Unknown"),
     INITIALIZING(1, "Initializing"),
     TRANSFERRING(2, "Transferring"),
