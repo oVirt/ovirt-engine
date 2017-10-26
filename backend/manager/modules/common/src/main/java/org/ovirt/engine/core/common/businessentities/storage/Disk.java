@@ -36,6 +36,7 @@ public abstract class Disk extends BaseDisk {
     private ImageTransferPhase imageTransferPhase;
     private Long imageTransferBytesSent;
     private Long imageTransferBytesTotal;
+    private TransferType transferType;
 
     /**
      * @return Whether taking snapshots of this disk is allowed
@@ -92,6 +93,14 @@ public abstract class Disk extends BaseDisk {
         this.imageTransferBytesTotal = imageTransferBytesTotal;
     }
 
+    public TransferType getTransferType() {
+        return transferType;
+    }
+
+    public void setTransferType(TransferType transferType) {
+        this.transferType = transferType;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -104,7 +113,8 @@ public abstract class Disk extends BaseDisk {
                 logicalName,
                 imageTransferPhase,
                 imageTransferBytesSent,
-                imageTransferBytesTotal
+                imageTransferBytesTotal,
+                transferType
         );
     }
 
@@ -125,6 +135,7 @@ public abstract class Disk extends BaseDisk {
                 && imageTransferPhase == other.imageTransferPhase
                 && Objects.equals(imageTransferBytesSent, other.imageTransferBytesSent)
                 && Objects.equals(imageTransferBytesTotal, other.imageTransferBytesTotal)
+                && transferType == other.transferType
                 && vmEntityType == other.vmEntityType
                 && numberOfVms == other.numberOfVms;
     }

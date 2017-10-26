@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -61,6 +62,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         mapper.addValue("command_id", entity.getId());
         mapper.addValue("command_type", entity.getCommandType());
         mapper.addValue("phase", entity.getPhase());
+        mapper.addValue("type", entity.getType());
         mapper.addValue("last_updated", entity.getLastUpdated());
         mapper.addValue("message", entity.getMessage());
         mapper.addValue("vds_id", entity.getVdsId() == null ? null : entity.getVdsId().toString());
@@ -80,6 +82,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             entity.setId(getGuidDefaultEmpty(rs, "command_id"));
             entity.setCommandType(ActionType.forValue(rs.getInt("command_type")));
             entity.setPhase(ImageTransferPhase.forValue(rs.getInt("phase")));
+            entity.setType(TransferType.forValue(rs.getInt("type")));
             entity.setLastUpdated(new Date(rs.getTimestamp("last_updated").getTime()));
             entity.setMessage(rs.getString("message"));
             entity.setVdsId(getGuid(rs, "vds_id"));

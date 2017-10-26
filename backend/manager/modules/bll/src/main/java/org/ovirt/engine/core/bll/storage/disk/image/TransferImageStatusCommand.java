@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.vdscommands.GetImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.ImageTransferDao;
@@ -87,6 +88,7 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
             entity = new ImageTransfer();
             entity.setId(getParameters().getTransferImageCommandId());
             entity.setPhase(ImageTransferPhase.UNKNOWN);
+            entity.setType(TransferType.Unknown);
         }
 
         setSucceeded(true);

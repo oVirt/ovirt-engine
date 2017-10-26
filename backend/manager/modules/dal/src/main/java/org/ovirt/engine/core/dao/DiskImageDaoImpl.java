@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -232,6 +233,7 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             entity.setWriteRate(rs.getInt("write_rate"));
             entity.setImageTransferPhase(rs.getObject("image_transfer_phase") != null
                     ? ImageTransferPhase.forValue(rs.getInt("image_transfer_phase")) : null);
+            entity.setTransferType(TransferType.forValue(rs.getInt("image_transfer_type")));
             entity.setImageTransferBytesSent(rs.getLong("image_transfer_bytes_sent"));
             entity.setImageTransferBytesTotal(rs.getLong("image_transfer_bytes_total"));
             entity.setProgress(getInteger(rs, "progress"));

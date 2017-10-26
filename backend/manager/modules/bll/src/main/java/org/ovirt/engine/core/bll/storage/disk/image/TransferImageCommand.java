@@ -96,6 +96,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         ImageTransfer entity = new ImageTransfer(getCommandId());
         entity.setCommandType(getActionType());
         entity.setPhase(ImageTransferPhase.INITIALIZING);
+        entity.setType(getParameters().getTransferType());
         entity.setLastUpdated(new Date());
         entity.setBytesTotal(getParameters().getTransferSize());
         imageTransferDao.save(entity);

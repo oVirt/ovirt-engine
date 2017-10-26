@@ -14,6 +14,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private Guid commandId;
     private ActionType commandType;
     private ImageTransferPhase phase;
+    private TransferType type;
     private Date lastUpdated;
     private String message;
 
@@ -54,6 +55,14 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
 
     public void setPhase(ImageTransferPhase phase) {
         this.phase = phase;
+    }
+
+    public TransferType getType() {
+        return type;
+    }
+
+    public void setType(TransferType type) {
+        this.type = type;
     }
 
     public Date getLastUpdated() {
@@ -154,7 +163,8 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 && Objects.equals(proxyUri, other.proxyUri)
                 && Objects.equals(signedTicket, other.signedTicket)
                 && Objects.equals(bytesSent, other.bytesSent)
-                && Objects.equals(bytesTotal, other.bytesTotal);
+                && Objects.equals(bytesTotal, other.bytesTotal)
+                && type == other.type;
     }
 
     @Override
@@ -162,6 +172,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         return Objects.hash(
                 commandId,
                 phase,
+                type,
                 lastUpdated,
                 message,
                 vdsId,

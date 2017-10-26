@@ -61,6 +61,9 @@ public class ImageTransferUpdater {
                             message);
                     entity.setPhase(updates.getPhase());
                 }
+                if (updates.getType() != null) {
+                    entity.setType(updates.getType());
+                }
                 if (updates.getMessage() != null) {
                     entity.setMessage(updates.getMessage());
                 }
