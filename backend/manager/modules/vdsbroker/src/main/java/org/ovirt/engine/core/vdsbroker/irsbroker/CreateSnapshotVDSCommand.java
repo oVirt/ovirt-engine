@@ -2,8 +2,10 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
@@ -33,13 +35,16 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
         if (getParameters().getImageInitialSizeInBytes() != 0) {
             imageInitSize = String.valueOf(getParameters().getImageInitialSizeInBytes());
         }
+
+        String diskType = FeatureSupported.isContentTypeSupported(getParameters().getPoolCompatibilityVersion()) ?
+                getParameters().getDiskContentType().getStorageValue() : DiskContentType.LEGACY_DISK_TYPE;
         uuidReturn = getIrsProxy().createVolume(getParameters().getStorageDomainId().toString(),
                                                 getParameters().getStoragePoolId().toString(),
                                                 getParameters().getImageGroupId().toString(),
                                                 Long.valueOf(getParameters().getImageSizeInBytes()).toString(),
                                                 getParameters().getVolumeFormat().getValue(),
                                                 getParameters().getImageType().getValue(),
-                                                2,
+                                                diskType,
                                                 getParameters().getNewImageID().toString(),
                                                 getParameters().getNewImageDescription(),
                                                 getParameters().getSourceImageGroupId().toString(),

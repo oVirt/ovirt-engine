@@ -12,7 +12,7 @@ public interface IIrsServer {
     void close();
 
     OneUuidReturn createVolume(String sdUUID, String spUUID, String imgGUID, String size, int volFormat,
-            int volType, int diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID,
+            int volType, String diskType, String volUUID, String descr, String srcImgGUID, String srcVolUUID,
             String initialSize);
 
     OneUuidReturn copyImage(String sdUUID, String spUUID, String vmGUID, String srcImgGUID, String srcVolUUID,

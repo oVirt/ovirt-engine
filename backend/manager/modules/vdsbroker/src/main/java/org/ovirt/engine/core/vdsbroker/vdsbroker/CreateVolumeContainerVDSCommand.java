@@ -41,7 +41,7 @@ public class CreateVolumeContainerVDSCommand<P extends CreateVolumeVDSCommandPar
         info.put("vol_id", getParameters().getNewImageID().toString());
         info.put("virtual_size", (Long.valueOf(getParameters().getImageSizeInBytes())).toString());
         info.put("vol_format", getParameters().getVolumeFormat().name().toUpperCase());
-        info.put("disk_type", DiskContentType.DATA.name());
+        info.put("disk_type", DiskContentType.DATA.getStorageValue());
         info.put("description", getParameters().getDescription());
         info.put("parent_img_id", getParameters().getSrcImageGroupId() != null ? getParameters().getSrcImageGroupId()
                 .toString()

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
@@ -54,7 +55,8 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
                         .getSrcImageId(), getParameters().getSize(),
                         getType(), getParameters().getVolumeFormat(), getParameters().getSrcImageGroupId(),
                         getParameters().getImageId(),
-                        getParameters().getDescription());
+                        getParameters().getDescription(), getStoragePool().getCompatibilityVersion(),
+                        DiskContentType.DATA);
         if (getType() != VolumeType.Preallocated &&
                 ImagesHandler.isImageInitialSizeSupported(getStorageDomain().getStorageType())) {
             parameters.setImageInitialSizeInBytes(Optional.ofNullable(getParameters().getInitialSize()).orElse(0L));

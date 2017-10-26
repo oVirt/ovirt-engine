@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -90,6 +91,9 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
             if (struct.containsKey("format")) {
                 newImage.setVolumeFormat(EnumUtils.valueOf(VolumeFormat.class, struct.get("format")
                         .toString(), true));
+            }
+            if (struct.containsKey("disktype")) {
+                newImage.setContentType(DiskContentType.forStorageValue((String) struct.get("disktype")));
             }
 
             if (struct.containsKey("lease") && struct.get("lease") != null) {

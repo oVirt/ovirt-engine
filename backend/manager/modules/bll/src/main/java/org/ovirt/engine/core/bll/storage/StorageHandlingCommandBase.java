@@ -499,7 +499,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             for (Disk disk : disksFromStorage) {
                 DiskImage ovfStoreDisk = (DiskImage) disk;
                 String diskDescription = ovfStoreDisk.getDescription();
-                if (diskDescription.contains(OvfInfoFileConstants.OvfStoreDescriptionLabel)) {
+                if (ovfStoreDisk.isOvfStore() || diskDescription.contains(OvfInfoFileConstants.OvfStoreDescriptionLabel)) {
                     Map<String, Object> diskDescriptionMap;
                     try {
                         diskDescriptionMap = JsonHelper.jsonToMap(diskDescription);

@@ -2,8 +2,10 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
@@ -33,6 +35,9 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
         if (getParameters().getImageInitialSizeInBytes() != 0) {
             imageInitSize = Long.valueOf(getParameters().getImageInitialSizeInBytes()).toString();
         }
+
+        String diskType = FeatureSupported.isContentTypeSupported(getParameters().getPoolCompatibilityVersion()) ?
+                getParameters().getDiskContentType().getStorageValue() : DiskContentType.LEGACY_DISK_TYPE;
         uuidReturn = getIrsProxy().createVolume(
                 getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString(),
@@ -40,7 +45,7 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
                 Long.valueOf(getParameters().getImageSizeInBytes()).toString(),
                 getParameters().getVolumeFormat().getValue(),
                 getParameters().getImageType().getValue(),
-                2,
+                diskType,
                 getParameters().getNewImageID().toString(),
                 getParameters().getNewImageDescription(), Guid.Empty.toString(),
                 Guid.Empty.toString(),

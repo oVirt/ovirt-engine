@@ -227,4 +227,8 @@ public class FeatureSupported {
     public static boolean isReduceVolumeSupported(Version version) {
         return supportedInConfig(ConfigValues.ReduceVolumeSupported, version);
     }
+
+    public static boolean isContentTypeSupported(Version version) {
+        return supportedInConfig(ConfigValues.ContentType, version);
+    }
 }

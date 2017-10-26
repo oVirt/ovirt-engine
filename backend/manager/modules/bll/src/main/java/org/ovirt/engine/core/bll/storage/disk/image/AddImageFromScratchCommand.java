@@ -128,7 +128,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
                         getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
                         .getVolumeFormat(), getDestinationImageId(),
-                        getJsonDiskDescription(getParameters().getDiskInfo()));
+                        getJsonDiskDescription(getParameters().getDiskInfo()), getStoragePool().getCompatibilityVersion(),
+                        getParameters().getDiskInfo().getContentType());
 
         parameters.setImageInitialSizeInBytes(Optional.ofNullable(getInitialSize()).orElse(0L));
         return parameters;

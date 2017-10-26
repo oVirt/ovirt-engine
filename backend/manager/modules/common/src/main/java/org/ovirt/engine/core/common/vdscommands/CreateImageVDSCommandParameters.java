@@ -1,22 +1,28 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
     public CreateImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             long imageSizeInBytes, VolumeType imageType, VolumeFormat volFormat, Guid newImageId,
-            String newImageDescription) {
+            String newImageDescription, Version poolCompatibilityVersion, DiskContentType diskContentType) {
         super(storagePoolId, storageDomainId, imageGroupId);
         _imageSizeInBytes = imageSizeInBytes;
         _imageType = imageType;
         this.setVolumeFormat(volFormat);
         setNewImageID(newImageId);
         setNewImageDescription(newImageDescription);
+        setPoolCompatibilityVersion(poolCompatibilityVersion);
+        setDiskContentType(diskContentType);
     }
 
+    private Version poolCompatibilityVersion;
+    private DiskContentType diskContentType;
     private long _imageSizeInBytes;
     private VolumeType _imageType;
     private long imageInitialSizeInBytes;
@@ -65,6 +71,22 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
 
     protected void setNewImageDescription(String value) {
         privateNewImageDescription = value;
+    }
+
+    public Version getPoolCompatibilityVersion() {
+        return poolCompatibilityVersion;
+    }
+
+    public void setPoolCompatibilityVersion(Version poolCompatibilityVersion) {
+        this.poolCompatibilityVersion = poolCompatibilityVersion;
+    }
+
+    public DiskContentType getDiskContentType() {
+        return diskContentType;
+    }
+
+    public void setDiskContentType(DiskContentType diskContentType) {
+        this.diskContentType = diskContentType;
     }
 
     public CreateImageVDSCommandParameters() {

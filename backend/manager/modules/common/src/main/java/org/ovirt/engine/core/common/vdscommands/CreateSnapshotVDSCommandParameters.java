@@ -1,16 +1,19 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandParameters {
     public CreateSnapshotVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             Guid imageId, long imgSizeInBytes, VolumeType imageType, VolumeFormat volFormat,
-            Guid sourceImageGroupId, Guid newImageId, String newImageDescription) {
+            Guid sourceImageGroupId, Guid newImageId, String newImageDescription, Version compatibilityVersion,
+            DiskContentType diskContentType) {
         super(storagePoolId, storageDomainId, imageGroupId, imgSizeInBytes, imageType, volFormat, newImageId,
-                newImageDescription);
+                newImageDescription, compatibilityVersion, diskContentType);
         _imageId = imageId;
         setSourceImageGroupId(sourceImageGroupId);
     }

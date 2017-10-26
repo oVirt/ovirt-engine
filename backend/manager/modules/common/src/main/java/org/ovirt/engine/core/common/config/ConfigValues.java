@@ -1525,6 +1525,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     ReduceVolumeSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    ContentType,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

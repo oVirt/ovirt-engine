@@ -44,7 +44,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
             String size,
             int volFormat,
             int volType,
-            int diskType,
+            String diskType,
             String volUUID,
             String descr,
             String srcImgGUID,
