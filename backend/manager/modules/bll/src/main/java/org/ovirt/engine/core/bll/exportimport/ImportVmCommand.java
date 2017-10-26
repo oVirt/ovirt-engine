@@ -997,7 +997,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private DiskImage createMemoryDisk(Snapshot snapshot) {
         List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
         StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, guids.get(0), guids.get(2), guids.get(3));
-        if (sd == null) {
+        DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, guids.get(2), guids.get(3));
+        if (sd == null || disk != null) {
             return null;
         }
         VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
@@ -1019,7 +1020,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private DiskImage createMetadaaDisk(Snapshot snapshot) {
         List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
         StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, guids.get(0), guids.get(4), guids.get(5));
-        if (sd == null) {
+        DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, guids.get(4), guids.get(5));
+        if (sd == null || disk != null) {
             return null;
         }
         DiskImage memoryDisk = MemoryUtils.createMetadataDisk();
@@ -1030,6 +1032,19 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         memoryDisk.setCreationDate(snapshot.getCreationDate());
         memoryDisk.setActive(true);
         return memoryDisk;
+    }
+
+    private DiskImage isMemoryDiskAlreadyExistsInDb(Snapshot snapshot, Guid diskId, Guid imageId) {
+        DiskImage disk = diskImageDao.get(imageId);
+        if (disk != null) {
+            log.info("Memory disk '{}'/'{}' of snapshot '{}'(id: '{}') already exists on storage domain '{}'",
+                    diskId,
+                    imageId,
+                    snapshot.getDescription(),
+                    snapshot.getId(),
+                    disk.getStoragesNames().get(0));
+        }
+        return disk;
     }
 
     private StorageDomainStatic validateStorageDomainExistsInDb(Snapshot snapshot, Guid storageDomainId, Guid diskId, Guid imageId) {
