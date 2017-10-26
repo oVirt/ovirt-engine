@@ -85,6 +85,11 @@ public abstract class OvfOvirtReader extends OvfReader {
                 readAffinityGroupsSection(node);
             }
 
+            node = getNode(list, "xsi:type", "ovf:AffinityLabelsSection_Type");
+            if (node != null) {
+                readAffinityLabelsSection(node);
+            }
+
             node = getNode(list, "xsi:type", "ovf:UserDomainsSection_Type");
             if (node != null) {
                 readUserDomainsSection(node);
@@ -134,6 +139,10 @@ public abstract class OvfOvirtReader extends OvfReader {
 
     protected void readAffinityGroupsSection(@SuppressWarnings("unused") XmlNode section) {
         // The affinity group section only has meaning for VMs, and is overridden in OvfVmReader.
+    }
+
+    protected void readAffinityLabelsSection(@SuppressWarnings("unused") XmlNode section) {
+        // The affinity label section only has meaning for VMs, and is overridden in OvfVmReader.
     }
 
     protected void readUserDomainsSection(@SuppressWarnings("unused") XmlNode section) {

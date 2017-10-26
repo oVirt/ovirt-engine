@@ -56,6 +56,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -105,6 +106,9 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Mock
     private AffinityGroupDao affinityGroupDao;
+
+    @Mock
+    private LabelDao labelDao;
 
     @Mock
     private DbUserDao dbUserDao;
@@ -325,6 +329,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(templatesGuids).when(vmAndTemplatesGenerationsDao).getVmTemplatesIdsForOvfUpdate(poolId);
         doReturn(removedGuids).when(vmAndTemplatesGenerationsDao).getIdsForOvfDeletion(poolId);
         doReturn(Collections.EMPTY_LIST).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+        doReturn(Collections.EMPTY_LIST).when(labelDao).getAllByEntityIds(any());
         doReturn(new DbUser()).when(dbUserDao).getByUsernameAndDomain(any(), any());
         doReturn(Collections.EMPTY_LIST).when(permissionDao).getAllForAdElementAndObjectId(any(), any());
         pool.setStatus(StoragePoolStatus.Up);

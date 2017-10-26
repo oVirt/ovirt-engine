@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -33,6 +35,7 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -77,6 +80,9 @@ public class OvfHelper {
 
     @Inject
     private PermissionDao permissionDao;
+
+    @Inject
+    private LabelDao labelDao;
 
     /**
      * parses a given ovf to a vm, initialize all the extra data related to it such as images, interfaces, cluster,
@@ -149,6 +155,7 @@ public class OvfHelper {
         List<LunDisk> lunDisks = DisksFilter.filterLunDisks(vm.getDiskMap().values());
         List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
         Set<DbUser> dbUsers = new HashSet<>(dbUserDao.getAllForVm(vm.getId()));
+        List<Label> affinityLabels = labelDao.getAllByEntityIds(Collections.singletonList(vm.getId()));
 
         for (DiskImage diskImage : filteredDisks) {
             List<DiskImage> images = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
@@ -160,6 +167,7 @@ public class OvfHelper {
         fullEntityOvfData.setDiskImages(allVmImages);
         fullEntityOvfData.setLunDisks(lunDisks);
         fullEntityOvfData.setAffinityGroups(affinityGroups);
+        fullEntityOvfData.setAffinityLabels(affinityLabels.stream().map(label -> label.getName()).collect(Collectors.toList()));
         fullEntityOvfData.setDbUsers(dbUsers);
         populateUserToRoles(fullEntityOvfData, vm.getId());
         return ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));

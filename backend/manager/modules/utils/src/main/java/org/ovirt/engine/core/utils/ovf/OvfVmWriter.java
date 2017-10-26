@@ -75,6 +75,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
         }
 
         writeAffinityGroups();
+        writeAffinityLabels();
     }
 
     private void writeLogEvent(String name, String value) {
@@ -151,4 +152,21 @@ public class OvfVmWriter extends OvfOvirtWriter {
         _writer.writeEndElement();
     }
 
+    private void writeAffinityLabels() {
+        List<String> affinityLabelsNames = fullEntityOvfData.getAffinityLabels();
+        if (affinityLabelsNames == null || affinityLabelsNames.isEmpty()) {
+            return;
+        }
+
+        _writer.writeStartElement("Section");
+        _writer.writeAttributeString(XSI_URI, "type", "ovf:AffinityLabelsSection_Type");
+
+        affinityLabelsNames.forEach(labelName -> {
+            _writer.writeStartElement(OvfProperties.AFFINITY_LABEL);
+            _writer.writeAttributeString(OVF_URI, "name", labelName);
+            _writer.writeEndElement();
+        });
+
+        _writer.writeEndElement();
+    }
 }

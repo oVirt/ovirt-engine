@@ -193,6 +193,18 @@ public class OvfVmReader extends OvfOvirtReader {
     }
 
     @Override
+    protected void readAffinityLabelsSection(XmlNode section) {
+        XmlNodeList list = selectNodes(section, OvfProperties.AFFINITY_LABEL);
+        List<String> affinityLabels = new ArrayList<>();
+        for (XmlNode node : list) {
+            String affinityLabelName = node.attributes.get("ovf:name").innerText;
+            affinityLabels.add(affinityLabelName);
+        }
+
+        fullEntityOvfData.setAffinityLabels(affinityLabels);
+    }
+
+    @Override
     protected void buildNicReference() {
     }
 

@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -47,6 +48,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
@@ -83,6 +85,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private LabelDao labelDao;
     @Inject
     private DbUserDao dbUserDao;
     @Inject
@@ -182,6 +186,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setAffinityGroups(fullEntityOvfData.getAffinityGroups());
+                getParameters().setAffinityLabels(fullEntityOvfData.getAffinityLabels());
                 getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
                 getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
 
@@ -241,26 +246,15 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         List<AffinityGroup> affinityGroups = new ArrayList<>();
         Map<String, String> affinityGroupMap = getParameters().getAffinityGroupMap();
         getParameters().getAffinityGroups().forEach(affinityGroup -> {
-            AffinityGroup originalAffinityGroup = affinityGroupDao.getByName(affinityGroup.getName());
-            if (affinityGroupMap != null) {
-                String destName = affinityGroupMap.get(affinityGroup.getName());
-                if (destName != null) {
-                    AffinityGroup destAffinityGroup = affinityGroupDao.getByName(destName);
-                    AffinityGroup affinity = addBusinessEntityToList(destAffinityGroup, originalAffinityGroup);
-                    if (affinity != null) {
-                        affinityGroups.add(affinity);
-                    }
-                } else {
-                    AffinityGroup affinity = addBusinessEntityToList(originalAffinityGroup, null);
-                    if (affinity != null) {
-                        affinityGroups.add(affinity);
-                    }
-                }
-            } else {
-                AffinityGroup affinity = addBusinessEntityToList(originalAffinityGroup, null);
-                if (affinity != null) {
-                    affinityGroups.add(affinity);
-                }
+            log.info("Mapping affinity group '{}/{} for vm '{}'.",
+                    affinityGroup != null ? affinityGroup.getId() : "N/A",
+                    affinityGroup != null ? affinityGroup.getName() : "N/A",
+                    getParameters().getVm().getId());
+            AffinityGroup affGroup = getRelatedEntity(affinityGroupMap,
+                    affinityGroup.getName(),
+                    val -> affinityGroupDao.getByName((String) val));
+            if (affGroup != null) {
+                affinityGroups.add(affGroup);
             }
         });
         return affinityGroups;
@@ -355,6 +349,32 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
             vmIds.add(getParameters().getVm().getId());
             affinityGroup.setVmIds(new ArrayList<>(vmIds));
             affinityGroupDao.update(affinityGroup);
+        });
+    }
+
+    @Override
+    protected List<Label> mapAffinityLabels() {
+        List<Label> affinityLabels = new ArrayList<>();
+        Map<String, String> affinityLabelMap = getParameters().getAffinityLabelMap();
+        getParameters().getAffinityLabels().forEach(affinityLabel -> {
+            log.info("Mapping affinity label '{}' for vm '{}'.",
+                    affinityLabel,
+                    getParameters().getVm().getId());
+            Label affLabel = getRelatedEntity(affinityLabelMap,
+                    affinityLabel,
+                    val -> labelDao.getByName((String) val));
+            if (affLabel != null) {
+                affinityLabels.add(affLabel);
+            }
+        });
+        return affinityLabels;
+    }
+
+    @Override
+    public void addVmToAffinityLabels() {
+        mapAffinityLabels().forEach(affinityLabel -> {
+            affinityLabel.addVm(getParameters().getVm());
+            labelDao.update(affinityLabel);
         });
     }
 

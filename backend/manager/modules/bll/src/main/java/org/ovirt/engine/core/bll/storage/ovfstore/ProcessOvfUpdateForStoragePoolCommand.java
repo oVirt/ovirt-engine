@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateParameters;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
@@ -48,6 +50,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -86,6 +89,8 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdatePa
     private VmDao vmDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private LabelDao labelDao;
     @Inject
     private DbUserDao dbUserDao;
     @Inject
@@ -348,11 +353,15 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdatePa
                     }
 
                     List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
+                    List<Label> affinityLabels = labelDao.getAllByEntityIds(Collections.singletonList(vm.getId()));
                     Set<DbUser> dbUsers = new HashSet<>(dbUserDao.getAllForVm(vm.getId()));
                     FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
                     fullEntityOvfData.setDiskImages(vmImages);
                     fullEntityOvfData.setLunDisks(lunDisks);
                     fullEntityOvfData.setAffinityGroups(affinityGroups);
+                    fullEntityOvfData.setAffinityLabels(affinityLabels.stream()
+                            .map(label -> label.getName())
+                            .collect(Collectors.toList()));
                     fullEntityOvfData.setDbUsers(dbUsers);
                     ovfHelper.populateUserToRoles(fullEntityOvfData, vm.getId());
                     proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForVm(vm,

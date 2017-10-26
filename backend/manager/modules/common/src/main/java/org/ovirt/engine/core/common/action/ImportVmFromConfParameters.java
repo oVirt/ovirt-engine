@@ -26,6 +26,7 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     private List<AffinityGroup> affinityGroups;
     private Set<DbUser> dbUsers;
     private Map<String, Set<String>> userToRoles  = new HashMap<>();
+    private List<String> affinityLabels;
 
     public ImportVmFromConfParameters() {
         this(Collections.emptyList(), false);
@@ -111,6 +112,14 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
 
     public void setAffinityGroups(List<AffinityGroup> affinityGroups) {
         this.affinityGroups = affinityGroups;
+    }
+
+    public List<String> getAffinityLabels() {
+        return affinityLabels;
+    }
+
+    public void setAffinityLabels(List<String> affinityLabels) {
+        this.affinityLabels = affinityLabels;
     }
 
     public Set<DbUser> getDbUsers() {

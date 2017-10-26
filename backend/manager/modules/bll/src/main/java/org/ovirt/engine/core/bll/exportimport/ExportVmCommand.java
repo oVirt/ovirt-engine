@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -84,6 +85,7 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -137,6 +139,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private DbUserDao dbUserDao;
     @Inject
     private OvfHelper ovfHelper;
+    @Inject
+    private LabelDao labelDao;
 
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
@@ -318,6 +322,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         List<LunDisk> lunDisks = new ArrayList<>();
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
+        List<Label> labels = labelDao.getAllByEntityIds(Collections.singletonList(vm.getId()));
         Set<DbUser> dbUsers = new HashSet<>(dbUserDao.getAllForVm(vm.getId()));
         if (interfaces != null) {
             // TODO remove this when the API changes
@@ -360,6 +365,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         fullEntityOvfData.setDiskImages(vmImages);
         fullEntityOvfData.setLunDisks(lunDisks);
         fullEntityOvfData.setAffinityGroups(affinityGroups);
+        fullEntityOvfData.setAffinityLabels(labels.stream().map(label -> label.getName()).collect(Collectors.toList()));
         fullEntityOvfData.setDbUsers(dbUsers);
         ovfHelper.populateUserToRoles(fullEntityOvfData, vm.getId());
         String vmMeta = ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
@@ -566,6 +572,10 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         fullEntityOvfData.setAffinityGroups(affinityGroupDao.getAllAffinityGroupsByVmId(getVmId()));
         fullEntityOvfData.setDbUsers(new HashSet<>(dbUserDao.getAllForVm(getVmId())));
         ovfHelper.populateUserToRoles(fullEntityOvfData, getVmId());
+        fullEntityOvfData.setAffinityLabels(labelDao.getAllByEntityIds(Collections.singletonList(getVmId()))
+                .stream()
+                .map(label -> label.getName())
+                .collect(Collectors.toList()));
         ovfUpdateProcessHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,
                 fullEntityOvfData);

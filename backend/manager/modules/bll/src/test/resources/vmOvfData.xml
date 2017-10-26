@@ -44,6 +44,9 @@
         <Section xsi:type="ovf:AffinityGroupsSection_Type">
             <AffinityGroup ovf:name="aff1"></AffinityGroup>
         </Section>
+        <Section xsi:type="ovf:AffinityLabelsSection_Type">
+            <AffinityLabel ovf:name="aff1_label"></AffinityLabel>
+        </Section>
         <Section xsi:type="ovf:VirtualHardwareSection_Type">
             <Info>1 CPU, 1024 Memeory</Info>
             <System>

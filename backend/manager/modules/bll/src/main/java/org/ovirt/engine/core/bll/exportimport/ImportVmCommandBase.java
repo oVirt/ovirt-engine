@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -463,6 +464,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         try {
             addVmToDb();
             addVmToAffinityGroups();
+            addVmToAffinityLabels();
             mapDbUsers();
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
@@ -480,7 +482,15 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         // Left empty to override in ImportVmFromConfiguration
     }
 
+    public void addVmToAffinityLabels() {
+        // Left empty to override in ImportVmFromConfiguration
+    }
+
     protected List<AffinityGroup> mapAffinityGroups() {
+        return Collections.EMPTY_LIST;
+    }
+
+    protected List<Label> mapAffinityLabels() {
         return Collections.EMPTY_LIST;
     }
 

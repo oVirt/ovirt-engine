@@ -27,6 +27,7 @@ public class FullEntityOvfData implements Serializable {
     private List<AffinityGroup> affinityGroups = new ArrayList<>();
     private Set<DbUser> dbUsers = new HashSet<>();
     private Map<String, Set<String>> userToRoles = new HashMap<>();
+    private List<String> affinityLabelsNames = new ArrayList<>();
 
     public FullEntityOvfData() {
     }
@@ -50,7 +51,8 @@ public class FullEntityOvfData implements Serializable {
             String clusterName,
             List<AffinityGroup> affinityGroups,
             Set<DbUser> dbUsers,
-            Map<String, Set<String>> userToRoles) {
+            Map<String, Set<String>> userToRoles,
+            List<String> affinityLabelsNames) {
         this.diskImages = diskImages;
         this.lunDisks = lunDisks;
         this.interfaces = interfaces;
@@ -59,6 +61,7 @@ public class FullEntityOvfData implements Serializable {
         this.affinityGroups = affinityGroups;
         this.dbUsers = dbUsers;
         this.userToRoles = userToRoles;
+        this.affinityLabelsNames = affinityLabelsNames;
     }
 
     public VmBase getVmBase() {
@@ -141,6 +144,14 @@ public class FullEntityOvfData implements Serializable {
         this.userToRoles = userToRoles;
     }
 
+    public List<String> getAffinityLabels() {
+        return affinityLabelsNames;
+    }
+
+    public void setAffinityLabels(List<String> affinityLabelsNames) {
+        this.affinityLabelsNames = affinityLabelsNames;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -158,7 +169,8 @@ public class FullEntityOvfData implements Serializable {
                 && Objects.equals(clusterName, other.clusterName)
                 && Objects.equals(affinityGroups, other.affinityGroups)
                 && Objects.equals(dbUsers, other.dbUsers)
-                && Objects.equals(userToRoles, other.userToRoles);
+                && Objects.equals(userToRoles, other.userToRoles)
+                && Objects.equals(affinityLabelsNames, other.affinityLabelsNames);
     }
 
     @Override
@@ -172,6 +184,7 @@ public class FullEntityOvfData implements Serializable {
                 clusterName,
                 affinityGroups,
                 dbUsers,
-                userToRoles);
+                userToRoles,
+                affinityLabelsNames);
     }
 }
