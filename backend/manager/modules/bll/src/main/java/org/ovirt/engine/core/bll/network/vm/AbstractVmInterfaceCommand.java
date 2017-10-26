@@ -1,10 +1,6 @@
 package org.ovirt.engine.core.bll.network.vm;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -30,7 +26,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
@@ -66,25 +61,6 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         final VmStatic vmStaticData = getVm().getStaticData();
         getCompensationContext().snapshotEntity(vmStaticData);
         vmStaticDao.incrementDbGeneration(vmStaticData.getId());
-    }
-
-    protected boolean duplicateMacExists(List<VmNic> allInterfaces) {
-        Map<String, Long> macAddressToItsUsageCount = allInterfaces.stream().map(VmNic::getMacAddress)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-
-        List<String> macsUsedDuplicitly = macAddressToItsUsageCount.entrySet()
-                .stream()
-                .filter(e -> e.getValue() > 1)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-
-        EngineMessage engineMessage =
-                EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_HAVE_MULTIPLE_VMNICS_WITH_SAME_MAC_ADDRESSES;
-
-        Collection<String> replacements =
-                ReplacementUtils.getListVariableAssignmentString(engineMessage, macsUsedDuplicitly);
-
-        return validate(ValidationResult.failWith(engineMessage, replacements).when(!macsUsedDuplicitly.isEmpty()));
     }
 
     @Override

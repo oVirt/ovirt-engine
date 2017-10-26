@@ -5,8 +5,6 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
 public interface AppErrors extends ConstantsWithLookup {
     String MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES();
 
-    String ACTION_TYPE_FAILED_VM_CANNOT_HAVE_MULTIPLE_VMNICS_WITH_SAME_MAC_ADDRESSES();
-
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL();
 
     String VAR__ENTITIES__CLUSTERS();
