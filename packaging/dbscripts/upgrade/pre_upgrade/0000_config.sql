@@ -940,6 +940,9 @@ select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
 select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}','4.2');
 select fn_db_update_config_value('MaxNumOfVmCpus', '384', '4.2');
+select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.1');
+select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.2');
+
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
 ------------------------------------------------------------------------------------
