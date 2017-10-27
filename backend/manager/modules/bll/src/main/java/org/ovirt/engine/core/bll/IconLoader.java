@@ -117,17 +117,17 @@ public class IconLoader implements BackendService {
     private void updateVmIconDefaultsTable() {
         vmIconDefaultDao.removeAll();
         for (Map.Entry<Integer, VmIconIdSizePair> entry : osIdToIconIdMap.entrySet()) {
-            final VmIconDefault osDefautlIconIds = new VmIconDefault(Guid.newGuid(),
+            final VmIconDefault osDefaultIconIds = new VmIconDefault(Guid.newGuid(),
                     entry.getKey(),
                     entry.getValue().getSmall(),
                     entry.getValue().getLarge());
-            vmIconDefaultDao.save(osDefautlIconIds);
+            vmIconDefaultDao.save(osDefaultIconIds);
         }
     }
 
     private void ensureDefaultOsIconExists() {
         if (osIdToIconIdMap.get(DEFAULT_OS_ID) == null) {
-            throw new RuntimeException("Icons for default os not found.");
+            throw new RuntimeException("Icons for default guest OS not found.");
         }
     }
 
