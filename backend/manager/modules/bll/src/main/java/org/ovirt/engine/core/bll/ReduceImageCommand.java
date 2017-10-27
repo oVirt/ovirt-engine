@@ -37,10 +37,17 @@ public class ReduceImageCommand<T extends ReduceImageCommandParameters> extends 
     public ReduceImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());
+        setStorageDomainId(getParameters().getStorageDomainId());
     }
 
     @Override
     protected void executeCommand() {
+        if (getStorageDomain().getStorageType().isFileDomain()) {
+            log.info("Reduce image isn't required for file based domains");
+            setSucceeded(true);
+            return;
+        }
+
         if (!isReduceVolumeSupported()) {
             log.info("Reduce image isn't supported in {}", getStoragePool().getCompatibilityVersion());
             setSucceeded(true);
