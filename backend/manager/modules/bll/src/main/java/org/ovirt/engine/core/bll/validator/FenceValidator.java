@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
 
@@ -94,8 +94,10 @@ public class FenceValidator {
     public boolean isFenceAgentVersionCompatible(FenceAgent agent,
             String clusterCompatibilityVersion,
             List<String> messages) {
-        if (!Regex.isMatch(FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceType.name(),
-                clusterCompatibilityVersion), String.format("(,|^)%1$s(,|$)", agent.getType()))) {
+        if (!Pattern.compile(String.format("(,|^)%1$s(,|$)", agent.getType())).matcher(
+                FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceType.name(),
+                        clusterCompatibilityVersion)
+                ).find()) {
             messages.add(EngineMessage.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED.name());
             return false;
         } else {
