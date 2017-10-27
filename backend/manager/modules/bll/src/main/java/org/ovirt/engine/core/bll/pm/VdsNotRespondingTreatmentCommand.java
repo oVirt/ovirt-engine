@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -121,7 +120,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     protected void executeCommand() {
         VDS host = getVds();
         if (!previousHostedEngineHost.isPreviousHostId(host.getId())
-                && !new FenceValidator().isStartupTimeoutPassed()
+                && !fenceValidator.isStartupTimeoutPassed()
                 && !host.isInFenceFlow()) {
             log.error("Failed to run Fence script on vds '{}'.", getVdsName());
             alertIfPowerManagementOperationSkipped();

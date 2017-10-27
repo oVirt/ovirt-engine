@@ -52,7 +52,8 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     @Inject
     protected AuditLogDirector auditLogDirector;
-
+    @Inject
+    protected FenceValidator fenceValidator;
     @Inject
     private PmHealthCheckManager pmHealthCheckManager;
     @Inject
@@ -225,7 +226,6 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
                 return false;
             }
             if (validateAgents) {
-                FenceValidator fenceValidator = new FenceValidator();
                 for (FenceAgent agent : fenceAgents) {
                     if (!fenceValidator.isFenceAgentVersionCompatible(agent,
                             clusterCompatibilityVersion,

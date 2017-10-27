@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
-import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -79,7 +78,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
     @Override
     protected boolean validate() {
         VDS host = getVds();
-        FenceValidator fenceValidator = new FenceValidator();
         List<String> messages = getReturnValue().getValidationMessages();
         boolean valid =
                 fenceValidator.isHostExists(host, messages)

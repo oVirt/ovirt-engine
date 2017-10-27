@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -34,8 +33,6 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
-    protected FenceValidator fenceValidator;
-
     @Inject
     private AuditLogDirector auditLogDirector;
 
@@ -55,12 +52,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      */
     protected FenceVdsBaseCommand(Guid commandId) {
         super(commandId);
-        fenceValidator = new FenceValidator();
     }
 
     public FenceVdsBaseCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        fenceValidator = new FenceValidator();
     }
 
     @Override

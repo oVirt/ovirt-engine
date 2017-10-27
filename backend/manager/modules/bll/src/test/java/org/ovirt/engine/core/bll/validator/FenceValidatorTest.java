@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -37,6 +37,7 @@ public class FenceValidatorTest {
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
 
+    @InjectMocks
     @Spy
     private FenceValidator validator;
 
@@ -47,18 +48,11 @@ public class FenceValidatorTest {
     private BackendInternal backend;
 
     @Mock
-    private DbFacade dbFacade;
-
-    @Mock
     private FenceAgentDao fenceAgentDao;
 
     @Before
     public void setup() {
-        when(dbFacade.getFenceAgentDao()).thenReturn(fenceAgentDao);
-
-        doReturn(dbFacade).when(validator).getDbFacade();
         doReturn(proxyLocator).when(validator).getProxyLocator(any());
-        doReturn(backend).when(validator).getBackend();
     }
 
     @Test
