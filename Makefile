@@ -436,13 +436,17 @@ install-packaging-files: \
 	$(MAKE) copy-recursive SOURCEDIR=packaging/sys-etc TARGETDIR="$(DESTDIR)$(SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/etc TARGETDIR="$(DESTDIR)$(PKG_SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pki TARGETDIR="$(DESTDIR)$(PKG_PKI_DIR)" EXCLUDE_GEN="$(GENERATED)"
-	for d in bin conf files firewalld services icons; do \
+	for d in bin conf files firewalld services; do \
 		$(MAKE) copy-recursive SOURCEDIR="packaging/$${d}" TARGETDIR="$(DESTDIR)$(DATA_DIR)/$${d}" EXCLUDE_GEN="$(GENERATED)"; \
 	done
 	$(MAKE) copy-recursive SOURCEDIR=packaging/doc TARGETDIR="$(DESTDIR)$(PKG_DOC_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/man TARGETDIR="$(DESTDIR)$(MAN_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/libexec TARGETDIR="$(DESTDIR)$(LIBEXEC_DIR)" EXCLUDE_GEN="$(GENERATED)"
+	# `cp` instead of `install` to copy symlinks
+	cp -dRT packaging/icons $(DESTDIR)$(DATA_DIR)/icons
+	find $(DESTDIR)$(DATA_DIR)/icons -type f -exec chmod 0644 {} \;
+	find $(DESTDIR)$(DATA_DIR)/icons -type d -exec chmod 0755 {} \;
 
 	# copy all of packaging/setup but exclude all tests.
 	$(MAKE) copy-recursive SOURCEDIR=packaging/setup TARGETDIR="$(DESTDIR)$(DATA_DIR)/setup" \
