@@ -1145,8 +1145,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String collapseSnapshots();
 
-    String connectAutomaticallyLabel();
-
     String highPriorityOnly();
 
     String virt();
@@ -1702,8 +1700,6 @@ public interface CommonApplicationConstants extends Constants {
     String headlessModeVmPopup();
 
     String headlessModeExplanation();
-
-    String connectAutomaticallyMessage();
 
     String consolePublicKeyMessage();
 

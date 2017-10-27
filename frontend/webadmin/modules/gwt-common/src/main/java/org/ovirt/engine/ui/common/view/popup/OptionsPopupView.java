@@ -1,15 +1,12 @@
 package org.ovirt.engine.ui.common.view.popup;
 
-import org.gwtbootstrap3.client.ui.FormLabel;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.section.main.presenter.OptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextArea;
 import org.ovirt.engine.ui.uicommonweb.models.EditOptionsModel;
 
@@ -39,20 +36,8 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
-    @Path(value = "enableConnectAutomatically.entity")
-    @WithElementId("enableConnectAutomatically")
-    EntityModelCheckBoxOnlyEditor connectAutomaticallyEditor;
-
-    @UiField
-    @Ignore
-    public FormLabel connectAutomaticallyLabel;
-
-    @UiField
     @Path(value = "publicKey.entity")
     StringEntityModelTextArea publicKeyEditor;
-
-    @UiField
-    InfoIcon connectAutomaticallyInfoIcon;
 
     @UiField
     InfoIcon consolePublicKeyInfoIcon;
@@ -62,10 +47,7 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
         super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        final String checkboxId = connectAutomaticallyEditor.asCheckBox().getElement().getFirstChildElement().getId();
-        connectAutomaticallyInfoIcon.setText(SafeHtmlUtils.fromString(constants.connectAutomaticallyMessage()));
         consolePublicKeyInfoIcon.setText(SafeHtmlUtils.fromString(constants.consolePublicKeyMessage()));
-        connectAutomaticallyLabel.setFor(checkboxId);
         driver.initialize(this);
     }
 

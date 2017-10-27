@@ -45,13 +45,6 @@
             <b:Container fluid="true">
                 <b:Row addStyleNames="{style.verticalSpacing}">
                     <b:Column size="LG_12">
-                        <b:FormLabel ui:field="connectAutomaticallyLabel" text="{constants.connectAutomaticallyLabel}" addStyleNames="{style.inlineBlock}" />
-                        <d:InfoIcon ui:field="connectAutomaticallyInfoIcon" addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
-                        <ge:EntityModelCheckBoxOnlyEditor ui:field="connectAutomaticallyEditor" usePatternFly="true" addStyleNames="{style.noBottomMargin} {style.inlineBlock}" />
-                    </b:Column>
-                </b:Row>
-                <b:Row addStyleNames="{style.verticalSpacing}">
-                    <b:Column size="LG_12">
                         <g:Label ui:field="publicKeyLabel" text="{constants.consolePublicKeyLabel}" addStyleNames="{style.inlineBlock}" />
                         <d:InfoIcon ui:field="consolePublicKeyInfoIcon" addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
                     </b:Column>
