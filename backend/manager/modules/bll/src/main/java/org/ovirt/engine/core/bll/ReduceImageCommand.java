@@ -36,6 +36,7 @@ public class ReduceImageCommand<T extends ReduceImageCommandParameters> extends 
 
     public ReduceImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+        setStoragePoolId(getParameters().getStoragePoolId());
     }
 
     @Override
@@ -141,7 +142,6 @@ public class ReduceImageCommand<T extends ReduceImageCommandParameters> extends 
     }
 
     private boolean isReduceVolumeSupported() {
-        setStoragePoolId(getParameters().getStoragePoolId());
         return FeatureSupported.isReduceVolumeSupported(getStoragePool().getCompatibilityVersion());
     }
 
