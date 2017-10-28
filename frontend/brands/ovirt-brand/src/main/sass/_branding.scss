@@ -56,6 +56,11 @@ over) by other installed brands.
     background-color: #121212;
 }
 
+.obrand_ssoHeader .navbar-nav li a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
 .obrand_main_tab {
     height: calc(100vh - 66px);
     min-height: calc(100vh - 66px);
