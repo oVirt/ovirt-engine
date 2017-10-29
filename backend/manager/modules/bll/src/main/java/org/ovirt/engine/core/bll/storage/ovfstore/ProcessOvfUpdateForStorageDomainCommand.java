@@ -198,15 +198,15 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
         Map<String, Object> vmsStatus = new HashMap<>();
         for (Guid vmId : vmAndTemplatesIds) {
             VmDynamic vmDynamic = vmDynamicDao.get(vmId);
-            if (vmDynamic.getStatus() != VMStatus.Down) {
+            if (vmDynamic != null && vmDynamic.getStatus() != VMStatus.Down) {
                 vmsStatus.put(vmId.toString(), vmDynamic.getStatus().getValue());
                 log.debug("OVF_STORE - Add vm id '{}' with status: '{}'",
                         vmId,
                         vmDynamic.getStatus());
             } else {
-                log.debug("OVF_STORE - Skip vm id '{}' with status: '{}'",
+                log.debug("OVF_STORE - Skip entity id '{}' with status: '{}'",
                         vmId,
-                        vmDynamic.getStatus());
+                        vmDynamic != null ? vmDynamic.getStatus() : "N/A");
             }
         }
         data.put(OvfInfoFileConstants.VmStatus, vmsStatus);
