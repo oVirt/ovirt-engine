@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -120,6 +122,24 @@ public class NetworkValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult networkNameNotUsedAsVdsmName() {
+        String conflictingNetwork = getNetworkDao()
+                .getAllForDataCenter(network.getDataCenterId())
+                .stream()
+                .filter(net -> !net.getId().equals(network.getId()))
+                .filter(net -> net.getVdsmName().equals(network.getName()))
+                .map(net -> net.getName())
+                .findFirst()
+                .orElse(null);
+        if (conflictingNetwork == null) {
+            return ValidationResult.VALID;
+        }
+        Collection<String> nameReplacements = ReplacementUtils.replaceWith(
+                "ConflictingNetwork", singletonList(conflictingNetwork));
+        nameReplacements.add(getNetworkNameReplacement());
+        return new ValidationResult(EngineMessage.NETWORK_NAME_USED_AS_VDSM_NETWORK_NAME, nameReplacements);
+    }
+
     public ValidationResult notManagementNetwork() {
         final boolean isManagementNetwork = isManagementNetwork();
         return getManagementNetworkValidationResult(isManagementNetwork);
@@ -134,6 +154,10 @@ public class NetworkValidator {
             ? new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
                                           getNetworkNameReplacement())
                                   : ValidationResult.VALID;
+    }
+
+    protected NetworkDao getNetworkDao() {
+        return Injector.get(NetworkDao.class);
     }
 
     protected ManagementNetworkUtil getManagementNetworkUtil() {

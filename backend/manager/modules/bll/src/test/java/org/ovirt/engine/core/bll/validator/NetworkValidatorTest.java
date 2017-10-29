@@ -10,6 +10,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class NetworkValidatorTest {
         validator = spy(new NetworkValidator(vmDao, network));
         doReturn(dbFacade).when(validator).getDbFacade();
         doReturn(managementNetworkUtil).when(validator).getManagementNetworkUtil();
+        doReturn(networkDao).when(validator).getNetworkDao();
 
         // mock some commonly used Daos
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
@@ -225,6 +227,33 @@ public class NetworkValidatorTest {
     @Test
     public void networkNameAvailable() throws Exception {
         networkNameAvailableTest(isValid(), getSingletonNamedNetworkList(OTHER_NETWORK_NAME, OTHER_GUID));
+    }
+
+    @Test
+    public void networkNameTakenByVdsmName() {
+        when(network.getName()).thenReturn("vdsm-name");
+        when(network.getId()).thenReturn(DEFAULT_GUID);
+
+        Network network2 = new Network();
+        network2.setVdsmName("vdsm-name");
+        network2.setName("vdsm-name");
+        network2.setId(OTHER_GUID);
+
+        when(networkDao.getAllForDataCenter(any())).thenReturn(Arrays.asList(network, network2));
+        assertThat(validator.networkNameNotUsedAsVdsmName(), failsWith(EngineMessage.NETWORK_NAME_USED_AS_VDSM_NETWORK_NAME));
+    }
+
+    @Test
+    public void networkNameNotTakenByVdsmName() {
+        when(network.getName()).thenReturn(DEFAULT_NETWORK_NAME);
+        when(network.getId()).thenReturn(DEFAULT_GUID);
+
+        Network network2 = new Network();
+        network2.setVdsmName("vdsm-name");
+        network2.setId(OTHER_GUID);
+
+        when(networkDao.getAllForDataCenter(any())).thenReturn(Arrays.asList(network, network2));
+        assertThat(validator.networkNameNotUsedAsVdsmName(), isValid());
     }
 
     @Test
