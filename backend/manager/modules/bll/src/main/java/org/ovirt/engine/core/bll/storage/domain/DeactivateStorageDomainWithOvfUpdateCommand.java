@@ -4,6 +4,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -41,7 +43,6 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
 
     public DeactivateStorageDomainWithOvfUpdateCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        setCommandShouldBeLogged(false);
     }
 
     private boolean shouldUseCallback() {
@@ -68,7 +69,13 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, getCompensationContext());
 
         if (shouldPerformOvfUpdate()) {
-            runInternalAction(ActionType.UpdateOvfStoreForStorageDomain, createUpdateOvfStoreParams(), getContext());
+            ActionReturnValue returnValue =  runInternalAction(ActionType.UpdateOvfStoreForStorageDomain,
+                    createUpdateOvfStoreParams(),
+                    cloneContext().withoutCompensationContext());
+            if (!returnValue.getSucceeded()) {
+                propagateFailure(returnValue);
+                return;
+            }
         }
 
         if (noAsyncOperations()) {
@@ -113,7 +120,9 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return AuditLogType.UNASSIGNED;
+        return getActionState() == CommandActionState.END_FAILURE ?
+                AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED :
+                AuditLogType.UNASSIGNED;
     }
 
     @Override
@@ -127,8 +136,6 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         if (commandCoordinatorUtil.getCommandExecutionStatus(getCommandId()) != CommandExecutionStatus.EXECUTED) {
             changeStorageDomainStatusInTransaction(loadStoragePoolIsoMap(), StorageDomainStatus.Unknown);
             auditLogDirector.log(this, AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_OVF_UPDATE_INCOMPLETE);
-        } else {
-            executeDeactivateCommand();
         }
 
         setSucceeded(true);

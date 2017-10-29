@@ -40,10 +40,18 @@ public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParame
                 runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters, getContext());
         Set<Guid> proccessedDomains = actionReturnValue.getActionReturnValue();
 
-        if (actionReturnValue.getSucceeded() && proccessedDomains != null &&
-                proccessedDomains.contains(storageDomainId)) {
-            runInternalActionWithTasksContext(ActionType.ProcessOvfUpdateForStorageDomain,
+        if (!actionReturnValue.getSucceeded()) {
+            propagateFailure(actionReturnValue);
+            return;
+        }
+
+        if (proccessedDomains != null && proccessedDomains.contains(storageDomainId)) {
+            actionReturnValue = runInternalActionWithTasksContext(ActionType.ProcessOvfUpdateForStorageDomain,
                     createProcessOvfUpdateForDomainParams());
+            if (!actionReturnValue.getSucceeded()) {
+                propagateFailure(actionReturnValue);
+                return;
+            }
         } else {
             log.info("OVFs update was ignored - nothing to update for storage domain '{}'", storageDomainId);
         }
