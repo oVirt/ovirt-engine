@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.PredefinedRoles;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -283,7 +284,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         // vm agnostic checks
         returnValue =
                 (getParameters().isSkipDomainCheck() || validate(storageDomainValidator.isDomainExistAndActive())) &&
-                !isShareableDiskOnGlusterDomain() &&
+                validateShareableDiskOnGlusterDomain() &&
                 checkImageConfiguration() &&
                 validate(storageDomainValidator.hasSpaceForNewDisk(getDiskImageInfo())) &&
                 validate(storageDomainValidator.isDomainWithinThresholds()) &&
@@ -304,13 +305,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return returnValue;
     }
 
-    private boolean isShareableDiskOnGlusterDomain() {
-        if (getParameters().getDiskInfo().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
-            return true;
-        }
-
-        return false;
+    private boolean validateShareableDiskOnGlusterDomain() {
+        return validate(ValidationResult.failWith(
+                EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN
+        ).when(getParameters().getDiskInfo().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS));
     }
 
     private boolean canAddShareableDisk() {
