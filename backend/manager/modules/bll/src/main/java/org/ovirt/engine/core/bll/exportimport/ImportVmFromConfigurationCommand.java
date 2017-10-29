@@ -253,7 +253,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
             affinityGroup.setClusterId(getParameters().getClusterId());
             Set<Guid> vmIds = new HashSet<>(affinityGroup.getVmIds());
             vmIds.add(getParameters().getVm().getId());
-            affinityGroup.setVmIds(vmIds.stream().collect(Collectors.toList()));
+            affinityGroup.setVmIds(new ArrayList<>(vmIds));
             affinityGroupDao.update(affinityGroup);
         });
     }
