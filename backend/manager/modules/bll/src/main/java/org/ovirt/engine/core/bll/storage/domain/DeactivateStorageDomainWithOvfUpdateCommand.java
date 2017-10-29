@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -69,8 +68,6 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, getCompensationContext());
 
         if (shouldPerformOvfUpdate()) {
-            StoragePoolParametersBase parameters = new StoragePoolParametersBase(getStoragePoolId());
-            runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters, null);
             runInternalAction(ActionType.UpdateOvfStoreForStorageDomain, createUpdateOvfStoreParams(), getContext());
         }
 
