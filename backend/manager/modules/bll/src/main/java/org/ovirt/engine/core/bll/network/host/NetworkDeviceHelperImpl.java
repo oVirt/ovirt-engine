@@ -58,9 +58,9 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
     private VdsNetworkInterface getNicByPciDevice(final HostDevice pciDevice,
             final Collection<HostDevice> devices,
             final Collection<VdsNetworkInterface> hostNics) {
-        final HostDevice netDevice = getFirstChildDevice(pciDevice, devices);
+        final HostDevice netDevice = getFirstChildNetworkDevice(pciDevice, devices);
 
-        if (netDevice == null || !isNetworkDevice(netDevice)) {
+        if (netDevice == null) {
             return null;
         }
 
@@ -71,10 +71,13 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
                 .findFirst().orElse(null);
     }
 
-    private HostDevice getFirstChildDevice(final HostDevice pciDevice, final Collection<HostDevice> devices) {
+    private HostDevice getFirstChildNetworkDevice(final HostDevice pciDevice, final Collection<HostDevice> devices) {
         Collection<HostDevice> hostDevices = devices == null ? getDevicesByHostId(pciDevice.getHostId()) : devices;
-        return hostDevices.stream().filter(device -> pciDevice.getDeviceName().equals(device.getParentDeviceName()))
-                .findFirst().orElse(null);
+        return hostDevices.stream()
+                .filter(device -> pciDevice.getDeviceName().equals(device.getParentDeviceName())
+                        && isNetworkDevice(device))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -180,8 +183,8 @@ class NetworkDeviceHelperImpl implements NetworkDeviceHelper {
 
     @Override
     public boolean isDeviceNetworkFree(HostDevice hostDevice) {
-        HostDevice firstChild = getFirstChildDevice(hostDevice, null);
-        if (firstChild == null || !isNetworkDevice(firstChild)) {
+        HostDevice firstChildNetDevice = getFirstChildNetworkDevice(hostDevice, null);
+        if (firstChildNetDevice == null) {
             return true;
         }
 
