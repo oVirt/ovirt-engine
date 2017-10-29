@@ -15,8 +15,10 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.TransferImageParameters;
+import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -300,6 +302,35 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         }
 
         resetPeriodicPauseLogTime(0);
+
+        if (getParameters().getTransferType() == TransferType.Download) {
+            pollDownloadStatus(context);
+        }
+    }
+
+    private void pollDownloadStatus(StateContext context) {
+        ActionReturnValue returnValue = runInternalAction(ActionType.TransferImageStatus,
+                new TransferImageStatusParameters(getCommandId()));
+        if (returnValue == null || !returnValue.getSucceeded()) {
+            log.debug("Failed to poll download status.");
+            return;
+        }
+        ImageTransfer imageTransfer = returnValue.getActionReturnValue();
+        // imageTransfer contains the up to date bytesSent and active fields.
+        if (imageTransfer.getBytesTotal() != 0 &&
+                // Frontend flow (REST API should close the connection on its own).
+                imageTransfer.getBytesTotal().equals(imageTransfer.getBytesSent()) && !imageTransfer.getActive()) {
+            // Heuristic - once the transfer is inactive, we want to wait another COCO iteration
+            // to decrease the chances that the few last packets are still on the way to the client.
+            if (!context.entity.getActive()) { // The entity from the previous COCO iteration.
+                // This is the second COCO iteration that the transfer is inactive.
+                ImageTransfer updates = new ImageTransfer();
+                updates.setPhase(ImageTransferPhase.FINALIZING_SUCCESS);
+                TransferImageStatusParameters parameters = new TransferImageStatusParameters(getCommandId());
+                parameters.setUpdates(updates);
+                runInternalAction(ActionType.TransferImageStatus, parameters);
+            }
+        }
     }
 
     private void handlePausedUser(final StateContext context) {

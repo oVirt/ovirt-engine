@@ -127,7 +127,11 @@ public interface CommonApplicationMessages extends Messages {
 
     String imageUploadProgress(int mbSent);
 
+    String imageDownloadProgress(int mbSent);
+
     String imageUploadProgressWithTotal(int mbSent, int mbTotal);
+
+    String imageDownloadProgressWithTotal(int mbSent, int mbTotal);
 
     String imageTransferringViaAPI();
 

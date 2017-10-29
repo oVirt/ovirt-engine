@@ -50,6 +50,7 @@ public class DownloadImageHandler {
         String fileExtension = diskImage.getVolumeFormat() == VolumeFormat.COW ?
                 ".qcow2" : ".raw"; //$NON-NLS-1$ //$NON-NLS-2$
         parameters.setDownloadFilename(diskImage.getDiskAlias() + fileExtension); //$NON-NLS-1$
+        parameters.setTransferSize(diskImage.getSize());
         return parameters;
     }
 

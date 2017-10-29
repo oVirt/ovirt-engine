@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -67,17 +68,23 @@ public class DiskTransferProgressColumn extends AbstractProgressBarColumn<Disk> 
                     return constants.imageTransferringViaAPI();
                 }
                 else if (disk.getImageTransferBytesSent() == null) {
-                    return constants.imageUploadTransferring();
+                    return disk.getTransferType() == TransferType.Upload ?
+                            constants.imageUploadTransferring() :
+                            constants.imageDownloadTransferring();
                 }
                 else if (disk.getImageTransferBytesTotal() == null
                         || disk.getImageTransferBytesTotal() == 0) {
-                    return messages.imageUploadProgress(
-                            (int) (disk.getImageTransferBytesSent() / SizeConverter.BYTES_IN_MB));
+                    int bytesSent = (int) (disk.getImageTransferBytesSent() / SizeConverter.BYTES_IN_MB);
+                    return disk.getTransferType() == TransferType.Upload ?
+                            messages.imageUploadProgress(bytesSent) :
+                            messages.imageDownloadProgress(bytesSent);
                 }
                 else {
-                    return messages.imageUploadProgressWithTotal(
-                            (int) (disk.getImageTransferBytesSent() / SizeConverter.BYTES_IN_MB),
-                            (int) (disk.getImageTransferBytesTotal() / SizeConverter.BYTES_IN_MB));
+                    int bytesSent = (int) (disk.getImageTransferBytesSent() / SizeConverter.BYTES_IN_MB);
+                    int bytesTotal = (int) (disk.getImageTransferBytesTotal() / SizeConverter.BYTES_IN_MB);
+                    return disk.getTransferType() == TransferType.Upload ?
+                            messages.imageUploadProgressWithTotal(bytesSent, bytesTotal) :
+                            messages.imageDownloadProgressWithTotal(bytesSent, bytesTotal);
                 }
             case PAUSED_SYSTEM:
                 return constants.imageTransferPausedSystem();

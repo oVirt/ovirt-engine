@@ -70,6 +70,7 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
                     getParameters().setUpdates(new ImageTransfer());
                 }
                 getParameters().getUpdates().setBytesSent(ticketInfo.getTransferred());
+                getParameters().getUpdates().setActive(ticketInfo.isActive());
             }
             // Always update; this serves as a keepalive
             entity = imageTransferUpdater.updateEntity(getParameters().getUpdates(), entity.getId(), false);
