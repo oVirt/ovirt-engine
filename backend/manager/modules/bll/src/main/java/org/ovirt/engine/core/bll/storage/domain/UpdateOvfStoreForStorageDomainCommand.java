@@ -2,10 +2,12 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute(forceCompensation = false)
 public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParametersBase> extends
@@ -31,11 +34,20 @@ public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParame
 
     @Override
     protected void executeCommand() {
+        Guid storageDomainId = getStorageDomainId();
         StoragePoolParametersBase parameters =
                 new StoragePoolParametersBase(getStoragePoolId());
-        runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters, getContext());
-        runInternalActionWithTasksContext(ActionType.ProcessOvfUpdateForStorageDomain,
-                createProcessOvfUpdateForDomainParams());
+        ActionReturnValue actionReturnValue =
+                runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters, getContext());
+        Set<Guid> proccessedDomains = actionReturnValue.getActionReturnValue();
+
+        if (actionReturnValue.getSucceeded() && proccessedDomains != null &&
+                proccessedDomains.contains(storageDomainId)) {
+            runInternalActionWithTasksContext(ActionType.ProcessOvfUpdateForStorageDomain,
+                    createProcessOvfUpdateForDomainParams());
+        } else {
+            log.info("OVFs update was ignored - nothing to update for storage domain '{}'", storageDomainId);
+        }
         setSucceeded(true);
     }
 
