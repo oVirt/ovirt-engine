@@ -134,8 +134,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     private boolean ifaceMacCannotBeAddedToMacPool(VmNetworkInterface iface) {
-        return iface.getMacAddress() != null
-                && !macPool.isDuplicateMacAddressesAllowed()
+        return !macPool.isDuplicateMacAddressesAllowed()
                 && !shouldReassignMac(iface)
                 && macPool.isMacInUse(iface.getMacAddress());
     }
@@ -589,7 +588,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     private boolean shouldReassignMac(VmNetworkInterface iface) {
-        return (getParameters().isReassignBadMacs() && vNicHasBadMac(iface)) || getParameters().isImportAsNewEntity();
+        return StringUtils.isEmpty(iface.getMacAddress())
+                || (getParameters().isReassignBadMacs() && vNicHasBadMac(iface))
+                || getParameters().isImportAsNewEntity();
     }
 
     protected boolean vNicHasBadMac(VmNetworkInterface vnic) {
@@ -606,16 +607,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         if (iface.getId() == null) {
             iface.setId(Guid.newGuid());
         }
-        fillMacAddressIfMissing(iface);
         iface.setVmTemplateId(null);
         iface.setVmId(getVmId());
-    }
-
-    private void fillMacAddressIfMissing(VmNic iface) {
-        if (StringUtils.isEmpty(iface.getMacAddress())
-                && macPool.getAvailableMacsCount() > 0) {
-            iface.setMacAddress(macPool.allocateNewMac());
-        }
     }
 
     private void addVmDynamic() {
