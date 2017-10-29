@@ -1,0 +1,5 @@
+[gerrit]
+host=gerrit.ovirt.org
+defaultbranch=master
+project=ovirt-engine
+port=29418
