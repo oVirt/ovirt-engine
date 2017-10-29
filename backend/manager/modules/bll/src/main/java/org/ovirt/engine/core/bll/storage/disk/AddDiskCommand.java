@@ -321,10 +321,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private boolean checkExceedingMaxBlockDiskSize() {
         if (isExceedMaxBlockDiskSize()) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
-            getReturnValue().getValidationMessages().add(
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED,
                     String.format("$max_disk_size %1$s", Config.<Integer> getValue(ConfigValues.MaxBlockDiskSize)));
-            return false;
         }
         return true;
     }
