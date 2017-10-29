@@ -138,6 +138,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorOld.networkIsSet(getNetwork().getId()))
                 && validate(validatorOld.notChangingDataCenterId(getNetwork().getDataCenterId()))
                 && validate(validatorNew.networkNameNotUsed())
+                && validate(validatorNew.networkNameNotUsedAsVdsmName())
                 && validate(validatorOld.nonVmNetworkNotUsedByVms(getNetwork()))
                 && validate(validatorOld.nonVmNetworkNotUsedByTemplates(getNetwork()))
                 && validate(validatorOld.notRenamingUsedNetwork(getNetworkName()))
