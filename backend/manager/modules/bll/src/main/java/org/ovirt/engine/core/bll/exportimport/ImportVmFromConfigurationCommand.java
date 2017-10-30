@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -239,30 +240,50 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         Map<String, String> affinityGroupMap = getParameters().getAffinityGroupMap();
         getParameters().getAffinityGroups().forEach(affinityGroup -> {
             AffinityGroup originalAffinityGroup = affinityGroupDao.getByName(affinityGroup.getName());
-
             if (affinityGroupMap != null) {
                 String destName = affinityGroupMap.get(affinityGroup.getName());
                 if (destName != null) {
                     AffinityGroup destAffinityGroup = affinityGroupDao.getByName(destName);
-                    addAffinityGroup(affinityGroups, destAffinityGroup, originalAffinityGroup);
+                    AffinityGroup affinity = addBusinessEntityToList(destAffinityGroup, originalAffinityGroup);
+                    if (affinity != null) {
+                        affinityGroups.add(affinity);
+                    }
                 } else {
-                    addAffinityGroup(affinityGroups, originalAffinityGroup, null);
+                    AffinityGroup affinity = addBusinessEntityToList(originalAffinityGroup, null);
+                    if (affinity != null) {
+                        affinityGroups.add(affinity);
+                    }
                 }
             } else {
-                addAffinityGroup(affinityGroups, originalAffinityGroup, null);
+                AffinityGroup affinity = addBusinessEntityToList(originalAffinityGroup, null);
+                if (affinity != null) {
+                    affinityGroups.add(affinity);
+                }
             }
         });
-
         return affinityGroups;
     }
 
-    private void addAffinityGroup(List<AffinityGroup> affinityGroups,
-                                  AffinityGroup affinityGroup,
-                                  AffinityGroup alternativeAffinityGroup) {
-        if (affinityGroup != null) {
-            affinityGroups.add(affinityGroup);
-        } else if (alternativeAffinityGroup != null) {
-            affinityGroups.add(alternativeAffinityGroup);
+    /**
+     * If the original BE exists, add it to the list. If the original BE is null and the alternative BE exists add it to
+     * the list. If both are null, don't add anything.
+     *
+     * @param primaryEntity
+     *            - The BE which should be added to the list
+     * @param alternativeEntity
+     *            - The BE which should be added to the list if originalVal is null
+     * @param <S>
+     *            - The BE to be added
+     */
+    private <S extends Nameable> S addBusinessEntityToList(S primaryEntity,
+            S alternativeEntity) {
+        if (primaryEntity != null) {
+            return primaryEntity;
+        } else if (alternativeEntity != null) {
+            return alternativeEntity;
+        } else {
+            log.warn("Nor primary entity of alternative entity were found. Not adding anything to the return list");
+            return null;
         }
     }
 
