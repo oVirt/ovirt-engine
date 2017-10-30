@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
+import org.ovirt.engine.core.common.action.DeactivateStorageDomainWithOvfUpdateParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -543,7 +544,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     private void onMaintenance() {
         ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (StorageDomain item : getSelectedItems()) {
-            StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
+            DeactivateStorageDomainWithOvfUpdateParameters parameters = new DeactivateStorageDomainWithOvfUpdateParameters();
             parameters.setStorageDomainId(getEntity().getId());
             if (item.getStoragePoolId() != null) {
                 parameters.setStoragePoolId(item.getStoragePoolId());

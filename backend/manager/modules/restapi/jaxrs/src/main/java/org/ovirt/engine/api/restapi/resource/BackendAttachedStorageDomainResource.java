@@ -11,6 +11,7 @@ import org.ovirt.engine.api.resource.AttachedStorageDomainDisksResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.DeactivateStorageDomainWithOvfUpdateParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -44,9 +45,10 @@ public class BackendAttachedStorageDomainResource
 
     @Override
     public Response deactivate(Action action) {
+        boolean forceMaintenance = action.isSetForce() ? action.isForce() : false;
         return doAction(ActionType.DeactivateStorageDomainWithOvfUpdate,
-                        new StorageDomainPoolParametersBase(guid, dataCenterId),
-                        action);
+                new DeactivateStorageDomainWithOvfUpdateParameters(guid, dataCenterId, forceMaintenance),
+                action);
     }
 
     @Override

@@ -4,7 +4,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -14,6 +13,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.DeactivateStorageDomainWithOvfUpdateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomainPoolParametersBase> extends
+public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateStorageDomainWithOvfUpdateParameters> extends
         DeactivateStorageDomainCommand<T> {
 
     @Inject
@@ -120,9 +120,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getActionState() == CommandActionState.END_FAILURE ?
-                AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED :
-                AuditLogType.UNASSIGNED;
+        return AuditLogType.UNASSIGNED;
     }
 
     @Override
@@ -136,6 +134,10 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         if (commandCoordinatorUtil.getCommandExecutionStatus(getCommandId()) != CommandExecutionStatus.EXECUTED) {
             changeStorageDomainStatusInTransaction(loadStoragePoolIsoMap(), StorageDomainStatus.Unknown);
             auditLogDirector.log(this, AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_OVF_UPDATE_INCOMPLETE);
+        } else if (getParameters().isForceMaintenance()) {
+            executeDeactivateCommand();
+        } else {
+            auditLogDirector.log(this, AuditLogType.USER_DEACTIVATE_STORAGE_DOMAIN_FAILED);
         }
 
         setSucceeded(true);
