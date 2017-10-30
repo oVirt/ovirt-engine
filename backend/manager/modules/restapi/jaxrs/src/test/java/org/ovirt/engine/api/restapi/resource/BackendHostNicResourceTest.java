@@ -151,10 +151,13 @@ public class BackendHostNicResourceTest
         assertSame(entity, query.resolve(NIC_ID));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
-                new String[] { "data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx",
+                new String[] { "data.current.rx", "data.current.tx", "data.current.rx.bps",
+                        "data.current.tx.bps", "errors.total.rx", "errors.total.tx",
                         "data.total.rx", "data.total.tx" },
                 new BigDecimal[] { asDec(RxTxCalculator.percent2bytes(SPEED, RECEIVE_RATE)),
                         asDec(RxTxCalculator.percent2bytes(SPEED, TRANSMIT_RATE)),
+                        asDec(RxTxCalculator.percent2bits(SPEED, RECEIVE_RATE)),
+                        asDec(RxTxCalculator.percent2bits(SPEED, TRANSMIT_RATE)),
                         asDec(RECEIVE_DROP_RATE), asDec(TRANSMIT_DROP_RATE),
                         asDec(RECEIVED_BYTES), asDec(TRANSMITTED_BYTES) });
         Statistic adopted = query.adopt(new Statistic());

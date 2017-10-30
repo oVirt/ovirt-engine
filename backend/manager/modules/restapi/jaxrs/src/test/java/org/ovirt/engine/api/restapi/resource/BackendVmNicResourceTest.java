@@ -241,6 +241,8 @@ public class BackendVmNicResourceTest
             new String[] {
                 "data.current.rx",
                 "data.current.tx",
+                "data.current.rx.bps",
+                "data.current.tx.bps",
                 "errors.total.rx",
                 "errors.total.tx",
                 "data.total.rx",
@@ -249,6 +251,8 @@ public class BackendVmNicResourceTest
             new BigDecimal[] {
                 asDec(RxTxCalculator.percent2bytes(50, 10D)),
                 asDec(RxTxCalculator.percent2bytes(50, 20D)),
+                asDec(RxTxCalculator.percent2bits(50, 10D)),
+                asDec(RxTxCalculator.percent2bits(50, 20D)),
                 asDec(30),
                 asDec(40),
                 asDec(50),
