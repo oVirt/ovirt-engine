@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
@@ -239,9 +240,13 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             addBootProtoAndIpInfo(entity);
         }
         if (nic instanceof BondNetworkInterfaceModel) {
+            CreateOrUpdateBond createOrUpdateBond = ((BondNetworkInterfaceModel) nic).getCreateOrUpdateBond();
+            String bondOptions = entity.getBondOptions();
+            if (createOrUpdateBond != null) {
+                bondOptions = createOrUpdateBond.getBondOptions();
+            }
             addRow(constants.bondOptionsItemInfo(),
-                    entity.getBondOptions()
-                            .replace(BOND_OPTIONS_IP_SEPARATOR, BOND_OPTIONS_IP_SEPARATOR + " ")); //$NON-NLS-1$
+                    bondOptions.replace(BOND_OPTIONS_IP_SEPARATOR, BOND_OPTIONS_IP_SEPARATOR + " ")); //$NON-NLS-1$
         } else {
             addLldpInfo(nic);
         }
