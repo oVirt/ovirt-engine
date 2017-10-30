@@ -464,7 +464,7 @@ endif
 
 install-brands:
 	install -dm 0755 "$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand"; \
-	$(MAKE) copy-recursive SOURCEDIR="$(MAVEN_OUTPUT_DIR)/frontend/brands/ovirt-brand/target/ovirt.brand" TARGETDIR="$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand" EXCLUDE_GEN="$(GENERATED)"; \
+	find "$(MAVEN_OUTPUT_DIR)" -name 'ovirt-*-brand.zip' | grep -v tmp.repos | xargs -r -n 1 unzip -q -o -d "$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand"
 
 install-gwt-symbols:
 	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols/webadmin"; \

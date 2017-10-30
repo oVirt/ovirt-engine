@@ -15,11 +15,8 @@
 
   <artifactId>ovirt-brand</artifactId>
   <name>oVirt Engine brand</name>
+  <packaging>pom</packaging>
   <description>oVirt Engine default brand package</description>
-
-  <properties>
-    <brand.build.directory>${project.build.directory}/ovirt.brand</brand.build.directory>
-  </properties>
 
   <build>
     <plugins>
@@ -36,32 +33,35 @@
          </executions>
          <configuration>
            <outputStyle>compressed</outputStyle>
-           <outputPath>${brand.build.directory}</outputPath>
+           <outputPath>${project.basedir}/target/generated-resources</outputPath>
            <generateSourceMap>false</generateSourceMap>
          </configuration>
       </plugin>
 
-      <!-- override the default-resources copy to put resources in ovirt.brand/ -->
       <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <id>default-resources</id>
-            <phase>validate</phase>
+            <id>generate-zip</id>
+            <phase>package</phase>
             <goals>
-              <goal>resources</goal>
+              <goal>run</goal>
             </goals>
             <configuration>
-              <outputDirectory>${brand.build.directory}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/src/main/resources/</directory>
-                </resource>
-              </resources>
+              <target>
+                <property name="brand.zip" value="${project.basedir}/target/${project.artifactId}-${project.version}-brand.zip" />
+                <zip destfile="${brand.zip}">
+                  <fileset dir="${project.basedir}/src/main/resources" />
+                  <fileset dir="${project.basedir}/target/generated-resources" />
+                </zip>
+                <attachartifact file="${brand.zip}" classifier="brand" type="zip" />
+              </target>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
 
@@ -75,7 +75,7 @@
             <artifactId>libsass-maven-plugin</artifactId>
             <configuration>
               <generateSourceMap>true</generateSourceMap>
-              <sourceMapOutputPath>${brand.build.directory}</sourceMapOutputPath>
+              <sourceMapOutputPath>${project.basedir}/target/generated-resources</sourceMapOutputPath>
               <embedSourceContentsInSourceMap>true</embedSourceContentsInSourceMap>
             </configuration>
           </plugin>

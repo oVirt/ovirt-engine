@@ -668,7 +668,14 @@
           <artifactId>libsass-maven-plugin</artifactId>
           <version>0.2.8-libsass_3.4.4</version>
         </plugin>
-      </plugins>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.8</version>
+       </plugin>
+
+     </plugins>
     </pluginManagement>
     <resources>
       <resource>
