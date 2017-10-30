@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -264,6 +266,64 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         return affinityGroups;
     }
 
+    private static <T, Q extends Nameable> Supplier<Q> getEntityByVal(Function<T, Q> fn, T val) {
+        return () -> fn.apply(val);
+    }
+
+    /**
+     * The function is mainly used for DR purposes, the functionality can be described by the following steps:
+     * <ul>
+     * <li>1. Check if a mapped value exists for the key <code>String</code> value</li>
+     * <li>2. If it does, fetch an entity by the alternative name</li>
+     * <li>3. If it doesn't, fetch an entity by the original name</li>
+     * <li>4. If the alternative BE exists return it, if it doesn't and the original BE exists return the original, if
+     * non exists return null</li>
+     * </ul>
+     *
+     * @param entityMap
+     *            - The mapping of the BE, for example Cluster to Cluster or AffinityGroups.
+     * @param originalEntityName
+     *            - The entity name which is about to be added to the return list map so the VM can be registered with
+     *            it.
+     * @param getterFunction
+     *            - The getter function to be used to fetch the entity by its name.
+     * @param <R>
+     *            - This is the BE which is about to be added to the registered entity
+     * @return - A list containing the entities to apply to the map. Null if none exists.
+     */
+    protected <R extends String, S extends Nameable> S getRelatedEntity(Map<R, R> entityMap,
+                                                                      R originalEntityName,
+                                                                      Function<R, S> getterFunction) {
+        // Try to fetch the entity from the DAO (usually by name).
+        // The entity which is being used is usually indicated in the entity's OVF.
+        Supplier<S> sup = getEntityByVal(getterFunction, originalEntityName);
+        S original = sup.get();
+
+        // Check if a map was sent by the user for DR purposes to cast the original BE with the alternative BE.
+        if (entityMap != null) {
+            R destName = entityMap.get(originalEntityName);
+            // If an alternative entity appears in the DR mapping sent by the user, try to fetch the alternative entity
+            // from the DAO to check if it exists.
+            if (destName != null) {
+                // Try to fetch the entity from the DAO (usually by name).
+                // The entity which is being used is the mapped entity.
+                Supplier<S> supplier = getEntityByVal(getterFunction, destName);
+                S dest = supplier.get();
+
+                // If the alternative entity exists add it, if not, try to add the original entity (if exists), if both
+                // are null, do not add anything.
+                return addBusinessEntityToList(dest, original);
+            } else if (original != null) {
+                // If the mapping destination was not found in the DB, try to add the original entity
+                return addBusinessEntityToList(original, null);
+            }
+        } else if (original != null) {
+            // If there is no mapping, only add the original entity
+            return addBusinessEntityToList(original, null);
+        }
+        return null;
+    }
+
     /**
      * If the original BE exists, add it to the list. If the original BE is null and the alternative BE exists add it to
      * the list. If both are null, don't add anything.
@@ -275,8 +335,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
      * @param <S>
      *            - The BE to be added
      */
-    private <S extends Nameable> S addBusinessEntityToList(S primaryEntity,
-            S alternativeEntity) {
+    private static <S extends Nameable> S addBusinessEntityToList(S primaryEntity,
+                                                                  S alternativeEntity) {
         if (primaryEntity != null) {
             return primaryEntity;
         } else if (alternativeEntity != null) {
