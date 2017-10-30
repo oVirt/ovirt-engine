@@ -179,7 +179,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 ovfEntityData = ovfEntityDataList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
                 vmFromConfiguration = fullEntityOvfData.getVm();
-                mapCluster(fullEntityOvfData.getClusterName());
+                mapCluster(fullEntityOvfData.getClusterName(), vmFromConfiguration);
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 mapVnicProfiles(vmFromConfiguration.getInterfaces());
                 getParameters().setVm(vmFromConfiguration);
@@ -214,16 +214,15 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 importedNetworkInfoUpdater.updateNetworkInfo(vnic, getParameters().getExternalVnicProfileMappings()));
     }
 
-    private void mapCluster(String clusterName) {
-        if (getParameters().getClusterMap() != null) {
-            String clusterDest = getParameters().getClusterMap().get(clusterName);
-            Cluster cluster = clusterDao.getByName(clusterDest);
-            if (cluster == null) {
-                cluster = clusterDao.getByName(clusterName);
-            }
-            if (cluster != null) {
-                getParameters().setClusterId(cluster.getId());
-            }
+    private void mapCluster(String clusterName, VM vm) {
+        log.info("Mapping cluster '{}' for vm '{}'.",
+                clusterName,
+                vm.getId());
+        Cluster cluster = getRelatedEntity(getParameters().getClusterMap(),
+                clusterName,
+                val -> clusterDao.getByName((String) val));
+        if (cluster != null) {
+            getParameters().setClusterId(cluster.getId());
         }
     }
 
