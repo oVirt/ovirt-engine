@@ -9,5 +9,4 @@ public enum RemoveSnapshotSingleDiskStep {
     DESTROY_IMAGE,
     DESTROY_IMAGE_CHECK,
     REDUCE_IMAGE,
-    COMPLETE,
 }

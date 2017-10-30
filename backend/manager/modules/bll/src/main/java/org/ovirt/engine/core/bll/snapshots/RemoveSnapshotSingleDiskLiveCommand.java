@@ -140,10 +140,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             break;
         case REDUCE_IMAGE:
             nextCommand = buildReduceImageCommand();
-            getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
-            break;
-        case COMPLETE:
-            getParameters().setDestroyImageCommandComplete(true);
             setCommandStatus(CommandStatus.SUCCEEDED);
             break;
         }
@@ -174,8 +170,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     private boolean completedMerge() {
         return getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.DESTROY_IMAGE
-                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK
-                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.COMPLETE;
+                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK;
     }
 
     private MergeParameters buildMergeParameters() {
