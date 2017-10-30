@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
             if (prettyLibvirtXml != null) {
                 log.info("VM {}", prettyLibvirtXml);
             }
-            createInfo.put("xml", libvirtXml);
+            createInfo = Collections.singletonMap("xml", libvirtXml);
         }
         vmReturn = getBroker().create(createInfo);
         proceedProxyReturnValue();
