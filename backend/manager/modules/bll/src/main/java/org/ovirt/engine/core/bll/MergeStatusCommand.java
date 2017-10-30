@@ -6,12 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -52,9 +49,6 @@ public class MergeStatusCommand<T extends MergeParameters>
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
-    @Inject
-    @Typed(MergeStatusCommandCallback.class)
-    private Instance<MergeStatusCommandCallback> callbackProvider;
 
     public MergeStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -218,10 +212,5 @@ public class MergeStatusCommand<T extends MergeParameters>
         return Collections.singletonList(new PermissionSubject(getParameters().getStorageDomainId(),
                 VdcObjectType.Storage,
                 getActionType().getActionGroup()));
-    }
-
-    @Override
-    public CommandCallback getCallback() {
-        return callbackProvider.get();
     }
 }
