@@ -111,12 +111,12 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
 
     @Override
     public HasData<AuditLog> getEventDropdown() {
-        return eventsWidget;
+        return eventsWidget.asHasData();
     }
 
     @Override
     public HasData<AuditLog> getAlertDropdown() {
-        return alertsWidget;
+        return alertsWidget.asHasData();
     }
 
     @Override

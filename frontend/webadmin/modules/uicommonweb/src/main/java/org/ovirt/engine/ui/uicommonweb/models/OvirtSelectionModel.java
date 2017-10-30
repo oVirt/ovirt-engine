@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -102,4 +103,33 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
         return (OrderedMultiSelectionModel<T>) delegate;
     }
 
+    public void setDataDisplay(HasData<T> dataDisplay) {
+        if (!isSingleSelectionOnly()) {
+            asMultiSelectionModel().setDataDisplay(dataDisplay);
+        }
+    }
+
+    public boolean isSingleSelectionOnly() {
+        return singleSelectionOnly;
+    }
+
+    /**
+     * Turns multiple selection feature on or off. If the underlying selection model supports multi selection
+     * otherwise does nothing.
+     */
+    public void setMultiSelectEnabled(boolean multiSelectEnabled) {
+        if (!isSingleSelectionOnly()) {
+            asMultiSelectionModel().setMultiSelectEnabled(multiSelectEnabled);
+        }
+    }
+
+    /**
+     * Turns multiple 'range' selection feature on or off. If the underlying selection model supports multi selection
+     * otherwise does nothing.
+     */
+    public void setMultiRangeSelectEnabled(boolean multiRangeSelectEnabled) {
+        if (!isSingleSelectionOnly()) {
+            asMultiSelectionModel().setMultiRangeSelectEnabled(multiRangeSelectEnabled);
+        }
+    }
 }

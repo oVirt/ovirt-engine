@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.gwt.user.cellview.client.AbstractHasData;
+import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
@@ -28,7 +28,7 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
 
     private boolean multiSelectEnabled;
     private boolean multiRangeSelectEnabled;
-    private AbstractHasData<T> dataDisplay;
+    private HasData<T> dataDisplay;
     private int lastSelectedRow = -1;
     private int originSelectedRow = -1;
     private final Set<Integer> disabledRows = new HashSet<>();
@@ -169,26 +169,32 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
         int startRow = originSelectedRow < selectedRow ? originSelectedRow : selectedRow;
         int endRow = originSelectedRow > selectedRow ? originSelectedRow : selectedRow;
 
-        int lastIndex = dataDisplay.getVisibleItems().size() - 1;
+        int lastIndex = visibleItemsAsList().size() - 1;
         //Adjust the end row in cases where multiple items were deleted
         endRow = endRow > lastIndex ? lastIndex : endRow;
 
         // Clear current selection and select row in range
         clearSelection();
         for (int row = startRow; row <= endRow; row++) {
-            selectionChanges.put(dataDisplay.getVisibleItems().get(row), true);
+            selectionChanges.put(visibleItemsAsList().get(row), true);
         }
     }
 
     // Get row's index by a specified row object
     private int getRowIndexByObject(T object) {
         for (int row = 0; row < dataDisplay.getRowCount(); row++) {
-            if (dataDisplay.getVisibleItems().get(row).equals(object)) {
+            if (visibleItemsAsList().get(row).equals(object)) {
                 return row;
             }
         }
 
         return -1;
+    }
+
+    private List<T> visibleItemsAsList() {
+        List<T> result = new ArrayList<>();
+        dataDisplay.getVisibleItems().iterator().forEachRemaining(result::add);
+        return result;
     }
 
     // Select a row with regarding a specified shift
@@ -207,7 +213,7 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
             return;
         }
 
-        setSelected(dataDisplay.getVisibleItems().get(nextRow), true);
+        setSelected(visibleItemsAsList().get(nextRow), true);
     }
 
     public void setDisabledRows(int... disabledRows) {
@@ -250,14 +256,15 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
     }
 
     private T firstItem() {
-        return dataDisplay.getVisibleItems().get(0);
+        return visibleItemsAsList().get(0);
     }
 
     private T lastItem() {
-        return dataDisplay.getVisibleItems().get(dataDisplay.getVisibleItems().size() - 1);
+        List<T> visibleItems = visibleItemsAsList();
+        return visibleItems.get(visibleItems.size() - 1);
     }
 
-    public void setDataDisplay(AbstractHasData<T> dataDisplay) {
+    public void setDataDisplay(HasData<T> dataDisplay) {
         this.dataDisplay = dataDisplay;
     }
 

@@ -19,11 +19,11 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.action.ActionAnchorListItem;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.HasDataMinimalDelegate;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -31,10 +31,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.RangeChangeEvent.Handler;
-import com.google.gwt.view.client.SelectionModel;
 
-public class NotificationListWidget extends Composite implements HasData<AuditLog>, ActionWidget {
+public class NotificationListWidget extends Composite implements ActionWidget {
 
     interface WidgetUiBinder extends UiBinder<Widget, NotificationListWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -56,6 +54,8 @@ public class NotificationListWidget extends Composite implements HasData<AuditLo
 
     private PanelBody eventPanelBody;
 
+    private Range range = new Range(0, 10);
+
     private Toggle toggle = Toggle.COLLAPSE;
     private String parentWidgetId;
     private String thisWidgetId;
@@ -63,7 +63,22 @@ public class NotificationListWidget extends Composite implements HasData<AuditLo
 
     private int rowCount;
 
-    private Range range = new Range(0, 10);
+    private HasData<AuditLog> hasDataDelegate = new HasDataMinimalDelegate<AuditLog>() {
+        @Override
+        public int getRowCount() {
+            return rowCount;
+        }
+
+        @Override
+        public void setRowData(int start, List<? extends AuditLog> values) {
+            setInternalRowData(start, values);
+        }
+
+        @Override
+        public Range getVisibleRange() {
+            return range;
+        }
+    };
 
     private List<String> actionLabels = new ArrayList<>();
     private List<AuditLogActionCallback> auditLogActions = new ArrayList<>();
@@ -96,81 +111,7 @@ public class NotificationListWidget extends Composite implements HasData<AuditLo
         addAllActionCallback(label, command, callback);
     }
 
-    @Override
-    public HandlerRegistration addRangeChangeHandler(Handler handler) {
-        return null;
-    }
-
-    @Override
-    public HandlerRegistration addRowCountChangeHandler(
-            com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
-        return null;
-    }
-
-    @Override
-    public int getRowCount() {
-        return rowCount;
-    }
-
-    @Override
-    public Range getVisibleRange() {
-        return range;
-    }
-
-    @Override
-    public boolean isRowCountExact() {
-        return true;
-    }
-
-    @Override
-    public void setRowCount(int count) {
-        this.rowCount = count;
-        range = new Range(0, count);
-    }
-
-    @Override
-    public void setRowCount(int count, boolean isExact) {
-        this.rowCount = count;
-    }
-
-    @Override
-    public void setVisibleRange(int start, int length) {
-        range = new Range(start, length);
-    }
-
-    @Override
-    public void setVisibleRange(Range range) {
-        this.range = range;
-    }
-
-    @Override
-    public HandlerRegistration addCellPreviewHandler(
-            com.google.gwt.view.client.CellPreviewEvent.Handler<AuditLog> handler) {
-        return null;
-    }
-
-    @Override
-    public SelectionModel<? super AuditLog> getSelectionModel() {
-        return null;
-    }
-
-    @Override
-    public AuditLog getVisibleItem(int indexOnPage) {
-        return null;
-    }
-
-    @Override
-    public int getVisibleItemCount() {
-        return 0;
-    }
-
-    @Override
-    public Iterable<AuditLog> getVisibleItems() {
-        return null;
-    }
-
-    @Override
-    public void setRowData(int start, List<? extends AuditLog> values) {
+    private void setInternalRowData(int start, List<? extends AuditLog> values) {
         // Compare the new values with the ones currently displayed, if no changes, don't refresh.
         if (values != null && !valuesEquals(values)) {
             boolean collapsed = checkIfCollapsed();
@@ -274,15 +215,6 @@ public class NotificationListWidget extends Composite implements HasData<AuditLo
         return result;
     }
 
-    @Override
-    public void setSelectionModel(SelectionModel<? super AuditLog> selectionModel) {
-    }
-
-    @Override
-    public void setVisibleRangeAndClearData(Range range, boolean forceRangeChangeEvent) {
-        this.range = range;
-    }
-
     private void addActionCallback(String label, UICommand command, AuditLogActionCallback callback) {
         actionLabels.add(label);
         actionCommand.add(command);
@@ -316,5 +248,9 @@ public class NotificationListWidget extends Composite implements HasData<AuditLo
 
     public void setStartCollapse(boolean value) {
         this.startCollapsed = value;
+    }
+
+    public HasData<AuditLog> asHasData() {
+        return this.hasDataDelegate;
     }
 }

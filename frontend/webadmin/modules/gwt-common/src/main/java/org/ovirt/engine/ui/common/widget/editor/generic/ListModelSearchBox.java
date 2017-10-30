@@ -11,6 +11,7 @@ import org.gwtbootstrap3.client.ui.TextBox;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.uicommonweb.models.HasDataMinimalDelegate;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.core.client.GWT;
@@ -31,10 +32,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.RangeChangeEvent.Handler;
-import com.google.gwt.view.client.SelectionModel;
 
-public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends Composite implements HasData<T>,
+public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends Composite implements
     ClickHandler {
 
     interface WidgetUiBinder extends UiBinder<Widget, ListModelSearchBox<?, ?>> {
@@ -58,6 +57,23 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
 
     private Range range = new Range(0, 10);
 
+    private HasData<T> hasDataDelegate = new HasDataMinimalDelegate<T>() {
+        @Override
+        public int getRowCount() {
+            return rowCount;
+        }
+
+        @Override
+        public void setRowData(int start, List<? extends T> values) {
+            setInternalRowData(start, values);
+        }
+
+        @Override
+        public Range getVisibleRange() {
+            return range;
+        }
+    };
+
     private String currentSearch;
 
     private final MainModelProvider<T, M> listModelProvider;
@@ -67,7 +83,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         this.listModelProvider = listModelProvider;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         configureDropDown();
-        listModelProvider.addDataDisplay(this);
+        listModelProvider.addDataDisplay(hasDataDelegate);
     }
 
     private void configureDropDown() {
@@ -157,78 +173,6 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         }
     }
 
-    @Override
-    public HandlerRegistration addRangeChangeHandler(Handler handler) {
-        return null;
-    }
-
-    @Override
-    public HandlerRegistration addRowCountChangeHandler(
-            com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
-        return null;
-    }
-
-    @Override
-    public int getRowCount() {
-        return rowCount;
-    }
-
-    @Override
-    public Range getVisibleRange() {
-        return this.range;
-    }
-
-    @Override
-    public boolean isRowCountExact() {
-        return true;
-    }
-
-    @Override
-    public void setRowCount(int count) {
-        this.rowCount = count;
-        range = new Range(0, count);
-    }
-
-    @Override
-    public void setRowCount(int count, boolean isExact) {
-        setRowCount(count);
-    }
-
-    @Override
-    public void setVisibleRange(int start, int length) {
-        range = new Range(start, length);
-    }
-
-    @Override
-    public void setVisibleRange(Range range) {
-        this.range = range;
-    }
-
-    @Override
-    public HandlerRegistration addCellPreviewHandler(com.google.gwt.view.client.CellPreviewEvent.Handler<T> handler) {
-        return null;
-    }
-
-    @Override
-    public SelectionModel<T> getSelectionModel() {
-        return null;
-    }
-
-    @Override
-    public T getVisibleItem(int indexOnPage) {
-        return null;
-    }
-
-    @Override
-    public int getVisibleItemCount() {
-        return 100;
-    }
-
-    @Override
-    public Iterable<T> getVisibleItems() {
-        return null;
-    }
-
     private void emptyMenuHandlers() {
         for (HandlerRegistration reg: menuHandlers) {
             reg.removeHandler();
@@ -244,8 +188,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         return SafeHtmlUtils.fromString(result);
     }
 
-    @Override
-    public void setRowData(int start, List<? extends T> values) {
+    private void setInternalRowData(int start, List<? extends T> values) {
         final int oldCount = menu.getWidgetCount();
         menu.clear();
         emptyMenuHandlers();
@@ -277,16 +220,6 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         if (currentFocusIndex >= 0) {
             ((AnchorListItem)menu.getWidget(currentFocusIndex)).setFocus(true);
         }
-    }
-
-    @Override
-    public void setSelectionModel(SelectionModel<? super T> selectionModel) {
-        // No-op we use the search models own selection model. Just here to satisfy the interface contract.
-    }
-
-    @Override
-    public void setVisibleRangeAndClearData(Range range, boolean forceRangeChangeEvent) {
-        this.range = range;
     }
 
     public void addModelSelectedCallback(ListModelSelectedCallback<T> callback) {

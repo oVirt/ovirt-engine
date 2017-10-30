@@ -46,7 +46,6 @@ public class SubTabVirtualMachineSnapshotView extends AbstractDetailTabListView<
 
         snapshotListView.setCreator(this);
         snapshotListView.setModel(modelProvider.getModel());
-        snapshotListView.setSelectionModel(modelProvider.getModel().getSelectionModel());
         getContentPanel().add(snapshotListView);
         initWidget(getContentPanel());
     }

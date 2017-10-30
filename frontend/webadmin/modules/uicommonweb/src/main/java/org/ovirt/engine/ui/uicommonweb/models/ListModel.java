@@ -145,6 +145,7 @@ public class ListModel<T> extends Model {
         setSelectedItemsChangedEvent(new Event<>(selectedItemsChangedEventDefinition));
         setItemsChangedEvent(new Event<>(itemsChangedEventDefinition));
         this.selectionModel = new OvirtSelectionModel<>(isSingleSelectionOnly());
+        this.selectionModel.addSelectionChangeHandler(e -> synchronizeSelection());
     }
 
     protected void onSelectedItemChanging(T newValue, T oldValue) {
@@ -348,4 +349,20 @@ public class ListModel<T> extends Model {
         return selectionModel;
     }
 
+    /**
+     * This method synchronizes the item selection from the OvirtSelectionModel. If it is a
+     * single selection model, it will call setSelectedItem, and if it is an OrderedMultiSelectionModel it will call
+     * setSelectedItems.
+     */
+    private void synchronizeSelection() {
+        if (isSingleSelectionOnly()) {
+            setSelectedItem(selectionModel.asSingleSelectionModel().getSelectedObject());
+        } else {
+            List<T> selectedItems = selectionModel.getSelectedObjects();
+            setSelectedItems(selectedItems);
+            if (selectedItems.size() == 1) {
+                setSelectedItem(selectedItems.get(0));
+            }
+        }
+    }
 }

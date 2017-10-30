@@ -42,7 +42,6 @@ public class SubTabVirtualMachineNetworkInterfaceView extends
         interfaceListView = new PatternflyListView<>();
         interfaceListView.setCreator(this);
         interfaceListView.setModel(modelProvider.getModel());
-        interfaceListView.setSelectionModel(modelProvider.getModel().getSelectionModel());
         getContentPanel().add(interfaceListView);
         initWidget(getContentPanel());
     }

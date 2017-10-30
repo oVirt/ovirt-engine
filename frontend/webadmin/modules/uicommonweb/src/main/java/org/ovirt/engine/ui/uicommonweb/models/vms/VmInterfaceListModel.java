@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -188,7 +187,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         if (getWindow() != null) {
             return;
         }
-        RemoveVmInterfaceModel model = new RemoveVmInterfaceModel(this, Arrays.asList(getSelectedItem()), false);
+        RemoveVmInterfaceModel model = new RemoveVmInterfaceModel(this, getSelectedItems(), false);
         setWindow(model);
     }
 
@@ -219,10 +218,10 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
                 && ActionUtils.canExecute(items, VM.class, ActionType.AddVmInterface));
         getEditCommand().setIsExecutionAllowed(vm != null
                 && ActionUtils.canExecute(items, VM.class, ActionType.UpdateVmInterface)
-                && getSelectedItem() != null);
+                && getSelectedItems() != null && getSelectedItems().size() == 1);
         getRemoveCommand().setIsExecutionAllowed(vm != null
                 && ActionUtils.canExecute(items, VM.class, ActionType.RemoveVmInterface) && canRemoveNics()
-                && getSelectedItem() != null);
+                && getSelectedItems() != null && !getSelectedItems().isEmpty());
     }
 
     private boolean canRemoveNics() {
@@ -231,11 +230,15 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
             return true;
         }
 
-        VmNetworkInterface nic = getSelectedItem();
+        List<VmNetworkInterface> nics = getSelectedItems() != null ? getSelectedItems()
+                : new ArrayList<VmNetworkInterface>();
 
-        if (nic != null && nic.isPlugged()) {
-            return false;
+        for (VmNetworkInterface nic : nics) {
+            if (nic.isPlugged()) {
+                return false;
+            }
         }
+
         return true;
     }
 
@@ -295,11 +298,5 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
                 setSelectedItem(value.iterator().next());
             }
         }
-    }
-
-    @Override
-    protected boolean isSingleSelectionOnly() {
-        // Single selection model
-        return true;
     }
 }

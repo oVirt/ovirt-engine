@@ -43,7 +43,6 @@ public class SubTabHostInterfaceView extends AbstractDetailTabListView<VDS, Host
 
         hostInterfaceListView.setCreator(this);
         hostInterfaceListView.setModel(modelProvider.getModel());
-        hostInterfaceListView.setSelectionModel(modelProvider.getModel().getSelectionModel());
         getContentPanel().add(hostInterfaceListView);
         initWidget(getContentPanel());
     }
