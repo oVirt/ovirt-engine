@@ -75,8 +75,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
         }
 
-        if (getStorageDomain() != null && getStorageDomain().getStatus() != null
-                    && getStorageDomain().getStatus() == StorageDomainStatus.Active) {
+        if (getStorageDomain() != null && getStorageDomain().getStatus() == StorageDomainStatus.Active) {
             addStorageDomainStatusIllegalMessage();
             return false;
         }
