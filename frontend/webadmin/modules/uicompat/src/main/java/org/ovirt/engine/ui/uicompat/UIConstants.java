@@ -127,10 +127,6 @@ public interface UIConstants extends Constants {
 
     String configurationChangesForHighPerformancePoolTitle();
 
-    String highPerformancePopupRecommendationMsgForKsmPart1();
-
-    String highPerformancePopupRecommendationMsgForKsmPart2();
-
     String highPerformancePopupRecommendationMsgForHugePages();
 
     String highPerformancePopupRecommendationMsgForNumaSetAndPinned();

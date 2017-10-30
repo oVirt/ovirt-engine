@@ -420,5 +420,7 @@ public interface UIMessages extends Messages {
     String storageDomainOfDiskCannotBeAccessed(String diskName);
 
     String liveMergeUnpluggedDisksNote(String diskList);
+
+    String highPerformancePopupRecommendationMsgForKsm(String clusterName);
 }
 

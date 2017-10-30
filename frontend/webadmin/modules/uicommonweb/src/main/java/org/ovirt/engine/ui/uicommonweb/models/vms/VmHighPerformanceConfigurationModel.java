@@ -6,10 +6,12 @@ import java.util.List;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class VmHighPerformanceConfigurationModel extends ConfirmationModel {
 
     final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private List<String> recommendationsList;
 
@@ -39,8 +41,7 @@ public class VmHighPerformanceConfigurationModel extends ConfirmationModel {
 
     public void addRecommendationForKsm(final boolean isKsmEnabled, final String clusterName) {
         if (isKsmEnabled) {
-            recommendationsList.add(constants.highPerformancePopupRecommendationMsgForKsmPart1() + clusterName
-                    + constants.highPerformancePopupRecommendationMsgForKsmPart2());
+            recommendationsList.add(messages.highPerformancePopupRecommendationMsgForKsm(clusterName));
         }
     }
 
