@@ -4,25 +4,12 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <ui:style>
-        .logicalNetworksPanel,
-        .storageTargetsPanel {
-            border-top: 1px #C0C0C0 solid;
-            border-bottom: 1px #C0C0C0 solid;
-            margin: 5px 5px 0px 5px;
-            padding: 0px;
-            height: 200px;
-            overflow: auto;
-        }
-
-        .textBox {
-            width: 60%;
-        }
-
         .labelStyle {
             font-size: 14px;
             font-weight: bold;
@@ -32,16 +19,20 @@
         }
     </ui:style>
 
-    <g:FlowPanel>
-        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.textBox}" />
-        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.textBox}" />
+    <b:Container fluid="true">
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.name}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
+        </b:Row>
+        <b:Row>
+            <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.description}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
+        </b:Row>
 
         <g:Label text="{constants.logicalNetworks}" addStyleNames="{style.labelStyle}" />
-        <w:ValidatedPanelWidget ui:field="logicalNetworksPanel" addStyleNames="{style.logicalNetworksPanel}" />
+        <w:ValidatedPanelWidget ui:field="logicalNetworksPanel" />
 
         <g:Label text="{constants.storageTargets}" addStyleNames="{style.labelStyle}" />
-        <w:ValidatedPanelWidget ui:field="storageTargetsPanel" addStyleNames="{style.storageTargetsPanel}" />
-    </g:FlowPanel>
+        <w:ValidatedPanelWidget ui:field="storageTargetsPanel" />
+    </b:Container>
 
 
 </ui:UiBinder>

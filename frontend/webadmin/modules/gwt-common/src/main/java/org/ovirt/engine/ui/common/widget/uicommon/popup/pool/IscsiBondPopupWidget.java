@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -19,14 +20,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBondModel> {
 
     interface Driver extends UiCommonEditorDriver<IscsiBondModel, IscsiBondPopupWidget> {
     }
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, IscsiBondPopupWidget> {
+    interface ViewUiBinder extends UiBinder<Container, IscsiBondPopupWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -64,7 +64,6 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
 
     public IscsiBondPopupWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initLogicalNetworksPanel();
         initNetworksTable();
@@ -74,15 +73,17 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
     }
 
     private void initLogicalNetworksPanel() {
-        VerticalPanel panel = new VerticalPanel();
+        FlowPanel panel = new FlowPanel();
         networksTable = new ListModelObjectCellTable<>(true);
+        networksTable.setHeight("150px"); // $NON-NLS-1$
         panel.add(networksTable);
         logicalNetworksPanel.setWidget(panel);
     }
 
     private void initStorageConnectionsPanel() {
-        VerticalPanel panel = new VerticalPanel();
+        FlowPanel panel = new FlowPanel();
         connectionsTable = new ListModelObjectCellTable<>(true);
+        connectionsTable.setHeight("150px"); // $NON-NLS-1$
         panel.add(connectionsTable);
         storageTargetsPanel.setWidget(panel);
     }
@@ -137,11 +138,6 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         connectionsTable.addColumn(portColumn, constants.portSanStorage(), "30%"); //$NON-NLS-1$
 
         connectionsTable.setWidth("100%"); // $NON-NLS-1$
-    }
-
-    private void localize() {
-        nameEditor.setLabel(constants.name());
-        descriptionEditor.setLabel(constants.description());
     }
 
     @Override
