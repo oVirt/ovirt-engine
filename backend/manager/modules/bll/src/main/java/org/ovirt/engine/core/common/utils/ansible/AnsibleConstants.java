@@ -49,4 +49,9 @@ public class AnsibleConstants {
      * This is name of callback plugin which is used to run update in check mode.
      */
     public static final String HOST_UPGRADE_CALLBACK_PLUGIN = "hostupgradeplugin";
+
+    /**
+     * This is name of file which executes the host-remove via Ansible.
+     */
+    public static final String HOST_REMOVE_PLAYBOOK = "ovirt-host-remove.yml";
 }

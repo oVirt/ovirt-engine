@@ -21,12 +21,19 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -72,6 +79,9 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     @Inject
     private ClusterUtils clusterUtils;
 
+    @Inject
+    private AnsibleExecutor ansibleExecutor;
+
     public RemoveVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -111,8 +121,38 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             removeVdsStaticFromDb();
             return null;
         });
+
         removeVdsFromCollection();
+        runAnsibleRemovePlaybook();
         setSucceeded(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void runAnsibleRemovePlaybook() {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsName(getVds().getName());
+        logable.setVdsId(getVds().getId());
+        logable.setCorrelationId(getCorrelationId());
+
+        try {
+            AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+                .hostnames(getVds().getHostName())
+                .playbook(AnsibleConstants.HOST_REMOVE_PLAYBOOK);
+
+            auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_STARTED);
+
+            AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+            logable.addCustomValue("LogFile", command.logFile().getAbsolutePath());
+
+            if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+                auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FAILED);
+            } else {
+                auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_FINISHED);
+            }
+        } catch (Exception e) {
+            logable.addCustomValue("Message", e.getMessage());
+            auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_EXECUTION_FAILED);
+        }
     }
 
     @Override

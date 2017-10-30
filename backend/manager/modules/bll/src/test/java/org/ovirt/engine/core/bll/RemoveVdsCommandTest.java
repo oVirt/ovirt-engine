@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -83,6 +84,9 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Mock
     private VdsStatisticsDao vdsStatisticsDao;
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     /**
      * The command under test.
