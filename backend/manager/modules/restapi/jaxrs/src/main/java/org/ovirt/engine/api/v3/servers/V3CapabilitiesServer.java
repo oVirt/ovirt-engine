@@ -74,26 +74,20 @@ public class V3CapabilitiesServer {
         XPath xpath = XPathFactory.newInstance().newXPath();
 
         try {
-            // Find the 3.6 capabilities and duplicate them for 4.0 and 4.1, as from the point of view of the user of
-            // version 3 of the API version 4.0 and 4.1 should be identical to version 3.6:
+            // Find the 3.6 capabilities:
             Element versionElement36 = (Element) xpath.evaluate("/capabilities/version[@major='3' and @minor='6']",
                 document, XPathConstants.NODE);
 
-            // Clone capabilities from 3.6 to 4.0
-            Element versionElement40 = cloneCapabilities(versionElement36, 4, 0);
+            // Clone capabilities from 3.6 to 4.y:
+            Element versionElement4y = null;
+            for (int y = 0; y <= 2; y++) {
+                versionElement4y = cloneCapabilities(versionElement36, 4, y);
+                document.getDocumentElement().appendChild(versionElement4y);
+            }
 
-            // Add the 4.0 capabilities to the end of the document:
-            document.getDocumentElement().appendChild(versionElement40);
-
-            // Clone capabilities from 3.6 to 4.1
-            Element versionElement41 = cloneCapabilities(versionElement36, 4, 1);
-
-            // Set the "current" flag of the 4.1 capabilities to "true"
-            Element currentElement = (Element) xpath.evaluate("current", versionElement41, XPathConstants.NODE);
+            // Set the "current" flag of the last version capabilities to "true":
+            Element currentElement = (Element) xpath.evaluate("current", versionElement4y, XPathConstants.NODE);
             currentElement.setTextContent("true");
-
-            // Add the 4.1 capabilities to the end of the document
-            document.getDocumentElement().appendChild(versionElement41);
         }
         catch (XPathExpressionException exception) {
             throw new WebApplicationException(exception, Response.Status.INTERNAL_SERVER_ERROR);
