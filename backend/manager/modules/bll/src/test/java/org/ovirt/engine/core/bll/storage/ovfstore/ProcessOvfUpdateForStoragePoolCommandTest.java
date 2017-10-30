@@ -120,6 +120,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private OvfHelper ovfHelper;
 
     @Spy
+    @InjectMocks
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
 
     private StoragePool pool1;

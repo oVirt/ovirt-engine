@@ -125,6 +125,14 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
     }
 
     @Override
+    public List<DbUser> getAllForTemplate(Guid id) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("template_guid", id);
+
+        return getCallsHandler().executeReadList("GetUsersByTemplateGuid", dbUserRowMapper, parameterSource);
+    }
+
+    @Override
     public List<DbUser> getAllWithQuery(String query) {
         return getJdbcTemplate().query(query, dbUserRowMapper);
     }

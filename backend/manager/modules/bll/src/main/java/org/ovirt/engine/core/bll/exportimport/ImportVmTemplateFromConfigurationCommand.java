@@ -12,9 +12,11 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -67,6 +69,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
     @Inject
     private UnregisteredDisksDao unregisteredDisksDao;
+    @Inject
+    private DrMappingHelper drMappingHelper;
 
     public ImportVmTemplateFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -174,6 +178,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 getParameters().setVmTemplate(vmTemplateFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
+                getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
+                getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
 
                 // For quota, update disks when required
                 if (getParameters().getDiskTemplateMap() != null) {
@@ -204,6 +210,16 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 getParameters().setClusterId(cluster.getId());
             }
         }
+    }
+
+    @Override
+    protected void mapDbUsers() {
+        drMappingHelper.mapDbUsers(getParameters().getDomainMap(),
+                getParameters().getDbUsers(),
+                getParameters().getUserToRoles(),
+                getVmTemplateId(),
+                VdcObjectType.VmTemplate,
+                getParameters().getRoleMap());
     }
 
     @Override

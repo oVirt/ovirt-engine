@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParameters implements ImportFromConfParameters {
@@ -11,6 +14,9 @@ public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParamete
     private Map<String, String> clusterMap;
     private Map<String, Object> roleMap;
     private Map<String, String> domainMap;
+
+    private Set<DbUser> dbUsers;
+    private Map<String, Set<String>> userToRoles  = new HashMap<>();
 
     public ImportVmTemplateFromConfParameters(Guid storagePoolId,
             Guid sourceDomainId,
@@ -75,6 +81,22 @@ public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParamete
 
     @Override
     public void setExternalLunMap(Map<String, Object> externalLunMap) {
+    }
+
+    public Set<DbUser> getDbUsers() {
+        return dbUsers;
+    }
+
+    public void setDbUsers(Set<DbUser> dbUsers) {
+        this.dbUsers = dbUsers;
+    }
+
+    public Map<String, Set<String>> getUserToRoles() {
+        return userToRoles;
+    }
+
+    public void setUserToRoles(Map<String, Set<String>> userToRoles) {
+        this.userToRoles = userToRoles;
     }
 
     public ImportVmTemplateFromConfParameters() {

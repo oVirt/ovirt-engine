@@ -5,8 +5,10 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAP
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -29,6 +32,7 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -62,6 +66,11 @@ public class OvfUpdateProcessHelper {
     @Inject
     private ClusterUtils clusterUtils;
 
+    @Inject
+    private DbUserDao dbUserDao;
+
+    @Inject
+    private OvfHelper ovfHelper;
     /**
      * Adds the given vm metadata to the given map
      */
@@ -87,8 +96,11 @@ public class OvfUpdateProcessHelper {
     public String buildMetadataDictionaryForTemplate(VmTemplate template,
                                                         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
         List<DiskImage> allTemplateImages = template.getDiskList();
+        Set<DbUser> dbUsers = new HashSet<>(dbUserDao.getAllForTemplate(template.getId()));
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
+        fullEntityOvfData.setDbUsers(dbUsers);
         fullEntityOvfData.setDiskImages(allTemplateImages);
+        ovfHelper.populateUserToRoles(fullEntityOvfData, template.getId());
         String templateMeta = generateVmTemplateMetadata(fullEntityOvfData);
         metaDictionary.put(template.getId(), new KeyValuePairCompat<>(
                 templateMeta, allTemplateImages.stream().map(BaseDisk::getId).collect(Collectors.toList())));

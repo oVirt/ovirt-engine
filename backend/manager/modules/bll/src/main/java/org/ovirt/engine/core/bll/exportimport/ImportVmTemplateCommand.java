@@ -390,6 +390,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         TransactionSupport.executeInNewTransaction(() -> {
             initImportClonedTemplateDisks();
             addVmTemplateToDb();
+            mapDbUsers();
             updateOriginalTemplateNameOnDerivedVms();
             addVmInterfaces();
             getCompensationContext().stateChanged();
@@ -410,6 +411,10 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmTemplateId());
         checkTrustedService();
         setSucceeded(true);
+    }
+
+    protected void mapDbUsers() {
+        // Left empty to override in ImportVmFromConfiguration
     }
 
     private void updateOriginalTemplateNameOnDerivedVms() {

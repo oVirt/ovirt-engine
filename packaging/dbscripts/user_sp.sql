@@ -298,6 +298,22 @@ LANGUAGE plpgsql;
 
     LANGUAGE plpgsql;
 
+    CREATE OR REPLACE FUNCTION GetUsersByTemplateGuid (v_template_guid UUID)
+    RETURNS SETOF users STABLE AS $PROCEDURE$
+
+    BEGIN
+        RETURN QUERY
+
+        SELECT users.*
+        FROM users
+            INNER JOIN permissions
+                ON users.user_id = permissions.ad_element_id
+        WHERE permissions.object_type_id = 4
+            AND permissions.object_id = v_template_guid;
+    END;$PROCEDURE$
+
+    LANGUAGE plpgsql;
+
     CREATE
         OR REPLACE FUNCTION UpdateLastAdminCheckStatus (v_userIds VARCHAR(4000))
     RETURNS VOID AS $PROCEDURE$
@@ -399,4 +415,18 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetUsersByTemplateGuid (v_template_guid UUID)
+RETURNS SETOF users STABLE AS $PROCEDURE$
 
+BEGIN
+    RETURN QUERY
+
+    SELECT users.*
+    FROM users
+        INNER JOIN permissions
+            ON users.user_id = permissions.ad_element_id
+    WHERE permissions.object_type_id = 4
+        AND permissions.object_id = v_template_guid;
+END;$PROCEDURE$
+
+LANGUAGE plpgsql;

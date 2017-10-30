@@ -68,6 +68,15 @@ public interface DbUserDao extends Dao, SearchDao<DbUser> {
     List<DbUser> getAllForVm(Guid id);
 
     /**
+     * Retrieves all users associated with the specified template.
+     *
+     * @param id
+     *            the template id
+     * @return the list of users
+     */
+    List<DbUser> getAllForTemplate(Guid id);
+
+    /**
      * Retrieves all defined used.
      *
      * @return the collection of all users
