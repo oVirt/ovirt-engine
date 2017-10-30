@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import org.ovirt.engine.ui.common.widget.AlertManager;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -33,15 +31,13 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
     private final HeaderPresenterWidget header;
     private final MenuPresenterWidget menu;
-    private final AlertManager alertManager;
 
     @Inject
     public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            HeaderPresenterWidget header, MenuPresenterWidget menu, AlertManager alertManager) {
+            HeaderPresenterWidget header, MenuPresenterWidget menu) {
         super(eventBus, view, proxy, RevealType.Root);
         this.header = header;
         this.menu = menu;
-        this.alertManager = alertManager;
     }
 
     @Override
@@ -53,17 +49,6 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
         // Remove the loading page placeholder
         removeHostPagePlaceholder();
-
-        // Enable alerts within the scope of main section
-        alertManager.setCanShowAlerts(true);
-    }
-
-    @Override
-    protected void onHide() {
-        super.onHide();
-
-        // Disable alerts outside the scope of main section
-        alertManager.setCanShowAlerts(false);
     }
 
     protected void removeHostPagePlaceholder() {

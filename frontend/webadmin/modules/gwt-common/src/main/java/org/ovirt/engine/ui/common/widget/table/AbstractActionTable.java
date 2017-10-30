@@ -40,7 +40,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
-import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -48,8 +47,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
@@ -109,7 +106,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public final ActionCellTable<T> table;
     private List<ActionButtonDefinition<T>> actionDefinitions;
 
-    private boolean multiSelectionDisabled;
     private final int[] mousePosition = new int[2];
 
     private boolean doAutoSelect;
@@ -127,7 +123,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 // Enable multiple selection only when Control/Shift key is pressed
                 mousePosition[0] = event.getClientX();
                 mousePosition[1] = event.getClientY();
-                if (BrowserEvents.CLICK.equals(event.getType()) && !multiSelectionDisabled) {
+                if (BrowserEvents.CLICK.equals(event.getType())) {
                     selectionModel.asMultiSelectionModel().setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.asMultiSelectionModel().setMultiRangeSelectEnabled(event.getShiftKey());
                 }
@@ -359,8 +355,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             } else if (ctrlA) {
                 selectionModel.asMultiSelectionModel().selectAll();
             } else if (arrow) {
-                selectionModel.asMultiSelectionModel().setMultiSelectEnabled(event.isControlKeyDown() && !multiSelectionDisabled);
-                selectionModel.asMultiSelectionModel().setMultiRangeSelectEnabled(event.isShiftKeyDown() && !multiSelectionDisabled);
+                selectionModel.asMultiSelectionModel().setMultiSelectEnabled(event.isControlKeyDown());
+                selectionModel.asMultiSelectionModel().setMultiRangeSelectEnabled(event.isShiftKeyDown());
 
                 if (event.isDownArrow()) {
                     selectionModel.asMultiSelectionModel().selectNext();
@@ -390,9 +386,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     }
 
     void initSortHandler() {
-        // Allow sorting by one column at a time
-        table.getColumnSortList().setLimit(1);
-
         // Attach column sort handler
         table.initModelSortHandler(getDataProvider().getModel());
     }
@@ -510,19 +503,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         return selectionModel;
     }
 
-    public void setTableSelectionModel(SelectionModel<T> selectionModel,
-            CellPreviewEvent.Handler<T> selectionEventManager) {
-        table.setSelectionModel(selectionModel, selectionEventManager);
-    }
-
-    public boolean isMultiSelectionDisabled() {
-        return multiSelectionDisabled;
-    }
-
-    public void setMultiSelectionDisabled(boolean multiSelectionDisabled) {
-        this.multiSelectionDisabled = multiSelectionDisabled;
-    }
-
     public List<T> getSelectedItems() {
         return selectionModel.asMultiSelectionModel().getSelectedList();
     }
@@ -532,28 +512,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         table.setLoadingState(state);
     }
 
-    /**
-     * Gets the instance of RowStyles class and sets it to the cell table. Can be used when the rows have special styles
-     * according to the data they are displaying.
-     */
-    public void setExtraRowStyles(RowStyles<T> rowStyles) {
-        table.setRowStyles(rowStyles);
-    }
-
-    public String getContentTableElementId() {
-        return table.getElementId();
-    }
-
     public String getColumnWidth(Column<T, ?> column) {
         return table.getColumnWidth(column);
-    }
-
-    public void setVisibleRange(int start, int length) {
-        this.table.setVisibleRange(start, length);
-    }
-
-    public void addCellPreviewHandler(Handler<T> handler) {
-        table.addCellPreviewHandler(handler);
     }
 
     /**
@@ -666,4 +626,5 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public void hideContextMenu() {
         this.menuContainer.removeStyleName(OPEN);
     }
+
 }

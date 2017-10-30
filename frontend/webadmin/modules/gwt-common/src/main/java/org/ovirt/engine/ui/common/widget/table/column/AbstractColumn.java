@@ -17,13 +17,11 @@ import com.google.gwt.user.cellview.client.Column;
  * Supports element-id framework.
  * Supports tooltips.
  *
- * @param <T>
- *            Table row data type.
- * @param <C>
- *            Cell data type.
+ * @param <T> Row data type.
+ * @param <C> Column data type.
  */
-public abstract class AbstractColumn<T, C> extends Column<T, C> implements ColumnWithElementId, SortableColumn<T, C>,
-        ProvidesTooltipForObject<T> {
+public abstract class AbstractColumn<T, C> extends Column<T, C> implements ColumnWithElementId,
+        SortableColumn<T>, ProvidesTooltipForObject<T> {
 
     // Name of the field to sort by, or null for undefined sort order
     // (applies in case of server-side sorting)
