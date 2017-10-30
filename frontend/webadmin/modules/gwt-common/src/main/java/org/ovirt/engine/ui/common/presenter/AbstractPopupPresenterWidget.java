@@ -97,7 +97,7 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
         }
     }
 
-    protected int getActivePopupCount() {
+    public static int getActivePopupCount() {
         return activePopups;
     }
 

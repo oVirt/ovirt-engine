@@ -6,6 +6,7 @@ import java.util.Map;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.NavTabs;
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTab;
@@ -101,7 +102,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
         super.onLoad();
         keyHandler = Event.addNativePreviewHandler(event -> {
                 NativeEvent nativeEvent = event.getNativeEvent();
-                if (breadCrumbs != null) {
+                if (breadCrumbs != null && AbstractPopupPresenterWidget.getActivePopupCount() == 0) {
                     if (event.getTypeInt() == Event.ONKEYDOWN) {
                         if (nativeEvent.getCharCode() == 's' || nativeEvent.getKeyCode() == KeyCodes.KEY_S) {
                             if (nativeEvent.getCtrlKey() && nativeEvent.getAltKey()) {
