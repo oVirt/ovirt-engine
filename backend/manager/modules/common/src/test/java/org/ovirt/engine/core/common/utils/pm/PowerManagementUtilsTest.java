@@ -24,4 +24,13 @@ public class PowerManagementUtilsTest {
         assertEquals("666", map.get("ipport"));
         assertEquals("true", map.get("secure"));
     }
+
+    @Test
+    public void testKeyValueStringToMap() {
+        final String str = "ipport=666,ssh_options=-oCiphers=+3des-cbc";
+        Map<String, String> map = PowerManagementUtils.pmOptionsStringToMap(str);
+        assertEquals(2, map.size());
+        assertEquals("666", map.get("ipport"));
+        assertEquals("-oCiphers=+3des-cbc", map.get("ssh_options"));
+    }
 }

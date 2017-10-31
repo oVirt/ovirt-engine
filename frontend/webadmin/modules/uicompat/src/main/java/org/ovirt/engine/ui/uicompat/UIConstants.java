@@ -893,10 +893,6 @@ public interface UIConstants extends Constants {
 
     String errorWhileRetrievingListOfDomainsImportSanStorage();
 
-    String valueDoesntNotMatchPatternKeyValueKeyValueInvalidReason();
-
-    String valueDoesntNotNatchPatternKeyValueKeyKeyValueInvalidReason();
-
     String dataCenterIsNotAccessibleMsg();
 
     String thisFieldCantBeEmptyInvalidReason();

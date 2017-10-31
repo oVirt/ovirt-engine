@@ -27,10 +27,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -255,7 +253,9 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         if (StringHelper.isNotNullOrEmpty(pmOptions)) {
             for (String pair : pmOptions.split("[,]", -1)) { //$NON-NLS-1$
                 String[] array = pair.split("[=]", -1); //$NON-NLS-1$
-                if (array.length == 2) {
+                if (array.length == 3) { // key=key=value
+                    dict.put(array[0], array[1] + "=" + array[2]); //$NON-NLS-1$
+                } else if (array.length == 2) { // key=value
                     dict.put(array[0], array[1]);
                 } else if (array.length == 1) {
                     dict.put(array[0], ""); //$NON-NLS-1$
@@ -333,29 +333,12 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         EntityModel<String> password = getPmPassword();
         ListModel<String> type = getPmType();
         EntityModel<Integer> port = getPmPort();
-        EntityModel<String> options = getPmOptions();
 
         ip.validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
         userName.validateEntity(new IValidation[] {new NotEmptyValidation()});
         password.validateEntity(new IValidation[] {new NotEmptyValidation(), new LengthValidation(50)});
         type.validateSelectedItem(new IValidation[] {new NotEmptyValidation()});
         port.validateEntity(new IValidation[] {new IntegerValidation(1, 65535)});
-        options.validateEntity(new IValidation[] {new KeyValuePairValidation(true) {
-            @Override
-            protected void validateKeyValuePair(String key, String value, ValidationResult result) {
-                super.validateKeyValuePair(key, value, result);
-                // Validate that port is an integer, this is the only field right now that has to be an
-                // integer.
-                if (PM_PORT_KEY.equals(key)) {
-                    IntegerValidation intValidation = new IntegerValidation();
-                    ValidationResult intResult = intValidation.validate(value);
-                    if (!intResult.getSuccess()) {
-                        result.getReasons().addAll(intResult.getReasons());
-                        result.setSuccess(false);
-                    }
-                }
-            }
-        }});
     }
 
     /**

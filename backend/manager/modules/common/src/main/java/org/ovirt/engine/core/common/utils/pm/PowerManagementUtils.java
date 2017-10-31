@@ -27,6 +27,12 @@ public class PowerManagementUtils {
                 if (pair[0].trim().length() > 0 && pair[1].trim().length() > 0) {
                     map.put(pair[0], pair[1]);
                 }
+            } else if (pair.length == 3) { // key=key=value setting
+                pair[1] = pair[1] == null ? "" : pair[1];
+                pair[2] = pair[2] == null ? "" : pair[2];
+                if (pair[0].trim().length() > 0 && pair[1].trim().length() > 0 && pair[2].trim().length() > 0) {
+                    map.put(pair[0], pair[1] + "=" + pair[2]);
+                }
             } else { // only key setting
                 map.put(pair[0], "");
             }
