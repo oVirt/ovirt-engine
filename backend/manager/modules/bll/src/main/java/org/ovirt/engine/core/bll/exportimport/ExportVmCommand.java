@@ -193,13 +193,6 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             }
         }
 
-        // check that the images requested format are valid (COW+Sparse)
-        if (!imagesHandler.checkImagesConfiguration(getParameters().getStorageDomainId(),
-                disksForExport,
-                getReturnValue().getValidationMessages())) {
-            return false;
-        }
-
         Map<Guid, ? extends Disk> images = getVm().getDiskMap();
         if (getParameters().getCopyCollapse()) {
             for (DiskImage img : disksForExport) {

@@ -68,7 +68,6 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -88,9 +87,6 @@ public class ImagesHandler {
 
     @Inject
     private StorageDomainDao storageDomainDao;
-
-    @Inject
-    private StorageDomainStaticDao storageDomainStaticDao;
 
     @Inject
     private BaseDiskDao baseDiskDao;
@@ -500,14 +496,6 @@ public class ImagesHandler {
                 || (storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW)
                 || volumeFormat == VolumeFormat.Unassigned
                 || volumeType == VolumeType.Unassigned);
-    }
-
-    public boolean checkImagesConfiguration(Guid storageDomainId,
-            Collection<? extends Disk> disksConfigList,
-            List<String> messages) {
-        StorageDomainStatic storageDomain = storageDomainStaticDao.get(storageDomainId);
-        return !disksConfigList.stream().filter(DisksFilter.ONLY_IMAGES)
-                .anyMatch(disk -> !checkImageConfiguration(storageDomain, (DiskImage) disk, messages));
     }
 
     public static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks(Iterable<DiskImage> diskImages,
