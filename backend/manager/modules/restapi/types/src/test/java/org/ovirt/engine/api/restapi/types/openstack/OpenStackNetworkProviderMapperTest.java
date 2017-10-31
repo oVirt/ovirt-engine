@@ -52,7 +52,7 @@ public class OpenStackNetworkProviderMapperTest
         // The password isn't mapped for security reasons.
         assertNull(transform.getPassword());
         assertEquals(model.getTenantName(), transform.getTenantName());
-        assertEquals(model.getPluginType(), transform.getPluginType());
+        assertEquals(model.getExternalPluginType(), transform.getExternalPluginType());
         assertEquals(model.getType(), transform.getType());
         verify(model.getAgentConfiguration(), transform.getAgentConfiguration());
     }

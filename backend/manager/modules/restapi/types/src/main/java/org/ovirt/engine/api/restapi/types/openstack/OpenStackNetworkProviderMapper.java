@@ -78,8 +78,13 @@ public class OpenStackNetworkProviderMapper {
         if (model.isSetTenantName()) {
             additionalProperties.setTenantName(model.getTenantName());
         }
-        if (model.isSetPluginType()) {
-            additionalProperties.setPluginType(map(model.getPluginType()));
+        // The `plugin_type` attribute has been deprecated in version 4.2 of the engine. This code is preserved
+        // for backwards compatibility, and should be removed in version 5 of the API.
+        if (model.isSetPluginType() && model.getType() == OpenStackNetworkProviderType.NEUTRON) {
+            additionalProperties.setPluginType(mapPluginType(model.getPluginType()));
+        }
+        if (model.isSetExternalPluginType()) {
+            additionalProperties.setPluginType(model.getExternalPluginType());
         }
         if (model.isSetAgentConfiguration()) {
             additionalProperties.setAgentConfiguration(map(model.getAgentConfiguration(), null));
@@ -135,8 +140,15 @@ public class OpenStackNetworkProviderMapper {
             if (additionalProperties.getTenantName() != null) {
                 model.setTenantName(additionalProperties.getTenantName());
             }
-            if (additionalProperties.getPluginType() != null) {
-                model.setPluginType(map(additionalProperties.getPluginType()));
+            String pluginType = additionalProperties.getPluginType();
+            if (pluginType != null) {
+                // The `plugin_type` attribute has been deprecated in version 4.2 of the engine. This code is preserved
+                // for backwards compatibility, and should be removed in version 5 of the API.
+                if (entity.getType() == ProviderType.OPENSTACK_NETWORK &&
+                    OpenstackNetworkPluginType.OPEN_VSWITCH.name().equalsIgnoreCase(pluginType)) {
+                    model.setPluginType(NetworkPluginType.OPEN_VSWITCH);
+                }
+                model.setExternalPluginType(additionalProperties.getPluginType());
             }
             if (additionalProperties.getAgentConfiguration() != null) {
                 model.setAgentConfiguration(map(additionalProperties.getAgentConfiguration(), null));
@@ -204,20 +216,11 @@ public class OpenStackNetworkProviderMapper {
         return entity;
     }
 
-    private static String map(NetworkPluginType model) {
-        switch (model) {
-        case OPEN_VSWITCH:
+    private static String mapPluginType(NetworkPluginType pluginType) {
+        if (pluginType == NetworkPluginType.OPEN_VSWITCH) {
             return OpenstackNetworkPluginType.OPEN_VSWITCH.name();
-        default:
-            throw new IllegalArgumentException("Unknown network plugin type \"" + model + "\"");
         }
-    }
-
-    private static NetworkPluginType map(String entity) {
-        if (OpenstackNetworkPluginType.OPEN_VSWITCH.name().equalsIgnoreCase(entity)) {
-            return NetworkPluginType.OPEN_VSWITCH;
-        }
-        throw new IllegalArgumentException("Unknown network plugin type \"" + entity + "\"");
+        throw new IllegalArgumentException("Unknown Neutron network plugin type \"" + pluginType + "\"");
     }
 
     private static OpenstackNetworkProviderProperties.BrokerType map(MessageBrokerType model) {
