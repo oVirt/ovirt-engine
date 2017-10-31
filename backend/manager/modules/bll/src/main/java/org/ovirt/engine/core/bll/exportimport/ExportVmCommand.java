@@ -492,7 +492,6 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
      * Check that vm is in export domain
      */
     protected boolean checkVmInStorageDomain() {
-        boolean retVal = true;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getVm()
                 .getStoragePoolId(), getParameters().getStorageDomainId());
         QueryReturnValue qretVal = runInternalQuery(QueryType.GetVmsFromExportDomain,
@@ -503,25 +502,20 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             for (VM vm : vms) {
                 if (vm.getId().equals(getVm().getId())) {
                     if (!getParameters().getForceOverride()) {
-                        addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
-                        retVal = false;
-                        break;
+                        return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_GUID_ALREADY_EXIST);
                     }
                 } else if (vm.getName().equals(getVm().getName())) {
-                    addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
-                    retVal = false;
-                    break;
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
             }
         }
-        return retVal;
+        return true;
     }
 
     public static boolean checkTemplateInStorageDomain(Guid storagePoolId,
             Guid storageDomainId,
             final Guid tmplId,
             EngineContext engineContext) {
-        boolean retVal = false;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(storagePoolId,
                 storageDomainId);
         QueryReturnValue qretVal = Backend.getInstance().runInternalQuery(QueryType.GetTemplatesFromExportDomain,
@@ -530,12 +524,12 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         if (qretVal.getSucceeded()) {
             if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(tmplId)) {
                 Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
-                retVal = templates.keySet().stream().anyMatch(vmTemplate -> vmTemplate.getId().equals(tmplId));
+                return templates.keySet().stream().anyMatch(vmTemplate -> vmTemplate.getId().equals(tmplId));
             } else {
-                retVal = true;
+                return true;
             }
         }
-        return retVal;
+        return false;
     }
 
     @Override
