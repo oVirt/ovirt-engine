@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.ImagesDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -248,7 +249,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     }
 
     private void initIsoImages() {
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(
+        ImagesDataProvider.getIrsImageList(new AsyncQuery<>(
                         images -> {
                             getIso().setItems(images);
                             getIso().setSelectedItem(tryToFindVirtioTools(images));

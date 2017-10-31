@@ -55,6 +55,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.ImagesDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
@@ -382,7 +383,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateUserCdImage(Guid storagePoolId) {
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(images -> setImagesToModel(getModel(), images)),
+        ImagesDataProvider.getIrsImageList(new AsyncQuery<>(images -> setImagesToModel(getModel(), images)),
                 storagePoolId
         );
     }
@@ -408,7 +409,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.getInstance().getIrsImageList(asyncQuery(
+        ImagesDataProvider.getIrsImageList(asyncQuery(
                 images -> setImagesToModel(getModel(), images)),
                 dataCenter.getId(),
                 forceRefresh);

@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.ImagesDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
@@ -825,7 +826,7 @@ public abstract class RunOnceModel extends Model {
     }
 
     protected void updateFloppyImages() {
-        AsyncDataProvider.getInstance().getFloppyImageList(new AsyncQuery<>(
+        ImagesDataProvider.getFloppyImageList(new AsyncQuery<>(
                         images -> {
                             VM selectedVM = vm;
 
@@ -923,7 +924,7 @@ public abstract class RunOnceModel extends Model {
     }
 
     public void updateUnknownTypeImagesList(boolean forceRefresh) {
-        AsyncDataProvider.getInstance().getUnknownImageList(new AsyncQuery<>(images -> {
+        ImagesDataProvider.getUnknownImageList(new AsyncQuery<>(images -> {
             getKernelImage().setItems(images);
             getInitrdImage().setItems(images);
 
@@ -933,7 +934,7 @@ public abstract class RunOnceModel extends Model {
     }
 
     public void updateIsoList(boolean forceRefresh) {
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(
+        ImagesDataProvider.getIrsImageList(new AsyncQuery<>(
                         images -> {
                             final String lastSelectedIso = getIsoImage().getSelectedItem();
 

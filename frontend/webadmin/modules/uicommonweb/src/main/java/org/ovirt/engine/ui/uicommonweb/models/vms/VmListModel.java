@@ -67,6 +67,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmIconUnitAndVmToParameterBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.ImagesDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
@@ -1589,7 +1590,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         attachCdModel.getIsoImage().setItems(images1);
         attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrNull(images1));
 
-        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery<>(images -> {
+        ImagesDataProvider.getIrsImageList(new AsyncQuery<>(images -> {
             AttachCdModel _attachCdModel = (AttachCdModel) getWindow();
             images.add(0, ConsoleModel.getEjectLabel());
             _attachCdModel.getIsoImage().setItems(images);

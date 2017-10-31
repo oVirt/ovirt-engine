@@ -98,10 +98,8 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
-import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -128,7 +126,6 @@ import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParame
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
 import org.ovirt.engine.core.common.queries.GetHostsForStorageOperationParameters;
-import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainDefaultWipeAfterDeleteParameters;
@@ -206,7 +203,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class AsyncDataProvider {
 
-    public static final String ISO_PREFIX = "iso://"; //$NON-NLS-1$
     private static AsyncDataProvider instance;
 
     public static AsyncDataProvider getInstance() {
@@ -647,64 +643,6 @@ public class AsyncDataProvider {
 
         IdQueryParameters getExportParams = new IdQueryParameters(dataCenterId);
         Frontend.getInstance().runQuery(QueryType.GetStorageDomainsByStoragePoolId, getExportParams, aQuery);
-    }
-
-    public void getIrsImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
-        getIrsImageList(aQuery, storagePoolId, false);
-    }
-
-    public void getIrsImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
-        ImageFileType imageFileType = ImageFileType.ISO;
-        getIrsImageList(aQuery, storagePoolId, forceRefresh, imageFileType);
-    }
-
-    public void getFloppyImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
-        getIrsImageList(aQuery, storagePoolId, false, ImageFileType.Floppy);
-    }
-
-    public void getUnknownImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
-        getIrsImageList(aQuery,
-                storagePoolId,
-                forceRefresh,
-                ImageFileType.All,
-                new RepoImageToImageFileNameAsyncConverter() {
-
-                    @Override
-                    protected String transform(ArrayList<String> fileNameList, RepoImage repoImage) {
-                        return ISO_PREFIX + super.transform(fileNameList, repoImage);
-                    }
-
-                    @Override
-                    protected boolean desiredImage(RepoImage repoImage) {
-                        return ImageFileType.Unknown == repoImage.getFileType();
-                    }
-                });
-    }
-
-    public void getIrsImageList(AsyncQuery<List<String>> aQuery,
-            Guid storagePoolId,
-            boolean forceRefresh,
-            ImageFileType imageFileType) {
-
-        getIrsImageList(aQuery,
-                storagePoolId,
-                forceRefresh,
-                imageFileType,
-                new RepoImageToImageFileNameAsyncConverter());
-    }
-
-    private void getIrsImageList(AsyncQuery<List<String>> aQuery,
-            Guid storagePoolId,
-            boolean forceRefresh,
-            ImageFileType imageFileType,
-            Converter<List<String>, List<RepoImage>> converterCallBack) {
-
-        aQuery.converterCallback = converterCallBack;
-
-        GetImagesListByStoragePoolIdParameters parameters =
-                new GetImagesListByStoragePoolIdParameters(storagePoolId, imageFileType);
-        parameters.setForceRefresh(forceRefresh);
-        Frontend.getInstance().runQuery(QueryType.GetImagesListByStoragePoolId, parameters, aQuery);
     }
 
     public void getDefaultManagementNetwork(AsyncQuery<Network> aQuery, Guid dataCenterId) {
@@ -3181,32 +3119,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetClusterFeaturesByClusterId,
                 new IdQueryParameters(clusterId),
                 aQuery);
-    }
-
-    private static class RepoImageToImageFileNameAsyncConverter implements Converter<List<String>, List<RepoImage>> {
-        @Override
-        public List<String> convert(List<RepoImage> source) {
-            if (source != null) {
-                ArrayList<String> fileNameList = new ArrayList<>();
-                for (RepoImage repoImage : source) {
-                    if (desiredImage(repoImage)) {
-                        fileNameList.add(transform(fileNameList, repoImage));
-                    }
-                }
-
-                Collections.sort(fileNameList, new LexoNumericComparator());
-                return fileNameList;
-            }
-            return new ArrayList<>();
-        }
-
-        protected String transform(ArrayList<String> fileNameList, RepoImage repoImage) {
-            return repoImage.getRepoImageId();
-        }
-
-        protected boolean desiredImage(RepoImage repoImage) {
-            return true;
-        }
     }
 
     public void getVmTemplatesByBaseTemplateId(AsyncQuery<List<VmTemplate>> asyncQuery, Guid baseTemplate) {
