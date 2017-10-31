@@ -100,7 +100,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         cpuProfileAddParameters.setParametersCurrentUser(getCurrentUser());
         cpuProfileAddParameters.setSessionId(getContext().getEngineContext().getSessionId());
 
-        ActionReturnValue addCpuProfileReturnValue = getBackend().runAction(ActionType.AddCpuProfile,
+        ActionReturnValue addCpuProfileReturnValue = backend.runAction(ActionType.AddCpuProfile,
                 cpuProfileAddParameters);
         cpuProfile.setId(addCpuProfileReturnValue.getActionReturnValue());
     }

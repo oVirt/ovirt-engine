@@ -129,7 +129,6 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
     }
 
     private void mockBackend(boolean succeeded, EngineError errorCode) {
-        doReturn(backend).when(cmd).getBackend();
         doNothing().when(cmd).startSubStep();
         doReturn(asyncTaskToBeReturned).when(cmd).handleTaskReturn(asyncTaskToBeReturned);
         doNothing().when(cmd).updateBricksWithTaskID(asyncTaskToBeReturned);

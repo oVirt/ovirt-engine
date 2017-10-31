@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -110,10 +109,5 @@ public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandB
         } else {
             return AuditLogType.GLUSTER_VOLUME_REMOVE_BRICKS_COMMIT_FAILED;
         }
-    }
-
-    @Override
-    public BackendInternal getBackend() {
-        return super.getBackend();
     }
 }

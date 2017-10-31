@@ -441,7 +441,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
         try {
             // As we currently support a single volume image, we only need to verify that volume.
-            getBackend().getResourceManager().runVdsCommand(VDSCommandType.VerifyUntrustedVolume,
+            backend.getResourceManager().runVdsCommand(VDSCommandType.VerifyUntrustedVolume,
                     parameters);
         } catch (RuntimeException e) {
             log.error("Failed to verify transferred image: {}", e);
@@ -586,7 +586,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;
         try {
-            vdsRetVal = getBackend().getResourceManager().runVdsCommand(VDSCommandType.AddImageTicket,
+            vdsRetVal = backend.getResourceManager().runVdsCommand(VDSCommandType.AddImageTicket,
                     transferCommandParams);
         } catch (RuntimeException e) {
             log.error("Failed to start image transfer session: {}", e);
@@ -693,7 +693,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;
         try {
-            vdsRetVal = getBackend().getResourceManager().runVdsCommand(VDSCommandType.ExtendImageTicket,
+            vdsRetVal = backend.getResourceManager().runVdsCommand(VDSCommandType.ExtendImageTicket,
                     transferCommandParams);
         } catch (RuntimeException e) {
             log.error("Failed to extend image transfer session for ticket '{}': {}",
@@ -740,7 +740,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                 vdsId, imagedTicketId);
         VDSReturnValue vdsRetVal;
         try {
-            vdsRetVal = getBackend().getResourceManager().runVdsCommand(
+            vdsRetVal = backend.getResourceManager().runVdsCommand(
                     VDSCommandType.RemoveImageTicket, parameters);
         } catch (RuntimeException e) {
             log.error("Failed to stop image transfer session for ticket '{}': {}", imagedTicketId, e);

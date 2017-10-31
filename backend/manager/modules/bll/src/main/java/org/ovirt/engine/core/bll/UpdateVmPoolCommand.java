@@ -167,7 +167,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
         boolean isCurrentLatest = false; // old latest status
         if (poolVm.isNextRunConfigurationExists()) {
             QueryReturnValue qRetNextRun =
-                    getBackend().runInternalQuery(QueryType.GetVmNextRunConfiguration,
+                    backend.runInternalQuery(QueryType.GetVmNextRunConfiguration,
                             new IdQueryParameters(poolVm.getId()));
             if (qRetNextRun.getSucceeded()) {
                 final VM nextRunVm =

@@ -56,7 +56,7 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
                 String currentHostNameToLog = getCustomValue(GlusterConstants.VDS_NAME);
                 getCustomValues().remove(currentHostNameToLog);
                 addCustomValue(GlusterConstants.VDS_NAME, vdsDao.get(currentRemoteHostId).getName());
-                return getBackend().runInternalAction(ActionType.UpdateGlusterHostPubKeyToSlaveInternal,
+                return backend.runInternalAction(ActionType.UpdateGlusterHostPubKeyToSlaveInternal,
                         new UpdateGlusterHostPubKeyToSlaveParameters(currentRemoteHostId,
                                 pubKeys, userName));
             });

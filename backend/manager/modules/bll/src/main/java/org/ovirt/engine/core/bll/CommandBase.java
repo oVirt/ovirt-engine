@@ -140,7 +140,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     private SessionDataContainer sessionDataContainer;
 
     @Inject
-    private BackendInternal backendInternal;
+    protected BackendInternal backend;
 
     @Inject
     private VDSBrokerFrontend vdsBroker;
@@ -276,13 +276,9 @@ public abstract class CommandBase<T extends ActionParametersBase>
         if (canPerformRollbackUsingCommand(commandType, params)) {
             params.setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            return getBackend().runInternalAction(commandType, params, context);
+            return backend.runInternalAction(commandType, params, context);
         }
         return new ActionReturnValue();
-    }
-
-    protected BackendInternal getBackend() {
-        return backendInternal;
     }
 
     /**
@@ -2312,26 +2308,26 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     protected ActionReturnValue runInternalAction(ActionType actionType, ActionParametersBase parameters) {
-        return getBackend().runInternalAction(actionType, parameters, context.clone());
+        return backend.runInternalAction(actionType, parameters, context.clone());
     }
 
     protected ActionReturnValue runInternalAction(ActionType actionType,
             ActionParametersBase parameters,
             CommandContext internalCommandContext) {
-        return getBackend().runInternalAction(actionType,
+        return backend.runInternalAction(actionType,
                 parameters,
                 internalCommandContext);
     }
 
     protected List<ActionReturnValue> runInternalMultipleActions(ActionType actionType,
             List<ActionParametersBase> parameters) {
-        return getBackend().runInternalMultipleActions(actionType, parameters, context.clone());
+        return backend.runInternalMultipleActions(actionType, parameters, context.clone());
     }
 
     protected List<ActionReturnValue> runInternalMultipleActions(ActionType actionType,
             List<ActionParametersBase> parameters,
             ExecutionContext executionContext) {
-        return getBackend().runInternalMultipleActions(actionType,
+        return backend.runInternalMultipleActions(actionType,
                 parameters,
                 context.clone().withExecutionContext(executionContext));
     }
@@ -2350,7 +2346,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     protected QueryReturnValue runInternalQuery(QueryType type, QueryParametersBase queryParams) {
-        return getBackend().runInternalQuery(type, queryParams, context.getEngineContext());
+        return backend.runInternalQuery(type, queryParams, context.getEngineContext());
     }
 
     protected CommandContext cloneContext() {

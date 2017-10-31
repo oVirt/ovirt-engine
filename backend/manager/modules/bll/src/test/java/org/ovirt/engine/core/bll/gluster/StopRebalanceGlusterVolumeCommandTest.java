@@ -146,7 +146,6 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
             JobExecutionStatus rebalanceStopStatus,
             boolean isRebalancegTaskCompleted,
             EngineError errorCode) {
-        doReturn(backend).when(cmd).getBackend();
         doReturn("TestVDS").when(cmd).getClusterName();
         doReturn("TestVolume").when(cmd).getGlusterVolumeName();
         doNothing().when(cmd).endStepJob(eq(rebalanceStopStatus), any(), eq(isRebalancegTaskCompleted));

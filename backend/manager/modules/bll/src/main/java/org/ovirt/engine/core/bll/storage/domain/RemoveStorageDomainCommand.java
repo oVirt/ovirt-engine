@@ -160,7 +160,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     protected boolean isStorageDomainAttached(StorageDomain dom) {
         List<StorageDomain> storageDomainList =
-                getBackend().runInternalQuery(QueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+                backend.runInternalQuery(QueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
                         new StorageDomainsAndStoragePoolIdQueryParameters(dom, getStoragePoolId(), getVds().getId(), false))
                         .getReturnValue();
         return !storageDomainList.isEmpty();
@@ -201,7 +201,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         DetachStorageDomainFromPoolParameters params = new DetachStorageDomainFromPoolParameters(domId, poolId);
         params.setDestroyingPool(getParameters().getDestroyingPool());
 
-        return getBackend()
+        return backend
                 .runInternalAction(ActionType.DetachStorageDomainFromPool,
                         params, cloneContext().withoutCompensationContext().withoutExecutionContext()).getSucceeded();
     }

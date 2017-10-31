@@ -1155,7 +1155,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endSuccessfully() {
         if (shouldEndSnapshotCreation()) {
-            getBackend().endAction(ActionType.CreateAllSnapshotsFromVm,
+            backend.endAction(ActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0),
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
@@ -1163,7 +1163,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getParameters().setRunAsStateless(false);
             getParameters().setCachedFlow(null);
 
-            setSucceeded(getBackend().runInternalAction(
+            setSucceeded(backend.runInternalAction(
                     getActionType(), getParameters(), createContextForRunStatelessVm()).getSucceeded());
             if (!getSucceeded()) {
                 getParameters().setShouldBeLogged(true);
@@ -1216,7 +1216,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endWithFailure() {
         if (shouldEndSnapshotCreation()) {
-            ActionReturnValue actionReturnValue = getBackend().endAction(ActionType.CreateAllSnapshotsFromVm,
+            ActionReturnValue actionReturnValue = backend.endAction(ActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0), cloneContext().withoutExecutionContext()
                             .withoutLock());
 

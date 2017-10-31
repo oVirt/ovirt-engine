@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -121,11 +120,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     public RestoreAllSnapshotsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
-    }
-
-    @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
     }
 
     @Override

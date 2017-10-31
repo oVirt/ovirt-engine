@@ -182,7 +182,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                     if (!currentSession.getUserName().equalsIgnoreCase("root")) {
                         succeeded =
                                 evaluateReturnValue(errorType,
-                                        getBackend().runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
+                                        backend.runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
                                                 new SetUpMountBrokerParameters(volume.getClusterId(),
                                                         serverIdsToPrep,
                                                         volume.getName(),

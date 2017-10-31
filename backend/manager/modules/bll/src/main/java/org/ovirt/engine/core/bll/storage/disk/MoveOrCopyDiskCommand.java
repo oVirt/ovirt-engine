@@ -384,7 +384,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private void endCommandActions() {
         if (!getParameters().getImagesParameters().isEmpty()) {
-            getBackend().endAction(getImagesActionType(),
+            backend.endAction(getImagesActionType(),
                     getParameters().getImagesParameters().get(0),
                     ExecutionHandler.createDefaultContextForTasks(getContext()));
         }

@@ -588,7 +588,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     protected void endActionOnAllImageGroups() {
         for (ActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().endAction(ActionType.CopyImageGroup,
+            backend.endAction(ActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }

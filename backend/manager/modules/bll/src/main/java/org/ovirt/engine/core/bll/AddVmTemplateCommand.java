@@ -452,7 +452,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
             graphicsDevice.setVmId(getVmTemplateId());
             GraphicsParameters parameters = new GraphicsParameters(graphicsDevice).setVm(false);
-            getBackend().runInternalAction(ActionType.AddGraphicsDevice, parameters);
+            backend.runInternalAction(ActionType.AddGraphicsDevice, parameters);
         }
     }
 
@@ -1038,7 +1038,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
             UpdateVmVersionParameters params = new UpdateVmVersionParameters(vmId);
             params.setSessionId(getParameters().getSessionId());
-            getBackend().runInternalAction(ActionType.UpdateVmVersion, params, cloneContextAndDetachFromParent());
+            backend.runInternalAction(ActionType.UpdateVmVersion, params, cloneContextAndDetachFromParent());
         }
         updateVmsJobHashMap.remove(getParameters().getBaseTemplateId());
         updateVmsJobMap.remove(getParameters().getBaseTemplateId());

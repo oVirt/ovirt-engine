@@ -130,7 +130,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         }
 
         if (getSucceeded()) {
-            setSucceeded(getBackend().runInternalAction(
+            setSucceeded(backend.runInternalAction(
                     actionType,
                     addSdParams,
                     getContext()).getSucceeded());
@@ -141,7 +141,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                     new AttachStorageDomainToPoolParameters(
                             addSdParams.getStorageDomainId(),
                             addSdParams.getStoragePoolId());
-            setSucceeded(getBackend().runInternalAction(
+            setSucceeded(backend.runInternalAction(
                     ActionType.AttachStorageDomainToPool,
                     attachSdParams,
                     getContext()).getSucceeded());
@@ -205,7 +205,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         List<BaseDisk> disks = baseDiskDao.getDisksByAlias(StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS);
         if (disks != null && !disks.isEmpty()) {
             BaseDisk heDirectLun = disks.get(0);
-            ActionReturnValue removeDisk = getBackend().runInternalAction(
+            ActionReturnValue removeDisk = backend.runInternalAction(
                     ActionType.RemoveDisk,
                     new RemoveDiskParameters(heDirectLun.getId()));
             if (!removeDisk.getSucceeded()) {
@@ -227,7 +227,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
     }
 
     private boolean fetchStorageDomainInfo() {
-        QueryReturnValue allDomainsQuery = getBackend().runInternalQuery(
+        QueryReturnValue allDomainsQuery = backend.runInternalQuery(
                 QueryType.GetExistingStorageDomainList,
                 new GetExistingStorageDomainListParameters(
                         getParameters().getVdsId(),

@@ -100,7 +100,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     }
 
     protected QueryReturnValue getUnregisteredDisksFromHost() {
-        return getBackend().runInternalQuery(QueryType.GetUnregisteredDisks,
+        return backend.runInternalQuery(QueryType.GetUnregisteredDisks,
                 new GetUnregisteredDisksQueryParameters(getParameters().getStorageDomainId(),
                         getParameters().getStoragePoolId()));
     }

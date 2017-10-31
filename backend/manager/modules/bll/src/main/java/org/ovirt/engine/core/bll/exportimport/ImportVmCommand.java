@@ -1349,7 +1349,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         for (ActionParametersBase p : getParameters().getImagesParameters()) {
             if (p instanceof MoveOrCopyImageGroupParameters) {
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-                getBackend().endAction(ActionType.CopyImageGroup,
+                backend.endAction(ActionType.CopyImageGroup,
                         p,
                         getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
             }

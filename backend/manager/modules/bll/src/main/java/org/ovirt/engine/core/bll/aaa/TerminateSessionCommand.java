@@ -62,7 +62,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
         }
 
         setReturnValue(
-                getBackend().logoff(
+                backend.logoff(
                         new ActionParametersBase(sessionId)));
     }
 

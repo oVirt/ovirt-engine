@@ -551,18 +551,18 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
                     GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
                     parameters.setVm(false);
-                    getBackend().runInternalAction(ActionType.AddGraphicsDevice, parameters);
+                    backend.runInternalAction(ActionType.AddGraphicsDevice, parameters);
                 }
             } else {
                 if (getParameters().getGraphicsDevices().get(type) == null) {
                     GraphicsParameters parameters = new GraphicsParameters(vmGraphicsDevice);
                     parameters.setVm(false);
-                    getBackend().runInternalAction(ActionType.RemoveGraphicsDevice, parameters);
+                    backend.runInternalAction(ActionType.RemoveGraphicsDevice, parameters);
                 } else {
                     getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
                     GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
                     parameters.setVm(false);
-                    getBackend().runInternalAction(ActionType.UpdateGraphicsDevice, parameters);
+                    backend.runInternalAction(ActionType.UpdateGraphicsDevice, parameters);
                 }
             }
         }
@@ -583,7 +583,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private List<GraphicsDevice> getGraphicsDevices() {
         if (cachedGraphics == null) {
-            cachedGraphics = getBackend()
+            cachedGraphics = backend
                     .runInternalQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(getVmTemplateId())).getReturnValue();
         }
         return cachedGraphics;

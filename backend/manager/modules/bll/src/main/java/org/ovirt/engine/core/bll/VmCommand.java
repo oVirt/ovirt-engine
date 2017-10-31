@@ -245,7 +245,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             }
 
-            ActionReturnValue returnValue = getBackend().endAction(
+            ActionReturnValue returnValue = backend.endAction(
                     p.getCommandType() == ActionType.Unknown ? getChildActionType() : p.getCommandType(),
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());

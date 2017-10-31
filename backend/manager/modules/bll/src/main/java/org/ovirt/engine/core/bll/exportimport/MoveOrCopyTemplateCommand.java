@@ -148,7 +148,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
     protected void endActionOnAllImageGroups() {
         for (ActionParametersBase p : getParameters().getImagesParameters()) {
-            getBackend().endAction(ActionType.CopyImageGroup,
+            backend.endAction(ActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }

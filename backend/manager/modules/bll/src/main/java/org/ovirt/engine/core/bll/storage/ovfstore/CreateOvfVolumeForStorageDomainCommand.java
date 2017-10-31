@@ -124,7 +124,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         if (!getParameters().getImagesParameters().isEmpty()) {
             ActionParametersBase childParams = getParameters().getImagesParameters().get(0);
             childParams.setTaskGroupSuccess(succeeded);
-            getBackend().endAction(childParams.getCommandType(), childParams,
+            backend.endAction(childParams.getCommandType(), childParams,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
     }

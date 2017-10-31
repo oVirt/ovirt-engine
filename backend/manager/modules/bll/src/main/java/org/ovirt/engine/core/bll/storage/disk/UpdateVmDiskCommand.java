@@ -664,7 +664,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             return;
         }
 
-        ActionReturnValue ret = getBackend().endAction(ActionType.ExtendImageSize,
+        ActionReturnValue ret = backend.endAction(ActionType.ExtendImageSize,
                 createExtendImageSizeParameters(),
                 getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
@@ -689,7 +689,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private void endInternalCommandWithFailure() {
         ExtendImageSizeParameters params = createExtendImageSizeParameters();
         params.setTaskGroupSuccess(false);
-        getBackend().endAction(ActionType.ExtendImageSize,
+        backend.endAction(ActionType.ExtendImageSize,
                 params,
                 getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
     }

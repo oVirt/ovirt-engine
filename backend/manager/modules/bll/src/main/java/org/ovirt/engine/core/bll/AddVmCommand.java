@@ -1058,7 +1058,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
 
             graphicsDevice.setVmId(getVmId());
-            getBackend().runInternalAction(ActionType.AddGraphicsDevice, new GraphicsParameters(graphicsDevice));
+            backend.runInternalAction(ActionType.AddGraphicsDevice, new GraphicsParameters(graphicsDevice));
         }
     }
 
@@ -1209,7 +1209,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(getParameters().getVm(), numaNodes);
 
-        ActionReturnValue returnValueBase = getBackend().runInternalAction(ActionType.AddVmNumaNodes, params);
+        ActionReturnValue returnValueBase = backend.runInternalAction(ActionType.AddVmNumaNodes, params);
         if (!returnValueBase.getSucceeded()) {
             auditLogDirector.log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
         }

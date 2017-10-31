@@ -123,7 +123,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         Guid slaveHostId = getParameters().getSlaveHostId();
         if (!rootSession) {
             ActionReturnValue completeMountBrokerSetupOnSlaveInternalAction =
-                    getBackend().runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
+                    backend.runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
                             new SetUpMountBrokerParameters(vdsDao.get(slaveHostId).getClusterId(),
                                     new HashSet<>(Collections.singletonList(getParameters().getSlaveHostId())),
                                     getParameters().getSlaveVolumeName(),
@@ -135,7 +135,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
                 auditLogDirector.log(this, AuditLogType.GLUSTER_SETUP_GEOREP_MOUNT_BROKER);
                 if (!remoteServerIds.isEmpty()) {
                     ActionReturnValue mountBrokerPartialSetupInternalAction =
-                            getBackend().runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
+                            backend.runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
                                     new SetUpMountBrokerParameters(vdsDao.get(slaveHostId).getClusterId(),
                                             remoteServerIds,
                                             getParameters().getSlaveVolumeName(),

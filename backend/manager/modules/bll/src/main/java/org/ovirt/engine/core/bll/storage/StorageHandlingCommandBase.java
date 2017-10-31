@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -456,7 +455,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             ovfDisks = new ArrayList<>();
 
             // Get all unregistered disks.
-            List<DiskImage> disksFromStorage = getBackend().runInternalQuery(QueryType.GetUnregisteredDisks,
+            List<DiskImage> disksFromStorage = backend.runInternalQuery(QueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId,
                             storagePoolId)).getReturnValue();
             if (disksFromStorage == null) {
@@ -738,13 +737,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVdsName());
         }
         return jobProperties;
-    }
-
-    /* Overidden Dao access methods, for easier testing */
-
-    @Override
-    public BackendInternal getBackend() {
-        return super.getBackend();
     }
 
     /* Transaction methods */

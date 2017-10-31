@@ -144,7 +144,7 @@ public class CreateAllOvaDisksCommand<T extends CreateAllOvaDisksParameters> ext
     }
 
     private void endCopyImageGroupCommands() {
-        getParameters().getImagesParameters().forEach(parameters -> getBackend().endAction(
+        getParameters().getImagesParameters().forEach(parameters -> backend.endAction(
                 ActionType.CopyImageGroup,
                 parameters,
                 getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock()));

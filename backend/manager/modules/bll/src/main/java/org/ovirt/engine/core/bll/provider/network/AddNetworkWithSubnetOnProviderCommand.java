@@ -25,8 +25,7 @@ public class AddNetworkWithSubnetOnProviderCommand<T extends AddNetworkWithSubne
         if (externalSubnet != null) {
             AddExternalSubnetParameters subnetParameters = new AddExternalSubnetParameters(
                 externalSubnet, providerId, externalId);
-            getBackend().runInternalMultipleActions(
-                ActionType.AddSubnetToProvider, Arrays.asList(subnetParameters));
+            backend.runInternalMultipleActions(ActionType.AddSubnetToProvider, Arrays.asList(subnetParameters));
         }
     }
 }

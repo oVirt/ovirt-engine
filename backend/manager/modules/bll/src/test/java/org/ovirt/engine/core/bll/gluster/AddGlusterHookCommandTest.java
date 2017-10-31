@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -77,8 +76,6 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     }
 
     private void mockBackend(boolean succeeded, EngineError errorCode) {
-        doReturn(backend).when(cmd).getBackend();
-
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(succeeded);
         if (!succeeded) {

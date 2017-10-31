@@ -288,7 +288,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
 
     protected void endActionOnDevices() {
         for (ActionParametersBase p : getParameters().getImagesParameters()) {
-            getBackend().endAction(p.getCommandType(),
+            backend.endAction(p.getCommandType(),
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }

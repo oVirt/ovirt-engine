@@ -643,7 +643,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             AuditLogable logable = new AuditLogableImpl();
             logable.setVmId(getVmId());
             logable.setVmName(getVmName());
-            List<String> validationMessages = getBackend().getErrorsTranslator()
+            List<String> validationMessages = backend.getErrorsTranslator()
                     .translateErrorText(setActionResult.getValidationMessages());
             logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE,
                     StringUtils.join(validationMessages, ","));
@@ -705,7 +705,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void removeGraphicsDevice(GraphicsType type) {
         GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(type);
         if (existingGraphicsDevice != null) {
-            getBackend().runInternalAction(ActionType.RemoveGraphicsDevice,
+            backend.runInternalAction(ActionType.RemoveGraphicsDevice,
                     new GraphicsParameters(existingGraphicsDevice));
         }
     }
@@ -713,7 +713,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void addOrUpdateGraphicsDevice(GraphicsDevice device) {
         GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(device.getGraphicsType());
         device.setVmId(getVmId());
-        getBackend().runInternalAction(
+        backend.runInternalAction(
                 existingGraphicsDevice == null ? ActionType.AddGraphicsDevice : ActionType.UpdateGraphicsDevice,
                 new GraphicsParameters(device));
     }
@@ -724,7 +724,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private List<GraphicsDevice> getGraphicsDevices() {
         if (cachedGraphics == null) {
-            cachedGraphics = getBackend()
+            cachedGraphics = backend
                     .runInternalQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(getParameters().getVmId())).getReturnValue();
         }
         return cachedGraphics;
@@ -788,7 +788,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<VmNumaNode> newList = getParameters().getVmStaticData().getvNumaNodeList();
         VmNumaNodeOperationParameters params =
                 new VmNumaNodeOperationParameters(getParameters().getVm(), new ArrayList<>(newList));
-            addLogMessages(getBackend().runInternalAction(ActionType.SetVmNumaNodes, params));
+        addLogMessages(backend.runInternalAction(ActionType.SetVmNumaNodes, params));
 
     }
 

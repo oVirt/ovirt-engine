@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -180,12 +179,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     protected List<VM> getVmList() {
         return vmDao.getAllRunningForVds(getVdsId());
-    }
-
-    // Method needs to be overridden to allow mocking in bll.pm subpackage
-    @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
     }
 
     /**

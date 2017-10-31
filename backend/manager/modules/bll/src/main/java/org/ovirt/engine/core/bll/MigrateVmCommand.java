@@ -567,7 +567,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getParameters().getTargetClusterId(),
                 getVmId(),
                 getVm().getCustomCompatibilityVersion());
-        setSucceeded(getBackend().runInternalAction(ActionType.ChangeVMCluster, params).getSucceeded());
+        setSucceeded(backend.runInternalAction(ActionType.ChangeVMCluster, params).getSucceeded());
     }
 
     private Boolean getAutoConverge() {
