@@ -534,6 +534,11 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         }
         model.setItems(items);
 
+        model.getForce().setIsAvailable(true);
+        model.getForce().setIsChangeable(true);
+        model.getForce().setEntity(false);
+        model.setForceLabel(ConstantsManager.getInstance().getConstants().ignoreOVFUpdateFailure());
+
         UICommand maintenance = UICommand.createDefaultOkUiCommand("OnMaintenance", this); //$NON-NLS-1$
         model.getCommands().add(maintenance);
 
@@ -542,10 +547,13 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void onMaintenance() {
+        final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
+
         ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (StorageDomain item : getSelectedItems()) {
             DeactivateStorageDomainWithOvfUpdateParameters parameters = new DeactivateStorageDomainWithOvfUpdateParameters();
             parameters.setStorageDomainId(getEntity().getId());
+            parameters.setForceMaintenance(confirmationModel.getForce().getEntity());
             if (item.getStoragePoolId() != null) {
                 parameters.setStoragePoolId(item.getStoragePoolId());
             }
@@ -553,7 +561,6 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             list.add(parameters);
         }
 
-        final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
         confirmationModel.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.DeactivateStorageDomainWithOvfUpdate, list,

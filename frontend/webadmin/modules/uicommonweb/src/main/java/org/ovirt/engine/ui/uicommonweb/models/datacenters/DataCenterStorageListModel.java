@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
+import org.ovirt.engine.core.common.action.DeactivateStorageDomainWithOvfUpdateParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -175,12 +176,13 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void onMaintenance() {
+        final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
+
         List<ActionParametersBase> pb = getSelectedItems()
                 .stream()
-                .map(sd -> new StorageDomainPoolParametersBase(sd.getId(), getEntity().getId()))
+                .map(sd -> new DeactivateStorageDomainWithOvfUpdateParameters(sd.getId(), getEntity().getId(), confirmationModel.getForce().getEntity()))
                 .collect(Collectors.toList());
 
-        final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
         confirmationModel.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.DeactivateStorageDomainWithOvfUpdate, pb, result -> {
@@ -198,6 +200,11 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
         List<String> items = getSelectedItems().stream().map(StorageDomain::getName).collect(Collectors.toList());
         model.setItems(items);
+
+        model.getForce().setIsAvailable(true);
+        model.getForce().setIsChangeable(true);
+        model.getForce().setEntity(false);
+        model.setForceLabel(ConstantsManager.getInstance().getConstants().ignoreOVFUpdateFailure());
 
         UICommand maintenance = UICommand.createDefaultOkUiCommand("OnMaintenance", this); //$NON-NLS-1$
         model.getCommands().add(maintenance);

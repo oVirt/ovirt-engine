@@ -2110,5 +2110,7 @@ public interface UIConstants extends Constants {
     String pinnedToHost();
 
     String replaceBrickWarning();
+
+    String ignoreOVFUpdateFailure();
 }
 
