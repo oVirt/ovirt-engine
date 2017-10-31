@@ -180,8 +180,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         // check that the target and source domain are in the same storage_pool
         if (storagePoolIsoMapDao.get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getStoragePoolId())) == null) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
 
         // check if template exists only if asked for
@@ -200,8 +199,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                     // check that no RAW format exists (we are in collapse mode)
                     if (((DiskImage) images.get(img.getId())).getVolumeFormat() == VolumeFormat.RAW
                             && img.getVolumeFormat() != VolumeFormat.RAW) {
-                        addValidationMessage(EngineMessage.VM_CANNOT_EXPORT_RAW_FORMAT);
-                        return false;
+                        return failValidation(EngineMessage.VM_CANNOT_EXPORT_RAW_FORMAT);
                     }
                 }
             }
