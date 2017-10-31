@@ -315,8 +315,8 @@ public class AffinityRulesEnforcer {
                 candidateVm.getRunOnVds() == null ?
                         Collections.emptyList() : Arrays.asList(candidateVm.getRunOnVds());
 
-        boolean canMove = schedulingManager.canSchedule(cluster, candidateVm,
-                vdsBlackList, Collections.emptyList(), new ArrayList<>());
+        boolean canMove = !schedulingManager.canSchedule(cluster, candidateVm,
+                vdsBlackList, Collections.emptyList(), new ArrayList<>()).isEmpty();
 
         if (canMove) {
             log.debug("VM {} is a viable candidate for solving the affinity group violation situation.",

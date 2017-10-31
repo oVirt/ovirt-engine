@@ -114,13 +114,13 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         if (getVdsId() != null) {
             blacklist.add(getVdsId());
         }
-        return schedulingManager.canSchedule(
+        return !schedulingManager.canSchedule(
                 getCluster(),
                 vm,
                 blacklist, //blacklist only contains the host we're putting to maintenance
                 Collections.emptyList(), //no whitelist
                 new ArrayList<>()
-        );
+        ).isEmpty();
     }
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method

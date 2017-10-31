@@ -813,11 +813,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
                 && validate(new DiskImagesValidator(callFilterImageDisks(vm)).diskImagesNotLocked())
-                && schedulingManager.canSchedule(getCluster(),
+                && !schedulingManager.canSchedule(getCluster(),
                         getVm(),
                         getVdsBlackList(),
                         getVdsWhiteList(),
-                        getReturnValue().getValidationMessages());
+                        getReturnValue().getValidationMessages()).isEmpty();
     }
 
     @SuppressWarnings("unchecked")

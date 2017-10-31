@@ -530,7 +530,7 @@ public class SchedulingManager implements BackendService {
                 && !crossedThreshold;
     }
 
-    public boolean canSchedule(Cluster cluster,
+    public List<VDS> canSchedule(Cluster cluster,
             VM vm,
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
@@ -555,7 +555,7 @@ public class SchedulingManager implements BackendService {
                         false,
                         null);
 
-        return vdsList != null && !vdsList.isEmpty();
+        return vdsList;
     }
 
     private Map<String, String> createClusterPolicyParameters(Cluster cluster) {

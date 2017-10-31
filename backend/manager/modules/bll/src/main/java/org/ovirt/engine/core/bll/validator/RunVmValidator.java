@@ -136,8 +136,8 @@ public class RunVmValidator {
                     &&
                    validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                    validate(validateDisksPassDiscard(vm), messages) &&
-                   getSchedulingManager().canSchedule(
-                           cluster, vm, vdsBlackList, vdsWhiteList, messages);
+                   !getSchedulingManager().canSchedule(
+                           cluster, vm, vdsBlackList, vdsWhiteList, messages).isEmpty();
         }
 
         return
@@ -159,8 +159,8 @@ public class RunVmValidator {
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateDisksPassDiscard(vm), messages) &&
                 validate(validateMemorySize(vm), messages) &&
-                getSchedulingManager().canSchedule(
-                        cluster, vm, vdsBlackList, vdsWhiteList, messages);
+                !getSchedulingManager().canSchedule(
+                        cluster, vm, vdsBlackList, vdsWhiteList, messages).isEmpty();
     }
 
     private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {
