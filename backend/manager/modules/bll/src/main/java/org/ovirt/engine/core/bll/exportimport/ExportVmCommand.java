@@ -499,7 +499,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                 tempVar);
 
         if (qretVal.getSucceeded()) {
-            ArrayList<VM> vms = qretVal.getReturnValue();
+            List<VM> vms = qretVal.getReturnValue();
             for (VM vm : vms) {
                 if (vm.getId().equals(getVm().getId())) {
                     if (!getParameters().getForceOverride()) {
