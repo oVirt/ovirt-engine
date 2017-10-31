@@ -136,10 +136,14 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
     }
 
     protected void onKeyPress(NativeEvent event) {
+        // Use deferred command to allow GWT Editor framework to update dialog model
+        // in case of "Enter" pressed on a specific field; technically this is needed
+        // since OVirtBootstrapModal previews native events (happens before GWT event
+        // callbacks are executed)
         if (KeyCodes.KEY_ENTER == event.getKeyCode()) {
-            handleEnterKey();
+            Scheduler.get().scheduleDeferred(this::handleEnterKey);
         } else if (KeyCodes.KEY_ESCAPE == event.getKeyCode()) {
-            handleEscapeKey();
+            Scheduler.get().scheduleDeferred(this::handleEscapeKey);
             event.preventDefault();
         }
     }
