@@ -169,8 +169,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 // We should get only one entity, since we fetched the entity with a specific Storage Domain
                 ovfEntityData = ovfEntityList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmTemplateFromOvf(ovfEntityData.getOvfData());
-                vmTemplateFromConfiguration = fullEntityOvfData.getVmTemplate();
-                mapCluster(fullEntityOvfData.getClusterName());
+                mapCluster(fullEntityOvfData);
                 vmTemplateFromConfiguration.setClusterId(getParameters().getClusterId());
                 setVmTemplate(vmTemplateFromConfiguration);
                 setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
@@ -198,17 +197,14 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         setStoragePoolId(getCluster().getStoragePoolId());
     }
 
-    // TODO: Move to one method which will be used also for ImportVmFromConfigurationCommand
-    private void mapCluster(String clusterName) {
-        if (getParameters().getClusterMap() != null) {
-            String clusterDest = getParameters().getClusterMap().get(clusterName);
-            Cluster cluster = clusterDao.getByName(clusterDest);
-            if (cluster == null) {
-                cluster = clusterDao.getByName(clusterName);
-            }
-            if (cluster != null) {
-                getParameters().setClusterId(cluster.getId());
-            }
+    private void mapCluster(FullEntityOvfData fullEntityOvfData) {
+        vmTemplateFromConfiguration = fullEntityOvfData.getVmTemplate();
+        Cluster cluster =
+                drMappingHelper.getMappedCluster(fullEntityOvfData.getClusterName(),
+                        vmTemplateFromConfiguration.getId(),
+                        getParameters().getClusterMap());
+        if (cluster != null) {
+            getParameters().setClusterId(cluster.getId());
         }
     }
 
