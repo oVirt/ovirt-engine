@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class RemovePermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
 
@@ -29,6 +30,8 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     private VmDao vmDao;
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -89,6 +92,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
             }
         }
 
+        vmStaticDao.incrementDbGeneration(perms.getObjectId());
         permissionDao.remove(perms.getId());
         dbUserDao.updateLastAdminCheckStatus(userId);
         setSucceeded(true);

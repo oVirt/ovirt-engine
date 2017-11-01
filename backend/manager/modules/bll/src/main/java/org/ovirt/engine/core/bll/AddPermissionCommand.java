@@ -28,6 +28,7 @@ import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @ValidateSupportsTransaction
@@ -43,6 +44,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
     private DbGroupDao dbGroupDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
@@ -200,6 +203,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         if (user != null) {
             updateAdminStatus(permission);
         }
+        vmStaticDao.incrementDbGeneration(paramPermission.getObjectId());
         setSucceeded(true);
     }
 
