@@ -49,7 +49,6 @@ public class OvfVmReader extends OvfOvirtReader {
         super.readGeneralData(content);
         consumeReadProperty(content, TEMPLATE_ID, val -> _vm.getStaticData().setVmtGuid(new Guid(val)));
         consumeReadProperty(content, TEMPLATE_NAME, val -> _vm.setVmtName(val));
-        consumeReadProperty(content, CLUSTER_NAME, val -> fullEntityOvfData.setClusterName(val));
         consumeReadProperty(content, INSTANCE_TYPE_ID, val -> _vm.setInstanceTypeId(new Guid(val)));
         consumeReadProperty(content, IMAGE_TYPE_ID, val -> _vm.setImageTypeId(new Guid(val)));
         consumeReadProperty(content, IS_INITIALIZED, val -> _vm.setInitialized(Boolean.parseBoolean(val)));

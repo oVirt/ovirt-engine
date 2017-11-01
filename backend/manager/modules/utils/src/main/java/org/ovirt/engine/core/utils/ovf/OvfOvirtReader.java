@@ -99,6 +99,11 @@ public abstract class OvfOvirtReader extends OvfReader {
         readGeneralData(virtualSystem);
     }
 
+    protected void readGeneralData(XmlNode content) {
+        super.readGeneralData(content);
+        consumeReadProperty(content, CLUSTER_NAME, val -> fullEntityOvfData.setClusterName(val));
+    }
+
     @Override
     protected void readLunDisk(XmlNode node, LunDisk lun) {
         lun.setDiskVmElements(Collections.singletonList(new DiskVmElement(lun.getId(), fullEntityOvfData.getVmBase().getId())));

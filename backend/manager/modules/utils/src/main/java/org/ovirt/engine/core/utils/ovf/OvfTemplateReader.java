@@ -23,7 +23,6 @@ public class OvfTemplateReader extends OvfOvirtReader {
     protected void readGeneralData(XmlNode content) {
         super.readGeneralData(content);
         consumeReadProperty(content, TEMPLATE_ID, val -> _vmTemplate.setId(new Guid(val)));
-        consumeReadProperty(content, CLUSTER_NAME, val -> fullEntityOvfData.setClusterName(val));
         consumeReadProperty(content, IS_DISABLED, val -> _vmTemplate.setDisabled(Boolean.parseBoolean(val)));
         consumeReadProperty(content, TRUSTED_SERVICE, val -> _vmTemplate.setTrustedService(Boolean.parseBoolean(val)));
         consumeReadProperty(content, TEMPLATE_TYPE, val -> _vmTemplate.setTemplateType(VmEntityType.valueOf(val)));
