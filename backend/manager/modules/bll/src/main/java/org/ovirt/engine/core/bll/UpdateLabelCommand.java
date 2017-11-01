@@ -1,12 +1,23 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.inject.Inject;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class UpdateLabelCommand extends LabelCommandBase<LabelActionParameters> {
+
+    @Inject
+    private VmStaticDao vmStaticDao;
+
     public UpdateLabelCommand(LabelActionParameters parameters,
             CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -14,6 +25,9 @@ public class UpdateLabelCommand extends LabelCommandBase<LabelActionParameters> 
 
     @Override
     protected void executeCommand() {
+        Label label = labelDao.get(getLabelId());
+        Collection changedVms = CollectionUtils.disjunction(label.getVms(), getParameters().getLabel().getVms());
+        vmStaticDao.incrementDbGenerationForVms(new ArrayList<>(changedVms));
         labelDao.update(getParameters().getLabel());
         setActionReturnValue(getParameters().getLabel());
         setSucceeded(true);

@@ -1,12 +1,21 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LabelActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class RemoveLabelCommand<T extends LabelActionParametersBase> extends LabelCommandBase<T> {
+
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     public RemoveLabelCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -15,6 +24,8 @@ public class RemoveLabelCommand<T extends LabelActionParametersBase> extends Lab
     @Override
     protected void executeCommand() {
         if (getLabelId() != null) {
+            Label label = labelDao.get(getLabelId());
+            vmStaticDao.incrementDbGenerationForVms(new ArrayList<Guid>(label.getVms()));
             labelDao.remove(getLabelId());
             setSucceeded(true);
         }
