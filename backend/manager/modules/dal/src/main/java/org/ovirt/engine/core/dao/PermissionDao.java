@@ -115,6 +115,18 @@ public interface PermissionDao extends GenericDao<Permission, Guid> {
     List<Permission> getAllForRoleAndAdElement(Guid roleid, Guid elementid);
 
     /**
+     * Retrieves all permissions for the specified element and object.
+     *
+     * @param elementid
+     *            the element
+     * @param objectid
+     *            the object
+     * @return the list of permissions
+     */
+    List<Permission> getAllForAdElementAndObjectId(Guid elementid, Guid objectid);
+
+
+    /**
      * Retrieves all permissions for the specified role and object.
      *
      * @param roleid

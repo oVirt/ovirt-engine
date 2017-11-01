@@ -144,6 +144,16 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
     }
 
     @Override
+    public List<Permission> getAllForAdElementAndObjectId(Guid elementid, Guid objectid) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("ad_element_id", elementid).addValue("object_id", objectid);
+
+        return getCallsHandler().executeReadList("GetPermissionsByAdElementAndObjectId",
+                permissionRowMapper,
+                parameterSource);
+    }
+
+    @Override
     public List<Permission> getAllForEntity(Guid id) {
         return getAllForEntity(id, -1, false);
     }

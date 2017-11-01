@@ -378,6 +378,21 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     }
 
     /**
+     * Ensures that the correct collection is returned.
+     */
+    @Test
+    public void testGetAllForAdElementAndObject() {
+        List<Permission> result = dao.getAllForAdElementAndObjectId(AD_ELEMENT_ID, VM_ENTITY_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (Permission permission : result) {
+            assertEquals(AD_ELEMENT_ID, permission.getAdElementId());
+            assertEquals(VM_ENTITY_ID, permission.getObjectId());
+        }
+    }
+
+    /**
      * Ensures an empty collection is returned when the entity has no permissions tree.
      */
     @Test

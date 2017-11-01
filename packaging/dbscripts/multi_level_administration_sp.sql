@@ -776,3 +776,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetPermissionsByAdElementAndObjectId(
+    v_ad_element_id UUID,
+    v_object_id UUID)
+RETURNS SETOF permissions_view STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM permissions_view
+    WHERE ad_element_id = v_ad_element_id
+        AND object_id = v_object_id;
+END; $procedure$
+LANGUAGE plpgsql;
