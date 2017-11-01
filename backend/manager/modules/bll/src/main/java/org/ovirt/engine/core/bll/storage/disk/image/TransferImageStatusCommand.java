@@ -89,6 +89,7 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
             entity.setId(getParameters().getTransferImageCommandId());
             entity.setPhase(ImageTransferPhase.UNKNOWN);
             entity.setType(TransferType.Unknown);
+            entity.setActive(false);
         }
 
         setSucceeded(true);

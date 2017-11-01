@@ -63,6 +63,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         mapper.addValue("command_type", entity.getCommandType());
         mapper.addValue("phase", entity.getPhase());
         mapper.addValue("type", entity.getType());
+        mapper.addValue("active", entity.getActive());
         mapper.addValue("last_updated", entity.getLastUpdated());
         mapper.addValue("message", entity.getMessage());
         mapper.addValue("vds_id", entity.getVdsId() == null ? null : entity.getVdsId().toString());
@@ -83,6 +84,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             entity.setCommandType(ActionType.forValue(rs.getInt("command_type")));
             entity.setPhase(ImageTransferPhase.forValue(rs.getInt("phase")));
             entity.setType(TransferType.forValue(rs.getInt("type")));
+            entity.setActive(rs.getBoolean("active"));
             entity.setLastUpdated(new Date(rs.getTimestamp("last_updated").getTime()));
             entity.setMessage(rs.getString("message"));
             entity.setVdsId(getGuid(rs, "vds_id"));

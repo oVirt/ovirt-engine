@@ -15,6 +15,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private ActionType commandType;
     private ImageTransferPhase phase;
     private TransferType type;
+    private Boolean active;
     private Date lastUpdated;
     private String message;
 
@@ -63,6 +64,14 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
 
     public void setType(TransferType type) {
         this.type = type;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Date getLastUpdated() {
@@ -155,6 +164,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         ImageTransfer other = (ImageTransfer) obj;
         return Objects.equals(commandId, other.commandId)
                 && Objects.equals(phase, other.phase)
+                && Objects.equals(active, other.active)
                 && Objects.equals(lastUpdated, other.lastUpdated)
                 && Objects.equals(message, other.message)
                 && Objects.equals(vdsId, other.vdsId)
@@ -173,6 +183,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 commandId,
                 phase,
                 type,
+                active,
                 lastUpdated,
                 message,
                 vdsId,
