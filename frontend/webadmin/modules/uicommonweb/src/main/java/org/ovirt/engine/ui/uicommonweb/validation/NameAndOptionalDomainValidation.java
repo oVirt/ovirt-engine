@@ -10,6 +10,6 @@ public class NameAndOptionalDomainValidation extends BaseI18NValidation {
 
     @Override
     protected String composeRegex() {
-        return "^[A-Za-z0-9_-]+(@[.A-Za-z0-9_-]+)?$"; //$NON-NLS-1$
+        return "^[.A-Za-z0-9_-]+((@|\\\\)[.A-Za-z0-9_-]+)?$"; //$NON-NLS-1$
     }
 }

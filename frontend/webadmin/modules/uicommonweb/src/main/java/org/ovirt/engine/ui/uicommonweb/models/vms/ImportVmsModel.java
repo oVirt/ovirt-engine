@@ -732,6 +732,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             String dataCenter, String cluster, String esx, boolean verify) {
         if (username != null) {
             username = username.replace("@", "%40"); //$NON-NLS-1$ //$NON-NLS-2$
+            username = username.replace("\\", "%5c"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         return "vpx://" + //$NON-NLS-1$
