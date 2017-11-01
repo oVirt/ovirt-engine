@@ -72,10 +72,6 @@ public class DiskImagesValidator {
         return getDbFacade().getDiskImageDao().get(id);
     }
 
-    protected boolean isDiskExists(Guid id) {
-        return DbFacade.getInstance().getBaseDiskDao().exists(id);
-    }
-
     /**
      * Validates that non of the disks exists
      *
