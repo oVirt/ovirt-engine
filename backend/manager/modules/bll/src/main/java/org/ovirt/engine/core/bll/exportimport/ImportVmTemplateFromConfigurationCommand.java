@@ -194,7 +194,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             }
         }
         setClusterId(getParameters().getClusterId());
-        setStoragePoolId(getCluster().getStoragePoolId());
+        if (getCluster() != null) {
+            setStoragePoolId(getCluster().getStoragePoolId());
+        }
     }
 
     private void mapCluster(FullEntityOvfData fullEntityOvfData) {

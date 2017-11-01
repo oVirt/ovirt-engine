@@ -140,7 +140,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
             getParameters().setVmId(getParameters().getVm().getId());
         }
         setClusterId(getParameters().getClusterId());
-        getParameters().setStoragePoolId(getCluster().getStoragePoolId());
+        if (getCluster() != null) {
+            getParameters().setStoragePoolId(getCluster().getStoragePoolId());
+        }
         super.init();
     }
 
