@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 
 public class ImagesDataProvider {
 
-    public static final String ISO_PREFIX = "iso://"; //$NON-NLS-1$
+    private static final String ISO_PREFIX = "iso://"; //$NON-NLS-1$
 
     public static void getFloppyImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
         getIrsImageList(aQuery, storagePoolId, false, ImageFileType.Floppy);
@@ -50,7 +50,7 @@ public class ImagesDataProvider {
         getIrsImageList(aQuery, storagePoolId, forceRefresh, imageFileType);
     }
 
-    public static void getIrsImageList(AsyncQuery<List<String>> aQuery,
+    private static void getIrsImageList(AsyncQuery<List<String>> aQuery,
             Guid storagePoolId,
             boolean forceRefresh,
             ImageFileType imageFileType) {
