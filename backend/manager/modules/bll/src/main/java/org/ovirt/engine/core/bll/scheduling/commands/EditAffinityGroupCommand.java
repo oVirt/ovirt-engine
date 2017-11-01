@@ -1,17 +1,25 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     public EditAffinityGroupCommand(AffinityGroupCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -34,6 +42,10 @@ public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
 
     @Override
     protected void executeCommand() {
+        Collection changedVms =
+                CollectionUtils.disjunction(getAffinityGroup().getVmIds(), getParameters().getAffinityGroup()
+                        .getVmIds());
+        vmStaticDao.incrementDbGenerationForVms(new ArrayList<>(changedVms));
         affinityGroupDao.update(getParameters().getAffinityGroup());
         setSucceeded(true);
     }

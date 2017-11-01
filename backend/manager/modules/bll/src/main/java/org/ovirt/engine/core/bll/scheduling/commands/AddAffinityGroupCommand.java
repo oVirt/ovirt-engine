@@ -8,12 +8,16 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     public AddAffinityGroupCommand(AffinityGroupCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -37,6 +41,7 @@ public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand {
         getAffinityGroup().setId(Guid.newGuid());
         affinityGroupDao.save(getAffinityGroup());
         getReturnValue().setActionReturnValue(getAffinityGroup().getId());
+        vmStaticDao.incrementDbGenerationForVms(getAffinityGroup().getVmIds());
         setSucceeded(true);
     }
 

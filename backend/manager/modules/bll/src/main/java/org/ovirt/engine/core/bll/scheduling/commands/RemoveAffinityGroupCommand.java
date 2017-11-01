@@ -6,12 +6,16 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 public class RemoveAffinityGroupCommand extends AffinityGroupCRUDCommand {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     public RemoveAffinityGroupCommand(AffinityGroupCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -27,6 +31,7 @@ public class RemoveAffinityGroupCommand extends AffinityGroupCRUDCommand {
 
     @Override
     protected void executeCommand() {
+        vmStaticDao.incrementDbGenerationForVms(getAffinityGroup().getVmIds());
         affinityGroupDao.remove(getParameters().getAffinityGroupId());
         setSucceeded(true);
     }
