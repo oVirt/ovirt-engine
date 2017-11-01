@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
+import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
@@ -81,6 +82,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Mock
     private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
+
+    @Mock
+    private DrMappingHelper drMappingHelper;
 
     @Spy
     @InjectMocks

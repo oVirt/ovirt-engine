@@ -3,13 +3,9 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -19,6 +15,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -30,30 +27,17 @@ import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.Label;
-import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
-import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
-import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.DbUserDao;
-import org.ovirt.engine.core.dao.LabelDao;
-import org.ovirt.engine.core.dao.PermissionDao;
-import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
-import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,26 +57,17 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private OvfHelper ovfHelper;
 
     @Inject
-    private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
+    private DrMappingHelper drMappingHelper;
 
     @Inject
-    private ClusterDao clusterDao;
+    private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
+
     @Inject
     private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;
     @Inject
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
     @Inject
     private UnregisteredDisksDao unregisteredDisksDao;
-    @Inject
-    private AffinityGroupDao affinityGroupDao;
-    @Inject
-    private LabelDao labelDao;
-    @Inject
-    private DbUserDao dbUserDao;
-    @Inject
-    private PermissionDao permissionDao;
-    @Inject
-    private RoleDao roleDao;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -179,7 +154,14 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 ovfEntityData = ovfEntityDataList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
                 vmFromConfiguration = fullEntityOvfData.getVm();
-                mapCluster(fullEntityOvfData.getClusterName(), vmFromConfiguration);
+                Cluster cluster =
+                        drMappingHelper.getMappedCluster(fullEntityOvfData.getClusterName(),
+                                vmFromConfiguration.getId(),
+                                getParameters().getClusterMap());
+                if (cluster != null) {
+                    getParameters().setClusterId(cluster.getId());
+                }
+
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 mapVnicProfiles(vmFromConfiguration.getInterfaces());
                 getParameters().setVm(vmFromConfiguration);
@@ -199,7 +181,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 // Therefore to achieve a simple VM registration the iSCSI storage server should not use
                 // credentials, although if the user will use the mapping attribute, one can set the credentials through
                 // there.
-                mapExternalLunDisks(DisksFilter.filterLunDisks(vmFromConfiguration.getDiskMap().values()));
+                drMappingHelper.mapExternalLunDisks(DisksFilter.filterLunDisks(vmFromConfiguration.getDiskMap().values()),
+                        getParameters().getExternalLunMap());
             } catch (OvfReaderException e) {
                 log.error("Failed to parse a given ovf configuration: {}:\n{}",
                         e.getMessage(),
@@ -214,219 +197,28 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 importedNetworkInfoUpdater.updateNetworkInfo(vnic, getParameters().getExternalVnicProfileMappings()));
     }
 
-    private void mapCluster(String clusterName, VM vm) {
-        log.info("Mapping cluster '{}' for vm '{}'.",
-                clusterName,
-                vm.getId());
-        Cluster cluster = getRelatedEntity(getParameters().getClusterMap(),
-                clusterName,
-                val -> clusterDao.getByName((String) val));
-        if (cluster != null) {
-            getParameters().setClusterId(cluster.getId());
-        }
-    }
-
-    private void mapExternalLunDisks(List<LunDisk> luns) {
-        luns.forEach(lunDisk -> {
-            if (getParameters().getExternalLunMap() != null) {
-                LunDisk targetLunDisk = (LunDisk) getParameters().getExternalLunMap().get(lunDisk.getId().toString());
-                if (targetLunDisk != null) {
-                    lunDisk.setLun(targetLunDisk.getLun());
-                    lunDisk.getLun()
-                            .getLunConnections()
-                            .forEach(conn -> conn.setStorageType(lunDisk.getLun().getLunType()));
-                }
-            }
-        });
-    }
-
-    @Override
-    protected List<AffinityGroup> mapAffinityGroups() {
-        List<AffinityGroup> affinityGroups = new ArrayList<>();
-        Map<String, String> affinityGroupMap = getParameters().getAffinityGroupMap();
-        getParameters().getAffinityGroups().forEach(affinityGroup -> {
-            log.info("Mapping affinity group '{}/{} for vm '{}'.",
-                    affinityGroup != null ? affinityGroup.getId() : "N/A",
-                    affinityGroup != null ? affinityGroup.getName() : "N/A",
-                    getParameters().getVm().getId());
-            AffinityGroup affGroup = getRelatedEntity(affinityGroupMap,
-                    affinityGroup.getName(),
-                    val -> affinityGroupDao.getByName((String) val));
-            if (affGroup != null) {
-                affinityGroups.add(affGroup);
-            }
-        });
-        return affinityGroups;
-    }
-
-    private static <T, Q extends Nameable> Supplier<Q> getEntityByVal(Function<T, Q> fn, T val) {
-        return () -> fn.apply(val);
-    }
-
-    /**
-     * The function is mainly used for DR purposes, the functionality can be described by the following steps:
-     * <ul>
-     * <li>1. Check if a mapped value exists for the key <code>String</code> value</li>
-     * <li>2. If it does, fetch an entity by the alternative name</li>
-     * <li>3. If it doesn't, fetch an entity by the original name</li>
-     * <li>4. If the alternative BE exists return it, if it doesn't and the original BE exists return the original, if
-     * non exists return null</li>
-     * </ul>
-     *
-     * @param entityMap
-     *            - The mapping of the BE, for example Cluster to Cluster or AffinityGroups.
-     * @param originalEntityName
-     *            - The entity name which is about to be added to the return list map so the VM can be registered with
-     *            it.
-     * @param getterFunction
-     *            - The getter function to be used to fetch the entity by its name.
-     * @param <R>
-     *            - This is the BE which is about to be added to the registered entity
-     * @return - A list containing the entities to apply to the map. Null if none exists.
-     */
-    protected <R extends String, S extends Nameable> S getRelatedEntity(Map<R, R> entityMap,
-                                                                      R originalEntityName,
-                                                                      Function<R, S> getterFunction) {
-        // Try to fetch the entity from the DAO (usually by name).
-        // The entity which is being used is usually indicated in the entity's OVF.
-        Supplier<S> sup = getEntityByVal(getterFunction, originalEntityName);
-        S original = sup.get();
-
-        // Check if a map was sent by the user for DR purposes to cast the original BE with the alternative BE.
-        if (entityMap != null) {
-            R destName = entityMap.get(originalEntityName);
-            // If an alternative entity appears in the DR mapping sent by the user, try to fetch the alternative entity
-            // from the DAO to check if it exists.
-            if (destName != null) {
-                // Try to fetch the entity from the DAO (usually by name).
-                // The entity which is being used is the mapped entity.
-                Supplier<S> supplier = getEntityByVal(getterFunction, destName);
-                S dest = supplier.get();
-
-                // If the alternative entity exists add it, if not, try to add the original entity (if exists), if both
-                // are null, do not add anything.
-                return addBusinessEntityToList(dest, original);
-            } else if (original != null) {
-                // If the mapping destination was not found in the DB, try to add the original entity
-                return addBusinessEntityToList(original, null);
-            }
-        } else if (original != null) {
-            // If there is no mapping, only add the original entity
-            return addBusinessEntityToList(original, null);
-        }
-        return null;
-    }
-
-    /**
-     * If the original BE exists, add it to the list. If the original BE is null and the alternative BE exists add it to
-     * the list. If both are null, don't add anything.
-     *
-     * @param primaryEntity
-     *            - The BE which should be added to the list
-     * @param alternativeEntity
-     *            - The BE which should be added to the list if originalVal is null
-     * @param <S>
-     *            - The BE to be added
-     */
-    private static <S extends Nameable> S addBusinessEntityToList(S primaryEntity,
-                                                                  S alternativeEntity) {
-        if (primaryEntity != null) {
-            return primaryEntity;
-        } else if (alternativeEntity != null) {
-            return alternativeEntity;
-        } else {
-            log.warn("Nor primary entity of alternative entity were found. Not adding anything to the return list");
-            return null;
-        }
+    protected void mapDbUsers() {
+        drMappingHelper.mapDbUsers(getParameters().getDomainMap(),
+                getParameters().getDbUsers(),
+                getParameters().getUserToRoles(),
+                getVmId(),
+                VdcObjectType.VM,
+                getParameters().getRoleMap());
     }
 
     @Override
     public void addVmToAffinityGroups() {
-        mapAffinityGroups().forEach(affinityGroup -> {
-            affinityGroup.setClusterId(getParameters().getClusterId());
-            Set<Guid> vmIds = new HashSet<>(affinityGroup.getVmIds());
-            vmIds.add(getParameters().getVm().getId());
-            affinityGroup.setVmIds(new ArrayList<>(vmIds));
-            affinityGroupDao.update(affinityGroup);
-        });
-    }
-
-    @Override
-    protected List<Label> mapAffinityLabels() {
-        List<Label> affinityLabels = new ArrayList<>();
-        Map<String, String> affinityLabelMap = getParameters().getAffinityLabelMap();
-        getParameters().getAffinityLabels().forEach(affinityLabel -> {
-            log.info("Mapping affinity label '{}' for vm '{}'.",
-                    affinityLabel,
-                    getParameters().getVm().getId());
-            Label affLabel = getRelatedEntity(affinityLabelMap,
-                    affinityLabel,
-                    val -> labelDao.getByName((String) val));
-            if (affLabel != null) {
-                affinityLabels.add(affLabel);
-            }
-        });
-        return affinityLabels;
+        drMappingHelper.addVmToAffinityGroups(getParameters().getClusterId(),
+                getParameters().getVmId(),
+                getParameters().getAffinityGroupMap(),
+                getParameters().getAffinityGroups());
     }
 
     @Override
     public void addVmToAffinityLabels() {
-        mapAffinityLabels().forEach(affinityLabel -> {
-            affinityLabel.addVm(getParameters().getVm());
-            labelDao.update(affinityLabel);
-        });
-    }
-
-    @Override
-    protected void mapDbUsers() {
-        Map<String, String> userDomainsMap = getParameters().getDomainMap();
-        getParameters().getDbUsers().forEach(dbUser -> {
-            DbUser originalDbUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), dbUser.getDomain());
-
-            if (userDomainsMap != null) {
-                String destDomain = userDomainsMap.get(dbUser.getDomain());
-
-                if (destDomain != null) {
-                    DbUser destDbUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), destDomain);
-                    if (destDbUser != null) {
-                        addPermissionsForUser(destDbUser, getParameters().getUserToRoles());
-                    }
-                } else if (originalDbUser != null) {
-                    addPermissionsForUser(originalDbUser, getParameters().getUserToRoles());
-                }
-            } else if (originalDbUser != null) {
-                addPermissionsForUser(originalDbUser, getParameters().getUserToRoles());
-            }
-        });
-
-    }
-
-    private void addPermissionsForUser(DbUser dbUser, Map<String, Set<String>> userToRoles) {
-        addPermissions(dbUser, userToRoles.getOrDefault(dbUser.getLoginName(), Collections.EMPTY_SET));
-    }
-
-    private void addPermissions(DbUser dbUser, Set<String> roles) {
-        Map<String, Object> roleMap = getParameters().getRoleMap();
-        roles.forEach(roleName -> {
-            Permission permission = null;
-            Role originalRole = roleDao.getByName(roleName);
-            if (roleMap != null) {
-                Role destRoleName = (Role) roleMap.get(roleName);
-
-                if (destRoleName != null) {
-                    Role destRole = roleDao.getByName(destRoleName.getName());
-                    permission = new Permission(dbUser.getId(), destRole.getId(), getVmId(), VdcObjectType.VM);
-                } else if (originalRole != null) {
-                    permission = new Permission(dbUser.getId(), originalRole.getId(), getVmId(), VdcObjectType.VM);
-                }
-            } else if (originalRole != null) {
-                permission = new Permission(dbUser.getId(), originalRole.getId(), getVmId(), VdcObjectType.VM);
-            }
-
-            if (permission != null) {
-                permissionDao.save(permission);
-            }
-        });
+        drMappingHelper.addVmToAffinityLabels(getParameters().getAffinityLabelMap(),
+                getParameters().getVm(),
+                getParameters().getAffinityLabels());
     }
 
     private static ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {
