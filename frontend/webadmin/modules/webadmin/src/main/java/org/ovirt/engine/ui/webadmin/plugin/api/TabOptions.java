@@ -31,6 +31,10 @@ public final class TabOptions extends JsObjectWithProperties {
         return getValueAsDouble("priority", Double.MAX_VALUE); //$NON-NLS-1$
     }
 
+    public Boolean getDefaultPlace() {
+        return getValueAsBoolean("defaultPlace", false); //$NON-NLS-1$
+    }
+
     /**
      * Returns the search prefix associated with the tab.
      * <p>

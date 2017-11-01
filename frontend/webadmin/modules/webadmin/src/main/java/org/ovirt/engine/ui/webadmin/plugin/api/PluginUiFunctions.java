@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
+import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityType;
 import org.ovirt.engine.ui.webadmin.plugin.entity.TagObject;
@@ -36,10 +37,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * Contains UI related functionality exposed to UI plugins through the plugin API.
@@ -53,7 +52,7 @@ public class PluginUiFunctions implements HasHandlers {
     private final Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider;
 
     private final TagModelProvider tagModelProvider;
-    private final PlaceManager placeManager;
+    private final WebAdminPlaceManager placeManager;
     private final AlertManager alertManager;
     private final MenuPresenterWidget menuPresenterWidget;
 
@@ -62,7 +61,7 @@ public class PluginUiFunctions implements HasHandlers {
             DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory,
             DynamicUrlContentProxyFactory dynamicUrlContentProxyFactory,
             Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider,
-            PlaceManager placeManager,
+            WebAdminPlaceManager placeManager,
             AlertManager alertManager,
             MenuPresenterWidget menuPresenterWidget,
             TagModelProvider tagModelProvider) {
@@ -87,17 +86,19 @@ public class PluginUiFunctions implements HasHandlers {
     @Deprecated
     public void addMainTab(String label, String historyToken,
             String contentUrl, TabOptions options) {
-        addMainContentView(label, historyToken, contentUrl, options.getPriority().intValue());
+        addMainContentView(label, historyToken, contentUrl, options.getPriority().intValue(),
+                options.getDefaultPlace().booleanValue());
     }
 
     /**
      * Adds new dynamic main content view that shows contents of the given URL.
      */
     public void addMainContentView(String label, String historyToken,
-            String contentUrl, int priority) {
+            String contentUrl, int priority, boolean defaultPlace) {
         menuPresenterWidget.addMenuItem(priority, label, historyToken);
         // Not interested in the actual proxy, it will register itself.
         dynamicUrlContentProxyFactory.create(historyToken, contentUrl);
+        placeManager.setDefaultPlace(historyToken);
     }
 
     /**
@@ -243,13 +244,6 @@ public class PluginUiFunctions implements HasHandlers {
     public void closeDialog(final String dialogToken) {
         Scheduler.get().scheduleDeferred(() -> CloseDynamicPopupEvent.fire(PluginUiFunctions.this,
                 dialogToken));
-    }
-
-    /**
-     * Reveals the application place denoted by {@code historyToken}.
-     */
-    public void revealPlace(final String historyToken) {
-        Scheduler.get().scheduleDeferred(() -> placeManager.revealPlace(new PlaceRequest.Builder().nameToken(historyToken).build()));
     }
 
     /**

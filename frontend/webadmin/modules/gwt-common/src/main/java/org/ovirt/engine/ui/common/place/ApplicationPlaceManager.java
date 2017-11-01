@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.place;
 
 import java.util.logging.Logger;
 
-import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
@@ -25,15 +24,11 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
 
     private static final Logger logger = Logger.getLogger(ApplicationPlaceManager.class.getName());
 
-    private final CurrentUser user;
     protected final ClientAgentType clientAgentType;
 
-    private PlaceRequest autoLoginRequest;
-
     public ApplicationPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter,
-            CurrentUser user, ClientAgentType clientAgentType) {
+            ClientAgentType clientAgentType) {
         super(eventBus, tokenFormatter);
-        this.user = user;
         this.clientAgentType = clientAgentType;
 
         eventBus.addHandler(UserLoginChangeEvent.getType(), this);
@@ -84,33 +79,14 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
 
     @Override
     public void revealUnauthorizedPlace(String unauthorizedHistoryToken) {
-        // Since auto login happens through deferred command,
-        // the original place request might appear as unauthorized
-        if (user.isAutoLogin()) {
-            autoLoginRequest = getCurrentPlaceRequest();
-
-            // Disable auto login for subsequent place requests
-            user.setAutoLogin(false);
-        } else {
-            logger.warning("Unauthorized place request - the user is not allowed to access '" //$NON-NLS-1$
-                    + unauthorizedHistoryToken + "'"); //$NON-NLS-1$
-            revealDefaultPlace();
-        }
+        logger.warning("Unauthorized place request - the user is not allowed to access '" //$NON-NLS-1$
+                + unauthorizedHistoryToken + "'"); //$NON-NLS-1$
+        revealDefaultPlace();
     }
 
     @Override
     public void onUserLoginChange(UserLoginChangeEvent event) {
-        // Disable auto login for subsequent place requests
-        user.setAutoLogin(false);
-
-        if (autoLoginRequest != null) {
-            revealPlace(autoLoginRequest);
-
-            // Once revealed, disable auto login for subsequent events
-            autoLoginRequest = null;
-        } else {
-            revealDefaultPlace();
-        }
+        revealCurrentPlace();
     }
 
     @Override

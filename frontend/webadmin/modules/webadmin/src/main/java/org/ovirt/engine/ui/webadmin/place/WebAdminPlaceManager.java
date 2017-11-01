@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.place;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
@@ -16,16 +15,19 @@ import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
 public class WebAdminPlaceManager extends ApplicationPlaceManager {
 
-    private final PlaceRequest defaultMainSectionRequest;
+    private PlaceRequest defaultMainSectionRequest;
 
     @Inject
     public WebAdminPlaceManager(EventBus eventBus,
             TokenFormatter tokenFormatter,
-            CurrentUser user,
             ClientAgentType clientAgentType,
             @DefaultMainSectionPlace String defaultMainSectionPlace) {
-        super(eventBus, tokenFormatter, user, clientAgentType);
-        this.defaultMainSectionRequest = PlaceRequestFactory.get(defaultMainSectionPlace);
+        super(eventBus, tokenFormatter, clientAgentType);
+        setDefaultPlace(defaultMainSectionPlace);
+    }
+
+    public void setDefaultPlace(String nameToken) {
+        this.defaultMainSectionRequest = PlaceRequestFactory.get(nameToken);
     }
 
     @Override
