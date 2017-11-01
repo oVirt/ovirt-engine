@@ -257,6 +257,10 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository
         initOsRepository();
 
+        updatePredefinedIcons();
+        iconCleanup();
+        registerIconDefaultsProvider();
+
         // When getting a proxy to this bean using JBoss embedded, the initialize method is called for each method
         // invocation on the proxy, as it is called by setup method which is @PostConstruct - the initialized flag
         // makes sure that initialization occurs only once per class (which is ok, as this is a @Service)
@@ -317,9 +321,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         //initializes attestation
         initAttestation();
-        updatePredefinedIcons();
-        iconCleanup();
-        registerIconDefaultsProvider();
         EngineExtensionsManager.getInstance().engineInitialize();
         AuthenticationProfileRepository.getInstance();
         AcctUtils.reportReason(Acct.ReportReason.STARTUP, "Starting up engine");
