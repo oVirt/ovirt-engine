@@ -71,6 +71,12 @@ OVIRT_NODE_LEGACY_HOST_TYPES = (
     'RHEV_H',
 )
 
+OVIRT_NODE_HOST_TYPES = (
+    'ovirt-node',
+    'ovirt_node',
+    'OVIRT_NODE',
+)
+
 # Default connection params.
 defaultEngineFqdn = 'engine'
 defaultPort = 443
@@ -418,6 +424,109 @@ def upgradeoVirtNodeLegacy(
         )
 
 
+def upgradeoVirtNode(
+        api,
+        name,
+        waitForUpgradeTimeout=waitForUpgradeTimeout,
+        upgradeInstallTimeout=upgradeInstallTimeout,
+        upgradeRebootTimeout=upgradeRebootTimeout,
+        skipInvalidHostNames=False,
+):
+    """
+    Performs upgrade of oVirt NGN node.
+
+    Expects the host to be in the up or maintenance, otherwise it raises
+    an InvalidState exception.
+    """
+    if api.hosts.list(name=name):
+        host = api.hosts.list(name=name)[0]
+        state = getHostState(api, name)
+    else:
+        if skipInvalidHostNames:
+            return
+        else:
+            raise InvalidHostName(
+                'Invalid host name %s.' % name
+            )
+    if state == HOST_STATE_UP:
+        try:
+            host.upgrade()
+        except ovirtsdk.infrastructure.errors.RequestError as err:
+            if err.status == 409:
+                print(
+                    '\tCannot upgrade Host. '
+                    'There are no available updates for the host.'
+                )
+                return
+        secs = 0
+        while True:
+            state = getHostState(api, name)
+            if state == HOST_STATE_INSTALLING:
+                print('\tInstalling', end='')
+                break
+            elif state in HOST_INSTALL_FAILED_STATES:
+                raise RuntimeError(
+                    'Unable to complete the reinstall operational, '
+                    'host is in mode: {0}'.format(state)
+                )
+
+            time.sleep(SLEEP_TIME)
+            secs += SLEEP_TIME
+            if secs > waitForUpgradeTimeout:
+                raise TimeoutError(
+                    'Timed out while waiting for host to begin installation.'
+                )
+
+        secs = 0
+        while True:
+            print('.', end='')
+            state = getHostState(api, name)
+            if state == HOST_STATE_REBOOT:
+                print("\n\tRebooting.", end='')
+                break
+            elif state in HOST_INSTALL_FAILED_STATES:
+                raise RuntimeError(
+                    'Unable to complete the reinstall operational, '
+                    'host is in mode: {0}'.format(state)
+                )
+
+            time.sleep(SLEEP_TIME)
+            secs += SLEEP_TIME
+            if secs > upgradeInstallTimeout:
+                raise TimeoutError(
+                    'Timed out while waiting for host to be re-installed.'
+                )
+
+        secs = 0
+        nonResponsiveCounter = 0
+        while True:
+            print('.', end='')
+            state = getHostState(api, name)
+            if state == HOST_STATE_UP:
+                print("\n\tInstalled.")
+                break
+            elif state in HOST_INSTALL_FAILED_STATES:
+                print('*', end='')
+                nonResponsiveCounter += 1
+                if nonResponsiveCounter >= MAX_NON_RESPONSIVE_COUNT:
+                    raise RuntimeError(
+                        'Unable to complete the reinstall operational, '
+                        'host is in mode: {0}'.format(state)
+                    )
+
+            time.sleep(SLEEP_TIME)
+            secs += SLEEP_TIME
+            if secs > upgradeRebootTimeout:
+                raise TimeoutError(
+                    'Timed out while waiting for host to reboot and activate.'
+                )
+
+    else:
+        raise InvalidState(
+            'Host must be up before attemting an upgrade.'
+        )
+
+
 def verifyHost(api, name, skipInvalidHostNames=False):
     """
     Verifies that oVirt/RHEV host functions properly e.g. stays 'up'.
@@ -510,6 +619,9 @@ def processHost(api, name, skipInvalidHostNames):
             if vdsType in OVIRT_NODE_LEGACY_HOST_TYPES:
                 print('\tPerforming oVirt Node/RHEVH (Legacy) upgrade...')
                 upgradeoVirtNodeLegacy(api, name)
+            elif vdsType in OVIRT_NODE_HOST_TYPES:
+                print('\tPerforming oVirt Node NGN upgrade...')
+                upgradeoVirtNode(api, name)
             else:
                 print('\tPerforming host update through reinstallation...')
                 deactivateHost(api, name)
