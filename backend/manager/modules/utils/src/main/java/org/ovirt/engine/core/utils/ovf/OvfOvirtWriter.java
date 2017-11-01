@@ -185,6 +185,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
     @Override
     protected void writeGeneralData() {
         super.writeGeneralData();
+        _writer.writeElement(CLUSTER_NAME, fullEntityOvfData.getClusterName());
         writeUserData();
     }
 

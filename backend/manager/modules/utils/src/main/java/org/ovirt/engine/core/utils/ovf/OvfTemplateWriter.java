@@ -20,7 +20,6 @@ public class OvfTemplateWriter extends OvfOvirtWriter {
     protected void writeGeneralData() {
         super.writeGeneralData();
         _writer.writeElement(TEMPLATE_ID, vmTemplate.getId().toString());
-        _writer.writeElement(CLUSTER_NAME, fullEntityOvfData.getClusterName());
         OriginType originType = vmTemplate.getOrigin();
         _writer.writeElement(ORIGIN, originType == null ? "" : String.valueOf(originType.getValue()));
         _writer.writeElement(TEMPLATE_DEFAULT_DISPLAY_TYPE,
