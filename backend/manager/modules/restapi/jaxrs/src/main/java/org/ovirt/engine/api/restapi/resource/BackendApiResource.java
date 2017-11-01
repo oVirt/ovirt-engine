@@ -42,6 +42,7 @@ import org.ovirt.engine.api.model.Rsdl;
 import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.resource.AffinityLabelsResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
@@ -98,12 +99,14 @@ import org.ovirt.engine.api.restapi.rsdl.RsdlLoader;
 import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.VersionMapper;
+import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -278,14 +281,36 @@ public class BackendApiResource
         }
         else {
             BaseResource response;
+            Api api;
             if (appMode == ApplicationMode.GlusterOnly) {
-                response = addGlusterSummary(addSystemVersion(getGlusterApi()));
+                api = getGlusterApi();
+                response = addGlusterSummary(addSystemVersion(api));
             }
             else {
-                response = addSummary(addSystemVersion(getApi()));
+                api = getApi();
+                response = addSummary(addSystemVersion(api));
             }
+            setAuthenticatedUser(api);
             return getResponseBuilder(response).entity(response).build();
         }
+    }
+
+    /**
+     * Set a link to the user of the current session
+     * (the 'authenticated user') in the API object.
+     * This link enables users a convenient way to see
+     * which is the logged-in user, using the system.
+     */
+    private void setAuthenticatedUser(Api api) {
+        QueryReturnValue returnValue = runQuery(QueryType.GetUserBySessionId, new QueryParametersBase());
+        DbUser authenticatedUser = (DbUser)returnValue.getReturnValue();
+        User user = new User();
+        user.setId(authenticatedUser.getId().toString());
+        LinkHelper.addLinks(user);
+        api.setAuthenticatedUser(user);
+        api.setEffectiveUser(user);
+        //currently the authenticated and effective users are the same one,
+        //but if and when impersonation is introduced, they may be different.
     }
 
     private Response getSchema() {

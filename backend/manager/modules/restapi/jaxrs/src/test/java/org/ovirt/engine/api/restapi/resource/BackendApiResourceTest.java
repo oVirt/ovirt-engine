@@ -299,6 +299,7 @@ public class BackendApiResourceTest {
         current.setApplicationMode(appMode);
         resource.setUriInfo(setUpUriInfo());
         setUpGetSystemVersionExpectations();
+        setUpGetUserBySessionExpectations();
         setUpGetSystemStatisticsExpectations();
     }
 
@@ -426,6 +427,20 @@ public class BackendApiResourceTest {
         productRpmQueryResult.setSucceeded(true);
         productRpmQueryResult.setReturnValue(SYSTEM_VERSION);
         when(backend.runQuery(eq(QueryType.GetConfigurationValue), getProductRPMVersionParams())).thenReturn(productRpmQueryResult);
+
+        QueryReturnValue productVersionQueryResult = new QueryReturnValue();
+        productVersionQueryResult.setSucceeded(true);
+        productVersionQueryResult.setReturnValue(new Version(MAJOR, MINOR, BUILD, REVISION));
+        when(backend.runQuery(eq(QueryType.GetProductVersion), getProductVersionParams())).thenReturn(productVersionQueryResult);
+    }
+
+    protected void setUpGetUserBySessionExpectations() {
+        QueryReturnValue returnValue = new QueryReturnValue();
+        returnValue.setSucceeded(true);
+        DbUser dbUser = new DbUser();
+        dbUser.setId(Guid.Empty);
+        returnValue.setReturnValue(dbUser);
+        when(backend.runQuery(eq(QueryType.GetUserBySessionId), eqParams(QueryParametersBase.class, new String[0], new Object[0]))).thenReturn(returnValue);
 
         QueryReturnValue productVersionQueryResult = new QueryReturnValue();
         productVersionQueryResult.setSucceeded(true);
