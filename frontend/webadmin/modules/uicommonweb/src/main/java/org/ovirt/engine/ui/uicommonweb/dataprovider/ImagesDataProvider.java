@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.dataprovider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
@@ -27,18 +29,8 @@ public class ImagesDataProvider {
                 storagePoolId,
                 forceRefresh,
                 ImageFileType.All,
-                new RepoImageToImageFileNameAsyncConverter() {
-
-                    @Override
-                    protected String transform(RepoImage repoImage) {
-                        return ISO_PREFIX + super.transform(repoImage);
-                    }
-
-                    @Override
-                    protected boolean desiredImage(RepoImage repoImage) {
-                        return ImageFileType.Unknown == repoImage.getFileType();
-                    }
-                });
+                new RepoImageToImageFileNameAsyncConverter(image -> ISO_PREFIX + image.getRepoImageId(),
+                        image -> ImageFileType.Unknown == image.getFileType()));
     }
 
     public static void getIrsImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
@@ -78,13 +70,25 @@ public class ImagesDataProvider {
 
 
     private static class RepoImageToImageFileNameAsyncConverter implements Converter<List<String>, List<RepoImage>> {
+
+        private Function<RepoImage, String> transform = image -> image.getRepoImageId();
+        private Predicate<RepoImage> imagePredicate = image -> true;
+
+        public RepoImageToImageFileNameAsyncConverter() {
+        }
+
+        RepoImageToImageFileNameAsyncConverter(Function<RepoImage, String> transform, Predicate<RepoImage> imagePredicate) {
+            this.transform = transform;
+            this.imagePredicate = imagePredicate;
+        }
+
         @Override
         public List<String> convert(List<RepoImage> source) {
             if (source != null) {
                 ArrayList<String> fileNameList = new ArrayList<>();
                 for (RepoImage repoImage : source) {
-                    if (desiredImage(repoImage)) {
-                        fileNameList.add(transform(repoImage));
+                    if (imagePredicate.test(repoImage)) {
+                        fileNameList.add(transform.apply(repoImage));
                     }
                 }
 
@@ -92,14 +96,6 @@ public class ImagesDataProvider {
                 return fileNameList;
             }
             return new ArrayList<>();
-        }
-
-        protected String transform(RepoImage repoImage) {
-            return repoImage.getRepoImageId();
-        }
-
-        protected boolean desiredImage(RepoImage repoImage) {
-            return true;
         }
     }
 }
