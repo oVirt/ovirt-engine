@@ -30,8 +30,8 @@ public class ImagesDataProvider {
                 new RepoImageToImageFileNameAsyncConverter() {
 
                     @Override
-                    protected String transform(ArrayList<String> fileNameList, RepoImage repoImage) {
-                        return ISO_PREFIX + super.transform(fileNameList, repoImage);
+                    protected String transform(RepoImage repoImage) {
+                        return ISO_PREFIX + super.transform(repoImage);
                     }
 
                     @Override
@@ -84,7 +84,7 @@ public class ImagesDataProvider {
                 ArrayList<String> fileNameList = new ArrayList<>();
                 for (RepoImage repoImage : source) {
                     if (desiredImage(repoImage)) {
-                        fileNameList.add(transform(fileNameList, repoImage));
+                        fileNameList.add(transform(repoImage));
                     }
                 }
 
@@ -94,7 +94,7 @@ public class ImagesDataProvider {
             return new ArrayList<>();
         }
 
-        protected String transform(ArrayList<String> fileNameList, RepoImage repoImage) {
+        protected String transform(RepoImage repoImage) {
             return repoImage.getRepoImageId();
         }
 
