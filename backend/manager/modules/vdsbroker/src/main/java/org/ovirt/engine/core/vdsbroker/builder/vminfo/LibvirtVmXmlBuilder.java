@@ -320,6 +320,10 @@ public class LibvirtVmXmlBuilder {
                 writer.writeStartElement("cell");
                 writer.writeAttributeString("cpus", vmNumaNode.get(VdsProperties.NUMA_NODE_CPU_LIST).toString());
                 writer.writeAttributeString("memory", String.valueOf(Integer.parseInt((String) vmNumaNode.get(VdsProperties.VM_NUMA_NODE_MEM)) * 1024));
+                boolean hugepagesShared = HugePageUtils.getHugepagesShared(vm.getStaticData());
+                if (hugepagesShared){
+                    writer.writeAttributeString("memAccess", "shared");
+                }
                 writer.writeEndElement();
             }
             writer.writeEndElement();

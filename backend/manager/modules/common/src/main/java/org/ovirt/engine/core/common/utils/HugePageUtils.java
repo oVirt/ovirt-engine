@@ -65,4 +65,10 @@ public class HugePageUtils {
             return vmBase.getMemSizeMb();
         }
     }
+
+    public static boolean getHugepagesShared(VmBase vm){
+        SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
+        Map<String, String> customProperties = util.convertProperties(vm.getCustomProperties());
+        return Boolean.parseBoolean(customProperties.get("hugepages_shared"));
+    }
 }
