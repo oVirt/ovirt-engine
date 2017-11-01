@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -39,7 +38,6 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T
 
     private EngineLock engineLock;
 
-    private List<ActionReturnValue> actionReturnValues = new ArrayList<>();
     private String cachedDiskIsBeingMigratedMessage;
 
 
@@ -64,26 +62,17 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T
             // return the wrong command and lead to unexpected results
             moveDiskParameters.setCommandId(null);
 
-            actionReturnValues.add(runInternalAction(actionType,
+            setReturnValue(runInternalAction(actionType,
                     moveDiskParameters,
                     ExecutionHandler.createInternalJobContext(getContext(), getLock())));
         } else {
             Guid vmId = diskVmElements.get(0).getVmId();
             engineLock = lockVmWithWait(vmId);
-            actionReturnValues.add(runInternalAction(actionType,
+            setReturnValue(runInternalAction(actionType,
                     createLiveMigrateDiskParameters(getParameters(), vmId),
                     ExecutionHandler.createInternalJobContext(getContext(), engineLock)));
         }
-
-        handleChildReturnValue();
         setSucceeded(true);
-    }
-
-    private void handleChildReturnValue() {
-        for (ActionReturnValue actionReturnValueReturnValue : actionReturnValues) {
-            getReturnValue().getValidationMessages().addAll(actionReturnValueReturnValue.getValidationMessages());
-            getReturnValue().setValid(getReturnValue().isValid() && actionReturnValueReturnValue.isValid());
-        }
     }
 
     protected ActionType getMoveActionType(List<DiskVmElement> diskVmElements) {

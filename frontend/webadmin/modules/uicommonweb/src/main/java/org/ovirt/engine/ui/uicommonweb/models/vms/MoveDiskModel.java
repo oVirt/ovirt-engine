@@ -180,7 +180,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             return;
         }
 
-        Frontend.getInstance().runMultipleAction(getActionType(), parameters, result -> {
+        Frontend.getInstance().runMultipleActions(getActionType(), parameters, result -> {
             MoveDiskModel localModel = (MoveDiskModel) result.getState();
             localModel.cancel();
         }, this);
