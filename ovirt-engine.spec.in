@@ -216,7 +216,7 @@ Requires:	%{name}-tools = %{version}-%{release}
 Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
-Requires:	%{name}-dashboard >= 1.0.0
+Requires:	%{name}-dashboard >= 1.2.0
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
