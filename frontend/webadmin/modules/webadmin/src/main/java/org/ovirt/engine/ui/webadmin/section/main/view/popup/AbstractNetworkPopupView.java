@@ -275,6 +275,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
                     if (networkClusterModel.getIsChangable()) {
                         networkClusterModel.setAttached(value);
+                        networkClusterModel.setRequired(value && networkClusterModel.isRequired());
                     }
                 }
                 refreshClustersTable();
@@ -309,7 +310,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             @Override
             protected void selectionChanged(Boolean value) {
                 for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
-                    networkClusterModel.setRequired(value);
+                    networkClusterModel.setRequired(value && networkClusterModel.isAttached());
                 }
                 refreshClustersTable();
             }
@@ -345,6 +346,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
         clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>((index, model, value) -> {
             model.setAttached(value);
+            model.setRequired(value && model.isRequired());
             refreshClustersTable();
         }) {
             @Override
@@ -365,7 +367,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
         }, assignAllHeader, "110px"); //$NON-NLS-1$
         clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>((index, model, value) -> {
-            model.setRequired(value);
+            model.setRequired(value && model.isAttached());
             refreshClustersTable();
         }) {
             @Override
@@ -375,7 +377,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
             @Override
             protected boolean canEdit(NetworkClusterModel model) {
-                return isRequiredChangeable();
+                return isRequiredChangeable() && model.isAttached();
             }
 
             @Override
