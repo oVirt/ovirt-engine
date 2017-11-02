@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -66,6 +67,7 @@ public class NewNetworkModel extends NetworkModel {
             items.add(createNetworkClusterModel(cluster));
         }
         getNetworkClusterList().setItems(items);
+        selectExternalProviderBasedOnCluster();
     }
 
     protected NetworkClusterModel createNetworkClusterModel(Cluster cluster) {
@@ -90,6 +92,18 @@ public class NewNetworkModel extends NetworkModel {
     @Override
     protected void selectExternalProvider() {
         getExternalProviders().setSelectedItem(Linq.firstOrNull(getExternalProviders().getItems()));
+    }
+
+    private void selectExternalProviderBasedOnCluster() {
+        ArrayList<NetworkClusterModel> clusters = getClustersToAttach();
+        if (clusters != null && !clusters.isEmpty()) {
+            NetworkClusterModel networkClusterModel = clusters.get(0);
+            ListModel<Provider<?>> providers = getExternalProviders();
+            providers.getItems().stream()
+                    .filter(provider -> Objects.equals(networkClusterModel.getEntity().getDefaultNetworkProviderId(),
+                            provider.getId()))
+                    .findFirst().ifPresent(providers::setSelectedItem);
+        }
     }
 
     @Override
