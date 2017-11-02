@@ -33,8 +33,7 @@ public class DiskTransferProgressColumn extends AbstractProgressBarColumn<Disk> 
             if (disk.getImageTransferBytesTotal() != null && disk.getImageTransferBytesTotal() > 0) {
                 return (int) (disk.getImageTransferBytesSent() * 100 / disk.getImageTransferBytesTotal());
             }
-            // Without the total upload size, the disk size is the next best estimate
-            return Math.min(100, (int) (disk.getImageTransferBytesSent() * 100 / disk.getSize()));
+            return 0;
         }
         return null;
     }
