@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
+import org.ovirt.engine.core.compat.Guid;
 
-public interface HasStoragePool<T extends Serializable> {
-    T getStoragePoolId();
+public interface HasStoragePool {
+    Guid getStoragePoolId();
 
-    void setStoragePoolId(T value);
+    void setStoragePoolId(Guid value);
 }

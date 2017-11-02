@@ -25,7 +25,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @ValidCluster(groups = { CreateEntity.class })
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class})
-public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<Guid>,
+public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions {
 
     private static final long serialVersionUID = -5607824129488532099L;

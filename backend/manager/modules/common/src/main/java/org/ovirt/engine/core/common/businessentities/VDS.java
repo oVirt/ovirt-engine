@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 
-public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>, HasStoragePool<Guid>, HasErrata, Commented, Nameable, Cloneable {
+public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>, HasStoragePool, HasErrata, Commented, Nameable, Cloneable {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic vdsStatic;
     private VdsDynamic vdsDynamic;

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, HasStoragePool<Guid>, HasErrata, Nameable, Commented {
+public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, HasStoragePool, HasErrata, Nameable, Commented {
     private static final long serialVersionUID = -4078140531074414263L;
 
     @Valid
