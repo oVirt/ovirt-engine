@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -141,7 +142,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 }
             }
 
-            FirewallType hostFirewallType = clusterDao.get(getClusterId()).getFirewallType();
+            Cluster hostCluster = clusterDao.get(getClusterId());
+            FirewallType hostFirewallType = hostCluster.getFirewallType();
             if (parameters.getOverrideFirewall()) {
                 switch (getVds().getVdsType()) {
                     case VDS:
@@ -206,7 +208,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     // TODO: When more logic goes to ovirt-host-deploy role,
                     // this code should be moved to appropriate place, currently
                     // we run this playbook only after successful run of otopi host-deploy
-                    runAnsibleHostDeployPlaybook(hostFirewallType);
+                    runAnsibleHostDeployPlaybook(hostCluster);
 
                     configureManagementNetwork();
                     if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
@@ -230,16 +232,16 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         }
     }
 
-    private void runAnsibleHostDeployPlaybook(FirewallType firewallType) throws IOException, InterruptedException {
+    private void runAnsibleHostDeployPlaybook(Cluster hostCluster) throws IOException, InterruptedException {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
             .hostnames(getVds().getHostName())
             .variables(
-                new Pair<>("host_deploy_cluster_version", getVds().getClusterCompatibilityVersion()),
-                new Pair<>("host_deploy_gluster_enabled", getVds().getClusterSupportsGlusterService()),
-                new Pair<>("host_deploy_virt_enabled", getVds().getClusterSupportsVirtService()),
+                new Pair<>("host_deploy_cluster_version", hostCluster.getCompatibilityVersion()),
+                new Pair<>("host_deploy_gluster_enabled", hostCluster.supportsGlusterService()),
+                new Pair<>("host_deploy_virt_enabled", hostCluster.supportsVirtService()),
                 new Pair<>("host_deploy_vdsm_port", getVds().getPort()),
                 new Pair<>("host_deploy_override_firewall", getParameters().getOverrideFirewall()),
-                new Pair<>("host_deploy_firewall_type", firewallType.name()),
+                new Pair<>("host_deploy_firewall_type", hostCluster.getFirewallType().name()),
                 new Pair<>("ansible_port", getVds().getSshPort()),
                 new Pair<>("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH),
                 new Pair<>("host_deploy_ovn_tunneling_network", NetworkUtils.getHostIp(getVds())),
