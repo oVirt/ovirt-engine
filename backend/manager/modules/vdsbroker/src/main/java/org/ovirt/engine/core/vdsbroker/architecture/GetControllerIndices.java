@@ -29,6 +29,12 @@ public class GetControllerIndices implements ArchCommand {
         controllerIndexMap.put(DiskInterface.VirtIO_SCSI, 1);
     }
 
+    @Override
+    public void runForS390X() {
+        // For now the same as x86
+        runForX86_64();
+    }
+
     public Map<DiskInterface, Integer> returnValue() {
         return controllerIndexMap;
     }

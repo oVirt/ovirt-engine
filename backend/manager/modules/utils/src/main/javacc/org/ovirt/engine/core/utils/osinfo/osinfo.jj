@@ -86,7 +86,7 @@ void booleanValue() : {} {
 }
 
 void archValue() : {} {
-    valueSpecifier() ("x86_64" | "ppc64")
+    valueSpecifier() ("x86_64" | "ppc64" | "s390x")
 }
 
 void busValue() : {} {
@@ -98,7 +98,7 @@ void displayValue() : {} {
 }
 
 void watchdogValue() : {} {
-    valueSpecifier() ("i6300esb")
+    valueSpecifier() ("i6300esb" | "diag288")
 }
 
 void networkValue() : {} {

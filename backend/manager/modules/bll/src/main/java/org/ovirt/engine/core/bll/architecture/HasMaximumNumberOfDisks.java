@@ -32,6 +32,11 @@ public class HasMaximumNumberOfDisks implements ArchCommand {
         hasMaximum = VmCommand.MAX_SPAPR_SCSI_DISKS == countDisks(DiskInterface.SPAPR_VSCSI);
     }
 
+    @Override
+    public void runForS390X() {
+        hasMaximum = VmCommand.MAX_VIRTIO_CCW_DISKS == countDisks(DiskInterface.VirtIO);
+    }
+
     public boolean returnValue() {
         return hasMaximum;
     }

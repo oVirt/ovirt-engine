@@ -459,6 +459,11 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writePowerManagement() {
+        if (vm.getClusterArch() == ArchitectureType.s390x) {
+            // s390x doesn't like the pm elements
+            return;
+        }
+
         writer.writeStartElement("pm");
         writer.writeStartElement("suspend-to-disk");
         writer.writeAttributeString("enabled", "no");
@@ -765,7 +770,10 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("devices");
 
-        writeInput();
+        if (vm.getClusterArch() != ArchitectureType.s390x) {
+            // no mouse or tablet for s390x
+            writeInput();
+        }
 
         writeGuestAgentChannels();
 

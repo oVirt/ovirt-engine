@@ -28,6 +28,14 @@ public class GetBootableDiskIndex implements ArchCommand {
         diskIndex = numOfReservedScsiIndexes;
     }
 
+    /**
+     *  S390X boots from first disk
+     */
+    @Override
+    public void runForS390X() {
+        diskIndex = 0;
+    }
+
     public int returnValue() {
         return diskIndex;
     }

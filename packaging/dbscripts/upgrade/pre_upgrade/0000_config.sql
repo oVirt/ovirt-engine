@@ -880,7 +880,7 @@ select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT 
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
 select fn_db_update_config_value('RhevhLocalFSPath','/data/images/rhev','general');
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.3.0','4.1');
-select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0','4.2');
+select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.6','4.2');
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','3.6,4.0,4.1,4.2','general');
 select fn_db_update_config_value('SupportedVDSMVersions','4.17,4.18','general');
@@ -907,17 +907,19 @@ select fn_db_update_config_value('DataOperationsByHSM','true','4.1');
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
 select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
-select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true", "s390x" : "true"}','4.2');
 select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
 select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
 select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
-select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true", "s390x" : "true"}','4.2');
 select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','3.6');
 select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.0');
 select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.1');
-select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true", "s390x" : "true"}','4.2');
 
 -- s390x architecture support
+select fn_db_update_config_value('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"true","s390x":"true"}', '4.2');
+select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc64":"true","s390x":"false"}', '4.2');
 select fn_db_update_config_value('ServerCPUList', '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell-noTSX Family:vmx,nx,model_Haswell-noTSX:Haswell-noTSX:x86_64; 9:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 10:Intel Broadwell-noTSX Family:vmx,nx,model_Broadwell-noTSX:Broadwell-noTSX:x86_64; 11:Intel Broadwell Family:vmx,nx,model_Broadwell:Broadwell:x86_64; 11:Intel Skylake Family:vmx,nx,model_Skylake-Client:Skylake-Client:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; 3:IBM POWER8:powernv,model_POWER8:POWER8:ppc64; 2:IBM z114, z196:sie,model_z196-base:z196-base:s390x; 3:IBM zBC12, zEC12:sie,model_zEC12-base:zEC12-base:s390x; 4:IBM z13s, z13:sie,model_z13-base:z13-base:s390x; 5:IBM z14:sie,model_z14-base:z14-base:s390x;', '4.2');
 
 select fn_db_update_config_value('PackageNamesForCheckUpdate','ioprocess,mom,libvirt-client,libvirt-daemon-config-nwfilter,libvirt-daemon-kvm,libvirt-lock-sanlock,libvirt-python,lvm2,ovirt-vmconsole,ovirt-vmconsole-host,python-ioprocess,qemu-kvm,qemu-img,sanlock,vdsm,vdsm-cli','3.6');
@@ -930,8 +932,8 @@ select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|fal
 
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true"}','4.0');
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true"}','4.1');
-select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true"}','4.2');
-select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true"}','4.2');
+select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
+select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}','4.2');
 select fn_db_update_config_value('MaxNumOfVmCpus', '384', '4.2');
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section

@@ -169,6 +169,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     // can be detected by the Linux kernel of PPC64 guests
     public static final int MAX_SPAPR_SCSI_DISKS = 7;
 
+    // The maximum number of virtio disks that
+    // can be detected by the Linux kernel of S390X guests
+    public static final int MAX_VIRTIO_CCW_DISKS = 4 * 65536;
+
     private List<VmNic> interfaces;
 
     protected void removeVmStatic() {

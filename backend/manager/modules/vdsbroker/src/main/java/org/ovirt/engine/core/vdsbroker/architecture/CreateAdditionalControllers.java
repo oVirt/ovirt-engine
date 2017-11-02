@@ -37,4 +37,10 @@ public class CreateAdditionalControllers implements ArchCommand {
         struct.put(VdsProperties.Address, spaprAddress);
         devices.add(struct);
     }
+
+    @Override
+    public void runForS390X() {
+        // For now same as on x86
+        runForX86_64();
+    }
 }
