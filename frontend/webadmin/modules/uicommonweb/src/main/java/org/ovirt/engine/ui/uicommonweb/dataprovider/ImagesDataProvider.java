@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.dataprovider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
@@ -85,15 +85,8 @@ public class ImagesDataProvider {
         @Override
         public List<String> convert(List<RepoImage> source) {
             if (source != null) {
-                ArrayList<String> fileNameList = new ArrayList<>();
-                for (RepoImage repoImage : source) {
-                    if (imagePredicate.test(repoImage)) {
-                        fileNameList.add(transform.apply(repoImage));
-                    }
-                }
-
-                Collections.sort(fileNameList, new LexoNumericComparator());
-                return fileNameList;
+                return source.stream().filter(imagePredicate).map(transform)
+                        .sorted(new LexoNumericComparator()).collect(Collectors.toList());
             }
             return new ArrayList<>();
         }
