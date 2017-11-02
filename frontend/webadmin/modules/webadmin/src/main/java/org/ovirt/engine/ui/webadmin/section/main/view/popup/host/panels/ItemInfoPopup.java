@@ -189,7 +189,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         }
 
         // Boot protocol and IP info
-        if (networkModel.isAttached()) {
+        if (networkModel.isAttached() && networkModel.isManaged()) {
             IpConfiguration ipConfiguration = networkModel.getNetworkAttachment().getIpConfiguration();
             addBootProtoAndIpInfo(ipConfiguration != null && ipConfiguration.hasIpv4PrimaryAddressSet() ?
                             ipConfiguration.getIpv4PrimaryAddress() :
