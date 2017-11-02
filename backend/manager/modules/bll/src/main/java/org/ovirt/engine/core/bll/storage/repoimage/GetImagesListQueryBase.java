@@ -29,7 +29,7 @@ public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBa
         try {
             getQueryReturnValue().setReturnValue(getUserRequestForStorageDomainRepoFileList());
         } catch (Exception e) {
-            String message = Optional.ofNullable(e.getCause()).map(Throwable::getMessage).orElse("");
+            String message = Optional.ofNullable(e.getCause()).orElse(e).getMessage();
             log.error("Failed to retrieve image list: {}", message);
             getQueryReturnValue().setExceptionString(message);
             getQueryReturnValue().setSucceeded(false);
