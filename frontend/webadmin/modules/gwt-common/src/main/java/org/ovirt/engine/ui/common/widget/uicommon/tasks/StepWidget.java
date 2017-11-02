@@ -73,9 +73,9 @@ public class StepWidget extends Composite {
         }
         if (!step.getSteps().isEmpty()) {
             // Updated values, add the sub tasks
-            step.getSteps().forEach(subStep -> {
-                container.add(createStep(subStep, indent + 1));
-            });
+            step.getSteps().forEach(subStep ->
+                container.add(createStep(subStep, indent + 1))
+            );
         }
     }
 
