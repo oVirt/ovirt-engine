@@ -92,7 +92,7 @@ class Plugin(plugin.PluginBase):
                 'an exception occurred while validating the Engine'
                 ' database, please check the logs for getting more info'
             )
-            stderrLines = stderr.splitlines()
+            stderrLines = stderr
             for stderrLine in stderrLines:
                 if re.match('^ERROR: ', stderrLine):
                     break
