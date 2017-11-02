@@ -81,10 +81,9 @@ validate_db_fks() {
 		exit 0
 	fi
 
-	local out="$(echo "${res}" | sed -n '1p')"
-	echo "${out}"
-	if [ "${exit_code}" = "0" -a -z "${fix_it}" ]; then
-		exit_code="$(echo "${res}" | sed -n '2p')"
+	echo "${res}" 1>&2
+	if [ ! -z "${res}" -a -z "${fix_it}" ]; then
+		exit_code=1
 	fi
 	exit ${exit_code}
 }
