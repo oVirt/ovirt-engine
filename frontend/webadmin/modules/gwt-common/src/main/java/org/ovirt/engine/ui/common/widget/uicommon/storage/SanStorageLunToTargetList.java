@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunAvailableSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunRemoveColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
@@ -250,7 +254,27 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getRawValue(LunModel model) {
                 return model.getSerial();
             }
-        }, constants.serialSanStorage(), "120px"); //$NON-NLS-1$
+        }, constants.serialSanStorage(), "350px"); //$NON-NLS-1$
+
+        StorageDomainStatus status = model.getContainer().getStorage().getStatus();
+
+        boolean reduceDeviceFromStorageDomainSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                ConfigValues.ReduceDeviceFromStorageDomain,
+                model.getContainer().getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
+
+        if (reduceDeviceFromStorageDomainSupported) {
+            if (status == StorageDomainStatus.Maintenance) {
+                table.addColumn(new AbstractLunRemoveColumn(model) {
+                    @Override
+                    public LunModel getValue(LunModel object) {
+                        return object;
+                    }
+                }, constants.removeSanStorage(), "75px"); //$NON-NLS-1$
+                model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
+                    table.redraw();
+                });
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -1033,6 +1033,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String serialSanStorage();
 
+    String removeSanStorage();
+
     String nameSanImStorage();
 
     String formatSanImStorage();

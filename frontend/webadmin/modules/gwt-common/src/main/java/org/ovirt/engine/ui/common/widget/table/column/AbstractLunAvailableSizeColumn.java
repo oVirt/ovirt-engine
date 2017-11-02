@@ -33,10 +33,10 @@ public abstract class AbstractLunAvailableSizeColumn extends AbstractColumn<LunM
                         messages.additionalAvailableSizeInGB(additionalAvailableSizeSize);
 
                 if (additionalAvailableSizeSize == 0 || !value.getIsIncluded()) {
-                    input = templates.disabled("", "color:gray", inputId); //$NON-NLS-1$
+                    input = templates.noButton("", "color:gray", inputId); //$NON-NLS-1$
                 }
                 else if (!isGrayedOut) {
-                    input = templates.disabled("", "color:black", inputId); //$NON-NLS-1$
+                    input = templates.noButton("", "color:black", inputId); //$NON-NLS-1$
                 }
                 else if (value.isAdditionalAvailableSizeSelected()) {
                     input = templates.toggledDown(inputId, additionalAvailableSizeSizeString);

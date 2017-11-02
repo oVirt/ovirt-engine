@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
+import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -1541,6 +1542,19 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                                 null, this);
                     }
 
+                    if (storageDomain1.getStatus() == StorageDomainStatus.Maintenance) {
+                        List<String> lunsToRemoveIds = new ArrayList<>();
+                        for (LunModel lun : sanStorageModelBase.getLunsToRemove()) {
+                            lunsToRemoveIds.add(lun.getLunId());
+                        }
+
+                        if (lunsToRemoveIds.size() > 0) {
+                            Frontend.getInstance().runAction(ActionType.ReduceSANStorageDomainDevices,
+                                    new ReduceSANStorageDomainDevicesCommandParameters(storageDomain1.getId(),
+                                            lunsToRemoveIds),
+                                    null, this);
+                        }
+                    }
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
                 }
             }, this);

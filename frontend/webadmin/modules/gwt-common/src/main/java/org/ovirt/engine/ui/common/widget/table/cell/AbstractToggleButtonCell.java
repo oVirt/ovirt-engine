@@ -23,13 +23,20 @@ public abstract class AbstractToggleButtonCell<T> extends AbstractCell<T> {
 
         @Template("<input id=\"{2}\" style=\"background: transparent; border: 0px; width: 95%; {1}\"" +
                 "readonly=\"readonly\" type=\"text\" value=\"{0}\" tabindex=\"-1\"></input>")
-        public SafeHtml disabled(String value, String customStyle, String id);
+        public SafeHtml noButton(String value, String customStyle, String id);
 
-        @Template("<button id=\"{0}\" tabindex='-1' type=\"button\" style=\"border-radius:2px;color:black\" " +
+        @Template("<button disabled id=\"{0}\" tabindex='-1' type=\"button\" style=\"border-radius:2px; " +
+                "padding-top:0; padding-bottom:0; padding-left:2px; padding-right:2px; width:85%; color:gray;\" " +
+                "class=\"gwt-ToggleButton gwt-ToggleButton-up\" tabindex=\"-1\" aria-pressed=\"true\">{1}</button>")
+        public SafeHtml disabled(String id, String value);
+
+        @Template("<button id=\"{0}\" tabindex='-1' type=\"button\" style=\"border-radius:2px; color:black; " +
+                "width:85%; padding-top:0; padding-bottom:0 ;padding-left:2px; padding-right:2px;\"" +
                 "class=\"gwt-ToggleButton gwt-ToggleButton-up\" tabindex=\"-1\" aria-pressed=\"true\">{1}</button>")
         public SafeHtml toggledUp(String id, String value);
 
-        @Template("<button id=\"{0}\" tabindex='-1' type=\"button\" style=\"border-radius:2px\" " +
+        @Template("<button id=\"{0}\" tabindex='-1' type=\"button\" style=\"border-radius:2px; color:black; " +
+                "width:85%; padding-top:0; padding-bottom:0; padding-left:2px; padding-right:2px;\"" +
                 "class=\"gwt-ToggleButton gwt-ToggleButton-down\" tabindex=\"-1\" aria-pressed=\"false\">{1}</button>")
         public SafeHtml toggledDown(String id, String value);
     }

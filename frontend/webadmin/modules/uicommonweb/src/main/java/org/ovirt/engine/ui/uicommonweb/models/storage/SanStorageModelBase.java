@@ -2,9 +2,12 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -56,6 +59,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private final List<LunModel> includedLUNs;
     private final ArrayList<SanTargetModel> lastDiscoveredTargets;
     private boolean isTargetModelList;
+    private Set<String> metadataDevices;
 
     private UICommand updateCommand;
 
@@ -232,6 +236,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     private List<SanTargetModel> targetsToConnect;
+
+    private EntityModel<Boolean> requireTableRefresh = new EntityModel<>();
+
+    public EntityModel<Boolean> getRequireTableRefresh() {
+        return requireTableRefresh;
+    }
 
     protected SanStorageModelBase() {
         setHelpTag(HelpTag.SanStorageModelBase);
@@ -624,6 +634,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 lunModel.setSize(a.getDeviceSize());
                 lunModel.setAdditionalAvailableSize(getAdditionalAvailableSize(a));
                 lunModel.setAdditionalAvailableSizeSelected(false);
+                lunModel.setRemoveLunSelected(false);
                 lunModel.setIsAccessible(a.getAccessible());
                 lunModel.setStatus(a.getStatus());
                 lunModel.setIsIncluded(isIncluded);
@@ -827,6 +838,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                     currLun.setSize(lun.getSize());
                     currLun.setAdditionalAvailableSize(lun.getAdditionalAvailableSize());
                     currLun.setAdditionalAvailableSizeSelected(lun.isAdditionalAvailableSizeSelected());
+                    currLun.setRemoveLunSelected(lun.isRemoveLunSelected());
                     currLun.setIsAccessible(lun.getIsAccessible());
                     currLun.setStatus(lun.getStatus());
                     currLun.setIsIncluded(lun.getIsIncluded());
@@ -954,6 +966,13 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     /**
+     * @return the luns included on storage domain.
+     */
+    public ArrayList<LunModel> getIncludedLuns() {
+        return getLuns(false, true);
+    }
+
+    /**
      * @return the new selected luns.
      */
     public ArrayList<LunModel> getAddedLuns() {
@@ -1002,6 +1021,22 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             }
         }
         return luns;
+    }
+
+    public List<LunModel> getLunsToRemove() {
+        if (getIsGrouppedByTarget()) {
+            return Collections.emptyList();
+        }
+        return ((List<LunModel>) getItems()).stream()
+                .filter(LunModel::getIsIncluded)
+                .filter(LunModel::isRemoveLunSelected)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public int getNumOfLUNsToRemove() {
+        List<LunModel> items = (List<LunModel>) getItems();
+        return (int) items.stream().filter(LunModel::isRemoveLunSelected).count();
     }
 
     public ArrayList<String> getUsedLunsMessages(List<LUNs> luns) {
@@ -1066,5 +1101,14 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
         AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery<>(lunList -> model.applyData(lunList, true, Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem()))), storage.getStorage(), hostId);
+    }
+
+    public Set<String> getMetadataDevices() {
+        if (metadataDevices == null) {
+            metadataDevices = new HashSet<>();
+            metadataDevices.add(getContainer().getStorage().getFirstMetadataDevice());
+            metadataDevices.add(getContainer().getStorage().getVgMetadataDevice());
+        }
+        return metadataDevices;
     }
 }

@@ -103,6 +103,19 @@ public class LunModel extends EntityModel<LUNs> {
         }
     }
 
+    private boolean removeLunSelected;
+
+    public boolean isRemoveLunSelected() {
+        return removeLunSelected;
+    }
+
+    public void setRemoveLunSelected(boolean value) {
+        if (removeLunSelected != value) {
+            removeLunSelected = value;
+            onPropertyChanged(new PropertyChangedEventArgs("RemoveLunSelected")); //$NON-NLS-1$
+        }
+    }
+
     private int multipathing;
 
     public int getMultipathing() {
