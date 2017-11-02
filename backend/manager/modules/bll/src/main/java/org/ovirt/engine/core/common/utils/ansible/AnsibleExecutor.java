@@ -77,13 +77,6 @@ public class AnsibleExecutor {
     ) throws IOException, InterruptedException {
         log.trace("Enter AnsibleExecutor::runCommand");
         AnsibleReturnValue returnValue = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
-        if (Files.notExists(Paths.get(command.playbook()))) {
-            log.warn(
-                "Playbook '{}' does not exist, please ensure that ovirt-ansible-roles package is properly installed.",
-                command.playbook()
-            );
-            return returnValue;
-        }
 
         Path inventoryFile = null;
         try {
