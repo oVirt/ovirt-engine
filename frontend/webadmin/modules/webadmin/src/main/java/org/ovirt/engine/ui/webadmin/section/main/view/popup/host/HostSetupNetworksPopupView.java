@@ -97,6 +97,9 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @UiField(provided = true)
     InfoIcon commitChangesInfo;
 
+    @UiField
+    ScrollPanel nicScrollPanel;
+
     private final Driver driver = GWT.create(Driver.class);
     private final EventBus eventBus;
 
@@ -166,9 +169,14 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 initStatusPanel();
             }
             keepStatusText = false;
+
+            int scrollPosition = nicScrollPanel.getVerticalScrollPosition();
+
             updateNetworks(model.getNetworkModels());
             updateLabels(model.getNewNetworkLabelModel(), model.getLabelModels());
             updateNics(model.getNicModels());
+
+            nicScrollPanel.setVerticalScrollPosition(scrollPosition);
             // mark as rendered
             rendered = true;
         });

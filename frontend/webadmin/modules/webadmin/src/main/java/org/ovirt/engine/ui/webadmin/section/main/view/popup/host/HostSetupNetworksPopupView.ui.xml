@@ -281,7 +281,7 @@
                                 <g:Label text="{constants.interfaces}" styleName="{style.nicstitle}" />
                                 <g:Label text="{constants.assignedLogicalNetworks}" styleName="{style.assignedtitle}" />
                             </g:HorizontalPanel>
-                            <g:ScrollPanel height="370px">
+                            <g:ScrollPanel height="370px" ui:field="nicScrollPanel">
                                 <e:AnimatedVerticalPanel ui:field="nicList" addStyleNames="ts10 {style.allNicsPanel} {style.fullWidth}"/>
                             </g:ScrollPanel>
                         </g:FlowPanel>
