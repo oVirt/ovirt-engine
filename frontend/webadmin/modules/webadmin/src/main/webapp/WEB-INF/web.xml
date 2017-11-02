@@ -29,6 +29,10 @@
         <param-name>auth-seq-priority-property-name</param-name>
         <param-value>ENGINE_SSO_AUTH_SEQUENCE_webadmin</param-value>
     </context-param>
+    <context-param>
+        <param-name>app-scope</param-name>
+        <param-value>ovirt-app-admin</param-value>
+    </context-param>
 
     <filter-mapping>
         <filter-name>LocaleFilter</filter-name>

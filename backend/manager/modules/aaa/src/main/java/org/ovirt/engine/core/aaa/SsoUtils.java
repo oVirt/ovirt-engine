@@ -44,6 +44,7 @@ public class SsoUtils {
                     new CreateUserSessionParameters(
                             (String) jsonResponse.get(SessionConstants.SSO_TOKEN_KEY),
                             (String) jsonResponse.get(SessionConstants.SSO_SCOPE_KEY),
+                            (String) jsonResponse.get(SessionConstants.SSO_SCOPE_KEY),
                             profile,
                             username,
                             (String) payload.get("principal_id"),

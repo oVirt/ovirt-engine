@@ -8,6 +8,7 @@ public class CreateUserSessionParameters extends ActionParametersBase {
     private static final long serialVersionUID = 5238452182295928273L;
     private String ssoToken;
     private String ssoScope;
+    private String appScope;
     private String profileName;
     private String principalName;
     private String principalId;
@@ -24,6 +25,7 @@ public class CreateUserSessionParameters extends ActionParametersBase {
 
     public CreateUserSessionParameters(String ssoToken,
                                        String ssoScope,
+                                       String appScope,
                                        String profileName,
                                        String principalName,
                                        String principalId,
@@ -36,6 +38,7 @@ public class CreateUserSessionParameters extends ActionParametersBase {
                                        boolean adminRequired) {
         setSsoToken(ssoToken);
         setSsoScope(ssoScope);
+        setAppScope(appScope);
         setProfileName(profileName);
         setPrincipalName(principalName);
         setPrincipalId(principalId);
@@ -142,5 +145,13 @@ public class CreateUserSessionParameters extends ActionParametersBase {
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    public String getAppScope() {
+        return appScope;
+    }
+
+    public void setAppScope(String appScope) {
+        this.appScope = appScope;
     }
 }

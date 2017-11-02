@@ -31,6 +31,7 @@ public class SsoPostLoginServlet extends HttpServlet {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private boolean loginAsAdmin = false;
     private String postActionUrl;
+    private String appScope;
 
     @Override
     public void init() throws ServletException {
@@ -42,6 +43,10 @@ public class SsoPostLoginServlet extends HttpServlet {
         postActionUrl = getServletContext().getInitParameter("post-action-url");
         if (postActionUrl == null) {
             throw new RuntimeException("No post-action-url init parameter specified for SsoPostLoginServlet.");
+        }
+        appScope = getServletContext().getInitParameter("app-scope");
+        if (appScope == null) {
+            throw new RuntimeException("No app-scope init parameter specified for SsoPostLoginServlet.");
         }
     }
 
@@ -83,6 +88,7 @@ public class SsoPostLoginServlet extends HttpServlet {
                         new CreateUserSessionParameters(
                                 (String) jsonResponse.get(SessionConstants.SSO_TOKEN_KEY),
                                 (String) jsonResponse.get(SessionConstants.SSO_SCOPE_KEY),
+                                appScope,
                                 profile,
                                 username,
                                 (String) payload.get("principal_id"),
