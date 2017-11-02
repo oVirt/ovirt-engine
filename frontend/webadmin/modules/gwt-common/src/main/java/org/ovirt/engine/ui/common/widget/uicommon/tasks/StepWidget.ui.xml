@@ -7,7 +7,7 @@
 
     <g:FlowPanel ui:field="container">
         <b:Row>
-            <b:Column size="SM_11" offset="SM_1">
+            <b:Column ui:field="column" size="SM_11" offset="SM_1">
                 <g:FlowPanel addStyleNames="progress-description">
                     <g:HTMLPanel tag="SPAN" ui:field="statusIcon"></g:HTMLPanel>
                     <g:HTMLPanel tag="SPAN" ui:field="label"></g:HTMLPanel>
