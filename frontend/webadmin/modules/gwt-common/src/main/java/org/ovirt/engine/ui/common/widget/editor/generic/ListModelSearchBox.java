@@ -113,7 +113,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
                 getAnchorListItem(currentFocusIndex).setFocus(true);
             } else if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
                 for (ListModelSelectedCallback<T> callback: this.callbacks) {
-                    callback.modelSelected(null);
+                    callback.modelSelected(listModelProvider.getModel().getSelectedItem());
                 }
             }
         });
@@ -235,7 +235,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
             selectItem(((AnchorListItem)menu.getWidget(currentFocusIndex)).getText());
         } else if (keycode == KeyCodes.KEY_ESCAPE) {
             for (ListModelSelectedCallback<T> callback: this.callbacks) {
-                callback.modelSelected(null);
+                callback.modelSelected(listModelProvider.getModel().getSelectedItem());
             }
         }
     }
@@ -263,20 +263,20 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
 
         SearchBoxAnchorListItem() {
             sinkEvents(Event.ONKEYUP);
+            sinkEvents(Event.ONKEYDOWN);
+            sinkEvents(Event.ONKEYPRESS);
         }
 
         @Override
         public void onBrowserEvent(Event event) {
             super.onBrowserEvent(event);
-            if (Event.ONKEYUP == DOM.eventGetType(event)) {
+            if (Event.ONKEYDOWN == DOM.eventGetType(event) || Event.ONKEYPRESS == DOM.eventGetType(event)) {
+                event.preventDefault();
+                event.stopPropagation();
+            } else if (Event.ONKEYUP == DOM.eventGetType(event)) {
                 onKeyUp(event.getKeyCode(), event.getShiftKey());
                 event.preventDefault();
                 event.stopPropagation();
-            } else if (Event.ONKEYPRESS == DOM.eventGetType(event)) {
-                if (event.getKeyCode() == KeyCodes.KEY_TAB) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
             }
         }
     }

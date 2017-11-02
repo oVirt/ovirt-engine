@@ -72,7 +72,6 @@ public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
                 Scheduler.get().scheduleDeferred(() -> {
                     T firstItem = itemsAsList.get(0);
                     getSelectionModel().setSelected(firstItem, true);
-                    getModel().setSelectedItem(firstItem);
                     getView().setCurrentSelectedNameForItem(firstItem);
                 });
             }
@@ -83,7 +82,6 @@ public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
                 Scheduler.get().scheduleDeferred(() -> {
                     T lastItem = itemsAsList.get(itemsAsList.size() - 1);
                     getSelectionModel().setSelected(lastItem, true);
-                    getModel().setSelectedItem(lastItem);
                     getView().setCurrentSelectedNameForItem(lastItem);
                 });
             }
