@@ -188,6 +188,7 @@ class Daemon(service.Daemon):
             'ENGINE_VARS': config.ENGINE_VARS,
             'ENGINE_NOTIFIER_DEFAULTS': self._defaults,
             'ENGINE_NOTIFIER_VARS': config.ENGINE_NOTIFIER_VARS,
+            'MALLOC_ARENA_MAX': self._config.get('NOTIFIER_MALLOC_ARENA_MAX'),
         })
 
         self._validateConfig()

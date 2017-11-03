@@ -32,6 +32,12 @@ ENGINE_LOG="@ENGINE_LOG@"
 ENGINE_USR="@ENGINE_USR@"
 
 #
+# Number of memory pools which can be created by glibc and later used
+# by malloc. This is specific to Java 8 and we are aligning with the defaults
+# used in WildFly: https://issues.jboss.org/browse/WFCORE-2959
+NOTIFIER_MALLOC_ARENA_MAX=1
+
+#
 # Extra system properties to be added to the java virtual machine
 # of the notifier. Properties can be specified using the typical
 # java syntax:
