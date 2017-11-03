@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkPluginType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.BrokerType;
@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.InterfaceMappingsValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 public class NeutronAgentModel extends EntityModel {
 
@@ -33,6 +32,8 @@ public class NeutronAgentModel extends EntityModel {
     private EntityModel<String> messagingServerPort = new EntityModel<>();
     private EntityModel<String> messagingServerUsername = new EntityModel<>();
     private EntityModel<String> messagingServerPassword = new EntityModel<>();
+
+    private IValidation pluginValidator;
 
     public ListModel<String> getPluginType() {
         return pluginType;
@@ -77,14 +78,15 @@ public class NeutronAgentModel extends EntityModel {
     public NeutronAgentModel() {
         getPluginType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
             String displayString = getPluginType().getSelectedItem();
-            isPluginConfigurationAvailable().setEntity(!NeutronPluginTranslator.isDisplayStringCustom(displayString));
+            boolean isAvailable = NetworkProviderPluginTranslator.isOpenstackPlugin(displayString);
+            isPluginConfigurationAvailable().setEntity(isAvailable);
         });
         getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                 boolean value = getIsAvailable();
-                getPluginType().setIsAvailable(value);
-                isPluginConfigurationAvailable().setEntity(value
-                        && !NeutronPluginTranslator.isDisplayStringCustom(getPluginType().getSelectedItem()));
+                String displayString = getPluginType().getSelectedItem();
+                boolean isAvailable = NetworkProviderPluginTranslator.isOpenstackPlugin(displayString);
+                isPluginConfigurationAvailable().setEntity(value && isAvailable);
             }
         });
 
@@ -98,7 +100,7 @@ public class NeutronAgentModel extends EntityModel {
 
     public boolean validate() {
         if (getIsAvailable()) {
-            getPluginType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getPluginType().validateSelectedItem(new IValidation[] { pluginValidator });
             getBrokerType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
             getInterfaceMappings().validateEntity(new IValidation[] { new InterfaceMappingsValidation() });
             getMessagingServer().validateEntity(new IValidation[] { new HostAddressValidation(true, true) });
@@ -114,10 +116,13 @@ public class NeutronAgentModel extends EntityModel {
 
     public void init(Provider<OpenstackNetworkProviderProperties> provider, ProviderType type) {
         OpenstackNetworkProviderProperties properties = provider.getAdditionalProperties();
-        String pluginName = (properties == null) ?  getDefaultPluginTypeString() : properties.getPluginType();
-
-        getPluginType().setItems(NeutronPluginTranslator.getPresetDisplayStrings());
-        getPluginType().setSelectedItem(NeutronPluginTranslator.getDisplayStringForPluginName(pluginName));
+        NetworkProviderPluginTranslator translator = NetworkProviderPluginTranslator.getTranslatorByProviderType(type);
+        String pluginName = translator.getDisplayStringForPluginName(properties == null ?
+            translator.getDefault() : properties.getPluginType());
+        List<String> displayItems = translator.getPresetDisplayStrings();
+        getPluginType().setItems(displayItems);
+        getPluginType().setSelectedItem(pluginName);
+        pluginValidator = translator.getPluginValidator();
 
         if (properties != null) {
             AgentConfiguration agentConfiguration = properties.getAgentConfiguration();
@@ -143,7 +148,7 @@ public class NeutronAgentModel extends EntityModel {
             properties = new OpenstackNetworkProviderProperties();
             provider.setAdditionalProperties(properties);
         }
-        properties.setPluginType(NeutronPluginTranslator.
+        properties.setPluginType(NetworkProviderPluginTranslator.
                 getPluginNameForDisplayString(getPluginType().getSelectedItem()));
 
         if (!isPluginConfigurationAvailable().getEntity()) {
@@ -169,9 +174,4 @@ public class NeutronAgentModel extends EntityModel {
             messagingConfiguration.setBrokerType(getBrokerType().getSelectedItem());
         }
     }
-
-    private String getDefaultPluginTypeString() {
-        return EnumTranslator.getInstance().translate(OpenstackNetworkPluginType.OPEN_VSWITCH);
-    }
-
 }
