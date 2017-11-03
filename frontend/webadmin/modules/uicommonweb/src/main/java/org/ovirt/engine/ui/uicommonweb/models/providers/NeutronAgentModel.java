@@ -77,26 +77,6 @@ public class NeutronAgentModel extends EntityModel {
         getPluginType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
             String displayString = getPluginType().getSelectedItem();
             isPluginConfigurationAvailable().setEntity(!NeutronPluginTranslator.isDisplayStringCustom(displayString));
-            if (!NeutronPluginTranslator.isDisplayStringCustom(displayString)) {
-                switch(NeutronPluginTranslator.getPluginTypeForDisplayString(displayString)) {
-                    case LINUX_BRIDGE:
-                    getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
-                            .getConstants()
-                            .bridgeMappings());
-                    getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
-                            .getConstants()
-                            .bridgeMappingsExplanation());
-                        break;
-                    case OPEN_VSWITCH:
-                    default:
-                    getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
-                            .getConstants()
-                            .interfaceMappings());
-                    getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
-                            .getConstants()
-                            .interfaceMappingsExplanation());
-                }
-            }
         });
         getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
