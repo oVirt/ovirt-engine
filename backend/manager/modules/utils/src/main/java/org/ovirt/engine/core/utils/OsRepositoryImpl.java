@@ -13,6 +13,7 @@ import java.util.prefs.Preferences;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.ConsoleTargetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
@@ -499,6 +500,16 @@ public enum OsRepositoryImpl implements OsRepository {
             return null;
         }
         return UsbControllerModel.fromLibvirtName(osInfoName);
+    }
+
+    @Override
+    public ConsoleTargetType getOsConsoleTargetType(int osId, Version version) {
+        final String osInfoName =
+                getValueByVersion(getUniqueOsNames().get(osId), "devices.console.target.type", version);
+        if (StringUtils.isEmpty(osInfoName)) {
+            return null;
+        }
+        return ConsoleTargetType.fromLibvirtName(osInfoName);
     }
 
     @Override

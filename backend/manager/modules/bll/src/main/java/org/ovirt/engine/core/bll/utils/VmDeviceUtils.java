@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.ConsoleTargetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
@@ -46,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
@@ -326,7 +328,7 @@ public class VmDeviceUtils {
                 new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.CONSOLE,
                 VmDeviceType.CONSOLE,
-                getConsoleDeviceSpecParams(),
+                getConsoleDeviceSpecParams(vmId),
                 true,
                 false);
     }
@@ -334,13 +336,19 @@ public class VmDeviceUtils {
     /**
      * Returns console device spec params.
      */
-    private Map<String, Object> getConsoleDeviceSpecParams() {
+    private Map<String, Object> getConsoleDeviceSpecParams(Guid vmId) {
         Map<String, Object> specParams = new HashMap<>();
+        VmBase vmBase = getVmBase(vmId);
+        ConsoleTargetType targetType =
+                osRepository.getOsConsoleTargetType(
+                        vmBase.getOsId(),
+                        CompatibilityVersionUtils.getEffective(vmBase,
+                                clusterDao.get(vmBase.getClusterId())));
         specParams.put("enableSocket", "true");
-        specParams.put("consoleType", "serial");
+        specParams.put("consoleType",
+                targetType == null ? "serial" : targetType.libvirtName);
         return specParams;
     }
-
 
     /*
      * VirtIO-SCSI controller

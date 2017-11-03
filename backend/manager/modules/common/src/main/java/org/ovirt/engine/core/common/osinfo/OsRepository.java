@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.ConsoleTargetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
@@ -267,4 +268,11 @@ public interface OsRepository {
      * @return usb controller for given operating system and cluster version; may be {@code null} if not specified
      */
     UsbControllerModel getOsUsbControllerModel(int osId, Version version);
+
+    /**
+     * @param osId operating system id
+     * @param version may be null
+     * @return console target type for given operating system and cluster version; may be {@code null} if not specified
+     */
+    ConsoleTargetType getOsConsoleTargetType(int osId, Version version);
 }
