@@ -8,9 +8,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Commented;
+import org.ovirt.engine.core.common.businessentities.HasStoragePool;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -21,7 +23,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Commented {
+public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Commented, HasStoragePool {
     private static final long serialVersionUID = 7357288865938773402L;
 
     private Guid id;
@@ -193,8 +195,20 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
         return this.dataCenterId;
     }
 
+    @JsonIgnore
+    @Override
+    public Guid getStoragePoolId() {
+        return getDataCenterId();
+    }
+
     public void setDataCenterId(Guid value) {
         this.dataCenterId = value;
+    }
+
+    @JsonIgnore
+    @Override
+    public void setStoragePoolId(Guid value) {
+        setDataCenterId(value);
     }
 
     public void setCluster(NetworkCluster cluster) {
