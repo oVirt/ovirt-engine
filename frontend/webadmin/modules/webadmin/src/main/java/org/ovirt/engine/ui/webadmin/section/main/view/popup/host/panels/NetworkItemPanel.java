@@ -49,14 +49,17 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
 
     private WidgetTooltip tooltip;
 
+    private ItemInfoPopup infoPopup;
+
     // statics
     private static final PopupPanel menuPopup = new PopupPanel(true);
-
-    private static final ItemInfoPopup infoPopup = new ItemInfoPopup();
 
     private static String lastDragData = ""; //$NON-NLS-1$
 
     public NetworkItemPanel(T item, NetworkPanelsStyle style, boolean draggable) {
+
+        infoPopup = new ItemInfoPopup(style);
+
         this.draggable = draggable;
         getElement().setDraggable(draggable ? Element.DRAGGABLE_TRUE : Element.DRAGGABLE_FALSE);
 

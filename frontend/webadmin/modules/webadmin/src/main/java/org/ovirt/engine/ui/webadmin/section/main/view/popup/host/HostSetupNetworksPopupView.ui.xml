@@ -263,6 +263,11 @@
             overflow: hidden;;
             text-overflow: ellipsis;
         }
+
+        .fixedTable {
+            table-layout: fixed;
+            width: 100%;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="900px" height="715px">

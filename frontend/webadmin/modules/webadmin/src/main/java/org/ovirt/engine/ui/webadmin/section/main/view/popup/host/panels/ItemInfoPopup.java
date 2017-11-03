@@ -74,9 +74,10 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private static int defaultMtu = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(
             ConfigValues.DefaultMTU);
 
-    public ItemInfoPopup() {
+    public ItemInfoPopup(NetworkPanelsStyle style) {
         super(true);
         contents.setCellPadding(5);
+        contents.getElement().setClassName(style.fixedTable());
         setWidget(contents);
     }
 

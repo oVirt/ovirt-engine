@@ -66,4 +66,6 @@ public interface NetworkPanelsStyle extends CssResource {
     String titleLabel();
 
     String fullWidth();
+
+    String fixedTable();
 }

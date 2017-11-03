@@ -156,6 +156,7 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
         titleLabel = new Label(item.getName());
         titleLabel.getElement().addClassName(style.titleLabel());
         Panel titlePanel = new HorizontalPanel();
+        titlePanel.getElement().addClassName(style.fixedTable());
         titlePanel.add(titleLabel);
         if (item.hasVlan()) {
             Label vlanLabel = new Label(messages.vlanNetwork(item.getVlanId()));
