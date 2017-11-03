@@ -37,6 +37,7 @@ here. Please create new partials when it makes sense.
     .detailMainBreadcrumbs {
         flex: 1;
         min-width: max-content;
+        min-width: -moz-max-content;
     }
 
     .detailMainActionPanelContainer {
