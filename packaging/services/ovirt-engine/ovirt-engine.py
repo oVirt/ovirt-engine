@@ -418,6 +418,7 @@ class Daemon(service.Daemon):
             'ENGINE_USR': self._config.get('ENGINE_USR'),
             'ENGINE_VAR': self._config.get('ENGINE_VAR'),
             'ENGINE_CACHE': self._config.get('ENGINE_CACHE'),
+            'MALLOC_ARENA_MAX': self._config.get('ENGINE_MALLOC_ARENA_MAX'),
         })
 
         self._detectJBossVersion()

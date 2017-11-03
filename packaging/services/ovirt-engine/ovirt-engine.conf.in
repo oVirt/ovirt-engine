@@ -68,6 +68,12 @@ ENGINE_HEAP_MAX=4g
 ENFORCE_ENGINE_HEAP_PARAMS=false
 
 #
+# Number of memory pools which can be created by glibc and later used
+# by malloc. This is specific to Java 8 and we are aligning with the defaults
+# used in WildFly: https://issues.jboss.org/browse/WFCORE-2959
+ENGINE_MALLOC_ARENA_MAX=1
+
+#
 # Use this if you want to enable remote debugging of the engine java virtual
 # machine (useful mainly for developers):
 #
