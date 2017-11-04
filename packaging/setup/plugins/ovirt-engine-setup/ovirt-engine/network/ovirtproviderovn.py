@@ -674,19 +674,16 @@ class Plugin(plugin.PluginBase):
             OvnEnv.OVIRT_PROVIDER_OVN
         )
 
-        if self._is_provider_installed() or do_install is False:
-            self._enabled = False
-            return
-
-        self._enabled = do_install or self._query_install_ovn()
+        provider_installed = self._is_provider_installed()
+        self._enabled = (do_install or self._query_install_ovn()) and \
+            not provider_installed
 
         self.environment[
             OvnEnv.OVIRT_PROVIDER_OVN
         ] = self._enabled
 
-        if not self._enabled:
-            return
-        self._setup_firewalld_services()
+        if self._enabled or provider_installed:
+            self._setup_firewalld_services()
 
     def _print_commands(self, message, commands):
         self.dialog.note(
