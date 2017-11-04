@@ -271,10 +271,6 @@ public class NetworkValidator {
         return mtuValid().isValid();
     }
 
-    public void setDataCenter(StoragePool dataCenter) {
-        this.dataCenter = dataCenter;
-    }
-
     protected static class PluralMessages {
 
         private final EngineMessage entitiesReplacementPlural;
