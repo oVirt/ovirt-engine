@@ -709,6 +709,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     UploadImageXhrMaxRetries(ClientAccessLevel.Admin),
 
+    @TypeConverterAttribute(Boolean.class)
+    GetImageTicketSupported,
+
     @Reloadable
     @TypeConverterAttribute(Long.class)
     SetupNetworksPollingTimeout,
