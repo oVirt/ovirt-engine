@@ -6,11 +6,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,9 +21,11 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link UpdateQuotaCommand} class. */
@@ -36,6 +40,14 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private UpdateQuotaCommand command = new UpdateQuotaCommand(params, null);
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.QuotaGraceStorage, 20),
+            mockConfig(ConfigValues.QuotaGraceCluster, 20),
+            mockConfig(ConfigValues.QuotaThresholdStorage, 80),
+            mockConfig(ConfigValues.QuotaThresholdCluster, 80)
+    );
 
     /** The quota to use for testing */
     private Quota quota;

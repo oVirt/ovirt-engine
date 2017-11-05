@@ -98,6 +98,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
                 quotaCluster.setQuotaClusterId(Guid.newGuid());
             }
         }
+        setQuotaThresholdDefaults(quotaParameter);
         setQuota(quotaParameter);
     }
 

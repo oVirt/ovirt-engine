@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -97,22 +95,6 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
         }
         setQuotaThresholdDefaults(quotaParameter);
         setQuota(quotaParameter);
-    }
-
-    // Setting defaults for hard and soft limits, for REST
-    private void setQuotaThresholdDefaults(Quota quotaParameter) {
-        if (quotaParameter.getGraceStoragePercentage() == 0) {
-            quotaParameter.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
-        }
-        if (quotaParameter.getGraceClusterPercentage() == 0) {
-            quotaParameter.setGraceClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaGraceCluster));
-        }
-        if (quotaParameter.getThresholdStoragePercentage() == 0) {
-            quotaParameter.setThresholdStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaThresholdStorage));
-        }
-        if (quotaParameter.getThresholdClusterPercentage() == 0) {
-            quotaParameter.setThresholdClusterPercentage(Config.<Integer>getValue(ConfigValues.QuotaThresholdCluster));
-        }
     }
 
     @Override
