@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
@@ -17,7 +19,7 @@ public class VmCommonUtils {
      * @param destination new configuration of the VM
      * @return true, if any CPUs are to be hotplugged, false otherwise
      */
-    public static boolean isCpusToBeHotplugged(VM source, VM destination) {
+    public static boolean isCpusToBeHotpluggedOrUnplugged(VM source, VM destination) {
         return source.getCpuPerSocket() == destination.getCpuPerSocket()
                 && source.getNumOfSockets() != destination.getNumOfSockets()
                 && source.getThreadsPerCpu() == destination.getThreadsPerCpu();
@@ -42,6 +44,18 @@ public class VmCommonUtils {
      */
     public static int maxMemorySizeWithHotplugInMb(VM vm) {
         return maxMemorySizeWithHotplugInMb(vm.getOs(), vm.getCompatibilityVersion());
+    }
+
+    /**
+     * Check if VM Lease changed and need to be hot plugged or hot unplugged when configuration of a running VM is
+     * updated from <code>source</code> to <code>destination</code>.
+     *
+     * @param source current configuration of the VM
+     * @param destination new configuration of the VM
+     * @return true, if VM Lease is to be hotplugged, false otherwise
+     */
+    public static boolean isVmLeaseToBeHotPluggedOrUnplugged(VM source, VM destination) {
+        return !Objects.equals(source.getLeaseStorageDomainId(), destination.getLeaseStorageDomainId());
     }
 
     /**

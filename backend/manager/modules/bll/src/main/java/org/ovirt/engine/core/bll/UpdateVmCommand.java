@@ -448,7 +448,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // try hotplug only if topology (cpuPerSocket, threadsPerCpu) hasn't changed
         if (getVm().getStatus() == VMStatus.Up
-                && VmCommonUtils.isCpusToBeHotplugged(getVm(), newVm)) {
+                && VmCommonUtils.isCpusToBeHotpluggedOrUnplugged(getVm(), newVm)) {
             HotSetNumberOfCpusParameters params =
                     new HotSetNumberOfCpusParameters(
                             newVmStatic,

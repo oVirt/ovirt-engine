@@ -1733,12 +1733,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 @Override
                 public void onSuccess(QueryReturnValue returnValue) {
                     List<String> changedFields = returnValue.getReturnValue();
-                    final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotplugged(selectedItem, getcurrentVm());
+                    final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotpluggedOrUnplugged(selectedItem, getcurrentVm());
                     final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
                     final boolean memoryHotPluggable =
                             VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm());
                     final boolean minAllocatedMemoryChanged = selectedItem.getMinAllocatedMem() != getcurrentVm().getMinAllocatedMem();
-                    final boolean vmLeaseUpdated = !Objects.equals(selectedItem.getLeaseStorageDomainId(), getcurrentVm().getLeaseStorageDomainId());
+                    final boolean vmLeaseUpdated = VmCommonUtils.isVmLeaseToBeHotPluggedOrUnplugged(selectedItem, getcurrentVm());
                     if (isHeadlessModeChanged) {
                         changedFields.add(constants.headlessMode());
                     }
