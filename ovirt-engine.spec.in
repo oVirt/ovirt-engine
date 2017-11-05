@@ -1296,6 +1296,7 @@ fi
 %{engine_data}/bin/ovirt-engine-extensions-tool.sh
 %{engine_data}/bin/ovirt-engine-crypto-tool.sh
 %{engine_data}/bin/ovirt-engine-role.sh
+%{engine_data}/bin/host-direct-upgrade.sh
 %{engine_data}/conf/extensions-tool-logging.properties
 %{engine_data}/conf/jaas.conf
 %{engine_data}/conf/notifier-logging.properties
