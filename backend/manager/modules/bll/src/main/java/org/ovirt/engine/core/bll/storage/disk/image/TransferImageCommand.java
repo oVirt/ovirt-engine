@@ -374,7 +374,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         stopImageTransferSession(context.entity);
         // Setting disk status to ILLEGAL only on upload failure
         // (only if not disk snapshot)
-        if (Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
+        if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
             setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
                     ImageStatus.ILLEGAL : ImageStatus.OK);
         }
