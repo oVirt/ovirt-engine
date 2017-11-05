@@ -767,6 +767,7 @@ public class LibvirtVmXmlBuilder {
         // replacement of some devices in run-once mode should eventually be done by the run-command
         devices = overrideDevicesForRunOnce(devices);
         devices = processPayload(devices);
+        devices.forEach(this::replaceNullSpecParams);
 
         writer.writeStartElement("devices");
 
@@ -970,6 +971,12 @@ public class LibvirtVmXmlBuilder {
         }
 
         return devices;
+    }
+
+    private void replaceNullSpecParams(VmDevice dev) {
+        if (dev.getSpecParams() == null) {
+            dev.setSpecParams(Collections.emptyMap());
+        }
     }
 
     @SafeVarargs
