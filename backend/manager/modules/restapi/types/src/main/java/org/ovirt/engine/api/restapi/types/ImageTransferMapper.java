@@ -3,8 +3,10 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.ImageTransfer;
+import org.ovirt.engine.api.model.ImageTransferDirection;
 import org.ovirt.engine.api.model.ImageTransferPhase;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 
 public class ImageTransferMapper {
     @Mapping(from = ImageTransfer.class,
@@ -54,6 +56,9 @@ public class ImageTransferMapper {
         if (entity.getActive() != null) {
             model.setActive(entity.getActive());
         }
+        if (entity.getType() != null) {
+            model.setDirection(mapDirection(entity.getType()));
+        }
         return model;
     }
 
@@ -83,6 +88,17 @@ public class ImageTransferMapper {
                 return ImageTransferPhase.FINISHED_FAILURE;
             default:
                 throw new IllegalArgumentException("The value \"" + phase + "\" isn't a valid image transfer phase.");
+        }
+    }
+
+    private static ImageTransferDirection mapDirection(TransferType type) {
+        switch (type) {
+        case Download:
+            return ImageTransferDirection.DOWNLOAD;
+        case Upload:
+            return ImageTransferDirection.UPLOAD;
+        default:
+            return null;
         }
     }
 }
