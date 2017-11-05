@@ -2131,7 +2131,8 @@ public class LibvirtVmXmlBuilder {
     private void writeInput() {
         writer.writeStartElement("input");
 
-        boolean tabletEnable = vm.getGraphicsInfos().size() == 1 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
+        // Avoid adding Tablet device for High Performance VMs since no USB devices are set
+        boolean tabletEnable = vm.getVmType() != VmType.HighPerformance && vm.getGraphicsInfos().size() == 1 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
         if (tabletEnable) {
             writer.writeAttributeString("type", "tablet");
             writer.writeAttributeString("bus", "usb");

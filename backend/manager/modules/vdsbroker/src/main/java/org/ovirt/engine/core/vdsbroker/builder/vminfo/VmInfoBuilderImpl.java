@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -724,7 +725,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             createInfo.put(VdsProperties.PitReinjection, "false");
         }
 
-        if (vm.getGraphicsInfos().size() == 1 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC)) {
+        // Avoid adding Tablet device for High Performance VMs since no USB devices are set
+        if (vm.getVmType() != VmType.HighPerformance && vm.getGraphicsInfos().size() == 1 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC)) {
             createInfo.put(VdsProperties.TabletEnable, "true");
         }
         createInfo.put(VdsProperties.transparent_huge_pages,
