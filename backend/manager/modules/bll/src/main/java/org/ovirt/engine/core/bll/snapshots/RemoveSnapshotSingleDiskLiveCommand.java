@@ -118,7 +118,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.MERGE_STATUS);
             break;
         case MERGE_STATUS:
-            getParameters().setMergeCommandComplete(true);
             nextCommand = new Pair<>(ActionType.MergeStatus, buildMergeParameters());
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
             break;
@@ -138,7 +137,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
             break;
         case COMPLETE:
-            getParameters().setDestroyImageCommandComplete(true);
             setCommandStatus(CommandStatus.SUCCEEDED);
             break;
         }
