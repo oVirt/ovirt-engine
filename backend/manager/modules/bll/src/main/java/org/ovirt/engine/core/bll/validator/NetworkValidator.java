@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Nameable;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -36,7 +35,6 @@ public class NetworkValidator {
     private final VmDao vmDao;
     protected final Network network;
 
-    private StoragePool dataCenter;
     private List<Network> networks;
     private List<VM> vms;
     private List<VmTemplate> templates;
@@ -48,13 +46,6 @@ public class NetworkValidator {
 
     protected DbFacade getDbFacade() {
         return DbFacade.getInstance();
-    }
-
-    protected StoragePool getDataCenter() {
-        if (dataCenter == null) {
-            dataCenter = getDbFacade().getStoragePoolDao().get(network.getDataCenterId());
-        }
-        return dataCenter;
     }
 
     /**
@@ -88,14 +79,6 @@ public class NetworkValidator {
     public ValidationResult networkPrefixValid() {
         return ValidationResult.failWith(EngineMessage.NETWORK_CANNOT_CONTAIN_BOND_NAME)
                 .when(network.getName().toLowerCase().startsWith("bond"));
-    }
-
-    /**
-     * @return An error iff the data center to which the network belongs doesn't exist.
-     */
-    public ValidationResult dataCenterExists() {
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
-                .when(getDataCenter() == null);
     }
 
     /**

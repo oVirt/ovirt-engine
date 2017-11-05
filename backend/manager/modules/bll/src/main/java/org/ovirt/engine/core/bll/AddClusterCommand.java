@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
+import org.ovirt.engine.core.bll.validator.HasStoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -130,6 +131,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
 
     @Override
     protected boolean validate() {
+        HasStoragePoolValidator hspValidator = new HasStoragePoolValidator(getCluster());
         final ClusterValidator validator = new ClusterValidator(
                 dbFacade, getCluster(), getCpuFlagsManagerHandler());
 
@@ -137,7 +139,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
                 && validate(validator.cpuTypeSupportsVirtService())
                 && validate(validator.versionSupported())
                 && validate(validator.dataCenterVersionMismatch())
-                && validate(validator.dataCenterExists())
+                && validate(hspValidator.storagePoolExists())
                 && validate(validator.localStoragePoolAttachedToSingleCluster())
                 && validate(validator.clusterServiceDefined())
                 && validate(validator.mixedClusterServicesSupported())

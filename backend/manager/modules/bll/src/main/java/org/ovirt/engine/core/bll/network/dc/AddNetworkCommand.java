@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.HasStoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -83,8 +84,9 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected boolean validate() {
+        HasStoragePoolValidator hasStoragePoolValidator = new HasStoragePoolValidator(getNetwork());
         AddNetworkValidator validator = getNetworkValidator();
-        return validate(validator.dataCenterExists())
+        return validate(hasStoragePoolValidator.storagePoolExists())
                 && validate(validator.stpForVmNetworkOnly())
                 && validate(validator.mtuValid())
                 && validate(validator.networkPrefixValid())

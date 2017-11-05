@@ -101,17 +101,6 @@ public class NetworkValidatorTest {
         assertThat(validator.networkIsSet(Guid.newGuid()), failsWith(EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS));
     }
 
-    @Test
-    public void dataCenterDoesntExist() throws Exception {
-        when(dataCenterDao.get(any())).thenReturn(null);
-        assertThat(validator.dataCenterExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
-    }
-
-    @Test
-    public void dataCenterExists() throws Exception {
-        assertThat(validator.dataCenterExists(), isValid());
-    }
-
     private void stpTest(Matcher<ValidationResult> matcher, boolean vmNetwork, boolean stp) {
         when(network.isVmNetwork()).thenReturn(vmNetwork);
         when(network.getStp()).thenReturn(stp);

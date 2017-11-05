@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.validator.HasStoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -128,9 +129,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return true;
         }
 
+        final HasStoragePoolValidator hasStoragePoolValidator = new HasStoragePoolValidator(getNetwork());
         final NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
         final UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork(), vmDao, interfaceDao);
-        return validate(validatorNew.dataCenterExists())
+        return validate(hasStoragePoolValidator.storagePoolExists())
                 && validate(validatorNew.stpForVmNetworkOnly())
                 && validate(validatorNew.mtuValid())
                 && validate(validatorNew.networkPrefixValid())

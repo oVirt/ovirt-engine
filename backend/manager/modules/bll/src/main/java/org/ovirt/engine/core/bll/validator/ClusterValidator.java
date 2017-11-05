@@ -68,11 +68,6 @@ public class ClusterValidator {
                         dataCenter.getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0);
     }
 
-    public ValidationResult dataCenterExists() {
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
-                .when(cluster.getStoragePoolId() != null && getDataCenter() == null);
-    }
-
     public ValidationResult localStoragePoolAttachedToSingleCluster() {
         StoragePool dataCenter = getDataCenter();
         return ValidationResult.failWith(EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE)

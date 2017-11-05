@@ -155,30 +155,6 @@ public class ClusterValidatorTest {
     }
 
     @Test
-    public void dataCenterExists() {
-        when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
-        when(dataCenterDao.get(any())).thenReturn(mock(StoragePool.class));
-        when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
-
-        assertThat(validator.dataCenterExists(), isValid());
-    }
-
-    @Test
-    public void dataCenterNotExistsWhenClusterIsOrphan() {
-        assertThat(validator.dataCenterExists(), isValid());
-    }
-
-    @Test
-    public void dataCenterDoesNotExist() {
-        when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
-        when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
-        validator = new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
-
-        assertThat(validator.dataCenterExists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
-    }
-
-    @Test
     public void noStoragePoolAttachedToCluster() {
         assertThat(validator.localStoragePoolAttachedToSingleCluster(), isValid());
     }
