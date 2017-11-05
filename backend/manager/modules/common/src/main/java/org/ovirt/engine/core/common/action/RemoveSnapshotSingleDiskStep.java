@@ -8,4 +8,5 @@ public enum RemoveSnapshotSingleDiskStep {
     MERGE_STATUS,
     DESTROY_IMAGE,
     REDUCE_IMAGE,
+    COMPLETE,
 }
