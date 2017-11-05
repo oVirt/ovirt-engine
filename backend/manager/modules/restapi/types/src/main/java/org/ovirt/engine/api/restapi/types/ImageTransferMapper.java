@@ -51,6 +51,9 @@ public class ImageTransferMapper {
         if (entity.getPhase() != null) {
             model.setPhase(mapPhase(entity.getPhase()));
         }
+        if (entity.getActive() != null) {
+            model.setActive(entity.getActive());
+        }
         return model;
     }
 
