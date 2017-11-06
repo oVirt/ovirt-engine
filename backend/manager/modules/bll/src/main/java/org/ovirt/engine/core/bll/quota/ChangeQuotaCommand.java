@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -27,8 +28,8 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
     @Override
     protected boolean validate() {
         // check if SP exist
-        if (getStoragePool() == null) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        StoragePoolValidator spValidator = new StoragePoolValidator(getStoragePool());
+        if (!validate(spValidator.exists())) {
             return false;
         }
         // Check if quota exist:

@@ -52,6 +52,14 @@ public class StoragePoolValidator {
         return hasDefaultCluster;
     }
 
+    public ValidationResult exists() {
+        if (storagePool == null) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        }
+
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult isUp() {
         if (storagePool == null || storagePool.getStatus() != StoragePoolStatus.Up) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);

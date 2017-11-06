@@ -40,6 +40,17 @@ public class StoragePoolValidatorTest {
     }
 
     @Test
+    public void testExistsValid() {
+        assertThat("Storage pool should exist", validator.exists(), isValid());
+    }
+
+    @Test
+    public void testExistsInvalid() {
+        validator = new StoragePoolValidator(null);
+        assertThat(validator.exists(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST));
+    }
+
+    @Test
     public void testIsUpValid() {
         assertThat("Storage pool should be up", validator.isUp(), isValid());
     }

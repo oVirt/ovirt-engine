@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.businessentities.HasStoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
@@ -12,7 +11,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
  */
 public class HasStoragePoolValidator {
     private HasStoragePool entity;
-    private StoragePool storagePool;
+    private StoragePoolValidator spValidator;
 
     public HasStoragePoolValidator(HasStoragePool entity) {
         this.entity = entity;
@@ -22,15 +21,17 @@ public class HasStoragePoolValidator {
      * @return An error iff the data center to which the network belongs doesn't exist.
      */
     public ValidationResult storagePoolExists() {
-        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
-                .when(entity.getStoragePoolId() != null && getStoragePool() == null);
+        if (entity.getStoragePoolId() == null) {
+            return ValidationResult.VALID;
+        }
+        return getStoragePoolValidator().exists();
     }
 
-    private StoragePool getStoragePool() {
-        if (storagePool == null) {
-            storagePool = getStoragePoolDao().get(entity.getStoragePoolId());
+    private StoragePoolValidator getStoragePoolValidator() {
+        if (spValidator == null) {
+            spValidator = new StoragePoolValidator(getStoragePoolDao().get(entity.getStoragePoolId()));
         }
-        return storagePool;
+        return spValidator;
     }
 
     protected StoragePoolDao getStoragePoolDao() {

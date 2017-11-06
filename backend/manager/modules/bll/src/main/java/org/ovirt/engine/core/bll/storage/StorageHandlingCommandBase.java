@@ -29,6 +29,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.MetadataDiskDescriptionHandl
 import org.ovirt.engine.core.bll.storage.pool.ActivateDeactivateSingleAsyncOperationFactory;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -207,11 +208,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected boolean checkStoragePool() {
-        if (getStoragePool() == null) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
-            return false;
-        }
-        return true;
+        return validate(new StoragePoolValidator(getStoragePool()).exists());
     }
 
     protected boolean canDetachStorageDomainWithVmsAndDisks(StorageDomain storageDomain) {

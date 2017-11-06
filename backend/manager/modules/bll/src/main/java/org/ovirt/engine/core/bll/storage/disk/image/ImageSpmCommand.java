@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -48,8 +49,9 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
         }
 
         setStoragePool(null);
-        if (getStoragePool() == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        StoragePoolValidator spValidator = new StoragePoolValidator(getStoragePool());
+        if (!validate(spValidator.exists())) {
+            return false;
         }
 
         if (!getPoolSpmId().equals(getStoragePool().getSpmVdsId())) {

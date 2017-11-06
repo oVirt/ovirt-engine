@@ -48,6 +48,7 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -547,8 +548,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED);
         }
 
-        if (getStoragePool() == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        StoragePoolValidator spValidator = new StoragePoolValidator(getStoragePool());
+        if (!validate(spValidator.exists())) {
+            return false;
         }
 
         if (!isExternalVM() && getStoragePool().getStatus() != StoragePoolStatus.Up) {
