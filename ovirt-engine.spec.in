@@ -1132,6 +1132,11 @@ fi
 %ghost %config(noreplace) %{engine_pki}/database.txt
 %ghost %config(noreplace) %{engine_pki}/serial.txt
 
+#
+# engine-host-update.py tool
+#
+%{engine_data}/bin/engine-host-update.py*
+
 %files setup-base
 
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
