@@ -39,6 +39,7 @@ import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * Contains UI related functionality exposed to UI plugins through the plugin API.
@@ -244,6 +245,13 @@ public class PluginUiFunctions implements HasHandlers {
     public void closeDialog(final String dialogToken) {
         Scheduler.get().scheduleDeferred(() -> CloseDynamicPopupEvent.fire(PluginUiFunctions.this,
                 dialogToken));
+    }
+
+    /**
+     * Reveals the application place denoted by {@code historyToken}.
+     */
+    public void revealPlace(final String historyToken) {
+        Scheduler.get().scheduleDeferred(() -> placeManager.revealPlace(new PlaceRequest.Builder().nameToken(historyToken).build()));
     }
 
     /**
