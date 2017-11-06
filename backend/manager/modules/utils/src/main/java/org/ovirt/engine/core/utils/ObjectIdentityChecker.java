@@ -213,7 +213,7 @@ public class ObjectIdentityChecker {
             return false;
         }
         for (String fieldName : getChangedFields(source, destination)) {
-            if (!isFieldUpdatable(status, fieldName, null, hotsetEnabled)) {
+            if (!isFieldUpdatable(status, fieldName, null, hotsetEnabled) && !isTransientField(fieldName)) {
                 log.warn("ObjectIdentityChecker.isUpdateValid:: Not updatable field '{}' was updated",
                         fieldName);
                 return false;

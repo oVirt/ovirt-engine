@@ -52,7 +52,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     @EditableVmField(onHostedEngine = true)
     private ArrayList<DiskImage> diskList;
+
+    @TransientField
     private Map<Guid, VmDevice> managedDeviceMap;
+
+    @TransientField
     private List<VmDevice> unmanagedDeviceList;
 
     private Guid id;
