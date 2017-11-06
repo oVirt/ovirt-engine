@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.system;
 
-import org.ovirt.engine.ui.common.auth.CurrentUser;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
@@ -28,14 +26,12 @@ public class LockInteractionManager implements LockInteractionHandler {
     private static final String APP_STATUS_READY = "ready"; //$NON-NLS-1$
 
     private final PlaceManager placeManager;
-    private final CurrentUser user;
 
     private boolean loadingIndicatorActive = false;
 
     @Inject
-    public LockInteractionManager(EventBus eventBus, PlaceManager placeManager, CurrentUser user) {
+    public LockInteractionManager(EventBus eventBus, PlaceManager placeManager) {
         this.placeManager = placeManager;
-        this.user = user;
         eventBus.addHandler(LockInteractionEvent.getType(), this);
     }
 
@@ -43,7 +39,7 @@ public class LockInteractionManager implements LockInteractionHandler {
     public void onLockInteraction(LockInteractionEvent event) {
         // Allow progress indicator to be hidden regardless of the current (non-empty) place
         boolean emptyPlace = placeManager.getCurrentPlaceRequest().getNameToken() == null;
-        if (!emptyPlace && !user.isAutoLogin() && !event.shouldLock()) {
+        if (!emptyPlace && !event.shouldLock()) {
             // Use deferred command because some other initialization might happen
             // right after place transition; therefore we want to hide the loading
             // indicator only after the browser event loop returns
