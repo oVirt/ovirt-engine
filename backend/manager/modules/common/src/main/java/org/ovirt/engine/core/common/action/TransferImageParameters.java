@@ -16,6 +16,7 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
     AuditLogType auditLogType;
     long lastPauseLogTime;
     String downloadFilename;
+    boolean retryExtendTicket = true;
 
     public TransferImageParameters() {
     }
@@ -83,5 +84,13 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
 
     public void setDownloadFilename(String downloadFilename) {
         this.downloadFilename = downloadFilename;
+    }
+
+    public boolean isRetryExtendTicket() {
+        return retryExtendTicket;
+    }
+
+    public void setRetryExtendTicket(boolean retryExtendTicket) {
+        this.retryExtendTicket = retryExtendTicket;
     }
 }

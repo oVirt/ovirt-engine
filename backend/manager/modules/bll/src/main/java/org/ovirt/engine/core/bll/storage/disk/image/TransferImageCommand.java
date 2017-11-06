@@ -296,7 +296,18 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         if (context.iterationTimestamp
                 >= getParameters().getSessionExpiration() - getHostTicketRefreshAllowance()) {
             log.info("Renewing transfer ticket for {}", getTransferDescription());
-            extendImageTransferSession(context.entity);
+            boolean extendSucceeded = extendImageTransferSession(context.entity);
+            if (!extendSucceeded) {
+                log.warn("Failed to renew transfer ticket for {}", getTransferDescription());
+                if (getParameters().isRetryExtendTicket()) {
+                    // Set 'extendTicketFailed' flag to true for giving a grace period
+                    // for another extend attempt.
+                    getParameters().setRetryExtendTicket(false);
+                } else {
+                    updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+                    getParameters().setRetryExtendTicket(true);
+                }
+            }
         } else {
             log.debug("Not yet renewing transfer ticket for {}", getTransferDescription());
         }
