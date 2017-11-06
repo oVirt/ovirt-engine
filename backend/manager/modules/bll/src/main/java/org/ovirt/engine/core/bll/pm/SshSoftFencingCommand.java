@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -37,8 +38,8 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
     @Override
     protected void executeCommand() {
         setVds(null);
+        setCommandShouldBeLogged(false);
         if (getVds() == null) {
-            setCommandShouldBeLogged(false);
             log.info("SSH Soft Fencing will not be executed on host '{}' ({}) since it doesn't exist anymore.",
                     getVdsName(),
                     getVdsId());
@@ -56,9 +57,9 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
                     // SSH Soft Fencing executed successfully, check if host become Up
                     result = checkIfHostBecomeUp();
                 }
+                setCommandShouldBeLogged(result);
                 getReturnValue().setSucceeded(result);
             } else {
-                setCommandShouldBeLogged(false);
                 log.info("SSH Soft Fencing will not be executed on host '{}' ({}) since it's status is ok.",
                         getVdsName(),
                         getVdsId());
@@ -133,5 +134,10 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
 
     public ResourceManager getResourceManager() {
         return resourceManager;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return AuditLogType.VDS_SOFT_RECOVER;
     }
 }

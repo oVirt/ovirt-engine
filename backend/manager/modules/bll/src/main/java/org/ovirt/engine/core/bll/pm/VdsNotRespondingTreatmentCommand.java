@@ -156,6 +156,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             if (retVal.getSucceeded()) {
                 // SSH Soft Fencing was successful and host is Up, stop non responding treatment
                 getReturnValue().setSucceeded(true);
+                setCommandShouldBeLogged(false);
                 return;
             }
 

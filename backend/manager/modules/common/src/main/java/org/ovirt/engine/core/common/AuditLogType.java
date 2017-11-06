@@ -14,6 +14,7 @@ public enum AuditLogType {
     // initialization the VDS is down
     VDS_DETECTED(13), // When VDC initializes and detects a running VDS
     VDS_RECOVER(14), // When VDS changes status down->up
+    VDS_SOFT_RECOVER(75), // Soft fencing was successful
     VDS_MAINTENANCE(15, AuditLogSeverity.NORMAL), // When VDS is transferred to maintenance mode
     VDS_ACTIVATE(16), // When VDS is reactivated
     VDS_ACTIVATE_MANUAL_HA(10454, AuditLogSeverity.WARNING), // When VDS is reactivated
