@@ -44,7 +44,11 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
 
     @Override
     public void resizeToFullHeight() {
-        table.updateGridSize();
+        int tableTop = table.getTableAbsoluteTop();
+        if (tableTop > 0) {
+            table.setMaxGridHeight(Window.getClientHeight() - tableTop);
+            table.updateGridSize();
+        }
     }
 
     @Override

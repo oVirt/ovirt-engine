@@ -70,6 +70,8 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     private final OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget;
 
+    private boolean resizing = false;
+
     @Inject
     private SearchStringCollector searchStringCollector;
 
@@ -111,7 +113,13 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         }));
         getView().setDetailPlaceTransitionHandler(this);
         registerHandler(getView().addWindowResizeHandler(e -> {
-            Scheduler.get().scheduleDeferred(() -> getView().resizeToFullHeight());
+            if (!resizing) {
+                Scheduler.get().scheduleDeferred(() -> {
+                    getView().resizeToFullHeight();
+                    resizing = false;
+                });
+                resizing = true;
+            }
         }));
         String searchString = searchStringCollector.getSearchStringPrefix(modelProvider.getModel().getSearchString());
         if (searchString != null) {
@@ -169,6 +177,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
     @Override
     protected void onHide() {
         getTable().hideContextMenu();
+        getView().resizeToFullHeight();
     }
 
     /**

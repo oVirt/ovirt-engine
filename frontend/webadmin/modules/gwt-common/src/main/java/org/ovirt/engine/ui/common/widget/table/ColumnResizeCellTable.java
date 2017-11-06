@@ -91,6 +91,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     protected static final int scrollbarThickness = WindowHelper.determineScrollbarThickness();
 
     protected boolean isHeightSet = false;
+    protected int maxGridHeight = -1;
 
     /**
      * {@link #emptyNoWidthColumn} header that supports handling context menu events.
@@ -781,11 +782,19 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         return contentHeight;
     }
 
+    public void setMaxGridHeight(int maxHeight) {
+        this.maxGridHeight = determineBrowserHeightAdjustment(maxHeight);
+    }
+
     public void updateGridSize(final int rowHeight) {
         Scheduler.get().scheduleDeferred(() -> {
             int gridHeaderHeight = getGridHeaderHeight();
             if (!isHeightSet && gridHeaderHeight > 0) {
-                resizeGridToContentHeight(rowHeight + gridHeaderHeight);
+                if (maxGridHeight == -1 || (maxGridHeight > -1 && maxGridHeight > rowHeight + gridHeaderHeight)) {
+                    resizeGridToContentHeight(rowHeight + gridHeaderHeight);
+                } else {
+                    resizeGridToContentHeight(maxGridHeight);
+                }
             }
         });
     }

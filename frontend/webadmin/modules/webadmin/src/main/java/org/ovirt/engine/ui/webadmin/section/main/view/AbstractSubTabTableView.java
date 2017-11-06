@@ -56,7 +56,11 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
 
     @Override
     public void resizeToFullHeight() {
-        table.updateGridSize();
+        int tableTop = table.getTableAbsoluteTop();
+        if (tableTop > 0) {
+            table.setMaxGridHeight(Window.getClientHeight() - tableTop);
+            table.updateGridSize();
+        }
     }
 
     protected SimpleActionTable<T> createActionTable() {

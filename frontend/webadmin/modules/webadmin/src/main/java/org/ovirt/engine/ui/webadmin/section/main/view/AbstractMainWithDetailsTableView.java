@@ -77,7 +77,11 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
 
     @Override
     public void resizeToFullHeight() {
-        table.updateGridSize();
+        int tableTop = table.getTableAbsoluteTop();
+        if (tableTop > 0) {
+            table.setMaxGridHeight(Window.getClientHeight() - tableTop);
+            table.updateGridSize();
+        }
     }
 
     @Override

@@ -61,6 +61,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     private final PlaceManager placeManager;
     private final DetailModelProvider<M, D> modelProvider;
     private final AbstractMainSelectedItems<T> selectedMainItems;
+    private boolean resizing = false;
 
     /**
      * @param view View type (extends AbstractSubTabPresenter.ViewDef&lt;T&gt;)
@@ -102,7 +103,13 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         }
         initializeHandlers();
         registerHandler(getView().addWindowResizeHandler(e -> {
-            Scheduler.get().scheduleDeferred(() -> getView().resizeToFullHeight());
+            if (!resizing) {
+                Scheduler.get().scheduleDeferred(() -> {
+                    getView().resizeToFullHeight();
+                    resizing = false;
+                });
+                resizing = true;
+            }
         }));
         getSelectedMainItems().registerListener(this);
         itemChanged(getSelectedMainItems().getSelectedItem());
@@ -143,6 +150,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     @Override
     protected void onReveal() {
         super.onReveal();
+        getView().resizeToFullHeight();
 
         // Notify model provider that the tab has been revealed
         modelProvider.onSubTabSelected();

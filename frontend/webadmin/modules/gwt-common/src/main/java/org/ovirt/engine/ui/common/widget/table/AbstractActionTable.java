@@ -218,6 +218,14 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         this.table.updateGridSize();
     }
 
+    public void setMaxGridHeight(int maxHeight) {
+        this.table.setMaxGridHeight(maxHeight);
+    }
+
+    public int getTableAbsoluteTop() {
+        return this.table.getElement().getAbsoluteTop() + this.table.getGridHeaderHeight();
+    }
+
     public void setRowVisitor(RowVisitor<T> rowVisitor) {
         this.rowVisitor = rowVisitor;
     }
