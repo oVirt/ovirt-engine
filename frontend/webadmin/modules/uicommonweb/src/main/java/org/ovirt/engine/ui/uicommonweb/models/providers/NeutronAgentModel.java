@@ -87,8 +87,6 @@ public class NeutronAgentModel extends EntityModel {
             }
         });
 
-        getPluginType().setItems(NeutronPluginTranslator.getPresetDisplayStrings());
-        getPluginType().setSelectedItem(getDefaultPluginTypeString());
         getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance().getConstants().interfaceMappings());
         getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
                 .getConstants()
@@ -116,6 +114,8 @@ public class NeutronAgentModel extends EntityModel {
     public void init(Provider<OpenstackNetworkProviderProperties> provider) {
         OpenstackNetworkProviderProperties properties = provider.getAdditionalProperties();
         String pluginName = (properties == null) ?  getDefaultPluginTypeString() : properties.getPluginType();
+
+        getPluginType().setItems(NeutronPluginTranslator.getPresetDisplayStrings());
         getPluginType().setSelectedItem(NeutronPluginTranslator.getDisplayStringForPluginName(pluginName));
 
         if (properties != null) {
