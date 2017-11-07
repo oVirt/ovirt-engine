@@ -30,6 +30,8 @@ import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class OvfWriter implements IOvfBuilder {
     private int _instanceId;
@@ -39,6 +41,8 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected XmlDocument _document;
     protected VmBase vmBase;
     protected Version version;
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
 
     public OvfWriter(VmBase vmBase, List<DiskImage> images, List<LunDisk> lunDisks, Version version) {
         _document = new XmlDocument();
