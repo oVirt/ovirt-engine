@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
@@ -81,7 +82,8 @@ public abstract class HostDeviceModelBaseTable<M extends HostDeviceListModelBase
         addColumn(constants.mdevTypes(), "120px", new AbstractTextColumn<HostDeviceView>() { //$NON-NLS-1$
             @Override
             public String getValue(HostDeviceView object) {
-                return object.getMdevTypes() == null ? "" : String.join(", ", object.getMdevTypes()); //$NON-NLS-1$
+                return object.getMdevTypes() == null ? "" :
+                        object.getMdevTypes().stream().sorted().collect(Collectors.joining(", ")); //$NON-NLS-1$
             }
         });
     }
