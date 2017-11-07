@@ -59,6 +59,9 @@ public class ImageTransferMapper {
         if (entity.getType() != null) {
             model.setDirection(mapDirection(entity.getType()));
         }
+        if (entity.getBytesSent() != null) {
+            model.setTransferred(entity.getBytesSent());
+        }
         return model;
     }
 
