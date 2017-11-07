@@ -90,7 +90,7 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
             model.setSearchType(AdSearchType.MY_GROUPS);
             getView().changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(false, true);
             getModel().getSearchMyGroupsCommand().execute();
-            getView().userTypeChanged(UserOrGroup.User, false);
+            getView().userTypeChanged(UserOrGroup.Group, false);
             model.setItems(null);
             getView().setLoadingState(LoadingState.LOADING);
         }));
