@@ -1626,6 +1626,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String OpenstackNetworkPluginType___OPEN_VSWITCH();
 
+    String ExternalNetworkPluginType___OVIRT_PROVIDER_OVN();
+
     String ProviderType___OPENSTACK_IMAGE();
 
     String ProviderType___OPENSTACK_VOLUME();
