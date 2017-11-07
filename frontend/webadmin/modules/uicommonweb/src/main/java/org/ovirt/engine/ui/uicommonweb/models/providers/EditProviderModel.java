@@ -49,7 +49,7 @@ public class EditProviderModel extends ProviderModel {
         getAuthUrl().setEntity(provider.getAuthUrl());
 
         if (isTypeNetwork()) {
-            getNeutronAgentModel().init(provider);
+            getNeutronAgentModel().init(provider, getType().getSelectedItem());
         }
 
         if (isTypeVmware()) {

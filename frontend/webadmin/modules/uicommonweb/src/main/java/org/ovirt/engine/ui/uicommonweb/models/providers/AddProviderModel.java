@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -17,9 +18,10 @@ public class AddProviderModel extends ProviderModel {
         setHelpTag(HelpTag.add_provider);
         setHashName("add_provider"); //$NON-NLS-1$
 
-        getType().setSelectedItem(Linq.firstOrNull(getType().getItems()));
+        ProviderType type = Linq.firstOrNull(getType().getItems());
+        getType().setSelectedItem(type);
+        getNeutronAgentModel().init(provider, type); // this is okay because AdditionalProperties == null at this point
 
-        getNeutronAgentModel().init(provider); // this is okay because AdditionalProperties == null at this point
     }
 
     @Override

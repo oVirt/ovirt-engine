@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.BrokerType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.MessagingConfiguration;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
@@ -111,7 +112,7 @@ public class NeutronAgentModel extends EntityModel {
         return getIsValid();
     }
 
-    public void init(Provider<OpenstackNetworkProviderProperties> provider) {
+    public void init(Provider<OpenstackNetworkProviderProperties> provider, ProviderType type) {
         OpenstackNetworkProviderProperties properties = provider.getAdditionalProperties();
         String pluginName = (properties == null) ?  getDefaultPluginTypeString() : properties.getPluginType();
 
