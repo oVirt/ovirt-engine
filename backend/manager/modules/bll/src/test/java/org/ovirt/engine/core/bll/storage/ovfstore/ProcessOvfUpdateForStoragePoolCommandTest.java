@@ -31,7 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
@@ -70,8 +70,8 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Spy
     @InjectMocks
-    private ProcessOvfUpdateForStoragePoolCommand<StoragePoolParametersBase> command =
-            new ProcessOvfUpdateForStoragePoolCommand<>(new StoragePoolParametersBase(), null);
+    private ProcessOvfUpdateForStoragePoolCommand<ProcessOvfUpdateParameters> command =
+            new ProcessOvfUpdateForStoragePoolCommand<>(new ProcessOvfUpdateParameters(), null);
 
     @Mock
     private StoragePoolDao storagePoolDao;

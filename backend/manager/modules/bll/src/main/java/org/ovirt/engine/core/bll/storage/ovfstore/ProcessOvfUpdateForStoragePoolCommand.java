@@ -21,7 +21,7 @@ import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
@@ -57,7 +57,7 @@ import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
+public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateParameters> extends StorageHandlingCommandBase<T> {
 
     @Inject
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
@@ -135,7 +135,9 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     protected void proccessDomainsForOvfUpdate(StoragePool pool) {
         List<StorageDomain> domainsInPool = storageDomainDao.getAllForStoragePool(pool.getId());
         for (StorageDomain domain : domainsInPool) {
-            if (!domain.getStorageDomainType().isDataDomain() || domain.getStatus() != StorageDomainStatus.Active) {
+            if (!domain.getStorageDomainType().isDataDomain() || (domain.getStatus() != StorageDomainStatus.Active
+                    && getParameters().getStorageDomainId() != null &&
+                    !domain.getId().equals(getParameters().getStorageDomainId()))) {
                 continue;
             }
 

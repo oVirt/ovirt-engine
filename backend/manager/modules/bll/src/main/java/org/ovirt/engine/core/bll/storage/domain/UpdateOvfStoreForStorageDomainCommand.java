@@ -10,9 +10,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -35,8 +34,8 @@ public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParame
     @Override
     protected void executeCommand() {
         Guid storageDomainId = getStorageDomainId();
-        StoragePoolParametersBase parameters =
-                new StoragePoolParametersBase(getStoragePoolId());
+        ProcessOvfUpdateParameters parameters =
+                new ProcessOvfUpdateParameters(getStoragePoolId(), getStorageDomainId());
         ActionReturnValue actionReturnValue =
                 runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters, getContext());
         Set<Guid> proccessedDomains = actionReturnValue.getActionReturnValue();
@@ -51,9 +50,9 @@ public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParame
         setSucceeded(true);
     }
 
-    private ProcessOvfUpdateForStorageDomainCommandParameters createProcessOvfUpdateForDomainParams() {
-        ProcessOvfUpdateForStorageDomainCommandParameters params =
-                new ProcessOvfUpdateForStorageDomainCommandParameters(getStoragePoolId(), getStorageDomainId());
+    private ProcessOvfUpdateParameters createProcessOvfUpdateForDomainParams() {
+        ProcessOvfUpdateParameters params =
+                new ProcessOvfUpdateParameters(getStoragePoolId(), getStorageDomainId());
         params.setSkipDomainChecks(true);
         if (isExecutedAsChildCommand()) {
             params.setParentCommand(getParameters().getParentCommand());

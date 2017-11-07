@@ -16,8 +16,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -57,11 +56,12 @@ public class OvfDataUpdater implements BackendService {
 
     protected void performOvfUpdateForDomain(Guid storagePoolId, Guid domainId) {
         backend.runInternalAction(ActionType.ProcessOvfUpdateForStorageDomain,
-                new ProcessOvfUpdateForStorageDomainCommandParameters(storagePoolId, domainId));
+                new ProcessOvfUpdateParameters(storagePoolId, domainId));
     }
 
     protected ActionReturnValue performOvfUpdateForStoragePool(Guid storagePoolId) {
-        StoragePoolParametersBase parameters = new StoragePoolParametersBase(storagePoolId);
+        ProcessOvfUpdateParameters parameters =
+                new ProcessOvfUpdateParameters(storagePoolId, null);
         return backend.runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters);
     }
 

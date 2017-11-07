@@ -36,8 +36,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateOvfVolumeForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters.OvfUpdateStep;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateParameters;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateParameters.OvfUpdateStep;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
@@ -69,7 +69,7 @@ import org.ovirt.engine.core.utils.archivers.tar.InMemoryTar;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @NonTransactiveCommandAttribute
-public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateForStorageDomainCommandParameters> extends StorageDomainCommandBase<T> implements SerialChildExecutingCommand {
+public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateParameters> extends StorageDomainCommandBase<T> implements SerialChildExecutingCommand {
 
     @Inject
     private AuditLogDirector auditLogDirector;

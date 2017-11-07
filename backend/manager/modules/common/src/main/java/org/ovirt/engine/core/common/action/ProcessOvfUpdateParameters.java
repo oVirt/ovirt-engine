@@ -2,15 +2,15 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class ProcessOvfUpdateForStorageDomainCommandParameters extends StorageDomainParametersBase {
+public class ProcessOvfUpdateParameters extends StorageDomainParametersBase {
     private boolean skipDomainChecks;
     private OvfUpdateStep ovfUpdateStep;
 
-    public ProcessOvfUpdateForStorageDomainCommandParameters() {
+    public ProcessOvfUpdateParameters() {
         super();
     }
 
-    public ProcessOvfUpdateForStorageDomainCommandParameters(Guid storagePoolId, Guid storageDomainId) {
+    public ProcessOvfUpdateParameters(Guid storagePoolId, Guid storageDomainId) {
         super(storagePoolId, storageDomainId);
     }
 
