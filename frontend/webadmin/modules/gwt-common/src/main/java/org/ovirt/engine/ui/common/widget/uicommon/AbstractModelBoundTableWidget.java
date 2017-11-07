@@ -50,6 +50,7 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
         this.wrappedWidget = new FlowPanel();
         if (actionPanel != null) {
             wrappedWidget.add(actionPanel);
+            table.setActionMenus(actionPanel.getActionButtons());
         }
         wrappedWidget.add(table);
         initWidget(getWrappedWidget());

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,13 +79,14 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         void setFilterResult(IsWidget result);
 
         /**
-         * Get a map of button definitions to action buttons.
-         * @return A map of the action button definitions to the action buttons.
+         * Get a map of button definitions to action items.
+         * @return A map of the action button definitions to the action items (this includes buttons and kebab menu).
          */
         Map<ActionButtonDefinition<T>, ActionButton> getActionItems();
     }
 
     private final SearchableTableModelProvider<T, M> dataProvider;
+    private final List<ActionButtonDefinition<T>> actionButtonDefinitions = new ArrayList<>();
 
     public ActionPanelPresenterWidget(EventBus eventBus, ViewDef<T> view, SearchableTableModelProvider<T, M> dataProvider) {
         super(eventBus, view);
@@ -128,6 +130,7 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
      */
     public void addActionButton(ActionButtonDefinition<T> buttonDef) {
         ActionButton newButton = getView().addActionButton(buttonDef);
+        actionButtonDefinitions.add(buttonDef);
         initButton(buttonDef, newButton);
     }
 
@@ -145,6 +148,7 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
 
     public void addComboActionButton(ActionButtonDefinition<T> buttonDef, List<ActionButtonDefinition<T>> subActions) {
         ActionButton newButton = getView().addDropdownComboActionButton(buttonDef, subActions, this);
+        actionButtonDefinitions.add(buttonDef);
         initButton(buttonDef, newButton);
     }
 
@@ -213,6 +217,10 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         if (buttonToRemove != null) {
             buttonToRemove.asWidget().removeFromParent();
         }
+    }
+
+    public List<ActionButtonDefinition<T>> getActionButtons() {
+        return actionButtonDefinitions;
     }
 
     protected abstract void initializeButtons();

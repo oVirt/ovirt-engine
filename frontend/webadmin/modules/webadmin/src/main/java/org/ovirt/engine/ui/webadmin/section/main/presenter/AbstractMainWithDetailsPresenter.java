@@ -161,6 +161,14 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
         setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
         setInSlot(TYPE_SetBreadCrumbs, breadCrumbsPresenterWidget);
+        if (hasActionPanelPresenterWidget()) {
+            getTable().setActionMenus(getActionPanelPresenterWidget().getActionButtons());
+        }
+    }
+
+    @Override
+    protected void onHide() {
+        getTable().hideContextMenu();
     }
 
     /**

@@ -37,6 +37,10 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
         return actionPanel;
     }
 
+    public boolean hasActionPanelPresenterWidget() {
+        return getActionPanelPresenterWidget() != null;
+    }
+
     @Override
     protected void onBind() {
         super.onBind();

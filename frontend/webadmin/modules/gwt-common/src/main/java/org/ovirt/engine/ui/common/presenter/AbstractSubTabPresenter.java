@@ -151,6 +151,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         if (entity != null) {
             onDetailModelEntityChange(entity);
         }
+        if (hasActionPanelPresenterWidget() && getTable() != null) {
+            getTable().setActionMenus(getActionPanelPresenterWidget().getActionButtons());
+        }
     }
 
     @Override
@@ -158,6 +161,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         super.onHide();
         // Notify model provider that the tab has been hidden
         modelProvider.onSubTabDeselected();
+        if (getTable() != null) {
+            getTable().hideContextMenu();
+        }
     }
 
     @Override
