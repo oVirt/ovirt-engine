@@ -37,6 +37,14 @@ public interface InterfacePropertiesAccessor {
 
     DnsResolverConfiguration getDnsResolverConfiguration();
 
+    default boolean isIpv4Available() {
+        return true;
+    }
+
+    default boolean isIpv6Available() {
+        return true;
+    }
+
     class FromNic implements InterfacePropertiesAccessor {
         private final VdsNetworkInterface nic;
         private final DnsResolverConfiguration reportedDnsResolverConfiguration;
@@ -189,6 +197,16 @@ public interface InterfacePropertiesAccessor {
         public DnsResolverConfiguration getDnsResolverConfiguration() {
             return networkAttachment.getDnsResolverConfiguration();
         }
+
+        @Override
+        public boolean isIpv4Available() {
+            return iPv4Address != null;
+        }
+
+        @Override
+        public boolean isIpv6Available() {
+            return iPv6Address != null;
+        }
     }
 
     class FromNetworkAttachmentModel implements InterfacePropertiesAccessor {
@@ -331,6 +349,22 @@ public interface InterfacePropertiesAccessor {
                 return true;
             }
             return false;
+        }
+
+        @Override
+        public boolean isIpv4Available() {
+            if (!shouldTakeIpv4DataFromNic()) {
+                return super.isIpv4Available();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean isIpv6Available() {
+            if (!shouldTakeIpv6DataFromNic()) {
+                return super.isIpv6Available();
+            }
+            return true;
         }
     }
 }

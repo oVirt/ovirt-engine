@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
-import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
-import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
-import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.LldpInfo;
@@ -22,6 +19,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.InterfacePropertiesAccessor;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
@@ -191,13 +189,13 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         // Boot protocol and IP info
         if (networkModel.isAttached() && networkModel.isManaged()) {
-            IpConfiguration ipConfiguration = networkModel.getNetworkAttachment().getIpConfiguration();
-            addBootProtoAndIpInfo(ipConfiguration != null && ipConfiguration.hasIpv4PrimaryAddressSet() ?
-                            ipConfiguration.getIpv4PrimaryAddress() :
-                            null,
-                    ipConfiguration != null && ipConfiguration.hasIpv6PrimaryAddressSet() ?
-                            ipConfiguration.getIpv6PrimaryAddress() :
-                            null);
+            addBootProtoAndIpInfo(new InterfacePropertiesAccessor.FromNetworkAttachmentForModel(
+                    networkModel.getNetworkAttachment(),
+                    null,
+                    networkModel.getVlanDevice() != null ?
+                            networkModel.getVlanDevice() :
+                            networkModel.getAttachedToNic().getOriginalIface())
+            );
         }
     }
 
@@ -238,7 +236,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
 
         if (nic.getItems().isEmpty() && !nic.isBonded()) {
-            addBootProtoAndIpInfo(entity);
+            addBootProtoAndIpInfo(new InterfacePropertiesAccessor.FromNic(entity, null));
         }
         if (nic instanceof BondNetworkInterfaceModel) {
             CreateOrUpdateBond createOrUpdateBond = ((BondNetworkInterfaceModel) nic).getCreateOrUpdateBond();
@@ -296,46 +294,30 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
                 || TlvSpecificType.LinkAggregation802_3.isSameAsTlv(tlv);
     }
 
-    private void addBootProtoAndIpInfo(VdsNetworkInterface iface) {
-        IPv4Address ipv4 = new IPv4Address();
-        ipv4.setBootProtocol(iface.getIpv4BootProtocol());
-        ipv4.setAddress(iface.getIpv4Address());
-        ipv4.setNetmask(iface.getIpv4Subnet());
-        ipv4.setGateway(iface.getIpv4Gateway());
-
-        IpV6Address ipv6 = new IpV6Address();
-        ipv6.setBootProtocol(iface.getIpv6BootProtocol());
-        ipv6.setAddress(iface.getIpv6Address());
-        ipv6.setPrefix(iface.getIpv6Prefix());
-        ipv6.setGateway(iface.getIpv6Gateway());
-
-        addBootProtoAndIpInfo(ipv4, ipv6);
-    }
-
-    private void addBootProtoAndIpInfo(IPv4Address ipv4, IpV6Address ipv6) {
+    private void addBootProtoAndIpInfo(InterfacePropertiesAccessor accessor) {
         insertHorizontalLine();
 
         // IPv4
         addRow(templates.strongTextWithColor(constants.ipv4ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
-        if (ipv4 != null) {
-            Ipv4BootProtocol ipv4BootProtocol = ipv4.getBootProtocol();
+        if (accessor.isIpv4Available()) {
+            Ipv4BootProtocol ipv4BootProtocol = accessor.getIpv4BootProtocol();
             addRow(constants.bootProtocolItemInfo(), IPV4_RENDERER.render(ipv4BootProtocol));
-            addNonNullOrEmptyValueRow(constants.addressItemInfo(), ipv4.getAddress());
-            addNonNullOrEmptyValueRow(constants.subnetItemInfo(), ipv4.getNetmask());
-            addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), ipv4.getGateway());
+            addNonNullOrEmptyValueRow(constants.addressItemInfo(), accessor.getIpv4Address());
+            addNonNullOrEmptyValueRow(constants.subnetItemInfo(), accessor.getIpv4Netmask());
+            addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), accessor.getIpv4Gateway());
         } else {
             addRow(SafeHtmlUtils.fromSafeConstant(constants.notAvailableLabel()));
         }
 
         // IPv6
         addRow(templates.strongTextWithColor(constants.ipv6ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
-        if (ipv6 != null) {
-            Ipv6BootProtocol ipv6BootProtocol = ipv6.getBootProtocol();
+        if (accessor.isIpv6Available()) {
+            Ipv6BootProtocol ipv6BootProtocol = accessor.getIpv6BootProtocol();
             addRow(constants.bootProtocolItemInfo(), IPV6_RENDERER.render(ipv6BootProtocol));
-            addNonNullOrEmptyValueRow(constants.addressItemInfo(), ipv6.getAddress());
+            addNonNullOrEmptyValueRow(constants.addressItemInfo(), accessor.getIpv6Address());
             addNonNullOrEmptyValueRow(constants.prefixItemInfo(),
-                    ipv6.getPrefix() != null ? ipv6.getPrefix().toString() : null);
-            addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), ipv6.getGateway());
+                    accessor.getIpv6Prefix() != null ? accessor.getIpv6Prefix().toString() : null);
+            addNonNullOrEmptyValueRow(constants.gatewayItemInfo(), accessor.getIpv6Gateway());
         } else {
             addRow(SafeHtmlUtils.fromSafeConstant(constants.notAvailableLabel()));
         }
