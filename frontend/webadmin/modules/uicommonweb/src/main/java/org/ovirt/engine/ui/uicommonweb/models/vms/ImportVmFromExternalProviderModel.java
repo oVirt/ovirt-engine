@@ -249,7 +249,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     }
 
     private void initIsoImages() {
-        ImagesDataProvider.getIrsImageList(new AsyncQuery<>(
+        ImagesDataProvider.getISOImagesList(new AsyncQuery<>(
                         images -> {
                             getIso().setItems(images);
                             getIso().setSelectedItem(tryToFindVirtioTools(images));

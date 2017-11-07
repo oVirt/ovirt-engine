@@ -33,11 +33,11 @@ public class ImagesDataProvider {
                         image -> ImageFileType.Unknown == image.getFileType()));
     }
 
-    public static void getIrsImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
-        getIrsImageList(aQuery, storagePoolId, false);
+    public static void getISOImagesList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
+        getISOImagesList(aQuery, storagePoolId, false);
     }
 
-    public static void getIrsImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
+    public static void getISOImagesList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
         ImageFileType imageFileType = ImageFileType.ISO;
         getIrsImageList(aQuery, storagePoolId, forceRefresh, imageFileType);
     }

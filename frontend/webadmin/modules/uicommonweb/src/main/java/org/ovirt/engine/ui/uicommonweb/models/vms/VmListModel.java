@@ -1643,7 +1643,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         attachCdModel.getIsoImage().setItems(images1);
         attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrNull(images1));
 
-        ImagesDataProvider.getIrsImageList(new AsyncQuery<>(images -> {
+        ImagesDataProvider.getISOImagesList(new AsyncQuery<>(images -> {
             AttachCdModel _attachCdModel = (AttachCdModel) getWindow();
             images.add(0, ConsoleModel.getEjectLabel());
             _attachCdModel.getIsoImage().setItems(images);

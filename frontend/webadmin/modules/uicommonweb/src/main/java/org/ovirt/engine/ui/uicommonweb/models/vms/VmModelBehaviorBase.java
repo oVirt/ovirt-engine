@@ -383,7 +383,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateUserCdImage(Guid storagePoolId) {
-        ImagesDataProvider.getIrsImageList(new AsyncQuery<>(images -> setImagesToModel(getModel(), images)),
+        ImagesDataProvider.getISOImagesList(new AsyncQuery<>(images -> setImagesToModel(getModel(), images)),
                 storagePoolId
         );
     }
@@ -409,7 +409,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        ImagesDataProvider.getIrsImageList(asyncQuery(
+        ImagesDataProvider.getISOImagesList(asyncQuery(
                 images -> setImagesToModel(getModel(), images)),
                 dataCenter.getId(),
                 forceRefresh);

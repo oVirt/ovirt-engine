@@ -934,7 +934,7 @@ public abstract class RunOnceModel extends Model {
     }
 
     public void updateIsoList(boolean forceRefresh) {
-        ImagesDataProvider.getIrsImageList(new AsyncQuery<>(
+        ImagesDataProvider.getISOImagesList(new AsyncQuery<>(
                         images -> {
                             final String lastSelectedIso = getIsoImage().getSelectedItem();
 
