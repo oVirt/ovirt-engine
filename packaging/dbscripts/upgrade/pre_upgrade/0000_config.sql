@@ -876,7 +876,7 @@ select fn_db_update_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
 select fn_db_update_config_value('FenceAgentDefaultParams','drac7:privlvl=OPERATOR,lanplus=1,delay=10;ilo3:power_wait=4;ilo4:power_wait=4;ilo_ssh:secure=1','general');
-select fn_db_update_config_value('FenceAgentDefaultParamsForPPC','ilo3:cipher=1,privlvl=administrator,power_wait=4,retry_on=2;ilo4:cipher=1,privlvl=administrator,power_wait=4,retry_on=2;ipmilan:lanplus=1,cipher=1,privlvl=administrator,power_wait=4,retry_on=2;ilo_ssh:secure=1','general');
+select fn_db_update_config_value('FenceAgentDefaultParamsForPPC','ilo3:cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ilo4:cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ipmilan:lanplus=1,cipher=1,privlvl=OPERATOR,power_wait=4,retry_on=2;ilo_ssh:secure=1','general');
 select fn_db_update_config_value('FenceAgentMapping','drac7=ipmilan,ilo2=ilo','general');
 select fn_db_update_config_value('FenceStartStatusDelayBetweenRetriesInSec','10','general');
 select fn_db_update_config_value('FenceStartStatusRetries','18','general');
