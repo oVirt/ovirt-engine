@@ -474,8 +474,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
           Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(diskImages);
           MultipleStorageDomainsValidator storageValidator =
                     new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
-            if (!validate(new StoragePoolValidator(getStoragePool()).isUp())
-                    || !validate(storageValidator.allDomainsExistAndActive())
+            if (!validate(storageValidator.allDomainsExistAndActive())
                     || !validate(storageValidator.allDomainsWithinThresholds())
                     || !validateCinder()) {
                 return false;
