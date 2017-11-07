@@ -150,12 +150,9 @@ public class ProviderModel extends Model {
         return xenPropertiesModel;
     }
 
-    protected boolean isExternalNetwork() {
-        return getType().getSelectedItem() == ProviderType.EXTERNAL_NETWORK;
-    }
-
-    protected boolean isTypeOpenStackNetwork() {
-        return getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
+    protected boolean isTypeNetwork() {
+        ProviderType type = getType().getSelectedItem();
+        return type == ProviderType.EXTERNAL_NETWORK || type == ProviderType.OPENSTACK_NETWORK;
     }
 
     private boolean isTypeOpenStackImage() {
@@ -256,8 +253,11 @@ public class ProviderModel extends Model {
                 getTenantName().setEntity(properties == null ? null : properties.getTenantName());
             }
 
-            boolean isNeutron = isTypeOpenStackNetwork();
-            getNeutronAgentModel().setIsAvailable(isNeutron);
+            boolean isNetworkProvider = isTypeNetwork();
+            if (isNetworkProvider) {
+                getNeutronAgentModel().init(provider);
+            }
+            getNeutronAgentModel().setIsAvailable(isNetworkProvider);
 
             getReadOnly().setIsAvailable(isReadOnlyAware);
             if (isReadOnlyAware){
@@ -435,7 +435,7 @@ public class ProviderModel extends Model {
         provider.setDescription(description.getEntity());
         provider.setUrl(url.getEntity());
 
-        if (isTypeOpenStackNetwork() || isExternalNetwork()) {
+        if (isTypeNetwork()) {
             getNeutronAgentModel().flush(provider);
             OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
             properties.setReadOnly(readOnly.getEntity());

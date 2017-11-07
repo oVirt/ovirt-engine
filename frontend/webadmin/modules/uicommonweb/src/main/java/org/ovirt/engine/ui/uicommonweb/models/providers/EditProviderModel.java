@@ -48,7 +48,7 @@ public class EditProviderModel extends ProviderModel {
         getPassword().setEntity(provider.getPassword());
         getAuthUrl().setEntity(provider.getAuthUrl());
 
-        if (isTypeOpenStackNetwork()) {
+        if (isTypeNetwork()) {
             getNeutronAgentModel().init(provider);
         }
 
