@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -111,6 +112,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private VmStatisticsDao vmStatisticsDao;
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
+    @Inject
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -150,6 +153,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             return validate(new ValidationResult(engineMessage, replacements));
         }
 
+        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getVm().getVmInit());
+        if (!CollectionUtils.isEmpty(msgs)) {
+            return failValidation(msgs);
+        }
 
         return true;
     }

@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -93,6 +94,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
 
     @Mock
     private VmHandler vmHandler;
+
+    @Mock
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     @Before
     public void setUp() throws IOException {

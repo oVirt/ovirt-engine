@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
@@ -89,6 +90,7 @@ import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.common.vdscommands.LeaseVDSParameters;
@@ -156,6 +158,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private NetworkHelper networkHelper;
     @Inject
     private IconUtils iconUtils;
+    @Inject
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -1148,6 +1152,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     && getVm().getLeaseStorageDomainId() != null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOT_SWAPPING_VM_LEASES_NOT_SUPPORTED);
             }
+        }
+
+        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmStaticData().getVmInit());
+        if (!CollectionUtils.isEmpty(msgs)) {
+            return failValidation(msgs);
         }
 
         final boolean isMemoryHotUnplug = vmFromDB.getMemSizeMb() > vmFromParams.getMemSizeMb()

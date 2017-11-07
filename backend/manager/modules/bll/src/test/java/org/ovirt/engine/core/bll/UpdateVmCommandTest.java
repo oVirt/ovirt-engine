@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -128,6 +129,9 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
     @Mock
     private VmHandler vmHandler;
+
+    @Mock
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(

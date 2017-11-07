@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -40,6 +42,8 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     private VmDeviceDao vmDeviceDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     public RunVmOnceCommand(T runVmParams, CommandContext commandContext) {
         super(runVmParams, commandContext);
@@ -100,6 +104,11 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             temp.setId(getParameters().getVmId());
             vmHandler.updateVmInitFromDB(temp, false);
             getParameters().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
+        }
+
+        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmInit());
+        if (!CollectionUtils.isEmpty(msgs)) {
+            return failValidation(msgs);
         }
 
         return true;

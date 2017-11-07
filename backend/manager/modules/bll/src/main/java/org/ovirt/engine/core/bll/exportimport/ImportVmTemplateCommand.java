@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -121,6 +123,8 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     private VmDao vmDao;
     @Inject
     private ImportUtils importUtils;
+    @Inject
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     private Version effectiveCompatibilityVersion;
     private StorageDomain sourceDomain;
@@ -280,6 +284,11 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
 
         if (!validate(vmHandler.validateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion()))) {
             return false;
+        }
+
+        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getVmTemplate().getVmInit());
+        if (!CollectionUtils.isEmpty(msgs)) {
+            return failValidation(msgs);
         }
 
         return true;

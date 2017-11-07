@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -112,6 +113,7 @@ import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
@@ -161,6 +163,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Inject
     private VmValidationUtils vmValidationUtils;
+
+    @Inject
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -785,6 +790,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (shouldAddLease(getParameters().getVmStaticData()) && !canAddLease()) {
             return false;
+        }
+
+        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmStaticData().getVmInit());
+        if (!CollectionUtils.isEmpty(msgs)) {
+            return failValidation(msgs);
         }
 
         return true;

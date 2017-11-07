@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -79,6 +80,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     @Mock
     private VmHandler vmHandler;
+
+    @Mock
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();

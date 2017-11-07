@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -79,6 +80,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     private IconUtils iconUtils;
     @Inject
     private OsRepository osRepository;
+    @Inject
+    private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
     private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;
@@ -210,6 +213,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getParameters().getVmTemplateData(),
                 CompatibilityVersionUtils.getEffective(getParameters().getVmTemplateData(), this::getCluster)))) {
             return false;
+        }
+
+        List<EngineMessage> msgs = openStackMetadataAdapter.validate(getParameters().getVmTemplateData().getVmInit());
+        if (!CollectionUtils.isEmpty(msgs)) {
+            return failValidation(msgs);
         }
 
         if (!isInstanceType && !isBlankTemplate && returnValue) {
