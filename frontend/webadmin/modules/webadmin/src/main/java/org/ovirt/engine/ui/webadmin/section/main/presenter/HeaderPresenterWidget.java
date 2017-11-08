@@ -105,7 +105,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         registerHandler(getView().getTasksWidget().addClickHandler(event -> toggleOverlayPresenter(tasksPresenter)));
 
         registerHandler(getView().getBookmarkLink().addClickHandler(event ->
-            toggleOverlayPresenter(bookmarksPresenter)));
+                toggleOverlayPresenter(bookmarksPresenter)));
 
         registerHandler(getView().getTagsLink().addClickHandler(event -> toggleOverlayPresenter(tagsPresenter)));
 
@@ -117,10 +117,14 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                     model.executeCommand(command);
                 }
         });
-        getView().getAlertActionWidget().addAllAction(constants.clearAllDismissedAlerts(),
-                this.alertModelProvider.getModel().getClearAllCommand(), (command, log) -> {
-                alertModelProvider.getModel().executeCommand(command);
-        });
+        getView().getAlertActionWidget().addClearAllAction(constants.clearAllDismissedAlerts(),
+                this.alertModelProvider.getModel().getClearAllCommand(), (command, log) ->
+                    alertModelProvider.getModel().executeCommand(command)
+        );
+        getView().getAlertActionWidget().addRestoreAllAction(constants.displayAllDismissedAlerts(),
+                this.alertModelProvider.getModel().getDisplayAllCommand(), (command, log) ->
+                    alertModelProvider.getModel().executeCommand(command)
+        );
 
         getView().getEventActionWidget().addAction(constants.dismissEvent(),
                 this.eventModelProvider.getModel().getDismissCommand(), (command, log) -> {
@@ -130,10 +134,14 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                     model.executeCommand(command);
                 }
         });
-        getView().getEventActionWidget().addAllAction(constants.clearAllDismissedEvents(),
-                this.eventModelProvider.getModel().getClearAllCommand(), (command, log) -> {
-                eventModelProvider.getModel().executeCommand(command);
-        });
+        getView().getEventActionWidget().addClearAllAction(constants.clearAllDismissedEvents(),
+                this.eventModelProvider.getModel().getClearAllCommand(), (command, log) ->
+                    eventModelProvider.getModel().executeCommand(command)
+        );
+        getView().getEventActionWidget().addRestoreAllAction(constants.displayAllDismissedEvents(),
+                this.eventModelProvider.getModel().getDisplayAllCommand(), (command, log) ->
+                    eventModelProvider.getModel().executeCommand(command)
+        );
 
         taskModelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 

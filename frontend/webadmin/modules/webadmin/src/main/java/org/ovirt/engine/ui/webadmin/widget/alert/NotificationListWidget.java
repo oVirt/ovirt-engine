@@ -84,9 +84,13 @@ public class NotificationListWidget extends Composite implements ActionWidget {
     private List<AuditLogActionCallback> auditLogActions = new ArrayList<>();
     private List<UICommand> actionCommand = new ArrayList<>();
 
-    private String allActionLabel;
-    private AuditLogActionCallback allActionCallback;
-    private UICommand allActionCommand;
+    private String clearAllActionLabel;
+    private AuditLogActionCallback clearAllActionCallback;
+    private UICommand clearAllActionCommand;
+
+    private String restoreAllActionLabel;
+    private AuditLogActionCallback restoreAllActionCallback;
+    private UICommand restoreAllActionCommand;
 
     private List<? extends AuditLog> currentValues;
     private int containerHeight = 0;
@@ -107,8 +111,13 @@ public class NotificationListWidget extends Composite implements ActionWidget {
     }
 
     @Override
-    public void addAllAction(String label, UICommand command, AuditLogActionCallback callback) {
-        addAllActionCallback(label, command, callback);
+    public void addClearAllAction(String label, UICommand command, AuditLogActionCallback callback) {
+        addClearAllActionCallback(label, command, callback);
+    }
+
+    @Override
+    public void addRestoreAllAction(String label, UICommand command, AuditLogActionCallback callback) {
+        addRestoreAllActionCallback(label, command, callback);
     }
 
     private void setInternalRowData(int start, List<? extends AuditLog> values) {
@@ -125,9 +134,7 @@ public class NotificationListWidget extends Composite implements ActionWidget {
             titleAnchor.setDataTarget(hashString(thisWidgetId));
             titleAnchor.setDataToggle(this.toggle);
             titleAnchor.setText(this.title);
-            titleAnchor.addClickHandler(e -> {
-                e.preventDefault();
-            });
+            titleAnchor.addClickHandler(e -> e.preventDefault());
             if (collapsed) {
                 titleAnchor.addStyleName(PatternflyConstants.COLLAPSED);
             }
@@ -156,25 +163,33 @@ public class NotificationListWidget extends Composite implements ActionWidget {
                 for (int i = 0; i < actionLabels.size(); i++) {
                     final int index = i;
                     ActionAnchorListItem listItem = new ActionAnchorListItem(actionLabels.get(index));
-                    listItem.addClickHandler(e -> {
-                        auditLogActions.get(index).executeCommand(actionCommand.get(index), auditLog);
-                    });
+                    listItem.addClickHandler(e ->
+                        auditLogActions.get(index).executeCommand(actionCommand.get(index), auditLog)
+                    );
                     notification.addActionButton(listItem);
                 }
                 eventPanelBody.add(notification);
             }
-            if (allActionLabel != null) {
+            if (clearAllActionLabel != null) {
                 actionPanel = new FlowPanel();
                 actionPanel.addStyleName(PatternflyConstants.PF_DRAWER_ACTION);
                 eventCollapse.add(actionPanel);
-                Button button = new Button(allActionLabel);
-                button.addStyleName(BTN_LINK);
-                button.addStyleName(Styles.BTN_BLOCK);
-                button.removeStyleName(BTN_DEFAULT);
-                button.addClickHandler(event -> {
-                    allActionCallback.executeCommand(allActionCommand, null);
-                });
-                actionPanel.add(button);
+                Button clearAllbutton = new Button(clearAllActionLabel);
+                clearAllbutton.addStyleName(BTN_LINK);
+                clearAllbutton.addStyleName(Styles.BTN_BLOCK);
+                clearAllbutton.removeStyleName(BTN_DEFAULT);
+                clearAllbutton.addClickHandler(event ->
+                    clearAllActionCallback.executeCommand(clearAllActionCommand, null)
+                );
+                actionPanel.add(clearAllbutton);
+                Button restoreAllbutton = new Button(restoreAllActionLabel);
+                restoreAllbutton.addStyleName(BTN_LINK);
+                restoreAllbutton.addStyleName(Styles.BTN_BLOCK);
+                restoreAllbutton.removeStyleName(BTN_DEFAULT);
+                restoreAllbutton.addClickHandler(event ->
+                    restoreAllActionCallback.executeCommand(restoreAllActionCommand, null)
+                );
+                actionPanel.add(restoreAllbutton);
             }
         }
     }
@@ -221,10 +236,16 @@ public class NotificationListWidget extends Composite implements ActionWidget {
         auditLogActions.add(callback);
     }
 
-    private void addAllActionCallback(String label, UICommand command, AuditLogActionCallback callback) {
-        allActionLabel = label;
-        allActionCommand = command;
-        allActionCallback = callback;
+    private void addClearAllActionCallback(String label, UICommand command, AuditLogActionCallback callback) {
+        clearAllActionLabel = label;
+        clearAllActionCommand = command;
+        clearAllActionCallback = callback;
+    }
+
+    private void addRestoreAllActionCallback(String label, UICommand command, AuditLogActionCallback callback) {
+        restoreAllActionLabel = label;
+        restoreAllActionCommand = command;
+        restoreAllActionCallback = callback;
     }
 
     public void setDataToggleInfo(Toggle toggle, String parentId) {
