@@ -16,6 +16,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.user.client.ui.CheckBox;
 
@@ -25,6 +26,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
     private static final String CBE_RIGHT_OF_LABEL_PFLY_FIX = "cbe_right_of_label_pfly_fix"; //$NON-NLS-1$
     private static final String CBE_CHECKBOX_PFLY_FIX = "cbe_checkbox_pfly_fix"; //$NON-NLS-1$
     private static final String CBE_LABEL_PFLY_FIX = "cbe_label_pfly_fix"; //$NON-NLS-1$
+    private static final String MAX_WIDTH = "maxWidth"; //$NON-NLS-1$
 
     private final WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>> editor;
 
@@ -66,6 +68,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         if (!useCheckBoxWidgetLabel) {
             addWrapperStyleName(CBE_RIGHT_OF_LABEL_PFLY_FIX);
         }
+        getContentWidgetElement().getStyle().setVerticalAlign(VerticalAlign.TOP);
 
     }
 
@@ -80,6 +83,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
             getCheckboxWidgetLabel().getStyle().setPaddingLeft(10, Unit.PX);
             getCheckboxWidgetLabel().getStyle().setPaddingRight(10, Unit.PX);
             getCheckboxWidgetLabel().getStyle().setPosition(Position.RELATIVE);
+            getCheckboxWidgetLabel().getStyle().setProperty(MAX_WIDTH, "95%"); //$NON-NLS-1$
             noPaddingNoFixes();
             removeWrapperStyleName(CBE_RIGHT_OF_LABEL_PFLY_FIX);
         }
