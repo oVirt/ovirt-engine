@@ -81,7 +81,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
             return false;
         }
         setStoragePoolId(getDiskImage().getStoragePoolId());
-        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+        if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
         if (!FeatureSupported.qcowCompatSupported(getStoragePool().getCompatibilityVersion())) {

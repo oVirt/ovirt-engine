@@ -380,7 +380,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         }
 
         setStoragePoolId(getCluster().getStoragePoolId());
-        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+        if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
 

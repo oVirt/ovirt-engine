@@ -707,7 +707,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         // Initialize validators.
         VmValidator vmValidator = createVmValidator();
         StoragePoolValidator spValidator = createStoragePoolValidator();
-        if (!(validateVM(vmValidator) && validate(spValidator.isUp())
+        if (!(validateVM(vmValidator) && validate(spValidator.existsAndUp())
                 && validate(vmValidator.vmNotIlegal())
                 && validate(vmValidator.vmNotLocked())
                 && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))

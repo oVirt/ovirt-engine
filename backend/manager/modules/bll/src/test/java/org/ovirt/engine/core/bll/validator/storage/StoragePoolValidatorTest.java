@@ -51,13 +51,13 @@ public class StoragePoolValidatorTest {
     }
 
     @Test
-    public void testIsUpValid() {
-        assertThat("Storage pool should be up", validator.isUp(), isValid());
+    public void testExistsAndUpValid() {
+        assertThat("Storage pool should be up", validator.existsAndUp(), isValid());
     }
 
     @Test
-    public void testIsUpInvalid() {
+    public void testExistAndUpInvalid() {
         storagePool.setStatus(StoragePoolStatus.NonResponsive);
-        assertThat(validator.isUp(), failsWith(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND));
+        assertThat(validator.existsAndUp(), failsWith(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND));
     }
 }

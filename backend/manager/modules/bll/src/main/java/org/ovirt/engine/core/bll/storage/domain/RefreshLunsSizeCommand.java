@@ -56,7 +56,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
     @Override
     protected boolean validate() {
-        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+        if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
 

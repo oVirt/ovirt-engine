@@ -236,7 +236,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        if (!getVm().getDiskMap().isEmpty() && !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+        if (!getVm().getDiskMap().isEmpty() && !validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
 

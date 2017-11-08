@@ -172,7 +172,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         }
 
         StoragePool sp = storagePoolDao.get(getStoragePoolId());
-        if (!validate(new StoragePoolValidator(sp).isUp())) {
+        if (!validate(new StoragePoolValidator(sp).existsAndUp())) {
             return false;
         }
 

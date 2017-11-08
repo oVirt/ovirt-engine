@@ -292,7 +292,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.
             returnValue =
-                    validate(new StoragePoolValidator(sp).isUp()) &&
+                    validate(new StoragePoolValidator(sp).existsAndUp()) &&
                     isStoragePoolMatching(vm) &&
                     validate(new VmValidator(getVm()).vmNotLocked()) &&
                     isVmNotInPreviewSnapshot();

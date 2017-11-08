@@ -71,7 +71,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
             return failValidation(EngineMessage.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
         }
 
-        if (!validate(new StoragePoolValidator(getStoragePoolForVds()).isUp())) {
+        if (!validate(new StoragePoolValidator(getStoragePoolForVds()).existsAndUp())) {
             return false;
         }
 

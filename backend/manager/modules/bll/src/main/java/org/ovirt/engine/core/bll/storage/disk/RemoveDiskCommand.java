@@ -342,7 +342,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (!listVms.isEmpty()) {
             Guid storagePoolId = listVms.get(0).getStoragePoolId();
             StoragePool sp = storagePoolDao.get(storagePoolId);
-            if (!validate(new StoragePoolValidator(sp).isUp())) {
+            if (!validate(new StoragePoolValidator(sp).existsAndUp())) {
                 return false;
             }
 

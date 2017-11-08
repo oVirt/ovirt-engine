@@ -130,7 +130,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     @Test
     public void testStoragePoolIsNotUp() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND)).when(storagePoolValidator)
-                .isUp();
+                .existsAndUp();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         assertFalse(cmd.validate());
         assertTrue(cmd.getReturnValue()

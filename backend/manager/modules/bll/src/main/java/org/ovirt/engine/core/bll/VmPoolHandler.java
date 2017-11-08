@@ -204,7 +204,7 @@ public class VmPoolHandler implements BackendService {
 
         VM vm = vmDao.get(vmId);
         StoragePool sp = storagePoolDao.get(vm.getStoragePoolId());
-        ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
+        ValidationResult spUpResult = new StoragePoolValidator(sp).existsAndUp();
         if (!spUpResult.isValid()) {
             return failVmFree(errorProcessor, vmId, spUpResult.getMessagesAsStrings());
         }

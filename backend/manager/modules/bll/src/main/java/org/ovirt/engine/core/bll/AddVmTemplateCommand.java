@@ -750,7 +750,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
-            if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+            if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
                 return false;
             }
 

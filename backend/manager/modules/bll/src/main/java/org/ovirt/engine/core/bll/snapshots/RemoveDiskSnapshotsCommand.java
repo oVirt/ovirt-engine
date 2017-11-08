@@ -204,7 +204,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             }
         }
 
-        if (!validate(new StoragePoolValidator(getStoragePool()).isUp()) ||
+        if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp()) ||
                 !validateVmNotDuringSnapshot() ||
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||

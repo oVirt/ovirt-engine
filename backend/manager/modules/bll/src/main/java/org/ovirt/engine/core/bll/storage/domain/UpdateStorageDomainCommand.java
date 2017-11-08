@@ -107,7 +107,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     private boolean isPoolUp() {
         // if domain is part of pool, and name changed, check that pool is up in
         // order to change description in spm
-        return validate(new StoragePoolValidator(getStoragePool()).isUp());
+        return validate(new StoragePoolValidator(getStoragePool()).existsAndUp());
     }
 
     private boolean validateNotTheSameName() {

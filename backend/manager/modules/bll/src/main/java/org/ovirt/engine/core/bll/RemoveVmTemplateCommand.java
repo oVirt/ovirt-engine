@@ -139,7 +139,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         }
 
         // check storage pool valid
-        if (!isInstanceType && !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+        if (!isInstanceType && !validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
 

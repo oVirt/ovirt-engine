@@ -468,7 +468,7 @@ public class RunVmValidator {
             return ValidationResult.VALID;
         }
 
-        return new StoragePoolValidator(storagePool).isUp();
+        return new StoragePoolValidator(storagePool).existsAndUp();
     }
 
     /**

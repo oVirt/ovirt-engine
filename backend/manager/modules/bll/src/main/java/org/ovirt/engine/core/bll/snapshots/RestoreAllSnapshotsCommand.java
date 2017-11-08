@@ -667,7 +667,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
                 || !validate(snapshotsValidator.snapshotExists(getVmId(), getSnapshot().getId())) ||
-                !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+                !validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
         if (Guid.Empty.equals(getSnapshot().getId())) {

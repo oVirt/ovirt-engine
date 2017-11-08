@@ -233,7 +233,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         }
 
         if (!(checkVmInStorageDomain()
-                && validate(new StoragePoolValidator(getStoragePool()).isUp())
+                && validate(new StoragePoolValidator(getStoragePool()).existsAndUp())
                 && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
                 && validate(snapshotsValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())

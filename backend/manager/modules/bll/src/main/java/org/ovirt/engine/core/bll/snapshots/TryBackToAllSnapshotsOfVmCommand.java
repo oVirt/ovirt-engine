@@ -455,7 +455,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                         ONLY_SNAPABLE, ONLY_ACTIVE);
         diskImages.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
         if (!diskImages.isEmpty()) {
-          if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+          if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
               return false;
           }
 
