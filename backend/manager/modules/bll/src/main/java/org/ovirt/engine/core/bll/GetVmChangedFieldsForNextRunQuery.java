@@ -33,12 +33,6 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         VmStatic srcStatic = srcVm.getStaticData();
         VmStatic dstStatic = dstVm.getStaticData();
 
-        // copy fields which are not saved as part of the OVF
-        dstStatic.setExportDate(srcStatic.getExportDate());
-        dstStatic.setManagedDeviceMap(srcStatic.getManagedDeviceMap());
-        dstStatic.setUnmanagedDeviceList(srcStatic.getUnmanagedDeviceList());
-        dstStatic.setOvfVersion(srcStatic.getOvfVersion());
-
         // Copy creationDate to ignore it, because it is never changed by user.
         // Without this creationDate will always show change in milliseconds,
         // because creationDate is saved without milliseconds in OVF, but
