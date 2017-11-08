@@ -217,7 +217,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         VdsStatic vdsStatic = getParameters().getVdsStaticData();
         VdsStatic oldVdsStatic = oldHost.getStaticData();
         return vdsStatic.isReinstallRequired() ||
-                (vdsStatic.isPmKdumpDetection() && !oldVdsStatic.isPmKdumpDetection()) ||
+                !Objects.equals(vdsStatic.isPmKdumpDetection(), oldVdsStatic.isPmKdumpDetection()) ||
                 !Objects.equals(vdsStatic.getCurrentKernelCmdline(), oldVdsStatic.getCurrentKernelCmdline());
     }
 

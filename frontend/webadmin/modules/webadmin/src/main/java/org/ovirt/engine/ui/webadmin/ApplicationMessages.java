@@ -14,6 +14,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String hostHasReinstallAlertMaintenance();
 
+    String hostHasReinstallRequiredAlert();
+
     String hostHasNICsAlert();
 
     String hostHasManualFenceAlert();
