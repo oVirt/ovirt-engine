@@ -89,6 +89,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
             if (!validate(importValidator.validateUnregisteredEntity(vmFromConfiguration, ovfEntityData))) {
                 return false;
             }
+            if (!validate(importValidator.validateDiskNotAlreadyExistOnDB(getImages(),
+                    getParameters().isAllowPartialImport(),
+                    imageToDestinationDomainMap,
+                    failedDisksToImportForAuditLog))) {
+                return false;
+            }
             if (!validate(importValidator.validateStorageExistForUnregisteredEntity(getImages(),
                     getParameters().isAllowPartialImport(),
                     imageToDestinationDomainMap,

@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.slf4j.Logger;
@@ -43,6 +44,46 @@ public class ImportValidator {
     }
 
     protected Logger log = LoggerFactory.getLogger(getClass());
+
+    /**
+     * Validate the existence of the VM's disks. If a disk already exist in the engine,
+     * the engine should fail the validation, unless the allowPartial flag is true. Once the
+     * allowPartial flag is true the operation should not fail and the disk will be removed from the VM's disk list and
+     * also from the imageToDestinationDomainMap, so the operation will pass the execute phase and import the VM
+     * partially without the invalid disks.
+     *
+     * @param images
+     *            - The images list to validate their storage domains. This list might be filtered if the allowPartial
+     *            flag is true
+     * @param allowPartial
+     *            - Flag which determine if the VM can be imported partially.
+     * @param imageToDestinationDomainMap
+     *            - Map from src storage to dst storage which might be filtered if the allowPartial flag is true.
+     * @return - The validation result.
+     */
+    public ValidationResult validateDiskNotAlreadyExistOnDB(List<DiskImage> images,
+            boolean allowPartial,
+            Map<Guid, Guid> imageToDestinationDomainMap,
+            Map<Guid, String> failedDisksToImport) {
+        // Creating new ArrayList in order to manipulate the original List and remove the existing disks
+        for (DiskImage image : new ArrayList<>(images)) {
+            DiskImage diskImage = getDiskImageDao().get(image.getImageId());
+            if (diskImage != null) {
+                log.info("Disk '{}' with id '{}', already exist on storage domain '{}'",
+                        diskImage.getDiskAlias(),
+                        diskImage.getImageId(),
+                        diskImage.getStoragesNames().get(0));
+                if (!allowPartial) {
+                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST,
+                            String.format("$diskAliases %s", diskImage.getDiskAlias()));
+                }
+                failedDisksToImport.putIfAbsent(image.getId(), image.getDiskAlias());
+                imageToDestinationDomainMap.remove(image.getId());
+                images.remove(image);
+            }
+        }
+        return ValidationResult.VALID;
+    }
 
     /**
      * Validate the storage domains' existence of the VM's disks. If a storage domain will fail to be active or does not
@@ -172,6 +213,10 @@ public class ImportValidator {
 
     public StorageDomainDao getStorageDomainDao() {
         return DbFacade.getInstance().getStorageDomainDao();
+    }
+
+    public DiskImageDao getDiskImageDao() {
+        return DbFacade.getInstance().getDiskImageDao();
     }
 
     protected StoragePoolDao getStoragePoolDao() {
