@@ -345,4 +345,9 @@ public class BookmarkListModel extends SearchableListModel {
     protected String getListName() {
         return "BookmarkListModel"; //$NON-NLS-1$
     }
+
+    @Override
+    public boolean hasItemsSorted() {
+        return true;
+    }
 }
