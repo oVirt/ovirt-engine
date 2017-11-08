@@ -40,7 +40,7 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
  * 2) We don't use verbose mode.
  * 3) Playbook directory is $PREFIX/usr/share/ovirt-ansible-roles/playbooks
  * 4) Private key used is $PREFIX/etc/pki/ovirt-engine/keys/engine_id_rsa
- * 5) Log file is $PREFIX/var/log/ovirt-engine/ansible/{prefix}-{playbook-name}-{timestamp}.log
+ * 5) Log file is $PREFIX/var/log/ovirt-engine/ansible/{prefix}-{timestamp}-{playbook-name}[-{suffix}].log
  * 6) Default inventory file is used.
  */
 public class AnsibleCommandBuilder {
@@ -205,7 +205,8 @@ public class AnsibleCommandBuilder {
      *
      * The logFile is set up to:
      *
-     *  /var/log/${logDirectory:ansible}/${logFilePrefix:""}-${logFileName:playbook}-${timestamp}-${logFileSuffix:""}
+     *  /var/log/ovirt-engine/${logDirectory:ansible}/
+     *  ${logFilePrefix:ansible}-${timestamp}-${logFileName:playbook}[-${logFileSuffix}].log
      */
     public List<String> build() {
         List<String> ansibleCommand = new ArrayList<>();
@@ -244,14 +245,14 @@ public class AnsibleCommandBuilder {
                 config.getLogDir().toString(),
                 logFileDirectory != null ? logFileDirectory : AnsibleExecutor.DEFAULT_LOG_DIRECTORY,
                 String.format(
-                    "%1$s-%2$s-%3$s-%4$s.log",
+                    "%1$s-%2$s-%3$s%4$s.log",
                     logFilePrefix != null ? logFilePrefix : "ansible",
                     new SimpleDateFormat("yyyyMMddHHmmss").format(
                         Calendar.getInstance().getTime()
                     ),
                     logFileName != null ?
                         logFileName : playbook.substring(playbook.lastIndexOf('/') + 1).replace('.', '_'),
-                    logFileSuffix != null ? logFileSuffix : "suffix"
+                    logFileSuffix != null ? "-" + logFileSuffix : ""
                 )
             ).toFile();
         }
