@@ -633,6 +633,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__TYPE__MEMORY_DEVICE();
 
+    String VAR_TYPE_FENCE_AGENT();
+
     String VAR__ACTION__RUN();
 
     String VAR__ACTION__REMOVE();

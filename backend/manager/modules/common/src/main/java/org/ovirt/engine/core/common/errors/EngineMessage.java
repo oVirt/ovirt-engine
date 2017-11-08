@@ -56,6 +56,7 @@ public enum EngineMessage {
     VAR__TYPE__AUTHENTICATION_KEY,
     VAR__TYPE__MEMORY_DEVICE,
     VAR__TYPE__NIC_FILTER_PARAMETER,
+    VAR_TYPE_FENCE_AGENT,
 
     // Gluster types
     VAR__TYPE__GLUSTER_VOLUME,

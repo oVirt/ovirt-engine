@@ -33,6 +33,12 @@ public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> exte
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+    }
+
+    @Override
     protected boolean validate() {
         if (getParameters() == null
                 || getParameters().getAgent() == null
@@ -46,6 +52,9 @@ public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> exte
 
         Guid vdsId = getParameters().getAgent().getHostId();
         VDS vds = vdsDao.get(vdsId);
+        if (vds == null) {
+            return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
+        }
         Guid vdsClusterId = vds.getClusterId();
         Cluster cluster = clusterDao.get(vdsClusterId);
         String clusterCompatibilityVersion = cluster.getCompatibilityVersion().toString();

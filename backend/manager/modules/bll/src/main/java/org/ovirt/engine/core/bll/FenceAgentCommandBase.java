@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -22,6 +23,11 @@ public abstract class FenceAgentCommandBase extends CommandBase<FenceAgentComman
 
     public FenceAgentCommandBase(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR_TYPE_FENCE_AGENT);
     }
 
     @Override
