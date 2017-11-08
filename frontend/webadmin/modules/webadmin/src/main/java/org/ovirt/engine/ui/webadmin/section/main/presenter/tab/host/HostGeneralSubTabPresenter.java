@@ -138,6 +138,9 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly && model.getHasNoPowerManagementAlert()) {
             addTextAndLinkAlert(view, messages.hostHasNoPowerManagementAlert(), model.getEditHostCommand());
         }
+        if (model.getHasReinstallRequiredAlert()) {
+            addTextAlert(view, messages.hostHasReinstallRequiredAlert());
+        }
         if (model.getNonOperationalReasonEntity() != null) {
             addTextAlert(view, EnumTranslator.getInstance().translate(model.getNonOperationalReasonEntity()));
         }

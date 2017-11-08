@@ -596,6 +596,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    private boolean hasReinstallRequiredAlert;
+
+    public boolean getHasReinstallRequiredAlert() {
+        return hasReinstallRequiredAlert;
+    }
+
+    public void setHasReinstallRequiredAlert(boolean value) {
+        if (hasReinstallRequiredAlert != value) {
+            hasReinstallRequiredAlert = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HasReinstallRequiredAlert")); //$NON-NLS-1$
+        }
+    }
+
     private boolean hasNoPowerManagementAlert;
 
     public boolean getHasNoPowerManagementAlert() {
@@ -944,6 +957,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setHasUpgradeAlert(false);
         setHasManualFenceAlert(false);
         setHasNoPowerManagementAlert(false);
+        setHasReinstallRequiredAlert(false);
         setHasReinstallAlertNonResponsive(false);
         setHasReinstallAlertInstallFailed(false);
         setHasReinstallAlertMaintenance(false);
@@ -961,6 +975,10 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
         else if (!getEntity().isPmEnabled()) {
             setHasNoPowerManagementAlert(true);
+        }
+
+        if (getEntity().getStaticData().isReinstallRequired()) {
+            setHasReinstallRequiredAlert(true);
         }
 
         // Check the reinstall alert presence.
