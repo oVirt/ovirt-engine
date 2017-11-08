@@ -737,16 +737,24 @@ public class VmMapper extends VmBaseMapper {
     @Mapping(from = ConfigurationType.class, to = org.ovirt.engine.core.common.businessentities.ConfigurationType.class)
     public static org.ovirt.engine.core.common.businessentities.ConfigurationType map(org.ovirt.engine.api.model.ConfigurationType configurationType, org.ovirt.engine.core.common.businessentities.ConfigurationType template) {
         switch (configurationType) {
-            case OVF:            return org.ovirt.engine.core.common.businessentities.ConfigurationType.OVF;
-            default:                return null;
+            case OVF:
+                return org.ovirt.engine.core.common.businessentities.ConfigurationType.OVF;
+            case OVA:
+                return org.ovirt.engine.core.common.businessentities.ConfigurationType.OVA;
+            default:
+                return null;
         }
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.ConfigurationType.class, to = ConfigurationType.class)
     public static ConfigurationType map(org.ovirt.engine.core.common.businessentities.ConfigurationType configurationType, org.ovirt.engine.api.model.ConfigurationType template) {
         switch (configurationType) {
-            case OVF:            return ConfigurationType.OVF;
-            default:                return null;
+            case OVF:
+                return ConfigurationType.OVF;
+            case OVA:
+                return ConfigurationType.OVA;
+            default:
+                return null;
         }
     }
 
