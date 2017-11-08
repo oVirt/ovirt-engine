@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -48,6 +49,14 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
         model.getCommands().add(okCommand);
         UICommand cancelCommand = UICommand.createCancelUiCommand(constants.cancel(), this);
         model.getCommands().add(cancelCommand);
+
+        AsyncDataProvider.getInstance().getUserProfile(model.asyncQuery(returnValue -> {
+            UserProfile profile = returnValue.getReturnValue();
+            if (profile != null) {
+                setUserProfile(profile);
+                model.getPublicKey().setEntity(profile.getSshPublicKey());
+            }
+        }));
     }
 
     private void onSave() {
