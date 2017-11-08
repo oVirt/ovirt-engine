@@ -406,7 +406,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
             VM vm = pair.getFirst();
             if (Boolean.TRUE.equals(pair.getSecond().getIsPlugged())) {
-                if (vm.isStartingOrUp()) {
+                if (!vm.isDown()) {
                     hostIdToExecuteQemuImageInfo = vm.getRunOnVds();
                     break;
                 }
