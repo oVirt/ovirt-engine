@@ -159,7 +159,7 @@ public class NewNetworkModel extends NetworkModel {
 
     private void postAddNetwork(ActionReturnValue retVal) {
         if (isActionSucceeded(retVal)) {
-            postSaveAction(retVal.getActionReturnValue(), null);
+            postSaveAction(retVal.getActionReturnValue());
         } else {
             failedPostSaveAction();
         }
@@ -168,7 +168,7 @@ public class NewNetworkModel extends NetworkModel {
     private void postAddNetworkOnProvider(ActionReturnValue retVal) {
         if (isActionSucceeded(retVal)) {
             Network network = (Network) retVal.getActionReturnValue();
-            postSaveAction(network.getId(), network.getProvidedBy());
+            postSaveAction(network.getId());
         } else {
             failedPostSaveAction();
         }
@@ -182,11 +182,11 @@ public class NewNetworkModel extends NetworkModel {
         super.postSaveAction(null, false);
     }
 
-    private void postSaveAction(Guid id, ProviderNetwork providedBy) {
+    private void postSaveAction(Guid id) {
         super.postSaveAction(id, true);
         attachNetworkToClusters(id);
-        if (hasDefinedSubnet(providedBy)) {
-            addNetworkSubnetToProvider(providedBy);
+        if (hasDefinedSubnet()) {
+            addNetworkSubnetToProvider();
         }
     }
 
@@ -226,11 +226,12 @@ public class NewNetworkModel extends NetworkModel {
         return clusterToAttach;
     }
 
-    private boolean hasDefinedSubnet(ProviderNetwork providedBy) {
-        return getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null;
+    private boolean hasDefinedSubnet() {
+        return getExport().getEntity() && getCreateSubnet().getEntity() && getNetwork().isExternal();
     }
 
-    private void addNetworkSubnetToProvider(ProviderNetwork providedBy) {
+    private void addNetworkSubnetToProvider() {
+        ProviderNetwork providedBy = getNetwork().getProvidedBy();
         getSubnetModel().setExternalNetwork(providedBy);
         getSubnetModel().flush();
 
