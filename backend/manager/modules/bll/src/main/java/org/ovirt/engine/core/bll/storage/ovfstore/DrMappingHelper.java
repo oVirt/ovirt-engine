@@ -160,6 +160,9 @@ public class DrMappingHelper {
     private List<AffinityGroup> mapAffinityGroups(Map<String, String> affinityGroupMap,
             List<AffinityGroup> affinityGroupsFromParam,
             Guid vmId) {
+        if (affinityGroupsFromParam == null) {
+            return Collections.emptyList();
+        }
         List<AffinityGroup> affinityGroups = new ArrayList<>();
         affinityGroupsFromParam.forEach(affinityGroup -> {
             log.info("Mapping affinity group '{}/{} for vm '{}'.", affinityGroup.getId(), affinityGroup.getName(), vmId);
@@ -190,6 +193,9 @@ public class DrMappingHelper {
     private List<Label> mapAffinityLabels(Map<String, String> affinityLabelMap,
             Guid vmId,
             List<String> affinityLabelsFromParam) {
+        if (affinityLabelsFromParam == null) {
+            return Collections.emptyList();
+        }
         List<Label> affinityLabels = new ArrayList<>();
         affinityLabelsFromParam.forEach(affinityLabel -> {
             log.info("Mapping affinity label '{}' for vm '{}'.",
@@ -218,6 +224,9 @@ public class DrMappingHelper {
             Guid entityId,
             VdcObjectType objectType,
             Map<String, Object> roleMap) {
+        if (dbUsersFromParams == null || userToRolesFromParams == null) {
+            return;
+        }
         dbUsersFromParams.forEach(dbUser -> {
             DbUser originalDbUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), dbUser.getDomain());
 
