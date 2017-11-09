@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -882,49 +883,54 @@ public class VmInfoBuildUtils {
      * In case the VM type is not "High performance" or in case prerequisites are not set, null value is returned.
      *
      * @param vm a VM to which iothreads and emulator threads pinning is calculated
+     * @param cpuPinning a map of CPU pinning topology (vCPU,vCPU set)
      * @param hostNumaNodesSupplier a list of the assigned VM's host NUMA nodes
      * @param vdsCpuThreads number of Logical CPU Cores
      * @return a string list of pCPUs ids to pin to
      */
-    public String getIoThreadsAndEmulatorPinningCpus(VM vm, MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier, int vdsCpuThreads) {
+    public String getIoThreadsAndEmulatorPinningCpus(VM vm, Map<String, Object> cpuPinning, MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier, int vdsCpuThreads) {
         if (vm.getVmType() != VmType.HighPerformance) {
             return null;
         }
 
-        final String cpuPinning = vm.getCpuPinning();
         List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         Optional<VmNumaNode> pinnedVmNumaNode = vmNumaNodes.stream().filter(d -> !d.getVdsNumaNodeList().isEmpty()).findAny();
 
-        if (StringUtils.isEmpty(cpuPinning) || !pinnedVmNumaNode.isPresent() || vm.getNumOfIoThreads() == 0) {
-            String msgReason1 = StringUtils.isEmpty(cpuPinning) ? "CPU Pinning topology is not set": "";
-            String msgReason2 = vm.getNumOfIoThreads() == 0 ? "IO Threads is not enabled": "";
-            String msgReason3 = !pinnedVmNumaNode.isPresent() ? "vm's virtual NUMA nodes are not pinned to host's NUMA nodes": "";
-            String finalMsgReason = Arrays.asList(msgReason1, msgReason2, msgReason3).stream().filter(r -> !r.isEmpty()).collect(Collectors.joining(", ")) + ".";
+        if (MapUtils.isEmpty(cpuPinning) || !pinnedVmNumaNode.isPresent() || vm.getNumOfIoThreads() == 0) {
+            String msgReason1 = MapUtils.isEmpty(cpuPinning) ? "CPU Pinning topology is not set": null;
+            String msgReason2 = vm.getNumOfIoThreads() == 0 ? "IO Threads is not enabled": null;
+            String msgReason3 = !pinnedVmNumaNode.isPresent() ? "vm's virtual NUMA nodes are not pinned to host's NUMA nodes": null;
+            String finalMsgReason = Arrays.asList(msgReason1, msgReason2, msgReason3).stream()
+                    .filter(Objects::nonNull).collect(Collectors.joining(", ")) + ".";
 
             log.warn("No IO thread(s) pinning and Emulator thread(s) pinning for High Performance VM {} {} due to wrong configuration: {}",
                     vm.getName(), vm.getId(), finalMsgReason);
             return null;
         }
 
-        return findCpusToPinIoAndEmulator(vm, hostNumaNodesSupplier, vdsCpuThreads);
+        return findCpusToPinIoAndEmulator(vm, cpuPinning, hostNumaNodesSupplier, vdsCpuThreads);
     }
 
-    private String findCpusToPinIoAndEmulator(VM vm, MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier, int vdsCpuThreads) {
+    private String findCpusToPinIoAndEmulator(VM vm, Map<String, Object> cpuPinning, MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier, int vdsCpuThreads) {
         List<VdsNumaNode> vdsNumaNodes = hostNumaNodesSupplier.get();
-        Set<Integer> vdsPinnedCpus = getAllPinnedPCpus(vm.getCpuPinning());
+        Set<Integer> vdsPinnedCpus = getAllPinnedPCpus(cpuPinning);
         VdsNumaNode mostPinnedPnumaNode = vdsNumaNodes.isEmpty() ? null : vdsNumaNodes.get(0);
         int maxNumOfPinnedCpusForNode = 0;
-
         // Go over all Host's NUMA nodes and find the node with most pinned CPU's in order to pin the
         // IO threads and emulator threads to
         for (VdsNumaNode pNode : vdsNumaNodes) {
             if (pNode.getCpuIds().isEmpty()) {
                 continue;
             }
+
             int numOfPinnedCpus = CollectionUtils.intersection(pNode.getCpuIds(), vdsPinnedCpus).size();
+
             if (maxNumOfPinnedCpusForNode < numOfPinnedCpus) {
                 maxNumOfPinnedCpusForNode = numOfPinnedCpus;
                 mostPinnedPnumaNode = pNode;
+            } else if (maxNumOfPinnedCpusForNode == numOfPinnedCpus && !mostPinnedPnumaNode.getCpuIds().isEmpty()) {
+                // choose the NUMA node with lower CPU ids
+                mostPinnedPnumaNode = getNumaNodeWithLowerCpuIds(mostPinnedPnumaNode, pNode);
             }
         }
 
@@ -957,11 +963,11 @@ public class VmInfoBuildUtils {
     }
 
     // collect all pinned cpus and merge them into one set
-    private static Set<Integer> getAllPinnedPCpus(String cpuPinning) {
+    private static Set<Integer> getAllPinnedPCpus(Map<String, Object> cpuPinning) {
         final Set<Integer> pinnedCpus = new LinkedHashSet<>();
-        for (final String rule : cpuPinning.split("_")) {
-            pinnedCpus.addAll(parsePCpuPinningNumbers(rule.split("#")[1]));
-        }
+        cpuPinning.forEach((vcpu, cpuSet) -> {
+            pinnedCpus.addAll(parsePCpuPinningNumbers((String)cpuSet));
+        });
         return pinnedCpus;
     }
 
@@ -1019,5 +1025,10 @@ public class VmInfoBuildUtils {
                     overriddenCpus.get(0) + "," + overriddenCpus.get(1) :
                     overriddenCpus.get(0).toString();
         }
+    }
+
+    private static VdsNumaNode getNumaNodeWithLowerCpuIds(VdsNumaNode mostPinnedPnumaNode, VdsNumaNode currNode) {
+        return Objects.compare(currNode.getCpuIds(), mostPinnedPnumaNode.getCpuIds(), Comparator.comparing(Collections::min)) < 0 ?
+                currNode: mostPinnedPnumaNode;
     }
 }

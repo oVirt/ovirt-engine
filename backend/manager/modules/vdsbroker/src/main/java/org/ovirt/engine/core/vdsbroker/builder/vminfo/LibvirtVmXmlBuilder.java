@@ -356,7 +356,7 @@ public class LibvirtVmXmlBuilder {
         }
 
         // iothreadpin + emulatorpin
-        String ioEmulatorCpus = vmInfoBuildUtils.getIoThreadsAndEmulatorPinningCpus(vm, hostNumaNodesSupplier, vdsCpuThreads);
+        String ioEmulatorCpus = vmInfoBuildUtils.getIoThreadsAndEmulatorPinningCpus(vm, cpuPinning, hostNumaNodesSupplier, vdsCpuThreads);
         if (ioEmulatorCpus != null) {
             for (int i = 0; i < vm.getNumOfIoThreads(); i++) {
                 writer.writeStartElement("iothreadpin");
