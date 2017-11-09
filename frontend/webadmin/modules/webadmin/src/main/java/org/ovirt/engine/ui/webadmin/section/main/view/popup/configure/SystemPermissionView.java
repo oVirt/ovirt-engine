@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.MainTableResources;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -27,15 +29,17 @@ public class SystemPermissionView extends Composite {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<SystemPermissionView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     FlowPanel tablePanel;
 
-    private SimpleActionTable<Permission> table;
+    @WithElementId
+    SimpleActionTable<Permission> table;
 
     private final SystemPermissionModelProvider modelProvider;
-
-    private final EventBus eventBus;
-    private final ClientStorage clientStorage;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -44,17 +48,17 @@ public class SystemPermissionView extends Composite {
             SystemPermissionModelProvider modelProvider,
             SystemPermissionActionPanelPresenterWidget actionPanel) {
         super();
-        this.eventBus = eventBus;
-        this.clientStorage = clientStorage;
         this.modelProvider = modelProvider;
-
+        // We need to instantiate the table first, then set the element id, and then set the columns so the
+        // persistence framework has all the right information to work.
+        table = new SimpleActionTable<>(modelProvider,
+                getTableResources(), eventBus, clientStorage);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(actionPanel);
     }
 
     private void initTable(SystemPermissionActionPanelPresenterWidget actionPanel) {
-        table = new SimpleActionTable<>(modelProvider,
-                getTableResources(), eventBus, clientStorage);
         table.enableColumnResizing();
 
         table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$

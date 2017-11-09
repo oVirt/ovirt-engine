@@ -6,6 +6,8 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.ui.common.MainTableResources;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
@@ -36,6 +38,10 @@ public class RoleView extends Composite {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<RoleView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     RadioButton allRolesRadioButton;
 
@@ -57,14 +63,14 @@ public class RoleView extends Composite {
     @UiField
     FlowPanel permissionTablePanel;
 
-    private SimpleActionTable<Role> roleTable;
-    private SimpleActionTable<Permission> permissionTable;
+    @WithElementId
+    SimpleActionTable<Role> roleTable;
+
+    @WithElementId
+    SimpleActionTable<Permission> permissionTable;
 
     private final RoleModelProvider roleModelProvider;
     private final RolePermissionModelProvider permissionModelProvider;
-
-    private final EventBus eventBus;
-    private final ClientStorage clientStorage;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -74,14 +80,20 @@ public class RoleView extends Composite {
             RoleActionPanelPresenterWidget roleActionPanel,
             RolePermissionModelProvider permissionModelProvider,
             RolePermissionActionPanelPresenterWidget permissionActionPanel) {
-        this.eventBus = eventBus;
-        this.clientStorage = clientStorage;
-        this.roleModelProvider = roleModelProvider;
+         this.roleModelProvider = roleModelProvider;
         this.permissionModelProvider = permissionModelProvider;
+
+        // We need to instantiate the tables first, then set the element id, and then set the columns so the
+        // persistence framework has all the right information to work.
+        roleTable = new SimpleActionTable<>(roleModelProvider,
+                getTableResources(), eventBus, clientStorage);
+        permissionTable = new SimpleActionTable<>(permissionModelProvider,
+                getTableResources(), eventBus, clientStorage);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initRolesFilterRadioButtons();
         actionPanelContainer.add(roleActionPanel);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initRoleTable();
         initPermissionTable(permissionActionPanel);
 
@@ -129,9 +141,6 @@ public class RoleView extends Composite {
     }
 
     private void initRoleTable() {
-        roleTable = new SimpleActionTable<>(roleModelProvider,
-                getTableResources(), eventBus, clientStorage);
-
         roleTable.enableColumnResizing();
 
         roleTable.addColumn(new IsLockedImageTypeColumn(), constants.empty(), "25px"); //$NON-NLS-1$
@@ -169,9 +178,6 @@ public class RoleView extends Composite {
     }
 
     private void initPermissionTable(RolePermissionActionPanelPresenterWidget permissionActionPanel) {
-        permissionTable = new SimpleActionTable<>(permissionModelProvider,
-                getTableResources(), eventBus, clientStorage);
-
         permissionTable.enableColumnResizing();
 
         AbstractTextColumn<Permission> userColumn = new AbstractTextColumn<Permission>() {
