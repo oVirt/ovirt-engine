@@ -114,16 +114,6 @@
                             </div>
                         </c:if>
                     </span>
-                    <span style="vertical-align:top;display:table-cell;">
-                        <c:if test="${applicationScope.msg_of_the_day != null && sessionScope.msg_of_the_day != '' }">
-                            <div style="margin-left:20px;">
-                                <strong>Message of the Day</strong>
-                            </div>
-                            <div style="margin-left:20px;">
-                                ${applicationScope.msg_of_the_day}
-                            </div>
-                        </c:if>
-                    </span>
                 </div>
             </div>
         </div>
