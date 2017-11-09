@@ -65,6 +65,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
+import org.ovirt.engine.core.common.action.ExportOvaParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -86,6 +87,7 @@ import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -469,9 +471,7 @@ public class BackendVmResource
     }
 
     @Override
-    public Response export(Action action) {
-        validateParameters(action, "storageDomain.id|name");
-
+    public Response exportToExportDomain(Action action) {
         MoveOrCopyParameters params = new MoveOrCopyParameters(guid, getStorageDomainId(action));
 
         if (action.isSetExclusive() && action.isExclusive()) {
@@ -483,6 +483,19 @@ public class BackendVmResource
         }
 
         return doAction(ActionType.ExportVm, params, action);
+    }
+
+    @Override
+    public Response exportToPathOnHost(Action action) {
+        ExportOvaParameters params = new ExportOvaParameters();
+
+        params.setEntityType(VmEntityType.VM);
+        params.setEntityId(guid);
+        params.setProxyHostId(getHostId(action));
+        params.setDirectory(action.getDirectory());
+        params.setName(action.getFilename());
+
+        return doAction(ActionType.ExportOva, params, action);
     }
 
     @Override

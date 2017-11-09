@@ -1009,18 +1009,7 @@ public class BackendVmResourceTest
         if (discardSnapshots) {
             action.setDiscardSnapshots(discardSnapshots);
         }
-        verifyActionResponse(resource.export(action));
-    }
-
-    @Test
-    public void testIncompleteExport() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.export(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Action", "export", "storageDomain.id|name");
-        }
+        verifyActionResponse(resource.exportToExportDomain(action));
     }
 
     @Test
