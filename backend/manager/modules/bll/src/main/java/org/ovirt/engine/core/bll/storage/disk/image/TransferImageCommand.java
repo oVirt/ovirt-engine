@@ -39,20 +39,14 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.ticket.TicketEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
 public abstract class TransferImageCommand<T extends TransferImageParameters> extends BaseImagesCommand<T> {
-
-    // Logger used by static updateEntity() method
-    private static final Logger staticLog = LoggerFactory.getLogger(TransferImageCommand.class);
 
     // Some token/"claim" names are from RFC 7519 on JWT
     private static final String TOKEN_NOT_BEFORE = "nbf";
@@ -71,8 +65,6 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     private ImageTransferUpdater imageTransferUpdater;
     @Inject
     protected ImageTransferDao imageTransferDao;
-    @Inject
-    private DiskDao diskDao;
     @Inject
     private ImageDao imageDao;
     @Inject
