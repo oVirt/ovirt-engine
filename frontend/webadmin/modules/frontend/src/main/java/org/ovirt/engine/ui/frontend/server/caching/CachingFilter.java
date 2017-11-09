@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.gwt;
+package org.ovirt.engine.ui.frontend.server.caching;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- * Controls caching of GWT application resources via HTTP response headers.
+ * Controls caching of application resources via HTTP response headers.
  * <p>
  * This filter works with following types of resources:
  * <ul>
@@ -82,7 +82,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * Aside from conditional download headers, this filter prevents further modification of {@code Expires},
  * {@code Cache-Control} and {@code Pragma} headers via response wrapper.
  */
-public class GwtCachingFilter implements Filter {
+public class CachingFilter implements Filter {
 
     protected static final String CACHE_INIT_PARAM = "cache"; //$NON-NLS-1$
     protected static final String NO_CACHE_INIT_PARAM = "no-cache"; //$NON-NLS-1$

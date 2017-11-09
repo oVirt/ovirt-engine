@@ -33,7 +33,7 @@
     <suppress checks="MethodName" files="WebAdminHostPageServletTest.java"/>
     <suppress checks="MethodName" files="OperationProcessorTest.java"/>
     <suppress checks="MethodName" files="AbstractGwtDynamicHostPageServletTest.java"/>
-    <suppress checks="MethodName" files="GwtCachingFilterTest.java"/>
+    <suppress checks="MethodName" files="CachingFilterTest.java"/>
     <suppress checks="MethodName" files="ErrorTranslatorTest.java"/>
     <suppress checks="MethodName" files="PoolNameLengthValidationTest.java"/>
     <suppress checks="MethodName" files="ExistingPoolNameLengthValidationTest.java"/>

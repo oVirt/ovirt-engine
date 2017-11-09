@@ -9,8 +9,8 @@
     </context-param>
 
     <filter>
-        <filter-name>GwtCachingFilter</filter-name>
-        <filter-class>org.ovirt.engine.ui.frontend.server.gwt.GwtCachingFilter</filter-class>
+        <filter-name>CachingFilter</filter-name>
+        <filter-class>org.ovirt.engine.ui.frontend.server.caching.CachingFilter</filter-class>
 
         <!-- Resources intended to be cached forever on the client: -->
         <!-- * anything with '.cache.' in the name: -->
