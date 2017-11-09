@@ -17,7 +17,6 @@ import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -33,6 +32,8 @@ public class MainHostPresenter extends AbstractMainWithDetailsPresenter<VDS, Hos
 
     }
 
+    private final TagEventCollector tagEventCollector;
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostMainPlace)
     public interface ProxyDef extends ProxyPlace<MainHostPresenter> {
@@ -47,8 +48,10 @@ public class MainHostPresenter extends AbstractMainWithDetailsPresenter<VDS, Hos
             PlaceManager placeManager, MainModelProvider<VDS, HostListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<VDS, HostListModel<Void>> searchPanelPresenterWidget,
             OvirtBreadCrumbsPresenterWidget<VDS, HostListModel<Void>> breadCrumbs,
+            TagEventCollector tagEventCollector,
             HostActionPanelPresenterWidget actionPanel) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
+        this.tagEventCollector = tagEventCollector;
     }
 
     @Override
@@ -61,7 +64,14 @@ public class MainHostPresenter extends AbstractMainWithDetailsPresenter<VDS, Hos
         return PlaceRequestFactory.get(WebAdminApplicationPlaces.hostMainPlace);
     }
 
-    @ProxyEvent
+    @Override
+    protected void onBind() {
+        super.onBind();
+        registerHandler(getEventBus().addHandler(TagActivationChangeEvent.getType(), this));
+        tagEventCollector.getActivationEvents().forEach(e -> onTagActivationChange(e));
+        tagEventCollector.activateHosts();
+    }
+
     @Override
     public void onTagActivationChange(TagActivationChangeEvent event) {
         getView().setActiveTags(event.getActiveTags());

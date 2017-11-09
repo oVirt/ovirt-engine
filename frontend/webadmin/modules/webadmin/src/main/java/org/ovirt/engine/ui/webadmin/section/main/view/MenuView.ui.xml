@@ -190,8 +190,8 @@
                     </b:ListGroup>
                 </g:FlowPanel>
             </b:ListGroupItem>
-            <b:ListGroupItem>
-                <b:Anchor href="#events">
+            <b:ListGroupItem ui:field="eventsPrimaryItem">
+                <b:Anchor href="#events" ui:field="eventsAnchor" targetHistoryToken="events">
                     <span class="pficon pficon-flag" />
                     <span class="list-group-item-value"><ui:text from="{constants.eventMainViewLabel}" /></span>
                 </b:Anchor>

@@ -178,6 +178,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
     protected void onHide() {
         getTable().hideContextMenu();
         getView().resizeToFullHeight();
+        breadCrumbsPresenterWidget.rebuildBreadCrumbs();
     }
 
     /**

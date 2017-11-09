@@ -67,6 +67,7 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
         if (primaryLabel != null) {
             breadCrumbs.add(new ListItem(primaryLabel));
         }
+        menuDetailsProvider.setPrimaryMenuActive(modelHref);
 
         // Add main model name.
         AnchorListItem mainModelAnchor = new AnchorListItem(modelTitle);

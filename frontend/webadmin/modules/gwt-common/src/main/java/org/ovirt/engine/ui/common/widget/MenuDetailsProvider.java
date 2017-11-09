@@ -10,4 +10,11 @@ public interface MenuDetailsProvider {
      * @return The label associated with the href.
      */
     String getLabelFromHref(String href);
+
+    /**
+     * Set the primary menu active based on the passed in href.
+     * @param href The href to use to set active primary menu.
+     */
+    void setPrimaryMenuActive(String href);
+
 }

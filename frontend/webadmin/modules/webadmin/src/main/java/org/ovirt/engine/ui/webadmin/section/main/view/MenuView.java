@@ -81,6 +81,11 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     @UiField
     Anchor administrationPrimaryHeader;
 
+    @UiField
+    ListGroupItem eventsPrimaryItem;
+    @UiField
+    Anchor eventsAnchor;
+
     /* Anchors */
     @WithElementId
     @UiField
@@ -143,7 +148,7 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     @UiField
     Anchor configureAnchor;
 
-    private final Map<String, String> hrefToGroupLabelMap = new HashMap<>();
+    private final Map<String, ListGroupItem> hrefToGroupLabelMap = new HashMap<>();
 
     public MenuView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -240,41 +245,53 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     }
 
     private void populateHrefToGroupMap(ApplicationMode applicationMode) {
-        String compute = ((Anchor) computeSecondaryItem.getWidget(1)).getElement().getInnerText().trim();
-        hrefToGroupLabelMap.put(vmsAnchor.getTargetHistoryToken(), compute);
-        hrefToGroupLabelMap.put(templatesAnchor.getTargetHistoryToken(), compute);
-        hrefToGroupLabelMap.put(poolsAnchor.getTargetHistoryToken(), compute);
-        hrefToGroupLabelMap.put(hostsAnchor.getTargetHistoryToken(), compute);
+        hrefToGroupLabelMap.put(vmsAnchor.getTargetHistoryToken(), computeSecondaryItem);
+        hrefToGroupLabelMap.put(templatesAnchor.getTargetHistoryToken(), computeSecondaryItem);
+        hrefToGroupLabelMap.put(poolsAnchor.getTargetHistoryToken(), computeSecondaryItem);
+        hrefToGroupLabelMap.put(hostsAnchor.getTargetHistoryToken(), computeSecondaryItem);
         if (!ApplicationMode.GlusterOnly.equals(applicationMode)) {
-            hrefToGroupLabelMap.put(dataCentersAnchor.getTargetHistoryToken(), compute);
-            hrefToGroupLabelMap.put(clustersAnchor.getTargetHistoryToken(), compute);
+            hrefToGroupLabelMap.put(dataCentersAnchor.getTargetHistoryToken(), computeSecondaryItem);
+            hrefToGroupLabelMap.put(clustersAnchor.getTargetHistoryToken(), computeSecondaryItem);
         }
 
-        String network = ((Anchor) networkSecondaryItem.getWidget(1)).getElement().getInnerText().trim();
-        hrefToGroupLabelMap.put(vnicProfilesAnchor.getTargetHistoryToken(), network);
-        hrefToGroupLabelMap.put(networksAnchor.getTargetHistoryToken(), network);
+        hrefToGroupLabelMap.put(vnicProfilesAnchor.getTargetHistoryToken(), networkSecondaryItem);
+        hrefToGroupLabelMap.put(networksAnchor.getTargetHistoryToken(), networkSecondaryItem);
 
-        String storage = ((Anchor) storageSecondaryItem.getWidget(1)).getElement().getInnerText().trim();
         if (ApplicationMode.GlusterOnly.equals(applicationMode)) {
-            hrefToGroupLabelMap.put(dataCentersStorageAnchor.getTargetHistoryToken(), storage);
-            hrefToGroupLabelMap.put(clustersStorageAnchor.getTargetHistoryToken(), storage);
+            hrefToGroupLabelMap.put(dataCentersStorageAnchor.getTargetHistoryToken(), storageSecondaryItem);
+            hrefToGroupLabelMap.put(clustersStorageAnchor.getTargetHistoryToken(), storageSecondaryItem);
         }
-        hrefToGroupLabelMap.put(domainsAnchor.getTargetHistoryToken(), storage);
-        hrefToGroupLabelMap.put(volumesAnchor.getTargetHistoryToken(), storage);
-        hrefToGroupLabelMap.put(disksAnchor.getTargetHistoryToken(), storage);
+        hrefToGroupLabelMap.put(domainsAnchor.getTargetHistoryToken(), storageSecondaryItem);
+        hrefToGroupLabelMap.put(volumesAnchor.getTargetHistoryToken(), storageSecondaryItem);
+        hrefToGroupLabelMap.put(disksAnchor.getTargetHistoryToken(), storageSecondaryItem);
 
-        String admin = ((Anchor) administrationSecondaryItem.getWidget(1)).getElement().getInnerText().trim();
-        hrefToGroupLabelMap.put(providersAnchor.getTargetHistoryToken(), admin);
-        hrefToGroupLabelMap.put(quotasAnchor.getTargetHistoryToken(), admin);
-        hrefToGroupLabelMap.put(sessionsAnchor.getTargetHistoryToken(), admin);
-        hrefToGroupLabelMap.put(usersAnchor.getTargetHistoryToken(), admin);
-        hrefToGroupLabelMap.put(errataAnchor.getTargetHistoryToken(), admin);
+        hrefToGroupLabelMap.put(providersAnchor.getTargetHistoryToken(), administrationSecondaryItem);
+        hrefToGroupLabelMap.put(quotasAnchor.getTargetHistoryToken(), administrationSecondaryItem);
+        hrefToGroupLabelMap.put(sessionsAnchor.getTargetHistoryToken(), administrationSecondaryItem);
+        hrefToGroupLabelMap.put(usersAnchor.getTargetHistoryToken(), administrationSecondaryItem);
+        hrefToGroupLabelMap.put(errataAnchor.getTargetHistoryToken(), administrationSecondaryItem);
+
+        hrefToGroupLabelMap.put(eventsAnchor.getTargetHistoryToken(), eventsPrimaryItem);
     }
 
     @Override
     public String getLabelFromHref(String href) {
-        String result = hrefToGroupLabelMap.get(href);
-        return result == null ? "" : result;
+        ListGroupItem group = hrefToGroupLabelMap.get(href);
+        String result = "";
+        if (group != null) {
+            result = ((Anchor) group.getWidget(1)).getElement().getInnerText().trim();
+        }
+        return result;
     }
 
+    @Override
+    public void setPrimaryMenuActive(String href) {
+        ListGroupItem group = hrefToGroupLabelMap.get(href);
+        if (group != null) {
+            for (int i = 0; i < menuListGroup.getWidgetCount(); i++) {
+                menuListGroup.getWidget(i).removeStyleName(Styles.ACTIVE);
+            }
+            group.addStyleName(Styles.ACTIVE);
+        }
+    }
 }

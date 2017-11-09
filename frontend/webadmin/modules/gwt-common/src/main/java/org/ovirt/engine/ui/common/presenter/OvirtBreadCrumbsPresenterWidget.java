@@ -150,4 +150,8 @@ public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
         getView().hidePopover();
         getSelectionModel().setSelected(model, true);
     }
+
+    public void rebuildBreadCrumbs() {
+        getView().buildCrumbs(getModel().getTitle(), getModel().getApplicationPlace());
+    }
 }

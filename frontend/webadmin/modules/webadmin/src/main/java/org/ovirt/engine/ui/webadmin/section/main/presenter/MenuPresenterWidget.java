@@ -18,6 +18,7 @@ public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.Vie
         HasClickHandlers getConfigureItem();
         void addMenuItem(int index, String label, String href);
         String getLabelFromHref(String href);
+        void setPrimaryMenuActive(String href);
     }
 
     private final Provider<ConfigurePopupPresenterWidget> configurePopupProvider;
@@ -43,5 +44,10 @@ public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.Vie
     @Override
     public String getLabelFromHref(String href) {
         return getView().getLabelFromHref(href);
+    }
+
+    @Override
+    public void setPrimaryMenuActive(String href) {
+        getView().setPrimaryMenuActive(href);
     }
 }
