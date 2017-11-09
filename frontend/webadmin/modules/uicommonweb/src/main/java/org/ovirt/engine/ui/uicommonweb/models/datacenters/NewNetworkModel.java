@@ -185,13 +185,8 @@ public class NewNetworkModel extends NetworkModel {
     private void postSaveAction(Guid id, ProviderNetwork providedBy) {
         super.postSaveAction(id, true);
         attachNetworkToClusters(id);
-
-        if (getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null) {
-            getSubnetModel().setExternalNetwork(providedBy);
-            getSubnetModel().flush();
-
-            Frontend.getInstance().runAction(ActionType.AddSubnetToProvider,
-                    new AddExternalSubnetParameters(getSubnetModel().getSubnet(), providedBy.getProviderId(), providedBy.getExternalId()));
+        if (hasDefinedSubnet(providedBy)) {
+            addNetworkSubnetToProvider(providedBy);
         }
     }
 
@@ -229,5 +224,17 @@ public class NewNetworkModel extends NetworkModel {
             }
         }
         return clusterToAttach;
+    }
+
+    private boolean hasDefinedSubnet(ProviderNetwork providedBy) {
+        return getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null;
+    }
+
+    private void addNetworkSubnetToProvider(ProviderNetwork providedBy) {
+        getSubnetModel().setExternalNetwork(providedBy);
+        getSubnetModel().flush();
+
+        Frontend.getInstance().runAction(ActionType.AddSubnetToProvider, new AddExternalSubnetParameters(
+                getSubnetModel().getSubnet(), providedBy.getProviderId(), providedBy.getExternalId()));
     }
 }
