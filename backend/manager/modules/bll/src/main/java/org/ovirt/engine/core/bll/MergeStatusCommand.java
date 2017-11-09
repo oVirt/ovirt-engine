@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
@@ -31,6 +32,8 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.DumpXmlsVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +52,8 @@ public class MergeStatusCommand<T extends MergeParameters>
     private DiskImageDao diskImageDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
+    @Inject
+    private ResourceManager resourceManager;
 
     public MergeStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -116,15 +121,21 @@ public class MergeStatusCommand<T extends MergeParameters>
         setCommandStatus(CommandStatus.SUCCEEDED);
     }
 
+    private boolean isDomainXmlEnabledForVds() {
+        return FeatureSupported.isDomainXMLSupported(
+                resourceManager.getVdsManager(getParameters().getVdsId()).getCompatibilityVersion());
+    }
+
     private Set<Guid> getVolumeChain() {
+        List<Guid> vmIds = Collections.singletonList(getParameters().getVmId());
         Map[] vms = null;
         try {
-            vms = (Map[]) runVdsCommand(
-                    VDSCommandType.FullList,
-                    new FullListVDSCommandParameters(
-                            getParameters().getVdsId(),
-                            Collections.singletonList(getParameters().getVmId())))
-                    .getReturnValue();
+            VDSReturnValue vdsReturnValue = isDomainXmlEnabledForVds() ?
+                    runVdsCommand(VDSCommandType.DumpXmls, new DumpXmlsVDSCommand.Params(getParameters().getVdsId(),
+                            vmIds))
+                    : runVdsCommand(VDSCommandType.FullList, new FullListVDSCommandParameters(getParameters().getVdsId(),
+                    vmIds));
+            vms = (Map[]) vdsReturnValue.getReturnValue();
         } catch (EngineException e) {
             log.error("Failed to retrieve images list of VM {}. Retrying ...", getParameters().getVmId(), e);
         }
@@ -154,7 +165,7 @@ public class MergeStatusCommand<T extends MergeParameters>
             if (VdsProperties.Disk.equals(device.get(VdsProperties.Type))
                     && activeDiskImage.getId().equals(Guid.createGuidFromString(
                     (String) device.get(VdsProperties.ImageId)))) {
-                Object[] volumeChain = (Object[]) device.get("volumeChain");
+                Object[] volumeChain = (Object[]) device.get(VdsProperties.VolumeChain);
                 for (Object v : volumeChain) {
                     Map<String, Object> volume = (Map<String, Object>) v;
                     images.add(Guid.createGuidFromString((String) volume.get(VdsProperties.VolumeId)));

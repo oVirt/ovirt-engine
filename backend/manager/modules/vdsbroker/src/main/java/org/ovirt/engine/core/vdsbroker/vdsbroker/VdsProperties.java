@@ -333,6 +333,7 @@ public final class VdsProperties {
     public static final String PoolId = "poolID";
     public static final String DomainId = "domainID";
     public static final String ImageId = "imageID";
+    public static final String VolumeChain = "volumeChain";
     public static final String VolumeId = "volumeID";
     public static final String Format = "format";
     public static final String Shareable = "shared";

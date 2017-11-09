@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -391,8 +392,15 @@ public class VmDevicesConverter {
 
             dbDevices.remove(dbDev);
 
+            dev.put(VdsProperties.ImageId, parseImageIdFromPath(path));
             dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
             dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+
+            List<Map<String, Object>> volumeChain = parseVolumeChain(node);
+            if (!volumeChain.isEmpty()) {
+                dev.put(VdsProperties.VolumeChain, volumeChain.toArray());
+            }
+
             result.add(dev);
         }
         return result;
@@ -571,7 +579,62 @@ public class VmDevicesConverter {
         return xmlAttribute != null ? xmlAttribute.getValue() : null;
     }
 
-    private String parseAlias(XmlNode node) {
+    List<Map<String, Object>> parseVolumeChain(XmlNode xmlNode) {
+        List<Map<String, Object>> chain = new ArrayList<>();
+
+        Integer index = null;
+        while (true) {
+            String path = parseDiskPath(xmlNode);
+
+            Map<String, Object> chainEntry = new HashMap<>();
+            String volumeId = parseVolumeIdFromPath(path);
+            if (!StringUtils.isEmpty(volumeId)) {
+                chainEntry.put(VdsProperties.VolumeId, volumeId);
+                chainEntry.put(VdsProperties.Path, path);
+                chainEntry.put(VdsProperties.Index, index);
+                // needs to be returned in the opposite order as provided by libvirt
+                chain.add(0, chainEntry);
+            }
+
+            xmlNode = xmlNode.selectSingleNode("backingStore");
+            if (xmlNode == null) {
+                return chain;
+            }
+
+            XmlAttribute xmlIndex = xmlNode.attributes.get("index");
+            if (xmlIndex != null) {
+                try {
+                    index = Integer.parseInt(xmlIndex.getValue());
+                } catch (NumberFormatException e) {
+                    log.error("The backing store index is invalid. Path {}, index: {}",
+                            path, xmlIndex.getValue());
+                    throw new IllegalArgumentException("The backing store index is invalid.");
+                }
+            }
+        }
+    }
+
+    String parseImageIdFromPath(String path) {
+        return parsePathSegment(path, 2);
+    }
+
+    String parseVolumeIdFromPath(String path) {
+        return parsePathSegment(path, 1);
+    }
+
+    private String parsePathSegment(String path, int index) {
+        if (StringUtils.isEmpty(path)) {
+            return "";
+        }
+
+        String[] pathSegments = path.split("/");
+        if (pathSegments.length < index + 1) {
+            return "";
+        }
+        return pathSegments[pathSegments.length - index];
+    }
+
+    String parseAlias(XmlNode node) {
         XmlNode aliasNode = node.selectSingleNode("alias");
         return aliasNode != null ? aliasNode.attributes.get("name").getValue() : "";
     }
