@@ -1,0 +1,7 @@
+host_deploy_firewalld_rules:
+  ## Service definition:
+  - service: ovirt-vmconsole
+
+  ## Port definition:
+  # OVN tunnels
+  - port: 6081/udp

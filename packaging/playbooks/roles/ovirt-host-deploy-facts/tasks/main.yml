@@ -1,0 +1,11 @@
+---
+- name: Fetch info about VDSM
+  command: "rpm -q vdsm --qf '%{VERSION}'"
+  changed_when: false
+  register: vdsm_version
+  args:
+    warn: no
+
+- name: Set facts
+  set_fact:
+    host_deploy_vdsm_version: "{{ vdsm_version.stdout }}"

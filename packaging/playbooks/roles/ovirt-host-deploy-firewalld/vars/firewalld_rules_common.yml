@@ -1,0 +1,10 @@
+host_deploy_firewalld_rules:
+  ## Service definition:
+  - service: cockpit
+  - service: libvirt-tls
+  - service: snmp
+  - service: vdsm
+
+  ## Port definition:
+  # ovirt-imageio-daemon
+  - port: 54322/tcp

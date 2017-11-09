@@ -1,0 +1,27 @@
+---
+- block:
+  - name: Install ovirt-provider-ovn-driver
+    yum:
+        name: ovirt-provider-ovn-driver
+        state: latest
+
+  - name: Ensure ovn-controller is started
+    service:
+        name: ovn-controller
+        state: started
+        enabled: yes
+
+  - name: Ensure Open vSwitch is started
+    service:
+        name: openvswitch
+        state: started
+        enabled: yes
+
+  - name: Configure OVN for oVirt
+    command: >
+        vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }}
+
+  when:
+    - ovn_central is defined
+    - ovn_central | ipaddr
+    - ovn_engine_cluster_version | version_compare('4.2', '>=')

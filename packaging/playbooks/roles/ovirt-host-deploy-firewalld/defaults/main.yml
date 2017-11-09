@@ -1,0 +1,7 @@
+---
+host_deploy_firewalld_cluster_specific: []
+host_deploy_cluster_version: 4.2
+host_deploy_gluster_enabled: false
+host_deploy_virt_enabled: false
+host_deploy_vdsm_port: 54321
+host_deploy_firewall_type: FIREWALLD

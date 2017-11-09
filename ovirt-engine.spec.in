@@ -217,6 +217,7 @@ Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	%{name}-dashboard >= 1.2.0
+Requires:	ansible >= 2.4
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
@@ -230,11 +231,11 @@ Requires:	ovirt-iso-uploader >= 4.1.0
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
+Requires:	ovirt-ansible-roles
 Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
 Requires:	ovirt-js-dependencies
-Requires:	ovirt-ansible-roles >= 1.1.0
 Requires:	ovirt-engine-api-explorer
 
 # Metrics stuff
@@ -909,7 +910,9 @@ fi
 %dir %{engine_data}/engine.ear
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
+%dir %{engine_data}/playbooks
 %dir %{engine_etc}
+%dir %{engine_etc}/ansible
 %dir %{engine_etc}/branding
 %dir %{engine_etc}/extensions.d
 %dir %{engine_java}
@@ -1133,8 +1136,14 @@ fi
 %{engine_data}/conf/jaas.conf
 %{engine_data}/conf/notifier-logging.properties
 %{engine_data}/conf/tools-logging.properties
+%{engine_data}/playbooks/ansible.cfg
+%{engine_data}/playbooks/ovirt-host-deploy.yml
+%{engine_data}/playbooks/ovirt-host-remove.yml
+%{engine_data}/playbooks/ovirt-host-upgrade.yml
+%{engine_data}/playbooks/roles/
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_data}/services/ovirt-fence-kdump-listener/
+%{engine_etc}/ansible/ovirt-host-deploy-post-tasks.yml.example
 %{engine_etc}/engine-config/engine-config.*properties
 %{engine_etc}/notifier/notifier.conf.d/
 %{engine_etc}/ovirt-fence-kdump-listener.conf.d/

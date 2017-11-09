@@ -1,0 +1,11 @@
+---
+#
+# Any additional tasks required to be executing during host deploy process can
+# be added below
+#
+- name: Enable additional port on firewalld
+  firewalld:
+    port: "12345/tcp"
+    permanent: yes
+    immediate: yes
+    state: enabled

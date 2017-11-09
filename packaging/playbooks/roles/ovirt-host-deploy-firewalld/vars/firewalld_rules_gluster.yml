@@ -1,0 +1,17 @@
+host_deploy_firewalld_rules:
+  ## Service definition:
+  - service: ctdb
+  - service: glusterfs
+  - service: nfs
+  - service: nrpe
+  - service: ovirt-storageconsole
+  - service: rpc-bind
+  - service: samba
+
+  ## Port definition:
+  # gluster swift
+  - port: 8080/tcp
+
+  # nlockmgr
+  - port: 963/udp
+  - port: 965/tcp

@@ -73,7 +73,7 @@ public class AnsibleCommandBuilder {
         enableLogging = true;
         verboseLevel = AnsibleVerbosity.LEVEL0;
         config = EngineLocalConfig.getInstance();
-        playbookDir = Paths.get(config.getUsrDir().getPath(), "..", "ovirt-ansible-roles", "playbooks");
+        playbookDir = Paths.get(config.getUsrDir().getPath(),  "playbooks");
         privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");
     }
 

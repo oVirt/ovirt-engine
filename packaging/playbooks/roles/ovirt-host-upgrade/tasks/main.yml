@@ -1,0 +1,22 @@
+---
+# All tasks marked by tag 'updatecheck' will be used by callback plugin
+# 'hostupgradeplugin' to retrieve information about packages which
+# that tasks installs or updates. So if you want to add any specific task
+# analazying packages to be updates/installed please tag it by 'updatecheck'
+# tag.
+
+- name: Install ovirt-host package if it isn't installed
+  yum:
+    name: ovirt-host
+    state: latest
+    update_cache: yes
+  tags:
+    - updatecheck
+
+- name: Update system
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+  tags:
+    - updatecheck

@@ -1,0 +1,16 @@
+---
+- block:
+    - name: Setup the configuration file
+      template:
+        src: libvirt-guests.j2
+        dest: /etc/sysconfig/libvirt-guests
+        backup: yes
+
+    - name: Start libvirt-guests service and ensure its enabled
+      service:
+        name: libvirt-guests
+        state: started
+        enabled: yes
+
+  when:
+    - "host_deploy_vdsm_version | version_compare('4.20', '>=')"

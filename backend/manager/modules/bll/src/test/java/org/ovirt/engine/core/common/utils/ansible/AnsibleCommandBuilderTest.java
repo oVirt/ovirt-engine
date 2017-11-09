@@ -31,8 +31,7 @@ public class AnsibleCommandBuilderTest {
 
     private static final String PRIVATE_KEY = "--private-key=/etc/pki/ovirt-engine/keys/engine_id_rsa";
     private static final String ANSIBLE_PLAYBOOK = "myplaybook.yml";
-    private static final String ANSIBLE_PLAYBOOK_FULL_PATH =
-        "/usr/share/ovirt-engine/../ovirt-ansible-roles/playbooks/myplaybook.yml";
+    private static final String ANSIBLE_PLAYBOOK_FULL_PATH = "/usr/share/ovirt-engine/playbooks/myplaybook.yml";
 
     @ClassRule
     public static MockEngineLocalConfigRule mockEngineLocalConfigRule;

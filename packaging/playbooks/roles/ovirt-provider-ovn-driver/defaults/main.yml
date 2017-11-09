@@ -1,0 +1,5 @@
+---
+ovn_engine_cluster_version: "{{ host_deploy_cluster_version | default('4.2') }}"
+ovn_central: "{{ host_deploy_ovn_central | default(omit) }}"
+ovn_tunneling_network: "{{ host_deploy_ovn_tunneling_network | default('ovirtmgmt') }}"
+ovn_tunneling_interface: "{{ host_deploy_ovn_tunneling_interface | default(ovn_tunneling_network) }}"

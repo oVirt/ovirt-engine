@@ -1,0 +1,11 @@
+# user overridable configuration
+host_deploy_shutdown_parallel: 0
+host_deploy_shutdown_timeout: 600
+
+# default configuration applied for new deploy
+libvirt_guests_config:
+  - { option: URIS, value: "qemu+tls://{{ ansible_fqdn }}/system" }
+  - { option: ON_BOOT, value: ignore }
+  - { option: ON_SHUTDOWN, value: shutdown }
+  - { option: PARALLEL_SHUTDOWN, value: "{{ host_deploy_shutdown_parallel }}" }
+  - { option: SHUTDOWN_TIMEOUT, value: "{{ host_deploy_shutdown_timeout }}" }

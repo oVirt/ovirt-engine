@@ -31,8 +31,7 @@ public class AnsibleConstants {
      */
     public static final Path HOST_DEPLOY_POST_TASKS_FILE_PATH = Paths.get(
         EngineLocalConfig.getInstance().getEtcDir().toString(),
-        "..",
-        "ovirt-ansible-roles",
+        "ansible",
         "ovirt-host-deploy-post-tasks.yml"
     );
 
