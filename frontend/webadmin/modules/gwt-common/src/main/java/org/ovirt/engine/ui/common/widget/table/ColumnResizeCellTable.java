@@ -358,6 +358,10 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     @Override
     public void setColumnWidth(Column<T, ?> column, String width) {
+        setColumnWidth(column, width, false);
+    }
+
+    public void setColumnWidth(Column<T, ?> column, String width, boolean overridePersist) {
         boolean columnVisible = isColumnVisible(column);
 
         if (columnVisible) {
@@ -377,6 +381,12 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
             Header<?> header = getHeader(getColumnIndex(column));
             if (header instanceof ResizableHeader) {
                 ((ResizableHeader<?>) header).setResizeEnabled(columnVisible);
+            }
+        }
+        if (columnResizePersistenceEnabled && !overridePersist) {
+            String persistedWidth = readColumnWidth(column);
+            if (persistedWidth != null) {
+                width = persistedWidth;
             }
         }
 
@@ -554,7 +564,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     @Override
     public void resizeColumn(Column<T, ?> column, int newWidth) {
-        setColumnWidth(column, newWidth + "px"); //$NON-NLS-1$
+        setColumnWidth(column, newWidth + "px", true); //$NON-NLS-1$
     }
 
     @Override
