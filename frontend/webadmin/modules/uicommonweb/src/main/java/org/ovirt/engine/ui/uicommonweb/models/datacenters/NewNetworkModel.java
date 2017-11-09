@@ -142,7 +142,7 @@ public class NewNetworkModel extends NetworkModel {
             getNetwork().setProvidedBy(providerNetwork);
 
             Frontend.getInstance().runAction(ActionType.AddNetworkOnProvider,
-                    parameters, addNetworkOnProviderCallback(), null);
+                    parameters, addNetworkCallback(), null);
         } else {
             Frontend.getInstance().runAction(ActionType.AddNetwork,
                     parameters, addNetworkCallback(), null);
@@ -153,22 +153,9 @@ public class NewNetworkModel extends NetworkModel {
         return result -> postAddNetwork(result.getReturnValue());
     }
 
-    private IFrontendActionAsyncCallback addNetworkOnProviderCallback() {
-        return result -> postAddNetworkOnProvider(result.getReturnValue());
-    }
-
     private void postAddNetwork(ActionReturnValue retVal) {
         if (isActionSucceeded(retVal)) {
             postSaveAction(retVal.getActionReturnValue());
-        } else {
-            failedPostSaveAction();
-        }
-    }
-
-    private void postAddNetworkOnProvider(ActionReturnValue retVal) {
-        if (isActionSucceeded(retVal)) {
-            Network network = (Network) retVal.getActionReturnValue();
-            postSaveAction(network.getId());
         } else {
             failedPostSaveAction();
         }

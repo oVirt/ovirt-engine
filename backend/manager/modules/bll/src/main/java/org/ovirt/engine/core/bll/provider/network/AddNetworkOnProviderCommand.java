@@ -62,7 +62,7 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
         TransactionSupport.executeInNewTransaction(() -> {
             super.executeCommand();
-            getReturnValue().setActionReturnValue(getNetwork());
+            getReturnValue().setActionReturnValue(getNetwork().getId());
             return null;
         });
     }
