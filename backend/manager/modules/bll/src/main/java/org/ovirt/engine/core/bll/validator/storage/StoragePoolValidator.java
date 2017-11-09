@@ -61,8 +61,13 @@ public class StoragePoolValidator {
     }
 
     public ValidationResult existsAndUp() {
-        if (storagePool == null || storagePool.getStatus() != StoragePoolStatus.Up) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+        ValidationResult existsResult = exists();
+        if (!existsResult.isValid()) {
+            return existsResult;
+        }
+
+        if (storagePool.getStatus() != StoragePoolStatus.Up) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
         }
 
         return ValidationResult.VALID;

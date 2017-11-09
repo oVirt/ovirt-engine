@@ -58,6 +58,6 @@ public class StoragePoolValidatorTest {
     @Test
     public void testExistAndUpInvalid() {
         storagePool.setStatus(StoragePoolStatus.NonResponsive);
-        assertThat(validator.existsAndUp(), failsWith(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND));
+        assertThat(validator.existsAndUp(), failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL));
     }
 }

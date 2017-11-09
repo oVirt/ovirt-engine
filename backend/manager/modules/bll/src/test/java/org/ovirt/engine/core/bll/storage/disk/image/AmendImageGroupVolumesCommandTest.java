@@ -102,13 +102,14 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
     @Test
     public void testValidationFailsStoragePoolNotExists() {
         doReturn(null).when(storagePoolDao).get(storagePoolId);
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 
     @Test
     public void testValidationFailsStoragePoolNotUp() {
         storagePool.setStatus(StoragePoolStatus.NotOperational);
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+        ValidateTestUtils.runAndAssertValidateFailure
+                (command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
     }
 
     @Test

@@ -85,6 +85,6 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     public void testValidatePoolInMaintenance() {
         storagePool.setStatus(StoragePoolStatus.Maintenance);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
-                EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+                EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
     }
 }

@@ -103,7 +103,7 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
         storagePool.setStatus(StoragePoolStatus.Uninitialized);
         ValidateTestUtils.runAndAssertValidateFailure
                 ("validate did not fail on a Storage Pool which is not up", command,
-                        EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+                        EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
     }
 
     @Test
