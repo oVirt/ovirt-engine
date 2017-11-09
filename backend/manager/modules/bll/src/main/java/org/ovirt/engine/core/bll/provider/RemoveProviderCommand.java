@@ -15,11 +15,13 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
@@ -36,6 +38,8 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     private NetworkDao networkDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private ClusterDao clusterDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
 
@@ -77,9 +81,10 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected boolean validate() {
-        RemoveProviderValidator validator = new RemoveProviderValidator(vmDao, networkDao, getDeletedProvider());
+        RemoveProviderValidator validator = new RemoveProviderValidator(vmDao, networkDao, clusterDao,
+                getDeletedProvider());
         return validate(validator.providerIsSet()) && validate(validator.providerNetworksNotUsed())
-                && validateRemoveProvider();
+                && validate(validator.providerIsNoDefaultProvider()) && validateRemoveProvider();
     }
 
     @Override
@@ -122,11 +127,14 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
         private final VmDao vmDao;
         private final NetworkDao networkDao;
+        private final ClusterDao clusterDao;
 
-        public RemoveProviderValidator(VmDao vmDao, NetworkDao networkDao, Provider<?> provider) {
+        public RemoveProviderValidator(VmDao vmDao, NetworkDao networkDao, ClusterDao clusterDao,
+                                       Provider<?> provider) {
             super(provider);
             this.vmDao = vmDao;
             this.networkDao = networkDao;
+            this.clusterDao = clusterDao;
         }
 
         public ValidationResult providerNetworksNotUsed() {
@@ -153,6 +161,13 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
             } else {
                 return EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES;
             }
+        }
+
+        public ValidationResult providerIsNoDefaultProvider() {
+            List<Cluster> clusters = clusterDao.getAllClustersByDefaultNetworkProviderId(provider.getId());
+            return clusters.isEmpty() ? ValidationResult.VALID
+                    : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_USED_IN_CLUSTER,
+                    ReplacementUtils.replaceWithNameable("CLUSTER_NAMES", clusters));
         }
 
         protected NetworkValidator getValidator(Network network) {

@@ -24,9 +24,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.RemoveProviderCommand.RemoveProviderValidator;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -38,6 +40,8 @@ public class RemoveProviderValidatorTest {
 
     private List<Network> networks = new ArrayList<>();
 
+    private List<Cluster> clusters = new ArrayList<>();
+
     private RemoveProviderValidator validator;
 
     @Mock
@@ -46,12 +50,16 @@ public class RemoveProviderValidatorTest {
     @Mock
     private VmDao vmDao;
 
+    @Mock
+    private ClusterDao clusterDao;
+
     /* --- Set up for tests --- */
 
     @Before
     public void setUp() throws Exception {
-        validator = spy(new RemoveProviderValidator(vmDao, networkDao, provider));
+        validator = spy(new RemoveProviderValidator(vmDao, networkDao, clusterDao, provider));
         when(networkDao.getAllForProvider(any())).thenReturn(networks);
+        when(clusterDao.getAllClustersByDefaultNetworkProviderId(any())).thenReturn(clusters);
     }
 
     @Test
@@ -137,5 +145,28 @@ public class RemoveProviderValidatorTest {
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED_MULTIPLE_TIMES))
                 .and(replacements(hasItem(containsString(net.getName()))))
                         .and(replacements(hasItem(containsString(net2.getName())))));
+    }
+
+    @Test
+    public void providerIsNoDefaultProvider() throws Exception {
+        assertThat(validator.providerIsNoDefaultProvider(), isValid());
+    }
+
+    @Test
+    public void providerIsDefaultProviderOfCluster() throws Exception {
+        Cluster cluster0 = mockCluster("0");
+        Cluster cluster1 = mockCluster("1");
+
+        assertThat(validator.providerIsNoDefaultProvider(),
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_USED_IN_CLUSTER))
+                .and(replacements(hasItem(containsString(cluster0.getName()))))
+                .and(replacements(hasItem(containsString(cluster1.getName())))));
+    }
+
+    private Cluster mockCluster(String suffix) {
+        Cluster cluster = mock(Cluster.class);
+        when(cluster.getName()).thenReturn("cluster" + suffix);
+        clusters.add(cluster);
+        return cluster;
     }
 }
