@@ -102,9 +102,9 @@ public class CachingFilter implements Filter {
     private static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z"; //$NON-NLS-1$
     private static final String GMT = "GMT"; //$NON-NLS-1$
 
-    private static Pattern cachePattern;
-    private static Pattern noCachePattern;
-    private static Pattern noStorePattern;
+    private Pattern cachePattern;
+    private Pattern noCachePattern;
+    private Pattern noStorePattern;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -197,8 +197,6 @@ public class CachingFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // No need to worry about concurrency, worst case scenario
-        // the same pattern is calculated a couple of times.
         if (cachePattern == null) {
             cachePattern = compilePatternFromInitParam(filterConfig, CACHE_INIT_PARAM);
         }

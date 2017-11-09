@@ -95,6 +95,36 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
+    <filter>
+        <filter-name>CachingFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.CachingFilter</filter-class>
+
+        <!-- Resources intended to be cached forever on the client: -->
+        <!-- * all brand assets: **/theme/*, **/theme-resource/* -->
+        <!-- * CSS, PNG/GIF/favicon, JS, TTF, WOFF, WOFF2 image files (usually served from brands but could be served elsewhere) -->
+        <init-param>
+            <param-name>cache</param-name>
+            <param-value>.*\/theme(-resource)?\/.*|.*\.(css|gif|png|favicon|js|ttf|woff|woff2)(\?.*)?</param-value>
+        </init-param>
+
+        <!-- Resources which always need to be checked for changes: -->
+        <init-param>
+            <param-name>no-cache</param-name>
+            <param-value></param-value>
+        </init-param>
+
+        <!-- Resources not intended to be cached on the client at all: -->
+        <init-param>
+            <param-name>no-store</param-name>
+            <param-value></param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>CachingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <servlet>
         <servlet-name>StatusServlet</servlet-name>
         <servlet-class>org.ovirt.engine.core.sso.servlets.StatusServlet</servlet-class>
