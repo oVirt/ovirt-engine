@@ -13,23 +13,24 @@
         <filter-class>org.ovirt.engine.ui.frontend.server.gwt.GwtCachingFilter</filter-class>
 
         <!-- Resources intended to be cached forever on the client: -->
-        <!-- * module permutations: <md5>.cache.html -->
-        <!-- * ClientBundle composite images: <md5>.cache.png | <md5>.cache.gif -->
-        <!-- * split points: deferredjs/<md5>/<n>.cache.js -->
-        <!-- * external CSS style sheets -->
-        <!-- * external PNG/GIF image files -->
+        <!-- * anything with '.cache.' in the name: -->
+        <!--   * module permutations: <md5>.cache.html -->
+        <!--   * ClientBundle composite images: <md5>.cache.png | <md5>.cache.gif -->
+        <!--   * split points: deferredjs/<md5>/<n>.cache.js -->
+        <!-- * all brand assets: **/theme/*, **/theme-resource/* -->
+        <!-- * CSS, PNG/GIF/favicon, JS, TTF, WOFF, WOFF2 image files (usually served from brands but could be served elsewhere) -->
         <init-param>
             <param-name>cache</param-name>
-            <param-value>.*\.cache\.html|.*\.cache\.png|.*\.cache\.gif|.*\.cache\.js|.*\.css|.*\.gif|.*\.png|.*favicon</param-value>
+            <param-value>.*\.cache\..*|.*\/theme(-resource)?\/.*|.*\.(css|gif|png|favicon|js|ttf|woff|woff2)(\?.*)?</param-value>
         </init-param>
 
         <!-- Resources which always need to be checked for changes: -->
         <!-- * application host page: WebAdmin.html -->
-        <!-- * permutation selector script: <applicationName>.nocache.js -->
+        <!-- * anything with '.nocache.' in the name, e.g. permutation selector script: <applicationName>.nocache.js -->
         <!-- * UI plugin static resources: */plugin/* -->
         <init-param>
             <param-name>no-cache</param-name>
-            <param-value>.*WebAdmin\.html|.*\.nocache\.js|.*\/plugin\/.*</param-value>
+            <param-value>.*WebAdmin\.html|.*\.nocache\..*|.*\/plugin\/.*</param-value>
         </init-param>
 
         <!-- Resources not intended to be cached on the client at all: -->

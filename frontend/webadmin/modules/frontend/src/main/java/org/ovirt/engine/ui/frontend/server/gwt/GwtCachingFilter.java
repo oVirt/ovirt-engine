@@ -112,7 +112,8 @@ public class GwtCachingFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        if (cacheFilterPatternMatches(httpRequest)) {
+        if (cacheFilterPatternMatches(httpRequest) && !noCacheFilterPatternMatches(httpRequest)
+                && !noStoreFilterPatternMatches(httpRequest)) {
             httpResponse.setHeader(EXPIRES_HEADER, getNowPlusYearHttpDate(Calendar.getInstance()));
             httpResponse.setHeader(CACHE_CONTROL_HEADER, CACHE_YEAR);
             httpResponse.setHeader(PRAGMA_HEADER, EMPTY_STRING);

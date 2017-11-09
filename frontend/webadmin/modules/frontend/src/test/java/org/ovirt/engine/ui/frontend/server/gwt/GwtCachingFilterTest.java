@@ -54,9 +54,9 @@ public class GwtCachingFilterTest {
     @Before
     public void setUp() throws Exception {
         testFilter = new GwtCachingFilter();
-        when(mockConfig.getInitParameter(GwtCachingFilter.CACHE_INIT_PARAM)).thenReturn(".*\\.cache\\..*"); //$NON-NLS-1$
-        when(mockConfig.getInitParameter(GwtCachingFilter.NO_CACHE_INIT_PARAM)).thenReturn(".*\\.nocache\\..*"); //$NON-NLS-1$
-        when(mockConfig.getInitParameter(GwtCachingFilter.NO_STORE_INIT_PARAM)).thenReturn(".*RPCService.*"); //$NON-NLS-1$
+        when(mockConfig.getInitParameter(GwtCachingFilter.CACHE_INIT_PARAM)).thenReturn(".*\\.cache\\..*|.*\\/theme(-resource)?\\/.*|.*\\.(css|gif|png|favicon|js|ttf|woff|woff2)(\\?.*)?"); //$NON-NLS-1$
+        when(mockConfig.getInitParameter(GwtCachingFilter.NO_CACHE_INIT_PARAM)).thenReturn(".*WebAdmin\\.html|.*\\.nocache\\..*|.*\\/plugin\\/.*"); //$NON-NLS-1$
+        when(mockConfig.getInitParameter(GwtCachingFilter.NO_STORE_INIT_PARAM)).thenReturn(".*GenericApiGWTService"); //$NON-NLS-1$
         testFilter.init(mockConfig);
     }
 
@@ -106,7 +106,7 @@ public class GwtCachingFilterTest {
 
     @Test
     public void testDoFilter_NoStoreMatch() throws IOException, ServletException {
-        when(mockRequest.getRequestURI()).thenReturn("RPCService"); //$NON-NLS-1$
+        when(mockRequest.getRequestURI()).thenReturn("GenericApiGWTService"); //$NON-NLS-1$
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockResponse).setHeader(eq(GwtCachingFilter.EXPIRES_HEADER), any());
         verify(mockResponse).setHeader(eq(GwtCachingFilter.CACHE_CONTROL_HEADER), eq(GwtCachingFilter.NO_STORE));
@@ -128,9 +128,39 @@ public class GwtCachingFilterTest {
     }
 
     @Test
-    public void testCacheFilterPatternMatches_NegativeMatch() {
-        when(mockRequest.getRequestURI()).thenReturn("something.nocache.js"); //$NON-NLS-1$
-        assertFalse(testFilter.cacheFilterPatternMatches(mockRequest));
+    public void testCacheFilterPatternMatches_PositiveMatch2() {
+        when(mockRequest.getRequestURI()).thenReturn("something.js"); //$NON-NLS-1$
+        assertTrue(testFilter.cacheFilterPatternMatches(mockRequest));
+    }
+
+    @Test
+    public void testCacheFilterPatternMatches_PositiveMatch3() {
+        when(mockRequest.getRequestURI()).thenReturn("/whatever/something.css"); //$NON-NLS-1$
+        assertTrue(testFilter.cacheFilterPatternMatches(mockRequest));
+    }
+
+    @Test
+    public void testCacheFilterPatternMatches_PositiveMatch4() {
+        when(mockRequest.getRequestURI()).thenReturn("myfont.woff2"); //$NON-NLS-1$
+        assertTrue(testFilter.cacheFilterPatternMatches(mockRequest));
+    }
+
+    @Test
+    public void testCacheFilterPatternMatches_PositiveMatch5() {
+        when(mockRequest.getRequestURI()).thenReturn("/something/in/a/theme/hello.html"); //$NON-NLS-1$
+        assertTrue(testFilter.cacheFilterPatternMatches(mockRequest));
+    }
+
+    @Test
+    public void testCacheFilterPatternMatches_PositiveMatch6() {
+        when(mockRequest.getRequestURI()).thenReturn("/something/in/a/theme-resource/hello.html"); //$NON-NLS-1$
+        assertTrue(testFilter.cacheFilterPatternMatches(mockRequest));
+    }
+
+    @Test
+    public void testCacheFilterPatternMatches_PositiveMatch7() {
+        when(mockRequest.getRequestURI()).thenReturn("myfile.css?v2"); //$NON-NLS-1$
+        assertTrue(testFilter.cacheFilterPatternMatches(mockRequest));
     }
 
     @Test
@@ -147,7 +177,7 @@ public class GwtCachingFilterTest {
 
     @Test
     public void testNoStoreFilterPatternMatches_PositiveMatch() {
-        when(mockRequest.getRequestURI()).thenReturn("RPCService"); //$NON-NLS-1$
+        when(mockRequest.getRequestURI()).thenReturn("GenericApiGWTService"); //$NON-NLS-1$
         assertTrue(testFilter.noStoreFilterPatternMatches(mockRequest));
     }
 
