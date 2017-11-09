@@ -41,13 +41,13 @@
                     <div style="clear: both;"></div>
                 </noscript>
 
-                <div class="col-sm-12">
+                <div class="col-sm-7">
                     <c:if test="${sessionScope.error_description != null && sessionScope.error_description != '' }">
-                        <div class="alert">
-                            <span class="pficon-layered">
-                                <span class="pficon pficon-warning-triangle"></span>
-                                <span class="pficon pficon-warning-exclamation"></span>
-                            </span>
+                        <div class="alert alert-warning alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                <span class="pficon pficon-close"></span>
+                            </button>
+                            <span class="pficon pficon-warning-triangle-o"></span>
                             ${sessionScope.error_description}
                         </div>
                         <c:remove var="error" scope="session"/>
