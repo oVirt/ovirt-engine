@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -323,8 +324,11 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     @Override
     protected boolean validate() {
-        boolean returnValue = super.validate() && checkStoragePool()
-                && checkStoragePoolStatus(StoragePoolStatus.Uninitialized) && initializeVds()
+        StoragePoolValidator spValidator = createStoragePoolValidator();
+        boolean returnValue = super.validate()
+                && validate(spValidator.exists())
+                && validate(spValidator.isInStatus(StoragePoolStatus.Uninitialized))
+                && initializeVds()
                 && checkStorageDomainsInPool();
         return returnValue;
     }

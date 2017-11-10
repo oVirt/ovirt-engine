@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.pool.RefreshPoolSingleAsyncOperationFactory;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -68,9 +69,9 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     protected boolean validate() {
-        boolean returnValue = checkStoragePool()
-                && checkStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
+        StoragePoolValidator validator = createStoragePoolValidator();
+        boolean returnValue = validate(validator.exists())
+                && validate(validator.isNotInStatus(StoragePoolStatus.Uninitialized))
                 && checkStorageDomain()
                 && storageDomainStatusIsValid()
                 && (getStorageDomain().getStorageDomainType() == StorageDomainType.Master || checkMasterDomainIsUp())

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -264,7 +265,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     @Override
     protected boolean validate() {
-        if (!checkStoragePool()
+        StoragePoolValidator spValidator = createStoragePoolValidator();
+        if (!validate(spValidator.exists())
                         || !initializeVds()
                         || !checkStorageDomain()) {
             return false;
@@ -276,7 +278,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             return false;
         }
 
-        if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized
+        if (!spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
             return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
         }
@@ -284,7 +286,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         if (!validate(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(getStoragePool().getCompatibilityVersion()))) {
             return false;
         }
-        if (getStoragePool().getStatus() != StoragePoolStatus.Uninitialized) {
+        if (!spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()) {
             return checkMasterDomainIsUp();
         }
         return true;

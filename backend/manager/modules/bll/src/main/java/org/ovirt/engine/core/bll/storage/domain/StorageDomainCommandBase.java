@@ -96,18 +96,13 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     @Override
-    protected boolean checkStoragePool() {
-        return super.checkStoragePool();
-    }
-
-    @Override
     public Guid getStorageDomainId() {
         return getParameters() != null ? !Guid.Empty.equals(getParameters().getStorageDomainId()) ? getParameters()
                 .getStorageDomainId() : super.getStorageDomainId() : super.getStorageDomainId();
     }
 
     protected boolean canDetachDomain(boolean isDestroyStoragePool) {
-        return checkStoragePool()
+        return validate(createStoragePoolValidator().exists())
                 && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Maintenance)
                 && (isMaster() || isDestroyStoragePool || checkMasterDomainIsUp())

@@ -207,8 +207,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return null;
     }
 
-    protected boolean checkStoragePool() {
-        return validate(new StoragePoolValidator(getStoragePool()).exists());
+    protected StoragePoolValidator createStoragePoolValidator() {
+        return new StoragePoolValidator(getStoragePool());
     }
 
     protected boolean canDetachStorageDomainWithVmsAndDisks(StorageDomain storageDomain) {
@@ -331,30 +331,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 return null;
             });
         }
-    }
-
-    protected boolean checkStoragePoolStatus(StoragePoolStatus status) {
-        boolean returnValue = false;
-        StoragePool storagePool = getStoragePool();
-        if (storagePool != null) {
-            returnValue = storagePool.getStatus() == status;
-            if (!returnValue) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
-            }
-        }
-        return returnValue;
-    }
-
-    protected boolean checkStoragePoolStatusNotEqual(StoragePoolStatus status, EngineMessage onFailMessage) {
-        boolean returnValue = false;
-        StoragePool storagePool = getStoragePool();
-        if (storagePool != null) {
-            returnValue = storagePool.getStatus() != status;
-            if (!returnValue) {
-                addValidationMessage(onFailMessage);
-            }
-        }
-        return returnValue;
     }
 
     protected boolean isStorageDomainNotNull(StorageDomain domain) {

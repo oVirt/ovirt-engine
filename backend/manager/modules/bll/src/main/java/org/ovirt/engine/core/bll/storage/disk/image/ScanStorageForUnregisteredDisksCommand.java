@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -58,9 +59,9 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
 
     @Override
     protected boolean validate() {
-        boolean returnValue = checkStoragePool()
-                && checkStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
-                EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
+        StoragePoolValidator validator = createStoragePoolValidator();
+        boolean returnValue = validate(validator.exists())
+                && validate(validator.isNotInStatus(StoragePoolStatus.Uninitialized))
                 && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Active)
                 && checkForActiveVds() != null;

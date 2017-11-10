@@ -62,17 +62,12 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
 
     @Override
     protected boolean validate() {
-        if (!checkStoragePool()) {
+        StoragePoolValidator storagePoolValidator = createStoragePoolValidator();
+        if (!validate(storagePoolValidator.exists())
+                || !validate(new StorageDomainValidator(getStorageDomain()).isInProcess())
+                || !validate(storagePoolValidator.isAnyDomainInProcess())
+                || !validate(storagePoolValidator.isNotInStatus(StoragePoolStatus.Uninitialized))) {
             return false;
-        }
-
-        if (!validate(new StorageDomainValidator(getStorageDomain()).isInProcess())
-                || !validate(new StoragePoolValidator(getStoragePool()).isAnyDomainInProcess())) {
-            return false;
-        }
-
-        if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
         }
 
         if (getStorageDomain() != null && getStorageDomain().getStatus() == StorageDomainStatus.Active) {

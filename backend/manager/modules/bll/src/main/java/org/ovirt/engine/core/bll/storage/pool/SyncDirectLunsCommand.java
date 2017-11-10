@@ -56,7 +56,7 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         if (getParameters().getDirectLunId() == null) {
             // To sync all the direct luns that are attached to VMs in
             // the storage pool, a valid and active storage pool is required.
-            return validateStoragePool();
+            return validate(createStoragePoolValidator().existsAndUp());
         }
         return canSyncDirectLun();
     }

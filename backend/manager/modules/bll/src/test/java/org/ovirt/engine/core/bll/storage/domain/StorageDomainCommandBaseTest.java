@@ -286,7 +286,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     }
 
     private void storagePoolExists() {
-        when(cmd.checkStoragePool()).thenReturn(true);
+        cmd.setStoragePool(new StoragePool());
     }
 
     private void masterDomainIsUp() {

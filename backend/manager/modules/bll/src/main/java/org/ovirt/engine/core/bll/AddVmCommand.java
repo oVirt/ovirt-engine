@@ -553,8 +553,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!isExternalVM() && getStoragePool().getStatus() != StoragePoolStatus.Up) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+        if (!isExternalVM() && !validate(spValidator.isInStatus(StoragePoolStatus.Up))) {
+            return false;
         }
 
         if (!isTemplateInValidDc()) {

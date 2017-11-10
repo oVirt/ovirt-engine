@@ -62,12 +62,12 @@ public class AbstractSyncLunsCommandTest {
         storagePool.setStatus(StoragePoolStatus.Up);
         when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
         command.setStoragePoolId(storagePool.getId());
-        assertTrue(command.validateStoragePool());
+        assertTrue(command.validate());
     }
 
     @Test
     public void testValidateStoragePoolNoStoragePoolId() {
-        assertFalse(command.validateStoragePool());
+        assertFalse(command.validate());
         ValidateTestUtils.assertValidationMessages("", command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
@@ -75,7 +75,7 @@ public class AbstractSyncLunsCommandTest {
     @Test
     public void testValidateStoragePoolRandomStoragePoolId() {
         command.setStoragePoolId(Guid.newGuid());
-        assertFalse(command.validateStoragePool());
+        assertFalse(command.validate());
         ValidateTestUtils.assertValidationMessages("", command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
@@ -86,7 +86,7 @@ public class AbstractSyncLunsCommandTest {
         storagePool.setId(Guid.newGuid());
         when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
         command.setStoragePoolId(storagePool.getId());
-        assertFalse(command.validateStoragePool());
+        assertFalse(command.validate());
         ValidateTestUtils.assertValidationMessages("", command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
     }

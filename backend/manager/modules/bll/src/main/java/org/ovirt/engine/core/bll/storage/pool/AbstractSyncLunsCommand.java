@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -29,12 +28,7 @@ public abstract class AbstractSyncLunsCommand<T extends SyncLunsParameters> exte
 
     @Override
     protected boolean validate() {
-        return validateStoragePool();
-    }
-
-    protected boolean validateStoragePool() {
-        return checkStoragePool() &&
-                checkStoragePoolStatus(StoragePoolStatus.Up);
+        return validate(createStoragePoolValidator().existsAndUp());
     }
 
     protected boolean validateVds() {

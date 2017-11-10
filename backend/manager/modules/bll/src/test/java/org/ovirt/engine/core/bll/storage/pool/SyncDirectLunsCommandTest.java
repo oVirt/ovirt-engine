@@ -100,18 +100,6 @@ public class SyncDirectLunsCommandTest {
     }
 
     @Test
-    public void validateNoDirectLunIdAndInvalidStoragePool() {
-        doReturn(false).when(command).validateStoragePool();
-        assertFalse(command.validate());
-    }
-
-    @Test
-    public void validateNoDirectLunIdAndValidStoragePool() {
-        doReturn(true).when(command).validateStoragePool();
-        ValidateTestUtils.runAndAssertValidateSuccess(command);
-    }
-
-    @Test
     public void validateWithDirectLunIdAndInvalidVds() {
         command.getParameters().setDirectLunId(Guid.newGuid());
         doReturn(false).when(command).validateVds();

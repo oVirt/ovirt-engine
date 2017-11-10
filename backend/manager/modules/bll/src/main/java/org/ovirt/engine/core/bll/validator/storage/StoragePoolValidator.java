@@ -66,11 +66,7 @@ public class StoragePoolValidator {
             return existsResult;
         }
 
-        if (storagePool.getStatus() != StoragePoolStatus.Up) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
-        }
-
-        return ValidationResult.VALID;
+        return isInStatus(StoragePoolStatus.Up);
     }
 
     public ValidationResult isAnyDomainInProcess() {

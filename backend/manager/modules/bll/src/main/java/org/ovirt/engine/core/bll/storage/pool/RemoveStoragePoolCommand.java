@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
@@ -257,14 +258,21 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     protected boolean validate() {
-        if (!super.validate() ||
-                !checkStoragePool() ||
-                !checkStoragePoolStatusNotEqual(StoragePoolStatus.Up,
-                        EngineMessage.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL)) {
+        if (!super.validate()) {
             return false;
         }
 
-        if (getStoragePool().getStatus() != StoragePoolStatus.Uninitialized && !getParameters().isForceDelete()
+        StoragePoolValidator validator = createStoragePoolValidator();
+
+        if (!validate(validator.exists())) {
+            return false;
+        }
+
+        if (!validator.isNotInStatus(StoragePoolStatus.Up).isValid()) {
+            return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL);
+        }
+
+        if (!validator.isInStatus(StoragePoolStatus.Uninitialized).isValid() && !getParameters().isForceDelete()
                 && !initializeVds()) {
             return false;
         }

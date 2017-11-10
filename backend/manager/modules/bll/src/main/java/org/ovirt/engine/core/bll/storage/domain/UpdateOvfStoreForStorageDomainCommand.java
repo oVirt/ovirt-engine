@@ -28,7 +28,7 @@ public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParame
 
     @Override
     protected boolean validate() {
-        return checkStoragePool() && checkStorageDomain();
+        return validate(createStoragePoolValidator().exists()) && checkStorageDomain();
     }
 
     @Override

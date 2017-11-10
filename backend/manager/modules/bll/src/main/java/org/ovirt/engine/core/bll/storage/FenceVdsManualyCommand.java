@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -89,10 +90,9 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                         return false;
                     }
                 }
-                if (getStoragePool().getStatus() != StoragePoolStatus.NotOperational
-                        && getStoragePool().getStatus() != StoragePoolStatus.NonResponsive
-                        && getStoragePool().getStatus() != StoragePoolStatus.Maintenance) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+                if (!validate(new StoragePoolValidator(getStoragePool()).isInStatus
+                        (StoragePoolStatus.NotOperational, StoragePoolStatus.NonResponsive, StoragePoolStatus.Maintenance))) {
+                    return false;
                 }
             }
         } else {

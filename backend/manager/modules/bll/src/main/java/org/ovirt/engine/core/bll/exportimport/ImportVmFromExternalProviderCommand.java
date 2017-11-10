@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
@@ -118,8 +119,8 @@ implements QuotaStorageDependent {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_AND_CLUSTER_IN_DIFFERENT_POOL);
         }
 
-        if (getStoragePool().getStatus() != StoragePoolStatus.Up) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+        if (!validate(new StoragePoolValidator(getStoragePool()).isInStatus(StoragePoolStatus.Up))) {
+            return false;
         }
 
         if (getStorageDomain().getStatus() != StorageDomainStatus.Active) {

@@ -273,7 +273,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     protected boolean validate() {
-        if (!checkStoragePool()) {
+        StoragePoolValidator spValidator = createStoragePoolValidator();
+        if (!validate(spValidator.exists())) {
             return false;
         }
 
@@ -324,8 +325,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             }
         }
 
-        StoragePoolValidator validator = createStoragePoolValidator();
-        return validate(validator.isNotLocalfsWithDefaultCluster())
+        return validate(spValidator.isNotLocalfsWithDefaultCluster())
                 && validate(allMacsInEveryClusterCanBeMigratedToAnotherPool());
     }
 
@@ -400,8 +400,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         return new NetworkValidator(vmDao, network);
     }
 
+    @Override
     protected StoragePoolValidator createStoragePoolValidator() {
-        return new StoragePoolValidator(getStoragePool());
+        return super.createStoragePoolValidator();
     }
 
     protected boolean isStoragePoolVersionSupported() {

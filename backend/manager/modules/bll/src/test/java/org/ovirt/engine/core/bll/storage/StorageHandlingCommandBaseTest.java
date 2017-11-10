@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -50,23 +49,6 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
     }
 
     @Test
-    public void storagePoolNotFound() {
-        when(storagePoolDao.get(storagePool.getId())).thenReturn(null);
-        checkStoragePoolFails();
-    }
-
-    @Test
-    public void storagePoolNull() {
-        createCommandWithNullPool();
-        checkStoragePoolFails();
-    }
-
-    @Test
-    public void storagePoolExists() {
-        checkStoragePoolSucceeds();
-    }
-
-    @Test
     public void nameTooLong() {
         setAcceptableNameLength(10);
         checkStoragePoolNameLengthSucceeds();
@@ -78,22 +60,12 @@ public class StorageHandlingCommandBaseTest extends BaseCommandTest {
         checkStoragePoolNameLengthFails();
     }
 
-    private void checkStoragePoolSucceeds() {
-        assertTrue(cmd.checkStoragePool());
-    }
-
     private static StoragePool createStoragePool() {
         StoragePool pool = new StoragePool();
         pool.setName("DefaultStoragePool");
         pool.setId(Guid.newGuid());
         pool.setIsLocal(false);
         return pool;
-    }
-
-    private void checkStoragePoolFails() {
-        assertFalse(cmd.checkStoragePool());
-        assertTrue(cmd.getReturnValue().getValidationMessages().contains(EngineMessage
-                .ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
     }
 
     private void createCommandWithNullPool() {

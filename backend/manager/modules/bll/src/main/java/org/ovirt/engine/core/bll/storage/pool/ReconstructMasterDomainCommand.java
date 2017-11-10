@@ -88,8 +88,9 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         return new StorageDomainValidator(getStorageDomain());
     }
 
+    @Override
     protected StoragePoolValidator createStoragePoolValidator() {
-        return new StoragePoolValidator(getStoragePool());
+        return super.createStoragePoolValidator();
     }
 
     @Override
