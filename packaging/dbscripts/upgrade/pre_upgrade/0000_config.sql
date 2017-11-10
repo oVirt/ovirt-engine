@@ -758,6 +758,7 @@ select fn_db_add_config_value_for_versions_up_to('VdsFenceType',
                                                  '4.2');
 select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'false', '4.1');
 select fn_db_add_config_value('IsHighPerformanceTypeSupported', 'true', '4.2');
+select fn_db_add_config_value('AlwaysFilterResultsForWebUi', 'false', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section

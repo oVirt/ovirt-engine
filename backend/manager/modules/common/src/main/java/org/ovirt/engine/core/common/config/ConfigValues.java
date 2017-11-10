@@ -1528,6 +1528,14 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     ReduceVolumeSupported,
 
+    /**
+     * Value of 'Filter' header Web-ui is supposed to send for admin users
+     *
+     * <p>Web-ui assumes {@code false} if option is missing (in older engine versions).</p>
+     */
+    @TypeConverterAttribute(Boolean.class)
+    AlwaysFilterResultsForWebUi(ClientAccessLevel.User),
+
     @TypeConverterAttribute(Boolean.class)
     ContentType,
     /**
@@ -1562,6 +1570,9 @@ public enum ConfigValues {
         return accessLevel;
     }
 
+    /**
+     * @see org.ovirt.engine.core.bll.GetSystemOptionQuery#shouldReturnValue
+     */
     public enum ClientAccessLevel {
         Internal,
         Admin,
