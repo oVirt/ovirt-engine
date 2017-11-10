@@ -64,11 +64,15 @@ public class StoragePoolValidatorTest {
     @Test
     public void testIsInStatusValid() {
         assertThat(validator.isInStatus(StoragePoolStatus.Up, StoragePoolStatus.Contend), isValid());
+        assertThat(validator.isNotInStatus(StoragePoolStatus.Up, StoragePoolStatus.Contend),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL));
     }
 
     @Test
     public void testIsInStatusInvalid() {
         assertThat(validator.isInStatus(StoragePoolStatus.NonResponsive, StoragePoolStatus.NotOperational),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL));
+        assertThat(validator.isNotInStatus(StoragePoolStatus.NonResponsive, StoragePoolStatus.NotOperational),
+                isValid());
     }
 }
