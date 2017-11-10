@@ -1,11 +1,5 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -117,8 +111,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     public void testPositiveValidateWithNoDisks() {
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
-        assertTrue(cmd.validate());
-        assertTrue(cmd.getReturnValue().getValidationMessages().isEmpty());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -134,10 +127,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND)).when(storagePoolValidator)
                 .existsAndUp();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 
     @Test
@@ -145,10 +135,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT)).when(snapshotsValidator)
                 .vmNotDuringSnapshot(any());
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
     }
 
     @Test
@@ -156,10 +143,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW)).when(snapshotsValidator)
                 .vmNotInPreview(any());
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     @Test
@@ -167,10 +151,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS)).when(vmValidator)
                 .vmNotDuringMigration();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
     }
 
     @Test
@@ -180,9 +161,8 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
                 .when(vmValidator)
                 .vmNotHavingPciPassthroughDevices();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
-        assertThat(cmd.getReturnValue().getValidationMessages(),
-                hasItem(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES.name()));
+        ValidateTestUtils.runAndAssertValidateFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES);
     }
 
     @Test
@@ -192,8 +172,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
                 .when(vmValidator)
                 .vmNotHavingPciPassthroughDevices();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertTrue(cmd.validate());
-        assertThat(cmd.getReturnValue().getValidationMessages(), is(empty()));
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -201,20 +180,14 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS)).when(vmValidator)
                 .vmNotRunningStateless();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS);
     }
 
     @Test
     public void testLiveSnapshotWhenNoPluggedDiskSnapshot() {
         doReturn(true).when(cmd).isLiveSnapshotApplicable();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertTrue(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .isEmpty());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -222,10 +195,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL)).when(vmValidator)
                 .vmNotIlegal();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
     }
 
     @Test
@@ -233,18 +203,14 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)).when(vmValidator)
                 .vmNotLocked();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED);
     }
 
     @Test
     public void testPositiveValidateWithDisks() {
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
-        assertTrue(cmd.validate());
-        assertTrue(cmd.getReturnValue().getValidationMessages().isEmpty());
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
@@ -253,10 +219,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).when(diskImagesValidator)
                 .diskImagesNotLocked();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
     @Test
@@ -265,10 +228,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).when(diskImagesValidator)
                 .diskImagesNotIllegal();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL);
     }
 
     @Test
@@ -287,10 +247,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
@@ -316,10 +273,8 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.name()));
+        ValidateTestUtils.runAndAssertValidateFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     @Test
