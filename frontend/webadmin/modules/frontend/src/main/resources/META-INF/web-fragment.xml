@@ -8,39 +8,6 @@
         <param-value>JSESSIONID</param-value>
     </context-param>
 
-    <filter>
-        <filter-name>CachingFilter</filter-name>
-        <filter-class>org.ovirt.engine.ui.frontend.server.caching.CachingFilter</filter-class>
-
-        <!-- Resources intended to be cached forever on the client: -->
-        <!-- * anything with '.cache.' in the name: -->
-        <!--   * module permutations: <md5>.cache.html -->
-        <!--   * ClientBundle composite images: <md5>.cache.png | <md5>.cache.gif -->
-        <!--   * split points: deferredjs/<md5>/<n>.cache.js -->
-        <!-- * all brand assets: **/theme/*, **/theme-resource/* -->
-        <!-- * CSS, PNG/GIF/favicon, JS, TTF, WOFF, WOFF2 image files (usually served from brands but could be served elsewhere) -->
-        <init-param>
-            <param-name>cache</param-name>
-            <param-value>.*\.cache\..*|.*\/theme(-resource)?\/.*|.*\.(css|gif|png|favicon|js|ttf|woff|woff2)(\?.*)?</param-value>
-        </init-param>
-
-        <!-- Resources which always need to be checked for changes: -->
-        <!-- * application host page: WebAdmin.html -->
-        <!-- * anything with '.nocache.' in the name, e.g. permutation selector script: <applicationName>.nocache.js -->
-        <!-- * UI plugin static resources: */plugin/* -->
-        <init-param>
-            <param-name>no-cache</param-name>
-            <param-value>.*WebAdmin\.html|.*\.nocache\..*|.*\/plugin\/.*</param-value>
-        </init-param>
-
-        <!-- Resources not intended to be cached on the client at all: -->
-        <!-- * RPC calls to Generic API -->
-        <init-param>
-            <param-name>no-store</param-name>
-            <param-value>.*GenericApiGWTService</param-value>
-        </init-param>
-    </filter>
-
     <!-- LocaleFilter, this filter detects the locale of the user based on: -->
     <!-- 1. parameter -->
     <!-- 2. cookie -->

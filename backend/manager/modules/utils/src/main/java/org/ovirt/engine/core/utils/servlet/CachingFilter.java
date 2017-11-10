@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.caching;
+package org.ovirt.engine.core.utils.servlet;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

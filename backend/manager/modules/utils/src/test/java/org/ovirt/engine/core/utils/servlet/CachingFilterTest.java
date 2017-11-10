@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.caching;
+package org.ovirt.engine.core.utils.servlet;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
