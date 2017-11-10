@@ -86,7 +86,10 @@ public class StoragePoolValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult checkStoragePoolNotInStatus(StoragePoolStatus... statuses) {
+    /**
+     * Validates that the storage pool is in one of the supplied {@code statuses}
+     */
+    public ValidationResult isInStatus(StoragePoolStatus... statuses) {
         List<StoragePoolStatus> statusList = Arrays.asList(statuses);
         if (!statusList.contains(storagePool.getStatus())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);

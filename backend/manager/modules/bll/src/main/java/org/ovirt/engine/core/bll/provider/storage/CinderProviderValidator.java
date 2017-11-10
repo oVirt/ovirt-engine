@@ -93,7 +93,7 @@ public class CinderProviderValidator extends ProviderValidator {
         if (!result.isValid()) {
             return result;
         }
-        result = spValidator.checkStoragePoolNotInStatus(StoragePoolStatus.Up);
+        result = spValidator.isInStatus(StoragePoolStatus.Up);
         if (!result.isValid()) {
             return result;
         }
