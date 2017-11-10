@@ -338,9 +338,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         StoragePool storagePool = getStoragePool();
         if (storagePool != null) {
             returnValue = storagePool.getStatus() == status;
-            if (!returnValue
-                    && !getReturnValue().getValidationMessages().contains(
-                            EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL.toString())) {
+            if (!returnValue) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
             }
         }
@@ -352,8 +350,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         StoragePool storagePool = getStoragePool();
         if (storagePool != null) {
             returnValue = storagePool.getStatus() != status;
-            if (!returnValue
-                    && !getReturnValue().getValidationMessages().contains(onFailMessage.name())) {
+            if (!returnValue) {
                 addValidationMessage(onFailMessage);
             }
         }
