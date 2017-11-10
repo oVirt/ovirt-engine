@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,9 +123,10 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testVMIsNotValid() {
-        doReturn(Boolean.FALSE).when(cmd).validateVM(vmValidator);
+        when(vmValidator.vmNotSavingRestoring()).thenReturn
+                (new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING));
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        assertFalse(cmd.validate());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
     }
 
     @Test
