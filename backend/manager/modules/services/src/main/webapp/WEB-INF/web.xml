@@ -1,246 +1,246 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app
-  xmlns="http://java.sun.com/xml/ns/javaee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-  version="3.0">
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
 
-  <!-- context params needed for branding -->
-  <context-param>
-    <param-name>obrandThemePath</param-name>
-    <param-value>/theme</param-value>
-  </context-param>
-  <context-param>
-    <param-name>obrandResourcePath</param-name>
-    <param-value>/theme-resource</param-value>
-  </context-param>
-  <!-- app name key for branding resources -->
-  <context-param>
-    <param-name>applicationName</param-name>
-    <param-value>common</param-value>
-  </context-param>
+    <!-- context params needed for branding -->
+    <context-param>
+        <param-name>obrandThemePath</param-name>
+        <param-value>/theme</param-value>
+    </context-param>
+    <context-param>
+        <param-name>obrandResourcePath</param-name>
+        <param-value>/theme-resource</param-value>
+    </context-param>
+    <!-- app name key for branding resources -->
+    <context-param>
+        <param-name>applicationName</param-name>
+        <param-value>common</param-value>
+    </context-param>
 
-  <filter>
-    <filter-name>LocaleFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>LocaleFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
+    <filter>
+        <filter-name>LocaleFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LocaleFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
-  <filter>
-    <filter-name>SsoRestApiAuthFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiAuthFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>SsoRestApiAuthFilter</filter-name>
-    <url-pattern>/hystrix.stream</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>SsoRestApiAuthFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiAuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SsoRestApiAuthFilter</filter-name>
+        <url-pattern>/hystrix.stream</url-pattern>
+    </filter-mapping>
 
-  <filter>
-    <filter-name>SsoRestApiNegotiationFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiNegotiationFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>SsoRestApiNegotiationFilter</filter-name>
-    <url-pattern>/hystrix.stream</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>SsoRestApiNegotiationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SsoRestApiNegotiationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SsoRestApiNegotiationFilter</filter-name>
+        <url-pattern>/hystrix.stream</url-pattern>
+    </filter-mapping>
 
-  <filter>
-    <filter-name>EnforceAuthFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.EnforceAuthFilter</filter-class>
-    <init-param>
-      <param-name>scheme.basic_auth</param-name>
-      <param-value>Basic realm="RESTAPI"</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>EnforceAuthFilter</filter-name>
-    <url-pattern>/hystrix.stream</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>EnforceAuthFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.EnforceAuthFilter</filter-class>
+        <init-param>
+            <param-name>scheme.basic_auth</param-name>
+            <param-value>Basic realm="RESTAPI"</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>EnforceAuthFilter</filter-name>
+        <url-pattern>/hystrix.stream</url-pattern>
+    </filter-mapping>
 
-  <!-- Branding Filter, passes branding information to jsps -->
-  <filter>
-    <filter-name>BrandingFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>BrandingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
+    <!-- Branding Filter, passes branding information to jsps -->
+    <filter>
+        <filter-name>BrandingFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>BrandingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
-  <servlet>
-    <display-name>HystrixMetricsStreamServlet</display-name>
-    <servlet-name>HystrixMetricsStreamServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.HystrixServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>HystrixMetricsStreamServlet</servlet-name>
-      <url-pattern>/hystrix.stream</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <display-name>HystrixMetricsStreamServlet</display-name>
+        <servlet-name>HystrixMetricsStreamServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.HystrixServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HystrixMetricsStreamServlet</servlet-name>
+        <url-pattern>/hystrix.stream</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>BrandingServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BrandingServlet</servlet-name>
-    <url-pattern>/theme/*</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>BrandingServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BrandingServlet</servlet-name>
+        <url-pattern>/theme/*</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>pki-resource</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.PKIResourceServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>pki-resource</servlet-name>
-    <url-pattern>/pki-resource</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>pki-resource</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.PKIResourceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>pki-resource</servlet-name>
+        <url-pattern>/pki-resource</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>host-register</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.RegisterServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>host-register</servlet-name>
-    <url-pattern>/host-register</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>host-register</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>host-register</servlet-name>
+        <url-pattern>/host-register</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>get-session-user</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.GetSessionUser</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>get-session-user</servlet-name>
-    <url-pattern>/get-session-user</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>get-session-user</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.GetSessionUser</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>get-session-user</servlet-name>
+        <url-pattern>/get-session-user</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>SsoLogoutServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.SsoLogoutServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>SsoLogoutServlet</servlet-name>
-    <url-pattern>/sso-logout</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>SsoLogoutServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.SsoLogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SsoLogoutServlet</servlet-name>
+        <url-pattern>/sso-logout</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-      <servlet-name>SsoCallbackServlet</servlet-name>
-      <servlet-class>org.ovirt.engine.core.services.SsoCallbackServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>SsoCallbackServlet</servlet-name>
-      <url-pattern>/sso-callback</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>SsoCallbackServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.SsoCallbackServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SsoCallbackServlet</servlet-name>
+        <url-pattern>/sso-callback</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>attachment</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.GetAttachmentServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>attachment</servlet-name>
-    <url-pattern>/attachment/*</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>attachment</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.GetAttachmentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>attachment</servlet-name>
+        <url-pattern>/attachment/*</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>files</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.servlet.FileServlet</servlet-class>
-    <init-param>
-      <param-name>file</param-name>
-      <param-value>%{ENGINE_USR}/files</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>files</servlet-name>
-    <url-pattern>/files/*</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>health</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.HealthStatus</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>health</servlet-name>
-    <url-pattern>/health/*</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>files</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.FileServlet</servlet-class>
+        <init-param>
+            <param-name>file</param-name>
+            <param-value>%{ENGINE_USR}/files</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>files</servlet-name>
+        <url-pattern>/files/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>health</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.HealthStatus</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>health</servlet-name>
+        <url-pattern>/health/*</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>vmconsole-proxy</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.VMConsoleProxyServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>vmconsole-proxy</servlet-name>
-    <url-pattern>/vmconsole-proxy</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>vmconsole-proxy</servlet-name>
+        <servlet-class>org.ovirt.engine.core.services.VMConsoleProxyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>vmconsole-proxy</servlet-name>
+        <url-pattern>/vmconsole-proxy</url-pattern>
+    </servlet-mapping>
 
-  <!-- PageNotFoundForward Servlet -->
-  <servlet>
-      <servlet-name>PageNotFoundForwardServlet</servlet-name>
-      <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
-      <init-param>
-          <param-name>targetContext</param-name>
-          <param-value>..</param-value>
-      </init-param>
-      <init-param>
-          <param-name>uri</param-name>
-          <param-value>/404.html</param-value>
-      </init-param>
-  </servlet>
+    <!-- PageNotFoundForward Servlet -->
+    <servlet>
+        <servlet-name>PageNotFoundForwardServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
+        <init-param>
+            <param-name>targetContext</param-name>
+            <param-value>..</param-value>
+        </init-param>
+        <init-param>
+            <param-name>uri</param-name>
+            <param-value>/404.html</param-value>
+        </init-param>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>PageNotFoundForwardServlet</servlet-name>
-    <url-pattern>/404.html</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PageNotFoundForwardServlet</servlet-name>
+        <url-pattern>/404.html</url-pattern>
+    </servlet-mapping>
 
-  <!-- MethodNotAllowedForward Servlet -->
-  <servlet>
-      <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
-      <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
-      <init-param>
-          <param-name>targetContext</param-name>
-          <param-value>..</param-value>
-      </init-param>
-      <init-param>
-          <param-name>uri</param-name>
-          <param-value>/405.html</param-value>
-      </init-param>
-  </servlet>
+    <!-- MethodNotAllowedForward Servlet -->
+    <servlet>
+        <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
+        <init-param>
+            <param-name>targetContext</param-name>
+            <param-value>..</param-value>
+        </init-param>
+        <init-param>
+            <param-name>uri</param-name>
+            <param-value>/405.html</param-value>
+        </init-param>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
-    <url-pattern>/405.html</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
+        <url-pattern>/405.html</url-pattern>
+    </servlet-mapping>
 
-  <!-- Go to the index when a page is not found (preserving the
+    <!-- Go to the index when a page is not found (preserving the
        404 status code): -->
-  <error-page>
-    <error-code>404</error-code>
-    <location>/404.html</location>
-  </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/404.html</location>
+    </error-page>
 
-  <!-- Go to the index when method is not allowed (preserving the
+    <!-- Go to the index when method is not allowed (preserving the
        405 status code): -->
-  <error-page>
-    <error-code>405</error-code>
-    <location>/405.html</location>
-  </error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/405.html</location>
+    </error-page>
 
-  <session-config>
-    <cookie-config>
-      <http-only>true</http-only>
-    </cookie-config>
-  </session-config>
+    <session-config>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
 
-  <jsp-config>
-    <jsp-property-group>
-      <url-pattern>*.jsp</url-pattern>
-      <page-encoding>UTF-8</page-encoding>
-    </jsp-property-group>
-  </jsp-config>
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+    </jsp-config>
 
 </web-app>

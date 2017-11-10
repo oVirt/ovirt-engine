@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app
-  xmlns="http://java.sun.com/xml/ns/javaee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-  version="3.0">
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
 
-  <!-- Header filter to automatically add some headers to each response -->
-  <filter>
-    <filter-name>HeaderFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
-  </filter>
+    <!-- Header filter to automatically add some headers to each response -->
+    <filter>
+        <filter-name>HeaderFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
+    </filter>
 
-  <servlet>
-    <servlet-name>index</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>
-    <init-param>
-      <param-name>targetUrl</param-name>
-      <param-value>%{ENGINE_URI}</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>index</servlet-name>
-    <url-pattern>/index.html</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>index</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>
+        <init-param>
+            <param-name>targetUrl</param-name>
+            <param-value>%{ENGINE_URI}</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>index</servlet-name>
+        <url-pattern>/index.html</url-pattern>
+    </servlet-mapping>
 
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
 
-  <session-config>
-    <cookie-config>
-      <http-only>true</http-only>
-    </cookie-config>
-  </session-config>
+    <session-config>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
 
 </web-app>

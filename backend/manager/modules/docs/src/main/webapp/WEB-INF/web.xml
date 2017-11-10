@@ -1,172 +1,171 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app
-  xmlns="http://java.sun.com/xml/ns/javaee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-  version="3.0">
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
 
-  <context-param>
-    <param-name>obrandThemePath</param-name>
-    <param-value>/theme</param-value>
-  </context-param>
-  <context-param>
-    <param-name>obrandResourcePath</param-name>
-    <param-value>/theme-resource</param-value>
-  </context-param>
-  <context-param>
-    <param-name>applicationName</param-name>
-    <param-value>common</param-value>
-  </context-param>
+    <context-param>
+        <param-name>obrandThemePath</param-name>
+        <param-value>/theme</param-value>
+    </context-param>
+    <context-param>
+        <param-name>obrandResourcePath</param-name>
+        <param-value>/theme-resource</param-value>
+    </context-param>
+    <context-param>
+        <param-name>applicationName</param-name>
+        <param-value>common</param-value>
+    </context-param>
 
-  <!-- Branding Servlet -->
-  <servlet>
-    <servlet-name>BrandingServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BrandingServlet</servlet-name>
-    <url-pattern>/theme/*</url-pattern>
-  </servlet-mapping>
+    <!-- Branding Servlet -->
+    <servlet>
+        <servlet-name>BrandingServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BrandingServlet</servlet-name>
+        <url-pattern>/theme/*</url-pattern>
+    </servlet-mapping>
 
-  <!-- Branding Cascading Resource Servlet -->
-  <servlet>
-    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
-    <url-pattern>/theme-resource/*</url-pattern>
-  </servlet-mapping>
+    <!-- Branding Cascading Resource Servlet -->
+    <servlet>
+        <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+        <url-pattern>/theme-resource/*</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>PageNotFoundForwardServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
-    <init-param>
-      <param-name>targetContext</param-name>
-      <param-value>..</param-value>
-    </init-param>
-    <init-param>
-      <param-name>uri</param-name>
-      <param-value>/404.html</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>PageNotFoundForwardServlet</servlet-name>
-      <url-pattern>/404.html</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>PageNotFoundForwardServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
+        <init-param>
+            <param-name>targetContext</param-name>
+            <param-value>..</param-value>
+        </init-param>
+        <init-param>
+            <param-name>uri</param-name>
+            <param-value>/404.html</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PageNotFoundForwardServlet</servlet-name>
+        <url-pattern>/404.html</url-pattern>
+    </servlet-mapping>
 
-  <!-- MethodNotAllowedForward Servlet -->
-  <servlet>
-      <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
-      <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
-      <init-param>
-          <param-name>targetContext</param-name>
-          <param-value>..</param-value>
-      </init-param>
-      <init-param>
-          <param-name>uri</param-name>
-          <param-value>/405.html</param-value>
-      </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
-    <url-pattern>/405.html</url-pattern>
-  </servlet-mapping>
+    <!-- MethodNotAllowedForward Servlet -->
+    <servlet>
+        <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
+        <init-param>
+            <param-name>targetContext</param-name>
+            <param-value>..</param-value>
+        </init-param>
+        <init-param>
+            <param-name>uri</param-name>
+            <param-value>/405.html</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
+        <url-pattern>/405.html</url-pattern>
+    </servlet-mapping>
 
+    <!-- ContextSensitiveHelpMappingServlet -->
+    <servlet>
+        <servlet-name>ContextSensitiveHelpMappingServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.docs.utils.servlet.ContextSensitiveHelpMappingServlet</servlet-class>
+        <init-param>
+            <param-name>manualDir</param-name>
+            <param-value>%{ENGINE_MANUAL}</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ContextSensitiveHelpMappingServlet</servlet-name>
+        <url-pattern>/csh/*</url-pattern>
+    </servlet-mapping>
 
-  <!-- ContextSensitiveHelpMappingServlet -->
-  <servlet>
-    <servlet-name>ContextSensitiveHelpMappingServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.docs.utils.servlet.ContextSensitiveHelpMappingServlet</servlet-class>
-    <init-param>
-      <param-name>manualDir</param-name>
-      <param-value>%{ENGINE_MANUAL}</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>ContextSensitiveHelpMappingServlet</servlet-name>
-      <url-pattern>/csh/*</url-pattern>
-  </servlet-mapping>
+    <!-- Filters -->
+    <!-- Locale Filter, determines the user locale -->
+    <filter>
+        <filter-name>LocaleFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
+    </filter>
+    <!-- Branding Filter, passes branding information to jsps -->
+    <filter>
+        <filter-name>BrandingFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
+    </filter>
 
-  <!-- Filters -->
-  <!-- Locale Filter, determines the user locale -->
-  <filter>
-    <filter-name>LocaleFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
-  </filter>
-  <!-- Branding Filter, passes branding information to jsps -->
-  <filter>
-    <filter-name>BrandingFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
-  </filter>
+    <!-- Header filter to automatically add some headers to each response -->
+    <filter>
+        <filter-name>HeaderFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
+    </filter>
 
-  <!-- Header filter to automatically add some headers to each response -->
-  <filter>
-    <filter-name>HeaderFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
-  </filter>
+    <filter-mapping>
+        <filter-name>HeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>HeaderFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>LocaleFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>LocaleFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>BrandingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>BrandingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
+    <servlet>
+        <servlet-name>docs</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.DocsServlet</servlet-class>
+        <init-param>
+            <param-name>file</param-name>
+            <param-value>%{ENGINE_MANUAL}</param-value>
+        </init-param>
+        <init-param>
+            <param-name>localeDocsMissingURI</param-name>
+            <param-value>/docsmissing</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>docs</servlet-name>
+        <url-pattern>/manual/*</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>docs</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.servlet.DocsServlet</servlet-class>
-    <init-param>
-      <param-name>file</param-name>
-      <param-value>%{ENGINE_MANUAL}</param-value>
-    </init-param>
-    <init-param>
-        <param-name>localeDocsMissingURI</param-name>
-        <param-value>/docsmissing</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>docs</servlet-name>
-    <url-pattern>/manual/*</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>docsmissing</servlet-name>
+        <jsp-file>/WEB-INF/no_lang.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>docsmissing</servlet-name>
+        <url-pattern>/docsmissing</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>docsmissing</servlet-name>
-    <jsp-file>/WEB-INF/no_lang.jsp</jsp-file>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>docsmissing</servlet-name>
-    <url-pattern>/docsmissing</url-pattern>
-  </servlet-mapping>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/404.html</location>
+    </error-page>
 
-  <error-page>
-      <error-code>404</error-code>
-      <location>/404.html</location>
-  </error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/405.html</location>
+    </error-page>
 
-  <error-page>
-      <error-code>405</error-code>
-      <location>/405.html</location>
-  </error-page>
-
-  <session-config>
-    <cookie-config>
-      <http-only>true</http-only>
-    </cookie-config>
-  </session-config>
+    <session-config>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
 
 </web-app>

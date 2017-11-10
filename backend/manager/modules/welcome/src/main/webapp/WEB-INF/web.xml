@@ -6,183 +6,183 @@
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
-  <listener>
-    <listener-class>org.ovirt.engine.core.WelcomeContextListener</listener-class>
-  </listener>
+    <listener>
+        <listener-class>org.ovirt.engine.core.WelcomeContextListener</listener-class>
+    </listener>
 
-  <context-param>
-    <param-name>obrandThemePath</param-name>
-    <param-value>/theme</param-value>
-  </context-param>
-  <context-param>
-    <param-name>obrandResourcePath</param-name>
-    <param-value>/theme-resource</param-value>
-  </context-param>
-  <context-param>
-    <param-name>applicationName</param-name>
-    <param-value>welcome</param-value>
-  </context-param>
+    <context-param>
+        <param-name>obrandThemePath</param-name>
+        <param-value>/theme</param-value>
+    </context-param>
+    <context-param>
+        <param-name>obrandResourcePath</param-name>
+        <param-value>/theme-resource</param-value>
+    </context-param>
+    <context-param>
+        <param-name>applicationName</param-name>
+        <param-value>welcome</param-value>
+    </context-param>
 
-  <!-- Branding Servlet -->
-  <servlet>
-    <servlet-name>BrandingServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BrandingServlet</servlet-name>
-    <url-pattern>/theme/*</url-pattern>
-  </servlet-mapping>
+    <!-- Branding Servlet -->
+    <servlet>
+        <servlet-name>BrandingServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BrandingServlet</servlet-name>
+        <url-pattern>/theme/*</url-pattern>
+    </servlet-mapping>
 
-  <!-- Branding Cascading Resource Servlet -->
-  <servlet>
-    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
-    <url-pattern>/theme-resource/*</url-pattern>
-  </servlet-mapping>
+    <!-- Branding Cascading Resource Servlet -->
+    <servlet>
+        <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+        <url-pattern>/theme-resource/*</url-pattern>
+    </servlet-mapping>
 
-  <!-- PageNotFound Servlet -->
-  <servlet>
-    <servlet-name>PageNotFoundServlet</servlet-name>
-    <jsp-file>/WEB-INF/404.jsp</jsp-file>
-  </servlet>
+    <!-- PageNotFound Servlet -->
+    <servlet>
+        <servlet-name>PageNotFoundServlet</servlet-name>
+        <jsp-file>/WEB-INF/404.jsp</jsp-file>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>PageNotFoundServlet</servlet-name>
-    <url-pattern>/404.html</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PageNotFoundServlet</servlet-name>
+        <url-pattern>/404.html</url-pattern>
+    </servlet-mapping>
 
-  <!-- MethodNotAllowedServlet -->
-  <servlet>
-    <servlet-name>MethodNotAllowedServlet</servlet-name>
-    <jsp-file>/WEB-INF/405.jsp</jsp-file>
-  </servlet>
+    <!-- MethodNotAllowedServlet -->
+    <servlet>
+        <servlet-name>MethodNotAllowedServlet</servlet-name>
+        <jsp-file>/WEB-INF/405.jsp</jsp-file>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>MethodNotAllowedServlet</servlet-name>
-    <url-pattern>/405.html</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MethodNotAllowedServlet</servlet-name>
+        <url-pattern>/405.html</url-pattern>
+    </servlet-mapping>
 
-  <!-- Welcome page -->
-  <servlet>
-    <servlet-name>WelcomeServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.WelcomeServlet</servlet-class>
-  </servlet>
+    <!-- Welcome page -->
+    <servlet>
+        <servlet-name>WelcomeServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.WelcomeServlet</servlet-class>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>WelcomeServlet</servlet-name>
-    <url-pattern>/index.html</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WelcomeServlet</servlet-name>
+        <url-pattern>/index.html</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-      <servlet-name>OAuthCallbackServlet</servlet-name>
-      <servlet-class>org.ovirt.engine.core.OAuthCallbackServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>OAuthCallbackServlet</servlet-name>
-      <url-pattern>/oauth2-callback</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>OAuthCallbackServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.OAuthCallbackServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OAuthCallbackServlet</servlet-name>
+        <url-pattern>/oauth2-callback</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>LogoutServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.LogoutServlet</servlet-class>
-  </servlet>
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.LogoutServlet</servlet-class>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>LogoutServlet</servlet-name>
-    <url-pattern>/logout</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-      <servlet-name>LoginServlet</servlet-name>
-      <servlet-class>org.ovirt.engine.core.LoginServlet</servlet-class>
-  </servlet>
-   <servlet-mapping>
-      <servlet-name>LoginServlet</servlet-name>
-      <url-pattern>/login</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-      <servlet-name>SwitchUserServlet</servlet-name>
-      <servlet-class>org.ovirt.engine.core.SwitchUserServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>SwitchUserServlet</servlet-name>
-      <url-pattern>/switch-user</url-pattern>
-  </servlet-mapping>
+    <servlet>
+        <servlet-name>SwitchUserServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.SwitchUserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SwitchUserServlet</servlet-name>
+        <url-pattern>/switch-user</url-pattern>
+    </servlet-mapping>
 
-  <!-- Filters -->
-  <!-- Locale Filter, determines the user locale -->
-  <filter>
-    <filter-name>LocaleFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
-  </filter>
-  <!-- Branding Filter, passes branding information to jsps -->
-  <filter>
-    <filter-name>BrandingFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
-  </filter>
+    <!-- Filters -->
+    <!-- Locale Filter, determines the user locale -->
+    <filter>
+        <filter-name>LocaleFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
+    </filter>
+    <!-- Branding Filter, passes branding information to jsps -->
+    <filter>
+        <filter-name>BrandingFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
+    </filter>
 
-  <!-- Header filter to automatically add some headers to each response -->
-  <filter>
-    <filter-name>HeaderFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
-  </filter>
+    <!-- Header filter to automatically add some headers to each response -->
+    <filter>
+        <filter-name>HeaderFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
+    </filter>
 
-  <filter-mapping>
-    <filter-name>HeaderFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>HeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>LocaleFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>LocaleFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>BrandingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>REQUEST</dispatcher>
-    <dispatcher>ERROR</dispatcher>
-  </filter-mapping>
+    <filter-mapping>
+        <filter-name>BrandingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
 
-  <!-- Go to the index when a page is not found (preserving the 404 status code): -->
-  <error-page>
-    <error-code>404</error-code>
-    <location>/404.html</location>
-  </error-page>
+    <!-- Go to the index when a page is not found (preserving the 404 status code): -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/404.html</location>
+    </error-page>
 
-  <!-- Go to the index when method is not allowed (preserving the 405 status code): -->
-  <error-page>
-    <error-code>405</error-code>
-    <location>/405.html</location>
-  </error-page>
+    <!-- Go to the index when method is not allowed (preserving the 405 status code): -->
+    <error-page>
+        <error-code>405</error-code>
+        <location>/405.html</location>
+    </error-page>
 
-  <!-- This is handled by the welcome servlet -->
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
+    <!-- This is handled by the welcome servlet -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
 
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>everything</web-resource-name>
-      <url-pattern>/*</url-pattern>
-    </web-resource-collection>
-    <user-data-constraint>
-      <transport-guarantee>NONE</transport-guarantee>
-    </user-data-constraint>
-  </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>everything</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 
-  <session-config>
-    <cookie-config>
-      <http-only>true</http-only>
-      <secure>false</secure>
-    </cookie-config>
-  </session-config>
+    <session-config>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+    </session-config>
 
 </web-app>
