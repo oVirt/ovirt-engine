@@ -45,6 +45,11 @@
             font-size: 20px;
             font-weight: 200;
         }
+
+        .copyrightNotice {
+            position: absolute;
+            bottom: 65px;
+        }
     </ui:style>
 
     <d:OVirtBootstrapModal width="565px" height="355px" addStyleNames="obrand_aboutBackground">
@@ -77,11 +82,8 @@
                     <g:InlineLabel ui:field="userNameText" />
                 </b:Column>
             </b:Row>
-            <b:Row>
-                <b:Column size="SM_12">
-                    <g:Label ui:field="copyrightNotice" />
-                </b:Column>
-            </b:Row>
+
+            <g:Label ui:field="copyrightNotice" addStyleNames="{style.copyrightNotice}" />
 
             <h:Div ui:field="logo" addStyleNames="obrand_aboutApplicationLogo" />
 
