@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.OVirtBootstrapModal;
@@ -38,6 +39,9 @@ public class AboutPopupView extends AbstractPopupView<OVirtBootstrapModal> imple
     Label copyrightNotice;
 
     @UiField
+    Anchor vendorUrl;
+
+    @UiField
     Div logo;
 
     private final ApplicationDynamicMessages dynamicMessages;
@@ -53,6 +57,8 @@ public class AboutPopupView extends AbstractPopupView<OVirtBootstrapModal> imple
     void localize() {
         applicationTitle.setText(dynamicMessages.applicationTitle());
         copyrightNotice.setText(dynamicMessages.copyRightNotice());
+        vendorUrl.setText(dynamicMessages.vendorUrl());
+        vendorUrl.setHref(dynamicMessages.vendorUrl());
     }
 
     @Override

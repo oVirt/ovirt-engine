@@ -50,6 +50,12 @@
             position: absolute;
             bottom: 65px;
         }
+
+        .vendorUrl, .vendorUrl:active, .vendorUrl:hover {
+            color: white;
+            position: absolute;
+            bottom: 45px;
+        }
     </ui:style>
 
     <d:OVirtBootstrapModal width="565px" height="355px" addStyleNames="obrand_aboutBackground">
@@ -84,6 +90,8 @@
             </b:Row>
 
             <g:Label ui:field="copyrightNotice" addStyleNames="{style.copyrightNotice}" />
+
+            <b:Anchor ui:field="vendorUrl" addStyleNames="{style.vendorUrl}" />
 
             <h:Div ui:field="logo" addStyleNames="obrand_aboutApplicationLogo" />
 
