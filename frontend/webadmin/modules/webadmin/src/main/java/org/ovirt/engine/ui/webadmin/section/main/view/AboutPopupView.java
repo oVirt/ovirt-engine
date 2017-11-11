@@ -3,9 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.OVirtBootstrapModal;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -41,10 +39,7 @@ public class AboutPopupView extends AbstractPopupView<OVirtBootstrapModal> imple
     @UiField
     Label logo;
 
-
     private final ApplicationDynamicMessages dynamicMessages;
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public AboutPopupView(EventBus eventBus, ApplicationDynamicMessages dynamicMessages) {
@@ -60,6 +55,7 @@ public class AboutPopupView extends AbstractPopupView<OVirtBootstrapModal> imple
         versionLabel.setText(dynamicMessages.ovirtVersionAbout());
     }
 
+    @Override
     public void setVersion(String text) {
         versionText.setText(text);
     }

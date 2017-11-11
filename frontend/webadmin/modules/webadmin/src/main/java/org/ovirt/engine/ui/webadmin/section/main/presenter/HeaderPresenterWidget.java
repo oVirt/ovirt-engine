@@ -7,8 +7,9 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
+import org.ovirt.engine.ui.common.utils.WebUtils;
+import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -27,15 +28,18 @@ import org.ovirt.engine.ui.webadmin.widget.alert.ActionWidget;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.view.client.HasData;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
-public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderPresenterWidget.ViewDef> {
+public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget.ViewDef> {
 
-    public interface ViewDef extends AbstractHeaderPresenterWidget.ViewDef {
+    public interface ViewDef extends View {
 
         HasClickHandlers getConfigureLink();
 
@@ -59,6 +63,14 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         ActionWidget getAlertActionWidget();
 
+        void setUserName(String userName);
+
+        HasClickHandlers getOptionsLink();
+
+        HasClickHandlers getLogoutLink();
+
+        HasClickHandlers getGuideLink();
+
     }
 
     private final ApplicationConstants constants = AssetProvider.getConstants();
@@ -70,6 +82,10 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     private final TasksPresenterWidget tasksPresenter;
     private final BookmarkPresenterWidget bookmarksPresenter;
     private final TagsPresenterWidget tagsPresenter;
+    private final CurrentUser user;
+    private final String windowName;
+    private String guideUrl;
+    private final OptionsProvider optionsProvider;
 
     @Inject
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
@@ -82,7 +98,12 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
             @Named("notification") EventModelProvider eventModelProvider,
             AlertModelProvider alertModelProvider,
             TaskModelProvider taskModelProvider) {
-        super(eventBus, view, user, optionsProvider, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
+        super(eventBus, view);
+
+        this.user = user;
+        this.windowName = dynamicMessages.applicationDocTitle();
+        this.optionsProvider = optionsProvider;
+        setGuideUrl(dynamicMessages.guideUrl());
         this.aboutPopupProvider = aboutPopupProvider;
         this.taskModelProvider = taskModelProvider;
         this.alertModelProvider = alertModelProvider;
@@ -98,6 +119,15 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     @Override
     protected void onBind() {
         super.onBind();
+
+        registerHandler(getView().getLogoutLink().addClickHandler(event -> user.logout()));
+
+        registerHandler(getView().getGuideLink().addClickHandler(event -> WebUtils.openUrlInNewWindow(windowName, guideUrl)));
+
+        registerHandler(getView().getOptionsLink().addClickHandler(event -> {
+            OptionsModel model = optionsProvider.getModel();
+            model.executeCommand(model.getEditCommand());
+        }));
 
         registerHandler(getView().getAboutLink().addClickHandler(event ->
                 RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, aboutPopupProvider.get())));
@@ -175,4 +205,20 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
             RevealOverlayContentEvent.fire(this, presenterWidget);
         }
     }
+
+    /**
+     * Set the URL of the guide link. This string is escaped.
+     * @param guideUrlString The new URL as a string.
+     */
+    public void setGuideUrl(String guideUrlString) {
+        this.guideUrl = SafeHtmlUtils.htmlEscapeAllowEntities(guideUrlString);
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+
+        getView().setUserName(user.getFullUserName());
+    }
+
 }
