@@ -29,9 +29,6 @@ public class AboutPopupView extends AbstractPopupView<OVirtBootstrapModal> imple
     Label applicationTitle;
 
     @UiField
-    Label versionLabel;
-
-    @UiField
     Label versionText;
 
     @UiField
@@ -56,7 +53,6 @@ public class AboutPopupView extends AbstractPopupView<OVirtBootstrapModal> imple
     void localize() {
         applicationTitle.setText(dynamicMessages.applicationTitle());
         copyrightNotice.setText(dynamicMessages.copyRightNotice());
-        versionLabel.setText(dynamicMessages.ovirtVersionAbout());
     }
 
     @Override

@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
-import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -113,12 +112,9 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
     @Ignore
     Anchor fencingOptionsUrl;
 
-    private final DynamicMessages dynamicMessages;
-
     @Inject
-    public HostFenceAgentPopupView(EventBus eventBus, DynamicMessages dynamicMessages) {
+    public HostFenceAgentPopupView(EventBus eventBus) {
         super(eventBus);
-        this.dynamicMessages = dynamicMessages;
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         fencingOptionsUrl.asWidget().addStyleName(style.fencingOptionsLink());
@@ -139,7 +135,7 @@ public class HostFenceAgentPopupView extends AbstractModelBoundPopupView<FenceAg
         pmEncryptOptionsEditor.setUsePatternFly(true);
         pmSecureEditor= new EntityModelCheckBoxEditor(Align.RIGHT);
         pmSecureEditor.setUsePatternFly(true);
-        fencingOptionsUrl = new Anchor(dynamicMessages.fencingOptions());
+        fencingOptionsUrl = new Anchor(constants.fencingOptionsLabel());
     }
 
     private void localize() {

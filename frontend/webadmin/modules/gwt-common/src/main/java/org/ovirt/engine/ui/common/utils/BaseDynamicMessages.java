@@ -32,17 +32,14 @@ public class BaseDynamicMessages implements DynamicMessages {
     public enum DynamicMessageKey {
 
         APPLICATION_TITLE("application_title"), //$NON-NLS-1$
-        VERSION_ABOUT("version_about"), //$NON-NLS-1$
         COPY_RIGHT_NOTICE("copy_right_notice"), //$NON-NLS-1$
         GUIDE_URL("guide_url"), //$NON-NLS-1$
-        EXTENDED_GUIDE_URL("extended_guide_url"), //$NON-NLS-1$
         GUIDE_LINK_LABEL("guide_link_label"), //$NON-NLS-1$
         CLIENT_RESOURCES("client_resources"), //$NON-NLS-1$
         CONSOLE_CLIENT_RESOURCES("console_client_resources"), //$NON-NLS-1$
         CONSOLE_CLIENT_RESOURCES_URL("console_client_resources_url"), //$NON-NLS-1$
         VENDOR_URL("vendor_url"), //$NON-NLS-1$
         DOC("doc"), //$NON-NLS-1$
-        FENCING_OPTIONS("fencing_options"), //$NON-NLS-1$
         FENCING_OPTIONS_URL("fencing_options_url"); //$NON-NLS-1$
 
         private final String value;
@@ -202,11 +199,6 @@ public class BaseDynamicMessages implements DynamicMessages {
     }
 
     @Override
-    public final String ovirtVersionAbout() {
-        return formatString(DynamicMessageKey.VERSION_ABOUT);
-    }
-
-    @Override
     public final String copyRightNotice() {
         return getString(DynamicMessageKey.COPY_RIGHT_NOTICE);
     }
@@ -249,11 +241,6 @@ public class BaseDynamicMessages implements DynamicMessages {
     @Override
     public final String applicationDocTitle() {
         return getString(DynamicMessageKey.DOC);
-    }
-
-    @Override
-    public final String fencingOptions() {
-        return getString(DynamicMessageKey.FENCING_OPTIONS);
     }
 
     @Override

@@ -75,47 +75,47 @@ public class BaseDynamicMessagesTest {
 
     @Test
     public void formatStringTest() {
-        testMessages.addFallback(DynamicMessageKey.VERSION_ABOUT, "This is version about: {0}"); //$NON-NLS-1$
-        String result = testMessages.formatString(DynamicMessageKey.VERSION_ABOUT, "1.1.1"); //$NON-NLS-1$
+        testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}"); //$NON-NLS-1$
+        String result = testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE, "1.1.1"); //$NON-NLS-1$
         assertNotNull("There should be a result"); //$NON-NLS-1$
-        assertEquals("Result should be 'This is version about: 1.1.1'", //$NON-NLS-1$
-                "This is version about: 1.1.1", result); //$NON-NLS-1$
+        assertEquals("Result should be 'Testing 123: 1.1.1'", //$NON-NLS-1$
+                "Testing 123: 1.1.1", result); //$NON-NLS-1$
     }
 
     @Test
     public void formatStringTest2() {
-        testMessages.addFallback(DynamicMessageKey.VERSION_ABOUT, "This is version about: {0}.{1}.{2}"); //$NON-NLS-1$
-        String result = testMessages.formatString(DynamicMessageKey.VERSION_ABOUT,
+        testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}.{1}.{2}"); //$NON-NLS-1$
+        String result = testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE,
                 "1", "1", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         assertNotNull("There should be a result"); //$NON-NLS-1$
-        assertEquals("Result should be 'This is version about: 1.1.1'", //$NON-NLS-1$
-                "This is version about: 1.1.1", result); //$NON-NLS-1$
+        assertEquals("Result should be 'Testing 123: 1.1.1'", //$NON-NLS-1$
+                "Testing 123: 1.1.1", result); //$NON-NLS-1$
     }
 
     @Test
     public void formatStringTest3() {
-        testMessages.addFallback(DynamicMessageKey.VERSION_ABOUT, "This is version about: {0}"); //$NON-NLS-1$
-        String result = testMessages.formatString(DynamicMessageKey.VERSION_ABOUT,
+        testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}"); //$NON-NLS-1$
+        String result = testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE,
                 "1.1.1", "2.2.2"); //$NON-NLS-1$ //$NON-NLS-2$
         assertNotNull("There should be a result"); //$NON-NLS-1$
-        assertEquals("Result should be 'This is version about: 1.1.1'", //$NON-NLS-1$
-                "This is version about: 1.1.1", result); //$NON-NLS-1$
+        assertEquals("Result should be 'Testing 123: 1.1.1'", //$NON-NLS-1$
+                "Testing 123: 1.1.1", result); //$NON-NLS-1$
     }
 
     @Test
     public void formatStringTest4() {
-        testMessages.addFallback(DynamicMessageKey.VERSION_ABOUT, "This is version about: {0}.{1}.{0}"); //$NON-NLS-1$
-        String result = testMessages.formatString(DynamicMessageKey.VERSION_ABOUT,
+        testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}.{1}.{0}"); //$NON-NLS-1$
+        String result = testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE,
                 "1", "2", "3"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         assertNotNull("There should be a result"); //$NON-NLS-1$
-        assertEquals("Result should be 'This is version about: 1.1.1'", //$NON-NLS-1$
-                "This is version about: 1.2.1", result); //$NON-NLS-1$
+        assertEquals("Result should be 'Testing 123: 1.1.1'", //$NON-NLS-1$
+                "Testing 123: 1.2.1", result); //$NON-NLS-1$
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void formatStringTestNotEnoughParams() {
-        testMessages.addFallback(DynamicMessageKey.VERSION_ABOUT, "This is version about: {0}.{1}.{2}"); //$NON-NLS-1$
-        testMessages.formatString(DynamicMessageKey.VERSION_ABOUT, "1.1.1"); //$NON-NLS-1$
+        testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}.{1}.{2}"); //$NON-NLS-1$
+        testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE, "1.1.1"); //$NON-NLS-1$
         fail("Should not get here"); //$NON-NLS-1$
     }
 

@@ -1746,4 +1746,8 @@ public interface CommonApplicationConstants extends Constants {
     String resumeBehavior();
 
     String userNameAboutLabel();
+
+    String versionAboutLabel();
+
+    String fencingOptionsLabel();
 }

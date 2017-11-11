@@ -61,7 +61,7 @@
             </b:Row>
             <b:Row>
                 <b:Column size="SM_12">
-                    <g:InlineLabel ui:field="versionLabel" addStyleNames="{style.label}" />
+                    <g:InlineLabel text="{constants.versionAboutLabel}:" addStyleNames="{style.label}" />
                     <g:InlineLabel ui:field="versionText" />
                 </b:Column>
             </b:Row>

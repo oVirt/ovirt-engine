@@ -11,14 +11,6 @@ public interface DynamicMessages {
     String applicationTitle();
 
     /**
-     * Get the application version message using the {@code Dictionary} in the host page. With a fall back to the
-     * standard GWT Message.
-     *
-     * @return The version about message
-     */
-    String ovirtVersionAbout();
-
-    /**
      * Get the copy right notice using the {@code Dictionary} in the host page. With a fall back to the standard GWT
      * Constant.
      *
@@ -85,15 +77,6 @@ public interface DynamicMessages {
      * @return The application documentation title string.
      */
     String applicationDocTitle();
-
-    /**
-     *
-     * Get the fencing options link name using the {@code Dictionary} in the host page. With a fall back to
-     * the standard GWT Constant.
-     *
-     * @return The fencing options page name.
-     */
-    String fencingOptions();
 
     /**
      *

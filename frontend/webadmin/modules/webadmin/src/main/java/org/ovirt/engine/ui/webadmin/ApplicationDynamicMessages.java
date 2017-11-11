@@ -10,7 +10,6 @@ public class ApplicationDynamicMessages extends BaseDynamicMessages {
     public ApplicationDynamicMessages() {
         super();
         addFallback(DynamicMessageKey.APPLICATION_TITLE, constants.applicationTitle());
-        addFallback(DynamicMessageKey.VERSION_ABOUT, constants.ovirtVersionAbout());
         addFallback(DynamicMessageKey.COPY_RIGHT_NOTICE, constants.copyRightNotice());
         addFallback(DynamicMessageKey.DOC, constants.engineWebAdminDoc());
         addFallback(DynamicMessageKey.GUIDE_LINK_LABEL, constants.guideLinkLabel());
