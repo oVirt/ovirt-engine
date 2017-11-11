@@ -4,7 +4,8 @@
     xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
+    xmlns:h="urn:import:org.gwtbootstrap3.client.ui.html">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
@@ -75,11 +76,9 @@
                     <g:Label ui:field="copyrightNotice" />
                 </b:Column>
             </b:Row>
-            <b:Row>
-                <b:Column size="SM_12">
-                    <g:Label ui:field="logo" addStyleNames="obrand_aboutApplicationLogo" />
-                </b:Column>
-            </b:Row>
+
+            <h:Div ui:field="logo" addStyleNames="obrand_aboutApplicationLogo" />
+
         </b:Container>
     </d:OVirtBootstrapModal>
 

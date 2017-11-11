@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.gwtbootstrap3.client.ui.html.Div;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.OVirtBootstrapModal;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
@@ -37,7 +38,7 @@ public class AboutPopupView extends AbstractPopupView<OVirtBootstrapModal> imple
     Label copyrightNotice;
 
     @UiField
-    Label logo;
+    Div logo;
 
     private final ApplicationDynamicMessages dynamicMessages;
 

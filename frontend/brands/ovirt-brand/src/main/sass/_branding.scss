@@ -122,7 +122,7 @@ over) by other installed brands.
     display: block;
     background-size: contain;
     background-repeat: no-repeat;
-    float: right;
-    position: relative;
-    top: 140px;
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
 }
