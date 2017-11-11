@@ -73,6 +73,12 @@
             </b:Row>
             <b:Row>
                 <b:Column size="SM_12">
+                    <g:InlineLabel text="{constants.userNameAboutLabel}:" addStyleNames="{style.label}" />
+                    <g:InlineLabel ui:field="userNameText" />
+                </b:Column>
+            </b:Row>
+            <b:Row>
+                <b:Column size="SM_12">
                     <g:Label ui:field="copyrightNotice" />
                 </b:Column>
             </b:Row>

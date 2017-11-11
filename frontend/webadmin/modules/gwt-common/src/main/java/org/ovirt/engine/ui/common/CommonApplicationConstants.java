@@ -1744,4 +1744,6 @@ public interface CommonApplicationConstants extends Constants {
     String memoryDisk();
 
     String resumeBehavior();
+
+    String userNameAboutLabel();
 }
