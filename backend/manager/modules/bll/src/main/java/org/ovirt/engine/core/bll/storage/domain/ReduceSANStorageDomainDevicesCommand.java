@@ -278,6 +278,10 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
             return validate(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_DEVICE));
         }
 
+        if (getParameters().getDevicesToReduce().size() ==
+                lunDao.getAllForVolumeGroup(getStorageDomain().getStorage()).size()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_ALL_LUNS);
+        }
         return validate(blockSDValidator.lunsInDomain(getStorageDomain(), devices)) &&
                 validate(blockSDValidator.lunsEligibleForOperation(getStorageDomain(), devices));
     }
