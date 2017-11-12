@@ -23,6 +23,11 @@ landing page (welcome), login (sso), docs, 404, etc
     top: 62px;
 }
 
+.navbar-pf-vertical .nav .drawer-pf-trigger .drawer-pf-trigger-icon {
+    border-left: 0;
+    border-right: 0;
+}
+
 .container-pad {
     padding-left: 100px !important;
     padding-top: 50px !important;
