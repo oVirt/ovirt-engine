@@ -351,6 +351,15 @@ public abstract class OvfReader implements IOvfBuilder {
                 break;
 
             case OvfHardware.Network:
+                /**
+                 *  If NIC items are found in the hardware section of the OVF, they are the real ones,
+                 *  so clear the NIC references found in the <NetworkSection> of the OVF which are used
+                 *  only to map networks, but should not be used to create NICs. Clear() is performed only
+                 *  upon finding the first NIC item.
+                 */
+                if (nicIdx == 0) {
+                    interfaces.clear();
+                }
                 readNetworkItem(node, ++nicIdx);
                 break;
 
