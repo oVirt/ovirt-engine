@@ -8,10 +8,12 @@ import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.NetworkUsage;
+import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.Vlan;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkMapper {
@@ -84,6 +86,12 @@ public class NetworkMapper {
                             model.getDnsResolverConfiguration()));
         }
 
+        if (model.isSetExternalProvider() && model.getExternalProvider().isSetId()) {
+            ProviderNetwork providerNetwork = new ProviderNetwork();
+            providerNetwork.setProviderId(GuidUtils.asGuid(model.getExternalProvider().getId()));
+            entity.setProvidedBy(providerNetwork);
+        }
+
         return entity;
     }
 
@@ -151,6 +159,12 @@ public class NetworkMapper {
         if (entity.getDnsResolverConfiguration() != null) {
             model.setDnsResolverConfiguration(
                     DnsResolverConfigurationMapper.map(entity.getDnsResolverConfiguration()));
+        }
+
+        if (entity.isExternal()) {
+            OpenStackNetworkProvider externalProvider = new OpenStackNetworkProvider();
+            externalProvider.setId(entity.getProvidedBy().getExternalId());
+            model.setExternalProvider(externalProvider);
         }
 
         return model;
