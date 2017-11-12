@@ -1,0 +1,17 @@
+autoconf
+git
+java-1.8.0-openjdk-devel
+make
+maven
+net-tools
+otopi
+postgresql-jdbc
+postgresql-server
+pyflakes
+python2-mock
+python2-psycopg2
+python2-pytest
+python-devel
+python-isort
+python-pep8
+yum-utils
