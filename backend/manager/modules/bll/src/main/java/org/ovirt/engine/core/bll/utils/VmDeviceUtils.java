@@ -52,8 +52,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
@@ -66,7 +66,7 @@ public class VmDeviceUtils {
     private static final int VNC_MIN_MONITORS = 1;
     private static final int SINGLE_QXL_MONITORS = 1;
 
-    private final VmDao vmDao;
+    private final VmStaticDao vmStaticDao;
     private final VmDeviceDao vmDeviceDao;
     private final ClusterDao clusterDao;
     private final VmTemplateDao vmTemplateDao;
@@ -79,7 +79,7 @@ public class VmDeviceUtils {
     private OsRepository osRepository;
 
     @Inject
-    VmDeviceUtils(VmDao vmDao,
+    VmDeviceUtils(VmStaticDao vmStaticDao,
                   VmDeviceDao vmDeviceDao,
                   ClusterDao clusterDao,
                   VmTemplateDao vmTemplateDao,
@@ -89,7 +89,7 @@ public class VmDeviceUtils {
                   VideoDeviceSettings videoDeviceSettings,
                   ClusterUtils clusterUtils,
                   OsRepository osRepository) {
-        this.vmDao = vmDao;
+        this.vmStaticDao = vmStaticDao;
         this.vmDeviceDao = vmDeviceDao;
         this.clusterDao = clusterDao;
         this.vmTemplateDao = vmTemplateDao;
@@ -1578,14 +1578,8 @@ public class VmDeviceUtils {
      * @return VmStatic if a VM of given ID was found, VmTemplate otherwise.
      */
     private VmBase getVmBase(Guid vmId) {
-        VM vm = vmDao.get(vmId);
-        VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
-
-        if (vmBase == null) {
-            vmBase = vmTemplateDao.get(vmId);
-        }
-
-        return vmBase;
+        VmStatic vmStatic = vmStaticDao.get(vmId);
+        return vmStatic != null ? vmStatic : vmTemplateDao.get(vmId);
     }
 
     private Version getVmCompatibilityVersion(VmBase base) {
