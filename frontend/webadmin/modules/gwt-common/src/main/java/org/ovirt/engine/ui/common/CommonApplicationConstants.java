@@ -157,8 +157,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String cloudInitNetworkLabel();
 
-    String cloudInitNetworkSelectLabel();
-
     String cloudInitNetworkIpv4BootProtocolLabel();
 
     String cloudInitNetworkIpv6BootProtocolLabel();

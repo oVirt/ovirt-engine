@@ -5,7 +5,6 @@ import java.util.Map;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.IconType;
-import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -257,10 +256,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     ComboBox<String> networkComboBox;
 
     @UiField
-    @Ignore
-    Label networkSelectLabel;
-
-    @UiField
     Button networkAddButton;
 
     @UiField
@@ -474,7 +469,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         String sep = "|"; //$NON-NLS-1$
         // sequence is: <select label> | [+] <add label> | [-] <remove label>
-        networkSelectLabel.setText(constants.cloudInitNetworkSelectLabel());
         networkAddLabel.setText(constants.cloudInitObjectAddLabel());
         networkLabelSepAddRemove.setText(sep);
         networkRemoveLabel.setText(constants.cloudInitObjectRemoveLabel());
@@ -660,7 +654,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             cloudInitPasswordSetEditor.removeStyleName(customizableStyle.primaryOption());
             sysprepPasswordSetEditor.removeStyleName(customizableStyle.primaryOption());
             regenerateKeysEnabledEditor.removeStyleName(customizableStyle.primaryOption());
-            networkSelectLabel.addStyleName(Styles.FORM_GROUP);
         } else {
             sysprepScriptEditor.setContentWidgetContainerStyleName(customizableStyle.customScript());
         }
@@ -670,7 +663,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     private void setNetworkDetailsStyle(boolean enabled) {
         networkNameEditor.setEnabled(enabled);
         networkListEditor.setEnabled(enabled);
-        setLabelEnabled(networkSelectLabel, enabled);
         setLabelEnabled(networkLabelSepAddRemove, enabled);
         setLabelEnabled(networkRemoveLabel, enabled);
         networkRemoveButton.setEnabled(enabled);
