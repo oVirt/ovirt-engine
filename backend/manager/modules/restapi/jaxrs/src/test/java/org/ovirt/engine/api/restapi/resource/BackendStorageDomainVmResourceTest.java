@@ -365,7 +365,7 @@ public class BackendStorageDomainVmResourceTest
             resource.doImport(new Action());
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Action", "doImport", "cluster.id|name", "storageDomain.id|name");
+            verifyIncompleteException(wae, "Action", "doImport", "storageDomain.id|name");
         }
     }
 

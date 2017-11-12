@@ -73,7 +73,6 @@ public class BackendStorageDomainVmResource
 
     @Override
     public Response register(Action action) {
-        validateParameters(action, "cluster.id|name");
         if (action.isSetRegistrationConfiguration()) {
             validateVnicMappings(action);
             validateClusterMappings(action);
@@ -88,7 +87,9 @@ public class BackendStorageDomainVmResource
         ExternalRegistrationConfigurationMapper.mapFromModel(action.getRegistrationConfiguration(), params);
         params.setContainerId(guid);
         params.setStorageDomainId(parent.getStorageDomainId());
-        params.setClusterId(getClusterId(action));
+        if (action.isSetCluster()) {
+            params.setClusterId(getClusterId(action));
+        }
         params.setImagesExistOnTargetStorageDomain(true);
 
         if (action.isSetClone()) {
@@ -105,14 +106,18 @@ public class BackendStorageDomainVmResource
 
     @Override
     public Response doImport(Action action) {
-        validateParameters(action, "cluster.id|name", "storageDomain.id|name");
+        validateParameters(action, "storageDomain.id|name");
         Guid destStorageDomainId = getDestStorageDomainId(action);
+        Guid clusterId = null;
+        if (action.isSetCluster()) {
+            clusterId = getClusterId(action);
+        }
 
         ImportVmParameters params = new ImportVmParameters(getEntity(),
                 parent.getStorageDomainId(),
                 destStorageDomainId,
                 parent.getDataCenterId(destStorageDomainId),
-                getClusterId(action));
+                clusterId);
         params.setImageToDestinationDomainMap(getDiskToDestinationMap(action));
         params.setForceOverride(action.isSetExclusive() ? action.isExclusive() : false);
 
