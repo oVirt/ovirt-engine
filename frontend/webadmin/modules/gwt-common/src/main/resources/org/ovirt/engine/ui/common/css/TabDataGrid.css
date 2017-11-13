@@ -8,6 +8,7 @@
     padding: 0 0 0 4px;
     text-align: left;
     background-image: linear-gradient(to bottom, #fafafa 0, #ededed 100%);
+    background-clip: padding-box;
     height: 27px;
     line-height: 28px;
     white-space: nowrap;
@@ -67,7 +68,7 @@
 
 .dataGridFirstColumn {
     padding-left: 3px;
-    border-left: 0 solid #d1d1d1;
+    border-left: 0;
 }
 
 .dataGridLastColumn {
@@ -75,9 +76,9 @@
 
 .dataGridFirstColumnHeader {
     padding-left: 4px;
-    border-left: 0 solid #D1D1D1;
+    border-left: 0;
 }
 
 .dataGridLastColumnHeader {
-    border-right: 0 solid #D1D1D1;
+    border-right: 0;
 }

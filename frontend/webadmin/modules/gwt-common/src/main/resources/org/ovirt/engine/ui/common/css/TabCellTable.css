@@ -7,6 +7,8 @@
 .cellTableHeader {
     padding: 0 0 0 4px;
     text-align: left;
+    background-image: linear-gradient(to bottom, #fafafa 0, #ededed 100%);
+    background-clip: padding-box;
     height: 27px;
     line-height: 28px;
     white-space: nowrap;
