@@ -61,9 +61,10 @@ public class InteractiveAuthServlet extends HttpServlet {
                 } catch (AuthenticationException ex) {
                     if (userCredentials != null) {
                         String profile = userCredentials.getProfile() == null ? "N/A" : userCredentials.getProfile();
-                        log.error("Cannot authenticate user '{}@{}': {}",
+                        log.error("Cannot authenticate user '{}@{}' connecting from '{}': {}",
                                 userCredentials.getUsername(),
                                 profile,
+                                ssoSession.getSourceAddr(),
                                 ex.getMessage());
                         log.debug("Exception", ex);
                         SsoUtils.getSsoSession(request).setLoginMessage(ex.getMessage());

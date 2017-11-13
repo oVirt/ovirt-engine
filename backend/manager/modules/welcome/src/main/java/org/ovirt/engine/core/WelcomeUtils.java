@@ -38,6 +38,7 @@ public class WelcomeUtils {
     public static final String HTTP_PARAM_SCOPE = "scope";
     public static final String HTTP_PARAM_CLIENT_ID = "client_id";
     public static final String HTTP_PARAM_RESPONSE_TYPE = "response_type";
+    public static final String HTTP_PARAM_SOURCE_ADDR = "source_addr";
 
     public static final String JSON_ACCESS_TOKEN = "access_token";
     public static final String JSON_USER_ID = "user_id";

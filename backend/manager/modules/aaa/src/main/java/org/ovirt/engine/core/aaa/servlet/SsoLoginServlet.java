@@ -52,7 +52,8 @@ public class SsoLoginServlet extends HttpServlet {
                 .addParameter("app_url", request.getParameter("app_url"))
                 .addParameter("engine_url", FiltersHelper.getEngineUrl(request))
                 .addParameter("redirect_uri", redirectUri)
-                .addParameter("scope", scope);
+                .addParameter("scope", scope)
+                .addParameter("source_addr", request.getRemoteAddr());
 
         if (StringUtils.isNotEmpty(request.getParameter("sso_token"))) {
             urlBuilder.addParameter("sso_token", request.getParameter("sso_token"));

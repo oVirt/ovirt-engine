@@ -35,6 +35,7 @@ public class LoginServlet extends HttpServlet {
                     .addParameter(WelcomeUtils.HTTP_PARAM_REDIRECT_URI, WelcomeUtils.getOauth2CallbackUrl(request))
                     .addParameter(WelcomeUtils.HTTP_PARAM_SCOPE, request.getParameter(WelcomeUtils.SCOPE))
                     .addParameter(WelcomeUtils.HTTP_PARAM_LOCALE, request.getAttribute(WelcomeUtils.LOCALE).toString())
+                    .addParameter(WelcomeUtils.HTTP_PARAM_SOURCE_ADDR, request.getRemoteAddr())
                     .build());
         }
     }

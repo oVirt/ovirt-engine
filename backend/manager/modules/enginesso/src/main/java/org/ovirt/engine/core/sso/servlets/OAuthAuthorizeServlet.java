@@ -71,6 +71,7 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         String appUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_APP_URL, "");
         String engineUrl = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_ENGINE_URL, "");
         String redirectUri = request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI);
+        String sourceAddr = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_SOURCE_ADDR, "UNKNOWN");
         validateClientRequest(request, clientId, scope, redirectUri);
 
         // Create the session
@@ -79,6 +80,7 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         SsoSession ssoSession = SsoUtils.getSsoSession(request);
         ssoSession.setAppUrl(appUrl);
         ssoSession.setClientId(clientId);
+        ssoSession.setSourceAddr(sourceAddr);
         ssoSession.setRedirectUri(redirectUri);
         ssoSession.setScope(scope);
         ssoSession.setState(state);

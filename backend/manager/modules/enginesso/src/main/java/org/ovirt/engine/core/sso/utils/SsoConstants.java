@@ -66,6 +66,7 @@ public class SsoConstants {
     public static final String HTTP_PARAM_SCOPE = "scope";
     public static final String HTTP_PARAM_STATE = "state";
     public static final String HTTP_PARAM_CLIENT_ID = "client_id";
+    public static final String HTTP_PARAM_SOURCE_ADDR = "source_addr";
     public static final String HTTP_PARAM_CLIENT_SECRET = "client_secret";
     public static final String HTTP_REQ_ATTR_ACCESS_TOKEN = "access_token";
     public static final String HTTP_PARAM_SEARCH_QUERY_TYPE = "query_type";

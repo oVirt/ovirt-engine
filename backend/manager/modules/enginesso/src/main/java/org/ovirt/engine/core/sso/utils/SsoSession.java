@@ -18,6 +18,7 @@ public class SsoSession implements Serializable, Cloneable {
     public enum Status { unauthenticated, inprogress, authenticated}
     private Status status = Status.unauthenticated;
     private String clientId;
+    private String sourceAddr;
     private boolean active;
     private String appUrl;
     private String authorizationCode;
@@ -102,6 +103,14 @@ public class SsoSession implements Serializable, Cloneable {
         if (StringUtils.isNotEmpty(clientId)) {
             associateClientIds.add(clientId);
         }
+    }
+
+    public String getSourceAddr() {
+        return sourceAddr;
+    }
+
+    public void setSourceAddr(String sourceAddr) {
+        this.sourceAddr = sourceAddr;
     }
 
     public boolean isActive() {
