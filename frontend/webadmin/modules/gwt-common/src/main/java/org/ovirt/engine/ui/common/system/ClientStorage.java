@@ -33,6 +33,12 @@ public interface ClientStorage {
     void setLocalItem(String key, String value);
 
     /**
+     * Remove the value for the given key from the local (persistent) storage.
+     * @param key The key of the value to remove.
+     */
+    void removeLocalItem(String key);
+
+    /**
      * Returns the value for the given key from session (transient) storage,
      * or {@code null} if there is no value for such key.
      */

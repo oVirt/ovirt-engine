@@ -89,8 +89,7 @@ public class ColumnContextMenuItem<T> extends Composite {
 
     @UiHandler("checkBox")
     void onClick(ClickEvent event) {
-        boolean visible = checkBox.getValue();
-        controller.setColumnVisible(column, visible);
+        controller.setColumnVisible(column, checkBox.getValue());
     }
 
     @UiHandler("container")
