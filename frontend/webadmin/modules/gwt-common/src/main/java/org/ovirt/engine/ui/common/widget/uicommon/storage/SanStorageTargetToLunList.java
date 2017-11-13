@@ -188,7 +188,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 new EntityModelCellTable<>(multiSelection, (Resources) GWT.create(SanStorageListLunTableResources.class));
 
         table.initModelSortHandler(sortedLeafModel);
-        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn(multiSelection) {
+        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn() {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;
@@ -248,7 +248,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         serialNumColumn.makeSortable();
-        table.addColumn(serialNumColumn, constants.serialSanStorage(), "120px"); //$NON-NLS-1$
+        table.addColumn(serialNumColumn, constants.serialSanStorage(), "350px"); //$NON-NLS-1$
 
         table.setRowData(items);
         final Object selectedItem = sortedLeafModel.getSelectedItem();

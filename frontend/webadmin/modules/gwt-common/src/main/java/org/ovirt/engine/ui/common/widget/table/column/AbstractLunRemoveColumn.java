@@ -39,7 +39,7 @@ public abstract class AbstractLunRemoveColumn extends AbstractColumn<LunModel, L
                 if (model.getMetadataDevices().contains(value.getLunId()) ||
                         model.getIncludedLuns().size() == 1 ||
                         exactlyOneLunLeft) {
-                    input = templates.disabled(inputId, uiConstants.notAvailableLabel());
+                    input = templates.noButton(uiConstants.notAvailableLabel(), "color:gray", inputId); //$NON-NLS-1$
                 } else if (value.isRemoveLunSelected()) {
                     input = templates.toggledDown(inputId, constants.removeSanStorage());
                 } else {

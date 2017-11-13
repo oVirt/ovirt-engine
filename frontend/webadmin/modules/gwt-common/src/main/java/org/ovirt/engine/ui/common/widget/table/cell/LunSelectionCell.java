@@ -4,9 +4,6 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 /**
@@ -15,35 +12,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
  */
 public class LunSelectionCell extends AbstractCell<LunModel> {
 
-    interface CellTemplate extends SafeHtmlTemplates {
-
-        @Template("<span id=\"{0}\" style=\"padding-left: 1px;\">{1}</span>")
-        SafeHtml span(String id, SafeHtml html);
-
-        @Template("<input id=\"{0}\" tabindex='-1' type=\"{1}\" checked />")
-        SafeHtml inputChecked(String id, String type);
-
-        @Template("<input id=\"{0}\" tabindex='-1' type=\"{1}\" checked disabled />")
-        SafeHtml inputCheckedDisabled(String id, String type);
-
-        @Template("<input id=\"{0}\" tabindex='-1' type=\"{1}\" />")
-        SafeHtml inputUnchecked(String id, String type);
-
-        @Template("<input id=\"{0}\" tabindex='-1' type=\"{1}\" disabled />")
-        SafeHtml inputUncheckedDisabled(String id, String type);
-    }
-
-    private static final CellTemplate templates = GWT.create(CellTemplate.class);
-
-    private boolean multiSelection;
-
     private static final CommonApplicationResources resources = AssetProvider.getResources();
 
     public LunSelectionCell() {
-    }
-
-    public LunSelectionCell(boolean multiSelection) {
-        this.multiSelection = multiSelection;
     }
 
     @Override
@@ -57,28 +28,6 @@ public class LunSelectionCell extends AbstractCell<LunModel> {
         } else if (!value.getIsAccessible()) {
             // ImageResourceCell sets the id
             imageCell.render(context, resources.logWarningImage(), sb, id);
-        } else {
-            boolean checked = value.getIsSelected();
-            boolean disabled = value.getIsGrayedOut();
-            String inputId = id + "_input"; //$NON-NLS-1$
-
-            String type = multiSelection ? "checkbox" : "radio"; //$NON-NLS-1$ //$NON-NLS-2$
-            SafeHtml input = null;
-
-            if (checked && !disabled) {
-                input = templates.inputChecked(inputId, type);
-            }
-            else if (checked && disabled) {
-                input = templates.inputCheckedDisabled(inputId, type);
-            }
-            else if (!checked && !disabled) {
-                input = templates.inputUnchecked(inputId, type);
-            }
-            else {
-                input = templates.inputUncheckedDisabled(inputId, type);
-            }
-
-            sb.append(templates.span(id, input));
         }
     }
 

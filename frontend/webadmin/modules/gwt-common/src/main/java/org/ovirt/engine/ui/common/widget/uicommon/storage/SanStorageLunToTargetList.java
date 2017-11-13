@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -10,8 +9,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractLunAvailableSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunAddOrExtendColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunRemoveColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
@@ -28,7 +26,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.user.cellview.client.DataGrid.Resources;
-import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -67,8 +64,13 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 (Resources) GWT.create(SanStorageListTargetTableResources.class),
                 true);
 
-        // Create select all button
-        addSelectAllButton(table);
+        // Add first blank header
+        table.addColumn(new TextColumn<LunModel>() {
+            @Override
+            public String getValue(LunModel model) {
+                return ""; //$NON-NLS-1$
+            }
+        }, "", "20px"); //$NON-NLS-1$
 
         // Create header table
         initRootNodeTable(table);
@@ -101,32 +103,6 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         treeHeader.add(table);
     }
 
-    private void addSelectAllButton(EntityModelCellTable<ListModel<LunModel>> table) {
-        // Create 'Select All' check-box
-        Header<Boolean> selectAllHeader = new Header<Boolean>(new CheckboxCell(true, false) {
-            @Override
-            public Set<String> getConsumedEvents() {
-                Set<String> consumedEvents = super.getConsumedEvents();
-                consumedEvents.addAll(getParentConsumedEvents());
-                return consumedEvents;
-            }
-        }) {
-            @Override
-            public Boolean getValue() {
-                return model.getIsAllLunsSelected();
-            }
-        };
-
-        selectAllHeader.setUpdater(value -> model.setIsAllLunsSelected(value));
-
-        table.addColumn(new TextColumn<LunModel>() {
-            @Override
-            public String getValue(LunModel model) {
-                return ""; //$NON-NLS-1$
-            }
-        }, multiSelection ? selectAllHeader : null, "20px"); //$NON-NLS-1$
-    }
-
     final IEventListener<PropertyChangedEventArgs> lunModelSelectedItemListener = (ev, sender, args) -> {
         String propName = args.propertyName;
         final EntityModelCellTable<ListModel> table = (EntityModelCellTable<ListModel>) ev.getContext();
@@ -149,7 +125,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         initRootNodeTable(table);
 
         // Set custom selection column
-        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn(multiSelection) {
+        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn() {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;
@@ -221,13 +197,6 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             }
         }, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
 
-        table.addColumn(new AbstractLunAvailableSizeColumn() {
-            @Override
-            public LunModel getValue(LunModel object) {
-                return object;
-            }
-        }, constants.devAdditionalSizeSanStorage(), "100px"); //$NON-NLS-1$
-
         table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
@@ -269,13 +238,26 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                         public LunModel getValue(LunModel object) {
                             return object;
                         }
-                    }, constants.removeSanStorage(), "75px"); //$NON-NLS-1$
+                    }, constants.removeSanStorage(), "85px"); //$NON-NLS-1$
                     model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
                         table.redraw();
                     });
                 }
+            } else {
+                addAbstractLunAddOrExtendColumn(table, constants.actionsSanStorage());
             }
+        } else {
+            addAbstractLunAddOrExtendColumn(table, constants.addSanStorage());
         }
+    }
+
+    private void addAbstractLunAddOrExtendColumn(EntityModelCellTable<ListModel<LunModel>> table, String headerString) {
+        table.addColumn(new AbstractLunAddOrExtendColumn() {
+            @Override
+            public LunModel getValue(LunModel object) {
+                return object;
+            }
+        }, headerString, "85px"); //$NON-NLS-1$
     }
 
     @SuppressWarnings("unchecked")
