@@ -47,6 +47,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public org.ovirt.engine.api.model.Cluster update(org.ovirt.engine.api.model.Cluster incoming) {
+        BackendExternalProviderHelper.completeExternalProviders(this, incoming.getExternalNetworkProviders());
         return performUpdate(incoming,
                              new QueryIdResolver<>(QueryType.GetClusterById, IdQueryParameters.class),
                              ActionType.UpdateCluster,

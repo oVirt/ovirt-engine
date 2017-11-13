@@ -74,6 +74,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     public Response add(org.ovirt.engine.api.model.Cluster cluster) {
         validateParameters(cluster, getMandatoryParameters());
         StoragePool dataCenter = getDataCenter(cluster);
+        BackendExternalProviderHelper.completeExternalProviders(this, cluster.getExternalNetworkProviders());
         return performCreate(ActionType.AddCluster,
                 createAddCommandParams(cluster, dataCenter),
                 new QueryIdResolver<Guid>(QueryType.GetClusterById, IdQueryParameters.class));

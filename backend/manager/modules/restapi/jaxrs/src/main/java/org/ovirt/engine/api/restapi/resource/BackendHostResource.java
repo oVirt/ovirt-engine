@@ -107,6 +107,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Host update(Host incoming) {
         QueryIdResolver<Guid> hostResolver = new QueryIdResolver<>(QueryType.GetVdsByVdsId, IdQueryParameters.class);
         VDS entity = getEntity(hostResolver, true);
+        BackendExternalProviderHelper.completeExternalNetworkProviderConfigurations(this,
+                incoming.getExternalNetworkProviderConfigurations());
         // if fence agents list is null set it to null in entity
         if(incoming.getAgents() == null) {
             entity.setFenceAgents(null);
