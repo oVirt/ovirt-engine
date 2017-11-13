@@ -541,7 +541,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         ImageTransfer updates = new ImageTransfer();
         updates.setVdsId(getVdsId());
         updates.setImagedTicketId(imagedTicketId);
-        updates.setProxyUri(getProxyUri());
+        updates.setProxyUri(getProxyUri() + IMAGES_PATH);
+        updates.setDaemonUri(getImageDaemonUri(getVds().getHostName()) + IMAGES_PATH);
         updates.setSignedTicket(signedTicket);
         updateEntity(updates);
 
@@ -724,7 +725,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     private String getProxyUri() {
         String scheme = Config.<Boolean> getValue(ConfigValues.ImageProxySSLEnabled)?  HTTPS_SCHEME : HTTP_SCHEME;
         String address = Config.getValue(ConfigValues.ImageProxyAddress);
-        return scheme + address + IMAGES_PATH;
+        return scheme + address;
     }
 
     private String getImageDaemonUri(String daemonHostname) {

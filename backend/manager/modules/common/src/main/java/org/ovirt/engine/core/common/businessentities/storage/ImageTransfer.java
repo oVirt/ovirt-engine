@@ -23,6 +23,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private Guid diskId;
     private Guid imagedTicketId;
     private String proxyUri;
+    private String daemonUri;
     private String signedTicket;
 
     private Long bytesSent;
@@ -120,6 +121,14 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
 
     public void setProxyUri(String proxyUri) {
         this.proxyUri = proxyUri;
+    }
+
+    public String getDaemonUri() {
+        return daemonUri;
+    }
+
+    public void setDaemonUri(String daemonUri) {
+        this.daemonUri = daemonUri;
     }
 
     public String getSignedTicket() {

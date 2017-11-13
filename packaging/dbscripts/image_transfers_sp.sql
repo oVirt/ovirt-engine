@@ -53,6 +53,7 @@ CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_disk_id UUID,
     v_imaged_ticket_id UUID,
     v_proxy_uri VARCHAR,
+    v_daemon_uri VARCHAR,
     v_signed_ticket VARCHAR,
     v_bytes_sent BIGINT,
     v_bytes_total BIGINT
@@ -72,6 +73,7 @@ BEGIN
         disk_id = v_disk_id,
         imaged_ticket_id = v_imaged_ticket_id,
         proxy_uri = v_proxy_uri,
+        daemon_uri = v_daemon_uri,
         signed_ticket = v_signed_ticket,
         bytes_sent = v_bytes_sent,
         bytes_total = v_bytes_total
@@ -103,6 +105,7 @@ CREATE OR REPLACE FUNCTION InsertImageUploads(
     v_disk_id UUID,
     v_imaged_ticket_id UUID,
     v_proxy_uri VARCHAR,
+    v_daemon_uri VARCHAR,
     v_signed_ticket VARCHAR,
     v_bytes_sent BIGINT,
     v_bytes_total BIGINT
@@ -122,6 +125,7 @@ BEGIN
         disk_id,
         imaged_ticket_id,
         proxy_uri,
+        daemon_uri,
         signed_ticket,
         bytes_sent,
         bytes_total
@@ -138,6 +142,7 @@ BEGIN
         v_disk_id,
         v_imaged_ticket_id,
         v_proxy_uri,
+        v_daemon_uri,
         v_signed_ticket,
         v_bytes_sent,
         v_bytes_total

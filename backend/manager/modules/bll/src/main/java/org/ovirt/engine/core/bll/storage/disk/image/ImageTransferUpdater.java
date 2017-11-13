@@ -83,6 +83,9 @@ public class ImageTransferUpdater {
                 if (updates.getProxyUri() != null) {
                     entity.setProxyUri(updates.getProxyUri());
                 }
+                if (updates.getDaemonUri() != null) {
+                    entity.setDaemonUri(updates.getDaemonUri());
+                }
                 if (updates.getSignedTicket() != null) {
                     entity.setSignedTicket(updates.getSignedTicket());
                 }
