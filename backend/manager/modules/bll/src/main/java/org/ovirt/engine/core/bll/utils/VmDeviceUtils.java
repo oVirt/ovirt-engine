@@ -339,11 +339,11 @@ public class VmDeviceUtils {
     private Map<String, Object> getConsoleDeviceSpecParams(Guid vmId) {
         Map<String, Object> specParams = new HashMap<>();
         VmBase vmBase = getVmBase(vmId);
-        ConsoleTargetType targetType =
-                osRepository.getOsConsoleTargetType(
-                        vmBase.getOsId(),
-                        CompatibilityVersionUtils.getEffective(vmBase,
-                                clusterDao.get(vmBase.getClusterId())));
+        ConsoleTargetType targetType = osRepository.getOsConsoleTargetType(
+                vmBase.getOsId(),
+                CompatibilityVersionUtils.getEffective(
+                        vmBase,
+                        () -> vmBase.getClusterId() != null ? clusterDao.get(vmBase.getClusterId()) : null));
         specParams.put("enableSocket", "true");
         specParams.put("consoleType",
                 targetType == null ? "serial" : targetType.libvirtName);
@@ -903,11 +903,9 @@ public class VmDeviceUtils {
      * created for instance types.
      */
     private UsbControllerModel getUsbControllerModel(VmBase vmBase) {
-        final Version version = vmBase.getCustomCompatibilityVersion() != null
-                ? vmBase.getCustomCompatibilityVersion()
-                : vmBase.getClusterId() != null
-                        ? clusterDao.get(vmBase.getClusterId()).getCompatibilityVersion()
-                        : null;
+        Version version = CompatibilityVersionUtils.getEffective(
+                vmBase,
+                () -> vmBase.getClusterId() != null ? clusterDao.get(vmBase.getClusterId()) : null);
         return osRepository.getOsUsbControllerModel(vmBase.getOsId(), version);
     }
 
