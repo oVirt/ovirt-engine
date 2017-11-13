@@ -66,7 +66,7 @@ public class HugePageUtils {
         }
     }
 
-    public static boolean getHugepagesShared(VmBase vm){
+    public static boolean isHugepagesShared(VmBase vm) {
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
         Map<String, String> customProperties = util.convertProperties(vm.getCustomProperties());
         return Boolean.parseBoolean(customProperties.get("hugepages_shared"));

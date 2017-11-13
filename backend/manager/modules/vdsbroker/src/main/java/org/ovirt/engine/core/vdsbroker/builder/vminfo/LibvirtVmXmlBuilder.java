@@ -320,8 +320,7 @@ public class LibvirtVmXmlBuilder {
                 writer.writeStartElement("cell");
                 writer.writeAttributeString("cpus", vmNumaNode.get(VdsProperties.NUMA_NODE_CPU_LIST).toString());
                 writer.writeAttributeString("memory", String.valueOf(Integer.parseInt((String) vmNumaNode.get(VdsProperties.VM_NUMA_NODE_MEM)) * 1024));
-                boolean hugepagesShared = HugePageUtils.getHugepagesShared(vm.getStaticData());
-                if (hugepagesShared){
+                if (HugePageUtils.isHugepagesShared(vm.getStaticData())) {
                     writer.writeAttributeString("memAccess", "shared");
                 }
                 writer.writeEndElement();
@@ -2150,17 +2149,17 @@ public class LibvirtVmXmlBuilder {
     private void writeInput() {
         writer.writeStartElement("input");
 
-        // Avoid adding Tablet device for High Performance VMs since no USB devices are set
-        boolean tabletEnable = vm.getVmType() != VmType.HighPerformance && vm.getGraphicsInfos().size() == 1 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
+        boolean tabletEnable =
+                vm.getVmType() != VmType.HighPerformance // avoid adding Tablet device for HP VMs since no USB devices are set
+                && vm.getGraphicsInfos().size() == 1
+                && vm.getGraphicsInfos().containsKey(GraphicsType.VNC);
         if (tabletEnable) {
             writer.writeAttributeString("type", "tablet");
             writer.writeAttributeString("bus", "usb");
-        }
-        else if (vm.getClusterArch().getFamily() == ArchitectureType.x86) {
+        } else if (vm.getClusterArch().getFamily() == ArchitectureType.x86) {
             writer.writeAttributeString("type", "mouse");
             writer.writeAttributeString("bus", "ps2");
-        }
-        else {
+        } else {
             writer.writeAttributeString("type", "mouse");
             writer.writeAttributeString("bus", "usb");
         }
