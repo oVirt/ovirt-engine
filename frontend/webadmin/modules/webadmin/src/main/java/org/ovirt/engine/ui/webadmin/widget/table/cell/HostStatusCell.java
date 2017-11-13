@@ -29,6 +29,8 @@ public class HostStatusCell extends AbstractCell<VDS> {
         ImageResource statusImage = null;
         switch (status) {
         case Unassigned:
+            statusImage = resources.hostActivating();
+            break;
         case NonResponsive:
         case InstallFailed:
         case Connecting:
@@ -36,7 +38,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
             statusImage = resources.downImage();
             break;
         case PreparingForMaintenance:
-            statusImage = resources.prepareImage();
+            statusImage = resources.prepareForMaintenance();
             break;
         case Maintenance:
             statusImage = resources.maintenanceImage();

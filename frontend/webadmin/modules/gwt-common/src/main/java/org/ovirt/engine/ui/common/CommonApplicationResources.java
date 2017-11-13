@@ -130,6 +130,12 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/down_disabled.gif")
     ImageResource downDisabledImage();
 
+    @Source("images/host_activating.png")
+    ImageResource hostActivating();
+
+    @Source("images/prepare_for_maintenance.png")
+    ImageResource prepareForMaintenance();
+
     @Source("images/admin.png")
     ImageResource adminImage();
 
