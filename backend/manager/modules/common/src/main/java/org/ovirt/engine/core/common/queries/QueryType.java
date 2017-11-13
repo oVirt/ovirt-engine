@@ -435,6 +435,7 @@ public enum QueryType implements Serializable {
     // Providers
     GetAllProviders,
     GetProviderById,
+    GetProviderByName,
     GetAllNetworksForProvider,
 
     //Network QoS
