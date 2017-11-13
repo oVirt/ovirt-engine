@@ -1276,17 +1276,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 model.getStopGlusterServices().getEntity(),
                 model.getForce().getEntity());
 
-        model.startProgress();
+        cancelConfirm();
 
-        Frontend.getInstance().runAction(ActionType.MaintenanceNumberOfVdss,
-                params,
-                result -> {
-                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                    localModel.stopProgress();
-                    if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
-                        cancelConfirm();
-                    }
-                }, model);
+        Frontend.getInstance().runAction(ActionType.MaintenanceNumberOfVdss, params);
     }
 
     public void approve() {
