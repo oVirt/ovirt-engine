@@ -286,7 +286,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         if (!validate(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(getStoragePool().getCompatibilityVersion()))) {
             return false;
         }
-        if (!spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()) {
+        if (spValidator.isNotInStatus(StoragePoolStatus.Uninitialized).isValid()) {
             return checkMasterDomainIsUp();
         }
         return true;
