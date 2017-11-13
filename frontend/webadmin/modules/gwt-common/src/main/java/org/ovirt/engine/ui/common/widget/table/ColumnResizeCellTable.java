@@ -365,12 +365,6 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
         columnVisibleMap.put(column, visible);
 
-        column.setCellStyleNames(visible ? GRID_VISIBLE : GRID_HIDDEN);
-
-        int index = getColumnIndex(column);
-        removeColumnStyleName(index, visible ? GRID_HIDDEN : GRID_VISIBLE);
-        addColumnStyleName(index, visible ? GRID_VISIBLE : GRID_HIDDEN);
-
         if (columnResizePersistenceEnabled) {
             String persistedWidth = readColumnWidth(column);
             if (persistedWidth != null) {
@@ -417,7 +411,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
                 ((ResizableHeader<?>) header).setResizeEnabled(columnVisible);
             }
         }
-        if (columnResizePersistenceEnabled && !overridePersist) {
+        if (columnResizePersistenceEnabled && !overridePersist && columnVisible) {
             String persistedWidth = readColumnWidth(column);
             if (persistedWidth != null) {
                 width = persistedWidth;
@@ -425,6 +419,12 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         }
 
         super.setColumnWidth(column, width);
+        column.setCellStyleNames(columnVisible ? GRID_VISIBLE : GRID_HIDDEN);
+
+        int index = getColumnIndex(column);
+        removeColumnStyleName(index, columnVisible ? GRID_HIDDEN : GRID_VISIBLE);
+        addColumnStyleName(index, columnVisible ? GRID_VISIBLE : GRID_HIDDEN);
+        redraw();
     }
 
     private TableCellElement getHeaderCell(TableElement tableElement, int columnIndex) {
@@ -496,6 +496,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
             visible = columnVisibleMapOverride.get(column);
         }
 
+        visible = visible && getHiddenPersistedColumnWidth(column) == null;
         return visible;
     }
 
@@ -503,7 +504,9 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     public void setColumnVisible(Column<T, ?> column, boolean visible) {
         if (isColumnPresent(column)) {
             columnVisibleMapOverride.put(column, visible);
-            ensureColumnVisible(column, null, visible, columnWidthMap.get(column), false);
+            String columnWidth = getHiddenPersistedColumnWidth(column) != null ? getHiddenPersistedColumnWidth(column) : columnWidthMap.get(column);
+            persistColumnVisibility(column, visible);
+            ensureColumnVisible(column, null, visible, columnWidth, false);
         }
     }
 
@@ -628,6 +631,14 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         return null;
     }
 
+    protected String getHiddenColumnWidthKey(Column<T, ?> column) {
+        if (columnResizePersistenceEnabled) {
+            return GRID_HIDDEN + "_" + GRID_COLUMN_WIDTH_PREFIX + "_" + getGridElementId() //$NON-NLS-1$ //$NON-NLS-2$
+                + "_" + getColumnIndex(column); //$NON-NLS-1$
+        }
+        return null;
+    }
+
     protected String getGridElementId() {
         return gridController.getId();
     }
@@ -649,6 +660,32 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
             }
         }
         return null;
+    }
+
+    protected String getHiddenPersistedColumnWidth(Column<T, ?> column) {
+        String result = null;
+        if (columnResizePersistenceEnabled) {
+            String key = getHiddenColumnWidthKey(column);
+            if (key != null) {
+                result = clientStorage.getLocalItem(key);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void persistColumnVisibility(Column<T, ?> column, boolean visible) {
+        if (columnResizePersistenceEnabled) {
+            String key = getHiddenColumnWidthKey(column);
+            if (key != null) {
+                if (!visible) {
+                    // Store the width of the column before hiding it, so we can restore it.
+                    clientStorage.setLocalItem(key, getColumnWidth(column));
+                } else {
+                    clientStorage.removeLocalItem(key);
+                }
+            }
+        }
     }
 
     protected void dontApplyResizableHeaderStyle() {
