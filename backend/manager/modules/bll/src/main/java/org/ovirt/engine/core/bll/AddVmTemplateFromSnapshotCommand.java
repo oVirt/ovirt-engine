@@ -73,10 +73,8 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         if (vm == null) {
             return;
         }
-        vm.setClusterId(getClusterId());
-        vm.setStoragePoolId(getStoragePoolId());
+        vm.setStaticData(getParameters().getMasterVm());
         setVm(vm);
-        getParameters().setVm(vm);
         setSnapshotName(getSnapshot() != null ? getSnapshot().getDescription() : null);
         super.init();
     }
