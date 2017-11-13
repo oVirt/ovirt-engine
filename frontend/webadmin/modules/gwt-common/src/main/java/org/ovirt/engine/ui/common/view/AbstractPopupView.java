@@ -25,6 +25,7 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
 
     public AbstractPopupView(EventBus eventBus) {
         super(eventBus);
+        setPopupPositioner(new OvirtCenterPopupPositioner());
     }
 
     @Override
