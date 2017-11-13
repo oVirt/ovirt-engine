@@ -155,8 +155,12 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         this.bytesTotal = bytesTotal;
     }
 
-    public String getClientURLForTransfer() {
+    public String getProxyURLForTransfer() {
         return getProxyUri() + "/" + getImagedTicketId();
+    }
+
+    public String getDaemonURLForTransfer() {
+        return getDaemonUri() + "/" + getImagedTicketId();
     }
 
     @Override

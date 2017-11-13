@@ -45,7 +45,10 @@ public class ImageTransferMapper {
             model.getImage().setId(entity.getDiskId().toString());
         }
         if (entity.getProxyUri() != null && entity.getImagedTicketId() != null) {
-            model.setProxyUrl( entity.getClientURLForTransfer() );
+            model.setProxyUrl(entity.getProxyURLForTransfer());
+        }
+        if (entity.getDaemonUri() != null && entity.getImagedTicketId() != null) {
+            model.setTransferUrl(entity.getDaemonURLForTransfer());
         }
         if (entity.getSignedTicket() != null) {
             model.setSignedTicket(entity.getSignedTicket());
