@@ -257,6 +257,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         AuditLogable logable = new AuditLogableImpl();
         logable.setVdsName(getVds().getName());
         logable.setVdsId(getVds().getId());
+        logable.setCorrelationId(getCorrelationId());
         auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_STARTED);
 
         if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
