@@ -25,7 +25,7 @@ Install the following system components:
 - ovirt-setup-lib
 - maven-3
 - ansible >= 2.4
-- ovirt-ansible-roles (more info in Host deploy via Ansible section)
+- ovirt-ansible-roles
 - python-flake8 / pyflakes (optional)
 - python-pep8 / pep8 (optional)
 - python-docker-py (optional)
@@ -415,18 +415,3 @@ Default is `1`.
 Example:
 
   # rpmbuild -D"ovirt_build_minimal 1" -tb @tarball@
-
-== Host deploy via Ansible
-
-Since version 4.2 host deploy process contains also invocation of
-ovirt-host-deploy Ansible role. This role is not part of engine, but it's
-a part of https://github.com/ovirt/ovirt-ansible[oVirt Ansible Roles] project.
-
-In order to make it work clone the project and run:
-
-  $ git clone git@github.com:oVirt/ovirt-ansible.git
-  $ cd ovirt-ansible
-  $ make install PREFIX="${PREFIX}"
-
-It will install all needed playbooks and roles to your dev env.
-If you don't install it, then host deploy process will fail.
