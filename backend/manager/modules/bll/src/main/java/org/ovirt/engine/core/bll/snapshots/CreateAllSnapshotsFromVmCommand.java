@@ -537,7 +537,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (isMemorySnapshotSupported()) {
             parameters.setMemoryVolume(snapshot.getMemoryVolume());
         }
-        parameters.setVmFrozen(shouldFreezeOrThawVm());
+
+        // In case the snapshot is auto-generated for live storage migration,
+        // we do not want to issue an FS freeze thus setting vmFrozen to true
+        // so a freeze will not be issued by Vdsm
+        parameters.setVmFrozen(shouldFreezeOrThawVm() ||
+                getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
 
         return parameters;
     }
@@ -596,7 +601,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private boolean shouldFreezeOrThawVm() {
-        return isLiveSnapshotApplicable() && isCinderDisksExist();
+        return isLiveSnapshotApplicable() && isCinderDisksExist() &&
+                getParameters().getParentCommand() != ActionType.LiveMigrateDisk;
     }
 
     private boolean isCinderDisksExist() {
