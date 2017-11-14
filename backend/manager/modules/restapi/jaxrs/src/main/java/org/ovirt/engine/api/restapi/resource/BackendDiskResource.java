@@ -119,6 +119,7 @@ public class BackendDiskResource
                 storageDomainId);
         params.setImageGroupID(asGuid(disk.getId()));
         params.setQuotaId(action.isSetQuota() ? asGuid(action.getQuota().getId()) : null);
+        params.setDiskProfileId(action.isSetDiskProfile() ? asGuid(action.getDiskProfile().getId()) : null);
 
         return doAction(ActionType.MoveDisk, params, action);
     }
@@ -155,6 +156,7 @@ public class BackendDiskResource
 
         params.setImageGroupID(asGuid(disk.getId()));
         params.setQuotaId(action.isSetQuota() ? asGuid(action.getQuota().getId()) : null);
+        params.setDiskProfileId(action.isSetDiskProfile() ? asGuid(action.getDiskProfile().getId()) : null);
 
         Disk actionDisk = action.getDisk();
         if (actionDisk != null) {
