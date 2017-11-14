@@ -272,7 +272,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (getVm().isRunningOrPaused() && !getVm().isHostedEngine()) {
             if (!vmHandler.copyNonEditableFieldsToDestination(
-                    oldVm.getStaticData(), newVmStatic, isHotSetEnabled(), getParameters().isMemoryHotUnplugEnabled())) {
+                    oldVm.getStaticData(),
+                    newVmStatic,
+                    isHotSetEnabled(),
+                    oldVm.getStatus(),
+                    getParameters().isMemoryHotUnplugEnabled())) {
                 // fail update vm if some fields could not be copied
                 throw new EngineException(EngineError.FAILED_UPDATE_RUNNING_VM);
             }

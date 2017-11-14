@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -170,5 +171,35 @@ public enum VMStatus implements Identifiable {
     public boolean isQualifiedForQosChange() {
         // TODO - Add other status, if live QoS change is possible when the VM has the status
         return this == Up;
+    }
+
+    /**
+     * Sole purpose of this enum is allow to pass multiple VMStatus items to {@link EditableVmField} annotation
+     * without the need of enumerating them.
+     */
+    public enum Group {
+        NONE(EnumSet.noneOf(VMStatus.class)),
+        UP(EnumSet.of(Up)),
+        RUNNING_OR_PAUSED(EnumSet.of(
+                Up,
+                PoweringDown,
+                PoweringUp,
+                MigratingFrom,
+                MigratingTo,
+                WaitForLaunch,
+                RebootInProgress,
+                Paused,
+                RestoringState,
+                SavingState));
+
+        private final EnumSet<VMStatus> states;
+
+        Group(EnumSet<VMStatus> states) {
+            this.states = states;
+        }
+
+        public EnumSet<VMStatus> getStates() {
+            return states;
+        }
     }
 }

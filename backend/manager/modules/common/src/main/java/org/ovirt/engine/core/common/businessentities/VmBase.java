@@ -95,7 +95,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
-            hotsetAllowed = true,
+            hotSettableOnStatus = VMStatus.Group.UP,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Min(1)
@@ -129,7 +129,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     @EditableVmField(
             onHostedEngine = true,
-            hotsetAllowed = true,
+            hotSettableOnStatus = VMStatus.Group.UP,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @CopyOnNewVersion
@@ -358,7 +358,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = false,
-            hotsetAllowed = true,
+            hotSettableOnStatus = VMStatus.Group.RUNNING_OR_PAUSED,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private Guid leaseStorageDomainId;
@@ -448,7 +448,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(
             onHostedEngine = true,
-            hotsetAllowed = true,
+            hotSettableOnStatus = VMStatus.Group.RUNNING_OR_PAUSED,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     @Min(0)

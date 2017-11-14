@@ -218,8 +218,8 @@ public class VmHandler implements BackendService {
             } else {
                 updateVmsStatic.addField(statusList, fieldName);
 
-                if (annotation.hotsetAllowed()) {
-                    updateVmsStatic.addHotsetFields(fieldName);
+                if (!annotation.hotSettableOnStatus().getStates().isEmpty()) {
+                    updateVmsStatic.addHotsetField(fieldName, annotation.hotSettableOnStatus().getStates());
                 }
             }
 
@@ -259,9 +259,10 @@ public class VmHandler implements BackendService {
             VmStatic source,
             VmStatic destination,
             boolean hotSetEnabled,
+            VMStatus vmStatus,
             boolean hotMemoryUnplug) {
         final boolean succeeded =
-                updateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
+                updateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled, vmStatus);
         if (!succeeded) {
             return false;
         }

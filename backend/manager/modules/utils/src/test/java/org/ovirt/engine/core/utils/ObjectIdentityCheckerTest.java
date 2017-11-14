@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.junit.Test;
@@ -54,15 +55,22 @@ public class ObjectIdentityCheckerTest {
     @Test
     public void testHotsetUpdateableWhenHotsetRequested() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
-        oic.addHotsetFields("name");
-        assertTrue("hot set requested for hot set fields should be true", oic.isFieldUpdatable(null, "name", null, true));
+        oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
+        assertTrue("hot set requested for hot set fields should be true in state Up", oic.isFieldUpdatable(VMStatus.Up, "name", null, true));
+    }
+
+    @Test
+    public void testHotsetUpdateableWhenHotsetRequestedAndStatusOtherThanHotSettable() {
+        ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
+        oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
+        assertFalse("hot set requested for hot set fields should be false in state other than Up", oic.isFieldUpdatable(null, "name", null, true));
     }
 
     @Test
     public void testHotsetNotUpdateableWhenHotsetNotRequested() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         assertFalse("Should be false by default", oic.isFieldUpdatable("name"));
-        oic.addHotsetFields("name");
+        oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
         assertFalse("hot set not requested should return false even if field is hot set", oic.isFieldUpdatable(null, "name", null, false));
     }
 
@@ -70,7 +78,7 @@ public class ObjectIdentityCheckerTest {
     public void testHotsetUpdateableWhenHotsetRequestedWithStatus() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         oic.addField(VMStatus.Down, "name");
-        oic.addHotsetFields("name");
+        oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
         assertTrue("hot set requested for hot set fields should be true", oic.isFieldUpdatable(VMStatus.Down, "name", null, true));
     }
 
@@ -78,7 +86,7 @@ public class ObjectIdentityCheckerTest {
     public void testHotsetUpdateableWhenHotsetNotRequestedWithStatus() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         oic.addField(VMStatus.Down, "name");
-        oic.addHotsetFields("name");
+        oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
         assertTrue("hot set not requested field should be updateable according to status", oic.isFieldUpdatable(VMStatus.Down, "name", null, false));
     }
 }

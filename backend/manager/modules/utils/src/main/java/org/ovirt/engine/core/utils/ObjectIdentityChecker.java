@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
@@ -24,7 +26,7 @@ public class ObjectIdentityChecker {
     private static Map<Class<?>, ObjectIdentityChecker> identities = new HashMap<>();
     private Map<Enum<?>, Set<String>> dictionary = new HashMap<>();
     private Set<String> permitted = new HashSet<>();
-    private Set<String> hotsetAllowedFields = new HashSet<>();
+    private Map<String, EnumSet<VMStatus>> hotSettableFieldsInStates = new HashMap<>();
     private Set<String> transientFields = new HashSet<>();
     private Set<String> permittedForHostedEngine = new HashSet<>();
 
@@ -92,10 +94,8 @@ public class ObjectIdentityChecker {
         }
     }
 
-    public final void addHotsetFields(String... fieldNames) {
-        for (String fieldName : fieldNames) {
-            hotsetAllowedFields.add(fieldName);
-        }
+    public final void addHotsetField(String fieldName, EnumSet<VMStatus> statuses) {
+        hotSettableFieldsInStates.put(fieldName, statuses);
     }
 
     public final void addTransientFields(String... fieldNames) {
@@ -112,8 +112,12 @@ public class ObjectIdentityChecker {
         return permittedForHostedEngine.contains(name);
     }
 
-    public final boolean isHotSetField(String name) {
-        return hotsetAllowedFields.contains(name);
+    public final boolean isFieldHotSettableInStatus(String fieldName, VMStatus status) {
+        final EnumSet<VMStatus> hotSettableStatuses = hotSettableFieldsInStates.get(fieldName);
+        if (hotSettableStatuses == null) {
+            return false;
+        }
+        return hotSettableStatuses.contains(status);
     }
 
     public final boolean isTransientField(String name) {
@@ -134,9 +138,9 @@ public class ObjectIdentityChecker {
                 Set<String> values = dictionary.get(status);
                 returnValue = values != null ? values.contains(name) : false;
 
-                // if field is not updateable in this status, check if hotset request and its an hotset allowed field
-                if (!returnValue && hotsetEnabled) {
-                    returnValue = isHotSetField(name);
+                // if field is not updatable in this status, check if it's hotset request and an hotset allowed field
+                if (!returnValue) {
+                    returnValue = status instanceof VMStatus && isFieldHotSettableInStatus(name, (VMStatus) status);
                 }
             }
             if (!returnValue) {
@@ -152,7 +156,8 @@ public class ObjectIdentityChecker {
      * @param source object that has values of non editable fields
      * @param destination object to copy the non editable to it
      */
-    public boolean copyNonEditableFieldsToDestination(Object source, Object destination, boolean hotSetEnabled) {
+    public boolean copyNonEditableFieldsToDestination(
+            Object source, Object destination, boolean hotSetEnabled, VMStatus vmStatus) {
         Class<?> cls = source.getClass();
         while (!cls.equals(Object.class)) {
             for (Field srcFld : cls.getDeclaredFields()) {
@@ -160,7 +165,7 @@ public class ObjectIdentityChecker {
                     // copy fields that are non final, and not-editable and not a hotset field or it is but this is not hotset case
                     if (!Modifier.isFinal(srcFld.getModifiers()) &&
                             !isFieldUpdatable(srcFld.getName()) &&
-                            (!isHotSetField(srcFld.getName()) || !hotSetEnabled)) {
+                            (!isFieldHotSettableInStatus(srcFld.getName(), vmStatus) || !hotSetEnabled)) {
                         srcFld.setAccessible(true);
 
                         Field dstFld = cls.getDeclaredField(srcFld.getName());

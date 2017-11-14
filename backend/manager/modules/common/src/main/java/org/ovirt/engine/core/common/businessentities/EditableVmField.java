@@ -16,7 +16,12 @@ import java.lang.annotation.Target;
 public @interface EditableVmField {
     boolean onHostedEngine() default false;
 
-    boolean hotsetAllowed() default false;
+    /**
+     * Field is considered editable in these states provided
+     * {@link org.ovirt.engine.core.common.action.VmManagementParametersBase#applyChangesLater}
+     * is not set.
+     */
+    VMStatus.Group hotSettableOnStatus() default VMStatus.Group.NONE;
 
     VMStatus[] onStatuses() default {};
 }
