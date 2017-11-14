@@ -80,6 +80,10 @@ public class ElementIdCellTable<T> extends ColumnResizeCellTable<T> implements H
     @Override
     public void setElementId(String elementId) {
         this.elementId = elementId;
+        // We can only populate the swapped list after the id is set since we use the id to generate the key
+        // to look up the swapped list. If the elementId is not set, then the map will remain empty and the
+        // order cannot be overriden.
+        popuplateSwappedList();
     }
 
     @Override

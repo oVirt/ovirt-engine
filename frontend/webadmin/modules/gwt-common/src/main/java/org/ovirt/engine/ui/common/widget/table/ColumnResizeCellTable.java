@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -135,6 +136,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     // Prefix for keys used to store widths of individual columns
     private static final String GRID_COLUMN_WIDTH_PREFIX = "GridColumnWidth"; //$NON-NLS-1$
 
+    private static final String GRID_SWAPPED_COLUMN_LIST = "GridSwappedColumns"; //$NON-NLS-1$
     // This is 1px instead of 0px as zero-size columns seem to confuse the cell table.
     private static final String HIDDEN_WIDTH = "1px"; //$NON-NLS-1$
 
@@ -164,6 +166,13 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     // Current column widths
     private final Map<Column<T, ?>, String> columnWidthMap = new HashMap<>();
+
+    // Mapping of column indexes to swapped indexes
+    private final Map<Integer, Integer> realToSwappedIndexes = new HashMap<>();
+    private final List<Column<T, ?>> unaddedColumns = new ArrayList<>();
+    private final List<Header<?>> unaddedHeaders = new ArrayList<>();
+    private final Map<Column<T, ?>, String> unaddedColumnWidths = new HashMap<>();
+    private int maxSwappedIndex = -1;
 
     // Column header context menu popup
     private final ColumnContextPopup<T> contextPopup = new ColumnContextPopup<>(this);
@@ -209,6 +218,25 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
     }
 
+    protected void popuplateSwappedList() {
+        String swappedColumnKey = getSwappedColumnListKey();
+        if (swappedColumnKey != null) {
+            String swappedColumns = clientStorage.getLocalItem(swappedColumnKey);
+            if (swappedColumns != null) {
+                // Data is stored in n=m,x=y,m=n,y=x format. so we can split on , and then on = to get mappings from the
+                // storage.
+                String[] split = swappedColumns.split(","); //$NON-NLS-1$
+                for (int i = 0; i < split.length; i++) {
+                    String[] tuple = split[i].split("="); //$NON-NLS-1$
+                    if (tuple.length == 2) {
+                        realToSwappedIndexes.put(Integer.parseInt(tuple[1]), Integer.parseInt(tuple[0]));
+                        maxSwappedIndex = Math.max(maxSwappedIndex, Integer.parseInt(tuple[0]));
+                    }
+                }
+            }
+        }
+    }
+
     private NativeContextMenuHandler ensureContextMenuHandler() {
         if (headerContextMenuHandler == null) {
             headerContextMenuHandler = event -> {
@@ -226,6 +254,35 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     @Override
     public void addColumn(Column<T, ?> column, Header<?> header) {
+        // If for some reason we have less columns than maxSwappedIndex (because we removed a column in the code)
+        // this will break as no columns are ever added to the grid.
+        if (maxSwappedIndex >= 0) {
+            unaddedColumns.add(column);
+            unaddedHeaders.add(header);
+            if (unaddedColumns.size() == maxSwappedIndex + 1) {
+                // Got the last column needed before we can properly add them in the right order.
+                // We have a list of columns in the order in which they were added in unaddedColumns/headers.
+                // We have a map of original to target indexes, now we can loop over the indexes, and if the map
+                // target matches the current index, we look up the source index and add that one instead.
+                for (int i = 0; i < unaddedColumns.size(); i++) {
+                    int originalIndex = determineOriginalIndex(i);
+                    Column<T, ?> unaddedColumn = unaddedColumns.get(originalIndex);
+                    addColumnImpl(unaddedColumn, unaddedHeaders.get(originalIndex));
+                    setColumnWidth(unaddedColumn, unaddedColumnWidths.get(unaddedColumn), false);
+                }
+                // clean up the book keeping.
+                unaddedColumns.clear();
+                unaddedHeaders.clear();
+                unaddedColumnWidths.clear();
+                // If more columns are added, they will be added in the order they are added.
+                maxSwappedIndex = -1;
+            }
+        } else {
+            addColumnImpl(column, header);
+        }
+    }
+
+    private void addColumnImpl(Column<T, ?> column, Header<?> header) {
         // build resizable headers, if necessary
         if (columnResizingEnabled && header instanceof AbstractCheckboxHeader) {
             header = createResizableCheckboxHeader(header, column);
@@ -386,7 +443,11 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     @Override
     public void setColumnWidth(Column<T, ?> column, String width) {
-        setColumnWidth(column, width, false);
+        if (unaddedColumns.indexOf(column) < 0) {
+            setColumnWidth(column, width, false);
+        } else {
+            unaddedColumnWidths.put(column, width);
+        }
     }
 
     public void setColumnWidth(Column<T, ?> column, String width, boolean overridePersist) {
@@ -504,7 +565,8 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     public void setColumnVisible(Column<T, ?> column, boolean visible) {
         if (isColumnPresent(column)) {
             columnVisibleMapOverride.put(column, visible);
-            String columnWidth = getHiddenPersistedColumnWidth(column) != null ? getHiddenPersistedColumnWidth(column) : columnWidthMap.get(column);
+            String persistedWidth = getHiddenPersistedColumnWidth(column);
+            String columnWidth = persistedWidth != null ? persistedWidth : columnWidthMap.get(column);
             persistColumnVisibility(column, visible);
             ensureColumnVisible(column, null, visible, columnWidth, false);
         }
@@ -512,9 +574,17 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     @Override
     public void swapColumns(Column<T, ?> columnOne, Column<T, ?> columnTwo) {
+        swapColumns(columnOne, columnTwo, true);
+    }
+
+    private void swapColumns(Column<T, ?> columnOne, Column<T, ?> columnTwo, boolean persistSwap) {
         if (isColumnPresent(columnOne) && isColumnPresent(columnTwo)) {
             int columnOneIndex = getColumnIndex(columnOne);
             int columnTwoIndex = getColumnIndex(columnTwo);
+            int originalIndexColumnOne = determineOriginalIndex(columnOneIndex);
+            int originalIndexColumnTwo = determineOriginalIndex(columnTwoIndex);
+            boolean columnOneVisible = isColumnVisible(columnOne);
+            boolean columnTwoVisible = isColumnVisible(columnTwo);
             boolean oneWasBeforeTwo = columnOneIndex < columnTwoIndex;
 
             // columnOne gets removed first
@@ -529,6 +599,9 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
             removeColumn(columnOneIndex);
             removeColumn(columnTwoRemovalIndex);
 
+            // Make both columns visible for swapping.
+            setColumnVisible(columnOne, true);
+            setColumnVisible(columnTwo, true);
             if (oneWasBeforeTwo) {
                 insertColumn(columnOneInsertionIndex, columnOne, columnOneHeader);
                 insertColumn(columnTwoInsertionIndex, columnTwo, columnTwoHeader);
@@ -536,8 +609,35 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
                 insertColumn(columnTwoInsertionIndex, columnTwo, columnTwoHeader);
                 insertColumn(columnOneInsertionIndex, columnOne, columnOneHeader);
             }
+            if (persistSwap) {
+                realToSwappedIndexes.put(columnOneIndex, originalIndexColumnTwo);
+                realToSwappedIndexes.put(columnTwoIndex, originalIndexColumnOne);
 
+                storeSwappedIndexMap();
+            }
+            // Make both columns visible for swapping.
+            setColumnVisible(columnOne, columnOneVisible);
+            setColumnVisible(columnTwo, columnTwoVisible);
             contextPopup.getContextMenu().update();
+        }
+    }
+
+    private int determineOriginalIndex(int index) {
+        Integer result = realToSwappedIndexes.get(index);
+        if (result != null) {
+            return result;
+        }
+        return index;
+    }
+
+    private void storeSwappedIndexMap() {
+        String value = realToSwappedIndexes.entrySet().stream().map(
+                entry -> entry.getValue() + "=" + entry.getKey()).collect(Collectors.joining(",")); //$NON-NLS-1$ $NON-NLS-2$
+        if (value != null && !"".equals(value)) { // $NON-NLS-1$
+            String swappedColumnKey = getSwappedColumnListKey();
+            if (swappedColumnKey != null) {
+                clientStorage.setLocalItem(swappedColumnKey, value);
+            }
         }
     }
 
@@ -626,7 +726,8 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     protected String getColumnWidthKey(Column<T, ?> column) {
         if (columnResizePersistenceEnabled) {
-            return GRID_COLUMN_WIDTH_PREFIX + "_" + getGridElementId() + "_" + getColumnIndex(column); //$NON-NLS-1$ //$NON-NLS-2$
+            return GRID_COLUMN_WIDTH_PREFIX + "_" + getGridElementId() + "_" //$NON-NLS-1$ //$NON-NLS-2$
+                    + determineOriginalIndex(getColumnIndex(column));
         }
         return null;
     }
@@ -634,7 +735,14 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     protected String getHiddenColumnWidthKey(Column<T, ?> column) {
         if (columnResizePersistenceEnabled) {
             return GRID_HIDDEN + "_" + GRID_COLUMN_WIDTH_PREFIX + "_" + getGridElementId() //$NON-NLS-1$ //$NON-NLS-2$
-                + "_" + getColumnIndex(column); //$NON-NLS-1$
+                + "_" + determineOriginalIndex(getColumnIndex(column)); //$NON-NLS-1$
+        }
+        return null;
+    }
+
+    protected String getSwappedColumnListKey() {
+        if (columnResizePersistenceEnabled) {
+            return getGridElementId() + "_" + GRID_SWAPPED_COLUMN_LIST; //$NON-NLS-1$
         }
         return null;
     }
