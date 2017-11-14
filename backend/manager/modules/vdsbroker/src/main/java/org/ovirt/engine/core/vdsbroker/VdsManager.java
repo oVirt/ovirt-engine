@@ -240,11 +240,10 @@ public class VdsManager {
     }
 
     public void refresh() {
+        boolean releaseLock = true;
         if (lockManager.acquireLock(monitoringLock).getFirst()) {
             try {
                 setIsSetNonOperationalExecuted(false);
-                Guid storagePoolId = null;
-                ArrayList<VDSDomainsData> domainsList = null;
                 synchronized (this) {
                     refreshCachedVds();
                     if (cachedVds == null) {
@@ -257,6 +256,7 @@ public class VdsManager {
                         updateIteration();
                         if (isMonitoringNeeded()) {
                             setStartTime();
+                            releaseLock = false;
                             hostMonitoring =
                                     new HostMonitoring(this,
                                             cachedVds,
@@ -265,41 +265,65 @@ public class VdsManager {
                                             dbFacade,
                                             auditLogDirector);
                             hostMonitoring.refresh();
-                            unrespondedAttempts.set(0);
-                            setLastUpdate();
                         }
                     } catch (VDSNetworkException e) {
                         logNetworkException(e);
+                        releaseLock = true;
                     } catch (VDSRecoveringException ex) {
                         handleVdsRecoveringException(ex);
+                        releaseLock = true;
                     } catch (RuntimeException ex) {
                         logFailureMessage(ex);
+                        releaseLock = true;
                     }
-                    try {
-                        if (hostMonitoring != null) {
-                            hostMonitoring.afterRefreshTreatment();
+                }
+            } catch (Throwable e) {
+                releaseLock = true;
+                log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(e));
+                log.debug("Exception:", e);
+            } finally {
+                if (releaseLock) {
+                    lockManager.releaseLock(monitoringLock);
+                }
+            }
+        }
+    }
 
-                            // Get cachedVds data for updating domains list, ignoring cachedVds which is down, since it's not
-                            // connected
-                            // to
-                            // the storage anymore (so there is no sense in updating the domains list in that case).
-                            if (cachedVds != null && cachedVds.getStatus() != VDSStatus.Maintenance) {
-                                storagePoolId = cachedVds.getStoragePoolId();
-                                domainsList = cachedVds.getDomains();
-                            }
-                        }
+    public void afterRefreshTreatment(boolean succeeded) {
 
-                        hostMonitoring = null;
-                    } catch (IRSErrorException ex) {
-                        logAfterRefreshFailureMessage(ex);
-                        if (log.isDebugEnabled()) {
-                            logException(ex);
-                        }
-                    } catch (RuntimeException ex) {
-                        logAfterRefreshFailureMessage(ex);
+        if (!succeeded) {
+            lockManager.releaseLock(monitoringLock);
+            return;
+        }
+
+        try {
+            synchronized (this) {
+                unrespondedAttempts.set(0);
+                setLastUpdate();
+                Guid storagePoolId = null;
+                ArrayList<VDSDomainsData> domainsList = null;
+
+                try {
+                    hostMonitoring.afterRefreshTreatment();
+
+                    // Get cachedVds data for updating domains list, ignoring cachedVds which is down, since it's not
+                    // connected
+                    // to
+                    // the storage anymore (so there is no sense in updating the domains list in that case).
+                    if (cachedVds != null && cachedVds.getStatus() != VDSStatus.Maintenance) {
+                        storagePoolId = cachedVds.getStoragePoolId();
+                        domainsList = cachedVds.getDomains();
+                    }
+
+                    hostMonitoring = null;
+                } catch (IRSErrorException ex) {
+                    logAfterRefreshFailureMessage(ex);
+                    if (log.isDebugEnabled()) {
                         logException(ex);
                     }
-
+                } catch (RuntimeException ex) {
+                    logAfterRefreshFailureMessage(ex);
+                    logException(ex);
                 }
 
                 // Now update the status of domains, this code should not be in
@@ -307,12 +331,12 @@ public class VdsManager {
                 if (domainsList != null) {
                     updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
                 }
-            } catch (Exception e) {
-                log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(e));
-                log.debug("Exception:", e);
-            } finally {
-                lockManager.releaseLock(monitoringLock);
             }
+        } catch (Exception e) {
+            log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Exception:", e);
+        } finally {
+            lockManager.releaseLock(monitoringLock);
         }
     }
 
@@ -646,6 +670,13 @@ public class VdsManager {
         VDSReturnValue caps =
                 resourceManager.runVdsCommand(VDSCommandType.GetCapabilities,
                         new VdsIdAndVdsVDSCommandParametersBase(vds));
+        return processRefreshCapabilitiesResponse(processHardwareCapsNeeded, vds, oldVDS, caps);
+    }
+
+    public VDSStatus processRefreshCapabilitiesResponse(AtomicBoolean processHardwareCapsNeeded,
+            VDS vds,
+            VDS oldVDS,
+            VDSReturnValue caps) {
         if (caps.getSucceeded()) {
             // Verify version capabilities
             Set<Version> hostVersions = null;
