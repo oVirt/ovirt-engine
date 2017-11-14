@@ -83,8 +83,8 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
-        // we fectch from db and not using VmTmplate property becase
-        // VmTemplate is the one from export domain and not from database
+        // We fetch from DB instead of using the VmTemplate property because
+        // it's the one from the export domain and not from database
         VmTemplate tmpl = vmTemplateDao.get(getVmTemplateId());
         if (tmpl != null) {
             if (tmpl.getStatus() == VmTemplateStatus.Locked) {
