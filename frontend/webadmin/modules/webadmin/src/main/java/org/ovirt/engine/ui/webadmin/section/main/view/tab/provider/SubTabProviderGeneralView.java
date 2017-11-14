@@ -68,12 +68,11 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 4);
-        formBuilder.setRelativeColumnWidth(0, 4);
 
-        formBuilder.addFormItem(new FormItem(constants.nameProvider(), name, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.typeProvider(), type, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.descriptionProvider(), description, 2, 0));
-        formBuilder.addFormItem(new FormItem(constants.urlProvider(), url, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.nameProvider(), name, 0, 0),  2, 10);
+        formBuilder.addFormItem(new FormItem(constants.typeProvider(), type, 1, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.descriptionProvider(), description, 2, 0), 2, 10);
+        formBuilder.addFormItem(new FormItem(constants.urlProvider(), url, 3, 0), 2, 10);
     }
 
     @Override
