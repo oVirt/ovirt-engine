@@ -25,9 +25,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class IconValidator {
 
-    private static final int MAX_DATAURL_SIZE = 32 * 1024;
     private final DimensionsType dimensionsType;
-    private String dataUrl;
     private String mimeType;
     private String base64Data;
     private byte[] rawImageData;
@@ -37,7 +35,6 @@ public class IconValidator {
 
     private IconValidator(DimensionsType dimensionsType, String dataUrl) {
         this.dimensionsType = dimensionsType;
-        this.dataUrl = dataUrl;
         validateDataUrlFormat(dataUrl);
         if (!validationResult.isValid()) {
             return;
@@ -56,10 +53,6 @@ public class IconValidator {
             return;
         }
         validateDimensions();
-        if (!validationResult.isValid()) {
-            return;
-        }
-        validateDataSize();
     }
 
     public static ValidationResult validate(DimensionsType iconType, String dataUrl) {
@@ -147,23 +140,6 @@ public class IconValidator {
                     "$currentDimensions " + image.getWidth() + "x" + image.getHeight());
         }
     }
-
-    private void validateDataSize() {
-        if (dataUrl.length() > MAX_DATAURL_SIZE) {
-            validationResult = new ValidationResult(EngineMessage.DATA_SIZE_OF_PROVIDED_VM_ICON_TOO_LARGE,
-                    "$maxSize " + getSizeEstimateByDataUrlLength(MAX_DATAURL_SIZE),
-                    "$currentSize " + getSizeEstimateByDataUrlLength(dataUrl.length()));
-        }
-    }
-
-    /**
-     * @return size estimate in form of 'x kB'
-     */
-    private static String getSizeEstimateByDataUrlLength(int dataUrlLength) {
-        return "" + (int) ((3.0/4) * dataUrlLength / 1000) + " kB";
-    }
-
-
 
     public enum FileType {
 
