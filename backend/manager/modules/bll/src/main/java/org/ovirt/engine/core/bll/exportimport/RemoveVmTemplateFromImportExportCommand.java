@@ -61,40 +61,38 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
 
     @Override
     protected boolean validate() {
-        boolean retVal = validate(templateExists());
-        if (retVal) {
-            List<DiskImage> images = templatesFromExport.get(templatesFromExport.keySet().stream().filter(
-                    t -> t.getId().equals(getParameters().getVmTemplateId())).findFirst().orElse(null));
+        if (!validate(templateExists())) {
+            return false;
+        }
 
-            if (images != null) {
-                getParameters().setImages(images);
-            } else {
-                retVal = false;
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+        List<DiskImage> images = templatesFromExport.get(templatesFromExport.keySet().stream().filter(
+                t -> t.getId().equals(getParameters().getVmTemplateId())).findFirst().orElse(null));
+
+        if (images != null) {
+            getParameters().setImages(images);
+        } else {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+        }
+
+        StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
+        if (!validate(validator.isDomainExistAndActive())) {
+            return false;
+        }
+
+        if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+        }
+
+        // we fectch from db and not using VmTmplate property becase
+        // VmTemplate is the one from export domain and not from database
+        VmTemplate tmpl = vmTemplateDao.get(getVmTemplateId());
+        if (tmpl != null) {
+            if (tmpl.getStatus() == VmTemplateStatus.Locked) {
+                return failValidation(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
             }
         }
 
-        if (retVal) {
-            StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
-            retVal = validate(validator.isDomainExistAndActive());
-        }
-        if (retVal && getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-            retVal = false;
-        }
-        if (retVal) {
-            // we fectch from db and not using VmTmplate property becase
-            // VmTemplate is the one from export domain and not from database
-            VmTemplate tmpl = vmTemplateDao.get(getVmTemplateId());
-            if (tmpl != null) {
-                retVal = tmpl.getStatus() != VmTemplateStatus.Locked;
-                if (!retVal) {
-                    getReturnValue().getValidationMessages()
-                            .add(EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
-                }
-            }
-        }
-        return retVal;
+        return true;
     }
 
     @Override
