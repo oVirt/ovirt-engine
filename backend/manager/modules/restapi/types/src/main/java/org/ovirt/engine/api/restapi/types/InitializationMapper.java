@@ -103,48 +103,60 @@ public class InitializationMapper {
     @Mapping(from = Initialization.class, to = VmInit.class)
     public static VmInit map(Initialization model, VmInit template) {
         VmInit entity = template != null ? template : new VmInit();
+        boolean someSubTagSet = false;
 
         if (model.isSetHostName()) {
+            someSubTagSet = true;
             entity.setHostname(model.getHostName());
         }
 
         if (model.isSetDomain()) {
+            someSubTagSet = true;
             entity.setDomain(model.getDomain());
         }
 
         if (model.isSetTimezone()) {
+            someSubTagSet = true;
             entity.setTimeZone(model.getTimezone());
         }
 
         if (model.isSetAuthorizedSshKeys()) {
+            someSubTagSet = true;
             entity.setAuthorizedKeys(model.getAuthorizedSshKeys());
         }
 
         if (model.isSetRegenerateSshKeys()) {
+            someSubTagSet = true;
             entity.setRegenerateKeys(model.isRegenerateSshKeys());
         }
 
         if (model.isSetDnsServers()) {
+            someSubTagSet = true;
             entity.setDnsServers(model.getDnsServers());
         }
 
         if (model.isSetDnsSearch()) {
+            someSubTagSet = true;
             entity.setDnsSearch(model.getDnsSearch());
         }
 
         if (model.isSetWindowsLicenseKey()) {
+            someSubTagSet = true;
             entity.setWinKey(model.getWindowsLicenseKey());
         }
 
         if (model.isSetRootPassword()) {
+            someSubTagSet = true;
             entity.setRootPassword(model.getRootPassword());
         }
 
         if (model.isSetCustomScript()) {
+            someSubTagSet = true;
             entity.setCustomScript(model.getCustomScript());
         }
 
         if (model.isSetNicConfigurations()) {
+            someSubTagSet = true;
             List<VmInitNetwork> networks = new ArrayList<>();
             for (NicConfiguration nic : model.getNicConfigurations().getNicConfigurations()) {
                 networks.add(map(nic, null));
@@ -153,35 +165,47 @@ public class InitializationMapper {
         }
 
         if (model.isSetInputLocale()) {
+            someSubTagSet = true;
             entity.setInputLocale(model.getInputLocale());
         }
 
         if (model.isSetUiLanguage()) {
+            someSubTagSet = true;
             entity.setUiLanguage(model.getUiLanguage());
         }
 
         if (model.isSetSystemLocale()) {
+            someSubTagSet = true;
             entity.setSystemLocale(model.getSystemLocale());
         }
 
         if (model.isSetUserLocale()) {
+            someSubTagSet = true;
             entity.setUserLocale(model.getUserLocale());
         }
 
         if (model.isSetUserName()) {
+            someSubTagSet = true;
             entity.setUserName(model.getUserName());
         }
 
         if (model.isSetActiveDirectoryOu()) {
+            someSubTagSet = true;
             entity.setActiveDirectoryOU(model.getActiveDirectoryOu());
         }
 
         if (model.isSetOrgName()) {
+            someSubTagSet = true;
             entity.setOrgName(model.getOrgName());
         }
 
         if (model.isSetCloudInit()) {
+            someSubTagSet = true;
             VmMapper.map(model.getCloudInit(), entity);
+        }
+
+        if (!someSubTagSet) {
+            return null;
         }
 
         return entity;
