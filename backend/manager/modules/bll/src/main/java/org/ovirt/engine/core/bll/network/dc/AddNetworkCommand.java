@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +107,8 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         return validate(providerValidator.providerIsSet())
                 && validate(validator.externalNetworkNewInDataCenter())
                 && validate(validator.externalNetworkIsVmNetwork())
-                && validate(validator.externalNetworkVlanValid());
+                && validate(validator.externalNetworkVlanValid())
+                && validate(validator.providerPhysicalNetworkValid());
     }
 
     @Override
@@ -177,6 +179,39 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         public ValidationResult externalNetworkIsVmNetwork() {
             return network.isVmNetwork() ? ValidationResult.VALID
                     : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_MUST_BE_VM_NETWORK);
+        }
+
+        /**
+         * @return An error if the network selected as provider physical network does not exist in the data center or
+         *         if label or vlan id is specified.
+         */
+        public ValidationResult providerPhysicalNetworkValid() {
+            if (!network.getProvidedBy().isSetPhysicalNetworkId()) {
+                return ValidationResult.VALID;
+            }
+
+            List<EngineMessage> errorMessages = new ArrayList<>();
+
+            if (isLabelOrVlanSet()) {
+                errorMessages.add(EngineMessage.ACTION_TYPE_FAILED_LABEL_AND_VLAN_CANNOT_BE_SET_WITH_PROVIDER_PHYSICAL_NETWORK);
+            }
+            if (!providerPhysicalNetworkInDataCenter()) {
+                errorMessages.add(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_PHYSICAL_NETWORK_DOES_NOT_EXIST_ON_DC);
+            }
+
+            if (errorMessages.isEmpty()) {
+                return ValidationResult.VALID;
+            }
+            return new ValidationResult(errorMessages);
+        }
+
+        private boolean isLabelOrVlanSet() {
+            return network.getLabel() != null || network.getVlanId() != null;
+        }
+
+        private boolean providerPhysicalNetworkInDataCenter() {
+            return getNetworks().stream().anyMatch(
+                    otherNetwork -> network.getProvidedBy().getPhysicalNetworkId().equals(otherNetwork.getId()));
         }
     }
 }
