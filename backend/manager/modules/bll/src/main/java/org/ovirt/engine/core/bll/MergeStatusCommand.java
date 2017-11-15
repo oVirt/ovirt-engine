@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -62,7 +61,7 @@ public class MergeStatusCommand<T extends MergeParameters>
 
     public void attemptResolution() {
         Set<Guid> images;
-        if (vmDynamicDao.get(getParameters().getVmId()).getStatus() == VMStatus.Down) {
+        if (vmDynamicDao.get(getParameters().getVmId()).getStatus().isNotRunning()) {
             StoragePool pool = storagePoolDao.get(getParameters().getStoragePoolId());
             if (pool.getSpmVdsId() == null || pool.getStatus() != StoragePoolStatus.Up) {
                 log.info("VM down, waiting on SPM election to resolve Live Merge");
