@@ -96,7 +96,9 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
     @SuppressWarnings("unchecked")
     @Override
     protected boolean validate() {
-        super.validate();
+        if (!super.validate()) {
+            return false;
+        }
 
         if (isLunsAlreadyInUse(getParameters().getLunIds())) {
             return false;
@@ -107,8 +109,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         }
 
         if (!getStorageDomain().getStorageType().isBlockDomain()) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
         final ActionReturnValue returnValue = connectAllHostsToLun();
@@ -117,12 +118,11 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
 
             ConnectAllHostsToLunResult result = returnValue.getActionReturnValue();
             if (result.getFailedVds() != null) {
-                getReturnValue().getValidationMessages().add(String.format("$hostName %1s",
-                        result.getFailedVds().getName()));
+                addValidationMessage(String.format("$hostName %1s", result.getFailedVds().getName()));
             }
 
             String lunId = result.getFailedLun() != null ? result.getFailedLun().getLUNId() : "";
-            getReturnValue().getValidationMessages().add(String.format("$lun %1s", lunId));
+            addValidationMessage(String.format("$lun %1s", lunId));
             return false;
         } else {
             // use luns list from connect command
