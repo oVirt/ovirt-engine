@@ -14,10 +14,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
@@ -50,7 +49,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     protected void executeVdsBrokerCommand() {
         buildVmData();
         log.info("VM {}", createInfo);
-        if ((boolean) Config.getValue(ConfigValues.DomainXML, vm.getClusterCompatibilityVersion().getValue())) {
+        if (FeatureSupported.isDomainXMLSupported(vm.getClusterCompatibilityVersion())) {
             LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
                     createInfo,
                     vm,

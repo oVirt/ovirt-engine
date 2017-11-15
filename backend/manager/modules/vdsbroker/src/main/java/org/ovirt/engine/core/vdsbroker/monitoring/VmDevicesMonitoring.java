@@ -24,12 +24,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -467,9 +466,7 @@ public class VmDevicesMonitoring {
     }
 
     private boolean isDomainXmlEnabledForVds(Guid vdsId) {
-        return (boolean) Config.getValue(
-                ConfigValues.DomainXML,
-                resourceManager.getVdsManager(vdsId).getCompatibilityVersion().getValue());
+        return FeatureSupported.isDomainXMLSupported(resourceManager.getVdsManager(vdsId).getCompatibilityVersion());
     }
 
     /**
