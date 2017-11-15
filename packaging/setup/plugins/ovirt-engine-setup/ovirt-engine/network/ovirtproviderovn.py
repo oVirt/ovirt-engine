@@ -106,6 +106,10 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
+            OvnEnv.OVIRT_PROVIDER_OVN,
+            None
+        )
+        self.environment.setdefault(
             OvnEnv.FIREWALLD_SERVICES_DIR,
             OvnFileLocations.DEFAULT_FIREWALLD_SERVICES_DIR
         )
@@ -675,18 +679,18 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _customization(self):
-        do_install = self.environment.get(
-            OvnEnv.OVIRT_PROVIDER_OVN
-        )
-
         provider_installed = self._is_provider_installed()
-        self._enabled = (do_install or self._query_install_ovn()) and \
+        if (
+            self.environment[OvnEnv.OVIRT_PROVIDER_OVN] is None and
             not provider_installed
+        ):
+            self.environment[OvnEnv.OVIRT_PROVIDER_OVN] = \
+                self._query_install_ovn()
 
-        self.environment[
-            OvnEnv.OVIRT_PROVIDER_OVN
-        ] = self._enabled
-
+        self._enabled = (
+            self.environment[OvnEnv.OVIRT_PROVIDER_OVN] and
+            not provider_installed
+        )
         if self._enabled or provider_installed:
             self._setup_firewalld_services()
 

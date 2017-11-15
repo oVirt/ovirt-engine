@@ -864,6 +864,8 @@ class OvnEnv(object):
     @osetupattrs(
         answerfile=True,
         description=_('Set up ovirt-provider-ovn'),
+        postinstallfile=True,
+        reconfigurable=True,
         summary=True,
     )
     def OVIRT_PROVIDER_OVN(self):
