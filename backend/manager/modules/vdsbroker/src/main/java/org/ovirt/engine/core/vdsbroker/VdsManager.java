@@ -236,7 +236,8 @@ public class VdsManager {
                 clientTimeOut,
                 connectionTimeOut,
                 clientRetries,
-                heartbeat);
+                heartbeat,
+                resourceManager.getExecutor());
     }
 
     public void refresh() {

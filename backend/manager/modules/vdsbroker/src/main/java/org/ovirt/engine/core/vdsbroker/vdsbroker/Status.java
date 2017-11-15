@@ -13,11 +13,13 @@ public class Status {
 
     public Status(Map<String, Object> innerMap) {
         code = (Integer) innerMap.get(CODE);
-        if (innerMap.get(MESSAGE) instanceof Object[]) {
-            message = Arrays.toString((Object[])innerMap.get(MESSAGE));
-        }
-        else {
-            message = innerMap.get(MESSAGE).toString();
+        Object obj = innerMap.get(MESSAGE);
+        if (obj == null) {
+            message = "";
+        } else if (obj instanceof Object[]) {
+            message = Arrays.toString((Object[]) obj);
+        } else {
+            message = obj.toString();
         }
     }
 

@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
@@ -50,6 +52,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsCommandExecutor;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
@@ -451,5 +454,13 @@ public class ResourceManager implements BackendService {
     public void subscribe(EventSubscriber subscriber) {
         log.debug("subscribe called with subscription id: {}", subscriber.getSubscriptionId());
         ReactorFactory.getWorker(this.parallelism).getPublisher().subscribe(subscriber);
+    }
+
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
+
+    public ScheduledExecutorService getExecutor() {
+        return executor;
     }
 }
