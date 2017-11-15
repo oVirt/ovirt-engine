@@ -2553,6 +2553,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__NOT_HE_HOST();
 
+    String VAR__DETAIL__HE_HOST_NOT_POSITIVE_SCORE();
+
     String VAR__DETAIL__NOT_ENOUGH_HE_SPARES();
 
     String VAR__DETAIL__SAME_HOST();

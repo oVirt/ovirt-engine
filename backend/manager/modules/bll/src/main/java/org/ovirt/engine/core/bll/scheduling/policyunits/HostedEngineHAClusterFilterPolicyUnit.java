@@ -39,6 +39,12 @@ public class HostedEngineHAClusterFilterPolicyUnit extends PolicyUnitImpl {
 
             List<VDS> hostsToRunOn = new ArrayList<>();
             for (VDS host : hosts) {
+                if (!host.isHostedEngineConfigured()) {
+                    log.debug("Host '{}' was filtered out as it is not a Hosted Engine host.", host.getName());
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NOT_HE_HOST.name());
+                    continue;
+                }
+
                 int haScore = host.getHighlyAvailableScore();
                 if (haScore > 0) {
                     hostsToRunOn.add(host);
@@ -48,7 +54,7 @@ public class HostedEngineHAClusterFilterPolicyUnit extends PolicyUnitImpl {
                 } else {
                     log.debug("Host '{}' was filtered out as it doesn't have a positive score (the score is {})",
                             host.getName(), haScore);
-                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NOT_HE_HOST.name());
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__HE_HOST_NOT_POSITIVE_SCORE.name());
                 }
             }
 
