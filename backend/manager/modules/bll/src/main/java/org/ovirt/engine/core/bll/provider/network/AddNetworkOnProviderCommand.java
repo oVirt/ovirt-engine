@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -25,6 +26,8 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
     private ProviderDao providerDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private NetworkDao networkDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
 
@@ -56,6 +59,10 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
     @Override
     protected void executeCommand() {
+        if (getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
+            loadPhysicalNetworkProviderParameters();
+        }
+
         NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
         getNetwork().getProvidedBy().setExternalId(proxy.add(getNetwork()));
         getNetwork().setVlanId(null);
@@ -67,6 +74,12 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
             return null;
         });
         postAddNetwork(getProvider().getId(), getNetwork().getProvidedBy().getExternalId());
+    }
+
+    private void loadPhysicalNetworkProviderParameters() {
+        Network physicalProviderNetwork = networkDao.get(getNetwork().getProvidedBy().getPhysicalNetworkId());
+        getNetwork().setVlanId(physicalProviderNetwork.getVlanId());
+        getNetwork().setLabel(physicalProviderNetwork.getVdsmName());
     }
 
     @Override

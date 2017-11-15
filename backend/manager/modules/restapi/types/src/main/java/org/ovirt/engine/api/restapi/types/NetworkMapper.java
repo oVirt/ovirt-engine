@@ -89,6 +89,10 @@ public class NetworkMapper {
         if (model.isSetExternalProvider() && model.getExternalProvider().isSetId()) {
             ProviderNetwork providerNetwork = new ProviderNetwork();
             providerNetwork.setProviderId(GuidUtils.asGuid(model.getExternalProvider().getId()));
+            if (model.isSetExternalProviderPhysicalNetwork() && model.getExternalProviderPhysicalNetwork().isSetId()) {
+                providerNetwork.setPhysicalNetworkId(
+                        GuidUtils.asGuid(model.getExternalProviderPhysicalNetwork().getId()));
+            }
             entity.setProvidedBy(providerNetwork);
         }
 
@@ -165,6 +169,11 @@ public class NetworkMapper {
             OpenStackNetworkProvider externalProvider = new OpenStackNetworkProvider();
             externalProvider.setId(entity.getProvidedBy().getExternalId());
             model.setExternalProvider(externalProvider);
+            if (entity.getProvidedBy().isSetPhysicalNetworkId()) {
+                Network providerPhysicalNetwork = new Network();
+                providerPhysicalNetwork.setId(entity.getProvidedBy().getPhysicalNetworkId().toString());
+                model.setExternalProviderPhysicalNetwork(providerPhysicalNetwork);
+            }
         }
 
         return model;
