@@ -582,34 +582,18 @@ public class VmDevicesConverter {
     List<Map<String, Object>> parseVolumeChain(XmlNode xmlNode) {
         List<Map<String, Object>> chain = new ArrayList<>();
 
-        Integer index = null;
         while (true) {
             String path = parseDiskPath(xmlNode);
 
-            Map<String, Object> chainEntry = new HashMap<>();
             String volumeId = parseVolumeIdFromPath(path);
             if (!StringUtils.isEmpty(volumeId)) {
-                chainEntry.put(VdsProperties.VolumeId, volumeId);
-                chainEntry.put(VdsProperties.Path, path);
-                chainEntry.put(VdsProperties.Index, index);
                 // needs to be returned in the opposite order as provided by libvirt
-                chain.add(0, chainEntry);
+                chain.add(0, Collections.singletonMap(VdsProperties.VolumeId, volumeId));
             }
 
             xmlNode = xmlNode.selectSingleNode("backingStore");
             if (xmlNode == null) {
                 return chain;
-            }
-
-            XmlAttribute xmlIndex = xmlNode.attributes.get("index");
-            if (xmlIndex != null) {
-                try {
-                    index = Integer.parseInt(xmlIndex.getValue());
-                } catch (NumberFormatException e) {
-                    log.error("The backing store index is invalid. Path {}, index: {}",
-                            path, xmlIndex.getValue());
-                    throw new IllegalArgumentException("The backing store index is invalid.");
-                }
             }
         }
     }

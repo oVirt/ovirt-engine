@@ -127,15 +127,9 @@ public class MergeStatusCommand<T extends MergeParameters>
     }
 
     private Set<Guid> getVolumeChain() {
-        List<Guid> vmIds = Collections.singletonList(getParameters().getVmId());
         Map[] vms = null;
         try {
-            VDSReturnValue vdsReturnValue = isDomainXmlEnabledForVds() ?
-                    runVdsCommand(VDSCommandType.DumpXmls, new DumpXmlsVDSCommand.Params(getParameters().getVdsId(),
-                            vmIds))
-                    : runVdsCommand(VDSCommandType.FullList, new FullListVDSCommandParameters(getParameters().getVdsId(),
-                    vmIds));
-            vms = (Map[]) vdsReturnValue.getReturnValue();
+            vms = getVms();
         } catch (EngineException e) {
             log.error("Failed to retrieve images list of VM {}. Retrying ...", getParameters().getVmId(), e);
         }
@@ -174,6 +168,17 @@ public class MergeStatusCommand<T extends MergeParameters>
             }
         }
         return images;
+    }
+
+    private Map[] getVms() {
+        List<Guid> vmIds = Collections.singletonList(getParameters().getVmId());
+        boolean domainXml = isDomainXmlEnabledForVds();
+        return (Map[]) runVdsCommand(
+                domainXml ? VDSCommandType.DumpXmls : VDSCommandType.FullList,
+                domainXml ?
+                        new DumpXmlsVDSCommand.Params(getParameters().getVdsId(), vmIds)
+                        : new FullListVDSCommandParameters(getParameters().getVdsId(), vmIds))
+                .getReturnValue();
     }
 
     private Set<Guid> getVolumeChainFromRecovery() {
