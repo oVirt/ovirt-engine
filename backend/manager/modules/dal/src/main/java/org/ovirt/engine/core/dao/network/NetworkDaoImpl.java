@@ -221,6 +221,8 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
                         network.getProvidedBy() == null ? null : network.getProvidedBy().getProviderId())
                 .addValue("provider_network_external_id",
                         network.getProvidedBy() == null ? null : network.getProvidedBy().getExternalId())
+                .addValue("provider_physical_network_id",
+                        network.getProvidedBy() == null ? null : network.getProvidedBy().getPhysicalNetworkId())
                 .addValue("qos_id", network.getQosId())
                 .addValue("label", network.getLabel())
                 .addValue("dns_resolver_configuration_id", getDnsResolverConfigurationId(network));
@@ -292,7 +294,8 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
             if (providerId != null) {
                 entity.setProvidedBy(new ProviderNetwork(
                         providerId,
-                        rs.getString("provider_network_external_id")));
+                        rs.getString("provider_network_external_id"),
+                        getGuid(rs, "provider_physical_network_id")));
             }
             entity.setQosId(getGuid(rs, "qos_id"));
 

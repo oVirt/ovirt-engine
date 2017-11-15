@@ -14,12 +14,19 @@ public class ProviderNetwork implements Serializable {
 
     private String externalId;
 
+    private Guid physicalNetworkId;
+
     public ProviderNetwork() {
     }
 
     public ProviderNetwork(Guid providerId, String externalId) {
         this.providerId = providerId;
         this.externalId = externalId;
+    }
+
+    public ProviderNetwork(Guid providerId, String externalId, Guid physicalNetworkId) {
+        this(providerId, externalId);
+        this.physicalNetworkId = physicalNetworkId;
     }
 
     public Guid getProviderId() {
@@ -38,11 +45,24 @@ public class ProviderNetwork implements Serializable {
         this.externalId = externalId;
     }
 
+    public Guid getPhysicalNetworkId() {
+        return physicalNetworkId;
+    }
+
+    public void setPhysicalNetworkId(Guid physicalNetworkId) {
+        this.physicalNetworkId = physicalNetworkId;
+    }
+
+    public boolean isSetPhysicalNetworkId() {
+        return physicalNetworkId != null;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
                 externalId,
-                providerId
+                providerId,
+                physicalNetworkId
         );
     }
 
@@ -56,7 +76,8 @@ public class ProviderNetwork implements Serializable {
         }
         ProviderNetwork other = (ProviderNetwork) obj;
         return Objects.equals(externalId, other.externalId)
-                && Objects.equals(providerId, other.providerId);
+                && Objects.equals(providerId, other.providerId)
+                && Objects.equals(physicalNetworkId, other.physicalNetworkId);
     }
 
     @Override
@@ -64,6 +85,7 @@ public class ProviderNetwork implements Serializable {
         return ToStringBuilder.forInstance(this)
                 .append("providerId", getProviderId())
                 .append("externalId", getExternalId())
+                .append("physicalNetworkId", getPhysicalNetworkId())
                 .build();
     }
 }

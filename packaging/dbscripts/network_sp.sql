@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION Insertnetwork (
     v_vm_network BOOLEAN,
     v_provider_network_provider_id UUID,
     v_provider_network_external_id TEXT,
+    v_provider_physical_network_id UUID,
     v_qos_id UUID,
     v_label TEXT,
     v_dns_resolver_configuration_id UUID
@@ -44,6 +45,7 @@ BEGIN
         vm_network,
         provider_network_provider_id,
         provider_network_external_id,
+        provider_physical_network_id,
         qos_id,
         label,
         dns_resolver_configuration_id
@@ -65,6 +67,7 @@ BEGIN
         v_vm_network,
         v_provider_network_provider_id,
         v_provider_network_external_id,
+        v_provider_physical_network_id,
         v_qos_id,
         v_label,
         v_dns_resolver_configuration_id
@@ -89,6 +92,7 @@ CREATE OR REPLACE FUNCTION Updatenetwork (
     v_vm_network BOOLEAN,
     v_provider_network_provider_id UUID,
     v_provider_network_external_id TEXT,
+    v_provider_physical_network_id UUID,
     v_qos_id UUID,
     v_label TEXT,
     v_dns_resolver_configuration_id UUID
@@ -113,6 +117,7 @@ BEGIN
         vm_network = v_vm_network,
         provider_network_provider_id = v_provider_network_provider_id,
         provider_network_external_id = v_provider_network_external_id,
+        provider_physical_network_id = v_provider_physical_network_id,
         qos_id = v_qos_id,
         label = v_label,
         dns_resolver_configuration_id = v_dns_resolver_configuration_id
@@ -280,6 +285,7 @@ CREATE TYPE networkViewClusterType AS (
         label TEXT,
         provider_network_provider_id UUID,
         provider_network_external_id TEXT,
+        provider_physical_network_id UUID,
         qos_id UUID,
         dns_resolver_configuration_id UUID,
         network_id UUID,
@@ -319,6 +325,7 @@ BEGIN
         network.label,
         network.provider_network_provider_id,
         network.provider_network_external_id,
+        network.provider_physical_network_id,
         network.qos_id,
         network.dns_resolver_configuration_id,
         network_cluster.network_id,
