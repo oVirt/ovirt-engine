@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.IscsiDetails;
+import org.ovirt.engine.api.model.IscsiDetailss;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.model.PowerManagement;
@@ -484,12 +485,31 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     private Action mapTargets(Action action, List<StorageServerConnections> targets) {
         if (targets != null) {
             Action.IscsiTargetsList iscsiTargets = new Action.IscsiTargetsList();
+            IscsiDetailss iscsiDetailss = new IscsiDetailss();
             for (StorageServerConnections cnx : targets) {
-                iscsiTargets.getIscsiTargets().add(map(cnx).getTarget());
+                LogicalUnit logicalUnit = map(cnx);
+                // The iscsiTargets property is replaced by discoveredTargets. The property is preserved
+                // for backward compatibility, and should be removed in version 5 of the API.
+                iscsiTargets.getIscsiTargets().add(logicalUnit.getTarget());
+                iscsiDetailss.getIscsiDetailss().add(mapLogicalUnitToIscsiDetails(logicalUnit));
             }
             action.setIscsiTargets(iscsiTargets);
+            action.setDiscoveredTargets(iscsiDetailss);
         }
         return action;
+    }
+
+    private IscsiDetails mapLogicalUnitToIscsiDetails(LogicalUnit logicalUnit) {
+        IscsiDetails iscsiDetails = new IscsiDetails();
+        iscsiDetails.setAddress(logicalUnit.getAddress());
+        iscsiDetails.setPort(logicalUnit.getPort());
+        iscsiDetails.setTarget(logicalUnit.getTarget());
+        iscsiDetails.setPortal(logicalUnit.getPortal());
+        iscsiDetails.setPaths(logicalUnit.getPaths());
+        iscsiDetails.setVendorId(logicalUnit.getVendorId());
+        iscsiDetails.setProductId(logicalUnit.getProductId());
+        iscsiDetails.setSerial(logicalUnit.getSerial());
+        return iscsiDetails;
     }
 
     private Action mapToStorageDomains(Action action, List<StorageDomain> storageDomains) {
