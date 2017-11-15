@@ -4,6 +4,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
+import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -35,6 +36,14 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     public void onBind() {
         super.onBind();
         addRegisteredHandler(RevealOverlayContentEvent.getType(), this);
+    }
+
+    @Override
+    public void setInSlot(Object slot, PresenterWidget<?> content) {
+        super.setInSlot(slot, content);
+        if (slot == TYPE_SetContent) {
+            onRevealOverlayContent(new RevealOverlayContentEvent(null));
+        }
     }
 
     @Override
