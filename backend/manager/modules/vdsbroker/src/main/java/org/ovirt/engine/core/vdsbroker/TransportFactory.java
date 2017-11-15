@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -11,7 +13,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 
 public class TransportFactory {
     public static IIrsServer createIrsServer(
-            String hostname, int port, int clientTimeOut, int connectionTimeOut, int clientRetries, int heartbeat) {
+            String hostname, int port, int clientTimeOut, int connectionTimeOut, int clientRetries, int heartbeat, ScheduledExecutorService executorService) {
         return new JsonRpcIIrsServer(
                 JsonRpcUtils.createStompClient(
                         hostname,
@@ -25,11 +27,12 @@ public class TransportFactory {
                         Config.getValue(ConfigValues.EventProcessingPoolSize),
                         Config.getValue(ConfigValues.IrsRequestQueueName),
                         Config.getValue(ConfigValues.IrsResponseQueueName),
-                        null));
+                        null,
+                        executorService));
     }
 
     public static IVdsServer createVdsServer(
-            String hostname, int port, int clientTimeOut, int connectionTimeOut, int clientRetries, int heartbeat) {
+            String hostname, int port, int clientTimeOut, int connectionTimeOut, int clientRetries, int heartbeat, ScheduledExecutorService executorService) {
 
         HttpClient client = HttpUtils.getConnection(
                 connectionTimeOut,
@@ -51,7 +54,8 @@ public class TransportFactory {
                         Config.getValue(ConfigValues.EventProcessingPoolSize),
                         Config.getValue(ConfigValues.VdsRequestQueueName),
                         Config.getValue(ConfigValues.VdsResponseQueueName),
-                        eventQueue)
+                        eventQueue,
+                        executorService)
                 , client);
     }
 }

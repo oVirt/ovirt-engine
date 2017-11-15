@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,7 +40,8 @@ public class JsonRpcIntegrationTest {
                 Runtime.getRuntime().availableProcessors(),
                 DEFAULT_REQUEST_QUEUE,
                 DEFAULT_RESPONSE_QUEUE,
-                DEFAULT_EVENTS_QUEUE);
+                DEFAULT_EVENTS_QUEUE,
+                Executors.newScheduledThreadPool(1));
         final JsonRpcRequest request = new RequestBuilder("Host.getCapabilities").build();
         Map<String, Object> map = new FutureMap(client, request);
         assertTrue(map.isEmpty());

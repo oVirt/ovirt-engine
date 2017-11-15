@@ -669,7 +669,8 @@ public class IrsProxy {
                                     clientTimeOut,
                                     connectionTimeOut,
                                     clientRetries,
-                                    heartbeat);
+                                    heartbeat,
+                                    resourceManager.getExecutor());
                     runStoragePoolUpEvent(storagePool);
                 }
             }

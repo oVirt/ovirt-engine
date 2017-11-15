@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
 import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -32,7 +33,8 @@ public class JsonRpcUtils {
             int parallelism,
             String requestQueue,
             String responseQueue,
-            String eventQueue) {
+            String eventQueue,
+            ScheduledExecutorService executorService) {
         StompClientPolicy connectionPolicy =
                 new StompClientPolicy(connectionTimeout,
                         connectionRetry,
@@ -47,7 +49,7 @@ public class JsonRpcUtils {
             log.debug(identifierLogMessage, hostname);
             connectionPolicy.setIdentifier(hostname);
         }
-        return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, ReactorType.STOMP, protocol, parallelism);
+        return createClient(hostname, port, connectionPolicy, clientPolicy, isSecure, ReactorType.STOMP, protocol, parallelism, executorService);
     }
 
     private static JsonRpcClient createClient(String hostname,
@@ -57,14 +59,15 @@ public class JsonRpcUtils {
             boolean isSecure,
             ReactorType type,
             String protocol,
-            int parallelism) {
+            int parallelism,
+            ScheduledExecutorService executorService) {
         ManagerProvider provider = null;
         if (isSecure) {
             provider = new EngineManagerProvider(protocol);
         }
         try {
             final Reactor reactor = ReactorFactory.getReactor(provider, type);
-            return getJsonClient(reactor, hostname, port, connectionPolicy, clientPolicy, parallelism);
+            return getJsonClient(reactor, hostname, port, connectionPolicy, clientPolicy, parallelism, executorService);
         } catch (ClientConnectionException e) {
             log.error("Exception occurred during building ssl context or obtaining selector for '{}': {}",
                     hostname,
@@ -79,12 +82,14 @@ public class JsonRpcUtils {
             int port,
             ClientPolicy connectionPolicy,
             ClientPolicy clientPolicy,
-            int parallelism) throws ClientConnectionException {
+            int parallelism,
+            ScheduledExecutorService executorService) throws ClientConnectionException {
         final ReactorClient client = reactor.createClient(hostName, port);
         client.setClientPolicy(connectionPolicy);
         ResponseWorker worker = ReactorFactory.getWorker(parallelism);
         JsonRpcClient jsonClient = worker.register(client);
         jsonClient.setRetryPolicy(clientPolicy);
+        jsonClient.setExecutorService(executorService);
         return jsonClient;
     }
 }
