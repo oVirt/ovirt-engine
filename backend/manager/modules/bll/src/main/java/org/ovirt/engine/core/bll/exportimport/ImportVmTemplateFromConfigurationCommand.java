@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
+import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -112,6 +114,17 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         }
         if (entityFromConfiguration == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
+        }
+
+        ImportValidator importValidator = new ImportValidator(getParameters());
+
+        // Avoid from sending imageToDestinationDomainMap because it isn't initialized at this point
+        if (!validate(importValidator.validateDiskNotAlreadyExistOnDB(
+                getImages(),
+                getParameters().isAllowPartialImport(),
+                null,
+                failedDisksToImportForAuditLog))) {
+            return false;
         }
 
         for (DiskImage image : new ArrayList<>(getImages())) {
@@ -234,6 +247,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     @Override
     public void executeCommand() {
         addAuditLogForPartialVMs();
+        filterInvalidDisksForImport();
         super.executeCommand();
         if (getParameters().isImagesExistOnTargetStorageDomain()) {
             if (!getImages().isEmpty()) {
@@ -247,6 +261,14 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         }
         setActionReturnValue(getVmTemplate().getId());
         setSucceeded(true);
+    }
+
+    // Filter out disks that cannot be imported due to the partial import flag
+    private void filterInvalidDisksForImport() {
+        getVmTemplate().setImages(getVmTemplate().getImages()
+                .stream()
+                .filter(diskImage -> !failedDisksToImportForAuditLog.containsKey(diskImage.getId()))
+                .collect(Collectors.toCollection(ArrayList::new)));
     }
 
     private void addAuditLogForPartialVMs() {
