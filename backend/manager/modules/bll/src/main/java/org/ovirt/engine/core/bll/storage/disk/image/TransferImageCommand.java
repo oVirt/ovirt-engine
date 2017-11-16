@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
@@ -32,6 +35,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.AddImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageTicketVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.GetImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveImageTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeLegalityVDSCommandParameters;
@@ -41,6 +45,7 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.ticket.TicketEncoder;
@@ -67,6 +72,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     protected ImageTransferDao imageTransferDao;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    private VdsDao vdsDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -305,33 +312,64 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         }
 
         resetPeriodicPauseLogTime(0);
+        pollTransferStatus(context);
+    }
 
+    private void pollTransferStatus(final StateContext context) {
+        if (context.entity.getVdsId() == null || context.entity.getImagedTicketId() == null ||
+                !FeatureSupported.getImageTicketSupported(
+                        vdsDao.get(context.entity.getVdsId()).getClusterCompatibilityVersion())) {
+            // Old engines update the transfer status in UploadImageHandler::updateBytesSent.
+            return;
+        }
+        ImageTicketInformation ticketInfo;
+        try {
+            ticketInfo = (ImageTicketInformation) runVdsCommand(VDSCommandType.GetImageTicket,
+                    new GetImageTicketVDSCommandParameters(
+                            context.entity.getVdsId(), context.entity.getImagedTicketId())).getReturnValue();
+        } catch (EngineException e) {
+            log.error("Could not get image ticket '{}' from vdsm", context.entity.getImagedTicketId(), e);
+            updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+            return;
+        }
+        ImageTransfer upToDateImageTransfer = updateTransferStatusWithTicketInformation(context.entity, ticketInfo);
         if (getParameters().getTransferType() == TransferType.Download) {
-            pollDownloadStatus(context);
+            finalizeDownloadIfNecessary(context, upToDateImageTransfer);
         }
     }
 
-    private void pollDownloadStatus(StateContext context) {
-        ActionReturnValue returnValue = runInternalAction(ActionType.TransferImageStatus,
-                new TransferImageStatusParameters(getCommandId()));
-        if (returnValue == null || !returnValue.getSucceeded()) {
-            log.debug("Failed to poll download status.");
-            return;
+    private ImageTransfer updateTransferStatusWithTicketInformation(ImageTransfer oldImageTransfer,
+            ImageTicketInformation ticketInfo) {
+        if (!Objects.equals(oldImageTransfer.getActive(), ticketInfo.isActive()) ||
+                !Objects.equals(oldImageTransfer.getBytesSent(), ticketInfo.getTransferred())) {
+            // At least one of the status fields (bytesSent or active) should be updated.
+            ImageTransfer updatesFromTicket = new ImageTransfer();
+            updatesFromTicket.setBytesSent(ticketInfo.getTransferred());
+            updatesFromTicket.setActive(ticketInfo.isActive());
+            ActionReturnValue returnValue = runInternalAction(ActionType.TransferImageStatus,
+                    new TransferImageStatusParameters(getCommandId(), updatesFromTicket));
+            if (returnValue == null || !returnValue.getSucceeded()) {
+                log.debug("Failed to update transfer status.");
+                return oldImageTransfer;
+            }
+            return returnValue.getActionReturnValue();
         }
-        ImageTransfer imageTransfer = returnValue.getActionReturnValue();
-        // imageTransfer contains the up to date bytesSent and active fields.
-        if (imageTransfer.getBytesTotal() != 0 &&
+        return oldImageTransfer;
+    }
+
+    private void finalizeDownloadIfNecessary(final StateContext context, ImageTransfer upToDateImageTransfer) {
+        if (upToDateImageTransfer.getBytesTotal() != 0 &&
                 // Frontend flow (REST API should close the connection on its own).
-                imageTransfer.getBytesTotal().equals(imageTransfer.getBytesSent()) && !imageTransfer.getActive()) {
+                upToDateImageTransfer.getBytesTotal().equals(upToDateImageTransfer.getBytesSent()) &&
+                !upToDateImageTransfer.getActive()) {
             // Heuristic - once the transfer is inactive, we want to wait another COCO iteration
             // to decrease the chances that the few last packets are still on the way to the client.
             if (!context.entity.getActive()) { // The entity from the previous COCO iteration.
                 // This is the second COCO iteration that the transfer is inactive.
-                ImageTransfer updates = new ImageTransfer();
-                updates.setPhase(ImageTransferPhase.FINALIZING_SUCCESS);
-                TransferImageStatusParameters parameters = new TransferImageStatusParameters(getCommandId());
-                parameters.setUpdates(updates);
-                runInternalAction(ActionType.TransferImageStatus, parameters);
+                ImageTransfer statusUpdate = new ImageTransfer();
+                statusUpdate.setPhase(ImageTransferPhase.FINALIZING_SUCCESS);
+                runInternalAction(ActionType.TransferImageStatus,
+                        new TransferImageStatusParameters(getCommandId(), statusUpdate));
             }
         }
     }
