@@ -295,7 +295,7 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         super.setItems(value);
         if (getSelectedItem() == null && (getSelectedItems() == null || getSelectedItems().size() == 0)) {
             if (value != null && value.iterator().hasNext()) {
-                setSelectedItem(value.iterator().next());
+                getSelectionModel().setSelected(value.iterator().next(), true);
             }
         }
     }

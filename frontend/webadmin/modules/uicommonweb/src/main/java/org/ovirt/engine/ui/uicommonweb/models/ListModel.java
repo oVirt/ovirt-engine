@@ -362,6 +362,8 @@ public class ListModel<T> extends Model {
             setSelectedItems(selectedItems);
             if (selectedItems.size() == 1) {
                 setSelectedItem(selectedItems.get(0));
+            } else if (selectedItems.size() == 0) {
+                setSelectedItem(null);
             }
         }
     }
