@@ -50,25 +50,29 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         buildVmData();
         log.info("VM {}", createInfo);
         if (FeatureSupported.isDomainXMLSupported(vm.getClusterCompatibilityVersion())) {
-            LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
-                    createInfo,
-                    vm,
-                    getVds().getId(),
-                    getPayload(),
-                    getVds().getCpuThreads(),
-                    getParameters().isVolatileRun(),
-                    getParameters().getPassthroughVnicToVfMap()));
-            String libvirtXml = builder.build();
-            String prettyLibvirtXml = prettify(libvirtXml);
-            if (prettyLibvirtXml != null) {
-                log.info("VM {}", prettyLibvirtXml);
-            }
-            createInfo = Collections.singletonMap("xml", libvirtXml);
+            createInfo = Collections.singletonMap(VdsProperties.engineXml, generateDomainXml());
         }
         vmReturn = getBroker().create(createInfo);
         proceedProxyReturnValue();
         VdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
                 vmReturn.vm, getVds());
+    }
+
+    private String generateDomainXml() {
+        LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
+                createInfo,
+                vm,
+                getVds().getId(),
+                getPayload(),
+                getVds().getCpuThreads(),
+                getParameters().isVolatileRun(),
+                getParameters().getPassthroughVnicToVfMap()));
+        String libvirtXml = builder.build();
+        String prettyLibvirtXml = prettify(libvirtXml);
+        if (prettyLibvirtXml != null) {
+            log.info("VM {}", prettyLibvirtXml);
+        }
+        return libvirtXml;
     }
 
     public static String prettify(String input) {
