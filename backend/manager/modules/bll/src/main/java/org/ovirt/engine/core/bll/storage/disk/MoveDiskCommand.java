@@ -121,13 +121,16 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T
     }
 
     private LiveMigrateDiskParameters createLiveMigrateDiskParameters(MoveDiskParameters moveDiskParameters, Guid vmId) {
-        return new LiveMigrateDiskParameters(moveDiskParameters.getImageId(),
+        LiveMigrateDiskParameters params = new LiveMigrateDiskParameters(moveDiskParameters.getImageId(),
                 moveDiskParameters.getSourceDomainId(),
                 moveDiskParameters.getStorageDomainId(),
                 vmId,
                 moveDiskParameters.getQuotaId(),
                 moveDiskParameters.getDiskProfileId(),
                 getParameters().getImageGroupID());
+        // Pass down correlation ID, useful when it's set externally (e.g. via the API)
+        params.setCorrelationId(getCorrelationId());
+        return params;
     }
 
     protected EngineLock lockVmWithWait(Guid vmId) {
