@@ -256,23 +256,24 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             }
         }, constants.serialSanStorage(), "350px"); //$NON-NLS-1$
 
-        StorageDomainStatus status = model.getContainer().getStorage().getStatus();
-
-        boolean reduceDeviceFromStorageDomainSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigValues.ReduceDeviceFromStorageDomain,
-                model.getContainer().getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
-
-        if (reduceDeviceFromStorageDomainSupported) {
+        if (!model.getContainer().isNewStorage()) {
+            StorageDomainStatus status = model.getContainer().getStorage().getStatus();
             if (status == StorageDomainStatus.Maintenance) {
-                table.addColumn(new AbstractLunRemoveColumn(model) {
-                    @Override
-                    public LunModel getValue(LunModel object) {
-                        return object;
-                    }
-                }, constants.removeSanStorage(), "75px"); //$NON-NLS-1$
-                model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
-                    table.redraw();
-                });
+                boolean reduceDeviceFromStorageDomainSupported =
+                        (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                        ConfigValues.ReduceDeviceFromStorageDomain,
+                        model.getContainer().getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
+                if (reduceDeviceFromStorageDomainSupported) {
+                    table.addColumn(new AbstractLunRemoveColumn(model) {
+                        @Override
+                        public LunModel getValue(LunModel object) {
+                            return object;
+                        }
+                    }, constants.removeSanStorage(), "75px"); //$NON-NLS-1$
+                    model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
+                        table.redraw();
+                    });
+                }
             }
         }
     }
