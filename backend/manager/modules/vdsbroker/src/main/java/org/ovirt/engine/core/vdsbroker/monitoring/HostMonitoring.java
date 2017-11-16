@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistic
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
+import org.ovirt.engine.core.common.vdscommands.BrokerCommandCallback;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -53,12 +55,12 @@ public class HostMonitoring {
     private final VdsManager vdsManager;
     private VDSStatus firstStatus = VDSStatus.forValue(0);
     private final MonitoringStrategy monitoringStrategy;
-    private boolean saveVdsDynamic;
-    private boolean saveVdsStatistics;
-    private boolean processHardwareCapsNeeded;
-    private boolean refreshedCapabilities = false;
+    private volatile boolean saveVdsDynamic;
+    private volatile boolean saveVdsStatistics;
+    private volatile boolean processHardwareCapsNeeded;
+    private volatile boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<>();
-    private boolean vdsMaintenanceTimeoutOccurred;
+    private volatile boolean vdsMaintenanceTimeoutOccurred;
     private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<>();
     private final ResourceManager resourceManager;
     private final DbFacade dbFacade;
@@ -86,25 +88,28 @@ public class HostMonitoring {
 
     public void postProcessRefresh(boolean succeeded) {
         try {
-            if (firstStatus != vds.getStatus() && vds.getStatus() == VDSStatus.Up) {
-                // use this lock in order to allow only one host updating DB and
-                // calling UpEvent in a time
-                vdsManager.cancelRecoveryJob();
-                log.debug("Host '{}' ({}) firing up event.", vds.getName(), vds.getId());
-                vdsManager.setIsSetNonOperationalExecuted(!getVdsEventListener().vdsUpEvent(vds));
+            try {
+                moveVDSToMaintenanceIfNeeded();
+                if (firstStatus != vds.getStatus() && vds.getStatus() == VDSStatus.Up) {
+                    // use this lock in order to allow only one host updating DB and
+                    // calling UpEvent in a time
+                    vdsManager.cancelRecoveryJob();
+                    log.debug("Host '{}' ({}) firing up event.", vds.getName(), vds.getId());
+                    vdsManager.setIsSetNonOperationalExecuted(!getVdsEventListener().vdsUpEvent(vds));
+                }
+            } finally {
+                // save all data to db
+                saveDataToDb();
             }
-            // save all data to db
-            saveDataToDb();
-        } catch (RuntimeException ex) {
-            logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
-            log.debug("Exception", ex);
+        } catch (Throwable t) {
+            logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", t);
+            log.debug("Exception", t);
         }  finally {
             vdsManager.afterRefreshTreatment(succeeded);
         }
     }
 
     public void refreshVdsRunTimeInfo() {
-        boolean succeeded = false;
         try {
             boolean isVdsUpOrGoingToMaintenance = vds.getStatus() == VDSStatus.Up
                     || vds.getStatus() == VDSStatus.PreparingForMaintenance || vds.getStatus() == VDSStatus.Error
@@ -114,12 +119,13 @@ public class HostMonitoring {
                     // check if its time for statistics refresh
                     if (vdsManager.isTimeToRefreshStatistics() || vds.getStatus() == VDSStatus.PreparingForMaintenance) {
                         refreshVdsStats();
+                        refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
+                    } else {
+                        refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
                     }
                 } else {
                     refreshCapabilities();
                 }
-                refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
-                succeeded = true;
             } catch (VDSRecoveringException e) {
                 handleVDSRecoveringException(vds, e);
             } catch (ClassCastException cce) {
@@ -129,20 +135,20 @@ public class HostMonitoring {
                 log.debug("Exception", t);
                 throw t;
             }
-            moveVDSToMaintenanceIfNeeded();
         } catch(Throwable t) {
             throw t;
-        } finally {
-            postProcessRefresh(succeeded);
         }
     }
 
     private void refreshVdsRunTimeInfo(boolean isVdsUpOrGoingToMaintenance) {
+        boolean succeeded = false;
+        boolean executingAsyncVdsCommand = false;
         try {
-            beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
-            if (vdsManager.isTimeToRefreshStatistics()) {
+            executingAsyncVdsCommand = beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
+            if (!executingAsyncVdsCommand && vdsManager.isTimeToRefreshStatistics()) {
                 saveVdsDynamic |= refreshCommitedMemory(vds, vdsManager.getLastVmsList(), resourceManager);
             }
+            succeeded = true;
         } catch (VDSRecoveringException e) {
             handleVDSRecoveringException(vds, e);
         } catch (ClassCastException cce) {
@@ -151,16 +157,51 @@ public class HostMonitoring {
             log.error("Failure to refresh host '{}' runtime info: {}", vds.getName(), t.getMessage());
             log.debug("Exception", t);
             throw t;
+        } finally {
+            if (!executingAsyncVdsCommand) {
+                postProcessRefresh(succeeded);
+            }
         }
     }
 
     private void refreshCapabilities() {
         // refresh dynamic data
-        final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
-        VDSStatus refreshReturnStatus =
-                vdsManager.refreshCapabilities(processHardwareNeededAtomic, vds);
-        processRefreshCapabilitiesResponse(refreshReturnStatus, processHardwareNeededAtomic);
+        vdsManager.refreshCapabilities(vds, new RefreshCapabilitiesCallback(vds));
     }
+
+    class RefreshCapabilitiesCallback implements BrokerCommandCallback {
+
+        private VDS vds;
+        private VDS oldVds;
+
+        RefreshCapabilitiesCallback(VDS vds) {
+            this.vds = vds;
+            this.oldVds = vds.clone();
+        }
+
+        @Override
+        public void onResponse(Map<String, Object> response) {
+            try {
+                final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
+                VDSStatus refreshReturnStatus = vdsManager.processRefreshCapabilitiesResponse(processHardwareNeededAtomic,
+                        vds,
+                        oldVds,
+                        (VDSReturnValue) response.get("result"));
+                processRefreshCapabilitiesResponse(refreshReturnStatus, processHardwareNeededAtomic);
+                refreshVdsRunTimeInfo(false);
+            } catch (Throwable t) {
+                onFailure(t);
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            log.error("Unable to RefreshCapabilities: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+            postProcessRefresh(false);
+        }
+    }
+
 
     private void processRefreshCapabilitiesResponse(VDSStatus refreshReturnStatus, AtomicBoolean processHardwareNeededAtomic) {
         processHardwareCapsNeeded = processHardwareNeededAtomic.get();
@@ -347,12 +388,12 @@ public class HostMonitoring {
         }
     }
 
-    private void logFailureMessage(String messagePrefix, RuntimeException ex) {
+    private void logFailureMessage(String messagePrefix, Throwable t) {
         log.error("{} host={}({}): {}",
                 messagePrefix,
                 vds.getName(),
                 vds.getId(),
-                ex.getMessage());
+                t.getMessage());
     }
 
     protected IVdsEventListener getVdsEventListener() {
@@ -659,19 +700,62 @@ public class HostMonitoring {
         }
     }
 
-    private void beforeFirstRefreshTreatment(boolean isVdsUpOrGoingToMaintenance) {
+    private boolean beforeFirstRefreshTreatment(boolean isVdsUpOrGoingToMaintenance) {
+        boolean executingAsyncVdsCommand = false;
         if (vdsManager.getbeforeFirstRefresh()) {
-            final AtomicBoolean processHardwareCapsNeededTemp = new AtomicBoolean();
-            vdsManager.refreshCapabilities(processHardwareCapsNeededTemp, vds);
-            processBeforeFirstRefreshTreatmentResponse(processHardwareCapsNeededTemp);
+            executingAsyncVdsCommand = true;
+            vdsManager.refreshCapabilities(vds, new BeforeFirstRefreshTreatmentCallback(vds));
         } else if (isVdsUpOrGoingToMaintenance || vds.getStatus() == VDSStatus.Error) {
-            return;
+            return false;
         }
         // show status UP in audit only when InitVdsOnUpCommand finished successfully
         if (vds.getStatus() != VDSStatus.Up) {
             AuditLogable logable = createAuditLogableForHost();
             logable.addCustomValue("HostStatus", vds.getStatus().toString());
             auditLog(logable, AuditLogType.VDS_DETECTED);
+        }
+        return executingAsyncVdsCommand;
+    }
+
+    class BeforeFirstRefreshTreatmentCallback implements BrokerCommandCallback {
+
+        private VDS vds;
+        private VDS oldVds;
+
+        BeforeFirstRefreshTreatmentCallback(VDS vds) {
+            this.vds = vds;
+            this.oldVds = vds.clone();
+        }
+
+        @Override
+        public void onResponse(Map<String, Object> response) {
+            boolean succeeded = true;
+            try {
+                final AtomicBoolean processHardwareCapsNeededTemp = new AtomicBoolean();
+                vdsManager.processRefreshCapabilitiesResponse(processHardwareCapsNeededTemp,
+                        vds,
+                        oldVds,
+                        (VDSReturnValue) response.get("result"));
+                processBeforeFirstRefreshTreatmentResponse(processHardwareCapsNeededTemp);
+                if (vdsManager.isTimeToRefreshStatistics()) {
+                    saveVdsDynamic |= refreshCommitedMemory(vds, vdsManager.getLastVmsList(), resourceManager);
+                }
+            } catch (Throwable t) {
+                succeeded = false;
+                onFailure(t);
+            } finally {
+                if (succeeded) {
+                    postProcessRefresh(true);
+                }
+            }
+
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            log.error("Unable to RefreshCapabilities beforeFirstRefreshTreatment: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+            postProcessRefresh(false);
         }
     }
 
