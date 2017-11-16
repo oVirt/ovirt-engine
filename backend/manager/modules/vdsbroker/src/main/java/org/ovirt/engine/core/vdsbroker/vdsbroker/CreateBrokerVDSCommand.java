@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -50,7 +51,12 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         buildVmData();
         log.info("VM {}", createInfo);
         if (FeatureSupported.isDomainXMLSupported(vm.getClusterCompatibilityVersion())) {
-            createInfo = Collections.singletonMap(VdsProperties.engineXml, generateDomainXml());
+            String hibernationVolHandle = getParameters().getHibernationVolHandle();
+            if (StringUtils.isEmpty(hibernationVolHandle)) {
+                createInfo = Collections.singletonMap(VdsProperties.engineXml, generateDomainXml());
+            } else {
+                createInfo = Collections.singletonMap(VdsProperties.hiberVolHandle, hibernationVolHandle);
+            }
         }
         vmReturn = getBroker().create(createInfo);
         proceedProxyReturnValue();
