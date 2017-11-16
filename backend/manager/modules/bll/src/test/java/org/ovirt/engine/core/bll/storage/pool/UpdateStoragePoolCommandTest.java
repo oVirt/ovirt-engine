@@ -244,9 +244,9 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         assertFalse(cmd.checkAllClustersLevel());
         List<String> messages = cmd.getReturnValue().getValidationMessages();
         assertTrue(messages.contains(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS.toString()));
-        assertTrue(messages.get(0).contains("firstCluster"));
-        assertFalse(messages.get(0).contains("secondCluster"));
-        assertTrue(messages.get(0).contains("thirdCluster"));
+        assertTrue(messages.get(1).contains("firstCluster"));
+        assertFalse(messages.get(1).contains("secondCluster"));
+        assertTrue(messages.get(1).contains("thirdCluster"));
     }
 
     @Test

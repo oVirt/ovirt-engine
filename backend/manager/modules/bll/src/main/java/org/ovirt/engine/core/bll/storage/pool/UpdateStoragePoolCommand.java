@@ -355,10 +355,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     private boolean manageCompatibilityVersionChangeCheckResult(List<String> formatProblematicDomains) {
         if (!formatProblematicDomains.isEmpty()) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
-            getReturnValue().getValidationMessages().addAll(ReplacementUtils.replaceWith("formatDowngradedDomains", formatProblematicDomains, "," , formatProblematicDomains.size()));
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING,
+                    ReplacementUtils.replaceWith("formatDowngradedDomains", formatProblematicDomains, "," , formatProblematicDomains.size()));
         }
-        return formatProblematicDomains.isEmpty();
+        return true;
     }
 
     protected StorageDomainToPoolRelationValidator getAttachDomainValidator(StorageDomainStatic domainStatic) {
@@ -366,24 +366,18 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     protected boolean checkAllClustersLevel() {
-        boolean returnValue = true;
         List<Cluster> clusters = clusterDao.getAllForStoragePool(getStoragePool().getId());
-        List<String> lowLevelClusters = new ArrayList<>();
-        for (Cluster cluster : clusters) {
-            if (getStoragePool().getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0) {
-                lowLevelClusters.add(cluster.getName());
-            }
-        }
+        String lowLevelClusters = clusters.stream()
+                .filter(c -> getStoragePool().getCompatibilityVersion().compareTo(c.getCompatibilityVersion()) > 0)
+                .map(Cluster::getName)
+                .collect(Collectors.joining(","));
+
         if (!lowLevelClusters.isEmpty()) {
-            returnValue = false;
-            getReturnValue().getValidationMessages().add(String.format("$ClustersList %1$s",
-                    StringUtils.join(lowLevelClusters, ",")));
-            getReturnValue()
-                    .getValidationMessages()
-                    .add(EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS
-                            .toString());
+            return failValidation(
+                    EngineMessage.ERROR_CANNOT_UPDATE_STORAGE_POOL_COMPATIBILITY_VERSION_BIGGER_THAN_CLUSTERS,
+                    String.format("$ClustersList %1$s", lowLevelClusters));
         }
-        return returnValue;
+        return true;
     }
 
     private StorageDomain getMasterDomain() {
