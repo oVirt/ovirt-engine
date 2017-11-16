@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -47,7 +46,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -77,8 +75,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Inject
     private ClusterDao clusterDao;
     @Inject
-    private StorageDomainDao storageDomainDao;
-    @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private VdsDao vdsDao;
@@ -99,7 +95,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     private StoragePool oldStoragePool;
-    private StorageDomain masterDomainForPool;
 
     @Override
     protected void executeCommand() {
@@ -378,16 +373,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     String.format("$ClustersList %1$s", lowLevelClusters));
         }
         return true;
-    }
-
-    private StorageDomain getMasterDomain() {
-        if (masterDomainForPool == null) {
-            Guid masterId = storageDomainDao.getMasterStorageDomainIdForPool(getStoragePoolId());
-            if (Guid.Empty.equals(masterId)) {
-                masterDomainForPool = storageDomainDao.get(masterId);
-            }
-        }
-        return masterDomainForPool;
     }
 
     protected NetworkValidator getNetworkValidator(Network network) {
