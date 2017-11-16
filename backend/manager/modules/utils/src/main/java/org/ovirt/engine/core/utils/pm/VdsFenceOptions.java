@@ -251,8 +251,10 @@ public class VdsFenceOptions implements Serializable {
                 String[] optionKeyVal = option.split(Pattern.quote(EQUAL), -1);
                 if (optionKeyVal.length == 1) {
                     add(getAgent(), optionKeyVal[0], "");
-                } else {
+                } else if (optionKeyVal.length == 2) {
                     add(getAgent(), optionKeyVal[0], optionKeyVal[1]);
+                } else if (optionKeyVal.length == 3) {
+                    add(getAgent(), optionKeyVal[0], optionKeyVal[1] + EQUAL + optionKeyVal[2]);
                 }
             }
         }
