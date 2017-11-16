@@ -96,19 +96,22 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void perform() {
-        addMemoryDisk();
-        addMetadataDisk();
+        boolean wipeAfterDelete = diskDao.getAllForVm(getVmId()).stream().anyMatch(d -> d.isWipeAfterDelete());
+        addMemoryDisk(wipeAfterDelete);
+        addMetadataDisk(wipeAfterDelete);
         setSucceeded(true);
     }
 
-    private void addMetadataDisk() {
+    private void addMetadataDisk(boolean wipeAfterDelete) {
         DiskImage metaDataDisk = MemoryUtils.createHibernationMetadataDisk(getVm());
+        metaDataDisk.setWipeAfterDelete(wipeAfterDelete);
         addDisk(metaDataDisk);
     }
 
-    private void addMemoryDisk() {
+    private void addMemoryDisk(boolean wipeAfterDelete) {
         DiskImage memoryDisk = MemoryUtils.createHibernationMemoryDisk(getVm(),
                 getStorageDomain().getStorageType(), vmOverheadCalculator);
+        memoryDisk.setWipeAfterDelete(wipeAfterDelete);
         addDisk(memoryDisk);
     }
 
