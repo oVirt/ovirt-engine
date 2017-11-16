@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.BrokerCommandCallback;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -136,14 +137,14 @@ public class VdsManager {
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
     private List<ScheduledFuture> registeredJobs;
-    private boolean isSetNonOperationalExecuted;
+    private volatile boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
     private EngineLock monitoringLock;
-    private boolean initialized;
+    private volatile boolean initialized;
     private IVdsServer vdsProxy;
-    private boolean beforeFirstRefresh = true;
-    private HostMonitoring hostMonitoring;
-    private boolean monitoringNeeded;
+    private volatile boolean beforeFirstRefresh = true;
+    private volatile HostMonitoring hostMonitoring;
+    private volatile boolean monitoringNeeded;
     private List<VmDynamic> lastVmsList = Collections.emptyList();
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
     private VmStatsRefresher vmsRefresher;
@@ -154,7 +155,7 @@ public class VdsManager {
     protected final long HOST_REFRESH_RATE;
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresher hostRefresher;
-    private boolean inServerRebootTimeout;
+    private volatile boolean inServerRebootTimeout;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -549,19 +550,44 @@ public class VdsManager {
     }
 
     public void refreshHost(VDS vds) {
-        try {
-            refreshCapabilities(new AtomicBoolean(), vds);
-        } finally {
-            if (vds != null) {
-                updateDynamicData(vds.getDynamicData());
-                updateNumaData(vds);
+        refreshCapabilities(vds, new RefreshCapabilitiesCallback(vds));
+    }
 
-                // Update VDS after testing special hardware capabilities
-                monitoringStrategy.processHardwareCapabilities(vds);
+    class RefreshCapabilitiesCallback implements BrokerCommandCallback {
 
-                // Always check VdsVersion
-                resourceManager.getEventListener().handleVdsVersion(vds.getId());
+        private VDS vds;
+
+        RefreshCapabilitiesCallback(VDS vds) {
+            this.vds = vds;
+        }
+
+        @Override
+        public void onResponse(Map<String, Object> response) {
+            try {
+                processRefreshCapabilitiesResponse(new AtomicBoolean(),
+                        vds,
+                        vds.clone(),
+                        (VDSReturnValue) response.get("result"));
+            } catch (Throwable t) {
+                onFailure(t);
+            } finally {
+                if (vds != null) {
+                    updateDynamicData(vds.getDynamicData());
+                    updateNumaData(vds);
+
+                    // Update VDS after testing special hardware capabilities
+                    monitoringStrategy.processHardwareCapabilities(vds);
+
+                    // Always check VdsVersion
+                    resourceManager.getEventListener().handleVdsVersion(vds.getId());
+                }
             }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            log.error("Unable to RefreshCapabilities: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 
@@ -665,13 +691,10 @@ public class VdsManager {
         resourceManager.succededToRunVm(vmId, getVdsId());
     }
 
-    public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
+    public void refreshCapabilities(VDS vds, BrokerCommandCallback callback) {
         log.debug("monitoring: refresh '{}' capabilities", vds);
-        VDS oldVDS = vds.clone();
-        VDSReturnValue caps =
-                resourceManager.runVdsCommand(VDSCommandType.GetCapabilities,
-                        new VdsIdAndVdsVDSCommandParametersBase(vds));
-        return processRefreshCapabilitiesResponse(processHardwareCapsNeeded, vds, oldVDS, caps);
+        resourceManager.runVdsCommand(VDSCommandType.GetCapabilitiesAsync,
+                new VdsIdAndVdsVDSCommandParametersBase(vds).withCallback(callback));
     }
 
     public VDSStatus processRefreshCapabilitiesResponse(AtomicBoolean processHardwareCapsNeeded,
