@@ -147,6 +147,9 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
         if (model.getHasGlusterDisconnectedAlert()) {
             addTextAndLinkAlert(view, messages.hostGlusterDisconnectedAlert(), model.getRestartGlusterCommand());
         }
+        if (model.getHasDefaultRouteAlert()) {
+            addTextAlert(view, messages.hostHasDefaultRouteAlert());
+        }
     }
 
     private void addTextAlert(final ViewDef view, final String text, AlertType type) {

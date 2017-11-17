@@ -4,6 +4,7 @@ import static org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel.crea
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -511,6 +512,11 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateAvailableOvirtNodeUpgrades());
 
         getItemsChangedEvent().addListener((ev, sender, args) -> hostAffinityLabelListModel.loadEntitiesNameMap());
+    }
+
+    @Override
+    public void setItems(Collection<VDS> value) {
+        AsyncDataProvider.getInstance().updateVDSInterfaceList(new ArrayList<>(value), () -> super.setItems(value));
     }
 
     private void setDetailList(final HostHardwareGeneralModel hostHardwareGeneralModel) {

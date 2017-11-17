@@ -90,6 +90,7 @@ import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -171,6 +172,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeGeoRepEligibili
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -3258,5 +3260,38 @@ public class AsyncDataProvider {
 
     public boolean isGetImageTicketSupported(Version clusterVersion) {
         return (Boolean) getConfigValuePreConverted(ConfigValues.GetImageTicketSupported, clusterVersion.getValue());
+    }
+
+    public void updateVDSInterfaceList(List<VDS> vdsList, Runnable callback) {
+        if (vdsList != null && !vdsList.isEmpty()) {
+            List<QueryType> types = new ArrayList<>();
+            List<QueryParametersBase> ids = new ArrayList<>();
+            vdsList.stream().forEach(vds -> {
+                types.add(QueryType.GetVdsInterfacesByVdsId);
+                ids.add(new IdQueryParameters(vds.getId()));
+            });
+            Frontend.getInstance().runMultipleQueries(types, ids, result -> {
+                List<QueryReturnValue> values = result.getReturnValues();
+                for (int i = 0; i < vdsList.size(); i++) {
+                    QueryReturnValue interfaceQueryValue = values.get(i);
+                    if (interfaceQueryValue.getReturnValue() != null) {
+                        vdsList.get(i).getInterfaces().addAll(interfaceQueryValue.getReturnValue());
+                        callback.run();
+                    }
+                }
+            });
+        } else {
+            callback.run();
+        }
+    }
+
+    public void updateVDSInterfaceList(Collection<PairQueryable<VdsNetworkInterface, VDS>> pairCollection,
+            Runnable callback) {
+        if (pairCollection != null) {
+            List<VDS> vdsList = pairCollection.stream().map(pair -> pair.getSecond()).collect(Collectors.toList());
+            updateVDSInterfaceList(vdsList, callback);
+        } else {
+            callback.run();
+        }
     }
 }

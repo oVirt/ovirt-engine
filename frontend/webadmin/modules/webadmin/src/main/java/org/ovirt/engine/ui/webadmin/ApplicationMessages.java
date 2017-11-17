@@ -24,6 +24,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String hostGlusterDisconnectedAlert();
 
+    String hostHasDefaultRouteAlert();
+
     String manaulFencePopupMessageLabel(String hostName);
 
     String storageDestroyPopupMessageLabel(String storageName);

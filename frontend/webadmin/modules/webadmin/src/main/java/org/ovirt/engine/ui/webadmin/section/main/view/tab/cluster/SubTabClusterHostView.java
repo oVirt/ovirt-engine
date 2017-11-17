@@ -48,7 +48,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS,
 
         HostStatusColumn statusIconColumn = new HostStatusColumn();
         statusIconColumn.setContextMenuTitle(constants.statusIconClusterHost());
-        getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(statusIconColumn, constants.empty(), "35px"); //$NON-NLS-1$
 
         AbstractTextColumn<VDS> nameColumn = new AbstractTextColumn<VDS>() {
             @Override

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.table.cell;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -88,8 +89,10 @@ public class HostStatusCell extends AbstractCell<VDS> {
         boolean getnet_config_dirty =
                 vds.getNetConfigDirty() == null ? false : vds.getNetConfigDirty().booleanValue();
         boolean showPMAlert = vds.getClusterSupportsVirtService() && !vds.isPmEnabled() && vds.isFencingEnabled();
+        boolean hasDefaultRoute = NetworkCommonUtils.hasDefaultRoute(vds.getInterfaces());
         boolean showGlusterAlert = vds.getClusterSupportsGlusterService() && vds.getGlusterPeerStatus() != PeerStatus.CONNECTED;
-        if (showPMAlert || getnet_config_dirty || showGlusterAlert || vds.getStaticData().isReinstallRequired()) {
+        if (showPMAlert || getnet_config_dirty || showGlusterAlert || vds.getStaticData().isReinstallRequired()
+                || !hasDefaultRoute) {
             sb.append(alertImageHtml);
         }
         sb.appendHtmlConstant("</div>"); //$NON-NLS-1$

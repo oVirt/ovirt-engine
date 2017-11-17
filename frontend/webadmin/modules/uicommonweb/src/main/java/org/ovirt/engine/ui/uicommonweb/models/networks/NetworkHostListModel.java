@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
@@ -39,6 +40,11 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
         setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$
 
         updateActionAvailability();
+    }
+
+    @Override
+    public void setItems(Collection<PairQueryable<VdsNetworkInterface, VDS>> value) {
+        AsyncDataProvider.getInstance().updateVDSInterfaceList(value, () -> super.setItems(value));
     }
 
     @Override

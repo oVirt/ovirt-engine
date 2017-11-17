@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
+import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -687,6 +688,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    private boolean hasDefaultRouteAlert;
+
+    public boolean getHasDefaultRouteAlert() {
+        return hasDefaultRouteAlert;
+    }
+
+    public void setHasDefaultRouteAlert(boolean value) {
+        if (hasDefaultRouteAlert != value) {
+            hasDefaultRouteAlert = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HasDefaultRouteAlert")); //$NON-NLS-1$
+        }
+    }
+
     private NonOperationalReason nonOperationalReasonEntity;
 
     public NonOperationalReason getNonOperationalReasonEntity() {
@@ -963,9 +977,13 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setHasReinstallAlertMaintenance(false);
         setHasNICsAlert(false);
         setHasGlusterDisconnectedAlert(false);
+        setHasDefaultRouteAlert(false);
+
 
         // Check the network alert presense.
         setHasNICsAlert(getEntity().getNetConfigDirty() == null ? false : getEntity().getNetConfigDirty());
+
+        setHasDefaultRouteAlert(!NetworkCommonUtils.hasDefaultRoute(getEntity().getInterfaces()));
 
         // Check manual fence alert presense.
         if (getEntity().getStatus() == VDSStatus.NonResponsive
@@ -1022,7 +1040,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setHasAnyAlert(getHasNICsAlert() || getHasUpgradeAlert() || getHasManualFenceAlert()
                 || getHasNoPowerManagementAlert() || getHasReinstallAlertNonResponsive()
                 || getHasReinstallAlertInstallFailed() || getHasReinstallAlertMaintenance()
-                || getHasGlusterDisconnectedAlert());
+                || getHasGlusterDisconnectedAlert() || getHasDefaultRouteAlert());
     }
 
     private void goToEvents() {
