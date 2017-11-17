@@ -119,7 +119,6 @@ public class HostMonitoring {
                     // check if its time for statistics refresh
                     if (vdsManager.isTimeToRefreshStatistics() || vds.getStatus() == VDSStatus.PreparingForMaintenance) {
                         refreshVdsStats();
-                        refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
                     } else {
                         refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
                     }
@@ -463,9 +462,27 @@ public class HostMonitoring {
         }
         // get statistics data, images checks and vm_count data (dynamic)
         fetchHostInterfaces();
-        VDSReturnValue statsReturnValue = resourceManager.runVdsCommand(VDSCommandType.GetStats,
-                new VdsIdAndVdsVDSCommandParametersBase(vds));
-        processRefreshVdsStatsResponse(statsReturnValue);
+        resourceManager.runVdsCommand(VDSCommandType.GetStatsAsync,
+                new VdsIdAndVdsVDSCommandParametersBase(vds).withCallback(new GetStatsAsyncCallback()));
+    }
+
+    class GetStatsAsyncCallback implements BrokerCommandCallback {
+        @Override
+        public void onResponse(Map<String, Object> response) {
+            try {
+                processRefreshVdsStatsResponse((VDSReturnValue) response.get("result"));
+                refreshVdsRunTimeInfo(true);
+            } catch(Throwable t) {
+                onFailure(t);
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            log.error("Unable to GetStats: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+            postProcessRefresh(false);
+        }
     }
 
     private void processRefreshVdsStatsResponse(VDSReturnValue statsReturnValue) {

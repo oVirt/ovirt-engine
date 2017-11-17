@@ -148,7 +148,7 @@ public class VdsManager {
     private List<VmDynamic> lastVmsList = Collections.emptyList();
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
     private VmStatsRefresher vmsRefresher;
-    protected int refreshIteration;
+    protected AtomicInteger refreshIteration;
     private int autoRestartUnknownVmsIteration;
 
     private final ReentrantLock autoStartVmsWithLeasesLock;
@@ -161,7 +161,7 @@ public class VdsManager {
         this.resourceManager = resourceManager;
         HOST_REFRESH_RATE = Config.<Long> getValue(ConfigValues.VdsRefreshRate) * 1000L;
         NUMBER_HOST_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
-        refreshIteration = NUMBER_HOST_REFRESHES_BEFORE_SAVE - 1;
+        refreshIteration = new AtomicInteger(NUMBER_HOST_REFRESHES_BEFORE_SAVE - 1);
         log.info("Entered VdsManager constructor");
         cachedVds = vds;
         vdsId = vds.getId();
@@ -242,6 +242,15 @@ public class VdsManager {
     }
 
     public void refresh() {
+        try {
+            refreshImpl();
+        } catch (Throwable t) {
+            log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception:", t);
+        }
+    }
+
+    public void refreshImpl() {
         boolean releaseLock = true;
         if (lockManager.acquireLock(monitoringLock).getFirst()) {
             try {
@@ -279,10 +288,9 @@ public class VdsManager {
                         releaseLock = true;
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Throwable t) {
                 releaseLock = true;
-                log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(e));
-                log.debug("Exception:", e);
+                throw t;
             } finally {
                 if (releaseLock) {
                     lockManager.releaseLock(monitoringLock);
@@ -1089,15 +1097,15 @@ public class VdsManager {
     }
 
     private void updateIteration() {
-        if (refreshIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE) {
-            refreshIteration = 1;
+        if (isTimeToRefreshStatistics()) {
+            refreshIteration.set(1);
         } else {
-            refreshIteration++;
+            refreshIteration.incrementAndGet();
         }
     }
 
     public boolean isTimeToRefreshStatistics() {
-        return refreshIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE;
+        return refreshIteration.get() == NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     }
 
     public boolean getbeforeFirstRefresh() {
