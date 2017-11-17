@@ -74,7 +74,7 @@ public class HostMonitoringTest {
     /**
      * not an integration test - just test a Network exceptionn doesn't throw and exception
      */
-    @Test(expected = VDSNetworkException.class)
+    @Test
     public void testErrorHandling() {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(false);
