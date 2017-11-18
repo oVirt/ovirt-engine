@@ -24,7 +24,7 @@ public class InitializationMapper {
             entity.setName(model.getName());
         }
 
-        if (model.isOnBoot()) {
+        if (model.isSetOnBoot()) {
             entity.setStartOnBoot(model.isOnBoot());
         }
 
