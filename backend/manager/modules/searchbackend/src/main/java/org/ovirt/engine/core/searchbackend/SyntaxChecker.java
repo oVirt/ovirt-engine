@@ -906,6 +906,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             String pagePhrase = getPagePhrase(syntax, pageNumber);
             String primeryKey = searchObjectAC.getPrimeryKeyName(searchObjStr);
             String tableName = searchObjectAC.getRelatedTableName(searchObjStr, useTags);
+            boolean usingDistinct = searchObjectAC.isUsingDistinct(searchObjStr);
 
             // adding a secondary default sort by entity name
             StringBuilder sortExpr = new StringBuilder();
@@ -924,9 +925,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                         "SELECT * FROM %1$s WHERE ( %2$s IN (%3$s)",
                                 searchObjectAC.getRelatedTableName(searchObjStr, false),
                                 primeryKey,
-                                getInnerQuery(tableName, primeryKey, fromStatement, wherePhrase, sortExpr));
+                                getInnerQuery(tableName, primeryKey, fromStatement, wherePhrase, sortExpr, true));
             } else {
-                inQuery = "(" + getInnerQuery(tableName, "*", fromStatement, wherePhrase, sortExpr);
+                inQuery = "(" + getInnerQuery(tableName, "*", fromStatement, wherePhrase, sortExpr, usingDistinct);
             }
             if (syntax.getSearchFrom() > 0) {
                 inQuery = StringFormat.format("%1$s and  %2$s >  %3$s", inQuery, primeryKey, syntax.getSearchFrom());
@@ -947,7 +948,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         return retval;
     }
 
-    private String getInnerQuery(String tableName, String primeryKey, String fromStatement, StringBuilder wherePhrase, StringBuilder sortExpr) {
+    private String getInnerQuery(String tableName, String primeryKey, String fromStatement, StringBuilder wherePhrase, StringBuilder sortExpr, boolean useDistinct) {
         // prevent using distinct when the sort expression has a function call since when distinct is used it is performed first and sorting
         // is done on the result, so all fields in the sort clause should appear in the result set after distinct is applied
 
@@ -955,7 +956,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             return StringFormat.format("SELECT %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement, wherePhrase);
         }
         else {
-            return StringFormat.format("SELECT distinct %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement, wherePhrase);
+            return StringFormat.format("SELECT %5$s %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement, wherePhrase, useDistinct ? "distinct" : "");
         }
     }
 
