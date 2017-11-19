@@ -160,7 +160,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                 handleInitializing(context);
                 break;
             case RESUMING:
-                handleResuming();
+                handleResuming(context);
                 break;
             case TRANSFERRING:
                 handleTransferring(context);
@@ -273,25 +273,27 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         }
     }
 
-    private void handleResuming() {
+    private void handleResuming(final StateContext context) {
         lockImage();
 
-        boolean resumeSessionSuccess = startImageTransferSession();
-        if (resumeSessionSuccess) {
-            log.info("Resuming session for {}", getTransferDescription());
-        } else {
-            log.error("Failed to resume session for {}", getTransferDescription());
-        }
-        updateEntityPhase(resumeSessionSuccess ? ImageTransferPhase.TRANSFERRING
-                : ImageTransferPhase.PAUSED_SYSTEM);
+        log.info("Resuming transfer for {}", getTransferDescription());
+        extendTicketIfNecessary(context);
+        updateEntityPhase(ImageTransferPhase.TRANSFERRING);
 
         resetPeriodicPauseLogTime(0);
     }
 
     private void handleTransferring(final StateContext context) {
-        // While the transfer is in progress, we're responsible for keeping the transfer
-        // session alive. The polling interval is user-configurable and grows exponentially,
-        // make sure to set it with time to spare.
+        // While the transfer is in progress, we're responsible
+        // for keeping the transfer session alive.
+        extendTicketIfNecessary(context);
+        resetPeriodicPauseLogTime(0);
+        pollTransferStatus(context);
+    }
+
+    private void extendTicketIfNecessary(final StateContext context) {
+        // The polling interval is user-configurable and grows
+        // exponentially, make sure to set it with time to spare.
         if (context.iterationTimestamp
                 >= getParameters().getSessionExpiration() - getHostTicketRefreshAllowance()) {
             log.info("Renewing transfer ticket for {}", getTransferDescription());
@@ -310,9 +312,6 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         } else {
             log.debug("Not yet renewing transfer ticket for {}", getTransferDescription());
         }
-
-        resetPeriodicPauseLogTime(0);
-        pollTransferStatus(context);
     }
 
     private void pollTransferStatus(final StateContext context) {
@@ -471,13 +470,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
 
     private void handlePaused(final StateContext context) {
-        // Close the session, but leave the command running to support later resumption.
-        // Stopping the image transfer session may fail so it's retried; the call is
-        // idempotent and lightweight if the session is not in progress.
         periodicPauseLog(context.entity, context.iterationTimestamp);
-        if (context.entity.getImagedTicketId() != null) {
-            stopImageTransferSession(context.entity);
-        }
     }
 
     /**
