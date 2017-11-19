@@ -54,6 +54,9 @@ public class BackendImageTransfersResource
 
     private Response performCreate(ImageTransfer imageTransfer, TransferDiskImageParameters params) {
         updateTransferType(imageTransfer, params);
+        if (imageTransfer.isSetHost() && imageTransfer.getHost().isSetId()) {
+            params.setVdsId(Guid.createGuidFromString(imageTransfer.getHost().getId()));
+        }
         return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
                 IdQueryParameters.class));
     }
