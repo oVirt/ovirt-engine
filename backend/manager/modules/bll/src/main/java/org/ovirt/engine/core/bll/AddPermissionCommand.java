@@ -103,22 +103,19 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 && getParameters().getGroup() == null
                 && dbUserDao.get(adElementId) == null
                 && dbGroupDao.get(adElementId) == null) {
-            getReturnValue().getValidationMessages().add(EngineMessage.USER_MUST_EXIST_IN_DB.toString());
-            return false;
+            return failValidation(EngineMessage.USER_MUST_EXIST_IN_DB);
         }
 
         // only system super user can give permissions with admin roles
         if (!isSystemSuperUser() && role.getType() == RoleType.ADMIN) {
-            addValidationMessage(EngineMessage.PERMISSION_ADD_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_GIVE_ADMIN_ROLES);
-            return false;
+            return failValidation(EngineMessage.PERMISSION_ADD_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_GIVE_ADMIN_ROLES);
         }
 
         // don't allow adding permissions to vms from pool externally
         if (!isInternalExecution() && perm.getObjectType() == VdcObjectType.VM) {
             VM vm = vmDao.get(perm.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
-                addValidationMessage(EngineMessage.PERMISSION_ADD_FAILED_VM_IN_POOL);
-                return false;
+                return failValidation(EngineMessage.PERMISSION_ADD_FAILED_VM_IN_POOL);
             }
         }
 
