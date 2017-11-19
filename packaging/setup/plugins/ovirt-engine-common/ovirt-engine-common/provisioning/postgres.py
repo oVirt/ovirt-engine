@@ -87,6 +87,10 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Defaults.PG_PROV_AUTOVACUUM_MAINTENANCE_WORK_MEM
         )
         self.environment.setdefault(
+            oengcommcons.ProvisioningEnv.PG_WORK_MEM_KB,
+            oengcommcons.Defaults.PG_PROV_WORK_MEM_KB
+        )
+        self.environment.setdefault(
             oengcommcons.ProvisioningEnv.OLD_POSTGRES_SERVICE,
             oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_SERVICE
         )

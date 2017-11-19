@@ -133,6 +133,21 @@ class Plugin(plugin.PluginBase):
                     specific='%s' % database.AT_LEAST_EXPECTED,
                 )
             },
+            {
+                'key': 'work_mem',
+                'expected': self.environment[
+                    ProvisioningEnv.PG_WORK_MEM_KB
+                ],
+                'useQueryForValue': True,
+                'ok': lambda key, current, expected: (
+                    int(current) >= int(expected)
+                ),
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': '{specific}'.format(
+                    specific='%s' % database.AT_LEAST_EXPECTED,
+                )
+            },
         )
 
     @plugin.event(

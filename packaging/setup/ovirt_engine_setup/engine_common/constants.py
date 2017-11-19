@@ -151,6 +151,7 @@ class Defaults(object):
     PG_PROV_AUTOVACUUM_ANALYZE_SCALE_FACTOR = 0.075
     PG_PROV_AUTOVACUUM_MAX_WORKERS = 6
     PG_PROV_AUTOVACUUM_MAINTENANCE_WORK_MEM = 65536
+    PG_PROV_WORK_MEM_KB = 8192
 
 
 @util.export
@@ -317,6 +318,8 @@ class ProvisioningEnv(object):
         'OVESETUP_PROVISIONING/postgresAutovacuumMaxWorkers'
     PG_AUTOVACUUM_MAINTENANCE_WORK_MEM =\
         'OVESETUP_PROVISIONING/postgresAutovacuumMaintenanceWorkMem'
+    PG_WORK_MEM_KB =\
+        'OVESETUP_PROVISIONING/postgresWorkMemKb'
 
 
 @util.export
