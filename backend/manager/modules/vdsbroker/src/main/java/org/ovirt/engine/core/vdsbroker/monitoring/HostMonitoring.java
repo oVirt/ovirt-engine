@@ -182,10 +182,12 @@ public class HostMonitoring {
         public void onResponse(Map<String, Object> response) {
             try {
                 final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
+                VDSReturnValue caps = (VDSReturnValue) response.get("result");
+                vdsManager.invokeGetHardwareInfo(vds, caps);
                 VDSStatus refreshReturnStatus = vdsManager.processRefreshCapabilitiesResponse(processHardwareNeededAtomic,
                         vds,
                         oldVds,
-                        (VDSReturnValue) response.get("result"));
+                        caps);
                 processRefreshCapabilitiesResponse(refreshReturnStatus, processHardwareNeededAtomic);
                 refreshVdsRunTimeInfo(false);
             } catch (Throwable t) {
@@ -749,10 +751,12 @@ public class HostMonitoring {
             boolean succeeded = true;
             try {
                 final AtomicBoolean processHardwareCapsNeededTemp = new AtomicBoolean();
+                VDSReturnValue caps = (VDSReturnValue) response.get("result");
+                vdsManager.invokeGetHardwareInfo(vds, caps);
                 vdsManager.processRefreshCapabilitiesResponse(processHardwareCapsNeededTemp,
                         vds,
                         oldVds,
-                        (VDSReturnValue) response.get("result"));
+                        caps);
                 processBeforeFirstRefreshTreatmentResponse(processHardwareCapsNeededTemp);
                 if (vdsManager.isTimeToRefreshStatistics()) {
                     saveVdsDynamic |= refreshCommitedMemory(vds, vdsManager.getLastVmsList(), resourceManager);
