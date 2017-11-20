@@ -611,13 +611,37 @@ public class VdsManager {
         // Verify that this VDS also supports the specific cluster level. Otherwise getHardwareInfo
         // API won't exist for the host and an exception will be raised by VDSM.
         if (hostVersions != null && hostVersions.contains(clusterCompatibility)) {
-            VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.GetHardwareInfo,
-                    new VdsIdAndVdsVDSCommandParametersBase(vds));
-            if (!ret.getSucceeded()) {
-                AuditLogable logable = createAuditLogableForHost(vds);
-                logable.updateCallStackFromThrowable(ret.getExceptionObject());
-                auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
+            resourceManager.runVdsCommand(VDSCommandType.GetHardwareInfoAsync,
+                    new VdsIdAndVdsVDSCommandParametersBase(vds).withCallback(new HardwareInfoCallback(vds)));
+        }
+    }
+
+    class HardwareInfoCallback implements BrokerCommandCallback {
+
+        private VDS vds;
+
+        HardwareInfoCallback(VDS vds) {
+            this.vds = vds;
+        }
+
+        @Override
+        public void onResponse(Map<String, Object> response) {
+            try {
+                VDSReturnValue ret = (VDSReturnValue) response.get("result");
+                if (!ret.getSucceeded()) {
+                    AuditLogable logable = createAuditLogableForHost(vds);
+                    logable.updateCallStackFromThrowable(ret.getExceptionObject());
+                    auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
+                }
+            } catch (Throwable t) {
+                onFailure(t);
             }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            log.error("Unable to GetHardwareInfo: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 
