@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -425,18 +424,13 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
         // If the VM is running then the volume is already prepared in the guest's host so there
         // is no need for prepare and teardown.
-        Guid hostIdToExecuteQemuImageInfo = null;
-        List<Pair<VM, VmDevice>> attachedVmsInfo =
-                vmDao.getVmsWithPlugInfo(diskImage.getId());
-        for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
-            VM vm = pair.getFirst();
-            if (Boolean.TRUE.equals(pair.getSecond().isPlugged())) {
-                if (!vm.isDown()) {
-                    hostIdToExecuteQemuImageInfo = vm.getRunOnVds();
-                    break;
-                }
-            }
-        }
+        Guid hostIdToExecuteQemuImageInfo = vmDao.getVmsWithPlugInfo(diskImage.getId())
+                .stream()
+                .filter(p -> !p.getFirst().isDown())
+                .filter(p -> p.getSecond().isPlugged())
+                .map(p -> p.getFirst().getRunOnVds())
+                .findFirst()
+                .orElse(null);
 
         setQcowCompat(diskImage.getImage(),
                 storagePoolId,
