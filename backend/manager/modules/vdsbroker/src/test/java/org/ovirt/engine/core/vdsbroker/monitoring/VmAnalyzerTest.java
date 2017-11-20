@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -119,6 +120,7 @@ public class VmAnalyzerTest {
         assumeNotNull(data.dbVm(), data.vdsmVm());
         assumeTrue(data.dbVm().getStatus() == VMStatus.MigratingFrom);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
+        assumeTrue(data.vdsmVm().getVmDynamic().getExitReason() == VmExitReason.MigrationSucceeded);
         assumeTrue(data.vdsmVm().getVmDynamic().getExitStatus() == VmExitStatus.Normal);
         //then
         vmAnalyzer.analyze();
@@ -227,6 +229,7 @@ public class VmAnalyzerTest {
         assumeNotNull(data.dbVm(), data.vdsmVm());
         // when vm ended migration
         assumeTrue(data.dbVm().getStatus() == VMStatus.MigratingFrom);
+        assumeTrue(data.vdsmVm().getVmDynamic().getExitReason() == VmExitReason.MigrationSucceeded);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         //then
         verify(resourceManager, times(1)).internalSetVmStatus(data.dbVm().getDynamicData(), VMStatus.MigratingTo);
