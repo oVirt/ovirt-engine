@@ -135,6 +135,7 @@ class Plugin(plugin.PluginBase):
                     v_auth_username:=%(auth_username)s,
                     v_auth_password:=%(auth_password)s,
                     v_custom_properties:=%(custom_properties)s,
+                    v_plugin_type:=%(plugin_type)s,
                     v_auth_url:=%(auth_url)s
                 )
             """,
@@ -148,6 +149,7 @@ class Plugin(plugin.PluginBase):
                 auth_username=self._user,
                 auth_password=self._password,
                 custom_properties=None,
+                plugin_type='OVIRT_PROVIDER_OVN',
                 auth_url='https://%s:35357/v2.0/' % fqdn
             ),
         )
