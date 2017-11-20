@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -1006,49 +1007,36 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
-    public ArrayList<LunModel> getLunsToRefresh() {
-        ArrayList<LunModel> luns = new ArrayList<>();
+    public Set<String> getLunsToRefresh() {
         if (!getIsGrouppedByTarget()) {
-            List<LunModel> items = (List<LunModel>) getItems();
-            for (LunModel lun : items) {
-                if (lun.getIsIncluded()) {
-                    if (lun.isAdditionalAvailableSizeSelected()
-                            && Linq.firstOrNull(luns, new Linq.LunPredicate(lun)) == null) {
-                        luns.add(lun);
-                    }
-                }
-            }
+            return filterLunsToRefresh(((List<LunModel>) getItems()).stream());
+
         }
-        else {
-            List<SanTargetModel> sanTargetModels = (List<SanTargetModel>) getItems();
-            for (SanTargetModel sanTargetModel : sanTargetModels) {
-                List<LunModel> items = sanTargetModel.getLuns();
-                for (LunModel lun : items) {
-                    if (lun.getIsIncluded()) {
-                        if (lun.isAdditionalAvailableSizeSelected()
-                                && Linq.firstOrNull(luns, new Linq.LunPredicate(lun)) == null) {
-                            luns.add(lun);
-                        }
-                    }
-                }
-            }
-        }
-        return luns;
+        return filterLunsToRefresh(((List<SanTargetModel>) getItems()).stream()
+                .map(SanTargetModel::getLuns)
+                .flatMap(List::stream));
     }
 
-    public List<LunModel> getLunsToRemove() {
+    public Set<String> getLunsToRemove() {
         if (getIsGrouppedByTarget()) {
-            return ((List<SanTargetModel>) getItems()).stream()
+            return filterLunsToRemove(((List<SanTargetModel>) getItems()).stream()
                     .map(SanTargetModel::getLuns)
-                    .flatMap(List::stream)
-                    .filter(LunModel::isRemoveLunSelected)
-                    .distinct()
-                    .collect(Collectors.toList());
+                    .flatMap(List::stream));
         }
-        return ((List<LunModel>) getItems()).stream()
-                .filter(LunModel::isRemoveLunSelected)
-                .distinct()
-                .collect(Collectors.toList());
+        return filterLunsToRemove(((List<LunModel>) getItems()).stream());
+    }
+
+    private Set<String> filterLunsToRefresh (Stream<LunModel> stream) {
+        return stream.filter(LunModel::getIsIncluded)
+                .filter(LunModel::isAdditionalAvailableSizeSelected)
+                .map(LunModel::getLunId)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<String> filterLunsToRemove (Stream<LunModel> stream) {
+        return stream.filter(LunModel::isRemoveLunSelected)
+                .map(LunModel::getLunId)
+                .collect(Collectors.toSet());
     }
 
     public int getNumOfLUNsToRemove() {

@@ -1531,10 +1531,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                             null, this);
                     }
 
-                    Set<String> lunToRefreshIds = new HashSet<>();
-                    for (LunModel lun : sanStorageModelBase.getLunsToRefresh()) {
-                        lunToRefreshIds.add(lun.getLunId());
-                    }
+                    Set<String> lunToRefreshIds = sanStorageModelBase.getLunsToRefresh();
 
                     if (lunToRefreshIds.size() > 0) {
                         Frontend.getInstance().runAction(ActionType.RefreshLunsSize,
@@ -1543,15 +1540,12 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     }
 
                     if (storageDomain1.getStatus() == StorageDomainStatus.Maintenance) {
-                        List<String> lunsToRemoveIds = new ArrayList<>();
-                        for (LunModel lun : sanStorageModelBase.getLunsToRemove()) {
-                            lunsToRemoveIds.add(lun.getLunId());
-                        }
+                        Set<String> lunsToRemoveIds = sanStorageModelBase.getLunsToRemove();
 
                         if (lunsToRemoveIds.size() > 0) {
                             Frontend.getInstance().runAction(ActionType.ReduceSANStorageDomainDevices,
                                     new ReduceSANStorageDomainDevicesCommandParameters(storageDomain1.getId(),
-                                            lunsToRemoveIds),
+                                            new ArrayList<>(lunsToRemoveIds)),
                                     null, this);
                         }
                     }
