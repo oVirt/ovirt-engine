@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -11,30 +10,22 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.action.AddVmParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -42,6 +33,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFromTemplateCommand<AddVmParameters>> {
 
     private static final int MAX_PCI_SLOTS = 26;
+    private List<StorageDomain> storageDomains;
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
@@ -68,7 +60,9 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     }
 
     protected void mockStorageDomainDaoGetAllForStoragePool() {
-        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.singletonList(createStorageDomain()));
+        storageDomains =
+                Arrays.asList(createStorageDomain(STORAGE_DOMAIN_ID_1), createStorageDomain(STORAGE_DOMAIN_ID_2));
+        when(sdDao.getAllForStoragePool(any())).thenReturn(storageDomains);
     }
 
     @Test
@@ -118,47 +112,18 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void diskImagesOnAnyApplicableDomainsValidDomains() {
-        List<DiskImage> disks = generateDisksList(2);
-        Map<Guid, Set<Guid>> validDomainsForDisk = createDiskValidDomainsMap(disks);
-        assertThat(cmd.diskImagesOnAnyApplicableDomains(disks,
-                validDomainsForDisk,
-                Collections.singletonMap(STORAGE_DOMAIN_ID_1, createStorageDomain()),
-                EnumSet.of(StorageDomainStatus.Active)),
-                isValid());
+        assertTrue(cmd.verifySourceDomains());
     }
 
     @Test
     public void diskImagesOnAnyApplicableDomainsNoValidDomainsForAllDisks() {
-        List<DiskImage> disks = generateDisksList(2);
-        Map<Guid, Set<Guid>> validDomainsForDisk =
-                disks.stream().collect(Collectors.toMap(DiskImage::getId, d -> Collections.emptySet()));
-        assertThat(cmd.diskImagesOnAnyApplicableDomains(disks,
-                validDomainsForDisk,
-                Collections.singletonMap(STORAGE_DOMAIN_ID_1, createStorageDomain()),
-                EnumSet.of(StorageDomainStatus.Active)),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
+        storageDomains.forEach(sd -> sd.setStatus(StorageDomainStatus.Inactive));
+        assertFalse(cmd.verifySourceDomains());
     }
 
     @Test
     public void diskImagesOnAnyApplicableDomainsNoValidDomainsForOneDisk() {
-        DiskImage disk1 = createDiskImage();
-        DiskImage disk2 = createDiskImage();
-        List<DiskImage> disks = Arrays.asList(disk1, disk2);
-        Map<Guid, Set<Guid>> validDomainsForDisk = createDiskValidDomainsMap(Collections.singletonList(disk1));
-        validDomainsForDisk.put(disk2.getId(), Collections.emptySet());
-        assertThat(cmd.diskImagesOnAnyApplicableDomains(disks,
-                validDomainsForDisk,
-                Collections.singletonMap(STORAGE_DOMAIN_ID_1, createStorageDomain()),
-                EnumSet.of(StorageDomainStatus.Active)),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
-    }
-
-    private Map<Guid, Set<Guid>> createDiskValidDomainsMap(List<DiskImage> diskImages) {
-        Map<Guid, Set<Guid>> toReturn = new HashMap<>();
-        for (DiskImage diskImage : diskImages) {
-            toReturn.put(diskImage.getId(), Collections.singleton(diskImage.getStorageIds().get(0)));
-        }
-
-        return toReturn;
+        storageDomains.get(0).setStatus(StorageDomainStatus.Maintenance);
+        assertFalse(cmd.verifySourceDomains());
     }
 }

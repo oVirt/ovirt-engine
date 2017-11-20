@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -38,7 +40,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends BaseCommandTest {
     protected static final int TOTAL_NUM_DOMAINS = 2;
     protected static final Guid STORAGE_DOMAIN_ID_1 = Guid.newGuid();
-    private static final Guid STORAGE_DOMAIN_ID_2 = Guid.newGuid();
+    protected static final Guid STORAGE_DOMAIN_ID_2 = Guid.newGuid();
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final int NUM_DISKS_STORAGE_DOMAIN_1 = 3;
     private static final int NUM_DISKS_STORAGE_DOMAIN_2 = 3;
@@ -83,10 +85,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     public void setUp() {
         injectorRule.bind(OsRepository.class, osRepository);
 
-        initVmTemplate();
-        cmd.setVmTemplate(vmTemplate);
-        cmd.setVmTemplateId(vmTemplate.getId());
-
         initCluster();
         cmd.setClusterId(cluster.getId());
         cmd.setCluster(cluster);
@@ -99,6 +97,10 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
         generateStorageToDisksMap();
         initDestSDs();
+
+        initVmTemplate();
+        cmd.setVmTemplate(vmTemplate);
+        cmd.setVmTemplateId(vmTemplate.getId());
     }
 
     protected void mockOtherDependencies() {
@@ -107,24 +109,24 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     private void generateStorageToDisksMap() {
         cmd.storageToDisksMap = new HashMap<>();
-        cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID_1, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_1));
-        cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID_2, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_2));
+        cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID_1, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_1, STORAGE_DOMAIN_ID_1));
+        cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID_2, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_2, STORAGE_DOMAIN_ID_2));
     }
 
-    protected static List<DiskImage> generateDisksList(int size) {
+    protected static List<DiskImage> generateDisksList(int size, Guid sdId) {
         List<DiskImage> disksList = new ArrayList<>();
         for (int i = 0; i < size; ++i) {
-            DiskImage diskImage = createDiskImage();
+            DiskImage diskImage = createDiskImage(sdId);
             disksList.add(diskImage);
         }
         return disksList;
     }
 
-    protected static DiskImage createDiskImage() {
+    protected static DiskImage createDiskImage(Guid sdId) {
         DiskImage diskImage = new DiskImage();
         diskImage.setId(Guid.newGuid());
         diskImage.setImageId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID_1)));
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(sdId)));
         return diskImage;
     }
 
@@ -170,10 +172,10 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     private void initVmTemplate() {
         vmTemplate = new VmTemplate();
         vmTemplate.setStoragePoolId(STORAGE_POOL_ID);
-        DiskImage image = createDiskImageTemplate();
-        vmTemplate.getDiskTemplateMap().put(image.getImageId(), image);
+        vmTemplate.getDiskTemplateMap().putAll(cmd.storageToDisksMap.values().stream().flatMap(List::stream).collect(
+                Collectors.toMap(DiskImage::getImageId, Function.identity())));
         HashMap<Guid, DiskImage> diskImageMap = new HashMap<>();
-        DiskImage diskImage = createDiskImage();
+        DiskImage diskImage = createDiskImage(STORAGE_DOMAIN_ID_1);
         diskImageMap.put(diskImage.getId(), diskImage);
         vmTemplate.setDiskImageMap(diskImageMap);
     }
@@ -193,22 +195,15 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         storagePool.setStatus(StoragePoolStatus.Up);
     }
 
-    private static DiskImage createDiskImageTemplate() {
-        DiskImage i = new DiskImage();
-        i.setImageId(Guid.newGuid());
-        i.setStorageIds(new ArrayList<>(Collections.singletonList(STORAGE_DOMAIN_ID_1)));
-        return i;
-    }
-
     protected void initCommandMethods() {
         doReturn(true).when(cmd).canAddVm(any(), any(), any(), anyInt());
     }
 
-    protected StorageDomain createStorageDomain() {
+    protected StorageDomain createStorageDomain(Guid sdId) {
         StorageDomain sd = new StorageDomain();
-        sd.setStorageDomainType(StorageDomainType.Master);
+        sd.setStorageDomainType(StorageDomainType.Data);
         sd.setStatus(StorageDomainStatus.Active);
-        sd.setId(STORAGE_DOMAIN_ID_1);
+        sd.setId(sdId);
         return sd;
     }
 

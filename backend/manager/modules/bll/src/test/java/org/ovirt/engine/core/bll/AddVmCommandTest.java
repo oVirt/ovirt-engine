@@ -76,7 +76,8 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
         doReturn(true).when(cmd).validateCustomProperties(any(), any());
         doReturn(true).when(cmd).validateSpaceRequirements();
-        assertTrue("vm could not be added", cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain())));
+        assertTrue("vm could not be added",
+                cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain(STORAGE_DOMAIN_ID_1))));
     }
 
     @Test

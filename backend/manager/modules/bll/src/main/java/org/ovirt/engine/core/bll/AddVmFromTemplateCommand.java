@@ -182,34 +182,17 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
                 ImagesHandler.findDomainsInApplicableStatusForDisks(templateDiskImages,
                         poolDomainsMap,
                         validDomainStatuses);
-        return validate(diskImagesOnAnyApplicableDomains
-                (templateDiskImages, validDisksDomains, poolDomainsMap, validDomainStatuses));
-    }
-
-    /**
-     * Checks that each of the disks has at least one domain in valid status in the given map
-     * @param DiskImages The disks to check
-     * @param validDomainsForDisk Map containing valid domains for each disk
-     * @param storageDomains Map containing the storage domain objects
-     * @param message Validation message to use in case of error
-     * @param applicableStatuses Applicable domain statuses to use as replacement in the given message
-     * @return A {@link ValidationResult} with the validation information.
-     */
-    public ValidationResult diskImagesOnAnyApplicableDomains(List<DiskImage> diskImages,
-            Map<Guid, Set<Guid>> validDomainsForDisk,
-            Map<Guid, StorageDomain> storageDomains,
-            Set<StorageDomainStatus> applicableStatuses) {
 
         StringBuilder disksInfo = new StringBuilder();
-        for (DiskImage diskImage : diskImages) {
-            Set<Guid> applicableDomains = validDomainsForDisk.get(diskImage.getId());
+        for (DiskImage diskImage : templateDiskImages) {
+            Set<Guid> applicableDomains = validDisksDomains.get(diskImage.getId());
             if (!applicableDomains.isEmpty()) {
                 continue;
             }
 
             List<String> nonApplicableStorageInfo = new LinkedList<>();
             for (Guid id : diskImage.getStorageIds()) {
-                StorageDomain domain = storageDomains.get(id);
+                StorageDomain domain = poolDomainsMap.get(id);
                 nonApplicableStorageInfo.add(String.format("%s - %s", domain.getName(), domain.getStatus().toString()));
             }
 
@@ -219,13 +202,13 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         }
 
         if (disksInfo.length() > 0) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
                     String.format("$disksInfo %s",
                             disksInfo.toString()),
-                    String.format("$applicableStatus %s", StringUtils.join(applicableStatuses, ",")));
+                    String.format("$applicableStatus %s", StringUtils.join(validDomainStatuses, ",")));
         }
 
-        return ValidationResult.VALID;
+        return true;
     }
 
     @Override
