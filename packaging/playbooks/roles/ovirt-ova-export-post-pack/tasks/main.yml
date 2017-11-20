@@ -1,0 +1,14 @@
+---
+- name: Rename the OVA file
+  command: mv "{{ ova_file.dest }}" "{{ target_directory }}/{{ ova_name }}"
+  when: packing_result.rc is defined and packing_result.rc == 0
+
+- name: Remove the temporary file
+  file:
+    path: "{{ ova_file.dest }}"
+    state: absent
+  when: packing_result.rc is defined and packing_result.rc != 0
+
+- fail:
+    msg: "Failed to create OVA file"
+  when: packing_result.rc is defined and packing_result.rc != 0

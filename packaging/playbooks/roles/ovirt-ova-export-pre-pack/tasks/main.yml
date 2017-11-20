@@ -1,0 +1,34 @@
+---
+- name: Examine target directory
+  stat:
+    path: "{{ target_directory }}"
+  register: target_directory_stats
+
+- name: Fail if target directory does not exist
+  fail:
+    msg: "Target directory does not exist"
+  when: not target_directory_stats.stat.exists
+
+- name: Fail if target directory is not a directory
+  fail:
+    msg: "Target directory is not a directory"
+  when: not target_directory_stats.stat.isdir
+
+- name: Fail if target directory is not writeable
+  fail:
+    msg: "Target directory is not writeable"
+  when: not target_directory_stats.stat.writeable
+
+- name: Removing the temporary file
+  file:
+    path: "{{ target_directory }}/{{ ova_name }}.tmp"
+    state: absent
+  when: validate_only is not defined
+
+- name: Prepare temporary path for the OVA file
+  file:
+    path: "{{ target_directory }}/{{ ova_name }}.tmp"
+    state: touch
+  register: ova_file
+  when: validate_only is not defined
+

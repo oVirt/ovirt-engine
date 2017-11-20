@@ -1,0 +1,8 @@
+- hosts: all
+  remote_user: root
+  gather_facts: no
+
+  roles:
+    - ovirt-ova-export-pre-pack
+    - ovirt-ova-pack
+    - ovirt-ova-export-post-pack

@@ -1,0 +1,10 @@
+---
+- name: Run packing script
+  script: >
+    pack_ova.py
+    "{{ ova_file.dest }}"
+    "{{ ovirt_ova_pack_ovf }}"
+    "{{ ovirt_ova_pack_disks }}"
+  register: packing_result
+  ignore_errors: yes
+  when: ova_file is defined and ova_file.dest is defined
