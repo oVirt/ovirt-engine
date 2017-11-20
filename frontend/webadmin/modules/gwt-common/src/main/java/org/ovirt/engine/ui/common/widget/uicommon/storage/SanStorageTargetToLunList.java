@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunAddOrExtendColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunRemoveColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractScrollableTextColumn;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
@@ -194,7 +199,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 return object;
             }
         };
-        table.setCustomSelectionColumn(lunSelectionColumn, "30px"); //$NON-NLS-1$
+        table.setCustomSelectionColumn(lunSelectionColumn, "20px"); //$NON-NLS-1$
 
         AbstractLunTextColumn lunIdColumn = new AbstractLunTextColumn() {
             @Override
@@ -248,7 +253,30 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         serialNumColumn.makeSortable();
-        table.addColumn(serialNumColumn, constants.serialSanStorage(), "350px"); //$NON-NLS-1$
+        table.addColumn(serialNumColumn, constants.serialSanStorage(), "370px"); //$NON-NLS-1$
+
+        if (model.getContainer().isNewStorage() ||
+                model.getContainer().getStorage().getStatus() != StorageDomainStatus.Maintenance) {
+            addAbstractLunAddOrExtendColumn(table,
+                    model.getContainer().isNewStorage() ? constants.addSanStorage() : constants.actionsSanStorage());
+        } else {
+            boolean reduceDeviceFromStorageDomainSupported =
+                    (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                            ConfigValues.ReduceDeviceFromStorageDomain,
+                            model.getContainer().getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
+            if (reduceDeviceFromStorageDomainSupported) {
+                AbstractLunRemoveColumn removeColumn = new AbstractLunRemoveColumn(model) {
+                    @Override
+                    public LunModel getValue(LunModel object) {
+                        return object;
+                    }
+                };
+                table.addColumn(removeColumn, constants.removeSanStorage(), "95px"); //$NON-NLS-1$
+                model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
+                    table.redraw();
+                });
+            }
+        }
 
         table.setRowData(items);
         final Object selectedItem = sortedLeafModel.getSelectedItem();
@@ -302,5 +330,16 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         super.updateItems();
 
         Scheduler.get().scheduleDeferred(() -> treeContainer.setVerticalScrollPosition(treeScrollPosition));
+    }
+
+    private void addAbstractLunAddOrExtendColumn(EntityModelCellTable<ListModel<LunModel>> table, String headerString) {
+        AbstractLunAddOrExtendColumn addOrExtendColumn = new AbstractLunAddOrExtendColumn() {
+            @Override
+            public LunModel getValue(LunModel object) {
+                return object;
+            }
+        };
+        addOrExtendColumn.makeSortable();
+        table.addColumn(addOrExtendColumn, headerString, "95px"); //$NON-NLS-1$
     }
 }

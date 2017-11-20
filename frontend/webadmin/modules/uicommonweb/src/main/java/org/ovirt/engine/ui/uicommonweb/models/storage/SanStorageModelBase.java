@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -1020,15 +1019,33 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 }
             }
         }
+        else {
+            List<SanTargetModel> sanTargetModels = (List<SanTargetModel>) getItems();
+            for (SanTargetModel sanTargetModel : sanTargetModels) {
+                List<LunModel> items = sanTargetModel.getLuns();
+                for (LunModel lun : items) {
+                    if (lun.getIsIncluded()) {
+                        if (lun.isAdditionalAvailableSizeSelected()
+                                && Linq.firstOrNull(luns, new Linq.LunPredicate(lun)) == null) {
+                            luns.add(lun);
+                        }
+                    }
+                }
+            }
+        }
         return luns;
     }
 
     public List<LunModel> getLunsToRemove() {
         if (getIsGrouppedByTarget()) {
-            return Collections.emptyList();
+            return ((List<SanTargetModel>) getItems()).stream()
+                    .map(SanTargetModel::getLuns)
+                    .flatMap(List::stream)
+                    .filter(LunModel::isRemoveLunSelected)
+                    .distinct()
+                    .collect(Collectors.toList());
         }
         return ((List<LunModel>) getItems()).stream()
-                .filter(LunModel::getIsIncluded)
                 .filter(LunModel::isRemoveLunSelected)
                 .distinct()
                 .collect(Collectors.toList());
