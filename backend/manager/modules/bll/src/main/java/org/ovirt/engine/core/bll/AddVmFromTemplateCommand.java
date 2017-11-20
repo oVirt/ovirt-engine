@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,11 +14,11 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -181,10 +182,50 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
                 ImagesHandler.findDomainsInApplicableStatusForDisks(templateDiskImages,
                         poolDomainsMap,
                         validDomainStatuses);
-        return validate(new DiskImagesValidator(templateDiskImages).diskImagesOnAnyApplicableDomains(
-                validDisksDomains, poolDomainsMap,
-                EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS, validDomainStatuses));
+        return validate(diskImagesOnAnyApplicableDomains
+                (templateDiskImages, validDisksDomains, poolDomainsMap, validDomainStatuses));
+    }
 
+    /**
+     * Checks that each of the disks has at least one domain in valid status in the given map
+     * @param DiskImages The disks to check
+     * @param validDomainsForDisk Map containing valid domains for each disk
+     * @param storageDomains Map containing the storage domain objects
+     * @param message Validation message to use in case of error
+     * @param applicableStatuses Applicable domain statuses to use as replacement in the given message
+     * @return A {@link ValidationResult} with the validation information.
+     */
+    public ValidationResult diskImagesOnAnyApplicableDomains(List<DiskImage> diskImages,
+            Map<Guid, Set<Guid>> validDomainsForDisk,
+            Map<Guid, StorageDomain> storageDomains,
+            Set<StorageDomainStatus> applicableStatuses) {
+
+        StringBuilder disksInfo = new StringBuilder();
+        for (DiskImage diskImage : diskImages) {
+            Set<Guid> applicableDomains = validDomainsForDisk.get(diskImage.getId());
+            if (!applicableDomains.isEmpty()) {
+                continue;
+            }
+
+            List<String> nonApplicableStorageInfo = new LinkedList<>();
+            for (Guid id : diskImage.getStorageIds()) {
+                StorageDomain domain = storageDomains.get(id);
+                nonApplicableStorageInfo.add(String.format("%s - %s", domain.getName(), domain.getStatus().toString()));
+            }
+
+            disksInfo.append(String.format("%s (%s) %n",
+                    diskImage.getDiskAlias(),
+                    StringUtils.join(nonApplicableStorageInfo, " / ")));
+        }
+
+        if (disksInfo.length() > 0) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
+                    String.format("$disksInfo %s",
+                            disksInfo.toString()),
+                    String.format("$applicableStatus %s", StringUtils.join(applicableStatuses, ",")));
+        }
+
+        return ValidationResult.VALID;
     }
 
     @Override

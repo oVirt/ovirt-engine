@@ -37,7 +37,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 
 public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends BaseCommandTest {
     protected static final int TOTAL_NUM_DOMAINS = 2;
-    private static final Guid STORAGE_DOMAIN_ID_1 = Guid.newGuid();
+    protected static final Guid STORAGE_DOMAIN_ID_1 = Guid.newGuid();
     private static final Guid STORAGE_DOMAIN_ID_2 = Guid.newGuid();
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final int NUM_DISKS_STORAGE_DOMAIN_1 = 3;
@@ -111,7 +111,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID_2, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_2));
     }
 
-    private static List<DiskImage> generateDisksList(int size) {
+    protected static List<DiskImage> generateDisksList(int size) {
         List<DiskImage> disksList = new ArrayList<>();
         for (int i = 0; i < size; ++i) {
             DiskImage diskImage = createDiskImage();
