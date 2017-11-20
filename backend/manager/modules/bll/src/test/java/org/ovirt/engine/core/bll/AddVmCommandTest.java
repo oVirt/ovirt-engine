@@ -24,7 +24,10 @@ import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.ovirt.engine.core.bll.validator.QuotaValidator;
+import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -38,6 +41,16 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Strict.class)
 public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmParameters>> {
+    private static final String CPU_ID = "0";
+
+    @Mock
+    private VmValidationUtils vmValidationUtils;
+
+    @Mock
+    private QuotaValidator quotaValidator;
+
+    @Mock
+    private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
@@ -160,6 +173,8 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void testBlockUseHostCpuWithPPCArch() {
+        when(vmValidationUtils.isOsTypeSupported(anyInt(), any())).thenReturn(true);
+        when(vmValidationUtils.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any())).thenReturn(true);
         when(cpuFlagsManagerHandler.getCpuId(any(), any())).thenReturn(CPU_ID);
         when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
         doNothing().when(cmd).initTemplateDisks();
@@ -185,6 +200,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void testValidateQuota() {
+        doReturn(quotaValidator).when(cmd).createQuotaValidator(any());
         cmd.validateQuota(Guid.newGuid());
 
         verify(quotaValidator, times(1)).isValid();

@@ -15,10 +15,7 @@ import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.validator.QuotaValidator;
-import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -36,14 +33,8 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends BaseCommandTest {
     protected static final int TOTAL_NUM_DOMAINS = 2;
@@ -52,21 +43,14 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final int NUM_DISKS_STORAGE_DOMAIN_1 = 3;
     private static final int NUM_DISKS_STORAGE_DOMAIN_2 = 3;
-    protected static final String CPU_ID = "0";
     private static final int MAX_MEMORY_SIZE = 4096;
     private static final int MEMORY_SIZE = 1024;
 
     @Mock
-    CpuFlagsManagerHandler cpuFlagsManagerHandler;
+    protected OsRepository osRepository;
 
     @Mock
-    OsRepository osRepository;
-
-    @Mock
-    VmDeviceUtils vmDeviceUtils;
-
-    @Mock
-    MacPoolPerCluster macPoolPerCluster;
+    private VmDeviceUtils vmDeviceUtils;
 
     @Mock
     protected StorageDomainValidator storageDomainValidator;
@@ -76,38 +60,14 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     protected StoragePool storagePool;
 
     @Mock
-    SnapshotDao snapshotDao;
+    private StorageDomainDao sdDao;
 
     @Mock
-    StorageDomainDao sdDao;
-
-    @Mock
-    VmTemplateDao vmTemplateDao;
-
-    @Mock
-    VmDao vmDao;
-
-    @Mock
-    VmStaticDao vmStaticDao;
-
-    @Mock
-    ClusterDao clusterDao;
-
-    @Mock
-    VmDeviceDao vmDeviceDao;
-
-    @Mock
-    DiskImageDao diskImageDao;
-
-    @Mock
-    VmValidationUtils vmValidationUtils;
-
-    @Mock
-    protected QuotaValidator quotaValidator;
+    private DiskImageDao diskImageDao;
 
     @Spy
     @InjectMocks
-    VmHandler vmHandler;
+    private VmHandler vmHandler;
 
     @Spy
     @InjectMocks
@@ -118,10 +78,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     @Before
     public void setUp() {
         injectorRule.bind(OsRepository.class, osRepository);
-
-        when(vmValidationUtils.isOsTypeSupported(anyInt(), any())).thenReturn(true);
-        when(vmValidationUtils.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any())).thenReturn(true);
-        vmHandler.init();
 
         initVmTemplate();
         cmd.setVmTemplate(vmTemplate);
@@ -140,7 +96,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected void mockOtherDependencies() {
         doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any());
-        doReturn(quotaValidator).when(cmd).createQuotaValidator(any());
     }
 
     protected void generateStorageToDisksMap() {

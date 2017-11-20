@@ -14,6 +14,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -26,11 +27,15 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.SnapshotDao;
 
 @RunWith(Strict.class)
 public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>> {
 
     private static final Guid SOURCE_SNAPSHOT_ID = Guid.newGuid();
+
+    @Mock
+    private SnapshotDao snapshotDao;
 
     @Spy
     private SnapshotsValidator snapshotsValidator;
