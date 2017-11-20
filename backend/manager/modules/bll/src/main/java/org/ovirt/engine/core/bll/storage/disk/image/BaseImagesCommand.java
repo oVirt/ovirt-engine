@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -426,9 +427,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         // is no need for prepare and teardown.
         Guid hostIdToExecuteQemuImageInfo = vmDao.getVmsWithPlugInfo(diskImage.getId())
                 .stream()
-                .filter(p -> !p.getFirst().isDown())
                 .filter(p -> p.getSecond().isPlugged())
                 .map(p -> p.getFirst().getRunOnVds())
+                .filter(Objects::nonNull) // filter out null Vds, happens when VM isn't running
                 .findFirst()
                 .orElse(null);
 
