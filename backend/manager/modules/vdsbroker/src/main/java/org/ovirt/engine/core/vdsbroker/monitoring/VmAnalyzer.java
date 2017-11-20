@@ -287,7 +287,9 @@ public class VmAnalyzer {
                 break;
             }
 
-            abortVmMigration();
+            abortVmMigration(vdsmVm.getVmDynamic().getExitStatus(),
+                    vdsmVm.getVmDynamic().getExitMessage(),
+                    vdsmVm.getVmDynamic().getExitReason());
 
             if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Error && getVmManager().isAutoStart()) {
                 setAutoRunFlag();
@@ -418,16 +420,12 @@ public class VmAnalyzer {
 
     // TODO Method with Side-Effect - move to VmsMonitoring
     // switch command execution with state change and let a final execution point at #VmsMonitoring crate tasks out of the new state. this can be delegated to some task Q instead of running in-thread
-    private void abortVmMigration() {
+    private void abortVmMigration(VmExitStatus exitStatus, String exitMessage, VmExitReason exitReason) {
         if (dbVm.getMigratingToVds() != null) {
             destroyVmOnDestinationHost();
         }
         // set vm status to down if source vm crushed
-        resourceManager.internalSetVmStatus(dbVm,
-                VMStatus.Down,
-                vdsmVm.getVmDynamic().getExitStatus(),
-                vdsmVm.getVmDynamic().getExitMessage(),
-                vdsmVm.getVmDynamic().getExitReason());
+        resourceManager.internalSetVmStatus(dbVm, VMStatus.Down, exitStatus, exitMessage, exitReason);
         saveDynamic(dbVm);
         resetVmStatistics();
         resetVmInterfaceStatistics();
@@ -788,7 +786,18 @@ public class VmAnalyzer {
 
         switch (dbVm.getStatus()) {
         case MigratingFrom:
-            handOverVm();
+            if (dbVm.getMigratingToVds() != null) {
+                handOverVm();
+                break;
+            }
+
+            abortVmMigration(VmExitStatus.Error,
+                    String.format("Could not find VM %s on host, assuming it went down unexpectedly",
+                            getVmManager().getName()),
+                    VmExitReason.GenericError);
+
+            // TODO: cold reboot + auto restart
+
             break;
 
         case PoweringDown:
