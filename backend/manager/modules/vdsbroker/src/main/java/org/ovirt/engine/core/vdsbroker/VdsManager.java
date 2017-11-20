@@ -572,10 +572,9 @@ public class VdsManager {
         @Override
         public void onResponse(Map<String, Object> response) {
             try {
-                processRefreshCapabilitiesResponse(new AtomicBoolean(),
-                        vds,
-                        vds.clone(),
-                        (VDSReturnValue) response.get("result"));
+                VDSReturnValue caps = (VDSReturnValue) response.get("result");
+                invokeGetHardwareInfo(vds, caps);
+                processRefreshCapabilitiesResponse(new AtomicBoolean(), vds, vds.clone(), caps);
             } catch (Throwable t) {
                 onFailure(t);
             } finally {
@@ -596,6 +595,29 @@ public class VdsManager {
         public void onFailure(Throwable t) {
             log.error("Unable to RefreshCapabilities: {}", ExceptionUtils.getRootCauseMessage(t));
             log.debug("Exception", t);
+        }
+    }
+
+    public void invokeGetHardwareInfo(VDS vds, VDSReturnValue caps) {
+        if (caps.getSucceeded()) {
+            getHardwareInfo(vds);
+        }
+    }
+
+    public void getHardwareInfo(VDS vds) {
+        // Verify version capabilities
+        Set<Version> hostVersions = vds.getSupportedClusterVersionsSet();
+        Version clusterCompatibility = vds.getClusterCompatibilityVersion();
+        // Verify that this VDS also supports the specific cluster level. Otherwise getHardwareInfo
+        // API won't exist for the host and an exception will be raised by VDSM.
+        if (hostVersions != null && hostVersions.contains(clusterCompatibility)) {
+            VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.GetHardwareInfo,
+                    new VdsIdAndVdsVDSCommandParametersBase(vds));
+            if (!ret.getSucceeded()) {
+                AuditLogable logable = createAuditLogableForHost(vds);
+                logable.updateCallStackFromThrowable(ret.getExceptionObject());
+                auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
+            }
         }
     }
 
@@ -710,22 +732,6 @@ public class VdsManager {
             VDS oldVDS,
             VDSReturnValue caps) {
         if (caps.getSucceeded()) {
-            // Verify version capabilities
-            Set<Version> hostVersions = null;
-            Version clusterCompatibility = vds.getClusterCompatibilityVersion();
-            if (// Verify that this VDS also
-                // supports the specific cluster level. Otherwise getHardwareInfo API won't exist for the
-                // host and an exception will be raised by VDSM.
-                (hostVersions = vds.getSupportedClusterVersionsSet()) != null &&
-                hostVersions.contains(clusterCompatibility)) {
-                VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.GetHardwareInfo,
-                        new VdsIdAndVdsVDSCommandParametersBase(vds));
-                if (!ret.getSucceeded()) {
-                    AuditLogable logable = createAuditLogableForHost(vds);
-                    logable.updateCallStackFromThrowable(ret.getExceptionObject());
-                    auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
-                }
-            }
             // For gluster nodes, SELinux needs to be in enforcing mode,
             // hence warning in case of permissive as well.
             if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)
