@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -147,6 +148,7 @@ public enum VmTestPairs {
         Pair<VM, VdsmVm> pair = createPair();
         setPairStatuses(pair, VMStatus.MigratingFrom, VMStatus.Down);
         pair.getSecond().getVmDynamic().setExitStatus(VmExitStatus.Normal);
+        pair.getSecond().getVmDynamic().setExitReason(VmExitReason.MigrationSucceeded);
         setDstHost(pair);
         return pair;
     }

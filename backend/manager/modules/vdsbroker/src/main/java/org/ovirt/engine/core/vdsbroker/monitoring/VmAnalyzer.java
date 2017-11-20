@@ -281,19 +281,18 @@ public class VmAnalyzer {
             break;
 
         case MigratingFrom:
-            switch (vdsmVm.getVmDynamic().getExitStatus()) {
-            case Normal:
+            if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Normal &&
+                    vdsmVm.getVmDynamic().getExitReason() == VmExitReason.MigrationSucceeded) {
                 handOverVm();
                 break;
-
-            case Error:
-                abortVmMigration();
-
-                if (getVmManager().isAutoStart()) {
-                    setAutoRunFlag();
-                    break;
-                }
             }
+
+            abortVmMigration();
+
+            if (vdsmVm.getVmDynamic().getExitStatus() == VmExitStatus.Error && getVmManager().isAutoStart()) {
+                setAutoRunFlag();
+            }
+
             break;
 
         default:
