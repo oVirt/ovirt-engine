@@ -42,7 +42,6 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Override
     protected AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> createCommand() {
-        initVM();
         AddVmFromSnapshotParameters param = new AddVmFromSnapshotParameters();
         param.setVm(vm);
         param.setSourceSnapshotId(SOURCE_SNAPSHOT_ID);
@@ -53,13 +52,6 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
         cmd.setVmId(vm.getId());
 
         return cmd;
-    }
-
-    @Override
-    public void setUp() {
-        super.setUp();
-        generateStorageToDisksMap();
-        initDestSDs();
     }
 
     @Test

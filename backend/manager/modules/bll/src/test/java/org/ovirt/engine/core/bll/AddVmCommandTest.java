@@ -64,16 +64,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Override
     protected AddVmCommand<AddVmParameters> createCommand() {
-        initVM();
         return new AddVmCommand<>(new AddVmParameters(vm), null);
-    }
-
-    @Override
-    public void setUp() {
-        super.setUp();
-
-        generateStorageToDisksMap();
-        initDestSDs();
     }
 
     @Test

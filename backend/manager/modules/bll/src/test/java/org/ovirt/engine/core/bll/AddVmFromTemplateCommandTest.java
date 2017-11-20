@@ -9,6 +9,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
@@ -38,7 +39,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Override
     protected AddVmFromTemplateCommand<AddVmParameters> createCommand() {
-        initVM();
         return new AddVmFromTemplateCommand<>(new AddVmParameters(vm), null);
     }
 
@@ -49,11 +49,13 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         doReturn(true).when(cmd).checkNumberOfMonitors();
         doReturn(true).when(cmd).validateCustomProperties(any(), any());
         initCommandMethods();
-
-        initDestSDs();
-        generateStorageToDisksMap();
+        mockStorageDomainDaoGetAllForStoragePool();
 
         cmd.init();
+    }
+
+    protected void mockStorageDomainDaoGetAllForStoragePool() {
+        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.singletonList(createStorageDomain()));
     }
 
     @Test
@@ -88,8 +90,6 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
         mockMaxPciSlots();
-
-        mockStorageDomainDaoGetAllForStoragePool();
         mockGetAllSnapshots();
 
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).

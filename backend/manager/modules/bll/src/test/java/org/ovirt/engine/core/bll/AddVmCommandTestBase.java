@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,7 +59,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     protected StoragePool storagePool;
 
     @Mock
-    private StorageDomainDao sdDao;
+    protected StorageDomainDao sdDao;
 
     @Mock
     private DiskImageDao diskImageDao;
@@ -71,7 +70,12 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     @Spy
     @InjectMocks
-    protected T cmd = createCommand();
+    protected T cmd = initCommand();
+
+    private T initCommand() {
+        initVM();
+        return createCommand();
+    }
 
     protected abstract T createCommand();
 
@@ -92,13 +96,16 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         cmd.setStoragePool(storagePool);
 
         mockOtherDependencies();
+
+        generateStorageToDisksMap();
+        initDestSDs();
     }
 
     protected void mockOtherDependencies() {
         doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any());
     }
 
-    protected void generateStorageToDisksMap() {
+    private void generateStorageToDisksMap() {
         cmd.storageToDisksMap = new HashMap<>();
         cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID_1, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_1));
         cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID_2, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_2));
@@ -135,7 +142,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         return disksList;
     }
 
-    protected void initDestSDs() {
+    private void initDestSDs() {
         StorageDomain sd1 = new StorageDomain();
         StorageDomain sd2 = new StorageDomain();
         sd1.setId(STORAGE_DOMAIN_ID_1);
@@ -160,7 +167,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         vm.setSingleQxlPci(false);
     }
 
-    protected void initVmTemplate() {
+    private void initVmTemplate() {
         vmTemplate = new VmTemplate();
         vmTemplate.setStoragePoolId(STORAGE_POOL_ID);
         DiskImage image = createDiskImageTemplate();
@@ -180,7 +187,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         cluster.setStoragePoolId(STORAGE_POOL_ID);
     }
 
-    protected void initStoragePool() {
+    private void initStoragePool() {
         storagePool = new StoragePool();
         storagePool.setId(STORAGE_POOL_ID);
         storagePool.setStatus(StoragePoolStatus.Up);
@@ -195,10 +202,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected void initCommandMethods() {
         doReturn(true).when(cmd).canAddVm(any(), any(), any(), anyInt());
-    }
-
-    protected void mockStorageDomainDaoGetAllForStoragePool() {
-        when(sdDao.getAllForStoragePool(any())).thenReturn(Collections.singletonList(createStorageDomain()));
     }
 
     protected StorageDomain createStorageDomain() {
