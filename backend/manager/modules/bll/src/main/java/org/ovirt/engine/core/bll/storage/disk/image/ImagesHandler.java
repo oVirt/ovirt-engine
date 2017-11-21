@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -496,23 +494,6 @@ public class ImagesHandler {
                 || (storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW)
                 || volumeFormat == VolumeFormat.Unassigned
                 || volumeType == VolumeType.Unassigned);
-    }
-
-    public static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks(Iterable<DiskImage> diskImages,
-            Map<Guid, StorageDomain> storageDomains,
-            Set<StorageDomainStatus> applicableStatuses) {
-        Map<Guid, Set<Guid>> disksApplicableDomainsMap = new HashMap<>();
-        for (DiskImage diskImage : diskImages) {
-            Set<Guid> diskApplicableDomain = new HashSet<>();
-            for (Guid storageDomainID : diskImage.getStorageIds()) {
-                StorageDomain domain = storageDomains.get(storageDomainID);
-                if (applicableStatuses.contains(domain.getStatus())) {
-                    diskApplicableDomain.add(domain.getId());
-                }
-            }
-            disksApplicableDomainsMap.put(diskImage.getId(), diskApplicableDomain);
-        }
-        return disksApplicableDomainsMap;
     }
 
     /**

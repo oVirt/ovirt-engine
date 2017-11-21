@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -178,10 +179,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         EnumSet<StorageDomainStatus> validDomainStatuses = EnumSet.of(StorageDomainStatus.Active);
         List<DiskImage> templateDiskImages = DisksFilter.filterImageDisks(getImagesToCheckDestinationStorageDomains(),
                 ONLY_NOT_SHAREABLE);
-        validDisksDomains =
-                ImagesHandler.findDomainsInApplicableStatusForDisks(templateDiskImages,
-                        poolDomainsMap,
-                        validDomainStatuses);
+        validDisksDomains = findDomainsInApplicableStatusForDisks(templateDiskImages, poolDomainsMap, validDomainStatuses);
 
         StringBuilder disksInfo = new StringBuilder();
         for (DiskImage diskImage : templateDiskImages) {
@@ -210,6 +208,24 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
 
         return true;
     }
+
+    private static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks(Iterable<DiskImage> diskImages,
+            Map<Guid, StorageDomain> storageDomains,
+            Set<StorageDomainStatus> applicableStatuses) {
+        Map<Guid, Set<Guid>> disksApplicableDomainsMap = new HashMap<>();
+        for (DiskImage diskImage : diskImages) {
+            Set<Guid> diskApplicableDomain = new HashSet<>();
+            for (Guid storageDomainID : diskImage.getStorageIds()) {
+                StorageDomain domain = storageDomains.get(storageDomainID);
+                if (applicableStatuses.contains(domain.getStatus())) {
+                    diskApplicableDomain.add(domain.getId());
+                }
+            }
+            disksApplicableDomainsMap.put(diskImage.getId(), diskApplicableDomain);
+        }
+        return disksApplicableDomainsMap;
+    }
+
 
     @Override
     protected void chooseDisksSourceDomains() {
