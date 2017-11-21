@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
+import static org.ovirt.engine.core.common.businessentities.ProviderType.OPENSTACK_NETWORK;
+
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -19,6 +21,8 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -109,7 +113,13 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
         final NeutronAgentModel neutronAgentModel = model.getNeutronAgentModel();
         neutronAgentWidget.edit(neutronAgentModel);
         neutronAgentPanel.setVisible(neutronAgentModel.isPluginConfigurationAvailable().getEntity());
-        neutronAgentModel.isPluginConfigurationAvailable().getEntityChangedEvent().addListener((ev, sender, args) -> neutronAgentPanel.setVisible(neutronAgentModel.isPluginConfigurationAvailable().getEntity()));
+
+        IEventListener<EventArgs> providerPluginTypeListener =  (ev, sender, args) ->
+                neutronAgentPanel.setVisible( model.getNetworkProviderType().getSelectedItem() == OPENSTACK_NETWORK &&
+                                model.providerPluginTypeIsOpenstack());
+
+        model.getNetworkProviderType().getSelectedItemChangedEvent().addListener(providerPluginTypeListener);
+        model.getProviderPluginType().getSelectedItemChangedEvent().addListener(providerPluginTypeListener);
     }
 
     @Override

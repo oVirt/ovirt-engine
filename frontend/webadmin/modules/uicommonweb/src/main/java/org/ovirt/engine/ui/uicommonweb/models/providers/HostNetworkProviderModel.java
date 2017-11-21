@@ -30,6 +30,10 @@ public class HostNetworkProviderModel extends EntityModel {
         return getNeutronAgentModel().getPluginType();
     }
 
+    public boolean providerPluginTypeIsOpenstack() {
+        return getNeutronAgentModel().pluginTypeIsOpenstack();
+    }
+
     public NeutronAgentModel getNeutronAgentModel() {
         return neutronAgentModel;
     }
