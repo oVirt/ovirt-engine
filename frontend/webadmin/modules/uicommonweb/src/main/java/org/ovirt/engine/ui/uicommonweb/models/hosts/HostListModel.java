@@ -1367,7 +1367,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
 
         Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
-        if (networkProvider != null) {
+        if (networkProvider == null) {
+            param.getVdsStaticData().setOpenstackNetworkProviderId(null);
+        } else {
             param.getVdsStaticData().setOpenstackNetworkProviderId(networkProvider.getId());
             param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
