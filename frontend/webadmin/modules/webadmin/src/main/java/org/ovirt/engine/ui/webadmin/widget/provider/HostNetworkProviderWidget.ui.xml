@@ -12,7 +12,8 @@
 
     <ui:style>
         .hostNetworkProviderWidget {
-            min-height: 464px;
+            min-height: 128px;
+            width: 95%;
         }
 
         .inline {
