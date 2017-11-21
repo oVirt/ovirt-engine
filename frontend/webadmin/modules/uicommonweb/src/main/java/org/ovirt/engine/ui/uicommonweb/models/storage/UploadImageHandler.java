@@ -715,6 +715,7 @@ public class UploadImageHandler {
             ImageTransfer rv = result.getReturnValue().getActionReturnValue();
             setCommandId(rv.getId());
             setBytesSent(rv.getBytesSent());
+            setBytesEndOffset(rv.getBytesTotal());
             startStatusPolling();
         } else {
             setProgressStr(messages.uploadImageFailedToResumeMessage(result.getReturnValue().getDescription()));
