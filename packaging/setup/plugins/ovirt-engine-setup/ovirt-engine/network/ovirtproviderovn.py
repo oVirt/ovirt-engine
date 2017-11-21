@@ -550,6 +550,9 @@ class Plugin(plugin.PluginBase):
         ]
 
         parameters = {
+            '[PROVIDER]': {
+                'provider-host': self.environment[osetupcons.ConfigEnv.FQDN]
+            },
             '[SSL]': {
                 'ssl-cert-file':
                     oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_CERT,
