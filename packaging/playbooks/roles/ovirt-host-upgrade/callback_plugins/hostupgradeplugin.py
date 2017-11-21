@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import json
 
 from ansible.plugins.callback import CallbackBase
+
 __metaclass__ = type
 
 
