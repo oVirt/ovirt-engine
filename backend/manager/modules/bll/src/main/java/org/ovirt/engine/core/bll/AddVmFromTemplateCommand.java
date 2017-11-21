@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -176,10 +175,9 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     @Override
     protected boolean verifySourceDomains() {
         Map<Guid, StorageDomain> poolDomainsMap = Entities.businessEntitiesById(getPoolDomains());
-        EnumSet<StorageDomainStatus> validDomainStatuses = EnumSet.of(StorageDomainStatus.Active);
         List<DiskImage> templateDiskImages = DisksFilter.filterImageDisks(getImagesToCheckDestinationStorageDomains(),
                 ONLY_NOT_SHAREABLE);
-        validDisksDomains = findDomainsInApplicableStatusForDisks(templateDiskImages, poolDomainsMap, validDomainStatuses);
+        validDisksDomains = findDomainsInApplicableStatusForDisks(templateDiskImages, poolDomainsMap);
 
         StringBuilder disksInfo = new StringBuilder();
         for (DiskImage diskImage : templateDiskImages) {
@@ -203,21 +201,20 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
                     String.format("$disksInfo %s",
                             disksInfo.toString()),
-                    String.format("$applicableStatus %s", StringUtils.join(validDomainStatuses, ",")));
+                    String.format("$applicableStatus %s", StorageDomainStatus.Active.toString()));
         }
 
         return true;
     }
 
-    private static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks(Iterable<DiskImage> diskImages,
-            Map<Guid, StorageDomain> storageDomains,
-            Set<StorageDomainStatus> applicableStatuses) {
+    private static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks
+            (Iterable<DiskImage> diskImages, Map<Guid, StorageDomain> storageDomains) {
         Map<Guid, Set<Guid>> disksApplicableDomainsMap = new HashMap<>();
         for (DiskImage diskImage : diskImages) {
             Set<Guid> diskApplicableDomain = new HashSet<>();
             for (Guid storageDomainID : diskImage.getStorageIds()) {
                 StorageDomain domain = storageDomains.get(storageDomainID);
-                if (applicableStatuses.contains(domain.getStatus())) {
+                if (domain.getStatus() == StorageDomainStatus.Active) {
                     diskApplicableDomain.add(domain.getId());
                 }
             }
