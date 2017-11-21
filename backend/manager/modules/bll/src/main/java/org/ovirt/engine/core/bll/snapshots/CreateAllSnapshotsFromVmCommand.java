@@ -314,8 +314,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         if (getParameters().isSaveMemory() && isLiveSnapshotApplicable()) {
+            boolean wipeAfterDelete = getDisksList().stream().anyMatch(DiskImage::isWipeAfterDelete);
             return new LiveSnapshotMemoryImageBuilder(getVm(), cachedStorageDomainId, getStoragePool(),
-                    this, vmOverheadCalculator, getParameters().getDescription());
+                    this, vmOverheadCalculator, getParameters().getDescription(), wipeAfterDelete);
         }
 
         return new NullableMemoryImageBuilder();
