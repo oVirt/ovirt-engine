@@ -817,6 +817,7 @@ select fn_db_update_config_value('PackageNamesForCheckUpdate','ioprocess,mom,lib
 
 select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^.*$', '4.1');
 
+select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.1');
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
 ------------------------------------------------------------------------------------
