@@ -4,11 +4,11 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -208,19 +208,17 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     }
 
     private static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks
-            (Iterable<DiskImage> diskImages, Map<Guid, StorageDomain> storageDomains) {
-        Map<Guid, Set<Guid>> disksApplicableDomainsMap = new HashMap<>();
-        for (DiskImage diskImage : diskImages) {
-            Set<Guid> diskApplicableDomain = new HashSet<>();
-            for (Guid storageDomainID : diskImage.getStorageIds()) {
-                StorageDomain domain = storageDomains.get(storageDomainID);
-                if (domain.getStatus() == StorageDomainStatus.Active) {
-                    diskApplicableDomain.add(domain.getId());
-                }
-            }
-            disksApplicableDomainsMap.put(diskImage.getId(), diskApplicableDomain);
-        }
-        return disksApplicableDomainsMap;
+            (List<DiskImage> diskImages, Map<Guid, StorageDomain> storageDomains) {
+        return diskImages
+                .stream()
+                .collect(Collectors.toMap(
+                        DiskImage::getId,
+                        diskImage -> diskImage
+                                .getStorageIds()
+                                .stream()
+                                .filter(sdId -> storageDomains.get(sdId).getStatus() == StorageDomainStatus.Active)
+                                .collect(Collectors.toSet())
+                ));
     }
 
 
