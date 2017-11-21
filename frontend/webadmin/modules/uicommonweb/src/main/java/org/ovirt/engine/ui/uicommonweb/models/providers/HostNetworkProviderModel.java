@@ -87,12 +87,18 @@ public class HostNetworkProviderModel extends EntityModel {
     }
 
     private void selectDefaultProvider() {
-        if (getNetworkProviders().getItems() != null && getUseClusterDefaultNetworkProvider().getEntity()) {
-            Provider defaultProvider= getNetworkProviders().getItems().stream()
-                    .filter(provider -> provider != null)
-                    .filter(provider -> provider.getId().equals(defaultProviderId))
+        if (getUseClusterDefaultNetworkProvider().getEntity()) {
+            selectProviderById(defaultProviderId);
+        }
+    }
+
+    public void selectProviderById(Guid providerId) {
+        if (getNetworkProviders().getItems() != null) {
+            Provider provider = getNetworkProviders().getItems().stream()
+                    .filter(candidate -> candidate != null)
+                    .filter(candidate -> candidate.getId().equals(providerId))
                     .findFirst().orElse(null);
-            getNetworkProviders().setSelectedItem(defaultProvider);
+            getNetworkProviders().setSelectedItem(provider);
         }
     }
 

@@ -103,6 +103,7 @@ public class InstallModel extends Model {
 
     private void setNetworkProviderModel(HostNetworkProviderModel value) {
         networkProviderModel = value;
+        updateNetworkProviderModel();
     }
 
     public ListModel<?> getNetworkProviders() {
@@ -115,6 +116,7 @@ public class InstallModel extends Model {
 
     public void setVds(VDS value) {
         vds = value;
+        updateNetworkProviderModel();
     }
 
     public VDS getVds() {
@@ -189,5 +191,16 @@ public class InstallModel extends Model {
                 getPublicKey().setEntity(pk);
             }
         }));
+    }
+
+    private void updateNetworkProviderModel() {
+        if (vds != null && networkProviderModel != null) {
+            networkProviderModel.selectProviderById(vds.getOpenstackNetworkProviderId());
+            startProgress();
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(cluster -> {
+                stopProgress();
+                networkProviderModel.setDefaultProviderId(cluster.getDefaultNetworkProviderId());
+            }), vds.getClusterId());
+        }
     }
 }
