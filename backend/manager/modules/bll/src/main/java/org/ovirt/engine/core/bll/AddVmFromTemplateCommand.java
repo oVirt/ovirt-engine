@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -48,8 +47,6 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     @Inject
     private AuditLogDirector auditLogDirector;
 
-    @Inject
-    private BlockStorageDiscardFunctionalityHelper discardHelper;
     @Inject
     private VmStaticDao vmStaticDao;
     @Inject
