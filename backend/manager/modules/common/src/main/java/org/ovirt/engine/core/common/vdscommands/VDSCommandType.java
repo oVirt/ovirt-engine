@@ -23,7 +23,6 @@ public enum VDSCommandType {
     VmLogoff("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetVmTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetVdsStatus("org.ovirt.engine.core.vdsbroker"),
-    FailedToRunVm("org.ovirt.engine.core.vdsbroker"),
     SetVmStatus("org.ovirt.engine.core.vdsbroker"),
     IsVmDuringInitiating("org.ovirt.engine.core.vdsbroker"),
     UpdateVdsVMsCleared("org.ovirt.engine.core.vdsbroker"),

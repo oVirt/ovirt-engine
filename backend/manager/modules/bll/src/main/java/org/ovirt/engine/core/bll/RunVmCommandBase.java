@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -199,26 +198,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             log();
             ExecutionHandler.setAsyncJob(getExecutionContext(), false);
             executionHandler.endJob(getExecutionContext(), true);
-            notifyHostsVmFailed();
         }
         finally {
             freeLock();
-        }
-    }
-
-    /**
-     * notify other hosts on a failed attempt to run a Vm in a non blocking matter
-     * to avoid deadlock where other host's VdsManagers lock is taken and is awaiting the current vds lock.
-     */
-    private void notifyHostsVmFailed() {
-        if (!getRunVdssList().isEmpty()) {
-            ThreadPoolUtil.execute(() -> {
-                for (Guid vdsId : getRunVdssList()) {
-                    if (!vdsId.equals(getCurrentVdsId())) {
-                        runVdsCommand(VDSCommandType.FailedToRunVm, new FailedToRunVmVDSCommandParameters(vdsId));
-                    }
-                }
-            });
         }
     }
 

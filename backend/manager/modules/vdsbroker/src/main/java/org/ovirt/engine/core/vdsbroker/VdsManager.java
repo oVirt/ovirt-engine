@@ -2,7 +2,6 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -632,32 +630,6 @@ public class VdsManager {
                     vds.getName(),
                     failedToRunVmAttempts);
             failedToRunVmAttempts.set(0);
-        }
-    }
-
-    /**
-     * This callback method notifies this cachedVds that an attempt to run a vm on it
-     * failed. above a certain threshold such hosts are marked as
-     * VDSStatus.Error.
-     */
-    public void failedToRunVm(VDS vds) {
-        if (failedToRunVmAttempts.get() < Config.<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)
-                && failedToRunVmAttempts.incrementAndGet() >= Config
-                        .<Integer> getValue(ConfigValues.NumberOfFailedRunsOnVds)) {
-            //Only one thread at a time can enter here
-            resourceManager.runVdsCommand(VDSCommandType.SetVdsStatus,
-                    new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
-
-            executor.schedule(
-                    this::recoverFromError,
-                    Config.<Long>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes),
-                    TimeUnit.MINUTES);
-            AuditLogable logable = createAuditLogableForHost(vds);
-            logable.addCustomValue("Time",
-                    Config.<Long> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString());
-            auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
-            log.info("Vds '{}' moved to Error mode after {} attempts. Time: {}", vds.getName(),
-                    failedToRunVmAttempts, new Date());
         }
     }
 
