@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+import static org.ovirt.engine.core.common.businessentities.ExternalNetworkPluginType.OVIRT_PROVIDER_OVN;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -311,16 +313,20 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         Guid providerId = getParameters().getNetworkProviderId();
         if (providerId != null) {
             Provider provider = providerDao.get(providerId);
-            if (provider.getType() == ProviderType.EXTERNAL_NETWORK) {
-                String ovnCentral = NetworkUtils.getIpAddress(provider.getUrl());
-                if (ovnCentral == null) {
-                    throw new VdsInstallException(
-                            VDSStatus.InstallFailed,
-                            String.format(
-                                    "Failed to extract OVN central IP from %1$s",
-                                    provider.getUrl()));
+            if (provider.getType() == ProviderType.EXTERNAL_NETWORK ) {
+                OpenstackNetworkProviderProperties properties =
+                        (OpenstackNetworkProviderProperties)provider.getAdditionalProperties();
+                if (OVIRT_PROVIDER_OVN.toString().equals(properties.getPluginType())) {
+                    String ovnCentral = NetworkUtils.getIpAddress(provider.getUrl());
+                    if (ovnCentral == null) {
+                        throw new VdsInstallException(
+                                VDSStatus.InstallFailed,
+                                String.format(
+                                        "Failed to extract OVN central IP from %1$s",
+                                        provider.getUrl()));
+                    }
+                    return ovnCentral;
                 }
-                return ovnCentral;
             }
         }
         return null;
