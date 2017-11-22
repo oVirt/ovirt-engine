@@ -439,7 +439,7 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-    def _execute_command(self, command, error_message):
+    def _execute_command(self, command, error_message, manual_commands=None):
         if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             rc, stdout, stderr = self.execute(
                 command,
@@ -447,9 +447,20 @@ class Plugin(plugin.PluginBase):
             )
             if rc != 0:
                 self.logger.error(error_message)
-                self._failed_commands.append(command)
+                self._append_manual_commands(
+                    self._failed_commands, command, manual_commands
+                )
         else:
-            self._manual_commands.append(command)
+            self._append_manual_commands(
+                self._manual_commands, command, manual_commands
+            )
+
+    def _append_manual_commands(self, append_to, command, manual_commands):
+        if manual_commands:
+            for manual_command in manual_commands:
+                append_to.append(manual_command)
+        else:
+            append_to.append(command)
 
     def _configure_ovndb_connection(self, ovn_db_config):
         if (ovn_db_config.protocol == self.CONNECTION_SSL):
@@ -638,23 +649,36 @@ class Plugin(plugin.PluginBase):
         truststore_password = config.get(
             'ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_PASSWORD'
         )
+        command_parts = (
+            'keytool',
+            '-import',
+            '-alias',
+            OvnEnv.PROVIDER_NAME,
+            '-keystore',
+            truststore,
+            '-file',
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+            '-noprompt',
+            '-storepass',
+        )
+        command = command_parts + (truststore_password, )
+        manual_keytool_command = (
+            command_parts +
+            ('"${ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_PASSWORD}"', )
+        )
         self._execute_command(
-            (
-                'keytool',
-                '-import',
-                '-alias',
-                OvnEnv.PROVIDER_NAME,
-                '-keystore',
-                truststore,
-                '-file',
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-                '-noprompt',
-                '-storepass',
-                truststore_password,
-            ),
+            command,
             _(
                 'Failed to import provider certificate into '
                 'the external provider keystore'
+            ),
+            manual_commands=(
+                (
+                    '.',
+                    FileLocations.OVIRT_ENGINE_DATADIR +
+                    '/bin/engine-prolog.sh'
+                ),
+                manual_keytool_command,
             )
         )
 
