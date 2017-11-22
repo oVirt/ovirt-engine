@@ -39,6 +39,10 @@ public class NeutronAgentModel extends EntityModel {
         return pluginType;
     }
 
+    public boolean pluginTypeIsOpenstack() {
+        return NetworkProviderPluginTranslator.isOpenstackPlugin(pluginType.getSelectedItem());
+    }
+
     public EntityModel<Boolean> isPluginConfigurationAvailable() {
         return pluginConfigurationAvailable;
     }
@@ -76,17 +80,12 @@ public class NeutronAgentModel extends EntityModel {
     }
 
     public NeutronAgentModel() {
-        getPluginType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
-            String displayString = getPluginType().getSelectedItem();
-            boolean isAvailable = NetworkProviderPluginTranslator.isOpenstackPlugin(displayString);
-            isPluginConfigurationAvailable().setEntity(isAvailable);
-        });
+        getPluginType().getSelectedItemChangedEvent().addListener((ev, sender, args) ->
+            isPluginConfigurationAvailable().setEntity(pluginTypeIsOpenstack()));
         getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                 boolean value = getIsAvailable();
-                String displayString = getPluginType().getSelectedItem();
-                boolean isAvailable = NetworkProviderPluginTranslator.isOpenstackPlugin(displayString);
-                isPluginConfigurationAvailable().setEntity(value && isAvailable);
+                isPluginConfigurationAvailable().setEntity(value && pluginTypeIsOpenstack());
             }
         });
 
