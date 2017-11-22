@@ -514,8 +514,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         for (Guid candidateHostGuid : dedicatedHostsList) {
             if (vdsDao.get(candidateHostGuid) == null) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
-                return false;
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
             }
         }
         return true;
@@ -933,8 +932,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean validateIsImagesOnDomains() {
         for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
             if (!image.getStorageIds().containsAll(diskInfoDestinationMap.get(image.getId()).getStorageIds())) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
-                return false;
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
         return true;
