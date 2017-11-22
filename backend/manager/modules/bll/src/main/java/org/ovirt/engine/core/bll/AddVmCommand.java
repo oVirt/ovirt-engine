@@ -1163,7 +1163,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         Cluster cluster = clusterDao.get(clusterId);
         boolean legalClusterId = cluster != null;
         if (!legalClusterId) {
-            reasons.add(EngineError.VM_INVALID_SERVER_CLUSTER_ID.toString());
+            reasons.add(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID.toString());
         }
         return legalClusterId;
     }
