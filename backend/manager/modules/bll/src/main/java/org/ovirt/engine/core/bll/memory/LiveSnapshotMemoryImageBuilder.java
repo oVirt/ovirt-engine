@@ -29,15 +29,17 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     private CommandBase<?> enclosingCommand;
     private StoragePool storagePool;
     private VmOverheadCalculator vmOverheadCalculator;
+    private boolean wipeAfterDelete;
 
     public LiveSnapshotMemoryImageBuilder(VM vm, Guid storageDomainId,
             StoragePool storagePool, CommandBase<?> enclosingCommand,
-            VmOverheadCalculator vmOverheadCalculator) {
+            VmOverheadCalculator vmOverheadCalculator, boolean wipeAfterDelete) {
         this.vm = vm;
         this.enclosingCommand = enclosingCommand;
         this.storageDomainId = storageDomainId;
         this.storagePool = storagePool;
         this.vmOverheadCalculator = vmOverheadCalculator;
+        this.wipeAfterDelete = wipeAfterDelete;
     }
 
     @Override
@@ -51,11 +53,13 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
 
     private Guid addMemoryDisk() {
         DiskImage memoryDisk = MemoryUtils.createSnapshotMemoryDisk(vm, getStorageType(), vmOverheadCalculator);
+        memoryDisk.setWipeAfterDelete(wipeAfterDelete);
         return addDisk(memoryDisk);
     }
 
     private Guid addMetadataDisk() {
         DiskImage metadataDisk = MemoryUtils.createSnapshotMetadataDisk();
+        metadataDisk.setWipeAfterDelete(wipeAfterDelete);
         return addDisk(metadataDisk);
     }
 

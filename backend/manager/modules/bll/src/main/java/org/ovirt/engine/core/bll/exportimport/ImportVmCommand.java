@@ -1014,6 +1014,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         memoryDisk.setStoragePoolId(guids.get(1));
         memoryDisk.setCreationDate(snapshot.getCreationDate());
         memoryDisk.setActive(true);
+        memoryDisk.setWipeAfterDelete(vm.getDiskList().stream().anyMatch(DiskImage::isWipeAfterDelete));
         return memoryDisk;
     }
 
@@ -1031,6 +1032,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         memoryDisk.setStoragePoolId(guids.get(1));
         memoryDisk.setCreationDate(snapshot.getCreationDate());
         memoryDisk.setActive(true);
+        memoryDisk.setWipeAfterDelete(getImages().stream().anyMatch(DiskImage::isWipeAfterDelete));
         return memoryDisk;
     }
 
