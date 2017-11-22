@@ -55,6 +55,9 @@
                                     <ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" label="{constants.pluginType}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
+                                    <ge:EntityModelCheckBoxEditor ui:field="isUnmanagedEditor" label="{constants.isUnmanaged}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
                                     <ge:StringEntityModelTextBoxEditor ui:field="urlEditor" label="{constants.urlProvider}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>

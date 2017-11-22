@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.provider;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.host.provider.foreman.ForemanHostProviderProxy;
+import org.ovirt.engine.core.bll.provider.network.UnmanagedNetworkProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.openstack.ExternalNetworkProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.openstack.OpenstackNetworkProviderProxy;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
@@ -35,6 +36,9 @@ public class ProviderProxyFactory {
     public <P extends ProviderProxy<?>> P create(Provider<?> provider) {
         switch (provider.getType()) {
         case EXTERNAL_NETWORK:
+            if (provider.getIsUnmanaged()) {
+                return (P) new UnmanagedNetworkProviderProxy((Provider<OpenstackNetworkProviderProperties>) provider);
+            }
             return (P) new ExternalNetworkProviderProxy((Provider<OpenstackNetworkProviderProperties>) provider);
 
         case FOREMAN:

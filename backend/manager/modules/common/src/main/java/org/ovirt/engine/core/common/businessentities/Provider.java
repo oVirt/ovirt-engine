@@ -36,8 +36,9 @@ public class Provider<P extends AdditionalProperties> implements Queryable, Busi
 
     private String description;
 
-    @NotNull(message = "VALIDATION_URL_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private String url;
+
+    private boolean isUnmanaged;
 
     @NotNull(message = "VALIDATION_PROVIDER_TYPE_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private ProviderType type;
@@ -151,6 +152,14 @@ public class Provider<P extends AdditionalProperties> implements Queryable, Busi
         this.authUrl = authUrl;
     }
 
+    public boolean getIsUnmanaged() {
+        return isUnmanaged;
+    }
+
+    public void setIsUnmanaged(boolean isUnmanaged) {
+        this.isUnmanaged = isUnmanaged;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -164,7 +173,8 @@ public class Provider<P extends AdditionalProperties> implements Queryable, Busi
                 username,
                 customProperties,
                 additionalProperties,
-                authUrl
+                authUrl,
+                isUnmanaged
         );
     }
 
@@ -187,7 +197,8 @@ public class Provider<P extends AdditionalProperties> implements Queryable, Busi
                 && Objects.equals(username, other.username)
                 && Objects.equals(customProperties, other.customProperties)
                 && Objects.equals(additionalProperties, other.additionalProperties)
-                && Objects.equals(authUrl, other.authUrl);
+                && Objects.equals(authUrl, other.authUrl)
+                && Objects.equals(isUnmanaged, other.isUnmanaged);
     }
 
     @Override
@@ -204,6 +215,7 @@ public class Provider<P extends AdditionalProperties> implements Queryable, Busi
                 .append("customProperties", getCustomProperties())
                 .append("additionalProperties", getAdditionalProperties())
                 .append("authUrl", getAuthUrl())
+                .append("isUnmanaged", getIsUnmanaged())
                 .build();
     }
 

@@ -96,7 +96,8 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 .addValue("auth_password", DbFacadeUtils.encryptPassword(entity.getPassword()))
                 .addValue("custom_properties",
                         SerializationFactory.getSerializer().serialize(entity.getCustomProperties()))
-                .addValue("auth_url", entity.getAuthUrl());
+                .addValue("auth_url", entity.getAuthUrl())
+                .addValue("is_unmanaged", entity.getIsUnmanaged());
     }
 
     @Override
@@ -139,6 +140,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                     .deserialize(rs.getString("custom_properties"), HashMap.class));
             entity.setAdditionalProperties(mapAdditionalProperties(rs, entity));
             entity.setAuthUrl(rs.getString("auth_url"));
+            entity.setIsUnmanaged(rs.getBoolean("is_unmanaged"));
 
             return entity;
         }

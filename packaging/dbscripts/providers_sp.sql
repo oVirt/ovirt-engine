@@ -18,7 +18,8 @@ CREATE OR REPLACE FUNCTION InsertProvider (
     v_agent_configuration TEXT DEFAULT NULL,
     v_additional_properties TEXT DEFAULT NULL,
     v_auth_url TEXT DEFAULT NULL,
-    v_read_only BOOLEAN DEFAULT FALSE
+    v_read_only BOOLEAN DEFAULT FALSE,
+    v_is_unmanaged BOOLEAN DEFAULT FALSE
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -37,7 +38,8 @@ BEGIN
         agent_configuration,
         additional_properties,
         auth_url,
-        read_only
+        read_only,
+        is_unmanaged
         )
     VALUES (
         v_id,
@@ -54,7 +56,8 @@ BEGIN
         v_agent_configuration,
         v_additional_properties,
         v_auth_url,
-        v_read_only
+        v_read_only,
+        v_is_unmanaged
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -74,7 +77,8 @@ CREATE OR REPLACE FUNCTION UpdateProvider (
     v_agent_configuration TEXT DEFAULT NULL,
     v_additional_properties TEXT DEFAULT NULL,
     v_auth_url TEXT DEFAULT NULL,
-    v_read_only BOOLEAN DEFAULT FALSE
+    v_read_only BOOLEAN DEFAULT FALSE,
+    v_is_unmanaged BOOLEAN DEFAULT FALSE
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -93,7 +97,8 @@ BEGIN
         agent_configuration = v_agent_configuration,
         additional_properties = v_additional_properties,
         auth_url = v_auth_url,
-        read_only = v_read_only
+        read_only = v_read_only,
+        is_unmanaged = v_is_unmanaged
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

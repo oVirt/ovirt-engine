@@ -58,6 +58,9 @@ public class OpenStackNetworkProviderMapper {
         if (model.isSetRequiresAuthentication()) {
             entity.setRequiringAuthentication(model.isRequiresAuthentication());
         }
+        if (model.isSetUnmanaged()) {
+            entity.setIsUnmanaged(model.isUnmanaged());
+        }
         if (model.isSetUsername()) {
             entity.setUsername(model.getUsername());
         }
@@ -116,6 +119,7 @@ public class OpenStackNetworkProviderMapper {
         if (entity.getAuthUrl() != null) {
             model.setAuthenticationUrl(entity.getAuthUrl());
         }
+        model.setUnmanaged(entity.getIsUnmanaged());
         model.setRequiresAuthentication(entity.isRequiringAuthentication());
         if (entity.getUsername() != null) {
             model.setUsername(entity.getUsername());

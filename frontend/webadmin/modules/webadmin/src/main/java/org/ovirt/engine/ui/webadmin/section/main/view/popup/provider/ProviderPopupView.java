@@ -70,6 +70,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     ListModelListBoxEditor<ProviderType> typeEditor;
 
     @UiField(provided = true)
+    @Path(value = "isUnmanaged.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor isUnmanagedEditor;
+
+    @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     @WithElementId
     ListModelListBoxEditor<StoragePool> datacenterEditor;
@@ -162,6 +167,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         super(eventBus);
 
         typeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
+        isUnmanagedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         datacenterEditor = new ListModelListBoxEditor<>(new AbstractRenderer<StoragePool>() {
             @Override
             public String render(StoragePool storagePool) {
@@ -260,6 +266,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         typeEditor.setTabIndex(nextTabIndex++);
         datacenterEditor.setTabIndex(nextTabIndex++);
         pluginTypeEditor.setTabIndex(nextTabIndex++);
+        isUnmanagedEditor.setTabIndex(nextTabIndex++);
         urlEditor.setTabIndex(nextTabIndex++);
         readOnlyEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = vmwarePropertiesWidget.setTabIndexes(nextTabIndex);

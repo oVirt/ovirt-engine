@@ -9,14 +9,14 @@ import org.ovirt.engine.core.common.VdcObjectType;
  * The provider type determines what external provider is used.
  */
 public enum ProviderType implements Identifiable {
-    OPENSTACK_NETWORK(0, true, true, true, true, VdcObjectType.Network),
-    FOREMAN(1, false, false, false, false, VdcObjectType.VDS),
-    OPENSTACK_IMAGE(2, true, true, false, true, VdcObjectType.Storage),
-    OPENSTACK_VOLUME(3, true, true, false, true, VdcObjectType.Storage),
-    VMWARE(4, false, false, false, false, VdcObjectType.VM),
-    EXTERNAL_NETWORK(5, true, true, true, false, VdcObjectType.Network),
-    KVM(6, false, false, false, false, VdcObjectType.VM),
-    XEN(7, false, false, false, false, VdcObjectType.VM);
+    OPENSTACK_NETWORK(0, true, true, true, true, false, VdcObjectType.Network),
+    FOREMAN(1, false, false, false, false, false, VdcObjectType.VDS),
+    OPENSTACK_IMAGE(2, false, true, true, false, false, VdcObjectType.Storage),
+    OPENSTACK_VOLUME(3, false, true, true, false, false, VdcObjectType.Storage),
+    VMWARE(4, false, false, false, false, false, VdcObjectType.VM),
+    EXTERNAL_NETWORK(5, true, true, true, true, true, VdcObjectType.Network),
+    KVM(6, false, false, false, false, false, VdcObjectType.VM),
+    XEN(7, false, false, false, false, false, VdcObjectType.VM);
 
     private int value;
     private Set<VdcObjectType> providedTypes;
@@ -24,12 +24,14 @@ public enum ProviderType implements Identifiable {
     private boolean isAuthUrlAware;
     private boolean isReadOnlyAware;
     private boolean isTenantRequired;
+    private boolean isUnmanagedAware;
 
     private ProviderType(int value,
             boolean isTenantAware,
             boolean isAuthUrlAware,
             boolean isReadOnlyAware,
             boolean isTenantRequired,
+            boolean isUnmanagedAware,
             VdcObjectType... providedTypes) {
 
         this.value = value;
@@ -38,6 +40,7 @@ public enum ProviderType implements Identifiable {
         this.isReadOnlyAware = isReadOnlyAware;
         this.isTenantRequired = isTenantRequired;
         this.providedTypes = new HashSet<>();
+        this.isUnmanagedAware = isUnmanagedAware;
         for (VdcObjectType providedType : providedTypes) {
             this.providedTypes.add(providedType);
         }
@@ -66,5 +69,9 @@ public enum ProviderType implements Identifiable {
 
     public boolean isTenantRequired() {
         return isTenantRequired;
+    }
+
+    public boolean isUnmanagedAware() {
+        return isUnmanagedAware;
     }
 }

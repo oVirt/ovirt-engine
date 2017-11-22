@@ -3329,6 +3329,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostedEngineStorageTooltip();
 
+    String isUnmanaged();
+
     String haActiveTooltip();
 
     String haActiveZeroHaScoreTooltip();
