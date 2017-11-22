@@ -167,7 +167,8 @@ class Plugin(plugin.PluginBase):
             statement="""
                 update cluster
                     set default_network_provider_id=%(provider_id)s
-                    where default_network_provider_id is null
+                    where default_network_provider_id is null and
+                    name = 'Default'
                     and exists (
                       select 1 from providers where id = %(provider_id)s
                     )
