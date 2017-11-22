@@ -857,20 +857,20 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean buildAndCheckDestStorageDomains() {
-        boolean retValue;
         if (diskInfoDestinationMap.isEmpty()) {
-            retValue = fillDestMap();
-        } else {
-            retValue = validateProvidedDestinations();
+            if (!fillDestMap()) {
+                return false;
+            }
+        } else if (!validateProvidedDestinations()) {
+            return false;
         }
-        if (retValue && getImagesToCheckDestinationStorageDomains().size() != diskInfoDestinationMap.size()) {
+        if (getImagesToCheckDestinationStorageDomains().size() != diskInfoDestinationMap.size()) {
             log.error("Can not find any default active domain for one of the disks of template with id '{}'",
                     vmDisksSource.getId());
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
-            retValue = false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
         }
 
-        return retValue && validateIsImagesOnDomains();
+        return validateIsImagesOnDomains();
     }
 
     protected boolean verifySourceDomains() {
@@ -1165,19 +1165,20 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean areParametersLegal() {
-        boolean returnValue = false;
         final VmStatic vmStaticData = getParameters().getVmStaticData();
 
         if (vmStaticData != null) {
 
-            returnValue = isLegalClusterId(vmStaticData.getClusterId());
+            if (!isLegalClusterId(vmStaticData.getClusterId())) {
+                return false;
+            }
 
             if (!validatePinningAndMigration()) {
-                returnValue = false;
+                return false;
             }
 
         }
-        return returnValue;
+        return true;
     }
 
     protected void addVmNetwork() {
