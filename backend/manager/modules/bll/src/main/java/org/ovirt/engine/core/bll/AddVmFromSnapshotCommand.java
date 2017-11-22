@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -108,6 +109,11 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             storageDomainId = !images.isEmpty() ? images.get(0).getStorageIds().get(0) : Guid.Empty;
         }
         return storageDomainId;
+    }
+
+    @Override
+    protected VmInit loadOriginalVmInitWithRootPassword() {
+        return vmFromConfiguration.getVmInit();
     }
 
     @Override

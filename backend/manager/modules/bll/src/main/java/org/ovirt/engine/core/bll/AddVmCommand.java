@@ -1223,11 +1223,17 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return;
         }
         if (vmInit.isPasswordAlreadyStored()) {
-            final VmInit templateVmInit = vmInitDao.get(getVmTemplateId());
-            vmInit.setPasswordAlreadyStored(false);
-            vmInit.setRootPassword(templateVmInit.getRootPassword());
+            final VmInit originalVmInit = loadOriginalVmInitWithRootPassword();
+            if (originalVmInit != null) {
+                vmInit.setPasswordAlreadyStored(false);
+                vmInit.setRootPassword(originalVmInit.getRootPassword());
+            }
         }
         vmHandler.addVmInitToDB(vmInit);
+    }
+
+    protected VmInit loadOriginalVmInitWithRootPassword() {
+        return  vmInitDao.get(getVmTemplateId());
     }
 
     private void addVmStatic() {

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -44,6 +45,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmInitDao;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -53,6 +55,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     private VmDeviceDao vmDeviceDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private VmInitDao vmInitDao;
 
     private Collection<DiskImage> diskImagesFromConfiguration;
 
@@ -179,6 +183,11 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         }
 
         return vm;
+    }
+
+    @Override
+    protected VmInit loadOriginalVmInitWithRootPassword() {
+        return vmInitDao.get(oldVmId);
     }
 
     private void fillDisksToParameters() {
