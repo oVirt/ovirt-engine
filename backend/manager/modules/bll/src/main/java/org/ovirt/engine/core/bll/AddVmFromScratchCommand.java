@@ -68,7 +68,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     }
 
     @Override
-    protected boolean checkTemplateImages(List<String> reasons) {
+    protected boolean checkTemplateImages() {
         return true;
     }
 

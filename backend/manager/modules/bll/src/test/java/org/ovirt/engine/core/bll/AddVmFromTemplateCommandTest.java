@@ -52,7 +52,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         super.setUp();
         doNothing().when(cmd).initTemplateDisks();
         doReturn(true).when(cmd).checkNumberOfMonitors();
-        doReturn(true).when(cmd).validateCustomProperties(any(), any());
+        doReturn(true).when(cmd).validateCustomProperties(any());
         initCommandMethods();
         mockStorageDomainDaoGetAllForStoragePool();
 
@@ -93,7 +93,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
 
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
-        doReturn(true).when(cmd).areParametersLegal(any());
+        doReturn(true).when(cmd).areParametersLegal();
         doReturn(Collections.emptyList()).when(cmd).getVmInterfaces();
         doReturn(Collections.emptyList()).when(cmd).getDiskVmElements();
         mockMaxPciSlots();

@@ -588,7 +588,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     }
 
     private void mockValidateCustomProperties() {
-        doReturn(true).when(command).validateCustomProperties(any(), any());
+        doReturn(true).when(command).validateCustomProperties(any());
     }
 
     private void mockValidatePciAndIdeLimit() {

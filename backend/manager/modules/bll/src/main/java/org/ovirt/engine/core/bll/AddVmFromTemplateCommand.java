@@ -105,7 +105,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
      * for this command
      */
     @Override
-    protected boolean checkTemplateImages(List<String> reasons) {
+    protected boolean checkTemplateImages() {
         return true;
     }
 

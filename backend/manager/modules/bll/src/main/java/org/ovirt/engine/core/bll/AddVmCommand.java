@@ -401,21 +401,20 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return diskVmElements;
     }
 
-    protected boolean canAddVm(List<String> reasons, Collection<StorageDomain> destStorages) {
+    protected boolean canAddVm(Collection<StorageDomain> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
-        if (!canAddVm(reasons, vmStaticFromParams.getName(), getStoragePoolId(), vmStaticFromParams.getPriority())) {
+        if (!canAddVm(vmStaticFromParams.getName(), getStoragePoolId(), vmStaticFromParams.getPriority())) {
             return false;
         }
 
-        if (!validateCustomProperties(vmStaticFromParams, reasons)) {
+        if (!validateCustomProperties(vmStaticFromParams)) {
             return false;
         }
 
         // check that template image and vm are on the same storage pool
         if (shouldCheckSpaceInStorageDomains()) {
             if (!getStoragePoolId().equals(getStoragePoolIdFromSourceImageContainer())) {
-                reasons.add(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH.toString());
-                return false;
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             }
             for (StorageDomain domain : destStorages) {
                StorageDomainValidator storageDomainValidator = new StorageDomainValidator(domain);
@@ -453,7 +452,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean validateAddVmCommand() {
-        return areParametersLegal(getReturnValue().getValidationMessages())
+        return areParametersLegal()
                 && checkNumberOfMonitors() && checkSingleQxlDisplay()
                 && validate(VmValidator.checkPciAndIdeLimit(getParameters().getVm().getOs(),
                         getEffectiveCompatibilityVersion(),
@@ -464,7 +463,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         hasWatchdog(),
                         isBalloonEnabled(),
                         isSoundDeviceEnabled()))
-                && canAddVm(getReturnValue().getValidationMessages(), destStorages.values())
+                && canAddVm(destStorages.values())
                 && hostToRunExist();
     }
 
@@ -842,7 +841,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return true;
     }
 
-    protected boolean checkTemplateImages(List<String> reasons) {
+    protected boolean checkTemplateImages() {
         if (getParameters().getParentCommand() == ActionType.AddVmPool) {
             return true;
         }
@@ -962,12 +961,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return newImage;
     }
 
-    protected boolean canAddVm(List<String> reasons, String name, Guid storagePoolId,
-            int vmPriority) {
+    protected boolean canAddVm(String name, Guid storagePoolId, int vmPriority) {
         // Checking if a desktop with same name already exists
         if (isVmWithSameNameExists(name, storagePoolId)) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED.name());
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
         }
 
         if (!validate(vmHandler.verifyMacPool(getVmInterfaces().size(), getMacPool()))) {
@@ -978,7 +975,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!checkTemplateImages(reasons)) {
+        if (!checkTemplateImages()) {
             return false;
         }
 
@@ -989,9 +986,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected void executeVmCommand() {
         vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
-        List<String> errorMessages = getReturnValue().getValidationMessages();
-        if (!canAddVm(errorMessages, destStorages.values())) {
-            log.error("Failed to add VM. The reasons are: {}", String.join(",", errorMessages));
+        if (!canAddVm(destStorages.values())) {
+            log.error("Failed to add VM. The reasons are: {}",
+                    String.join(",", getReturnValue().getValidationMessages()));
             return;
         }
 
@@ -1158,23 +1155,22 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         );
     }
 
-    private boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
+    private boolean isLegalClusterId(Guid clusterId) {
         // check given cluster id
         Cluster cluster = clusterDao.get(clusterId);
-        boolean legalClusterId = cluster != null;
-        if (!legalClusterId) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID.toString());
+        if (cluster == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
         }
-        return legalClusterId;
+        return true;
     }
 
-    protected boolean areParametersLegal(List<String> reasons) {
+    protected boolean areParametersLegal() {
         boolean returnValue = false;
         final VmStatic vmStaticData = getParameters().getVmStaticData();
 
         if (vmStaticData != null) {
 
-            returnValue = isLegalClusterId(vmStaticData.getClusterId(), reasons);
+            returnValue = isLegalClusterId(vmStaticData.getClusterId());
 
             if (!validatePinningAndMigration()) {
                 returnValue = false;

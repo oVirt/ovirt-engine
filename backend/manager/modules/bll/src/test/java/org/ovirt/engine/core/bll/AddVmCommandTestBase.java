@@ -196,7 +196,7 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     }
 
     protected void initCommandMethods() {
-        doReturn(true).when(cmd).canAddVm(any(), any(), any(), anyInt());
+        doReturn(true).when(cmd).canAddVm(any(), any(), anyInt());
     }
 
     protected StorageDomain createStorageDomain(Guid sdId) {

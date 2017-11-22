@@ -913,7 +913,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     String.format("$Version %s", getEffectiveCompatibilityVersion()));
         }
 
-        if (!validateCustomProperties(vmFromParams.getStaticData(), getReturnValue().getValidationMessages())) {
+        if (!validateCustomProperties(vmFromParams.getStaticData())) {
             return false;
         }
 

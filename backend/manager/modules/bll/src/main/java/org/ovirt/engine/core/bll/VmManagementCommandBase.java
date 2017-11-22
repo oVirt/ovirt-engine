@@ -98,11 +98,11 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         return vdsDao.get(id);
     }
 
-    protected boolean validateCustomProperties(VmStatic vmStaticFromParams, List<String> reasons) {
+    protected boolean validateCustomProperties(VmStatic vmStaticFromParams) {
         return VmPropertiesUtils.getInstance().validateVmProperties(
                 getEffectiveCompatibilityVersion(),
                 vmStaticFromParams.getCustomProperties(),
-                reasons);
+                getReturnValue().getValidationMessages());
     }
 
     boolean validatePinningAndMigration() {

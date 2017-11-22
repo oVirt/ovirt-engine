@@ -314,7 +314,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     }
 
     @Override
-    protected boolean checkTemplateImages(List<String> reasons) {
+    protected boolean checkTemplateImages() {
         return true;
     }
 

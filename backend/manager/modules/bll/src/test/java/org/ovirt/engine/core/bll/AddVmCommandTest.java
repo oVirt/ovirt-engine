@@ -13,12 +13,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Rule;
@@ -69,15 +67,14 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
     @Test
     public void canAddVm() {
-        List<String> reasons = new ArrayList<>();
         doNothing().when(cmd).initTemplateDisks();
         initCommandMethods();
         cmd.init();
 
-        doReturn(true).when(cmd).validateCustomProperties(any(), any());
+        doReturn(true).when(cmd).validateCustomProperties(any());
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added",
-                cmd.canAddVm(reasons, Collections.singletonList(createStorageDomain(STORAGE_DOMAIN_ID_1))));
+                cmd.canAddVm(Collections.singletonList(createStorageDomain(STORAGE_DOMAIN_ID_1))));
     }
 
     @Test
