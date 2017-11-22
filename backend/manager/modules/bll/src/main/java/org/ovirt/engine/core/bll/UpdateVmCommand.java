@@ -1022,8 +1022,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!validatePinningAndMigration(getReturnValue().getValidationMessages(),
-                getParameters().getVm().getStaticData(), getParameters().getVm().getCpuPinning())) {
+        if (!validatePinningAndMigration()) {
             return false;
         }
 

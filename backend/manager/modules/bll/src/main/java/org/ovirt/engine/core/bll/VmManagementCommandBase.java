@@ -105,14 +105,14 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 reasons);
     }
 
-    static boolean validatePinningAndMigration(List<String> reasons, VmStatic vmStaticData, String cpuPinning) {
+    boolean validatePinningAndMigration() {
         final boolean cpuPinMigrationEnabled = Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinMigrationEnabled));
+        VmStatic vmStaticData = getParameters().getVmStaticData();
         if (!cpuPinMigrationEnabled
                 && (vmStaticData.getMigrationSupport() == MigrationSupport.MIGRATABLE
                 || vmStaticData.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE)
-                && StringUtils.isNotEmpty(cpuPinning)) {
-            reasons.add(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE.toString());
-            return false;
+                && StringUtils.isNotEmpty(getParameters().getVm().getCpuPinning())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE);
         }
 
         return true;
