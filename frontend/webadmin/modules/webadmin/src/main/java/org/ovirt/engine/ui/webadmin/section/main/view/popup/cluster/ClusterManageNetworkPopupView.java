@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -49,6 +50,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     protected static final int MAX_CLUSTER_NETWORK_GRID_HEIGHT = 253;
 
@@ -473,6 +475,17 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                     && (!isMultipleSelectionAllowed()
                     || !clusterNetworkModel.isManagement()
                     || !clusterNetworkModel.getOriginalNetworkCluster().isDefaultRoute());
+        }
+
+        @Override
+        protected String getDisabledMessage(ClusterNetworkModel clusterNetworkModel) {
+            String version = clusterNetworkModel.getCluster().getCompatibilityVersion().getValue();
+            boolean defaultRouteReportedByVdsm = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                    ConfigValues.DefaultRouteReportedByVdsm, version);
+            if (!defaultRouteReportedByVdsm) {
+                return messages.clusterDefaultRouteCompatibility(version);
+            }
+            return super.getDisabledMessage(clusterNetworkModel);
         }
     }
 

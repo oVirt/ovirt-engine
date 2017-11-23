@@ -107,5 +107,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String slaves(int count);
 
     String testImageIOProxyConnectionFailure(String location);
+
+    String clusterDefaultRouteCompatibility(String version);
 }
 
