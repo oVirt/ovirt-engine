@@ -185,7 +185,6 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         Guid vdsId = getVdsId();
         ArrayList<String> reasons = getReturnValue().getValidationMessages();
         boolean returnValue = true;
-        // VDS vds = ResourceManager.Instance.getVds(vdsId);
         VDS vds = vdsDao.get(vdsId);
         // we can get here when vds status was set already to Maintenance
         if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.NonResponsive
