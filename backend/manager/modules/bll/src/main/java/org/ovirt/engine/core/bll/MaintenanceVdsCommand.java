@@ -183,16 +183,13 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     @Override
     protected boolean validate() {
         Guid vdsId = getVdsId();
-        ArrayList<String> reasons = getReturnValue().getValidationMessages();
-        boolean returnValue = true;
         VDS vds = vdsDao.get(vdsId);
         // we can get here when vds status was set already to Maintenance
         if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.NonResponsive
                 && vds.getStatus() != VDSStatus.Up && vds.getStatus() != VDSStatus.Error
                 && vds.getStatus() != VDSStatus.PreparingForMaintenance && vds.getStatus() != VDSStatus.Down
                 && vds.getStatus() != VDSStatus.InstallFailed) {
-            returnValue = false;
-            reasons.add(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL.toString());
+            return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL);
         }
 
         orderListOfRunningVmsOnVds(vdsId);
@@ -203,19 +200,17 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 if (!HostedEngineHelper.haveHostsAvailableforHE(
                         vdsDao.getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up),
                         Collections.singletonList(vdsId))) {
-                    reasons.add(EngineMessage.VDS_CANNOT_MAINTENANCE_NO_ALTERNATE_HOST_FOR_HOSTED_ENGINE.toString());
-                    return false;
+                    return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_NO_ALTERNATE_HOST_FOR_HOSTED_ENGINE);
                 }
                 // The Hosted Engine vm is migrated by the HA agent
                 continue;
             }
             if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-                reasons.add(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM.toString());
-                return false;
+                return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM);
             }
         }
 
-        return returnValue;
+        return true;
     }
 
     @Override
