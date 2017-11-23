@@ -864,8 +864,10 @@ public class VmInfoBuildUtils {
         return Optional.empty();
     }
 
-    public Map<String, Object> prepareGlusterDisk(VM vm, DiskImage diskImage, Map<String, Object> struct) {
-        getNetworkDiskType(vm, diskImage.getStorageTypes().get(0)).ifPresent((diskType) -> struct.put(VdsProperties.DiskType, diskType));
+    public Map<String, Object> setDiskType(VM vm, DiskImage diskImage, Map<String, Object> struct) {
+        StorageType storageType = diskImage.getStorageTypes().get(0);
+        Optional<String> diskType = getNetworkDiskType(vm, storageType);
+        struct.put(VdsProperties.DiskType, diskType.orElseGet(() -> storageType.isBlockDomain() ? "block" : "file"));
         return struct;
     }
 

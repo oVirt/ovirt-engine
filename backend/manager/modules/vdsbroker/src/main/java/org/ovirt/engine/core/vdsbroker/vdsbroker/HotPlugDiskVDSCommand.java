@@ -85,7 +85,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         switch (disk.getDiskStorageType()) {
             case IMAGE:
                 DiskImage diskImage = (DiskImage) disk;
-                drive = vmInfoBuildUtils.prepareGlusterDisk(getParameters().getVm(), diskImage, drive);
+                drive = vmInfoBuildUtils.setDiskType(getParameters().getVm(), diskImage, drive);
                 drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
                 drive.put(VdsProperties.Format, diskImage.getVolumeFormat().toString().toLowerCase());
                 drive.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
