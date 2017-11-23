@@ -189,15 +189,21 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String descriptionLabel();
 
-    String exportLabel();
+    String externalLabel();
 
     String profilesLabel();
 
-    String exportCheckboxLabel();
+    String externalCheckboxLabel();
+
+    String physicalNetworkCheckboxLabel();
+
+    String physicalNetworkLabel();
+
+    String physicalNetworkDatacenterLabel();
+
+    String physicalNetworkCustomLabel();
 
     String externalProviderLabel();
-
-    String neutronPhysicalNetwork();
 
     String hostProviderTabLabel();
 

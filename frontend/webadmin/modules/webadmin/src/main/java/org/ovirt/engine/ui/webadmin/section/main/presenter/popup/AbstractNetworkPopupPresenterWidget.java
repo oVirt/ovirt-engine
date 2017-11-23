@@ -45,9 +45,9 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasVal
             }
         });
 
-        getView().toggleSubnetVisibility(model.getExport().getEntity());
-        model.getExport().getEntityChangedEvent().addListener((ev, sender, args) ->
-                getView().toggleSubnetVisibility(model.getExport().getEntity()));
+        getView().toggleSubnetVisibility(model.getExternal().getEntity());
+        model.getExternal().getEntityChangedEvent().addListener((ev, sender, args) ->
+                getView().toggleSubnetVisibility(model.getExternal().getEntity()));
 
         getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
         model.getProfiles().getPropertyChangedEvent().addListener((ev, sender, args) -> {

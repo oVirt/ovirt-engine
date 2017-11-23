@@ -47,6 +47,7 @@ public class NewNetworkModel extends NetworkModel {
         setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
         setHelpTag(HelpTag.new_logical_network);
         setHashName("new_logical_network"); //$NON-NLS-1$
+        getConnectedToPhysicalNetwork().setEntity(true);
 
         initMtu();
     }
@@ -72,7 +73,7 @@ public class NewNetworkModel extends NetworkModel {
     protected NetworkClusterModel createNetworkClusterModel(Cluster cluster) {
         NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
         networkClusterModel.setAttached(true);
-        networkClusterModel.setRequired(!getExport().getEntity());
+        networkClusterModel.setRequired(!getExternal().getEntity());
 
         return networkClusterModel;
     }
@@ -107,8 +108,13 @@ public class NewNetworkModel extends NetworkModel {
     }
 
     @Override
+    protected void selectPhysicalDatacenterNetwork() {
+        getDatacenterPhysicalNetwork().setSelectedItem(Linq.firstOrNull(getDatacenterPhysicalNetwork().getItems()));
+    }
+
+    @Override
     protected void onExportChanged() {
-        boolean externalNetwork = getExport().getEntity();
+        boolean externalNetwork = getExternal().getEntity();
         getExternalProviders().setIsChangeable(externalNetwork);
         getIsVmNetwork().setIsChangeable(!externalNetwork && isSupportBridgesReportByVDSM()
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
@@ -136,7 +142,7 @@ public class NewNetworkModel extends NetworkModel {
 
 
         // New network
-        if (getExport().getEntity()) {
+        if (getExternal().getEntity()) {
             Provider<?> externalProvider = getExternalProviders().getSelectedItem();
             ProviderNetwork providerNetwork = new ProviderNetwork();
             providerNetwork.setProviderId(externalProvider.getId());
@@ -217,6 +223,6 @@ public class NewNetworkModel extends NetworkModel {
     }
 
     private boolean hasDefinedSubnet() {
-        return getExport().getEntity() && getCreateSubnet().getEntity() && getNetwork().isExternal();
+        return getExternal().getEntity() && getCreateSubnet().getEntity() && getNetwork().isExternal();
     }
 }

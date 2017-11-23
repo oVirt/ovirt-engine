@@ -1,9 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -36,12 +39,23 @@ public class EditNetworkModel extends NetworkModel {
         getVLanTag().setEntity(getNetwork().getVlanId());
         initMtu();
         initIsVm();
-        getExport().setEntity(getNetwork().isExternal());
-        getExport().setIsChangeable(false);
+        getExternal().setEntity(getNetwork().isExternal());
+        getExternal().setIsChangeable(false);
         getExternalProviders().setIsChangeable(false);
 
-        if (getNetwork().isExternal()) {
-            getNeutronPhysicalNetwork().setEntity(getNetwork().getLabel());
+        getConnectedToPhysicalNetwork().setEntity(isConnectedToPhysicalNetwork());
+        getConnectedToPhysicalNetwork().setIsChangeable(false);
+        getUsePhysicalNetworkFromDatacenter().setIsChangeable(false);
+        getUsePhysicalNetworkFromCustom().setIsChangeable(false);
+        getDatacenterPhysicalNetwork().setIsChangeable(false);
+
+        if (isConnectedToPhysicalNetwork()) {
+            if (getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
+                getUsePhysicalNetworkFromDatacenter().setEntity(true);
+            } else {
+                getUsePhysicalNetworkFromCustom().setEntity(true);
+                getCustomPhysicalNetwork().setEntity(getNetwork().getLabel());
+            }
         } else {
             getNetworkLabel().setSelectedItem(getNetwork().getLabel());
         }
@@ -73,14 +87,31 @@ public class EditNetworkModel extends NetworkModel {
     }
 
     @Override
+    protected void selectPhysicalDatacenterNetwork() {
+        final Network network = getNetwork();
+        if (network.isExternal() && network.getProvidedBy().isSetPhysicalNetworkId()) {
+            getDatacenterPhysicalNetwork().getItems()
+                    .stream()
+                    .filter(net -> Objects.equals(net.getId(), network.getProvidedBy().getPhysicalNetworkId()))
+                    .findAny()
+                    .ifPresent(this.getDatacenterPhysicalNetwork()::setSelectedItem);
+        }
+    }
+
+    private boolean isConnectedToPhysicalNetwork() {
+        final Network network = getNetwork();
+        return network.isExternal() && (network.getProvidedBy().isSetPhysicalNetworkId() || StringHelper.isNotNullOrEmpty(network.getLabel()));
+    }
+
+    @Override
     protected void onExportChanged() {
         super.onExportChanged();
-        if (getExport().getEntity()) {
+        if (getExternal().getEntity()) {
             getHasVLanTag().setIsChangeable(false);
             getVLanTag().setIsChangeable(false);
             getIsVmNetwork().setIsChangeable(false);
             getNetworkLabel().setIsChangeable(false);
-            getNeutronPhysicalNetwork().setIsChangeable(false);
+            getCustomPhysicalNetwork().setIsChangeable(false);
         }
     }
 

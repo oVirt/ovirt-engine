@@ -19,6 +19,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -69,10 +72,14 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     private EntityModel<String> privateName;
     private EntityModel<String> privateDescription;
-    private EntityModel<Boolean> export;
+    private EntityModel<Boolean> external;
+    private EntityModel<Boolean> connectedToPhysicalNetwork;
+    private ListModel<Network> datacenterPhysicalNetwork;
+    private EntityModel<Boolean> usePhysicalNetworkFromDatacenter;
+    private EntityModel<Boolean> usePhysicalNetworkFromCustom;
     private ListModel<Provider<?>> externalProviders;
     private ListModel<String> networkLabel;
-    private EntityModel<String> neutronPhysicalNetwork;
+    private EntityModel<String> customPhysicalNetwork;
     private EntityModel<String> privateComment;
     private EntityModel<Integer> privateVLanTag;
     private EntityModel<Boolean> privateIsStpEnabled;
@@ -108,9 +115,23 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         setComment(new EntityModel<String>());
         setDataCenters(new ListModel<StoragePool>());
         getDataCenters().getSelectedItemChangedEvent().addListener((ev, sender, args) -> syncWithBackend());
-        setExport(new EntityModel<>(false));
-        getExport().getEntityChangedEvent().addListener((ev, sender, args) -> onExportChanged());
-        setNeutronPhysicalNetwork(new EntityModel<String>());
+        setExternal(new EntityModel<>(false));
+        getExternal().getEntityChangedEvent().addListener((ev, sender, args) -> onExportChanged());
+        setCustomPhysicalNetwork(new EntityModel<String>());
+
+        setDatacenterPhysicalNetwork(new ListModel<>());
+        setConnectedToPhysicalNetwork(new EntityModel<>());
+        setUsePhysicalNetworkFromDatacenter(new EntityModel<>());
+        setUsePhysicalNetworkFromCustom(new EntityModel<>());
+
+        getUsePhysicalNetworkFromCustom().getEntityChangedEvent()
+                .addListener((ev, sender, args) -> onPhysicalNetworkSourceChange(sender));
+        getUsePhysicalNetworkFromDatacenter().getEntityChangedEvent()
+                .addListener((ev, sender, args) -> onPhysicalNetworkSourceChange(sender));
+        onPhysicalNetworkSourceChange(getUsePhysicalNetworkFromDatacenter());
+        getConnectedToPhysicalNetwork().getEntityChangedEvent()
+                .addListener((ev, sender, args) -> onConnectedToPhysicalNetworkChange());
+
 
         setNetworkLabel(new ListModel<String>());
         setExternalProviders(new ListModel<Provider<?>>());
@@ -173,14 +194,27 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         updateAvailability();
     }
 
+    private void initPhysicalNetworkList() {
+        Frontend.getInstance()
+                .runQuery(QueryType.GetAllNetworks,
+                        new IdQueryParameters(getSelectedDc().getId()),
+                        new AsyncQuery<QueryReturnValue>(result -> {
+                            List<Network> networks = result.getReturnValue();
+                            if (networks != null) {
+                                getDatacenterPhysicalNetwork().setItems(networks);
+                                selectPhysicalDatacenterNetwork();
+                            }
+                        }));
+    }
+
     private void updateAvailability() {
         if (!ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
             getExternalProviders().setIsAvailable(false);
-            getNeutronPhysicalNetwork().setIsAvailable(false);
+            getCustomPhysicalNetwork().setIsAvailable(false);
             getCreateSubnet().setIsAvailable(false);
             getVLanTag().setIsAvailable(false);
             getHasVLanTag().setIsAvailable(false);
-            getExport().setIsAvailable(false);
+            getExternal().setIsAvailable(false);
         }
     }
 
@@ -255,12 +289,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         privateDescription = value;
     }
 
-    public EntityModel<Boolean> getExport() {
-        return export;
+    public EntityModel<Boolean> getExternal() {
+        return external;
     }
 
-    private void setExport(EntityModel<Boolean> value) {
-        export = value;
+    private void setExternal(EntityModel<Boolean> value) {
+        external = value;
     }
 
     public ListModel<Provider<?>> getExternalProviders() {
@@ -279,12 +313,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         this.networkLabel = networkLabel;
     }
 
-    public EntityModel<String> getNeutronPhysicalNetwork() {
-        return neutronPhysicalNetwork;
+    public EntityModel<String> getCustomPhysicalNetwork() {
+        return customPhysicalNetwork;
     }
 
-    private void setNeutronPhysicalNetwork(EntityModel<String> neutronPhysicalNetwork) {
-        this.neutronPhysicalNetwork = neutronPhysicalNetwork;
+    private void setCustomPhysicalNetwork(EntityModel<String> customPhysicalNetwork) {
+        this.customPhysicalNetwork = customPhysicalNetwork;
     }
 
     public EntityModel<String> getComment() {
@@ -457,6 +491,61 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         }
     }
 
+    public void setConnectedToPhysicalNetwork(EntityModel<Boolean> connectedToPhysicalNetwork) {
+        this.connectedToPhysicalNetwork = connectedToPhysicalNetwork;
+    }
+
+    public EntityModel<Boolean> getConnectedToPhysicalNetwork() {
+        return connectedToPhysicalNetwork;
+    }
+
+    public ListModel<Network> getDatacenterPhysicalNetwork() {
+        return datacenterPhysicalNetwork;
+    }
+
+    public void setDatacenterPhysicalNetwork(ListModel<Network> datacenterPhysicalNetwork) {
+        this.datacenterPhysicalNetwork = datacenterPhysicalNetwork;
+    }
+
+    public EntityModel<Boolean> getUsePhysicalNetworkFromDatacenter() {
+        return usePhysicalNetworkFromDatacenter;
+    }
+
+    public void setUsePhysicalNetworkFromDatacenter(EntityModel<Boolean> usePhysicalNetworkFromDatacenter) {
+        this.usePhysicalNetworkFromDatacenter = usePhysicalNetworkFromDatacenter;
+    }
+
+    public EntityModel<Boolean> getUsePhysicalNetworkFromCustom() {
+        return usePhysicalNetworkFromCustom;
+    }
+
+    public void setUsePhysicalNetworkFromCustom(EntityModel<Boolean> usePhysicalNetworkFromCustom) {
+        this.usePhysicalNetworkFromCustom = usePhysicalNetworkFromCustom;
+    }
+
+    private void onPhysicalNetworkSourceChange(Object sender) {
+        boolean datacenter = true;
+        if (sender == getUsePhysicalNetworkFromDatacenter()) {
+            getCustomPhysicalNetwork().setIsChangeable(false);
+            getDatacenterPhysicalNetwork().setIsChangeable(true);
+            datacenter = true;
+        } else if (sender == getUsePhysicalNetworkFromCustom()) {
+            getCustomPhysicalNetwork().setIsChangeable(true);
+            getDatacenterPhysicalNetwork().setIsChangeable(false);
+            datacenter = false;
+        }
+        getUsePhysicalNetworkFromCustom().setEntity(!datacenter, false);
+        getUsePhysicalNetworkFromDatacenter().setEntity(datacenter, false);
+    }
+
+    private void onConnectedToPhysicalNetworkChange() {
+        boolean visible = getConnectedToPhysicalNetwork().getEntity();
+        getUsePhysicalNetworkFromDatacenter().setIsAvailable(visible);
+        getUsePhysicalNetworkFromCustom().setIsAvailable(visible);
+        getCustomPhysicalNetwork().setIsAvailable(visible);
+        getDatacenterPhysicalNetwork().setIsAvailable(visible);
+    }
+
     private boolean validate() {
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(BusinessEntitiesDefinitions.NETWORK_NAME_SIZE);
@@ -489,7 +578,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         getExternalProviders().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         boolean subnetValid = true;
-        if (getExport().getEntity() && getCreateSubnet().getEntity()) {
+        if (getExternal().getEntity() && getCreateSubnet().getEntity()) {
             subnetValid = getSubnetModel().validate();
         }
 
@@ -547,6 +636,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
         onExportChanged();
         getProfiles().updateDcId(dc.getId());
+
+        initPhysicalNetworkList();
     }
 
     private void addCommands() {
@@ -570,9 +661,11 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         network.setComment(getComment().getEntity());
         network.setVmNetwork(getIsVmNetwork().getEntity());
 
-        String label = getExport().getEntity() ?
-                getNeutronPhysicalNetwork().getEntity() : getNetworkLabel().getSelectedItem();
-        network.setLabel(label == null || !label.isEmpty() ? label : null);
+        String label = getNetworkLabel().getSelectedItem();
+        if (getExternal().getEntity() && getConnectedToPhysicalNetwork().getEntity()) {
+            label = !getUsePhysicalNetworkFromDatacenter().getEntity() ? getCustomPhysicalNetwork().getEntity() : null;
+        }
+        network.setLabel(StringHelper.isNotNullOrEmpty(label) ? label : null);
 
         network.setMtu(0);
         if (getMtu().getIsChangable()) {
@@ -717,13 +810,22 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
     protected abstract void selectExternalProvider();
 
+    protected abstract void selectPhysicalDatacenterNetwork();
+
     protected void onExportChanged() {
-        boolean externalNetwork = getExport().getEntity();
+        boolean externalNetwork = getExternal().getEntity();
 
         getNetworkLabel().setIsChangeable(!externalNetwork);
-        getNeutronPhysicalNetwork().setIsChangeable(externalNetwork);
+        getCustomPhysicalNetwork().setIsChangeable(
+                externalNetwork && !getUsePhysicalNetworkFromDatacenter().getEntity());
+        getDatacenterPhysicalNetwork().setIsChangeable(
+                externalNetwork && getUsePhysicalNetworkFromDatacenter().getEntity());
         getQos().setIsChangeable(!externalNetwork);
         getAddQosCommand().setIsExecutionAllowed(!externalNetwork);
+
+        getConnectedToPhysicalNetwork().setIsChangeable(externalNetwork);
+        getUsePhysicalNetworkFromCustom().setIsChangeable(externalNetwork);
+        getUsePhysicalNetworkFromDatacenter().setIsChangeable(externalNetwork);
 
         updateMtuSelectorsChangeability();
     }
@@ -760,7 +862,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        if (getExport().getEntity()) {
+        if (getExternal().getEntity()) {
             setMtuSelectorsChangeability(false, null);
             return;
         }

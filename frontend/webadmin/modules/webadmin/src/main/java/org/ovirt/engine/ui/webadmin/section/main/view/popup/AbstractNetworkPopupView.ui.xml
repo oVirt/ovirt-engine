@@ -45,6 +45,14 @@
         .topElement {
             padding-top: 15px;
         }
+
+        .firstLevelPadding {
+            padding-left: 5%;
+        }
+
+        .secondLevelPadding {
+            padding-left: 10%;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel ui:field="mainPanel" width="845px" height="565px">
@@ -70,22 +78,6 @@
                                 </b:Row>
                                 <b:Row addStyleNames="{style.generalTabTopDecorator}">
                                     <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <b:Column size="SM_12">
-                                        <g:Label ui:field="exportLabel" addStyleNames="{style.headerLabel}" />
-                                    </b:Column>
-                                </b:Row>
-                                <b:Row>
-                                    <b:Column size="SM_12">
-                                        <ge:EntityModelCheckBoxEditor ui:field="exportEditor" usePatternFly="true" />
-                                    </b:Column>
-                                </b:Row>
-                                <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="externalProviderEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                </b:Row>
-                                <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="neutronPhysicalNetwork" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
@@ -135,6 +127,56 @@
                                   <b:Column size="LG_12">
                                     <p:DnsServersWidget ui:field="dnsServersWidget" />
                                   </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="externalEditor" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <g:Label ui:field="externalLabel" addStyleNames="{style.headerLabel}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.firstLevelPadding}">
+                                    <e:ListModelListBoxEditor ui:field="externalProviderEditor" usePatternFly="true"
+                                                              labelColSize="SM_6" widgetColSize="SM_6"/>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.firstLevelPadding}">
+                                    <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="physicalNetworkEditor"
+                                                                      usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.firstLevelPadding}">
+                                    <b:Column size="SM_12">
+                                        <g:Label ui:field="physicalNetworkLabel"
+                                                 addStyleNames="{style.headerLabel}"
+                                                 text="{constants.physicalNetworkLabel}"  />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.secondLevelPadding}">
+                                    <b:Column size="SM_6">
+                                        <ge:EntityModelRadioButtonEditor
+                                                ui:field="physicalNetworkDatacenterRadioButtonEditor"
+                                                label="{constants.physicalNetworkDatacenterLabel}"
+                                                usePatternFly="true" />
+                                    </b:Column>
+                                    <b:Column size="SM_6">
+                                        <e:ListModelListBoxOnlyEditor
+                                                ui:field="datacenterPhysicalNetworkEditor" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.secondLevelPadding}">
+                                    <b:Column size="SM_6">
+                                        <ge:EntityModelRadioButtonEditor
+                                                ui:field="physicalNetworkCustomRadioButtonEditor"
+                                                label="{constants.physicalNetworkCustomLabel}" usePatternFly="true" />
+                                    </b:Column>
+                                    <b:Column size="SM_6">
+                                        <ge:StringEntityModelTextBoxOnlyEditor
+                                                ui:field="customPhysicalNetworkEditor" usePatternFly="true" />
+                                    </b:Column>
                                 </b:Row>
                             </b:Container>
                         </t:content>
