@@ -47,6 +47,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -104,6 +106,11 @@ public class VmInfoBuildUtilsTest {
     private AuditLogDirector auditLogDirector;
     @Mock
     private OsRepository osRepository;
+    @Mock
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Mock
+    private StorageServerConnectionDao storageServerConnectionDao;
+
 
     @InjectMocks
     private VmInfoBuildUtils underTest;

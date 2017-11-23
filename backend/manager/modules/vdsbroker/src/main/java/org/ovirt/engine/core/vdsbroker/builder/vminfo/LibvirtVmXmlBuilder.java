@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -66,7 +65,6 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -124,8 +122,6 @@ public class LibvirtVmXmlBuilder {
     private HostDeviceDao hostDeviceDao;
     @Inject
     private VmNicFilterParameterDao vmNicFilterParameterDao;
-    @Inject
-    private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private VdsStatisticsDao vdsStatisticsDao;
     @Inject
@@ -1501,13 +1497,10 @@ public class LibvirtVmXmlBuilder {
         // </disk>
         writer.writeStartElement("disk");
 
-        StorageType storageDomainType = disk.getDiskStorageType() == DiskStorageType.IMAGE ?
-                storageDomainStaticDao.get(((DiskImage) disk).getStorageIds().get(0)).getStorageType() : null;
-
         writeGeneralDiskAttributes(device, disk, dve);
         String dev = writeDiskTarget(dve, index);
         writeDiskSource(disk, dev);
-        writeDiskDriver(device, disk, dve, storageDomainType);
+        writeDiskDriver(device, disk, dve);
         writeAddress(device);
         writeBootOrder(device.getBootOrder());
 
@@ -1563,7 +1556,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDiskDriver(VmDevice device, Disk disk, DiskVmElement dve, StorageType storageDomainType) {
+    private void writeDiskDriver(VmDevice device, Disk disk, DiskVmElement dve) {
         writer.writeStartElement("driver");
         writer.writeAttributeString("name", "qemu");
         if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
@@ -1576,7 +1569,8 @@ public class LibvirtVmXmlBuilder {
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
-            writer.writeAttributeString("io", storageDomainType.isBlockDomain() ? "native" : "threads");
+            String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage);
+            writer.writeAttributeString("io", "file".equals(diskType) ? "threads" : "native");
             writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
             writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
             break;
@@ -1640,6 +1634,21 @@ public class LibvirtVmXmlBuilder {
                                 diskImage.getStorageIds().get(0),
                                 diskImage.getId(),
                                 diskImage.getImageId()));
+                break;
+            case "network":
+                writer.writeAttributeString("protocol", "gluster");
+                String[] volInfo = vmInfoBuildUtils.getGlusterVolInfo(disk);
+                writer.writeAttributeString(
+                        "name",
+                        String.format("%s/%s/images/%s/%s",
+                                volInfo[1],
+                                diskImage.getStorageIds().get(0),
+                                diskImage.getId(),
+                                diskImage.getImageId()));
+                writer.writeStartElement("host");
+                writer.writeAttributeString("name", volInfo[0]);
+                writer.writeAttributeString("port", "0");
+                writer.writeEndElement();
                 break;
             }
             Map<String, Object> diskUuids = new HashMap<>();

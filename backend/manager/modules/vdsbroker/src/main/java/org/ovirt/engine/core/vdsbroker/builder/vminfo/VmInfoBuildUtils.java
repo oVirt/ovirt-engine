@@ -36,6 +36,8 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -76,6 +78,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -119,6 +123,9 @@ public class VmInfoBuildUtils {
     private final ClusterFeatureDao clusterFeatureDao;
     private final VmNumaNodeDao vmNumaNodeDao;
     private final OsRepository osRepository;
+    private final StorageDomainStaticDao storageDomainStaticDao;
+    private final StorageServerConnectionDao storageServerConnectionDao;
+
 
     @Inject
     VmInfoBuildUtils(
@@ -133,7 +140,9 @@ public class VmInfoBuildUtils {
             AuditLogDirector auditLogDirector,
             ClusterFeatureDao clusterFeatureDao,
             VmNumaNodeDao vmNumaNodeDao,
-            OsRepository osRepository) {
+            OsRepository osRepository,
+            StorageDomainStaticDao storageDomainStaticDao,
+            StorageServerConnectionDao storageServerConnectionDao) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -146,6 +155,8 @@ public class VmInfoBuildUtils {
         this.clusterFeatureDao = Objects.requireNonNull(clusterFeatureDao);
         this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
         this.osRepository = Objects.requireNonNull(osRepository);
+        this.storageDomainStaticDao = Objects.requireNonNull(storageDomainStaticDao);
+        this.storageServerConnectionDao = Objects.requireNonNull(storageServerConnectionDao);
     }
 
     @SuppressWarnings("unchecked")
@@ -910,6 +921,18 @@ public class VmInfoBuildUtils {
         }
 
         return findCpusToPinIoAndEmulator(vm, cpuPinning, hostNumaNodesSupplier, vdsCpuThreads);
+    }
+
+    /**
+     * Finds Storage Domain by disk and extracts gluster host and volume info.
+     * @param disk Disk located on Gluster's SD
+     * @return volume info array. First element is a brick's hostname, second element - volume name.
+     */
+    public String[] getGlusterVolInfo(Disk disk) {
+        StorageDomainStatic dom = this.storageDomainStaticDao.get(((DiskImage) disk).getStorageIds().get(0));
+        StorageServerConnections con = this.storageServerConnectionDao.getAllForDomain(dom.getId()).get(0);
+        String path = con.getConnection(); // host:/volume
+        return path.split(":/");
     }
 
     private String findCpusToPinIoAndEmulator(VM vm, Map<String, Object> cpuPinning, MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier, int vdsCpuThreads) {
