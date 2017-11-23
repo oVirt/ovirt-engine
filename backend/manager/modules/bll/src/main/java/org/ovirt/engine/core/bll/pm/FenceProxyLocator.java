@@ -170,13 +170,9 @@ public class FenceProxyLocator {
     }
 
     protected boolean isHostNetworkUnreachable(VDS proxyCandidate) {
-        boolean unreachable = proxyCandidate.getStatus() == VDSStatus.Down
-                || proxyCandidate.getStatus() == VDSStatus.Reboot
-                || proxyCandidate.getStatus() == VDSStatus.Kdumping
-                || proxyCandidate.getStatus() == VDSStatus.NonResponsive
-                || proxyCandidate.getStatus() == VDSStatus.PendingApproval
-                || (proxyCandidate.getStatus() == VDSStatus.NonOperational
-                        && proxyCandidate.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE);
+        boolean unreachable = proxyCandidate.getStatus() != VDSStatus.Up
+                && (proxyCandidate.getStatus() != VDSStatus.NonOperational
+                        || proxyCandidate.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE);
 
         log.debug("Proxy candidate '{}' with status '{}' is unreachable: {}",
                 proxyCandidate.getHostName(),

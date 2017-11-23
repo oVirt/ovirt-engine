@@ -205,30 +205,33 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     }
 
     /**
-     * Checks if the locator will prefer an host in Up status as proxy over a host in Maintenance status.
+     * Checks if the locator will prefer an host in Up status as proxy over a host in NonOperational status.
      */
     @Test
     public void findProxyHostPreferUpHost() {
-        VDS hostInMaintenance = createHost();
-        hostInMaintenance.setStatus(VDSStatus.Maintenance);
-        mockExistingHosts(hostInMaintenance, createHost());
+        VDS nonoperationalHost = createHost();
+        nonoperationalHost.setStatus(VDSStatus.NonOperational);
+        nonoperationalHost.setNonOperationalReason(NonOperationalReason.GENERAL);
+        mockExistingHosts(nonoperationalHost, createHost());
 
         VDS proxyHost = setupLocator().findProxyHost(false);
 
         assertNotNull(proxyHost);
-        assertNotEquals(proxyHost.getId(), hostInMaintenance.getId());
+        assertNotEquals(proxyHost.getId(), nonoperationalHost.getId());
     }
 
     /**
-     * Checks if the locator will select as proxy host in 'Maintenance'
+     * Checks if the locator will select as proxy host in 'NonOperational'
      */
     @Test
     public void findProxyHostSelectSomeHostIfNoneUp() {
-        VDS hostInMaintenance1 = createHost();
-        hostInMaintenance1.setStatus(VDSStatus.Maintenance);
-        VDS hostInMaintenance2 = createHost();
-        hostInMaintenance2.setStatus(VDSStatus.Maintenance);
-        mockExistingHosts(hostInMaintenance1, hostInMaintenance2);
+        VDS nonoperationalHost1 = createHost();
+        nonoperationalHost1.setStatus(VDSStatus.NonOperational);
+        nonoperationalHost1.setNonOperationalReason(NonOperationalReason.GENERAL);
+        VDS nonoperationalHost2 = createHost();
+        nonoperationalHost2.setStatus(VDSStatus.NonOperational);
+        nonoperationalHost2.setNonOperationalReason(NonOperationalReason.GENERAL);
+        mockExistingHosts(nonoperationalHost1, nonoperationalHost2);
 
         VDS proxyHost = setupLocator().findProxyHost(false);
 
@@ -374,19 +377,6 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     }
 
     private boolean shouldHostBeUnreachable(VDSStatus status) {
-        boolean unreachable;
-        switch(status) {
-            case Down:
-            case Reboot:
-            case Kdumping:
-            case NonResponsive:
-            case PendingApproval:
-                unreachable = true;
-                break;
-
-            default:
-                unreachable = false;
-        }
-        return unreachable;
+        return  status != VDSStatus.Up && status != VDSStatus.NonOperational;
     }
 }
