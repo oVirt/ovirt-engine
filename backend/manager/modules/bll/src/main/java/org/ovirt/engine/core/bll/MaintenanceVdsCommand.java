@@ -182,34 +182,8 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     @Override
     protected boolean validate() {
-        return canMaintenanceVds(getVdsId(), getReturnValue().getValidationMessages());
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        if (getParameters().isInternal()) {
-            if (isSucceededWithHA()) {
-                return AuditLogType.VDS_MAINTENANCE;
-            } else if (getSucceeded()) {
-                return AuditLogType.VDS_MAINTENANCE_MANUAL_HA;
-            } else {
-                return AuditLogType.VDS_MAINTENANCE_FAILED;
-            }
-        } else {
-            if (isSucceededWithReasonGiven()){
-                addCustomValue("Reason", getVds().getMaintenanceReason());
-                return AuditLogType.USER_VDS_MAINTENANCE;
-            } else if(isSucceededWithoutReasonGiven()) {
-                return AuditLogType.USER_VDS_MAINTENANCE_WITHOUT_REASON;
-            } else if (getSucceeded()) {
-                return AuditLogType.USER_VDS_MAINTENANCE_MANUAL_HA;
-            } else {
-                return AuditLogType.USER_VDS_MAINTENANCE_MIGRATION_FAILED;
-            }
-        }
-    }
-
-    public boolean canMaintenanceVds(Guid vdsId, ArrayList<String> reasons) {
+        Guid vdsId = getVdsId();
+        ArrayList<String> reasons = getReturnValue().getValidationMessages();
         boolean returnValue = true;
         // VDS vds = ResourceManager.Instance.getVds(vdsId);
         VDS vds = vdsDao.get(vdsId);
@@ -243,6 +217,30 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         }
 
         return returnValue;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        if (getParameters().isInternal()) {
+            if (isSucceededWithHA()) {
+                return AuditLogType.VDS_MAINTENANCE;
+            } else if (getSucceeded()) {
+                return AuditLogType.VDS_MAINTENANCE_MANUAL_HA;
+            } else {
+                return AuditLogType.VDS_MAINTENANCE_FAILED;
+            }
+        } else {
+            if (isSucceededWithReasonGiven()){
+                addCustomValue("Reason", getVds().getMaintenanceReason());
+                return AuditLogType.USER_VDS_MAINTENANCE;
+            } else if(isSucceededWithoutReasonGiven()) {
+                return AuditLogType.USER_VDS_MAINTENANCE_WITHOUT_REASON;
+            } else if (getSucceeded()) {
+                return AuditLogType.USER_VDS_MAINTENANCE_MANUAL_HA;
+            } else {
+                return AuditLogType.USER_VDS_MAINTENANCE_MIGRATION_FAILED;
+            }
+        }
     }
 
     @Override
