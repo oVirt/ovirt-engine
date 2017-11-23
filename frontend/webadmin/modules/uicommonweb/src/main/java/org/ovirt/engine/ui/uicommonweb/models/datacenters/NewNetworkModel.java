@@ -97,7 +97,8 @@ public class NewNetworkModel extends NetworkModel {
     private void selectExternalProviderBasedOnCluster() {
         ArrayList<NetworkClusterModel> clusters = getClustersToAttach();
         if (clusters != null && !clusters.isEmpty()) {
-            NetworkClusterModel networkClusterModel = clusters.get(0);
+            NetworkClusterModel networkClusterModel =
+                    clusters.stream().filter(model -> !model.getIsChangable()).findAny().orElse(clusters.get(0));
             ListModel<Provider<?>> providers = getExternalProviders();
             providers.getItems().stream()
                     .filter(provider -> Objects.equals(networkClusterModel.getEntity().getDefaultNetworkProviderId(),
