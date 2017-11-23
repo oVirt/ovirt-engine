@@ -309,7 +309,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 switch (disk.getDiskStorageType()) {
                 case IMAGE:
                     DiskImage diskImage = (DiskImage) disk;
-                    struct = vmInfoBuildUtils.setDiskType(vm, diskImage, struct);
+                    struct.put(VdsProperties.DiskType, vmInfoBuildUtils.getDiskType(vm, diskImage));
                     struct.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
                     struct.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
                     struct.put(VdsProperties.ImageId, diskImage.getId().toString());

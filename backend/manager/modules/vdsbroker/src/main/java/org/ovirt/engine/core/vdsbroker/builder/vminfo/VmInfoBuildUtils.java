@@ -864,11 +864,10 @@ public class VmInfoBuildUtils {
         return Optional.empty();
     }
 
-    public Map<String, Object> setDiskType(VM vm, DiskImage diskImage, Map<String, Object> struct) {
+    public String getDiskType(VM vm, DiskImage diskImage) {
         StorageType storageType = diskImage.getStorageTypes().get(0);
         Optional<String> diskType = getNetworkDiskType(vm, storageType);
-        struct.put(VdsProperties.DiskType, diskType.orElseGet(() -> storageType.isBlockDomain() ? "block" : "file"));
-        return struct;
+        return diskType.orElseGet(() -> storageType.isBlockDomain() ? "block" : "file");
     }
 
     private boolean isFeatureSupportedAsAdditionalFeature(Guid clusterId, String featureName) {
