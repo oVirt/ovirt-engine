@@ -1504,9 +1504,9 @@ public class LibvirtVmXmlBuilder {
         StorageType storageDomainType = disk.getDiskStorageType() == DiskStorageType.IMAGE ?
                 storageDomainStaticDao.get(((DiskImage) disk).getStorageIds().get(0)).getStorageType() : null;
 
-        writeGeneralDiskAttributes(device, disk, dve, storageDomainType);
+        writeGeneralDiskAttributes(device, disk, dve);
         String dev = writeDiskTarget(dve, index);
-        writeDiskSource(disk, storageDomainType, dev);
+        writeDiskSource(disk, dev);
         writeDiskDriver(device, disk, dve, storageDomainType);
         writeAddress(device);
         writeBootOrder(device.getBootOrder());
@@ -1617,19 +1617,22 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDiskSource(Disk disk, StorageType storageDomainType, String dev) {
+    private void writeDiskSource(Disk disk, String dev) {
         writer.writeStartElement("source");
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
-            if (storageDomainType.isBlockDomain()) {
+            String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage);
+            switch (diskType) {
+            case "block":
                 writer.writeAttributeString(
                         "dev",
                         String.format("/rhev/data-center/mnt/blockSD/%s/images/%s/%s",
                                 diskImage.getStorageIds().get(0),
                                 diskImage.getId(),
                                 diskImage.getImageId()));
-            } else { // file
+                break;
+            case "file":
                 writer.writeAttributeString(
                         "file",
                         String.format("/rhev/data-center/%s/%s/images/%s/%s",
@@ -1637,6 +1640,7 @@ public class LibvirtVmXmlBuilder {
                                 diskImage.getStorageIds().get(0),
                                 diskImage.getId(),
                                 diskImage.getImageId()));
+                break;
             }
             Map<String, Object> diskUuids = new HashMap<>();
             diskUuids.put("poolID", diskImage.getStoragePoolId());
@@ -1710,12 +1714,12 @@ public class LibvirtVmXmlBuilder {
         return dev;
     }
 
-    private void writeGeneralDiskAttributes(VmDevice device, Disk disk, DiskVmElement dve, StorageType storageDomainType) {
+    private void writeGeneralDiskAttributes(VmDevice device, Disk disk, DiskVmElement dve) {
         writer.writeAttributeString("snapshot", "no");
 
         switch (disk.getDiskStorageType()) {
         case IMAGE:
-            writer.writeAttributeString("type", storageDomainType.isBlockDomain() ? "block" : "file");
+            writer.writeAttributeString("type", this.vmInfoBuildUtils.getDiskType(this.vm, (DiskImage) disk));
             break;
         case LUN:
             writer.writeAttributeString("type", "block");
