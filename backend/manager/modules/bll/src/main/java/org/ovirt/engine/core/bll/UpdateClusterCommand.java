@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -257,6 +258,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             momPolicyUpdatedEvent.fire(getCluster());
         }
 
+        updateDefaultNetworkProvider();
+
         // Call UpdateVmCommand on all VMs in the cluster to update defaults (i.e. DisplayType)
         updateVms();
         updateTemplates();
@@ -279,6 +282,23 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         }
 
         setSucceeded(true);
+    }
+
+    private void updateDefaultNetworkProvider() {
+        if (Objects.equals(getCluster().getDefaultNetworkProviderId(),
+                getPrevCluster().getDefaultNetworkProviderId())) {
+            return;
+        }
+
+        allForCluster.stream()
+                .filter(vds -> !Objects.equals(vds.getOpenstackNetworkProviderId(),
+                        getCluster().getDefaultNetworkProviderId()))
+                .forEach(vds -> {
+                    VdsStatic vdsStatic = vds.getStaticData();
+                    vdsStatic.setOpenstackNetworkProviderId(getCluster().getDefaultNetworkProviderId());
+                    vdsStatic.setReinstallRequired(true);
+                    vdsStaticDao.update(vdsStatic);
+                });
     }
 
     private void updateClusterVersionInManager(VmStatic vm) {
