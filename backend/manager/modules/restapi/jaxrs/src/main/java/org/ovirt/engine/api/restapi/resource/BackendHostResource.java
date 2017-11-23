@@ -743,7 +743,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public FenceAgentsResource getFenceAgentsResource() {
-        return inject(new BackendFenceAgentsResource(id));
+        return inject(new BackendFenceAgentsResource(guid));
     }
 
     @Override

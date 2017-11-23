@@ -20,12 +20,12 @@ public class BackendFenceAgentsResource
         extends AbstractBackendCollectionResource<Agent, FenceAgent>
         implements FenceAgentsResource {
 
-    protected BackendFenceAgentsResource(String hostId) {
+    private Guid hostId;
+
+    public BackendFenceAgentsResource(Guid hostId) {
         super(Agent.class, FenceAgent.class);
         this.hostId = hostId;
     }
-
-    private String hostId;
 
     @Override
     public Agents list() {
@@ -42,7 +42,7 @@ public class BackendFenceAgentsResource
 
     private FenceAgentCommandParameterBase getAddParameters(Agent agent) {
         Host host = new Host();
-        host.setId(hostId);
+        host.setId(hostId.toString());
         agent.setHost(host);
         FenceAgentCommandParameterBase params = new FenceAgentCommandParameterBase();
         params.setAgent(map(agent, null));
@@ -50,8 +50,8 @@ public class BackendFenceAgentsResource
     }
 
     @Override
-    public FenceAgentResource getAgentResource(String id) {
-        return inject(new BackendFenceAgentResource(id));
+    public FenceAgentResource getAgentResource(String agentId) {
+        return inject(new BackendFenceAgentResource(hostId, agentId));
     }
 
     private Agents mapCollection(List<FenceAgent> fenceAgents) {
@@ -64,6 +64,6 @@ public class BackendFenceAgentsResource
     }
 
     private List<FenceAgent> getFenceAgents() {
-        return getBackendCollection(QueryType.GetFenceAgentsByVdsId, new IdQueryParameters(new Guid(hostId)));
+        return getBackendCollection(QueryType.GetFenceAgentsByVdsId, new IdQueryParameters(hostId));
     }
 }

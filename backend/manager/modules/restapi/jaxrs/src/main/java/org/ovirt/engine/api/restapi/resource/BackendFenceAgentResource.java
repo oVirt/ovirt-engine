@@ -13,9 +13,11 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent, FenceAgent> implements FenceAgentResource {
+    private Guid hostId;
 
-    public BackendFenceAgentResource(String fenceAgentId) {
-        super(fenceAgentId, Agent.class, FenceAgent.class);
+    public BackendFenceAgentResource(Guid hostId, String agentId) {
+        super(agentId, Agent.class, FenceAgent.class);
+        this.hostId = hostId;
     }
 
     @Override
@@ -51,6 +53,7 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
         get();
         FenceAgentCommandParameterBase params = new FenceAgentCommandParameterBase();
         FenceAgent agent = new FenceAgent();
+        agent.setHostId(hostId);
         agent.setId(guid);
         params.setAgent(agent);
         return performAction(ActionType.RemoveFenceAgent, params);
