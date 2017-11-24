@@ -155,6 +155,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 // it was reset by getTemplateWithVersion event
                 getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
                 setCustomCompatibilityVersionChangeInProgress(false);
+
+                getModel().updateResumeBehavior();
             });
         }
     }

@@ -190,6 +190,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());
 
             initPriority(template.getPriority());
+            getModel().updateResumeBehavior();
         });
     }
 

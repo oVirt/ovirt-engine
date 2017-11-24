@@ -191,6 +191,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             }
 
             updateCpuProfile(vm.getClusterId(), vm.getCpuProfileId());
+            getModel().updateResumeBehavior();
         });
     }
 

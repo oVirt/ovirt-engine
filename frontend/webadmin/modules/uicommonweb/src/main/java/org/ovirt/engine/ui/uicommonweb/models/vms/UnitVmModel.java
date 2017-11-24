@@ -2135,7 +2135,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getConsoleDisconnectAction().setItems(Arrays.asList(ConsoleDisconnectAction.values()));
     }
 
-    private void updateResumeBehavior() {
+    public void updateResumeBehavior() {
         if (getSelectedCluster() == null) {
             return;
         }

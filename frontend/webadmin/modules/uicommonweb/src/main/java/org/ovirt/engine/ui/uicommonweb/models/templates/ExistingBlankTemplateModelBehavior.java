@@ -36,6 +36,7 @@ public class ExistingBlankTemplateModelBehavior extends ExistingNonClusterModelB
         updateTimeZone(template.getTimeZone());
         getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
         getModel().getVmInitModel().init(template);
+        getModel().updateResumeBehavior();
     }
 
     @Override
