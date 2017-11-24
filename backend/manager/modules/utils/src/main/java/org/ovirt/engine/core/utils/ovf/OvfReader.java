@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -597,6 +598,9 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content,
                 ALLOW_CONSOLE_RECONNECT,
                 val -> vmBase.setAllowConsoleReconnect(Boolean.parseBoolean(val)));
+        consumeReadProperty(content,
+                CONSOLE_DISCONNECT_ACTION,
+                val -> vmBase.setConsoleDisconnectAction(ConsoleDisconnectAction.fromString(val)));
         consumeReadProperty(content, IS_AUTO_CONVERGE, val -> vmBase.setAutoConverge(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
                 IS_MIGRATE_COMPRESSED,

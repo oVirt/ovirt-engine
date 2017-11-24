@@ -7,7 +7,7 @@ public enum ConsoleDisconnectAction {
     SHUTDOWN,
     REBOOT;
 
-    public static ConsoleDisconnectAction fromDbString(String name) {
+    public static ConsoleDisconnectAction fromString(String name) {
         if(name == null) {
             return LOCK_SCREEN;
         }

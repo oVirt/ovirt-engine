@@ -166,7 +166,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setCustomCpuName(rs.getString("custom_cpu_name"));
             entity.setSmallIconId(getGuid(rs, SMALL_ICON_ID_COLUMN));
             entity.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
-            entity.setConsoleDisconnectAction(ConsoleDisconnectAction.fromDbString(rs.getString("console_disconnect_action")));
+            entity.setConsoleDisconnectAction(ConsoleDisconnectAction.fromString(rs.getString("console_disconnect_action")));
             String resumeBehavior = rs.getString("resume_behavior");
             entity.setResumeBehavior(resumeBehavior == null ? null : VmResumeBehavior.valueOf(resumeBehavior));
             entity.setCustomCompatibilityVersion(new VersionRowMapper("custom_compatibility_version").mapRow(rs, 0));
