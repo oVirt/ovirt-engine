@@ -69,7 +69,18 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
 
     public SimpleDialogPanel() {
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        addAttachHandler(event -> setDraggable(event.isAttached()));
+    }
+
+    @Override
+    protected void onLoad() {
+        super.onLoad();
+        setDraggable(true);
+    }
+
+    @Override
+    protected void onUnload() {
+        super.onUnload();
+        setDraggable(false);
     }
 
     private native void setDraggable(boolean dragEnabled) /*-{
