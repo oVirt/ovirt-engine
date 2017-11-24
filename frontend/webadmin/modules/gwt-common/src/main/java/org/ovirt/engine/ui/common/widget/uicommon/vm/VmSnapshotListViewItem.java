@@ -14,6 +14,7 @@ import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -197,14 +198,17 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
                 String.valueOf(snapshot.containsMemory()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.descriptionSnapshot()),
                 getDescription(snapshot), dl);
-        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.definedMemoryVm()),
-                listModel.getEntity().getVmMemSizeMb() + constants.mb(), dl);
-        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.physMemGauranteedVm()),
-                listModel.getEntity().getMinAllocatedMem() + constants.mb(), dl);
-        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.numOfCpuCoresVm()),
-                messages.cpuInfoLabel(listModel.getEntity().getNumOfCpus(),
-                        listModel.getEntity().getNumOfSockets(), listModel.getEntity().getCpuPerSocket(),
-                        listModel.getEntity().getThreadsPerCpu()), dl);
+        VM entity = listModel.getEntity();
+        if (entity != null) {
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.definedMemoryVm()),
+                    entity.getVmMemSizeMb() + constants.mb(), dl);
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.physMemGauranteedVm()),
+                    entity.getMinAllocatedMem() + constants.mb(), dl);
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.numOfCpuCoresVm()),
+                    messages.cpuInfoLabel(entity.getNumOfCpus(),
+                            entity.getNumOfSockets(), entity.getCpuPerSocket(),
+                            entity.getThreadsPerCpu()), dl);
+        }
         column.getElement().appendChild(dl);
         return createItemContainerPanel(content);
     }
