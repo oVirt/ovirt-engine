@@ -5,24 +5,43 @@
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.MacRangeEditor.Style">
-        .elementStyle {
-            float: left;
-            padding-right: 10px;
-        }
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-        .floatLeft {
-            float: left;
-        }
-
+    <ui:style>
         .wrapper {
             padding-bottom: 10px;
+        }
+
+        .wrapper label {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .countPadding {
+            padding-top: 5px;
         }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.wrapper}">
-        <ge:StringEntityModelTextBoxEditor ui:field="leftBound" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true"/>
-        <ge:StringEntityModelTextBoxEditor ui:field="rightBound" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" />
+        <b:Row>
+            <b:Column size="SM_6">
+                <ge:StringEntityModelTextBoxEditor ui:field="leftBound" label="{constants.macPoolWidgetLeftBound}"
+                                                   usePatternFly="true" removeFormGroup="true"
+                                                   widgetColSize="SM_10" labelColSize="SM_2"/>
+            </b:Column>
+            <b:Column size="SM_6">
+                <ge:StringEntityModelTextBoxEditor ui:field="rightBound" label="{constants.macPoolWidgetRightBound}"
+                                                   usePatternFly="true" removeFormGroup="true"
+                                                   widgetColSize="SM_10" labelColSize="SM_2"/>
+            </b:Column>
+        </b:Row>
+        <b:Row addStyleNames="{style.countPadding}">
+            <b:Column size="SM_3">
+                <g:Label text="{constants.macCountLabel}:"/>
+            </b:Column>
+            <b:Column size="SM_9">
+                <ge:EntityModelLabel ui:field="macsCount"/>
+            </b:Column>
+        </b:Row>
     </g:FlowPanel>
-
 </ui:UiBinder>

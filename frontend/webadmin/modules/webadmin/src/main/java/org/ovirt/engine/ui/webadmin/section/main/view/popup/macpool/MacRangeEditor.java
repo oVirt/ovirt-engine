@@ -3,21 +3,21 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.parser.generic.ToIntEntityModelParser;
+import org.ovirt.engine.ui.common.widget.renderer.NullableNumberRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacRangeModel;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -38,10 +38,6 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
         WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
     }
 
-    interface Style extends CssResource {
-        String elementStyle();
-    }
-
     @UiField
     @Path(value = "leftBound.entity")
     @WithElementId
@@ -52,31 +48,29 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
     @WithElementId
     StringEntityModelTextBoxEditor rightBound;
 
-    @UiField
-    Style style;
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    @UiField(provided = true)
+    @Path(value = "macsCount.entity")
+    @WithElementId
+    EntityModelLabel<Integer> macsCount;
 
     private boolean enabled = true;
 
     public MacRangeEditor() {
+        macsCount = new EntityModelLabel(new NullableNumberRenderer(NumberFormat.getDecimalFormat()),
+                new ToIntEntityModelParser());
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-
-        leftBound.setLabel(constants.macPoolWidgetLeftBound());
-        rightBound.setLabel(constants.macPoolWidgetRightBound());
-        ((Element)leftBound.getElement().getChild(0)).addClassName(style.elementStyle());
-        ((Element)leftBound.getElement().getChild(1)).addClassName(style.elementStyle());
-        ((Element)rightBound.getElement().getChild(0)).addClassName(style.elementStyle());
-        ((Element)rightBound.getElement().getChild(1)).addClassName(style.elementStyle());
     }
 
     @Override
     public void edit(final MacRangeModel model) {
         driver.edit(model);
         IEventListener<EventArgs> textChangedListener =
-                (ev, sender, args) -> ValueChangeEvent.fire(MacRangeEditor.this, model);
+                (ev, sender, args) -> {
+                    ValueChangeEvent.fire(MacRangeEditor.this, model);
+                    model.recalculateMacsCount();
+                };
         model.getLeftBound().getEntityChangedEvent().addListener(textChangedListener);
         model.getRightBound().getEntityChangedEvent().addListener(textChangedListener);
     }

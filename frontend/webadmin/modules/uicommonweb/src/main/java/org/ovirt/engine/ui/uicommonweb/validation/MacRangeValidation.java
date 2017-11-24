@@ -10,7 +10,7 @@ public class MacRangeValidation implements IValidation {
         this.lowestMacAddress = lowestMacAddress;
     }
 
-    private static long macToLong(String mac) {
+    public static long macToLong(String mac) {
         final int HEX_RADIX = 16;
 
         String macWithoutCommas = mac.replaceAll(":", "");  //$NON-NLS-1$ //$NON-NLS-2$

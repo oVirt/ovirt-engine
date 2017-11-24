@@ -13,6 +13,7 @@ public class MacRangeModel extends Model {
 
     private final EntityModel<String> leftBound = new EntityModel<>();
     private final EntityModel<String> rightBound = new EntityModel<>();
+    private final EntityModel<Integer> macsCount = new EntityModel<>();
 
     public EntityModel<String> getLeftBound() {
         return leftBound;
@@ -20,6 +21,10 @@ public class MacRangeModel extends Model {
 
     public EntityModel<String> getRightBound() {
         return rightBound;
+    }
+
+    public EntityModel<Integer> getMacsCount() {
+        return macsCount;
     }
 
     public MacRangeModel() {
@@ -34,6 +39,7 @@ public class MacRangeModel extends Model {
     private void init() {
         leftBound.setEntity(macRange.getMacFrom() == null ? "" : macRange.getMacFrom()); //$NON-NLS-1$
         rightBound.setEntity(macRange.getMacTo() == null ? "" : macRange.getMacTo()); //$NON-NLS-1$
+        recalculateMacsCount();
     }
 
     public MacRange flush() {
@@ -52,4 +58,15 @@ public class MacRangeModel extends Model {
         return getIsValid();
     }
 
+    public void recalculateMacsCount() {
+        if (!validate()) {
+            getMacsCount().setEntity(null);
+            return;
+        }
+
+        String from = getLeftBound().getEntity();
+        String to = getRightBound().getEntity();
+        Long count = MacRangeValidation.macToLong(to) - MacRangeValidation.macToLong(from);
+        getMacsCount().setEntity(count.intValue());
+    }
 }

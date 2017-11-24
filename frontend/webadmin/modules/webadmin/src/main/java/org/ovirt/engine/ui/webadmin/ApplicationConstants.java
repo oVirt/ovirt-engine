@@ -964,6 +964,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String macPoolPopupDescription();
 
+    String macCountLabel();
+
     String dataCenterGeneralTab();
 
     String clusterMacPoolTab();
