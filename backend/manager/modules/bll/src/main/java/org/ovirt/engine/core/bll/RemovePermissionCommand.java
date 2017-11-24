@@ -52,28 +52,23 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
 
     @Override
     protected boolean validate() {
-        boolean returnValue = true;
         Permission p = permissionDao.get(getParameters().getPermission().getId());
         if (multiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
-            getReturnValue().getValidationMessages()
-                    .add(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
-            returnValue = false;
-        } else if (p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
-            addValidationMessage(EngineMessage.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
-            returnValue = false;
-        } else if (
-            Objects.equals(p.getObjectId(), MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID) &&
+            return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE);
+        }
+        if (p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
+            return failValidation(EngineMessage.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
+        }
+        if (Objects.equals(p.getObjectId(), MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID) &&
             Objects.equals(p.getAdElementId(), MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID)
         ) {
-            addValidationMessage(EngineMessage.SYSTEM_PERMISSIONS_CANT_BE_REMOVED_FROM_EVERYONE);
-            returnValue = false;
+            return failValidation(EngineMessage.SYSTEM_PERMISSIONS_CANT_BE_REMOVED_FROM_EVERYONE);
         }
         if(!Objects.equals(p.getAdElementId(), getParameters().getTargetId())
             && dbUserDao.get(getParameters().getTargetId()) != null) {
-            addValidationMessage(EngineMessage.INHERITED_PERMISSION_CANT_BE_REMOVED);
-            returnValue = false;
+            return failValidation(EngineMessage.INHERITED_PERMISSION_CANT_BE_REMOVED);
         }
-        return returnValue;
+        return true;
     }
 
     @Override
