@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1016,7 +1017,9 @@ public class LibvirtVmXmlBuilder {
     private void writeInterfaces(List<VmDevice> devices) {
         Map<VmDeviceId, VmNetworkInterface> devIdToNic = vm.getInterfaces().stream()
                 .collect(Collectors.toMap(nic -> new VmDeviceId(nic.getId(), nic.getVmId()), nic -> nic));
-        devices.forEach(dev -> writeInterface(dev, devIdToNic.get(dev.getId())));
+        devices.stream()
+                .sorted(Comparator.comparing(dev -> devIdToNic.get(dev.getId()).getMacAddress()))
+                .forEach(dev -> writeInterface(dev, devIdToNic.get(dev.getId())));
     }
 
     private void writeDisks(List<VmDevice> devices) {
