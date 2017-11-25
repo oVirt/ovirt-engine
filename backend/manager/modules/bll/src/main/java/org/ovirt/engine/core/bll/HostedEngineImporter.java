@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import javax.ejb.EJB;
@@ -142,7 +141,7 @@ public class HostedEngineImporter {
         Guid sdProfileId = diskProfileDao.getAllForStorageDomain(sd.getId()).get(0).getId();
         for (DiskImage image : vm.getImages()) {
             image.setDiskProfileId(sdProfileId);
-            image.setStorageIds(new ArrayList(Arrays.asList(sd.getId())));
+            image.setStorageIds(Collections.singletonList(sd.getId()));
             image.setVmSnapshotId(Guid.newGuid());
             image.setImageStatus(ImageStatus.OK);
         }
