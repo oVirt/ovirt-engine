@@ -17,7 +17,8 @@ public enum VmExitReason {
     DestroyedOnStartup(10),
     HostShutdown(11),
     PostcopyMigrationFailed(12),
-    DestroyedOnReboot(13);
+    DestroyedOnReboot(13),
+    DestroyedOnResume(14);
 
     private final int reason;
     private static final HashMap<Integer, VmExitReason> valueToReason = new HashMap<>();
