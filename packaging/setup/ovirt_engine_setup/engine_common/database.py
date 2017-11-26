@@ -1019,6 +1019,23 @@ class OvirtUtils(base.Base):
                     "Please use a Postgresql server of version '{expected}'."
                 ),
             },
+            {
+                'key': 'log_line_prefix',
+                'expected': "'%m '",  # timestamp with milliseconds
+                'ok': self._lower_equal,
+                'check_on_use': False,
+                'needed_on_create': True,
+                'error_msg': None,
+            },
+            {
+
+                'key': 'log_filename',
+                'expected': "'postgresql-%m.log'",  # month as a decimal number
+                'ok': self._lower_equal,
+                'check_on_use': False,
+                'needed_on_create': True,
+                'error_msg': None,
+            },
         )
 
     def validateDbConf(self, name, environment=None):
