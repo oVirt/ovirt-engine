@@ -90,6 +90,13 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
         if (getVm() == null) {
             return;
         }
+        String path = getParameters().getDirectory();
+        if (path != null && path.endsWith("/")) {
+            getParameters().setDirectory(path.substring(0, path.length()-1));
+        }
+        if (StringUtils.isEmpty(getParameters().getName())) {
+            getParameters().setName(String.format("%s.ova", getVm().getName()));
+        }
         setStoragePoolId(getVm().getStoragePoolId());
         setVdsId(getParameters().getProxyHostId());
         if (getParameters().getDiskInfoDestinationMap() == null) {
@@ -165,13 +172,6 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
 
     @Override
     protected void executeCommand() {
-        String path = getParameters().getDirectory();
-        if (path.endsWith("/")) {
-            getParameters().setDirectory(path.substring(0, path.length()-1));
-        }
-        if (StringUtils.isEmpty(getParameters().getName())) {
-            getParameters().setName(String.format("%s.ova", getVm().getName()));
-        }
         createTemporaryDisks();
         setSucceeded(true);
     }
