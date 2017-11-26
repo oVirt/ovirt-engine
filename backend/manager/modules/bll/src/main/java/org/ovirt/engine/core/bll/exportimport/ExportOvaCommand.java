@@ -114,6 +114,10 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
+        if (getParameters().getProxyHostId() == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROXY_HOST_MUST_BE_SPECIFIED);
+        }
+
         HostValidator hostValidator = HostValidator.createInstance(getVds());
         if (!validate(hostValidator.hostExists())) {
             return false;
@@ -130,6 +134,10 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
 
         if (!validate(spValidator.isInStatus(StoragePoolStatus.Up))) {
             return false;
+        }
+
+        if (!getStoragePoolId().equals(getVds().getStoragePoolId())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROXY_HOST_NOT_IN_VM_DATA_CENTER);
         }
 
         if (!validate(validateTargetFolder())) {
