@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
@@ -27,6 +28,8 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
     private static final String OBRAND_DETAIL_TAB = "obrand_detail_tab"; // $NON-NLS-1$
 
     private final DetailModelProvider<M, D> modelProvider;
+
+    private PlaceTransitionHandler placeTransitionHandler;
 
     public AbstractSubTabFormView(DetailModelProvider<M, D> modelProvider) {
         this.modelProvider = modelProvider;
@@ -75,4 +78,12 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
      */
     protected abstract void generateIds();
 
+    @Override
+    public void setPlaceTransitionHandler(PlaceTransitionHandler handler) {
+        placeTransitionHandler = handler;
+    }
+
+    protected PlaceTransitionHandler getPlaceTransitionHandler() {
+        return placeTransitionHandler;
+    }
 }

@@ -1,18 +1,25 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkProfileListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
@@ -59,7 +66,16 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         networkColumn.makeSortable();
         getTable().addColumn(networkColumn, constants.networkVnicProfile(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VnicProfileView> dcColumn = new AbstractTextColumn<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> dcColumn = new AbstractLinkColumn<VnicProfileView>(
+                new FieldUpdater<VnicProfileView, String>() {
+            @Override
+            public void update(int index, VnicProfileView profileView, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), profileView.getDataCenterName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getDataCenterName();

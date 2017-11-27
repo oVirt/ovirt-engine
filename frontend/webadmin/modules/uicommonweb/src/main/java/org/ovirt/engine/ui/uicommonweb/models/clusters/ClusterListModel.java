@@ -41,6 +41,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.ClusterAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
@@ -232,7 +233,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         setApplicationPlace(WebAdminApplicationPlaces.clusterMainPlace);
         setHashName("clusters"); //$NON-NLS-1$
 
-        setDefaultSearchString("Cluster:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.CLUSTER_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME });
 

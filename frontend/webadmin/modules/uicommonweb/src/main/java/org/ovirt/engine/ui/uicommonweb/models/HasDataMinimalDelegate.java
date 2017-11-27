@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.event.shared.GwtEvent;
@@ -91,7 +92,7 @@ public class HasDataMinimalDelegate<T> implements HasData<T> {
 
     @Override
     public Iterable<T> getVisibleItems() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

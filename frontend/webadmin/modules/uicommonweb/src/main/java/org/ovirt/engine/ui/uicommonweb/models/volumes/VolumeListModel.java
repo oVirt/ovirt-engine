@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterClusterSnapshotConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotConfigModel;
@@ -277,7 +278,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
         setApplicationPlace(WebAdminApplicationPlaces.volumeMainPlace);
 
-        setDefaultSearchString("Volumes:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.VOLUMES_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.GLUSTER_VOLUME_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.GlusterOnly);

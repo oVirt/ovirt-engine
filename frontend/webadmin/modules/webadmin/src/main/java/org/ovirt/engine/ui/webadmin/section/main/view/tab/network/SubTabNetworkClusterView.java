@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,13 +12,16 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -26,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkClusterStatusColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -76,7 +81,17 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     private void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>> nameColumn = new AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>>() {
+        AbstractTextColumn<PairQueryable<Cluster, NetworkCluster>> nameColumn =
+                new AbstractLinkColumn<PairQueryable<Cluster, NetworkCluster>>(
+                        new FieldUpdater<PairQueryable<Cluster, NetworkCluster>, String>() {
+            @Override
+            public void update(int index, PairQueryable<Cluster, NetworkCluster> cluster, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), cluster.getFirst().getName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(PairQueryable<Cluster, NetworkCluster> object) {
                 return object.getFirst().getName();

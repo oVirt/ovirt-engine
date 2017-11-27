@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -51,7 +52,7 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
         setApplicationPlace(WebAdminApplicationPlaces.providerMainPlace);
         setHashName("providers"); //$NON-NLS-1$
 
-        setDefaultSearchString("Provider:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.PROVIDER_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.PROVIDER_OBJ_NAME, SearchObjects.PROVIDER_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);

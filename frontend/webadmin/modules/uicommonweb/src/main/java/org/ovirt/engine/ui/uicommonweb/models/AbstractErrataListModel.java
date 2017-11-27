@@ -42,7 +42,7 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
         setHelpTag(HelpTag.errata);
         setHashName("errata"); //$NON-NLS-1$
 
-        setDefaultSearchString("Errata:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.ERRATA_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setAvailableInModes(ApplicationMode.AllModes);
 

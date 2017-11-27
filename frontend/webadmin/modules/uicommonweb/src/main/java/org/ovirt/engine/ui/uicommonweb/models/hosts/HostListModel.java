@@ -77,6 +77,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HostMaintenanceConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.HostAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
@@ -472,7 +473,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         setApplicationPlace(WebAdminApplicationPlaces.hostMainPlace);
         setHashName("hosts"); //$NON-NLS-1$
 
-        setDefaultSearchString("Host:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.HOSTS_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.VDS_OBJ_NAME, SearchObjects.VDS_PLU_OBJ_NAME });
 

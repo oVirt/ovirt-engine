@@ -77,6 +77,10 @@ public abstract class AbstractMainPresenter<T, M extends SearchableListModel, V 
      */
     protected abstract PlaceRequest getMainViewRequest();
 
+    public boolean placeMatches(String placeName) {
+        return getMainViewRequest().getNameToken().equals(placeName);
+    }
+
     public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
         return actionPanel;
     }

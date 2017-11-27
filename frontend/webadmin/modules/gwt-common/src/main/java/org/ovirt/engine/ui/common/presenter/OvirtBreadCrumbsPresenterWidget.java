@@ -28,7 +28,7 @@ public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
         boolean isSearchVisible();
         void toggleSearchWidget();
         void setSelectionCallback(ListModelSelectedCallback<T> selectionCallback);
-
+        void hideSelectedWidget();
     }
 
     private final MainModelProvider<T, M> listModelProvider;
@@ -94,6 +94,7 @@ public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
 
     public void hideSelectedName() {
         this.showSelectedName = false;
+        getView().hideSelectedWidget();
     }
 
     private List<T> getItemsAsList(M searchableListModel) {

@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
@@ -162,7 +163,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
         setApplicationPlace(WebAdminApplicationPlaces.templateMainPlace);
 
-        setDefaultSearchString("Template:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.TEMPLATE_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.TEMPLATE_OBJ_NAME, SearchObjects.TEMPLATE_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);

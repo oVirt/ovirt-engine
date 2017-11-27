@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -58,7 +59,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
         setApplicationPlace(WebAdminApplicationPlaces.vnicProfileMainPlace);
         setHashName("vnicProfiles"); //$NON-NLS-1$)
 
-        setDefaultSearchString("VnicProfile:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.VNIC_PROFILE_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         // setSearchObjects(new String[] { SearchObjects.PROFILE_OBJ_NAME, SearchObjects.PROFILE_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);

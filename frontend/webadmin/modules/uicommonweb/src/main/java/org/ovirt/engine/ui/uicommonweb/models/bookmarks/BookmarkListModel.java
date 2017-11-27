@@ -27,7 +27,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-public class BookmarkListModel extends SearchableListModel {
+public class BookmarkListModel extends SearchableListModel<Bookmark, Bookmark> {
 
     private static class BookmarksComparator implements Comparator<Bookmark>, Serializable {
 

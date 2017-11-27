@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -9,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.VdsConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
@@ -21,6 +24,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainHostPresenter;
@@ -120,17 +124,34 @@ public class MainHostView extends AbstractMainWithDetailsTableView<VDS, HostList
         hostColumn.makeSortable(VdsConditionFieldAutoCompleter.ADDRESS);
         getTable().addColumn(hostColumn, constants.ipHost(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VDS> clusterColumn = new AbstractTextColumn<VDS>() {
+        AbstractTextColumn<VDS> clusterColumn = new AbstractLinkColumn<VDS>(new FieldUpdater<VDS, String>() {
+            @Override
+            public void update(int index, VDS host, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), host.getClusterName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VDS object) {
                 return object.getClusterName();
             }
         };
+
         clusterColumn.makeSortable(VdsConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterHost(), "150px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            AbstractTextColumn<VDS> dcColumn = new AbstractTextColumn<VDS>() {
+            AbstractTextColumn<VDS> dcColumn = new AbstractLinkColumn<VDS>(new FieldUpdater<VDS, String>() {
+                @Override
+                public void update(int index, VDS host, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), host.getStoragePoolName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
+                }
+            }) {
                 @Override
                 public String getValue(VDS object) {
                     return object.getStoragePoolName();

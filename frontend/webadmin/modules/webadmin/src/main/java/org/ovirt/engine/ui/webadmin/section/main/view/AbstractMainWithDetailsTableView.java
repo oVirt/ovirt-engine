@@ -13,6 +13,7 @@ import org.gwtbootstrap3.client.ui.html.Span;
 import org.gwtbootstrap3.client.ui.html.UnorderedList;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -47,6 +48,7 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
     private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     protected DetailsTransitionHandler<T> transitionHandler;
+    protected PlaceTransitionHandler placeTransitionHandler;
 
     private Column breadCrumbsColumn;
 
@@ -186,5 +188,14 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
             resultList.add(tagItem);
         }
         resultRow.setVisible(!tags.isEmpty());
+    }
+
+    @Override
+    public void setPlaceTransitionHandler(PlaceTransitionHandler handler) {
+        placeTransitionHandler = handler;
+    }
+
+    protected PlaceTransitionHandler getPlaceTransitionHandler() {
+        return placeTransitionHandler;
     }
 }

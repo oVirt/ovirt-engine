@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -9,7 +11,9 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.AddActionButtonEvent;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.presenter.PluginActionButtonHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -18,7 +22,6 @@ import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -28,13 +31,13 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.HasHandlers;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest.Builder;
 
 /**
  * Base class for main tab presenters that work with {@link ListWithDetailsModel}.
@@ -50,7 +53,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  */
 public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDetailsModel,
     V extends AbstractMainWithDetailsPresenter.ViewDef<T>, P extends ProxyPlace<?>>
-        extends AbstractMainPresenter<T, M, V, P> implements DetailsTransitionHandler<T> {
+        extends AbstractMainPresenter<T, M, V, P> implements PlaceTransitionHandler, DetailsTransitionHandler<T> {
 
     public interface ViewDef<T> extends View, HasActionTable<T> {
         void setDetailPlaceTransitionHandler(DetailsTransitionHandler<T> handler);
@@ -59,6 +62,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
         HandlerRegistration addWindowResizeHandler(ResizeHandler handler);
 
+        void setPlaceTransitionHandler(PlaceTransitionHandler handler);
     }
 
     @ContentSlot
@@ -76,6 +80,8 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     private PluginActionButtonHandler actionButtonPluginHandler;
     private boolean resizing = false;
+    private String parameterName = null;
+    private T switchToItem = null;
 
     @Inject
     private SearchStringCollector searchStringCollector;
@@ -95,10 +101,12 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         return getView().getTable();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onBind() {
         super.onBind();
 
+        getView().setPlaceTransitionHandler(this);
         registerHandler(getTable().getSelectionModel()
                 .addSelectionChangeHandler(event -> {
                     // Update main model selection
@@ -106,13 +114,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
                     // Let others know that the table selection has changed
                     fireTableSelectionChangeEvent();
-
-                    // We need to be visible so we don't display ourselves when the detail tabs
-                    // quick switch search is run.
-                    if (isVisible()) {
-                        handlePlaceTransition(false);
-                    }
-                }));
+               }));
         registerHandler(getEventBus().addHandler(ApplySearchStringEvent.getType(), event -> {
             applySearchString(event.getSearchString());
         }));
@@ -143,6 +145,21 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
             }
         ));
 
+        getModel().getItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (this.parameterName != null) {
+                switchToName(parameterName);
+                parameterName = null;
+            }
+        });
+        getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (switchToItem != null) {
+                // This needs to be deferred otherwise the main view will be shown second overriding this one.
+                Scheduler.get().scheduleDeferred(() -> {
+                    handlePlaceTransition(true);
+                    switchToItem = null;
+                });
+            }
+        });
         if (hasSearchPanelPresenterWidget()) {
             setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
         }
@@ -151,7 +168,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         }
     }
 
-    private void applySearchString(String searchString) {
+    public void applySearchString(String searchString) {
         if (modelProvider.getModel() instanceof SearchableListModel) {
             @SuppressWarnings("unchecked")
             SearchableListModel<?, ? extends EntityModel<?>> listModel = modelProvider.getModel();
@@ -160,7 +177,6 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
                 // search string for this model found.
                 listModel.setSearchString(searchString);
                 listModel.getSearchCommand().execute();
-                MainModelSelectionChangeEvent.fire((HasHandlers) getEventBus(), listModel);
             }
         }
     }
@@ -189,8 +205,48 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         if (hasActionPanelPresenterWidget()) {
             getTable().setActionMenus(getActionPanelPresenterWidget().getActionButtons());
         }
+        breadCrumbsPresenterWidget.hideSelectedName();
         breadCrumbsPresenterWidget.rebuildBreadCrumbs();
         getView().resizeToFullHeight();
+        PlaceRequest currentPlace = placeManager.getCurrentPlaceRequest();
+        Set<FragmentParams> params = FragmentParams.getParams(currentPlace);
+        params.forEach(param -> {
+            switch(param) {
+            case NAME:
+                switchToName(currentPlace.getParameter(FragmentParams.NAME.getName(), ""));
+                break;
+            case SEARCH:
+                String search = currentPlace.getParameter(FragmentParams.SEARCH.getName(), "");
+                if (!"".equals(search)) {
+                    // We have a search parameter. The tokenizer has already run it through URL decode so we should be
+                    // able to simply pass it to setSearchString in the model.
+                    applySearchString(getModel().getDefaultSearchString() + search);
+                }
+                break;
+            default:
+                break;
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void switchToName(String name) {
+        if (!"".equals(name)) {
+            T namedItem = (T) FragmentParams.findItemByName(name, getModel());
+            if (namedItem != null) {
+                getModel().getSelectionModel().clear();
+                getModel().getSelectionModel().setSelected(namedItem, true);
+                // Simulate a click on the link.
+                switchToItem = namedItem;
+            } else if (getModel().getItems() != null) {
+                // Couldn't find the named item, and the items have loaded, try to search for it by query.
+                applySearchString(getModel().getDefaultSearchString() + "name=" + name); // $NON-NLS-1$
+                Scheduler.get().scheduleDeferred(() -> parameterName = name);
+            } else {
+                // items haven't loaded yet, store the name for use when the items have loaded.
+                parameterName = name;
+            }
+        }
     }
 
     @Override
@@ -264,5 +320,13 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
     @Inject
     public void setActionButtonPluginHandler(PluginActionButtonHandler actionButtonPluginHandler) {
         this.actionButtonPluginHandler = actionButtonPluginHandler;
+    }
+
+    @Override
+    public void handlePlaceTransition(String nameToken, Map<String, String> parameters) {
+        final Builder builder = new Builder();
+        builder.nameToken(nameToken);
+        builder.with(parameters);
+        placeManager.revealPlace(builder.build());
     }
 }

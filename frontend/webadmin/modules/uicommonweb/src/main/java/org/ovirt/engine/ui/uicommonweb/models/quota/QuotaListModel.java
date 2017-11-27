@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -129,7 +130,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
         setApplicationPlace(WebAdminApplicationPlaces.quotaMainPlace);
 
-        setDefaultSearchString("Quota:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.QUOTA_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.QUOTA_OBJ_NAME, SearchObjects.QUOTA_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);

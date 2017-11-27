@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -9,9 +11,11 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRenderedTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -19,6 +23,7 @@ import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmFilter;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -26,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNet
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -109,13 +115,24 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
                     setContextMenuTitle(constants.statusVm());
                 }
             };
+
     private final AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>> nameColumn =
-            new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
-                @Override
-                public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                    return object.getSecond().getName();
-                }
-            };
+                new AbstractLinkColumn<PairQueryable<VmNetworkInterface, VM>>(
+                        new FieldUpdater<PairQueryable<VmNetworkInterface, VM>, String>() {
+            @Override
+            public void update(int index, PairQueryable<VmNetworkInterface, VM> vm, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), vm.getSecond().getName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.virtualMachineGeneralSubTabPlace, parameters);
+            }
+    }) {
+        @Override
+        public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
+            return object.getSecond().getName();
+        }
+    };
+
     private final AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>> clusterColumn =
             new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override

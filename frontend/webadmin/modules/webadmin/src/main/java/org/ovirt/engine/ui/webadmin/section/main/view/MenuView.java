@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.gwtbootstrap3.client.ui.Anchor;
@@ -149,6 +151,7 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     Anchor configureAnchor;
 
     private final Map<String, ListGroupItem> hrefToGroupLabelMap = new HashMap<>();
+    private final List<Anchor> anchorList = new ArrayList<>();
 
     public MenuView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -156,6 +159,7 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
         setTargetAndId();
         updateBasedonMode(UiModeData.getUiMode());
         populateHrefToGroupMap(UiModeData.getUiMode());
+        populateAnchorList();
     }
 
     private void setTargetAndId() {
@@ -276,6 +280,29 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
         hrefToGroupLabelMap.put(eventsAnchor.getTargetHistoryToken(), eventsPrimaryItem);
     }
 
+    private void populateAnchorList() {
+        anchorList.add(vmsAnchor);
+        anchorList.add(templatesAnchor);
+        anchorList.add(poolsAnchor);
+        anchorList.add(hostsAnchor);
+        anchorList.add(dataCentersAnchor);
+        anchorList.add(clustersAnchor);
+        anchorList.add(vnicProfilesAnchor);
+        anchorList.add(networksAnchor);
+        anchorList.add(dataCentersStorageAnchor);
+        anchorList.add(clustersStorageAnchor);
+        anchorList.add(domainsAnchor);
+        anchorList.add(volumesAnchor);
+        anchorList.add(disksAnchor);
+        anchorList.add(providersAnchor);
+        anchorList.add(quotasAnchor);
+        anchorList.add(sessionsAnchor);
+        anchorList.add(usersAnchor);
+        anchorList.add(errataAnchor);
+        anchorList.add(configureAnchor);
+
+    }
+
     @Override
     public String getLabelFromHref(String href) {
         ListGroupItem group = hrefToGroupLabelMap.get(href);
@@ -287,13 +314,33 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     }
 
     @Override
-    public void setPrimaryMenuActive(String href) {
+    public void setMenuActive(String href) {
         ListGroupItem group = hrefToGroupLabelMap.get(href);
         if (group != null) {
             for (int i = 0; i < menuListGroup.getWidgetCount(); i++) {
                 menuListGroup.getWidget(i).removeStyleName(Styles.ACTIVE);
             }
             group.addStyleName(Styles.ACTIVE);
+            clearActiveFromAnchors();
+            activateAnchorFromHref(href);
         }
+    }
+
+    private void activateAnchorFromHref(String href) {
+        Anchor anchor = anchorList.stream().filter(a -> {
+            String[] split = a.getHref().split("#"); //$NON-NLS-1$
+            boolean result = false;
+            if (split.length > 1) {
+                result = href.startsWith(split[1]);
+            }
+            return result;
+        }).findFirst().orElse(null);
+        if (anchor != null) {
+            anchor.getParent().addStyleName(Styles.ACTIVE);
+        }
+    }
+
+    private void clearActiveFromAnchors() {
+        anchorList.forEach(anchor -> anchor.getParent().removeStyleName(Styles.ACTIVE));
     }
 }

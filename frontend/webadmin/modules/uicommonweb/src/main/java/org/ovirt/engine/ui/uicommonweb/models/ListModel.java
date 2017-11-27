@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
@@ -145,6 +146,12 @@ public class ListModel<T> extends Model {
         setSelectedItemsChangedEvent(new Event<>(selectedItemsChangedEventDefinition));
         setItemsChangedEvent(new Event<>(itemsChangedEventDefinition));
         this.selectionModel = new OvirtSelectionModel<>(isSingleSelectionOnly());
+        this.selectionModel.setDataDisplay(new HasDataMinimalDelegate<T>() {
+            @Override
+            public Iterable<T> getVisibleItems() {
+                return getItems() != null ? getItems() : Collections.emptyList();
+            }
+        });
         this.selectionModel.addSelectionChangeHandler(e -> synchronizeSelection());
     }
 

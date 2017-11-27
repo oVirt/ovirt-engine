@@ -1,12 +1,17 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVnicProfilePresenter;
@@ -62,12 +67,22 @@ public class MainVnicProfileView extends AbstractMainWithDetailsTableView<VnicPr
         networkColumn.makeSortable();
         getTable().addColumn(networkColumn, constants.networkVnicProfile(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VnicProfileView> dcColumn = new AbstractTextColumn<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> dcColumn = new AbstractLinkColumn<VnicProfileView>(
+                new FieldUpdater<VnicProfileView, String>() {
+            @Override
+            public void update(int index, VnicProfileView vnicProfile, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), vnicProfile.getDataCenterName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getDataCenterName();
             }
         };
+
         dcColumn.makeSortable();
         getTable().addColumn(dcColumn, constants.dcVnicProfile(), "200px"); //$NON-NLS-1$
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,12 +10,14 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.NetworkConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -84,7 +87,16 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
                 "75px"); //$NON-NLS-1$
         boolean virtMode = ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
 
-        AbstractTextColumn<NetworkView> dcColumn = new AbstractTextColumn<NetworkView>() {
+        AbstractTextColumn<NetworkView> dcColumn = new AbstractLinkColumn<NetworkView>(
+                new FieldUpdater<NetworkView, String>() {
+            @Override
+            public void update(int index, NetworkView networkView, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), networkView.getDataCenterName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(NetworkView object) {
                 return object.getDataCenterName();

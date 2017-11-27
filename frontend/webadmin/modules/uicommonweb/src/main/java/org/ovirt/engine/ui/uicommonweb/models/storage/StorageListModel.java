@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -181,7 +182,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
         setApplicationPlace(WebAdminApplicationPlaces.storageMainPlace);
 
-        setDefaultSearchString("Storage:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.STORAGE_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);

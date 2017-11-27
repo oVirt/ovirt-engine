@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BaseInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
@@ -77,7 +78,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
     @Inject
     public InstanceTypeListModel(final InstanceTypeGeneralModel instanceTypeGeneralModel) {
         setDetailList(instanceTypeGeneralModel);
-        setDefaultSearchString("Instancetypes:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.INSTANCE_TYPE_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         this.newInstanceTypeCommand = new UICommand("NewInstanceType", this); //$NON-NLS-1$
         this.editInstanceTypeCommand = new UICommand("EditInstanceType", this); //$NON-NLS-1$

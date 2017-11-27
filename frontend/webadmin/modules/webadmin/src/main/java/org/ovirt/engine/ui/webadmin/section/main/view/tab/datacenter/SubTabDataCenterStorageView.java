@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -8,12 +11,15 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
@@ -21,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 
 public class SubTabDataCenterStorageView extends AbstractSubTabTableView<StoragePool, StorageDomain, DataCenterListModel, DataCenterStorageListModel>
@@ -55,10 +62,19 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<Storage
         additionalStatusColumn.setContextMenuTitle(constants.additionalStatusStorage());
         getTable().addColumn(additionalStatusColumn, constants.empty(), "60px"); //$NON-NLS-1$
 
-        AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> nameColumn = new AbstractLinkColumn<StorageDomain>(
+                new FieldUpdater<StorageDomain, String>() {
+            @Override
+            public void update(int index, StorageDomain sd, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), sd.getName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.storageGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(StorageDomain object) {
-                return object.getStorageName();
+                return object.getName();
             }
         };
         nameColumn.makeSortable();

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
@@ -29,6 +30,7 @@ public abstract class AbstractDetailTabListView<T, M extends ListWithDetailsMode
     private final DetailModelProvider<M, D> modelProvider;
     private final ScrollPanel scrollPanel = new ScrollPanel();
     private final FlowPanel container = new FlowPanel();
+    private PlaceTransitionHandler placeTransitionHandler;
 
     public AbstractDetailTabListView(DetailModelProvider<M, D> modelProvider) {
         this.modelProvider = modelProvider;
@@ -95,4 +97,12 @@ public abstract class AbstractDetailTabListView<T, M extends ListWithDetailsMode
      */
     protected abstract void generateIds();
 
+    @Override
+    public void setPlaceTransitionHandler(PlaceTransitionHandler handler) {
+        placeTransitionHandler = handler;
+    }
+
+    protected PlaceTransitionHandler getPlaceTransitionHandler() {
+        return placeTransitionHandler;
+    }
 }

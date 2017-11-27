@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -7,12 +10,15 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -20,6 +26,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 
 public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS, ClusterListModel<Void>, ClusterHostListModel>
@@ -50,7 +57,15 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<Cluster, VDS,
         statusIconColumn.setContextMenuTitle(constants.statusIconClusterHost());
         getTable().addColumn(statusIconColumn, constants.empty(), "35px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VDS> nameColumn = new AbstractTextColumn<VDS>() {
+        AbstractTextColumn<VDS> nameColumn = new AbstractLinkColumn<VDS>(new FieldUpdater<VDS, String>() {
+            @Override
+            public void update(int index, VDS host, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), host.getName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.hostGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VDS object) {
                 return object.getName();

@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
@@ -71,7 +72,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         setApplicationPlace(WebAdminApplicationPlaces.networkMainPlace);
         setHashName("networks"); //$NON-NLS-1$
 
-        setDefaultSearchString("Network:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.NETWORK_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.NETWORK_OBJ_NAME, SearchObjects.NETWORK_PLU_OBJ_NAME });
 

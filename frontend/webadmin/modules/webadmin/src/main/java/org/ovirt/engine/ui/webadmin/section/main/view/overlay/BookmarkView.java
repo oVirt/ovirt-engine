@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.overlay;
 
-import java.util.Collection;
-
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
@@ -14,12 +12,12 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.bookmark.BookmarkListGroupItem;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 
 public class BookmarkView extends AbstractView implements BookmarkPresenterWidget.ViewDef {
 
@@ -36,46 +34,37 @@ public class BookmarkView extends AbstractView implements BookmarkPresenterWidge
     @UiField
     Column emptyBookmarksColumn;
 
-    private final BookmarkModelProvider modelProvider;
-
     @Inject
     public BookmarkView(BookmarkModelProvider modelProvider) {
-        this.modelProvider = modelProvider;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 
-    @SuppressWarnings("unchecked")
-    public void updateBookmarks() {
-        BookmarkListModel model = modelProvider.getModel();
+    @Override
+    public void clearBookmarks() {
         bookmarkListGroup.clear();
-        Collection<Bookmark> items = model.getItems();
-        if (items != null && !items.isEmpty()) {
-            emptyBookmarksColumn.setVisible(false);
-            for(Bookmark bookmark: items) {
-                BookmarkListGroupItem item = new BookmarkListGroupItem(bookmark);
-                item.addEditClickHandler(new ClickHandler() {
+        emptyBookmarksColumn.setVisible(true);
+    }
 
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        model.setSelectedItem(bookmark);
-                        model.executeCommand(model.getEditCommand());
-                    }
-
-                });
-                item.addDeleteClickHandler(new ClickHandler() {
-
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        model.setSelectedItem(bookmark);
-                        model.executeCommand(model.getRemoveCommand());
-                    }
-
-                });
-                bookmarkListGroup.add(item);
+    @Override
+    public HandlerRegistration addBookmark(Bookmark bookmark, BookmarkListModel model, ClickHandler handler) {
+        emptyBookmarksColumn.setVisible(false);
+        BookmarkListGroupItem item = new BookmarkListGroupItem(bookmark);
+        item.addEditClickHandler(event -> {
+                model.setSelectedItem(bookmark);
+                model.executeCommand(model.getEditCommand());
             }
-        } else {
-            emptyBookmarksColumn.setVisible(true);
+        );
+        item.addRemoveClickHandler(event -> {
+                model.setSelectedItem(bookmark);
+                model.executeCommand(model.getRemoveCommand());
+            }
+        );
+        bookmarkListGroup.add(item);
+        HandlerRegistration handlerRegistration = null;
+        if (handler != null) {
+            handlerRegistration = item.addAnchorClickHandler(handler);
         }
+        return handlerRegistration;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -30,6 +31,8 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
     private static final String OBRAND_DETAIL_TAB = "obrand_detail_tab"; // $NON-NLS-1$
 
     private final AbstractModelBoundTableWidget<T, D> modelBoundTableWidget;
+
+    private PlaceTransitionHandler placeTransitionHandler;
 
     @WithElementId
     public final SimpleActionTable<T> table;
@@ -82,4 +85,12 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
         // No-op since table-based sub tab views don't handle main tab selection on their own
     }
 
+    @Override
+    public void setPlaceTransitionHandler(PlaceTransitionHandler handler) {
+        placeTransitionHandler = handler;
+    }
+
+    protected PlaceTransitionHandler getPlaceTransitionHandler() {
+        return placeTransitionHandler;
+    }
 }

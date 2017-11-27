@@ -78,6 +78,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
@@ -512,7 +513,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setApplicationPlace(WebAdminApplicationPlaces.virtualMachineMainPlace);
         setHashName("virtual_machines"); //$NON-NLS-1$
 
-        setDefaultSearchString("Vms:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.VMS_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.VM_OBJ_NAME, SearchObjects.VM_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);

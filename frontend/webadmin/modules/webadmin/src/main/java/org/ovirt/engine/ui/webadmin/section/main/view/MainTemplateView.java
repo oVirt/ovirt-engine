@@ -1,18 +1,22 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.searchbackend.VmTemplateConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTemplatePresenter;
@@ -97,7 +101,15 @@ public class MainTemplateView extends AbstractMainWithDetailsTableView<VmTemplat
         statusColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusTemplate(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VmTemplate> clusterColumn = new AbstractTextColumn<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> clusterColumn = new AbstractLinkColumn<VmTemplate>(new FieldUpdater<VmTemplate, String>() {
+            @Override
+            public void update(int index, VmTemplate template, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), template.getClusterName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getClusterName();
@@ -106,7 +118,15 @@ public class MainTemplateView extends AbstractMainWithDetailsTableView<VmTemplat
         clusterColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterTemplate(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VmTemplate> dcColumn = new AbstractTextColumn<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> dcColumn = new AbstractLinkColumn<VmTemplate>(new FieldUpdater<VmTemplate, String>() {
+            @Override
+            public void update(int index, VmTemplate template, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), template.getStoragePoolName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getStoragePoolName();

@@ -7,6 +7,8 @@ import com.gwtplatform.mvp.client.View;
 
 public abstract class AbstractOverlayPresenterWidget<V extends AbstractOverlayPresenterWidget.ViewDef> extends PresenterWidget<V> {
 
+    private PresenterWidget<?> currentPlaceWidget;
+
     public interface ViewDef extends View {
         // Each view must implement a close button.
         HasClickHandlers getCloseButton();
@@ -22,5 +24,13 @@ public abstract class AbstractOverlayPresenterWidget<V extends AbstractOverlayPr
         registerHandler(getView().getCloseButton().addClickHandler(e ->
             RevealOverlayContentEvent.fire(this, new RevealOverlayContentEvent(null))
         ));
+    }
+
+    public PresenterWidget<?> getCurrentPlaceWidget() {
+        return currentPlaceWidget;
+    }
+
+    public void setCurrentPlaceWidget(PresenterWidget<?> currentPlaceWidget) {
+        this.currentPlaceWidget = currentPlaceWidget;
     }
 }

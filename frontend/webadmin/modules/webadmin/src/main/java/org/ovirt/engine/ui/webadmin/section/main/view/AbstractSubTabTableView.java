@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -40,6 +41,8 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     private IsWidget actionPanel;
 
     private final FlowPanel container = new FlowPanel();
+
+    private PlaceTransitionHandler placeTransitionHandler;
 
     public AbstractSubTabTableView(SearchableDetailModelProvider<T, M, D> modelProvider) {
         this.modelProvider = modelProvider;
@@ -123,6 +126,15 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     @Override
     public void setMainSelectedItem(I selectedItem) {
         // No-op since table-based sub tab views don't handle main tab selection on their own
+    }
+
+    @Override
+    public void setPlaceTransitionHandler(PlaceTransitionHandler handler) {
+        placeTransitionHandler = handler;
+    }
+
+    protected PlaceTransitionHandler getPlaceTransitionHandler() {
+        return placeTransitionHandler;
     }
 
     protected abstract void generateIds();

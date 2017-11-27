@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
@@ -100,7 +101,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
         setApplicationPlace(WebAdminApplicationPlaces.userMainPlace);
 
-        setDefaultSearchString("Users:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.USERS_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.VDC_USER_OBJ_NAME, SearchObjects.VDC_USER_PLU_OBJ_NAME });
 

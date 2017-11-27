@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
@@ -174,7 +175,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
         setApplicationPlace(WebAdminApplicationPlaces.dataCenterMainPlace);
 
-        setDefaultSearchString("DataCenter:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.DATACENTER_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.VDC_STORAGE_POOL_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);

@@ -5,6 +5,8 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
     <ui:style>
         .container {
             width: 100%;
@@ -14,8 +16,8 @@
     <g:FlowPanel addStyleNames="{style.container}">
         <g:FlowPanel addStyleNames="list-view-pf-actions">
             <b:ButtonGroup>
-                <b:Button ui:field="editButton">Edit</b:Button>
-                <b:Button ui:field="deleteButton">Delete</b:Button>
+                <b:Button text="{constants.editBookmark}" ui:field="editButton" />
+                <b:Button text="{constants.removeBookmark}" ui:field="removeButton" />
             </b:ButtonGroup>
         </g:FlowPanel>
         <g:FlowPanel addStyleNames="list-view-pf-main-info">
@@ -25,7 +27,7 @@
                         <g:HTMLPanel ui:field="name" />
                     </g:FlowPanel>
                     <g:FlowPanel addStyleNames="list-group-item-text">
-                        <g:HTMLPanel ui:field="bookmarkText" />
+                        <b:Anchor ui:field="bookmarkText" />
                     </g:FlowPanel>
                 </g:FlowPanel>
             </g:FlowPanel>

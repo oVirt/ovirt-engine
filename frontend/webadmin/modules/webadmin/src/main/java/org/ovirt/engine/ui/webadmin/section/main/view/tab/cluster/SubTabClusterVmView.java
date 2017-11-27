@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -7,11 +10,14 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterVmPresenter;
@@ -20,6 +26,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 
 public class SubTabClusterVmView extends AbstractSubTabTableView<Cluster, VM, ClusterListModel<Void>, ClusterVmListModel>
@@ -51,12 +58,21 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<Cluster, VM, Cl
         statusIconColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
+        AbstractTextColumn<VM> nameColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>() {
+            @Override
+            public void update(int index, VM vm, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), vm.getName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.virtualMachineGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VM object) {
                 return object.getName();
             }
         };
+
         nameColumn.makeSortable(VmConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameVm(), "220px"); //$NON-NLS-1$
 

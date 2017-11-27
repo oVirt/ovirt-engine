@@ -30,7 +30,7 @@ public class SessionListModel extends ListWithSimpleDetailsModel<UserSession, Us
         setApplicationPlace(WebAdminApplicationPlaces.sessionMainPlace);
         setHashName("sessions"); //$NON-NLS-1$
 
-        setDefaultSearchString("Session:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.SESSION_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.SESSION_OBJ_NAME, SearchObjects.SESSION_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.AllModes);

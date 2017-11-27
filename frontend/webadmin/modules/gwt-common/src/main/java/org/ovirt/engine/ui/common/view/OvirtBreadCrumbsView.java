@@ -53,6 +53,7 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
     private final MenuDetailsProvider menuDetailsProvider;
 
     IsWidget currentSelectedItemWidget;
+    private boolean hideSelectedWidget = false;
 
     @Inject
     public OvirtBreadCrumbsView(MainModelProvider<T, M> listModelProvider, MenuDetailsProvider menuDetailsProvider) {
@@ -73,14 +74,14 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
         if (primaryLabel != null) {
             breadCrumbs.add(new ListItem(primaryLabel));
         }
-        menuDetailsProvider.setPrimaryMenuActive(modelHref);
+        menuDetailsProvider.setMenuActive(modelHref);
 
         // Add main model name.
         AnchorListItem mainModelAnchor = new AnchorListItem(modelTitle);
         mainModelAnchor.setHref("#" + modelHref); //$NON-NLS-1$
         breadCrumbs.add(mainModelAnchor);
 
-        if (currentSelectedItemWidget != null) {
+        if (currentSelectedItemWidget != null && !hideSelectedWidget) {
             breadCrumbs.add(currentSelectedItemWidget);
         }
     }
@@ -172,12 +173,17 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
 
     @Override
     public boolean isSearchVisible() {
-        return popover.isVisible();
+        return popover != null && popover.isVisible();
     }
 
     private static class OvirtAnchorListItem extends AnchorListItem {
         public Anchor getAnchor() {
             return anchor;
         }
+    }
+
+    @Override
+    public void hideSelectedWidget() {
+        this.hideSelectedWidget = true;
     }
 }

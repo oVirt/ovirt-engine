@@ -1,14 +1,19 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.searchbackend.PoolConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainPoolPresenter;
@@ -60,16 +65,34 @@ public class MainPoolView extends AbstractMainWithDetailsTableView<VmPool, PoolL
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VmPool> assignedColumn = new AbstractTextColumn<VmPool>() {
+        AbstractTextColumn<VmPool> assignedColumn = new AbstractLinkColumn<VmPool>(new FieldUpdater<VmPool, String>() {
+            @Override
+            public void update(int index, VmPool pool, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.SEARCH.getName(), "pool=" + pool.getName()); //$NON-NLS-1$
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.virtualMachineMainPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VmPool object) {
                 return Integer.toString(object.getAssignedVmsCount());
             }
         };
+
         assignedColumn.makeSortable(PoolConditionFieldAutoCompleter.ASSIGNED_VM_COUNT);
         getTable().addColumn(assignedColumn, constants.assignVmsPool(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VmPool> runningColumn = new AbstractTextColumn<VmPool>() {
+        AbstractTextColumn<VmPool> runningColumn = new AbstractLinkColumn<VmPool>(new FieldUpdater<VmPool, String>() {
+            @Override
+            public void update(int index, VmPool pool, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.SEARCH.getName(), "pool=" + pool.getName() //$NON-NLS-1$
+                        + " AND status=up"); //$NON-NLS-1$
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.virtualMachineMainPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VmPool object) {
                 return Integer.toString(object.getRunningVmsCount());

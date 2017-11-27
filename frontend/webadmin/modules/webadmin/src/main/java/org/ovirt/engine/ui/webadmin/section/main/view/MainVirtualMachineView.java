@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
@@ -19,6 +21,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVirtualMachinePresenter;
@@ -91,7 +94,15 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> hostColumn = new AbstractTextColumn<VM>() {
+        AbstractTextColumn<VM> hostColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>() {
+            @Override
+            public void update(int index, VM vm, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), vm.getRunOnVdsName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.hostGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VM object) {
                 return object.getRunOnVdsName();
@@ -120,7 +131,15 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
         fqdnColumn.makeSortable(VmConditionFieldAutoCompleter.FQDN);
         getTable().addColumn(fqdnColumn, constants.fqdn(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
+        AbstractTextColumn<VM> clusterColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>() {
+            @Override
+            public void update(int index, VM vm, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), vm.getClusterName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VM object) {
                 return object.getClusterName();
@@ -130,13 +149,22 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
         clusterColumn.makeSortable(VmConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> dcColumn = new AbstractTextColumn<VM>() {
+        AbstractTextColumn<VM> dcColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>() {
+            @Override
+            public void update(int index, VM vm, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), vm.getStoragePoolName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.dataCenterStorageSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(VM object) {
                 return object.getStoragePoolName();
             }
         };
         dcColumn.makeSortable(VmConditionFieldAutoCompleter.DATACENTER);
+
         getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
 
         getTable().addColumn(new ColumnResizeTableLineChartProgressBar<VM>(

@@ -187,7 +187,9 @@ public class SimpleTabPanel extends AbstractTabPanel {
             tabWidget.setVisible(visible);
 
             // handle the case when currently active tab becomes hidden
-            if (!visible && getActiveTabHistoryToken().equals(tabHistoryTokens.get(tabData))) {
+            String activeTabHistoryToken = getActiveTabHistoryToken();
+            if (!visible && activeTabHistoryToken != null &&
+                    activeTabHistoryToken.equals(tabHistoryTokens.get(tabData))) {
                 Scheduler.get().scheduleDeferred(() -> {
                     String href = getFirstVisibleTabHref();
                     if (href != null) {

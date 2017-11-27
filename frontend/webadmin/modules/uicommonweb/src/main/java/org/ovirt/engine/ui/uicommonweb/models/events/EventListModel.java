@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -112,7 +113,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         clearAllCommand = new UICommand("Clear All", this); //$NON-NLS-1$
         displayAllCommand = new UICommand("Display All", this); //$NON-NLS-1$
 
-        setDefaultSearchString("Events:"); //$NON-NLS-1$
+        setDefaultSearchString(SearchStringMapping.EVENTS_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.AUDIT_OBJ_NAME, SearchObjects.AUDIT_PLU_OBJ_NAME });
 

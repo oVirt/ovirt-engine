@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -11,10 +13,12 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRenderedTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
@@ -23,6 +27,7 @@ import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparat
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostFilter;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -32,6 +37,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.host.InterfaceStatusImage;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -82,12 +88,23 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> nameColumn = new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> nameColumn =
+            new AbstractLinkColumn<PairQueryable<VdsNetworkInterface, VDS>>(
+                    new FieldUpdater<PairQueryable<VdsNetworkInterface, VDS>, String>() {
+        @Override
+        public void update(int index, PairQueryable<VdsNetworkInterface, VDS> host, String value) {
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put(FragmentParams.NAME.getName(), host.getSecond().getName());
+            getPlaceTransitionHandler().handlePlaceTransition(
+                    WebAdminApplicationPlaces.hostGeneralSubTabPlace, parameters);
+        }
+    }) {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
             return object.getSecond().getName();
         }
     };
+
 
     private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> clusterColumn = new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override

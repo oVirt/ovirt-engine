@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -24,6 +26,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest.Builder;
 
 /**
  * Base class for presenters representing sub tabs that react to item selection changes within main tab presenters.
@@ -36,7 +39,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  */
 public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity,
   V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
-        extends AbstractTabPresenter<V, P> implements MainSelectedItemChangeListener<T> {
+        extends AbstractTabPresenter<V, P> implements PlaceTransitionHandler, MainSelectedItemChangeListener<T> {
 
     // TODO(vszocs) use HasActionTable<I> instead of raw type HasActionTable, this will
     // require adding new type parameter to presenter (do later as part of refactoring)
@@ -51,6 +54,8 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         void resizeToFullHeight();
 
         HandlerRegistration addWindowResizeHandler(ResizeHandler handler);
+
+        void setPlaceTransitionHandler(PlaceTransitionHandler handler);
     }
 
     private static final Logger logger = Logger.getLogger(AbstractSubTabPresenter.class.getName());
@@ -62,6 +67,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     private final DetailModelProvider<M, D> modelProvider;
     private final AbstractMainSelectedItems<T> selectedMainItems;
     private boolean resizing = false;
+    private PlaceRequest currentPlace;
 
     /**
      * @param view View type (extends AbstractSubTabPresenter.ViewDef&lt;T&gt;)
@@ -87,7 +93,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     @Override
     protected void onBind() {
         super.onBind();
-
+        getView().setPlaceTransitionHandler(this);
         OvirtSelectionModel<?> tableSelectionModel = getTable() != null ? getTable().getSelectionModel() : null;
         if (tableSelectionModel != null) {
             registerHandler(tableSelectionModel.addSelectionChangeHandler(event -> {
@@ -95,10 +101,10 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 updateDetailModelSelection();
             }));
         }
-        OvirtSelectionModel<T> mainModelSelectionModel = modelProvider.getMainModel().getSelectionModel();
+        OvirtSelectionModel<T> mainModelSelectionModel = getMainModel().getSelectionModel();
         if (mainModelSelectionModel != null) {
             registerHandler(mainModelSelectionModel.addSelectionChangeHandler(event -> {
-                itemChanged(getSelectedMainItems().getSelectedItem());
+                itemChanged(mainModelSelectionModel.getFirstSelectedObject());
             }));
         }
         initializeHandlers();
@@ -111,8 +117,13 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 resizing = true;
             }
         }));
+        getMainModel().getItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (currentPlace != null) {
+                prepareFromRequest(currentPlace);
+            }
+        });
+
         getSelectedMainItems().registerListener(this);
-        itemChanged(getSelectedMainItems().getSelectedItem());
         setInSlot(TYPE_SetActionPanel, getActionPanelPresenterWidget());
     }
 
@@ -121,8 +132,8 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         boolean widgetVisible = getView().asWidget().isVisible();
         if (item != null && widgetVisible) {
             getView().setMainSelectedItem(item);
-        } else if (item == null && widgetVisible && (modelProvider.getMainModel().getItems() == null
-                || modelProvider.getMainModel().getItems().isEmpty())) {
+        } else if (item == null && widgetVisible && (getMainModel().getItems() == null
+                || getMainModel().getItems().isEmpty())) {
             // No selection so we can't positively show anything, switch to grid.
             placeManager.revealPlace(getMainContentRequest());
         }
@@ -186,13 +197,78 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
 
-        // Reveal presenter only when there is something selected in the main tab
-        if (selectedMainItems.hasSelection()) {
-            getProxy().manualReveal(this);
+        Set<FragmentParams> params = FragmentParams.getParams(request);
+
+        final String fragmentNameValue = request.getParameter(FragmentParams.NAME.getName(), "");
+        final T itemToSwitchTo;
+        if (params.contains(FragmentParams.NAME)) {
+            // Someone passed a fragment with a name here.
+            itemToSwitchTo = switchToName(fragmentNameValue);
+            if (itemToSwitchTo == null) {
+                currentPlace = request;
+            } else {
+                currentPlace = null;
+            }
         } else {
-            getProxy().manualRevealFailed();
-            placeManager.revealPlace(getMainContentRequest());
+            itemToSwitchTo = getMainModel().getSelectionModel().getFirstSelectedObject();
+            currentPlace = null;
         }
+        // Give the selection model time to resolve before trying to reveal the detail tab.
+        Scheduler.get().scheduleDeferred(() -> {
+            // Check if there is a name parameter so we can preselect something.
+            if (itemToSwitchTo != null) {
+                // Reveal presenter only when there is something selected in the main tab
+                getProxy().manualReveal(this);
+            } else if ("".equals(fragmentNameValue) ||
+                    (!"".equals(fragmentNameValue) &&
+                            getMainModel().getDefaultSearchString().equals(getMainModel().getSearchString()) &&
+                            getMainModel().getItems() != null)) {
+                // Show the main view in the following cases:
+                // 1. No fragment is provided and thus we can't locate the entity to show.
+                // 2. A fragment is provided but it is not a valid entity. This is the case if the value is not empty
+                // and the search string is set back to the default search string after attempting to search for
+                // the name, and the items are not null, meaning at least one attempt at loading the data has been
+                // made.
+                getProxy().manualRevealFailed();
+                placeManager.revealPlace(getMainContentRequest());
+                currentPlace = null;
+            }
+        });
+    }
+
+    private T switchToName(String name) {
+        if (!"".equals(name)) {
+            T namedItem = (T) FragmentParams.findItemByName(name, getMainModel());
+            if (namedItem != null) {
+                getMainModel().getSelectionModel().clear();
+                // This needs to be deferred, so the 'clear' is registered by the selection model. The selection model
+                // schedules its resolution of changes so we want the clear to happen so when we select the entity
+                // it updates properly in case what we selected was already selected
+                // (so a selection changed event fires).
+                Scheduler.get().scheduleDeferred(() -> getMainModel().getSelectionModel().setSelected(namedItem, true));
+                return namedItem;
+            } else if (getMainModel().getItems() != null) {
+                // Items loaded and not found.
+                String searchForNameString = getMainModel().getDefaultSearchString() + "name=" + name; //$NON-NLS-1$
+                if (searchForNameString.equals(getMainModel().getSearchString())) {
+                    // Searched for the string and couldn't find it.
+                    getMainModel().setSearchString(getMainModel().getDefaultSearchString());
+                } else {
+                    getMainModel().setSearchString(searchForNameString);
+                }
+                getMainModel().getSearchCommand().execute();
+            } else {
+                // Not loaded yet, load items.
+                getMainModel().getSearchCommand().execute();
+            }
+            return namedItem;
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private ListWithDetailsModel<M, D, T> getMainModel() {
+        return modelProvider.getMainModel();
     }
 
     /**
@@ -266,4 +342,11 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         return selectedMainItems;
     }
 
+    @Override
+    public void handlePlaceTransition(String nameToken, Map<String, String> parameters) {
+        final Builder builder = new Builder();
+        builder.nameToken(nameToken);
+        builder.with(parameters);
+        placeManager.revealPlace(builder.build());
+    }
 }
