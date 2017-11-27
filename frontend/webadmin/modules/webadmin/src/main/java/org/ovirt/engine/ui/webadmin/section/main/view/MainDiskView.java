@@ -103,15 +103,15 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     final IEventListener<EventArgs> diskTypeChangedEventListener = (ev, sender, args) -> {
         DiskStorageType diskType = getMainModel().getDiskViewType().getEntity();
         disksViewRadioGroup.setDiskStorageType(diskType);
-        onDiskViewTypeChanged(diskType);
+        onDiskViewTypeOrContentTypeChanged();
     };
 
     final IEventListener<EventArgs> diskContentTypeChangedEventListener = new IEventListener<EventArgs>() {
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            EntityModel diskContentType = (EntityModel) sender;
-            disksContentTypeRadioGroup.setDiskContentType((DiskContentType) diskContentType.getEntity());
-            onDiskContentTypeChanged();
+            EntityModel<DiskContentType> diskContentType = (EntityModel<DiskContentType>) sender;
+            disksContentTypeRadioGroup.setDiskContentType(diskContentType.getEntity());
+            onDiskViewTypeOrContentTypeChanged();
         }
     };
 
@@ -137,21 +137,19 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
             }
         }
 
-        onDiskViewTypeChanged(disksViewRadioGroup.getDiskStorageType());
+        onDiskViewTypeOrContentTypeChanged();
     }
 
-    /**
-     * When the disk type is changed, update the table columns based on the disk type
-     * and update the search string.
-     */
-    void onDiskViewTypeChanged(DiskStorageType diskType) {
+    @Override
+    public void ensureColumnsVisible(DiskStorageType diskType) {
         boolean all = diskType == null;
         boolean images = diskType == DiskStorageType.IMAGE;
         boolean luns = diskType == DiskStorageType.LUN;
         boolean cinder = diskType == DiskStorageType.CINDER;
+        ensureColumnsVisible(all, images, luns, cinder);
+    }
 
-        searchByDiskViewType(disksViewRadioGroup.getDiskStorageType(), disksContentTypeRadioGroup.getDiskContentType());
-
+    private void ensureColumnsVisible(boolean all, boolean images, boolean luns, boolean cinder) {
         getTable().ensureColumnVisible(
                 aliasColumn, constants.aliasDisk(), all || images || luns || cinder,
                 "150px"); //$NON-NLS-1$
@@ -224,8 +222,9 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "90px"); //$NON-NLS-1$
     }
 
-    private void onDiskContentTypeChanged() {
+    private void onDiskViewTypeOrContentTypeChanged() {
         searchByDiskViewType(disksViewRadioGroup.getDiskStorageType(), disksContentTypeRadioGroup.getDiskContentType());
+        ensureColumnsVisible(disksViewRadioGroup.getDiskStorageType());
     }
 
     void initTableColumns() {

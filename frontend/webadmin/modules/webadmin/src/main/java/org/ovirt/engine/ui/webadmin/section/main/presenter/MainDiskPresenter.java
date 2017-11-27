@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -42,7 +43,7 @@ public class MainDiskPresenter extends AbstractMainWithDetailsPresenter<Disk, Di
         IEventListener<EventArgs> getDiskContentTypeChangedEventListener();
 
         void handleQuotaColumnVisibility();
-
+        void ensureColumnsVisible(DiskStorageType diskType);
     }
 
     @Inject
@@ -79,6 +80,8 @@ public class MainDiskPresenter extends AbstractMainWithDetailsPresenter<Disk, Di
     protected void onReveal() {
         super.onReveal();
         getView().handleQuotaColumnVisibility();
+        // Make sure the menu has the right columns visible.
+        getView().ensureColumnsVisible(getModel().getDiskViewType().getEntity());
     }
 
 }
