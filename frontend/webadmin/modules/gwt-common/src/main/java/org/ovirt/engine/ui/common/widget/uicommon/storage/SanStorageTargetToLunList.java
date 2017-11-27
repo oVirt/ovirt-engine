@@ -191,9 +191,9 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         sortedLeafModel.setItems(items);
         final EntityModelCellTable<ListModel<LunModel>> table =
                 new EntityModelCellTable<>(multiSelection, (Resources) GWT.create(SanStorageListLunTableResources.class));
-
+        table.enableColumnResizing();
         table.initModelSortHandler(sortedLeafModel);
-        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn() {
+        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn(multiSelection) {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;
@@ -208,7 +208,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         lunIdColumn.makeSortable();
-        table.addColumn(lunIdColumn, constants.lunIdSanStorage());
+        table.addColumn(lunIdColumn, constants.lunIdSanStorage(), "250px"); //$NON-NLS-1$
 
         AbstractLunTextColumn devSizeColumn = new AbstractLunTextColumn() {
             @Override
@@ -217,7 +217,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         devSizeColumn.makeSortable();
-        table.addColumn(devSizeColumn, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
+        table.addColumn(devSizeColumn, constants.devSizeSanStorage(), "60px"); //$NON-NLS-1$
 
         AbstractLunTextColumn path = new AbstractLunTextColumn() {
             @Override
@@ -226,7 +226,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         path.makeSortable();
-        table.addColumn(path, constants.pathSanStorage(), "55px"); //$NON-NLS-1$
+        table.addColumn(path, constants.pathSanStorage(), "45px"); //$NON-NLS-1$
 
         AbstractLunTextColumn vendorIdColumn = new AbstractLunTextColumn() {
             @Override
@@ -235,7 +235,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         vendorIdColumn.makeSortable();
-        table.addColumn(vendorIdColumn, constants.vendorIdSanStorage(), "100px"); //$NON-NLS-1$
+        table.addColumn(vendorIdColumn, constants.vendorIdSanStorage(), "69px"); //$NON-NLS-1$
 
         AbstractLunTextColumn productIdColumn = new AbstractLunTextColumn() {
             @Override
@@ -244,7 +244,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         productIdColumn.makeSortable();
-        table.addColumn(productIdColumn, constants.productIdSanStorage(), "100px"); //$NON-NLS-1$
+        table.addColumn(productIdColumn, constants.productIdSanStorage(), "69px"); //$NON-NLS-1$
 
         AbstractLunTextColumn serialNumColumn = new AbstractLunTextColumn() {
             @Override
@@ -253,12 +253,14 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         serialNumColumn.makeSortable();
-        table.addColumn(serialNumColumn, constants.serialSanStorage(), "370px"); //$NON-NLS-1$
+        table.addColumn(serialNumColumn, constants.serialSanStorage(), "210px"); //$NON-NLS-1$
 
         if (model.getContainer().isNewStorage() ||
                 model.getContainer().getStorage().getStatus() != StorageDomainStatus.Maintenance) {
-            addAbstractLunAddOrExtendColumn(table,
-                    model.getContainer().isNewStorage() ? constants.addSanStorage() : constants.actionsSanStorage());
+            if (multiSelection) {
+                addAbstractLunAddOrExtendColumn(table,
+                        model.getContainer().isNewStorage() ? constants.addSanStorage() : constants.actionsSanStorage());
+            }
         } else {
             boolean reduceDeviceFromStorageDomainSupported =
                     (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(

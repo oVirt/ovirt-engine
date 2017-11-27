@@ -10,4 +10,8 @@ public abstract class AbstractLunSelectionColumn extends Column<LunModel, LunMod
     public AbstractLunSelectionColumn() {
         super(new LunSelectionCell());
     }
+
+    public AbstractLunSelectionColumn(boolean multiSelection) {
+        super(new LunSelectionCell(multiSelection));
+    }
 }

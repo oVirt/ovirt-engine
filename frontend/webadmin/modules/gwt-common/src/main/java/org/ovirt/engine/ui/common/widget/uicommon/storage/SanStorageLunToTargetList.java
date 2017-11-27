@@ -125,7 +125,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         initRootNodeTable(table);
 
         // Set custom selection column
-        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn() {
+        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn(multiSelection) {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;
@@ -145,7 +145,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
         table.setWidth("100%"); // $NON-NLS-1$
         // This was the height of the header
-        table.setHeight("46px"); // $NON-NLS-1$
+        table.setHeight("26px"); // $NON-NLS-1$
 
         rootModel.getPropertyChangedEvent().removeListener(lunModelSelectedItemListener);
         rootModel.getPropertyChangedEvent().addListener(lunModelSelectedItemListener, table);
@@ -188,66 +188,66 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getRawValue(LunModel model) {
                 return model.getLunId();
             }
-        }, constants.lunIdSanStorage());
+        }, constants.lunIdSanStorage(), "250px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return messages.gigabytes(String.valueOf(model.getSize()));
             }
-        }, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
+        }, constants.devSizeSanStorage(), "60px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getMultipathing());
             }
-        }, constants.pathSanStorage(), "55px"); //$NON-NLS-1$
+        }, constants.pathSanStorage(), "45px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getVendorId();
             }
-        }, constants.vendorIdSanStorage(), "100px"); //$NON-NLS-1$
+        }, constants.vendorIdSanStorage(), "70px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getProductId();
             }
-        }, constants.productIdSanStorage(), "100px"); //$NON-NLS-1$
+        }, constants.productIdSanStorage(), "70px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getSerial();
             }
-        }, constants.serialSanStorage(), "350px"); //$NON-NLS-1$
+        }, constants.serialSanStorage(), "210px"); //$NON-NLS-1$
 
-        if (!model.getContainer().isNewStorage()) {
-            StorageDomainStatus status = model.getContainer().getStorage().getStatus();
-            if (status == StorageDomainStatus.Maintenance) {
-                boolean reduceDeviceFromStorageDomainSupported =
-                        (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                        ConfigValues.ReduceDeviceFromStorageDomain,
-                        model.getContainer().getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
-                if (reduceDeviceFromStorageDomainSupported) {
-                    table.addColumn(new AbstractLunRemoveColumn(model) {
-                        @Override
-                        public LunModel getValue(LunModel object) {
-                            return object;
-                        }
-                    }, constants.removeSanStorage(), "85px"); //$NON-NLS-1$
-                    model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
-                        table.redraw();
-                    });
-                }
-            } else {
-                addAbstractLunAddOrExtendColumn(table, constants.actionsSanStorage());
+        if (model.getContainer().isNewStorage() ||
+                model.getContainer().getStorage().getStatus() != StorageDomainStatus.Maintenance) {
+            if (multiSelection) {
+                addAbstractLunAddOrExtendColumn(table,
+                        model.getContainer().isNewStorage() ? constants.addSanStorage() : constants.actionsSanStorage());
             }
         } else {
-            addAbstractLunAddOrExtendColumn(table, constants.addSanStorage());
+            boolean reduceDeviceFromStorageDomainSupported =
+                    (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                            ConfigValues.ReduceDeviceFromStorageDomain,
+                            model.getContainer().getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
+            if (reduceDeviceFromStorageDomainSupported) {
+                AbstractLunRemoveColumn removeColumn = new AbstractLunRemoveColumn(model) {
+                    @Override
+                    public LunModel getValue(LunModel object) {
+                        return object;
+                    }
+                };
+                table.addColumn(removeColumn, constants.removeSanStorage(), "95px"); //$NON-NLS-1$
+                model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
+                    table.redraw();
+                });
+            }
         }
     }
 
