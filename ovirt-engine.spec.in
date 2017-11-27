@@ -1172,9 +1172,8 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
-* Mon Dec 19 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.0
+* Mon Nov 27 2017 Sandro Bonazzola <sbonazzo@redhat.com> - 4.2.0
 - Bump version to 4.2.0
-- Dropped Fedora < 23
 
 * Wed May 25 2016 Sandro Bonazzola <sbonazzo@redhat.com> - 4.1.0
 - Add dependency for ovirt-engine-dashboard.
