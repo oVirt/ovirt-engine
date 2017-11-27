@@ -1120,6 +1120,10 @@ public class VdsBrokerObjectsBuilder {
                 Map<String, Object> gluster = (Map<String, Object>) packages.get(VdsProperties.GLUSTER_PACKAGE_NAME);
                 vds.setGlusterVersion(getPackageRpmVersion("glusterfs", gluster));
             }
+            if (packages.containsKey(VdsProperties.OPENVSWITCH)) {
+                Map<String, Object> ovs = (Map<String, Object>) packages.get(VdsProperties.OPENVSWITCH);
+                vds.setOvsVersion(getPackageRpmVersion(VdsProperties.OPENVSWITCH, ovs));
+            }
         }
     }
 

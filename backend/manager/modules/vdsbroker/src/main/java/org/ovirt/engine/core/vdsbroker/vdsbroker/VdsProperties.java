@@ -129,6 +129,7 @@ public final class VdsProperties {
     public static final String MAC_ADDR = "macAddr";
     public static final String NETWORK_CUSTOM_PROPERTIES = "custom";
     public static final String BOND_XMIT_POLICY = "xmit_hash_policy";
+    public static final String OPENVSWITCH = "openvswitch";
 
     // LLDP related properties
     public static final String LLDP_ENABLED = "enabled";

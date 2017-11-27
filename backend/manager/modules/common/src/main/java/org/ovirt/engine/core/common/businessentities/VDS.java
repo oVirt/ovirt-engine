@@ -221,6 +221,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setKernelCmdlineUnsafeInterrupts(isKernelCmdlineUnsafeInterrupts());
         vds.setGlusterPeerStatus(getGlusterPeerStatus());
         vds.setKernelFeatures(getKernelFeatures());
+        vds.setOvsVersion(getOvsVersion());
 
         DnsResolverConfiguration originalDnsResolverConfiguration = getReportedDnsResolverConfiguration();
         if (originalDnsResolverConfiguration != null) {
@@ -1049,6 +1050,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setGlusterfsCliVersion(RpmVersion value) {
         vdsDynamic.setGlusterfsCliVersion(value);
+    }
+
+    public RpmVersion getOvsVersion() {
+        return vdsDynamic.getOvsVersion();
+    }
+
+    public void setOvsVersion(RpmVersion ovsVersion) {
+        vdsDynamic.setOvsVersion(ovsVersion);
     }
 
     public String getKernelVersion() {
