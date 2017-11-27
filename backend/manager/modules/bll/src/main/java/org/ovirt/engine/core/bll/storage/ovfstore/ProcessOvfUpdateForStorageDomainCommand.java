@@ -397,11 +397,18 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
         return Config.<Integer>getValue(ConfigValues.StorageDomainOvfStoreCount) - ovfDiskCount;
     }
 
-    public void createOvfStoreDisks(int missingDiskCount) {
+    public boolean createOvfStoreDisks(int missingDiskCount) {
+        boolean allOvfStoreDisksCreated = true;
         for (int i = 0; i < missingDiskCount; i++) {
             CreateOvfVolumeForStorageDomainCommandParameters parameters = createCreateOvfVolumeForStorageDomainParams();
-            runInternalAction(ActionType.CreateOvfVolumeForStorageDomain, parameters, getContext().clone().withoutLock());
+            ActionReturnValue returnValue = runInternalAction(ActionType.CreateOvfVolumeForStorageDomain,
+                    parameters,
+                    getContext().clone().withoutLock());
+            if (!returnValue.getSucceeded()) {
+                allOvfStoreDisksCreated = false;
+            }
         }
+        return allOvfStoreDisksCreated;
     }
 
     @Override
@@ -441,12 +448,11 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
         if (missingDiskCount <= 0) {
             setOvfUpdateStep(OvfUpdateStep.OVF_UPLOAD);
             updateOvfStoreContent();
+            setSucceeded(true);
         } else {
             setOvfUpdateStep(OvfUpdateStep.OVF_STORES_CREATION);
-            createOvfStoreDisks(getMissingDiskCount());
+            setSucceeded(createOvfStoreDisks(getMissingDiskCount()));
         }
-
-        setSucceeded(true);
     }
 
     protected Set<Guid> buildFilesForOvfs(List<Pair<Guid, String>> ovfs, InMemoryTar inMemoryTar) throws Exception {
