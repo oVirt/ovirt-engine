@@ -3440,5 +3440,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String cacheSize();
 
     String resetBrickBrick();
+
+    String ovsVersionGeneral();
 }
 
