@@ -322,6 +322,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
         entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));
         entity.setGlusterfsCliVersion(new RpmVersion(rs.getString("glusterfs_cli_version")));
+        entity.setOvsVersion(new RpmVersion(rs.getString("openvswitch_version")));
         entity.setKvmVersion(rs.getString("kvm_version"));
         entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
         entity.setSpiceVersion(rs.getString("spice_version"));
