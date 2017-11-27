@@ -3442,5 +3442,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String resetBrickBrick();
 
     String showVfInfo();
+
+    String ovsVersionGeneral();
 }
 
