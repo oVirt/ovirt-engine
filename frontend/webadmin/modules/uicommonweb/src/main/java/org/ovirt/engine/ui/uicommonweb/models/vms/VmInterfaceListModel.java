@@ -27,6 +27,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
+import com.google.gwt.core.client.Scheduler;
+
 public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInterface> {
 
     private UICommand privateNewCommand;
@@ -293,10 +295,17 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
     @Override
     public void setItems(Collection<VmNetworkInterface> value) {
         super.setItems(value);
-        if (getSelectedItem() == null && (getSelectedItems() == null || getSelectedItems().size() == 0)) {
-            if (value != null && value.iterator().hasNext()) {
-                getSelectionModel().setSelected(value.iterator().next(), true);
+        // We need to defer this so we can give the selection model a chance to resolve the changes and syncing the
+        // seletectedItems with the selection model. This is to prevent a situation where we select nothing, due to
+        // removing a vnic, which causes a refresh of the list model, and we auto select the first one. The refresh
+        // will trigger a check of existing selection in the the patternfly list view. That combined with the auto
+        // select the first entity below will select 2 items.
+        Scheduler.get().scheduleDeferred(() -> {
+            if (getSelectedItem() == null && (getSelectedItems() == null || getSelectedItems().size() == 0)) {
+                if (value != null && value.iterator().hasNext()) {
+                    getSelectionModel().setSelected(value.iterator().next(), true);
+                }
             }
-        }
+        });
     }
 }
