@@ -118,6 +118,7 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
 
     @Test
     public void validAuthentication() {
+        when(provider.getType()).thenReturn(ProviderType.OPENSTACK_NETWORK);
         when(provider.isRequiringAuthentication()).thenReturn(true);
         when(provider.getUsername()).thenReturn("user");
         when(provider.getPassword()).thenReturn("pass");
@@ -159,6 +160,7 @@ public class NetworkProviderValidatorTest extends ProviderValidatorTest {
 
     @Test
     public void invalidAuthenticationTenant() {
+        when(provider.getType()).thenReturn(ProviderType.OPENSTACK_NETWORK);
         when(provider.isRequiringAuthentication()).thenReturn(true);
         when(provider.getUsername()).thenReturn("user");
         when(provider.getPassword()).thenReturn("pass");
