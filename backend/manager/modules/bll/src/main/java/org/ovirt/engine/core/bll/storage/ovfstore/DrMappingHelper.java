@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.ovfstore;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.exportimport.ImportedNetworkInfoUpdater;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
@@ -20,6 +22,8 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,6 +54,8 @@ public class DrMappingHelper {
     private RoleDao roleDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;
 
     protected static final Logger log = LoggerFactory.getLogger(DrMappingHelper.class);
 
@@ -285,4 +291,8 @@ public class DrMappingHelper {
             }
         });
     }
+    public void mapVnicProfiles(List<VmNetworkInterface> vnics, Collection<ExternalVnicProfileMapping> externalVnicProfileMappings) {
+        vnics.forEach(vnic -> importedNetworkInfoUpdater.updateNetworkInfo(vnic, externalVnicProfileMappings));
+    }
+
 }

@@ -20,10 +20,13 @@ public class ExternalVnicProfileMappingFinder {
     public Optional<ExternalVnicProfileMapping> findMappingEntry(String networkName,
             String vnicProfileName,
             Collection<ExternalVnicProfileMapping> externalVnicProfileMappings) {
+        if (externalVnicProfileMappings == null) {
+            return Optional.empty();
+        }
         return externalVnicProfileMappings
-                .stream()
-                .filter(mapping -> Objects.equals(mapping.getExternalNetworkName(), networkName)
-                        && Objects.equals(mapping.getExternalNetworkProfileName(), vnicProfileName))
-                .findFirst();
+            .stream()
+            .filter(mapping -> Objects.equals(mapping.getExternalNetworkName(), networkName)
+                    && Objects.equals(mapping.getExternalNetworkProfileName(), vnicProfileName))
+            .findFirst();
     }
 }

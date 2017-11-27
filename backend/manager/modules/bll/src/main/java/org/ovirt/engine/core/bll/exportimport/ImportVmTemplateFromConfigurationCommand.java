@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
@@ -73,6 +74,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private DrMappingHelper drMappingHelper;
+    @Inject
+    private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
 
     public ImportVmTemplateFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -97,6 +100,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     protected boolean validate() {
+        if (!validateExternalVnicProfileMapping()) {
+            return false;
+        }
         initVmTemplate();
         ArrayList<DiskImage> disks = new ArrayList(getVmTemplate().getDiskTemplateMap().values());
         setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
@@ -106,6 +112,14 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             return false;
         }
         return super.validate();
+    }
+
+    private boolean validateExternalVnicProfileMapping() {
+        final ValidationResult validationResult =
+                externalVnicProfileMappingValidator.validateExternalVnicProfileMapping(
+                        getParameters().getExternalVnicProfileMappings(),
+                        getParameters().getClusterId());
+        return validate(validationResult);
     }
 
     private boolean validateUnregisteredEntity(VmTemplate entityFromConfiguration, OvfEntityData ovfEntityData) {
@@ -187,6 +201,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                     mapCluster(fullEntityOvfData);
                 }
                 vmTemplateFromConfiguration.setClusterId(getParameters().getClusterId());
+                drMappingHelper.mapVnicProfiles(vmTemplateFromConfiguration.getInterfaces(), getParameters().getExternalVnicProfileMappings());
                 setVmTemplate(vmTemplateFromConfiguration);
                 setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
                 vmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
