@@ -11,18 +11,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
-import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
-import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
-import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.action.ImportExternalNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -41,7 +35,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 
 public class BaseImportNetworksModel extends Model {
@@ -59,8 +52,6 @@ public class BaseImportNetworksModel extends Model {
 
     private final UICommand addImportCommand = new UICommand(null, this);
     private final UICommand cancelImportCommand = new UICommand(null, this);
-
-    private Map<Guid, Collection<Cluster>> dcClusters;
 
     public ListModel<ExternalNetwork> getProviderNetworks() {
         return providerNetworks;
@@ -226,68 +217,22 @@ public class BaseImportNetworksModel extends Model {
         }
 
         List<ActionParametersBase> multipleActionParameters = new LinkedList<>();
-        List<IFrontendActionAsyncCallback> callbacks = new LinkedList<>();
-        dcClusters = new HashMap<>();
 
         for (final ExternalNetwork externalNetwork : importedNetworks.getItems()) {
             final Network network = externalNetwork.getNetwork();
             final Guid dcId = externalNetwork.getDataCenters().getSelectedItem().getId();
-            network.setName(externalNetwork.getDisplayName());
-            network.setDataCenterId(dcId);
-            AddNetworkStoragePoolParameters params =
-                    new AddNetworkStoragePoolParameters(dcId, network);
-            params.setVnicProfileRequired(false);
+
+            ImportExternalNetworkParameters params = new ImportExternalNetworkParameters(
+                    network.getProvidedBy().getProviderId(), network.getProvidedBy().getExternalId(), dcId,
+                    externalNetwork.isPublicUse(), true);
+
             multipleActionParameters.add(params);
-            callbacks.add(result -> {
-                ActionReturnValue returnValue = result.getReturnValue();
-                if (returnValue != null && returnValue.getSucceeded()) {
-                    network.setId((Guid) returnValue.getActionReturnValue());
-
-                    // Perform sequentially: first fetch clusters, then attach network, then create VNIC profile
-                    fetchDcClusters(dcId, network, externalNetwork.isPublicUse());
-                }
-            });
         }
 
-        Frontend.getInstance().runMultipleActions(ActionType.AddNetwork, multipleActionParameters, callbacks);
-        cancel();
-    }
-
-    private void fetchDcClusters(final Guid dcId, final Network network, final boolean publicUse) {
-        if (dcClusters.containsKey(dcId)) {
-            attachNetworkToClusters(network, dcClusters.get(dcId), publicUse);
-        } else {
-            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery<>(clusters -> {
-                dcClusters.put(dcId, clusters);
-                attachNetworkToClusters(network, clusters, publicUse);
-            }), dcId);
-        }
-    }
-
-    private void attachNetworkToClusters(final Network network, Collection<Cluster> clusters, final boolean publicUse) {
-        List<NetworkCluster> networkAttachments = new LinkedList<>();
-        for (Cluster cluster : clusters) {
-            final NetworkCluster networkCluster = new NetworkCluster();
-            networkCluster.setClusterId(cluster.getId());
-            networkCluster.setNetworkId(network.getId());
-            networkCluster.setRequired(false);
-            networkAttachments.add(networkCluster);
-        }
-
-        Frontend.getInstance().runAction(
-                ActionType.ManageNetworkClusters,
-                new ManageNetworkClustersParameters(networkAttachments),
-                result -> addVnicProfile(network, publicUse));
-    }
-
-    private void addVnicProfile(Network network, boolean publicUse) {
-        VnicProfile vnicProfile = new VnicProfile();
-        vnicProfile.setName(network.getName());
-        vnicProfile.setNetworkId(network.getId());
-        AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile, true);
-        parameters.setPublicUse(publicUse);
-        Frontend.getInstance().runAction(ActionType.AddVnicProfile, parameters,
+        Frontend.getInstance().runMultipleActions(ActionType.ImportExternalNetwork, multipleActionParameters,
                 result -> sourceListModel.getSearchCommand().execute());
+
+        cancel();
     }
 
     private void addImport() {

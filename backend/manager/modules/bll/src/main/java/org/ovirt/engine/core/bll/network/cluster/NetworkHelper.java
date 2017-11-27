@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -16,8 +17,11 @@ import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -184,5 +188,18 @@ public class NetworkHelper {
             interfacesToUpdate.add(iface);
         });
         interfaceDao.massUpdateInterfacesForVds(interfacesToUpdate);
+    }
+
+    public ActionReturnValue attachNetworkToClusters(Guid networkId, Collection<Guid> clusterIds) {
+        List<NetworkCluster> networkAttachments = new LinkedList<>();
+        for (Guid clusterId : clusterIds) {
+            final NetworkCluster networkCluster = new NetworkCluster();
+            networkCluster.setClusterId(clusterId);
+            networkCluster.setNetworkId(networkId);
+            networkCluster.setRequired(false);
+            networkAttachments.add(networkCluster);
+        }
+        return backend.runInternalAction(ActionType.ManageNetworkClusters,
+                new ManageNetworkClustersParameters(networkAttachments));
     }
 }
