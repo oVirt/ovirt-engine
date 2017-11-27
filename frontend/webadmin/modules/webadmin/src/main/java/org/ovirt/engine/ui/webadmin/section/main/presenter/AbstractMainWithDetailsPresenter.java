@@ -172,6 +172,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         if (hasActionPanelPresenterWidget()) {
             getTable().setActionMenus(getActionPanelPresenterWidget().getActionButtons());
         }
+        getView().resizeToFullHeight();
     }
 
     @Override
