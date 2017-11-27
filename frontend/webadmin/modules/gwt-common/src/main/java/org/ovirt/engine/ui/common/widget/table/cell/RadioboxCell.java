@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.cell.client.ValueUpdater;
@@ -32,6 +36,8 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
     private final boolean dependsOnSelection;
     private final boolean handlesSelection;
 
+    private SafeHtml tooltipFallback;
+
     /**
      * Construct a new {@link RadioboxCell}.
      */
@@ -48,7 +54,6 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
      *            true if the cell modifies the selection state
      */
     public RadioboxCell(boolean dependsOnSelection, boolean handlesSelection) {
-        super(BrowserEvents.CHANGE, BrowserEvents.KEYDOWN);
         this.dependsOnSelection = dependsOnSelection;
         this.handlesSelection = handlesSelection;
     }
@@ -107,6 +112,7 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
                 valueUpdater.update(isChecked);
             }
         }
+        ElementTooltipUtils.handleCellEvent(event, parent, getTooltip(value));
     }
 
     @Override
@@ -126,14 +132,26 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
         }
     }
 
-    @Override
-    public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
-        return EventHandlingCellMixin.inputHandlesClick(event);
+    public SafeHtml getTooltip(Boolean value) {
+        return tooltipFallback;
     }
 
     @Override
     public void setTooltipFallback(SafeHtml tooltipFallback) {
-        // no-op, this Cell doesn't support tooltips
+        this.tooltipFallback = tooltipFallback;
     }
 
+    @Override
+    public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
+        return EventHandlingCellMixin.inputHandlesClick(event)
+                || ElementTooltipUtils.HANDLED_CELL_EVENTS.contains(event.getNativeEvent().getType());
+    }
+
+    @Override
+    public Set<String> getConsumedEvents() {
+        Set<String> consumedEvents = new HashSet<>(ElementTooltipUtils.HANDLED_CELL_EVENTS);
+        consumedEvents.add(BrowserEvents.CHANGE);
+        consumedEvents.add(BrowserEvents.KEYDOWN);
+        return consumedEvents;
+    }
 }

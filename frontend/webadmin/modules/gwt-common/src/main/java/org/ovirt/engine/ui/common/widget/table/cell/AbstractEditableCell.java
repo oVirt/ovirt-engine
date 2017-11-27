@@ -17,10 +17,6 @@ public abstract class AbstractEditableCell<C, V> extends com.google.gwt.cell.cli
     private String elementIdPrefix = DOM.createUniqueId(); // default
     private String columnId;
 
-    public AbstractEditableCell(String... consumedEvents) {
-        super(consumedEvents);
-    }
-
     /**
      * Override the normal render to pass along an id.
      *
