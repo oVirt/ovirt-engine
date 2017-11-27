@@ -27,6 +27,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel, D extends SearchableListModel>
     extends AbstractView implements AbstractSubTabPresenter.ViewDef<I> {
 
+    private static final String OBRAND_DETAIL_TAB = "obrand_detail_tab"; // $NON-NLS-1$
+
     private final AbstractModelBoundTableWidget<T, D> modelBoundTableWidget;
 
     @WithElementId
@@ -49,6 +51,12 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
             table.setMaxGridHeight(Window.getClientHeight() - tableTop);
             table.updateGridSize();
         }
+    }
+
+    @Override
+    protected void initWidget(IsWidget widget) {
+        super.initWidget(widget);
+        asWidget().addStyleName(OBRAND_DETAIL_TAB);
     }
 
     @Override
