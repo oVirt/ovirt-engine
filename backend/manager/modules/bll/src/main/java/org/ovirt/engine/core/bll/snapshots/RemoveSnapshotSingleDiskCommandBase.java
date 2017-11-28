@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -104,6 +105,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
                 getDiskImage().isWipeAfterDelete(),
                 false);
         parameters.setParentCommand(actionType);
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
         parameters.setParentParameters(getParameters());
         return parameters;
     }
