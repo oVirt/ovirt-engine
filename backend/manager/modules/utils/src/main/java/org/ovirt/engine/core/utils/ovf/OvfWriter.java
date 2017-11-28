@@ -498,7 +498,8 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeElement(RASD_URI, "num_of_sockets", String.valueOf(vmBase.getNumOfSockets()));
         _writer.writeElement(RASD_URI, "cpu_per_socket", String.valueOf(vmBase.getCpuPerSocket()));
         _writer.writeElement(RASD_URI, "threads_per_cpu", String.valueOf(vmBase.getThreadsPerCpu()));
-        _writer.writeElement(RASD_URI, "max_num_of_vcpus", String.valueOf(maxNumOfVcpus()));
+        _writer.writeElement(RASD_URI, "max_num_of_vcpus", String.valueOf(maxNumOfVcpus())); // TODO: replace with Limit
+        _writer.writeElement(RASD_URI, "VirtualQuantity", String.valueOf(vmBase.getNumOfCpus()));
         _writer.writeEndElement();
     }
 
