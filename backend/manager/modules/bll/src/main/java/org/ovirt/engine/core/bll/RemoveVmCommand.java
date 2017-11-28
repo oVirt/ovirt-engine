@@ -236,12 +236,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        if (!getVm().getDiskMap().isEmpty() && !validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
+        Collection<Disk> vmDisks = getVm().getDiskMap().values();
+        List<DiskImage> vmImages = DisksFilter.filterImageDisks(vmDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
+        if (!vmImages.isEmpty() && !validate(new StoragePoolValidator(getStoragePool()).existsAndUp())) {
             return false;
         }
 
-        Collection<Disk> vmDisks = getVm().getDiskMap().values();
-        List<DiskImage> vmImages = DisksFilter.filterImageDisks(vmDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
         vmImages.addAll(DisksFilter.filterCinderDisks(vmDisks));
         if (!vmImages.isEmpty()) {
             Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
