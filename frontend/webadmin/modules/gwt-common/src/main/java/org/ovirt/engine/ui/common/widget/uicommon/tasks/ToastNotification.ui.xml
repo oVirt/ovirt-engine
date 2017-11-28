@@ -16,7 +16,7 @@
         }
     </ui:style>
 
-    <g:FlowPanel ui:field="widgetWrapper" addStyleNames="toast-pf alert alert-dismissable">
+    <g:FlowPanel ui:field="widgetWrapper" addStyleNames="alert alert-dismissable">
         <b:Button ui:field="closeButton" addStyleNames="close" />
         <g:HTMLPanel tag="SPAN" ui:field="icon" addStyleNames="pficon pficon-ok" />
         <g:HTMLPanel tag="SPAN" ui:field="label" />
