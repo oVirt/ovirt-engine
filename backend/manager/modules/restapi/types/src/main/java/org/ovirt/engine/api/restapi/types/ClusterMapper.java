@@ -167,7 +167,9 @@ public class ClusterMapper {
         if (model.isSetExternalNetworkProviders()) {
             List<ExternalProvider> externalNetworkProviders =
                     model.getExternalNetworkProviders().getExternalProviders();
-            if (externalNetworkProviders.size() > 0) {
+            if (externalNetworkProviders.size() == 0) {
+                entity.setDefaultNetworkProviderId(null);
+            } else {
                 // Ignore everything but the first external provider, because engine's Cluster currently supports
                 // only a single external network provider
                 String providerId = externalNetworkProviders.get(0).getId();
