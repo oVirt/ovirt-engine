@@ -110,7 +110,7 @@ public class GetDeviceListVDSCommandTest {
 
     @Test
     public void discardFieldsAreParsed() {
-        testDiscardFieldsParsing(Version.v4_1, 1024L, true);
+        testDiscardFieldsParsing(Version.v4_1, 1024L, false);
     }
 
     @Test

@@ -171,7 +171,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                 lun.setDiscardMaxSize(((Number) xlun.get("discard_max_bytes")).longValue());
             }
             if (xlun.containsKey("discard_zeroes_data")) {
-                lun.setDiscardZeroesData((int) xlun.get("discard_zeroes_data") > 0);
+                lun.setDiscardZeroesData(false);
             }
         }
         if (xlun.containsKey("vendorID")) {
