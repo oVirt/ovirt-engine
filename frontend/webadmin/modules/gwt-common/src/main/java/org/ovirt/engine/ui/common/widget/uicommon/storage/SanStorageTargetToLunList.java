@@ -122,8 +122,6 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         // Add blank item list
         table.setRowData(new ArrayList<EntityModel>());
         table.setWidth("100%"); //$NON-NLS-1$
-        // This was the height of the header
-        table.setHeight("23px"); // $NON-NLS-1$
 
         // Add table as header widget
         treeHeader.add(table);
@@ -208,7 +206,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         lunIdColumn.makeSortable();
-        table.addColumn(lunIdColumn, constants.lunIdSanStorage());
+        table.addColumn(lunIdColumn, constants.lunIdSanStorage(), "35px"); //$NON-NLS-1$
 
         AbstractLunTextColumn devSizeColumn = new AbstractLunTextColumn() {
             @Override
