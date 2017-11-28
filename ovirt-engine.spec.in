@@ -192,6 +192,7 @@ BuildArch:	noarch
 BuildRequires:	assertj-core >= 2.2.0
 BuildRequires:	hystrix-core
 BuildRequires:	hystrix-metrics-event-stream
+BuildRequires:	rxjava
 BuildRequires:	java-1.8.0-openjdk-devel >= 1:1.8.0
 BuildRequires:	jpackage-utils
 BuildRequires:	make
@@ -228,6 +229,7 @@ Requires:	java-openjdk-headless >= 1:1.8.0
 Requires:	jpackage-utils
 Requires:	objectweb-asm
 Requires:	ovirt-iso-uploader >= 4.1.0
+Requires:	rxjava
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
@@ -790,6 +792,7 @@ common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/ope
 common/com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
 common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
 common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
+common/io/reactivex/rxjava/main/rxjava.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
 common/org/apache/commons/configuration/main/commons-configuration.jar
