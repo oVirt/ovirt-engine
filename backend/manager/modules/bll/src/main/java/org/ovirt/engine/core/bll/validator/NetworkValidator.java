@@ -85,9 +85,16 @@ public class NetworkValidator {
      * @return An error iff the network isn't set.
      */
     public ValidationResult networkIsSet(Guid networkId) {
+        return networkIsSet(String.valueOf(networkId));
+    }
+
+    /**
+     * @return An error iff the network isn't set.
+     */
+    public ValidationResult networkIsSet(String networkId) {
         EngineMessage engineMessage = EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS;
         return ValidationResult.failWith(engineMessage,
-            ReplacementUtils.getVariableAssignmentString(engineMessage, String.valueOf(networkId)))
+            ReplacementUtils.getVariableAssignmentString(engineMessage, networkId))
             .when(network == null);
     }
 
