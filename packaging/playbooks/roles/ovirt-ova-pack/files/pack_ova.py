@@ -27,7 +27,7 @@ def pad_to_block_size(file, size):
 def write_ovf(ova_file, ovf):
     print ("writing ovf: %s" % ovf)
     ovf_size = len(ovf.encode('utf-8'))
-    tar_info = create_tar_info("ovf", ovf_size)
+    tar_info = create_tar_info("vm.ovf", ovf_size)
     ova_file.write(tar_info.tobuf())
     ova_file.write(ovf)
     pad_to_block_size(ova_file, ovf_size)
