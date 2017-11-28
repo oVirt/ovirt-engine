@@ -11,11 +11,9 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, StorageDomainStatus>, Nameable, Commented {
-    private static final long serialVersionUID = -6162192446628804305L;
+    private static final long serialVersionUID = 1043048758366348870L;
 
     private Boolean supportsDiscard;
-
-    private Boolean supportsDiscardZeroesData;
 
     public StorageDomain() {
         staticData = new StorageDomainStatic();
@@ -393,14 +391,6 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
         this.supportsDiscard = supportsDiscard;
     }
 
-    public Boolean getSupportsDiscardZeroesData() {
-        return supportsDiscardZeroesData;
-    }
-
-    public void setSupportsDiscardZeroesData(Boolean supportsDiscardZeroesData) {
-        this.supportsDiscardZeroesData = supportsDiscardZeroesData;
-    }
-
     private boolean hostedEngineStorage;
 
     public boolean isHostedEngineStorage() {
@@ -423,7 +413,6 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
                 storagePoolIsoMapData,
                 totalDiskSize,
                 supportsDiscard,
-                supportsDiscardZeroesData,
                 hostedEngineStorage
         );
     }
@@ -443,7 +432,6 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
                 && storageDomainOverCommitPercent == other.storageDomainOverCommitPercent
                 && Objects.equals(totalDiskSize, other.totalDiskSize)
                 && Objects.equals(supportsDiscard, other.supportsDiscard)
-                && Objects.equals(supportsDiscardZeroesData, other.supportsDiscardZeroesData)
                 && hostedEngineStorage == other.hostedEngineStorage;
     }
 

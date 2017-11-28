@@ -49,8 +49,6 @@ public class LUNs implements BusinessEntity<String> {
 
     private Long peAllocatedCount;
 
-    private Boolean discardZeroesData;
-
     private String vendorName;
 
     private HashMap<String, Boolean> pathsDictionary;
@@ -92,7 +90,6 @@ public class LUNs implements BusinessEntity<String> {
                 deviceSize,
                 pvSize,
                 discardMaxSize,
-                discardZeroesData,
                 lunType,
                 pathsDictionary,
                 pathsCapacity,
@@ -125,7 +122,6 @@ public class LUNs implements BusinessEntity<String> {
                 && deviceSize == other.deviceSize
                 && pvSize == other.pvSize
                 && Objects.equals(discardMaxSize, other.discardMaxSize)
-                && Objects.equals(discardZeroesData, other.discardZeroesData)
                 && lunType == other.lunType
                 && Objects.equals(pathsDictionary, other.pathsDictionary)
                 && Objects.equals(pathsCapacity, other.pathsCapacity)
@@ -248,19 +244,6 @@ public class LUNs implements BusinessEntity<String> {
     @JsonIgnore
     public boolean supportsDiscard() {
         return getDiscardMaxSize() != null && getDiscardMaxSize() > 0;
-    }
-
-    public Boolean getDiscardZeroesData() {
-        return discardZeroesData;
-    }
-
-    public void setDiscardZeroesData(Boolean discardZeroesData) {
-        this.discardZeroesData = discardZeroesData;
-    }
-
-    @JsonIgnore
-    public boolean hasDiscardZeroesTheDataSupport() {
-        return Boolean.TRUE.equals(getDiscardZeroesData());
     }
 
     public String getVendorName() {
@@ -389,7 +372,6 @@ public class LUNs implements BusinessEntity<String> {
                 .append("storageDomainId", getStorageDomainId())
                 .append("storageDomainName", getStorageDomainName())
                 .append("discardMaxSize", getDiscardMaxSize())
-                .append("discardZeroesData", getDiscardZeroesData())
                 .build();
     }
 

@@ -41,7 +41,6 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
         entity.setStorageDomainId(getGuid(rs, "storage_id"));
         entity.setStorageDomainName(rs.getString("storage_name"));
         entity.setDiscardMaxSize((Long) rs.getObject("discard_max_size"));
-        entity.setDiscardZeroesData((Boolean) rs.getObject("discard_zeroes_data"));
         return entity;
     };
 
@@ -81,7 +80,6 @@ public class LunDaoImpl extends MassOperationsGenericDao<LUNs, String> implement
                 .addValue("vendor_id", lun.getVendorId())
                 .addValue("product_id", lun.getProductId())
                 .addValue("device_size", lun.getDeviceSize())
-                .addValue("discard_max_size", lun.getDiscardMaxSize())
-                .addValue("discard_zeroes_data", lun.getDiscardZeroesData());
+                .addValue("discard_max_size", lun.getDiscardMaxSize());
     }
 }

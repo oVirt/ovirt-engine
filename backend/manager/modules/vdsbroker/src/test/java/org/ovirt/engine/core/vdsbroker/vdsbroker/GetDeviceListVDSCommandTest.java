@@ -109,24 +109,19 @@ public class GetDeviceListVDSCommandTest {
     }
 
     @Test
-    public void discardFieldsAreParsed() {
-        testDiscardFieldsParsing(Version.v4_1, 1024L, false);
+    public void discardMaxBytesFieldIsParsed() {
+        testDiscardFieldParsing(Version.v4_1, 1024L);
     }
 
     @Test
-    public void passDiscardNotSupported() {
-        testDiscardFieldsParsing(Version.v4_0, null, null);
+    public void discardMaxBytesFieldIsNotParsed() {
+        testDiscardFieldParsing(Version.v4_0, null);
     }
 
-    private void testDiscardFieldsParsing(Version poolCompatibilityVersion,
-            Long expectedDiscardMaxSize, Boolean expectedDiscardZeroesData) {
+    private void testDiscardFieldParsing(Version poolCompatibilityVersion, Long expectedDiscardMaxSize) {
         Map<String, Object> xlun = new HashMap<>();
         xlun.put("discard_max_bytes", 1024L);
-        xlun.put("discard_zeroes_data", 1);
-
         LUNs lun = GetDeviceListVDSCommand.parseLun(xlun, poolCompatibilityVersion);
-
         assertEquals(lun.getDiscardMaxSize(), expectedDiscardMaxSize);
-        assertEquals(lun.getDiscardZeroesData(), expectedDiscardZeroesData);
     }
 }

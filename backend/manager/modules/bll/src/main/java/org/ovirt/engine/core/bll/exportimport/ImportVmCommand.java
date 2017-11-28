@@ -311,7 +311,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             lun.setProductId(luns.getProductId());
             lun.setProductId(luns.getProductId());
             lun.setDiscardMaxSize(luns.getDiscardMaxSize());
-            lun.setDiscardZeroesData(luns.getDiscardZeroesData());
             lun.setPvSize(luns.getPvSize());
         }
         return false;

@@ -264,19 +264,10 @@ public class DiskValidatorTest {
 
     @Test
     public void sparsifyNotSupportedWhenWipeAfterDeleteIsOn() {
-        StorageDomain storageDomain = createStorageDomainForDisk(StorageType.ISCSI);
+        createStorageDomainForDisk(StorageType.ISCSI);
         disk.setWipeAfterDelete(true);
-        storageDomain.setSupportsDiscardZeroesData(false);
         assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
                 .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED));
-    }
-
-    @Test
-    public void sparsifySupportedWhenWipeAfterDeleteIsOn() {
-        StorageDomain storageDomain = createStorageDomainForDisk(StorageType.FCP);
-        disk.setWipeAfterDelete(true);
-        storageDomain.setSupportsDiscardZeroesData(true);
-        assertThat(validator.isSparsifySupported(), isValid());
     }
 
     @Test

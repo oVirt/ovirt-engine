@@ -94,19 +94,6 @@ public class BlockStorageDiscardFunctionalityHelper {
                 return false;
             }
         }
-        boolean sdDiscardZeroesData = Boolean.TRUE.equals(storageDomain.getSupportsDiscardZeroesData());
-        if (sdDiscardZeroesData && !allLunsHaveDiscardZeroesTheDataSupport(lunsToAdd)) {
-            // The sd supports the property that discard zeroes the data and
-            // there is at least one lun that breaks this property.
-            if (diskVmElements == null) {
-                diskVmElements = diskVmElementDao.getAllDiskVmElementsByDisksIds(sdDisksIds);
-            }
-            if (vmDiskWithPassDiscardAndWadExists(sdDisks, diskVmElements)) {
-                // There is at least one disk that requires the storage domain's support for the
-                // property that discard zeroes the data and at least one lun that breaks this property.
-                return false;
-            }
-        }
         return true;
     }
 
@@ -160,36 +147,18 @@ public class BlockStorageDiscardFunctionalityHelper {
         return luns.stream().allMatch(LUNs::supportsDiscard);
     }
 
-    protected boolean allLunsHaveDiscardZeroesTheDataSupport(Collection<LUNs> luns) {
-        return luns.stream().allMatch(LUNs::hasDiscardZeroesTheDataSupport);
-    }
-
     protected boolean vmDiskWithPassDiscardExists(Collection<DiskVmElement> diskVmElements) {
         return diskVmElements.stream().anyMatch(DiskVmElement::isPassDiscard);
-    }
-
-    protected boolean vmDiskWithPassDiscardAndWadExists(Collection<DiskImage> storageDomainDisks,
-            Collection<DiskVmElement> storageDomainVmDisks) {
-        Map<Guid, List<DiskVmElement>> diskVmElementsMap = storageDomainVmDisks.stream()
-                .collect(Collectors.groupingBy(DiskVmElement::getDiskId));
-        return storageDomainDisks.stream().anyMatch(sdDisk -> sdDisk.isWipeAfterDelete() &&
-                diskVmElementsMap.containsKey(sdDisk.getId()) &&
-                diskVmElementsMap.get(sdDisk.getId()).stream().anyMatch(DiskVmElement::isPassDiscard));
     }
 
     protected Collection<LUNs> getLunsThatBreakPassDiscardSupport(Collection<LUNs> luns, Guid storageDomainId) {
         Collection<DiskImage> sdDisks = diskImageDao.getAllForStorageDomain(storageDomainId);
         Collection<Guid> sdDisksIds = sdDisks.stream().map(Disk::getId).collect(Collectors.toList());
         Collection<DiskVmElement> diskVmElements = diskVmElementDao.getAllDiskVmElementsByDisksIds(sdDisksIds);
-        boolean sdContainsVmDiskWithPassDiscard = vmDiskWithPassDiscardExists(diskVmElements);
-
-        if (sdContainsVmDiskWithPassDiscard) {
-            boolean sdContainsVmDiskWithPassDiscardAndWad =
-                    vmDiskWithPassDiscardAndWadExists(sdDisks, diskVmElements);
-
+        if (vmDiskWithPassDiscardExists(diskVmElements)) {
+            // The storage domain contains at least one disk with pass discard enabled.
             return luns.stream()
-                    .filter(lun -> !lun.supportsDiscard() ||
-                            (sdContainsVmDiskWithPassDiscardAndWad && !lun.hasDiscardZeroesTheDataSupport()))
+                    .filter(lun -> !lun.supportsDiscard())
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

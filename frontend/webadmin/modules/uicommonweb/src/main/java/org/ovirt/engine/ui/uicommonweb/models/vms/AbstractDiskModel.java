@@ -788,8 +788,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                 getPassDiscard().setIsChangeable(false, constants.discardIsNotSupportedByUnderlyingStorage());
                 getPassDiscard().setEntity(false);
             } else {
-                getPassDiscard().setIsChangeable(!getIsWipeAfterDelete().getEntity() ||
-                        getStorageDomain().getSelectedItem().getSupportsDiscardZeroesData(),
+                getPassDiscard().setIsChangeable(!getIsWipeAfterDelete().getEntity(),
                         constants.theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled());
                 if (!getPassDiscard().getIsChangable()) {
                     getPassDiscard().setEntity(false);
@@ -874,8 +873,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                             getStorageDomain().getSelectedItem() != null &&
                             getStorageDomain().getSelectedItem().getStorageType().isBlockDomain() &&
                             getPassDiscard().getIsChangable() &&
-                            getPassDiscard().getEntity() &&
-                            !getStorageDomain().getSelectedItem().getSupportsDiscardZeroesData()),
+                            getPassDiscard().getEntity()),
                     constants.theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled());
         } else {
             getIsWipeAfterDelete().setIsChangeable(false);

@@ -151,13 +151,6 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     }
 
     @Test
-    public void testGetLunsToUpdateInDbDiffDiscardZeroesData() {
-        lunFromVg.setDiscardZeroesData(true);
-        lunFromDb.setDiscardZeroesData(false);
-        assertLunShouldBeUpdatedDueToFieldChange();
-    }
-
-    @Test
     public void testGetLunsToUpdateInDbLunExistsInDbButNotInVgInfo() {
         Guid lunFromDbId = Guid.newGuid();
         Map<LunHandler, List<LUNs>> lunsToUpdateInDb =

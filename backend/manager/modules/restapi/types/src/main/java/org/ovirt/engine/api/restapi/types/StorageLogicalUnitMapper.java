@@ -43,9 +43,8 @@ public class StorageLogicalUnitMapper {
         if (entity.getDiscardMaxSize() != null) {
             model.setDiscardMaxSize(entity.getDiscardMaxSize());
         }
-        if (entity.getDiscardZeroesData() != null) {
-            model.setDiscardZeroesData(entity.getDiscardZeroesData());
-        }
+        // Not supported by sysfs since kernel version 4.12, and thus deprecated.
+        model.setDiscardZeroesData(false);
         model.setSize(SizeConverter.convert((long)entity.getDeviceSize(),
                 SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
 

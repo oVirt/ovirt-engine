@@ -311,8 +311,7 @@ FROM (
         NULL AS vendor_id,
         NULL AS product_id,
         NULL AS device_size,
-        NULL AS discard_max_size,
-        NULL AS discard_zeroes_data
+        NULL AS discard_max_size
     FROM images_storage_domain_view
     INNER JOIN storage_for_image_view
         ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
@@ -415,8 +414,7 @@ FROM (
         l.vendor_id,
         l.product_id,
         l.device_size,
-        l.discard_max_size,
-        l.discard_zeroes_data
+        l.discard_max_size
     FROM disk_lun_map dlm
     INNER JOIN luns l
         ON l.lun_id = dlm.lun_id
@@ -498,8 +496,7 @@ FROM (
         NULL AS vendor_id,
         NULL AS product_id,
         NULL AS device_size,
-        NULL AS discard_max_size,
-        NULL AS discard_zeroes_data
+        NULL AS discard_max_size
     FROM images_storage_domain_view
     INNER JOIN storage_for_image_view
         ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
@@ -602,8 +599,7 @@ FROM (
         l.vendor_id,
         l.product_id,
         l.device_size,
-        l.discard_max_size,
-        l.discard_zeroes_data
+        l.discard_max_size
     FROM disk_lun_map dlm
     INNER JOIN luns l
         ON l.lun_id = dlm.lun_id
@@ -663,8 +659,7 @@ GROUP BY storage_domain_id;
 
 CREATE OR REPLACE VIEW vg_discard_support_view AS
 SELECT volume_group_id,
-    BOOL_AND(COALESCE(luns.discard_max_size, 0) > 0) AS supports_discard,
-    BOOL_AND(COALESCE(luns.discard_zeroes_data, FALSE)) AS supports_discard_zeroes_data
+    BOOL_AND(COALESCE(luns.discard_max_size, 0) > 0) AS supports_discard
 FROM luns
 WHERE volume_group_id <> ''
 GROUP BY volume_group_id;
@@ -714,7 +709,6 @@ SELECT storage_domain_static.id AS id,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
     storage_domain_dynamic.external_status AS external_status,
     vg_discard_support_view.supports_discard AS supports_discard,
-    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data,
     EXISTS (
         SELECT 1
         FROM hosted_engine_storage_domains_ids_view
@@ -768,7 +762,6 @@ SELECT DISTINCT storage_domain_static.id AS id,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
     storage_domain_dynamic.external_status AS external_status,
     vg_discard_support_view.supports_discard AS supports_discard,
-    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data,
     EXISTS (
         SELECT 1
         FROM hosted_engine_storage_domains_ids_view
@@ -825,7 +818,6 @@ SELECT storage_domain_static.id AS id,
     storage_domain_static.critical_space_action_blocker AS critical_space_action_blocker,
     storage_domain_dynamic.external_status AS external_status,
     vg_discard_support_view.supports_discard AS supports_discard,
-    vg_discard_support_view.supports_discard_zeroes_data AS supports_discard_zeroes_data,
     EXISTS (
         SELECT 1
         FROM hosted_engine_storage_domains_ids_view

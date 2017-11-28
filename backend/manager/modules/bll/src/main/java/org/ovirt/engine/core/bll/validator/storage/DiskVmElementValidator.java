@@ -142,7 +142,7 @@ public class DiskVmElementValidator {
                         .ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_FOR_DISK_IMAGE_BY_UNDERLYING_STORAGE,
                         getDiskAliasVarReplacement(), getStorageDomainNameVarReplacement(diskStorageDomain));
             }
-            if (disk.isWipeAfterDelete() && !diskStorageDomain.getSupportsDiscardZeroesData()) {
+            if (disk.isWipeAfterDelete()) {
                 return new ValidationResult(EngineMessage
                         .ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED,
                         getStorageDomainNameVarReplacement(diskStorageDomain), getDiskAliasVarReplacement());

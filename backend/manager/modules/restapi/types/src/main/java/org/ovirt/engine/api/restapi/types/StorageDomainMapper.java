@@ -158,7 +158,8 @@ public class StorageDomainMapper {
         model.setWipeAfterDelete(entity.getWipeAfterDelete());
         model.setDiscardAfterDelete(entity.getDiscardAfterDelete());
         model.setSupportsDiscard(entity.getSupportsDiscard());
-        model.setSupportsDiscardZeroesData(entity.getSupportsDiscardZeroesData());
+        // Not supported by sysfs since kernel version 4.12, and thus deprecated.
+        model.setSupportsDiscardZeroesData(false);
         model.setBackup(entity.isBackup());
         return model;
     }

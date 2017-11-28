@@ -187,8 +187,7 @@ public class DiskValidator {
                     ReplacementUtils.createSetVariableString("storageType", domainStorageType));
         }
 
-        if (domainStorageType.isBlockDomain() && disk.isWipeAfterDelete()
-                && !diskStorageDomain.getSupportsDiscardZeroesData()) {
+        if (domainStorageType.isBlockDomain() && disk.isWipeAfterDelete()) {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED,
                     getStorageDomainNameVarReplacement(diskStorageDomain),
