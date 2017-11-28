@@ -1036,6 +1036,15 @@ class OvirtUtils(base.Base):
                 'needed_on_create': True,
                 'error_msg': None,
             },
+            {
+
+                'key': 'log_timezone',
+                'expected': "'UTC'",
+                'ok': self._lower_equal,
+                'check_on_use': False,
+                'needed_on_create': True,
+                'error_msg': None,
+            },
         )
 
     def validateDbConf(self, name, environment=None):
