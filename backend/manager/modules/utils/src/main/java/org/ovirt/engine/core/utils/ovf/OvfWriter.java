@@ -591,6 +591,9 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeStartElement(RASD_URI, "Name");
             _writer.writeRaw(iface.getName());
             _writer.writeEndElement();
+            _writer.writeStartElement(RASD_URI, "ElementName");
+            _writer.writeRaw(iface.getName());
+            _writer.writeEndElement();
 
             writeMacAddress(iface);
 
