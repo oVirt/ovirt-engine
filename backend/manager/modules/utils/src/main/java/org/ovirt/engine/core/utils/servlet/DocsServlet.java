@@ -62,7 +62,7 @@ public class DocsServlet extends FileServlet {
                 String redirect = getServletContext().getContextPath() + request.getServletPath()
                         + replaceLocaleWithUSLocale(request.getPathInfo(), locale);
                 if (!languagePageShown) {
-                    setLangPageShown(response, true);
+                    setLangPageShown(request, response, true);
                     request.setAttribute(LocaleFilter.LOCALE, locale);
                     request.setAttribute(ENGLISH_HREF, redirect);
                     final ServletContext forwardContext = getServletContext();
@@ -106,9 +106,9 @@ public class DocsServlet extends FileServlet {
         return result;
     }
 
-    private void setLangPageShown(HttpServletResponse response, boolean value) {
+    private void setLangPageShown(HttpServletRequest request, HttpServletResponse response, boolean value) {
         Cookie cookie = new Cookie(LANG_PAGE_SHOWN, Boolean.toString(value));
-        cookie.setSecure(true);
+        cookie.setSecure("https".equalsIgnoreCase(request.getScheme()));
         // Scope this cookie to the (root) application context URL
         cookie.setPath(getServletContext().getContextPath());
         cookie.setHttpOnly(true);

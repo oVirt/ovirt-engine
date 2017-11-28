@@ -9,7 +9,6 @@ import java.util.Properties;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -62,21 +61,20 @@ public class LocaleFilter implements Filter {
             final FilterChain chain) throws IOException, ServletException {
         Locale locale = determineLocale((HttpServletRequest) request);
         request.setAttribute(LOCALE, locale);
-        setCookie((HttpServletResponse) response, request.getServletContext(), locale);
+        setCookie((HttpServletRequest) request, (HttpServletResponse) response, locale);
         chain.doFilter(request, response);
     }
 
     /**
      * Add the {@code Locale} cookie to the response.
+     * @param request The {@code HttpServletRequest}
      * @param response The {@code HttpServletResponse}
-     * @param servletContext The {@code ServletContext} to get the request path from.
      * @param userLocale The {@code Locale} to put in the cookie.
      */
-    private void setCookie(final HttpServletResponse response, final ServletContext servletContext,
-            final Locale userLocale) {
+    private void setCookie(final HttpServletRequest request, final HttpServletResponse response, final Locale userLocale) {
         // Detected locale doesn't match the default locale, set a cookie.
         Cookie cookie = new Cookie(LocaleFilter.LOCALE, userLocale.toString());
-        cookie.setSecure(true);
+        cookie.setSecure("https".equalsIgnoreCase(request.getScheme()));
         cookie.setPath(ROOT_PATH);
         cookie.setMaxAge(Integer.MAX_VALUE); // Doesn't expire.
         cookie.setHttpOnly(true);

@@ -75,7 +75,7 @@ public class InteractiveAuthServlet extends HttpServlet {
                     if (StringUtils.isNotEmpty(ssoContext.getSsoDefaultProfile()) &&
                             Arrays.stream(request.getCookies()).noneMatch(c -> c.getName().equals("profile"))) {
                         Cookie cookie = new Cookie("profile", ssoContext.getSsoDefaultProfile());
-                        cookie.setSecure(true);
+                        cookie.setSecure("https".equalsIgnoreCase(request.getScheme()));
                         response.addCookie(cookie);
                     }
                     redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_FORM_URI;
@@ -102,7 +102,7 @@ public class InteractiveAuthServlet extends HttpServlet {
         try {
             log.debug("Authenticating user using credentials");
             Cookie cookie = new Cookie("profile", userCredentials.getProfile());
-            cookie.setSecure(true);
+            cookie.setSecure("https".equalsIgnoreCase(request.getScheme()));
             response.addCookie(cookie);
             AuthenticationUtils.handleCredentials(
                     ssoContext,
