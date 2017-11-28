@@ -376,7 +376,7 @@ Requires:	openssh
 Requires:	vdsm-jsonrpc-java >= 1.4.13
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
-Requires:	ovirt-host-deploy-java >= 1.6.3
+Requires:	ovirt-host-deploy-java >= 1.7.3
 Requires:	python-jinja2
 Requires(pre):	shadow-utils
 Requires(post):		systemd
@@ -562,7 +562,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common >= %{version}-%{release}
 Requires:	tar
 Requires:	bzip2
 Requires:	xz
-Requires:	otopi >= 1.7.1
+Requires:	otopi >= 1.7.6
 %if %{ovirt_rh_postgresql95}
 Requires:	rh-postgresql95-postgresql
 %else
@@ -633,7 +633,7 @@ Summary:	%{ovirt_product_name_short} health check bundler.
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
 Requires:	makeself >= 2.2
-Requires:	otopi-devtools >= 1.7.1
+Requires:	otopi-devtools >= 1.7.6
 
 %description health-check-bundler
 A utility for creating a bundle script that runs a health check.
