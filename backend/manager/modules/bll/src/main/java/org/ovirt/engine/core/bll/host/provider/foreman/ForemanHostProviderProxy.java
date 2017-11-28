@@ -165,6 +165,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             hostgroup.setEnvironmentName(hostGroup.getEnvironmentName());
             hostgroup.setPtableName(hostGroup.getPtableName());
             hostgroup.setMediumName(hostGroup.getMediumName());
+            hostgroup.setPuppetCaProxyId(hostGroup.getPuppetCaProxyId());
+            hostgroup.setPuppetProxyId(hostGroup.getPuppetProxyId());
             hostGroups.put(hostGroup.getId(), hostgroup);
         }
         List<ExternalHostGroup> ret = new ArrayList<>(foremanHostGroups.size());
@@ -317,6 +319,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "        \"operatingsystem_id\": \"" + hg.getOperatingsystemId() + "\",\n" +
                 "        \"medium_id\": \"" + hg.getMediumId() + "\",\n" +
                 "        \"ptable_id\": \"" + hg.getPtableId() + "\",\n" +
+                "        \"puppet_proxy_id\": \"" + hg.getPuppetProxyId() + "\",\n" +
+                "        \"puppet_ca_proxy_id\": \"" + hg.getPuppetCaProxyId() + "\",\n" +
                 "        \"root_pass\": \"" + rootPassword + "\",\n" +
                 "        \"host_parameters_attributes\": [\n" +
                 "           {\n" +

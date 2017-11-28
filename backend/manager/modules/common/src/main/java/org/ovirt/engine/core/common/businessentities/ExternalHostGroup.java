@@ -16,6 +16,8 @@ public class ExternalHostGroup implements ExternalEntityBase {
     private int ptableId;
     private int mediumId;
     private int architectureId;
+    private int puppetProxyId;
+    private int puppetCaProxyId;
     private Map<String, String> parameters;
     private String ancestry;
     private String subnetName;
@@ -176,5 +178,21 @@ public class ExternalHostGroup implements ExternalEntityBase {
 
     public void setMediumName(String mediumName) {
         this.mediumName = mediumName;
+    }
+
+    public void setPuppetProxyId(int puppetProxyId) {
+        this.puppetProxyId = puppetProxyId;
+    }
+
+    public void setPuppetCaProxyId(int puppetCaProxyId) {
+        this.puppetCaProxyId = puppetCaProxyId;
+    }
+
+    public int getPuppetProxyId() {
+        return puppetProxyId;
+    }
+
+    public int getPuppetCaProxyId() {
+        return puppetCaProxyId;
     }
 }
