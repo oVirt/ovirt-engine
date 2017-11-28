@@ -169,7 +169,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 // We should get only one entity, since we fetched the entity with a specific Storage Domain
                 ovfEntityData = ovfEntityList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmTemplateFromOvf(ovfEntityData.getOvfData());
-                mapCluster(fullEntityOvfData);
+                if (Guid.isNullOrEmpty(getParameters().getClusterId())) {
+                    mapCluster(fullEntityOvfData);
+                }
                 vmTemplateFromConfiguration.setClusterId(getParameters().getClusterId());
                 setVmTemplate(vmTemplateFromConfiguration);
                 setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));

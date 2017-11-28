@@ -156,14 +156,15 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 ovfEntityData = ovfEntityDataList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
                 vmFromConfiguration = fullEntityOvfData.getVm();
-                Cluster cluster =
-                        drMappingHelper.getMappedCluster(fullEntityOvfData.getClusterName(),
-                                vmFromConfiguration.getId(),
-                                getParameters().getClusterMap());
-                if (cluster != null) {
-                    getParameters().setClusterId(cluster.getId());
+                if (Guid.isNullOrEmpty(getParameters().getClusterId())) {
+                    Cluster cluster =
+                            drMappingHelper.getMappedCluster(fullEntityOvfData.getClusterName(),
+                                    vmFromConfiguration.getId(),
+                                    getParameters().getClusterMap());
+                    if (cluster != null) {
+                        getParameters().setClusterId(cluster.getId());
+                    }
                 }
-
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 mapVnicProfiles(vmFromConfiguration.getInterfaces());
                 getParameters().setVm(vmFromConfiguration);
