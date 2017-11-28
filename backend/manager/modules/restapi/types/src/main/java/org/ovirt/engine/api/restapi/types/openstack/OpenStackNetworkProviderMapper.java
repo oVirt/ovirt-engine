@@ -95,6 +95,9 @@ public class OpenStackNetworkProviderMapper {
         if (model.isSetReadOnly()) {
             additionalProperties.setReadOnly(model.isReadOnly());
         }
+        if (model.isSetAutoSync()) {
+            additionalProperties.setAutoSync(model.isAutoSync());
+        }
         entity.setAdditionalProperties(additionalProperties);
         return entity;
     }
@@ -157,6 +160,7 @@ public class OpenStackNetworkProviderMapper {
             if (additionalProperties.getAgentConfiguration() != null) {
                 model.setAgentConfiguration(map(additionalProperties.getAgentConfiguration(), null));
             }
+            model.setAutoSync(additionalProperties.getAutoSync());
         }
         return model;
     }

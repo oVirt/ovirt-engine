@@ -146,7 +146,8 @@ class Plugin(plugin.PluginBase):
                     v_auth_password:=%(auth_password)s,
                     v_custom_properties:=%(custom_properties)s,
                     v_plugin_type:=%(plugin_type)s,
-                    v_auth_url:=%(auth_url)s
+                    v_auth_url:=%(auth_url)s,
+                    v_auto_sync:=%(auto_sync)s
                 )
             """,
             args=dict(
@@ -160,7 +161,8 @@ class Plugin(plugin.PluginBase):
                 auth_password=password,
                 custom_properties=None,
                 plugin_type='OVIRT_PROVIDER_OVN',
-                auth_url='https://%s:35357/v2.0/' % fqdn
+                auth_url='https://%s:35357/v2.0/' % fqdn,
+                auto_sync='TRUE'
             ),
         )
 

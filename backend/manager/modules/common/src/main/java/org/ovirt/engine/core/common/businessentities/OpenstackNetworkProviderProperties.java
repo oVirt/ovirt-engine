@@ -23,6 +23,16 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
         this.readOnly = entity;
     }
 
+    private boolean autoSync;
+
+    public boolean getAutoSync() {
+        return autoSync;
+    }
+
+    public void setAutoSync(boolean autoSync) {
+        this.autoSync = autoSync;
+    }
+
     public String getPluginType() {
         return pluginType;
     }

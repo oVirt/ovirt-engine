@@ -42,6 +42,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         String tenantName = null;
         String pluginType = null;
         boolean readOnly = false;
+        boolean autoSync = false;
         AgentConfiguration agentConfiguration = null;
         AdditionalProperties additionalProperties = null;
 
@@ -55,6 +56,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
                 tenantName = networkProperties.getTenantName();
                 pluginType = networkProperties.getPluginType();
                 agentConfiguration = networkProperties.getAgentConfiguration();
+                autoSync = networkProperties.getAutoSync();
                 break;
             case OPENSTACK_IMAGE:
                 OpenStackImageProviderProperties imageProperties =
@@ -82,6 +84,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
         mapper.addValue("agent_configuration", SerializationFactory.getSerializer().serialize(agentConfiguration));
         mapper.addValue("additional_properties", SerializationFactory.getSerializer().serialize(additionalProperties));
         mapper.addValue("read_only", readOnly);
+        mapper.addValue("auto_sync", autoSync);
         return mapper;
     }
 
@@ -151,6 +154,7 @@ public class ProviderDaoImpl extends DefaultGenericDao<Provider<?>, Guid> implem
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties networkProperties = new OpenstackNetworkProviderProperties();
                 networkProperties.setReadOnly(rs.getBoolean("read_only"));
+                networkProperties.setAutoSync(rs.getBoolean("auto_sync"));
                 networkProperties.setTenantName(rs.getString("tenant_name"));
                 networkProperties.setPluginType(rs.getString("plugin_type"));
                 networkProperties.setAgentConfiguration(SerializationFactory.getDeserializer()
