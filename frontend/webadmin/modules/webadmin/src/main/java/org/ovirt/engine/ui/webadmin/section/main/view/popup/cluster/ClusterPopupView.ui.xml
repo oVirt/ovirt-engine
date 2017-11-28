@@ -166,6 +166,10 @@
             margin: 5px 0px 15px 0px;
             padding: 15px 0px 15px 0px;
         }
+
+        .max95Width {
+            max-width: 95%;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="860px" height="560px">
@@ -454,7 +458,7 @@
                             </b:Row>
                             <b:Row>
                               <b:Column size="SM_7">
-                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft}" label="{constants.skipFencingWhenConnectivityBroken}"/>
+                                <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft} {style.max95Width}" label="{constants.skipFencingWhenConnectivityBroken}"/>
                                 <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" addStyleNames="{style.floatLeft}" />
                               </b:Column>
                               <b:Column size="SM_5">
