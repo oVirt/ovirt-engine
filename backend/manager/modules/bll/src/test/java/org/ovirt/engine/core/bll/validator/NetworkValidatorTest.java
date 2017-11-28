@@ -82,11 +82,9 @@ public class NetworkValidatorTest {
         doReturn(networkDao).when(validator).getNetworkDao();
 
         // mock some commonly used Daos
-        when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
 
         // mock their getters
-        when(dataCenterDao.get(any())).thenReturn(dataCenter);
         when(networkDao.getAllForDataCenter(any())).thenReturn(networks);
     }
 
