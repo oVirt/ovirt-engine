@@ -40,6 +40,14 @@ public class XmlTextWriter {
         }
     }
 
+    public void writeDefaultNamespace(String uri) {
+        try {
+            writer.writeDefaultNamespace(uri);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to write default namespace", e);
+        }
+    }
+
     public void writeStartDocument(boolean b) {
         // nothing, see ctor
     }
@@ -55,6 +63,14 @@ public class XmlTextWriter {
     public void writeAttributeString(String namespaceURI, String localName, String value) {
         try {
             writer.writeAttribute(namespaceURI, localName, value);
+        } catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to write attribute", e);
+        }
+    }
+
+    public void writeAttributeString(String prefix, String namespaceURI, String localName, String value) {
+        try {
+            writer.writeAttribute(prefix, namespaceURI, localName, value);
         } catch (XMLStreamException e) {
             throw new RuntimeException("Failed to write attribute", e);
         }
