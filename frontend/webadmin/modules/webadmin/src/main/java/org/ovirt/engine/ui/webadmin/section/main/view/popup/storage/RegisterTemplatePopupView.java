@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
+import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterTemplateModel;
@@ -102,6 +104,15 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplat
     protected void createInfoPanel(RegisterTemplateModel model) {
         registerEntityInfoPanel = new RegisterTemplateInfoPanel(model);
         entityInfoContainer.add(registerEntityInfoPanel);
+    }
+
+    @Override
+    protected UiCommandButton createCommandButton(String label, String uniqueId) {
+        if (RegisterTemplateModel.VNIC_PROFILE_MAPPING_COMMAND.equals(uniqueId)) {
+            return new LeftAlignedUiCommandButton(label);
+        } else {
+            return super.createCommandButton(label, uniqueId);
+        }
     }
 
     @Override

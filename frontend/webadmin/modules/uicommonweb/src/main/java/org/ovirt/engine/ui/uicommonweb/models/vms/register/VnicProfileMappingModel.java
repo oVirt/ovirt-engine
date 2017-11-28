@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VnicProfileMappingModel extends Model {
 
@@ -153,5 +154,9 @@ public class VnicProfileMappingModel extends Model {
 
     public ListModel<VnicProfileMappingItem> getMappingModelRows() {
         return mappingModelRows;
+    }
+
+    @Override public String getTitle() {
+        return ConstantsManager.getInstance().getConstants().vnicProfilesMapping();
     }
 }
