@@ -16,7 +16,6 @@ import org.ovirt.engine.api.model.RegistrationLunMapping;
 import org.ovirt.engine.api.model.RegistrationRoleMapping;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
-import org.ovirt.engine.api.model.VnicProfileMapping;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainVmDiskAttachmentsResource;
@@ -73,8 +72,8 @@ public class BackendStorageDomainVmResource
 
     @Override
     public Response register(Action action) {
+        BackendVnicProfileHelper.validateVnicMappings(this, action);
         if (action.isSetRegistrationConfiguration()) {
-            validateVnicMappings(action);
             validateClusterMappings(action);
             validateRoleMappings(action);
             validateDomainMappings(action);
@@ -253,25 +252,6 @@ public class BackendStorageDomainVmResource
         }
         if (!mapping.isSetTo()) {
             badRequest("Lun is missing from destination.");
-        }
-    }
-
-    private void validateVnicMappings(Action action) {
-        if (action.isSetVnicProfileMappings() && action.getVnicProfileMappings().isSetVnicProfileMappings()) {
-            action.getVnicProfileMappings().getVnicProfileMappings().forEach(this::validateVnicProfileMapping);
-        }
-    }
-
-    private void validateVnicProfileMapping(VnicProfileMapping mapping) {
-        if (!mapping.isSetSourceNetworkName()) {
-            badRequest("vNic profile mapping is missing source network name.");
-        }
-        if (!mapping.isSetSourceNetworkProfileName()) {
-            badRequest("vNic profile mapping is missing source network profile name.");
-        }
-        if (mapping.isSetTargetVnicProfile()
-                && mapping.getTargetVnicProfile().isSetId()) {
-            asGuid(mapping.getTargetVnicProfile().getId());
         }
     }
 

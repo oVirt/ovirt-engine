@@ -9,6 +9,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainTemplateResource;
 import org.ovirt.engine.api.restapi.types.ExternalRegistrationConfigurationMapper;
+import org.ovirt.engine.api.restapi.types.ExternalVnicProfileMappingMapper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
@@ -54,6 +55,7 @@ public class BackendStorageDomainTemplateResource
 
     @Override
     public Response register(Action action) {
+        BackendVnicProfileHelper.validateVnicMappings(this, action);
         ImportVmTemplateFromConfParameters params = new ImportVmTemplateFromConfParameters();
         ExternalRegistrationConfigurationMapper.mapFromModel(action.getRegistrationConfiguration(), params);
         params.setContainerId(guid);
@@ -62,6 +64,7 @@ public class BackendStorageDomainTemplateResource
             params.setClusterId(getClusterId(action));
         }
         params.setImagesExistOnTargetStorageDomain(true);
+        params.setExternalVnicProfileMappings(ExternalVnicProfileMappingMapper.mapFromModel(action.getVnicProfileMappings()));
 
         if (action.isSetClone()) {
             params.setImportAsNewEntity(action.isClone());

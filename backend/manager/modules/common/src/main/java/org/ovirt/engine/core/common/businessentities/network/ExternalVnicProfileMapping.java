@@ -16,8 +16,14 @@ public class ExternalVnicProfileMapping implements Serializable {
     public ExternalVnicProfileMapping(String externalNetworkName,
             String externalNetworkProfileName,
             Guid vnicProfileId) {
-        this.externalNetworkName = externalNetworkName;
-        this.externalNetworkProfileName = externalNetworkProfileName;
+        /**
+         * In the body of a REST request (e.g. register vm\template requests) an '<Empty>' target vNic profile
+         * has "" for network and profile name while in {@link VmNetworkInterface} these fields are denoted with null.
+         * So map the empty string to null so that comparisons of the two will succeed.
+         * @see ExternalVnicProfileMappingFinder#findMappingEntry
+         */
+        this.externalNetworkName = "".equals(externalNetworkName) ? null : externalNetworkName;
+        this.externalNetworkProfileName = "".equals(externalNetworkProfileName) ? null : externalNetworkProfileName;
         this.vnicProfileId = vnicProfileId;
     }
 
