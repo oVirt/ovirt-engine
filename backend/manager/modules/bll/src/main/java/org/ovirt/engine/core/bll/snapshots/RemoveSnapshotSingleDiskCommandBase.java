@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
@@ -75,7 +76,8 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         }
     }
 
-    protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList, VdcActionType actionType) {
+    protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList, VdcActionType actionType,
+                                                                 VdcActionParametersBase.EndProcedure endProcedure) {
         DestroyImageParameters parameters = new DestroyImageParameters(
                 getVdsId(),
                 getVmId(),
@@ -86,6 +88,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
                 getDiskImage().isWipeAfterDelete(),
                 false);
         parameters.setParentCommand(actionType);
+        parameters.setEndProcedure(endProcedure);
         parameters.setParentParameters(getParameters());
         return parameters;
     }
@@ -164,9 +167,10 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
     protected Pair<VdcActionType, DestroyImageParameters> buildDestroyCommand(VdcActionType actionToRun,
                                                                               VdcActionType parentCommand,
-                                                                              List<Guid> images) {
+                                                                              List<Guid> images,
+                                                                              VdcActionParametersBase.EndProcedure endProcedure) {
         return new Pair<>(actionToRun, buildDestroyImageParameters(getActiveDiskImage().getId(),
-                images, parentCommand));
+                images, parentCommand, endProcedure));
     }
 
     private void handleForwardMerge(DiskImage topImage, DiskImage baseImage, DiskImage imageFromVdsm) {

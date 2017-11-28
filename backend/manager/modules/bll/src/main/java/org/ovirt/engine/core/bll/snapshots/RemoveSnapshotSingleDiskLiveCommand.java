@@ -113,12 +113,14 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 getParameters().setMergeStatusReturnValue(synthesizeMergeStatusReturnValue());
             }
             nextCommand = buildDestroyCommand(VdcActionType.DestroyImage, getActionType(),
-                    new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()));
+                    new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()),
+                    VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK);
             break;
         case DESTROY_IMAGE_CHECK:
             nextCommand = buildDestroyCommand(VdcActionType.DestroyImageCheck, getActionType(),
-                    new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()));
+                    new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()),
+                    VdcActionParametersBase.EndProcedure.PARENT_MANAGED);
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
             break;
         case COMPLETE:

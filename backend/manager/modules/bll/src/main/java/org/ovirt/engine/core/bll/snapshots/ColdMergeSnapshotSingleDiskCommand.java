@@ -83,12 +83,12 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
                 break;
             case DESTROY_IMAGE:
                 nextCommand = buildDestroyCommand(VdcActionType.DestroyImage, getActionType(),
-                        Collections.singletonList(getDestinationImageId()));
+                        Collections.singletonList(getDestinationImageId()), VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK);
                 break;
             case DESTROY_IMAGE_CHECK:
                 nextCommand = buildDestroyCommand(VdcActionType.DestroyImageCheck, getActionType(),
-                        Collections.singletonList(getDestinationImageId()));
+                        Collections.singletonList(getDestinationImageId()), VdcActionParametersBase.EndProcedure.PARENT_MANAGED);
                 setCommandStatus(CommandStatus.SUCCEEDED);
                 break;
         }
