@@ -792,6 +792,7 @@ common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/ope
 common/com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
 common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
 common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
+common/com/netflix/hystrix/main/hystrix-core.jar hystrix/hystrix-core.jar
 common/io/reactivex/rxjava/main/rxjava.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
