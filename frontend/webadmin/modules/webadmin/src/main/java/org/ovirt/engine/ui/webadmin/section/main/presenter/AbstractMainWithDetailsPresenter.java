@@ -172,6 +172,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         if (hasActionPanelPresenterWidget()) {
             getTable().setActionMenus(getActionPanelPresenterWidget().getActionButtons());
         }
+        breadCrumbsPresenterWidget.rebuildBreadCrumbs();
         getView().resizeToFullHeight();
     }
 
@@ -179,7 +180,6 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
     protected void onHide() {
         getTable().hideContextMenu();
         getView().resizeToFullHeight();
-        breadCrumbsPresenterWidget.rebuildBreadCrumbs();
     }
 
     /**

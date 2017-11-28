@@ -241,6 +241,8 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
         labelSpan.addStyleName(PatternflyStyles.LIST_GROUP_ITEM_VALUE);
         menuAnchor.add(labelSpan);
         newMenuItem.add(menuAnchor);
+        // Insert the new menu item into the map.
+        hrefToGroupLabelMap.put(href, newMenuItem);
         menuListGroup.insert(newMenuItem, index);
     }
 
