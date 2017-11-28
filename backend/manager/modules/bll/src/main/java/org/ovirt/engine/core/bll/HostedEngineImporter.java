@@ -154,9 +154,7 @@ public class HostedEngineImporter {
         vm.setClusterArch(cluster.getArchitecture());
         vm.setVmCreationDate(new Date());
         vm.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
-        vm.setVmOs(osRepository.getLinuxOss().stream()
-                .sorted()
-                .findFirst().get());
+        osRepository.getLinuxOss().stream().sorted().findFirst().ifPresent(vm::setVmOs);
         vm.setPriority(1);
 
         vmHandler.updateDefaultTimeZone(vm.getStaticData());
