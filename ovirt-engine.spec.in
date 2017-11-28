@@ -796,6 +796,7 @@ common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantu
 common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
 common/com/netflix/config/main/archaius-core.jar archaius/archaius-core.jar
 common/com/netflix/hystrix/main/hystrix-core.jar hystrix/hystrix-core.jar
+common/com/netflix/hystrix/contrib/main/hystrix-metrics-event-stream.jar hystrix/hystrix-metrics-event-stream.jar
 common/io/reactivex/rxjava/main/rxjava.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
