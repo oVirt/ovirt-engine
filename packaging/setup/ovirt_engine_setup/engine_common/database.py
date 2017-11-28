@@ -587,6 +587,7 @@ class OvirtUtils(base.Base):
                         pg_proc.pronamespace=ns.oid
                     )
                 WHERE ns.nspname = 'public'
+                AND proname NOT LIKE 'uuid_%%'
             """,
 
             'SCHEMA': """

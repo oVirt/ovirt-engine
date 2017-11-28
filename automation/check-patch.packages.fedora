@@ -7,6 +7,7 @@ net-tools
 otopi
 postgresql-jdbc
 postgresql-server
+postgresql-contrib
 pyflakes
 python2-mock
 python2-psycopg2

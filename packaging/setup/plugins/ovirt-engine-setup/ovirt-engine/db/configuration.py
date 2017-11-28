@@ -22,6 +22,7 @@ from otopi import plugin
 from otopi import transaction
 from otopi import util
 
+from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
@@ -149,6 +150,25 @@ class Plugin(plugin.PluginBase):
             },
         )
 
+    # Checks if uuid-ossp extension was installed in DB
+    def _uuidOsspInstalled(self):
+        dbstatement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
+        statement = """
+            select count(*) as count
+            from pg_available_extensions
+            where name = 'uuid-ossp'
+            and installed_version IS NOT NULL
+        """
+        return dbstatement.execute(
+            statement=statement,
+            args=None,
+            ownConnection=True,
+            transaction=False,
+        )[0]['count'] != 0
+
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
@@ -260,6 +280,54 @@ class Plugin(plugin.PluginBase):
             raise RuntimeError(
                 database.getInvalidConfigItemsMessage(invalid_config_items)
             )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_EARLY_MISC,
+        condition=lambda self: (
+            (
+                self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] or
+                not self._setupOwnsDB()
+            ) and
+            not self._uuidOsspInstalled()
+        ),
+    )
+    def checkUuidOsspExtensionForRemoteDbOrDevEnv(self):
+        self.dialog.note(
+            '\nPostgreSQL uuid-ossp extension is not installed in'
+            '  the engine :database\n'
+            'Please run the following commands from psql prompt'
+            '  with database administrator privileges and run'
+            '  engine-setup again:\n'
+            'DROP FUNCTION IF EXISTS uuid_generate_v1();\n'
+            'CREATE EXTENSION "uuid-ossp";\n'
+            'For ''DROP'' you should connect to the engine database,\n'
+            '  even though you use admin user.'
+        )
+        raise RuntimeError(
+            "uuid-ossp extension is not installed on database"
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        before=(
+            oengcommcons.Stages.DB_SCHEMA,
+        ),
+        after=(
+            oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
+        ),
+    )
+    def installUuidOsspExtensionForLocalDb(self):
+        if (
+            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] and
+            self._setupOwnsDB() and
+                not self._uuidOsspInstalled()
+        ):
+            self.logger.info(
+                _(
+                    'Installing PostgreSQL uuid-ossp extension into database'
+                )
+            )
+            self._provisioning.installUuidOsspExtension()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

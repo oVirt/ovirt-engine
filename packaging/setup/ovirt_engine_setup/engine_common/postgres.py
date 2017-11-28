@@ -546,6 +546,8 @@ class Provisioning(base.Base):
 
         self.restartPG()
         self._waitForDatabase()
+        # We should install the UUID extension when a new db is created
+        self.installUuidOsspExtension()
 
     def createUser(self):
         if not self.supported():
@@ -650,6 +652,62 @@ class Provisioning(base.Base):
                 conf_f[f] = ret[0][f]
 
         return conf_f
+
+    # Install uuid-ossp extension on DB using DB admin role
+    def installUuidOsspExtension(self):
+        with AlternateUser(
+            user=self.environment[
+                oengcommcons.SystemEnv.USER_POSTGRES
+            ],
+        ):
+            # uuid-ossp extension needs to be installed into engine db, but
+            # only administrator user is allowed to perform this, so we need
+            # to use 'postgres' user
+            usockenv = {
+                self._dbenvkeys[DEK.HOST]: '',  # usock
+                self._dbenvkeys[DEK.PORT]: '',
+                self._dbenvkeys[DEK.SECURED]: False,
+                self._dbenvkeys[DEK.HOST_VALIDATION]: False,
+                self._dbenvkeys[DEK.USER]: 'postgres',
+                self._dbenvkeys[DEK.PASSWORD]: '',
+                self._dbenvkeys[DEK.DATABASE]: _ind_env(self, DEK.DATABASE)
+            }
+            self._waitForDatabase(
+                environment=usockenv,
+            )
+            dbstatement = database.Statement(
+                dbenvkeys=self._dbenvkeys,
+                environment=usockenv,
+            )
+            extensionInstalled = dbstatement.execute(
+                statement="""
+                    select count(*) as count
+                    from pg_available_extensions
+                    where name = 'uuid-ossp'
+                    and installed_version IS NOT NULL
+                """,
+                args=None,
+                ownConnection=True,
+                transaction=False,
+            )[0]['count'] != 0
+
+            if (not extensionInstalled):
+                dbstatement.execute(
+                    statement="""
+                        drop function if exists uuid_generate_v1()
+                    """,
+                    args=None,
+                    ownConnection=True,
+                    transaction=False,
+                )
+                dbstatement.execute(
+                    statement="""
+                        create extension "uuid-ossp"
+                    """,
+                    args=None,
+                    ownConnection=True,
+                    transaction=False,
+                )
 
 
 class DBMSUpgradeTransaction(transaction.TransactionElement):

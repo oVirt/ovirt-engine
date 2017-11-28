@@ -51,6 +51,10 @@ su - postgres -c "$PGENV psql -h $HOST -p $PORT -d template1 -c \"create role en
 su - postgres -c "$PGENV psql -h $HOST -p $PORT -d template1 -c \"ALTER ROLE engine WITH login\" || \:"
 su - postgres -c "$PGENV dropdb -h $HOST -p $PORT engine || \:"
 su - postgres -c "$PGENV psql -h $HOST -p $PORT -d template1 -c \"create database ${DB_NAME} owner engine;\""
+su - postgres -c "$PGENV psql -h $HOST -p $PORT -d ${DB_NAME} << __EOF__
+create extension \"uuid-ossp\";
+__EOF__
+"
 
 $PGENV /usr/bin/bash -c "PGPASSWORD=engine ./packaging/dbscripts/schema.sh -c apply -d ${DB_NAME} -u engine -s $HOST -p $PORT"
 

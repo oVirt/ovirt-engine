@@ -425,6 +425,7 @@ LANGUAGE plpgsql;
         INNER JOIN pg_namespace ns
             ON (pg_proc.pronamespace = ns.oid)
         WHERE ns.nspname = 'public'
+        AND proname NOT LIKE 'uuid_%'
         ORDER BY proname;
     END;$PROCEDURE$
 

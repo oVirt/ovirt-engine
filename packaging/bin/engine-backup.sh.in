@@ -1364,9 +1364,9 @@ restoreDB() {
 language "plpgsql" already exists
 must be owner of language plpgsql
 must be owner of extension plpgsql
+must be owner of extension uuid-ossp
 #
-# older versions of dwh used uuid-ossp, which requires special privs,
-# is not used anymore, and emits the following errors for normal users.
+# engine uses uuid-ossp PG extension, which requires special privs,
 permission denied for language c
 function public.uuid_generate_v1\(\) does not exist
 function public.uuid_generate_v1mc\(\) does not exist

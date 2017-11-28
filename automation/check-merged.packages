@@ -8,5 +8,6 @@ git
 maven
 java-1.8.0-openjdk-devel
 rh-postgresql95-postgresql-server
+rh-postgresql95-postgresql-contrib
 postgresql-jdbc
 net-tools

@@ -266,8 +266,10 @@ Requires:	yum-plugin-versionlock
 
 %if %{ovirt_rh_postgresql95}
 Requires:	rh-postgresql95-postgresql-server
+Requires:	rh-postgresql95-postgresql-contrib
 %else
 Requires:	postgresql-server >= 9.5
+Requires:	postgresql-contrib >= 9.5
 %endif
 
 Requires:	openstack-java-cinder-client >= %{openstack_java_version}
@@ -441,8 +443,10 @@ Requires:	ovirt-imageio-proxy-setup
 Requires:	openssh
 %if %{ovirt_rh_postgresql95}
 Requires:       rh-postgresql95-postgresql-server
+Requires:       rh-postgresql95-postgresql-contrib
 %else
 Requires:       postgresql-server >= 9.5
+Requires:       postgresql-contrib >= 9.5
 %endif
 Conflicts:	%{name} < 4.1.7
 
