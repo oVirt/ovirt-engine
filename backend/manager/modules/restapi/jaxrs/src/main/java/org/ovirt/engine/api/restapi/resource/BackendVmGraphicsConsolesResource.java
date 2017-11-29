@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +53,7 @@ public class BackendVmGraphicsConsolesResource
             // from devices (e.g. what is configured on the VM)
             List<GraphicsType> graphicsTypes = DisplayHelper.getGraphicsTypesForEntity(this, guid, true);
 
-            graphicsTypeToGraphicsInfo = new HashMap<>();
+            graphicsTypeToGraphicsInfo = new EnumMap<>(GraphicsType.class);
             for (GraphicsType type : graphicsTypes) {
                 graphicsTypeToGraphicsInfo.put(type, null);
             }
