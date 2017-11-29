@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -287,12 +286,29 @@ implements QuotaStorageDependent {
     @Override
     protected void addVmInterfaces() {
         super.addVmInterfaces();
-        for (VmNetworkInterface iface : getVm().getInterfaces()) {
-            getVmDeviceUtils().addInterface(getVmId(), iface.getId(), iface.isPlugged(), false);
-        }
+        addNetworkInterfaceDevices();
     }
 
-    private Guid createDisk(DiskImage image, boolean isBoot) {
+    protected void addNetworkInterfaceDevices() {
+        getVm().getInterfaces().forEach(iface
+                -> getVmDeviceUtils().addInterface(getVmId(), iface.getId(), iface.isPlugged(), false));
+    }
+
+    protected Guid createDisk(DiskImage image, boolean isBoot) {
+
+        ActionReturnValue actionReturnValue =
+                runInternalActionWithTasksContext(ActionType.AddDisk, buildAddDiskParameters(image, isBoot));
+
+        if (!actionReturnValue.getSucceeded()) {
+            throw new EngineException(actionReturnValue.getFault().getError(),
+                    "Failed to create disk!");
+        }
+
+        getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
+        return actionReturnValue.getActionReturnValue();
+    }
+
+    protected AddDiskParameters buildAddDiskParameters(DiskImage image, boolean isBoot) {
         image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
 
         AddDiskParameters diskParameters = new AddDiskParameters(new DiskVmElement(null, getVmId()), image);
@@ -307,16 +323,7 @@ implements QuotaStorageDependent {
         dve.setBoot(isBoot);
         diskParameters.setDiskVmElement(dve);
 
-        ActionReturnValue actionReturnValue =
-                runInternalActionWithTasksContext(ActionType.AddDisk, diskParameters);
-
-        if (!actionReturnValue.getSucceeded()) {
-            throw new EngineException(actionReturnValue.getFault().getError(),
-                    "Failed to create disk!");
-        }
-
-        getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
-        return actionReturnValue.getActionReturnValue();
+        return diskParameters;
     }
 
     private void checkImageTarget() {
@@ -422,10 +429,11 @@ implements QuotaStorageDependent {
         setSucceeded(true);
     }
 
-    private void removeVm() {
+    protected void removeVm() {
         runInternalActionWithTasksContext(
                 ActionType.RemoveVm,
-                new RemoveVmParameters(getVmId(), true));
+                new RemoveVmParameters(getVmId(), true),
+                getLock());
     }
 
     protected List<DiskImage> getDisks() {
