@@ -48,13 +48,6 @@ public interface ColumnController<T> {
     void setColumnVisible(Column<T, ?> column, boolean visible);
 
     /**
-     * Persist the visible value.
-     * @param column The column to persist the visibility of.
-     * @param The visibility of the column.
-     */
-    void persistColumnVisibility(Column<T, ?> column, boolean visible);
-
-    /**
      * Swap position of given columns.
      * <p>
      * Does nothing unless both columns are present.

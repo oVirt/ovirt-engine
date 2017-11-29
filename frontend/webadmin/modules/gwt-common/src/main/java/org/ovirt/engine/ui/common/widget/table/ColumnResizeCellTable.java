@@ -69,8 +69,6 @@ import com.google.gwt.view.client.ProvidesKey;
 public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizableColumns<T>, ColumnController<T>,
     HasCleanup {
 
-    private static final String GRID_HIDDEN = "grid-hidden"; // $NON-NLS-1$
-
     /**
      * {@link #emptyNoWidthColumn} header that supports handling context menu events.
      */
@@ -385,7 +383,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
                 ((ResizableHeader<?>) header).setResizeEnabled(columnVisible);
             }
         }
-        if (columnResizePersistenceEnabled && !overridePersist && columnVisible) {
+        if (columnResizePersistenceEnabled && !overridePersist) {
             String persistedWidth = readColumnWidth(column);
             if (persistedWidth != null) {
                 width = persistedWidth;
@@ -393,7 +391,6 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         }
 
         super.setColumnWidth(column, width);
-        redraw();
     }
 
     private TableCellElement getHeaderCell(TableElement tableElement, int columnIndex) {
@@ -465,7 +462,6 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
             visible = columnVisibleMapOverride.get(column);
         }
 
-        visible = visible && getHiddenPersistedColumnWidth(column) == null;
         return visible;
     }
 
@@ -473,9 +469,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     public void setColumnVisible(Column<T, ?> column, boolean visible) {
         if (isColumnPresent(column)) {
             columnVisibleMapOverride.put(column, visible);
-            String columnWidth = getHiddenPersistedColumnWidth(column) != null ? getHiddenPersistedColumnWidth(column) : columnWidthMap.get(column);
-            persistColumnVisibility(column, visible);
-            ensureColumnVisible(column, null, visible, columnWidth, false);
+            ensureColumnVisible(column, null, visible, columnWidthMap.get(column), false);
         }
     }
 
@@ -601,14 +595,6 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         return null;
     }
 
-    protected String getHiddenColumnWidthKey(Column<T, ?> column) {
-        if (columnResizePersistenceEnabled) {
-            return GRID_HIDDEN + "_" + GRID_COLUMN_WIDTH_PREFIX + "_" + getGridElementId() //$NON-NLS-1$ //$NON-NLS-2$
-                + "_" + getColumnIndex(column); //$NON-NLS-1$
-        }
-        return null;
-    }
-
     protected String getGridElementId() {
         return gridController.getId();
     }
@@ -630,32 +616,6 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
             }
         }
         return null;
-    }
-
-    protected String getHiddenPersistedColumnWidth(Column<T, ?> column) {
-        String result = null;
-        if (columnResizePersistenceEnabled) {
-            String key = getHiddenColumnWidthKey(column);
-            if (key != null) {
-                result = clientStorage.getLocalItem(key);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public void persistColumnVisibility(Column<T, ?> column, boolean visible) {
-        if (columnResizePersistenceEnabled) {
-            String key = getHiddenColumnWidthKey(column);
-            if (key != null) {
-                if (!visible) {
-                    // Store the width of the column before hiding it, so we can restore it.
-                    clientStorage.setLocalItem(key, getColumnWidth(column));
-                } else {
-                    clientStorage.removeLocalItem(key);
-                }
-            }
-        }
     }
 
     protected void dontApplyResizableHeaderStyle() {

@@ -48,19 +48,6 @@ public class ClientStorageImpl implements ClientStorage {
         return (value != null) ? value : getLocalItemImpl(key);
     }
 
-    @Override
-    public void removeLocalItem(String key) {
-        removeLocalItemImpl(getPrefixedKey(key));
-    }
-
-    private void removeLocalItemImpl(String key) {
-        if (localStorage != null) {
-            localStorage.removeItem(key);
-        } else {
-            Cookies.removeCookie(key);
-        }
-    }
-
     String getLocalItemImpl(String key) {
         if (localStorage != null) {
             return localStorage.getItem(key);
