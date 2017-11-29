@@ -23,6 +23,10 @@
             margin-left: 50px !important;
         }
 
+        .message {
+            padding-left: 30px;
+        }
+
         .dialogTab {
             height: 50%;
             top: 58px;
@@ -47,7 +51,7 @@
     </ui:style>
 
     <b:Container fluid="true">
-        <b:Row>
+        <b:Row addStyleNames="{style.message}">
             <b:Column size="SM_12">
                 <g:Label ui:field="message"/>
             </b:Column>

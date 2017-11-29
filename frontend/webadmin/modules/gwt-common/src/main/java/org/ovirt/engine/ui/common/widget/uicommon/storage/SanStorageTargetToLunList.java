@@ -235,7 +235,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         vendorIdColumn.makeSortable();
-        table.addColumn(vendorIdColumn, constants.vendorIdSanStorage(), "69px"); //$NON-NLS-1$
+        table.addColumn(vendorIdColumn, constants.vendorIdSanStorage(), "70px"); //$NON-NLS-1$
 
         AbstractLunTextColumn productIdColumn = new AbstractLunTextColumn() {
             @Override
@@ -244,7 +244,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         };
         productIdColumn.makeSortable();
-        table.addColumn(productIdColumn, constants.productIdSanStorage(), "69px"); //$NON-NLS-1$
+        table.addColumn(productIdColumn, constants.productIdSanStorage(), "70px"); //$NON-NLS-1$
 
         AbstractLunTextColumn serialNumColumn = new AbstractLunTextColumn() {
             @Override

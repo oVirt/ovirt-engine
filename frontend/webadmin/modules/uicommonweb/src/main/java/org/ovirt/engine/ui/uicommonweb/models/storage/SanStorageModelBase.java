@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -59,6 +60,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private final ArrayList<SanTargetModel> lastDiscoveredTargets;
     private boolean isTargetModelList;
     private Set<String> metadataDevices;
+    private boolean isInMaintenance;
+    private Set<String> metadata;
 
     private UICommand updateCommand;
 
@@ -490,7 +493,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         final SanStorageModelBase model = this;
         AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(response -> {
             if (response.getSucceeded()) {
-                model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected);
+                setValuesForMaintenance(model);
+
+                model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected,
+                        isInMaintenance, metadata);
                 model.setGetLUNsFailure(""); //$NON-NLS-1$
             }
             else {
@@ -616,7 +622,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     /**
      * Creates model items from the provided list of business entities.
      */
-    public void applyData(List<LUNs> source, boolean isIncluded, Collection<EntityModel<?>> selectedItems) {
+    public void applyData(List<LUNs> source, boolean isIncluded, Collection<EntityModel<?>> selectedItems,
+            boolean isInMaintenance, Set<String> metadataDevices) {
         ArrayList<LunModel> newItems = new ArrayList<>();
 
         for (LUNs a : source) {
@@ -644,7 +651,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 newItems.add(lunModel);
 
                 // Update isGrayedOut and grayedOutReason properties
-                updateGrayedOut(lunModel);
+                updateGrayedOut(isInMaintenance, metadataDevices, lunModel);
 
                 // Remember included LUNs to prevent their removal while updating items.
                 if (isIncluded) {
@@ -705,7 +712,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         return targetModelList;
     }
 
-    private void updateGrayedOut(LunModel lunModel) {
+    private void updateGrayedOut(boolean isInMaintenance, Set<String> metadataDevices, LunModel lunModel) {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
         UIMessages messages = ConstantsManager.getInstance().getMessages();
 
@@ -721,9 +728,13 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             lunModel.getGrayedOutReasons().add(
                     messages.lunUsedByDiskWarning(lun.getDiskAlias()));
         }
-        else if (lun.getStorageDomainId() != null) {
+        else if (lun.getStorageDomainId() != null && !isInMaintenance) {
             lunModel.getGrayedOutReasons().add(
                     messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName()));
+        }
+        else if (isInMaintenance && metadataDevices.contains(lun.getId())) {
+            lunModel.getGrayedOutReasons().add(
+                    messages.lunIsMetadataDevice(lun.getStorageDomainName()));
         }
         else if (lun.getStatus() == LunStatus.Unusable) {
             lunModel.getGrayedOutReasons().add(
@@ -746,7 +757,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 isTargetModelList = true;
             }
             else {
-                // Convert to list of another type as neccessary.
+                // Convert to list of another type as necessary.
                 if (!isTargetModelList) {
                     setItems(toTargetModelList((List<LunModel>) getItems()));
                 }
@@ -1105,7 +1116,11 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
-        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery<>(lunList -> model.applyData(lunList, true, Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem()))), storage.getStorage(), hostId);
+        setValuesForMaintenance(model);
+
+        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery<>(lunList ->
+                model.applyData(lunList, true, Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem()),
+                        isInMaintenance, metadata)), storage.getStorage(), hostId);
     }
 
     public Set<String> getMetadataDevices() {
@@ -1115,5 +1130,14 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             metadataDevices.add(getContainer().getStorage().getVgMetadataDevice());
         }
         return metadataDevices;
+    }
+
+    private void setValuesForMaintenance(SanStorageModelBase model) {
+        isInMaintenance = false;
+        metadata = null;
+        if (!model.getContainer().isNewStorage()) {
+            isInMaintenance = model.getContainer().getStorage().getStatus() == StorageDomainStatus.Maintenance;
+            metadata = model.getMetadataDevices();
+        }
     }
 }

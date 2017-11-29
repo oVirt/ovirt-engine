@@ -149,6 +149,8 @@ public interface UIMessages extends Messages {
 
     String lunAlreadyPartOfStorageDomainWarning(String storageDomainName);
 
+    String lunIsMetadataDevice(String storageDomainName);
+
     String lunUsedByDiskWarning(String diskAlias);
 
     String lunUsedByVG(String vgID);
