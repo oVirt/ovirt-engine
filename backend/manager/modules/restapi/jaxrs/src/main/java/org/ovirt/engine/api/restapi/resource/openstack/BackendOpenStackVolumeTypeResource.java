@@ -17,7 +17,6 @@
 package org.ovirt.engine.api.restapi.resource.openstack;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenStackVolumeType;
@@ -46,15 +45,11 @@ public class BackendOpenStackVolumeTypeResource
                 CinderVolumeType.class, QueryType.GetCinderVolumeTypesByStorageDomainId, parameters);
 
 
-        Optional<CinderVolumeType> volType = volumeTypes.stream()
+        return volumeTypes.stream()
                 .filter(v -> v.getId().equals(id))
-                .findFirst();
-
-        if (!volType.isPresent()) {
-            return notFound();
-        }
-
-        return volType.map(v -> addLinks(populate(map(v), v))).get();
+                .findFirst()
+                .map(v -> addLinks(populate(map(v), v)))
+                .orElseGet(this::notFound);
     }
 
     @Override
