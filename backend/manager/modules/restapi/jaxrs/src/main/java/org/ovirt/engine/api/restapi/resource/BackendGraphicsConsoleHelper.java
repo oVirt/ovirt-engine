@@ -45,7 +45,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGraphicsConsoleHelper {
 
-    private static final long DEFAULT_TICKET_EXPIRY = 120 * 60; // 2 hours
+    private static final long DEFAULT_TICKET_EXPIRY = 120L * 60L; // 2 hours
 
     public static org.ovirt.engine.core.common.businessentities.GraphicsType asGraphicsType(String consoleId) {
         String consoleString = HexUtils.hex2string(consoleId);
