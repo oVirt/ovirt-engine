@@ -50,7 +50,7 @@ public class DeprecatedVersionInfo {
             log.error(
                 "The deprecated version specification \"{}\" doesn't match the expected regular expression \"{}\", " +
                 "will return null.",
-                specification, VERSION_RE.pattern()
+                specification, VERSION_RE
             );
             return null;
         }
