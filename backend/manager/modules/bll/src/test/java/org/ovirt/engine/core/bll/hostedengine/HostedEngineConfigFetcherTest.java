@@ -147,7 +147,25 @@ public class HostedEngineConfigFetcherTest {
     }
 
     @Test
-    public void configVolumeDescriptionNotMatch() {
+    public void configVolumeIdNotMatch() {
+        mcr.mockConfigValue(
+                mockConfig(ConfigValues.HostedEngineConfigurationImageGuid, Guid.Empty.toString())
+        );
+
+        // given
+        givenListOfImagesAndVolumes();
+        // when
+        Map<String, String> config = fetchConfig();
+        // then
+        verifyCalled(VDSCommandType.GetImagesList, times(1));
+        verifyCalled(VDSCommandType.GetVolumesList, times(1));
+        verifyCalled(VDSCommandType.GetImageInfo, times(1));
+        verifyCalled(ActionType.RetrieveImageData, never());
+        assertThat(config, is(Collections.emptyMap()));
+    }
+
+    @Test
+    public void configVolumeDescriptionNotMatchAndNoId() {
         // given
         givenListOfImagesAndVolumes();
         mockVdsCommand(VDSCommandType.GetImageInfo, successfulReturnValue(newDisk("nonMatchingDesc")));
@@ -204,6 +222,28 @@ public class HostedEngineConfigFetcherTest {
         // then
         verifyCalled(ActionType.RetrieveImageData, times(1));
         assertThat(config, is(Collections.emptyMap()));
+    }
+
+    @Test
+    public void configVolumeDescriptionNotMatchButIdDoes() throws Exception {
+        mcr.mockConfigValue(
+                mockConfig(ConfigValues.HostedEngineConfigurationImageGuid, IMAGE_ID.toString())
+        );
+
+        // given
+        givenListOfImagesAndVolumes();
+        mockVdsCommand(VDSCommandType.GetImageInfo, successfulReturnValue(newDisk("nonMatchingDesc")));
+        mockVdcCommand(ActionType.RetrieveImageData,
+                successfulActionReturnValue(load("hosted-engine-config.tar")));
+        // when
+        Map<String, String> config = fetchConfig();
+        // then
+        verifyCalled(VDSCommandType.GetImagesList, times(1));
+        verifyCalled(VDSCommandType.GetVolumesList, times(1));
+        verifyCalled(VDSCommandType.GetImageInfo, times(1));
+        verifyCalled(ActionType.RetrieveImageData, times(1));
+        assertThat(config, hasKey("sdUUID"));
+        assertThat(config, hasKey("host_id"));
     }
 
     @Test

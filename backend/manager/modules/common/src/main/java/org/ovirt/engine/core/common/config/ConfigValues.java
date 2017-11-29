@@ -1424,6 +1424,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     HostedEngineVmName,
 
+    @TypeConverterAttribute(String.class)
+    HostedEngineConfigurationImageGuid,
+
     @TypeConverterAttribute(Integer.class)
     MaxIoThreadsPerVm(ClientAccessLevel.User),
 

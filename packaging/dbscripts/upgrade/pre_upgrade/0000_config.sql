@@ -647,6 +647,7 @@ select fn_db_add_config_value('HostedEngineVmName','HostedEngine','general');
 select fn_db_add_config_value('AutoImportHostedEngine','true','general');
 select fn_db_add_config_value('AllowEditingHostedEngine','true','general');
 select fn_db_add_config_value('HostedEngineConfigDiskSizeInBytes','20480','general');
+select fn_db_add_config_value('HostedEngineConfigurationImageGuid','','general');
 
 -- Image IO
 select fn_db_add_config_value('ImageProxyAddress','localhost:54323','general');

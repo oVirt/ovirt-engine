@@ -110,6 +110,7 @@ public class HostedEngineConfigFetcher {
         if (diskIds == null) {
             return Optional.empty();
         }
+
         return diskIds.stream()
                 .map(diskId -> new Pair<>(diskId, (List<Guid>) resourceManager.runVdsCommand(
                         VDSCommandType.GetVolumesList,
@@ -120,9 +121,19 @@ public class HostedEngineConfigFetcher {
                 .filter(Objects::nonNull)
                 .map(diskImageCall -> (DiskImage)diskImageCall.getReturnValue())
                 .filter(Objects::nonNull)
-                .filter(diskImage -> HOSTED_ENGINE_CONFIGURATION_IMAGE
-                        .equals(diskImage.getDescription()))
+                .filter(this::isHostedEngineConfigDiskImage)
                 .findAny();
+    }
+
+    private boolean isHostedEngineConfigDiskImage(DiskImage diskImage) {
+        final String strConfigImageId = Config.getValue(ConfigValues.HostedEngineConfigurationImageGuid);
+        final Guid configImageId = (strConfigImageId == null || strConfigImageId.isEmpty()) ? null : Guid.createGuidFromString(strConfigImageId);
+
+        if (configImageId != null) {
+            return diskImage.getId().equals(configImageId);
+        }
+
+        return HOSTED_ENGINE_CONFIGURATION_IMAGE.equals(diskImage.getDescription());
     }
 
     private VDSReturnValue getImageInfo(Guid spId, Guid sdId, Guid diskId, Guid volumeId) {
