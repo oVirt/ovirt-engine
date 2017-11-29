@@ -46,7 +46,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
-import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
@@ -216,7 +215,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution);
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override
@@ -329,22 +328,20 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         getVm().getStaticData().setLeaseInfo(null);
         if (getVm().isNotRunning()) {
-            if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId())) {
+            if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId(), false)) {
                 return false;
             }
         }
         else if (isHotSetEnabled()) {
             if (oldVm.getLeaseStorageDomainId() == null) {
-                VmLeaseParameters params = new VmLeaseParameters(getStoragePoolId(),
-                        newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId());
-                params.setVdsId(getVm().getRunOnVds());
-                params.setHotPlugLease(true);
-                return runInternalAction(ActionType.AddVmLease, params).getSucceeded();
+                return addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId(), true);
             }
             boolean hotUnplugSucceeded = false;
             try {
                 hotUnplugSucceeded = runVdsCommand(VDSCommandType.HotUnplugLease,
-                        new LeaseVDSParameters(getVm().getRunOnVds(), oldVm.getId(), oldVm.getLeaseStorageDomainId())).getSucceeded();
+                        new LeaseVDSParameters(getVm().getRunOnVds(),
+                                oldVm.getId(),
+                                oldVm.getLeaseStorageDomainId())).getSucceeded();
             } catch (EngineException e) {
                 log.error("Failure in hot unplugging a lease to VM {}, message: {}",
                         oldVm.getId(), e.getMessage());

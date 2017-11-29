@@ -990,7 +990,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return;
         }
 
-        if (!addVmLease(getParameters().getVm().getLeaseStorageDomainId(), getVmId())) {
+        if (!addVmLease(getParameters().getVm().getLeaseStorageDomainId(), getVmId(), false)) {
             return;
         }
 
