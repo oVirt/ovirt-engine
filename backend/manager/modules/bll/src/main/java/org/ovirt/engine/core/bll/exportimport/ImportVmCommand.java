@@ -260,7 +260,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         if (getVm().isAutoStartup() && shouldAddLease(getVm().getStaticData())) {
             if (FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
                 if (validateLeaseStorageDomain(getVm().getLeaseStorageDomainId())) {
-                    if (!addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId())) {
+                    if (!addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId(), false)) {
                         getVm().setLeaseStorageDomainId(null);
                     }
                 } else {
@@ -1131,10 +1131,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().endAction(VdcActionType.CopyImageGroup,
-                    p,
-                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            if (p instanceof MoveOrCopyImageGroupParameters) {
+                p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+                getBackend().endAction(VdcActionType.CopyImageGroup,
+                        p,
+                        getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            }
         }
     }
 

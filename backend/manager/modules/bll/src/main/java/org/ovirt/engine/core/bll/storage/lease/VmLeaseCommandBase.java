@@ -43,7 +43,7 @@ abstract class VmLeaseCommandBase<T extends VmLeaseParameters> extends CommandBa
             getTaskIdList().add(
                     createTask(taskId,
                             returnValue.getCreationInfo(),
-                            getActionType(),
+                            getParameters().getParentCommand(),
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));
         }
@@ -58,7 +58,6 @@ abstract class VmLeaseCommandBase<T extends VmLeaseParameters> extends CommandBa
                 getActionType().getActionGroup()));
         return permissionCheckSubjects;
     }
-
     protected abstract VDSCommandType getLeaseAction();
 
     protected abstract AsyncTaskType getTaskType();

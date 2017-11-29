@@ -180,10 +180,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void endVmCommand() {
+        endActionOnDisks();
         if (getVm() != null) {
             vmStaticDao.incrementDbGeneration(getVm().getId());
         }
-        endActionOnDisks();
         unlockVm();
 
         setSucceeded(true);
@@ -454,11 +454,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (leaseStorageDomainId == null) {
             return true;
         }
-
-        return runInternalActionWithTasksContext(
-                VdcActionType.RemoveVmLease,
-                new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId)
-        ).getSucceeded();
+        VmLeaseParameters params = new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId);
+        params.setParentCommand(getActionType());
+        params.setParentParameters(getParameters());
+        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(VdcActionType.RemoveVmLease, params);
+        if (returnValue.getSucceeded()) {
+            getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
+        }
+        return returnValue.getSucceeded();
     }
 
     protected boolean shouldAddLease(VmStatic vm) {
@@ -471,15 +474,22 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return validate(validator.isDomainExistAndActive()) && validate(validator.isDataDomain());
     }
 
-    protected boolean addVmLease(Guid leaseStorageDomainId, Guid vmId) {
+    protected boolean addVmLease(Guid leaseStorageDomainId, Guid vmId, boolean hotPlugLease) {
         if (leaseStorageDomainId == null) {
             return true;
         }
-
-        return runInternalActionWithTasksContext(
-                VdcActionType.AddVmLease,
-                new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId)
-        ).getSucceeded();
+        VmLeaseParameters params = new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId);
+        if (hotPlugLease) {
+            params.setVdsId(getVm().getRunOnVds());
+            params.setHotPlugLease(true);
+        }
+        params.setParentCommand(getActionType());
+        params.setParentParameters(getParameters());
+        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(VdcActionType.AddVmLease, params);
+        if (returnValue.getSucceeded()) {
+            getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
+        }
+        return returnValue.getSucceeded();
     }
 
 }
