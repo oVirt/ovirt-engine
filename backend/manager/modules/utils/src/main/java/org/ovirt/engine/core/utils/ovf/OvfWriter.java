@@ -107,37 +107,37 @@ public abstract class OvfWriter implements IOvfBuilder {
             VmInit vmInit = vmBase.getVmInit();
             _writer.writeStartElement("VmInit");
             if (vmInit.getHostname() != null) {
-                _writer.writeAttributeString(OVF_URI, "hostname", vmInit.getHostname());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "hostname", vmInit.getHostname());
             }
             if (vmInit.getDomain() != null) {
-                _writer.writeAttributeString(OVF_URI, "domain", vmInit.getDomain());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "domain", vmInit.getDomain());
             }
             if (vmInit.getTimeZone() != null) {
-                _writer.writeAttributeString(OVF_URI, "timeZone", vmInit.getTimeZone());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "timeZone", vmInit.getTimeZone());
             }
             if (vmInit.getAuthorizedKeys() != null) {
-                _writer.writeAttributeString(OVF_URI, "authorizedKeys", vmInit.getAuthorizedKeys());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "authorizedKeys", vmInit.getAuthorizedKeys());
             }
             if (vmInit.getRegenerateKeys() != null) {
-                _writer.writeAttributeString(OVF_URI, "regenerateKeys", vmInit.getRegenerateKeys().toString());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "regenerateKeys", vmInit.getRegenerateKeys().toString());
             }
             if (vmInit.getDnsSearch() != null) {
-                _writer.writeAttributeString(OVF_URI, "dnsSearch", vmInit.getDnsSearch());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "dnsSearch", vmInit.getDnsSearch());
             }
             if (vmInit.getDnsServers() != null) {
-                _writer.writeAttributeString(OVF_URI, "dnsServers", vmInit.getDnsServers());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "dnsServers", vmInit.getDnsServers());
             }
             if (vmInit.getNetworks() != null) {
-                _writer.writeAttributeString(OVF_URI, "networks", VmInitUtils.networkListToJson(vmInit.getNetworks()));
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "networks", VmInitUtils.networkListToJson(vmInit.getNetworks()));
             }
             if (vmInit.getWinKey() != null) {
-                _writer.writeAttributeString(OVF_URI, "winKey", vmInit.getWinKey());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "winKey", vmInit.getWinKey());
             }
             if (vmInit.getRootPassword() != null) {
-                _writer.writeAttributeString(OVF_URI, "rootPassword", vmInit.getRootPassword());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "rootPassword", vmInit.getRootPassword());
             }
             if (vmInit.getCustomScript() != null) {
-                _writer.writeAttributeString(OVF_URI, "customScript", vmInit.getCustomScript());
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "customScript", vmInit.getCustomScript());
             }
             _writer.writeEndElement();
         }
@@ -150,7 +150,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         vmBase.getInterfaces().stream().map(VmNetworkInterface::getNetworkName).filter(Objects::nonNull).distinct()
         .forEach(network -> {
             _writer.writeStartElement("Network");
-            _writer.writeAttributeString(OVF_URI, "name", network);
+            _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "name", network);
             _writer.writeEndElement();
         });
         _writer.writeEndElement();
@@ -340,7 +340,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 }
 
                 _writer.writeStartElement("ProductSection");
-                _writer.writeAttributeString(OVF_URI, "class", product);
+                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "class", product);
                 _writer.writeElement("Info", app);
                 _writer.writeElement("Product", product);
                 _writer.writeElement("Version", version);
