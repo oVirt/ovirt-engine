@@ -136,4 +136,9 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     public String getInterfaceName() {
         return getInterface().getName();
     }
+
+    @Override
+    protected boolean shouldUpdateHostedEngineOvf() {
+        return true;
+    }
 }

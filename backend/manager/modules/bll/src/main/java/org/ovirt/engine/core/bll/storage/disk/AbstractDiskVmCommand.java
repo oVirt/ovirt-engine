@@ -327,4 +327,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         lockManager.acquireLockWait(vmDiskHotPlugEngineLock);
         return vmDiskHotPlugEngineLock;
     }
+
+    @Override
+    protected boolean shouldUpdateHostedEngineOvf() {
+        return true;
+    }
 }

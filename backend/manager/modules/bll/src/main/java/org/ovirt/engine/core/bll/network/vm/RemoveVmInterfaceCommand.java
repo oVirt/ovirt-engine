@@ -126,4 +126,9 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
         addValidationMessage(EngineMessage.VAR__TYPE__INTERFACE);
     }
+
+    @Override
+    protected boolean shouldUpdateHostedEngineOvf() {
+        return true;
+    }
 }
