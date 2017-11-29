@@ -177,7 +177,7 @@ public class DiskMapper {
         if (entity.hasActualSize()) {
             model.setActualSize(entity.getActualSizeInBytes());
             if (entity.isAllowSnapshot()){
-                model.setTotalSize(Double.valueOf(entity.getActualDiskWithSnapshotsSizeInBytes()).longValue());
+                model.setTotalSize((long) entity.getActualDiskWithSnapshotsSizeInBytes());
             }
         }
 
