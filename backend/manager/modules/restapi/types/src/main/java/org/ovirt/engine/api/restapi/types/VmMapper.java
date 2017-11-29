@@ -565,7 +565,7 @@ public class VmMapper extends VmBaseMapper {
             }
         }
         if (vm.isSetOs()) {
-            if (vm.getOs().isSetBoot() && vm.getOs().isSetBoot() && vm.getOs().getBoot().isSetDevices() &&
+            if (vm.getOs().isSetBoot() && vm.getOs().getBoot().isSetDevices() &&
                     vm.getOs().getBoot().getDevices().isSetDevices()) {
                 params.setBootSequence(map(vm.getOs().getBoot(), null));
             }
