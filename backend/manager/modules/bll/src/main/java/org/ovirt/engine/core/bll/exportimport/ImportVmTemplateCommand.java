@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
+import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -126,6 +127,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     @Inject
     private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
+    private ImportValidator importValidator;
     private Version effectiveCompatibilityVersion;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
@@ -398,7 +400,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         TransactionSupport.executeInNewTransaction(() -> {
             initImportClonedTemplateDisks();
             addVmTemplateToDb();
-            mapDbUsers();
+            addPermissionsToDB();
             updateOriginalTemplateNameOnDerivedVms();
             addVmInterfaces();
             getCompensationContext().stateChanged();
@@ -422,8 +424,8 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         setSucceeded(true);
     }
 
-    protected void mapDbUsers() {
-        // Left empty to be overridden in ImportVmTemplateFromConfigurationCommand
+    protected void addPermissionsToDB() {
+        // Left empty to be overriden in ImportVmTemplateFromConfigurationCommand
     }
 
     private void updateOriginalTemplateNameOnDerivedVms() {
@@ -757,4 +759,10 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         return newDiskIdForDisk.get(diskId);
     }
 
+    protected ImportValidator getImportValidator() {
+        if (importValidator == null) {
+            importValidator = new ImportValidator(getParameters());
+        }
+        return importValidator;
+    }
 }

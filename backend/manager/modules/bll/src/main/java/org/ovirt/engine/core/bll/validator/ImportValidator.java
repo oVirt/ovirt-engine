@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -28,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -266,4 +269,29 @@ public class ImportValidator {
 
         return faultyAffinityGroups;
     }
+
+    public List<DbUser> findMissingUsers(Set<DbUser> usersToAdd) {
+        List<DbUser> missingUsers = new ArrayList<>();
+
+        usersToAdd.forEach(dbUser -> {
+            DbUser userToAdd = getDbUserDao().getByUsernameAndDomain(dbUser.getLoginName(), dbUser.getDomain());
+            if (userToAdd == null) {
+                missingUsers.add(dbUser);
+            }
+        });
+
+        if (!missingUsers.isEmpty()) {
+            log.warn("Missing users: {}", missingUsers
+                    .stream()
+                    .map(dbUser -> String.format("%s@%s", dbUser.getName(), dbUser.getDomain()))
+                    .collect(Collectors.joining(", ")));
+        }
+
+        return missingUsers;
+    }
+
+    private DbUserDao getDbUserDao() {
+        return DbFacade.getInstance().getDbUserDao();
+    }
+
 }

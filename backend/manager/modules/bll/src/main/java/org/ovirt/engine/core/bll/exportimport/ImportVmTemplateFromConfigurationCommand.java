@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
@@ -39,6 +42,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
@@ -55,6 +59,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private OvfEntityData ovfEntityData;
     VmTemplate vmTemplateFromConfiguration;
     private ArrayList<DiskImage> imagesList;
+    private List<String> missingRoles = new ArrayList<>();
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -75,6 +80,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private DrMappingHelper drMappingHelper;
     @Inject
     private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
+    @Inject
+    private RoleDao roleDao;
 
     public ImportVmTemplateFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -115,7 +122,18 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 !validateUnregisteredEntity(vmTemplateFromConfiguration, ovfEntityData)) {
             return false;
         }
-        return true;
+
+        log.info("Checking for missing users");
+        List<DbUser> dbMissingUsers = getImportValidator().findMissingUsers(getParameters().getDbUsers());
+        getParameters().getDbUsers().removeAll(dbMissingUsers);
+
+        Set<String> roles = new HashSet<>(getParameters().getRoleMap().values());
+        roles.addAll(getParameters().getRoleMap().keySet());
+        log.info("Checking for missing roles");
+        missingRoles = getImportValidator().findMissingEntities(roles, val -> roleDao.getByName(val));
+        getParameters().getUserToRoles().forEach((k, v) -> v.removeAll(missingRoles));
+
+        return super.validate();
     }
 
     private boolean validateExternalVnicProfileMapping() {
@@ -210,7 +228,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 getParameters().setVmTemplate(vmTemplateFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
-                getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
                 getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
 
                 // For quota, update disks when required
@@ -218,6 +235,12 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                     ArrayList imageList = new ArrayList<>(getParameters().getDiskTemplateMap().values());
                     vmTemplateFromConfiguration.setDiskList(imageList);
                     ensureDomainMap(imageList, getParameters().getDestDomainId());
+                }
+                if (getParameters().getDomainMap() != null) {
+                    getParameters().setDbUsers(drMappingHelper.mapDbUsers(fullEntityOvfData.getDbUsers(),
+                            getParameters().getDomainMap()));
+                } else {
+                    getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
                 }
             } catch (OvfReaderException e) {
                 log.error("Failed to parse a given ovf configuration: {}:\n{}",
@@ -243,9 +266,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     }
 
     @Override
-    protected void mapDbUsers() {
-        drMappingHelper.mapDbUsers(getParameters().getDomainMap(),
-                getParameters().getDbUsers(),
+    protected void addPermissionsToDB() {
+        drMappingHelper.addPermissions(getParameters().getDbUsers(),
                 getParameters().getUserToRoles(),
                 getVmTemplateId(),
                 VdcObjectType.VmTemplate,

@@ -83,12 +83,12 @@ public class ExternalRegistrationConfigurationMapper {
                                 : null));
     }
 
-    private static Map<String, Object> mapExternalRoleMapping(RegistrationRoleMappings model) {
+    private static Map<String, String> mapExternalRoleMapping(RegistrationRoleMappings model) {
         return model.getRegistrationRoleMappings()
                 .stream()
                 .collect(Collectors.toMap(
                         registrationMap -> registrationMap.isSetFrom() ? registrationMap.getFrom().getName() : null,
-                        registrationMap -> registrationMap.isSetTo() ? RoleMapper.map(registrationMap.getTo(), null)
+                        registrationMap -> registrationMap.isSetTo() ? RoleMapper.map(registrationMap.getTo(), null).getName()
                                 : null));
     }
 

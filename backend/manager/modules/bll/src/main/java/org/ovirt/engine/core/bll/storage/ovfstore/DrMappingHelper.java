@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.ovfstore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,13 +49,13 @@ public class DrMappingHelper {
     @Inject
     private DbUserDao dbUserDao;
     @Inject
-    private PermissionDao permissionDao;
-    @Inject
     private RoleDao roleDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
     @Inject
     private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;
+    @Inject
+    private PermissionDao permissionDao;
 
     protected static final Logger log = LoggerFactory.getLogger(DrMappingHelper.class);
 
@@ -229,75 +230,46 @@ public class DrMappingHelper {
         return affinityLabelsToAdd;
     }
 
-    public void mapDbUsers(Map<String, String> userDomainsMap,
-            Set<DbUser> dbUsersFromParams,
-            Map<String, Set<String>> userToRolesFromParams,
-            Guid entityId,
-            VdcObjectType objectType,
-            Map<String, Object> roleMap) {
-        if (dbUsersFromParams == null || userToRolesFromParams == null) {
-            return;
+    public Set<DbUser> mapDbUsers(Set<DbUser> dbUsers,
+                                  Map<String, String> userDomainsMap) {
+        if (dbUsers == null) {
+            return Collections.emptySet();
         }
-        dbUsersFromParams.forEach(dbUser -> {
-            DbUser originalDbUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), dbUser.getDomain());
 
-            if (userDomainsMap != null) {
-                String destDomain = userDomainsMap.get(dbUser.getDomain());
+        Set<DbUser> dbUsersToAdd = new HashSet<>();
 
-                if (destDomain != null) {
-                    DbUser destDbUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), destDomain);
-                    if (destDbUser != null) {
-                        addPermissionsForUser(destDbUser, userToRolesFromParams, entityId, objectType, roleMap);
-                    }
-                } else if (originalDbUser != null) {
-                    addPermissionsForUser(originalDbUser, userToRolesFromParams, entityId, objectType, roleMap);
-                }
-            } else if (originalDbUser != null) {
-                addPermissionsForUser(originalDbUser, userToRolesFromParams, entityId, objectType, roleMap);
+        dbUsers.forEach(dbUser -> {
+            String destDomain = userDomainsMap.get(dbUser.getLoginName());
+            if (destDomain == null) {
+                dbUsersToAdd.add(dbUser);
+            } else {
+                DbUser destUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), destDomain);
+                dbUsersToAdd.add(Optional.ofNullable(destUser).orElse(dbUser));
             }
         });
+
+        return dbUsersToAdd;
     }
 
-    private void addPermissionsForUser(DbUser dbUser,
-            Map<String, Set<String>> userToRoles,
-            Guid entityId,
-            VdcObjectType objectType,
-            Map<String, Object> roleMap) {
-        addPermissions(dbUser,
-                userToRoles.getOrDefault(dbUser.getLoginName(), Collections.<String> emptySet()),
-                entityId,
-                objectType,
-                roleMap);
-    }
-
-    private void addPermissions(DbUser dbUser,
-            Set<String> roles,
-            Guid entityId,
-            VdcObjectType objectType,
-            Map<String, Object> roleMap) {
-        roles.forEach(roleName -> {
-            Permission permission = null;
-            Role originalRole = roleDao.getByName(roleName);
-            if (roleMap != null) {
-                Role destRoleName = (Role) roleMap.get(roleName);
-
-                if (destRoleName != null) {
-                    Role destRole = roleDao.getByName(destRoleName.getName());
-                    permission = new Permission(dbUser.getId(), destRole.getId(), entityId, objectType);
-                } else if (originalRole != null) {
-                    permission = new Permission(dbUser.getId(), originalRole.getId(), entityId, objectType);
-                }
-            } else if (originalRole != null) {
-                permission = new Permission(dbUser.getId(), originalRole.getId(), entityId, objectType);
+    public void addPermissions(Set<DbUser> dbUsers,
+                               Map<String, Set<String>> userToRoles,
+                               Guid objectId,
+                               VdcObjectType objectType,
+                               Map<String, String> roleMap) {
+        dbUsers.forEach(dbUser -> userToRoles.getOrDefault(dbUser.getLoginName(), Collections.emptySet()).forEach(roleName -> {
+            Role role = getRelatedEntity(roleMap, roleName, val -> roleDao.getByName(val));
+            if (role != null) {
+                DbUser dbUserFromDB =
+                        dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), dbUser.getDomain());
+                Permission p = new Permission(dbUserFromDB.getId(), role.getId(), objectId, objectType);
+                permissionDao.save(p);
+            } else {
+                log.warn("Role {} was not found", roleName);
             }
-
-            if (permission != null) {
-                permissionDao.save(permission);
-            }
-        });
+        }));
     }
+
     public void mapVnicProfiles(List<VmNetworkInterface> vnics, Collection<ExternalVnicProfileMapping> externalVnicProfileMappings) {
         vnics.forEach(vnic -> importedNetworkInfoUpdater.updateNetworkInfo(vnic, externalVnicProfileMappings));
     }
-
 }

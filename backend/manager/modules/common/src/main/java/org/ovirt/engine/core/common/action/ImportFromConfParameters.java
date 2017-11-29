@@ -8,9 +8,9 @@ public interface ImportFromConfParameters {
 
     void setClusterMap(Map<String, String> clusterMap);
 
-    Map<String, Object> getRoleMap();
+    Map<String, String> getRoleMap();
 
-    void setRoleMap(Map<String, Object> roleMap);
+    void setRoleMap(Map<String, String> roleMap);
 
     Map<String, String> getDomainMap();
 

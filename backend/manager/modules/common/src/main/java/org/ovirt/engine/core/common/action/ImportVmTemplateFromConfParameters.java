@@ -15,7 +15,7 @@ public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParamete
     private static final long serialVersionUID = -2440515728742118922L;
 
     private Map<String, String> clusterMap;
-    private Map<String, Object> roleMap;
+    private Map<String, String> roleMap;
     private Map<String, String> domainMap;
 
     private Set<DbUser> dbUsers;
@@ -41,12 +41,12 @@ public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParamete
     }
 
     @Override
-    public Map<String, Object> getRoleMap() {
+    public Map<String, String> getRoleMap() {
         return roleMap;
     }
 
     @Override
-    public void setRoleMap(Map<String, Object> roleMap) {
+    public void setRoleMap(Map<String, String> roleMap) {
         this.roleMap = roleMap;
     }
 

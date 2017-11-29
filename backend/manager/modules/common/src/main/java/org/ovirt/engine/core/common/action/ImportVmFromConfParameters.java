@@ -18,7 +18,7 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     private static final long serialVersionUID = 757253818528428256L;
 
     private Map<String, String> clusterMap;
-    private Map<String, Object> roleMap;
+    private Map<String, String> roleMap;
     private Map<String, String> domainMap;
     private Map<String, String> affinityGroupMap;
     private Map<String, String> affinityLabelMap;
@@ -58,12 +58,12 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     }
 
     @Override
-    public Map<String, Object> getRoleMap() {
+    public Map<String, String> getRoleMap() {
         return roleMap;
     }
 
     @Override
-    public void setRoleMap(Map<String, Object> roleMap) {
+    public void setRoleMap(Map<String, String> roleMap) {
         this.roleMap = roleMap;
     }
 

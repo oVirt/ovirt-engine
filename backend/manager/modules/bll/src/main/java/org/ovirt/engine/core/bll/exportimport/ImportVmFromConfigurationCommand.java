@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.LabelDao;
+import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -59,6 +61,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
     private List<String> missingAffinityGroups = new ArrayList<>();
     private List<String> missingAffinityLabels = new ArrayList<>();
+    private List<String> missingUsers = new ArrayList<>();
+    private List<String> missingRoles = new ArrayList<>();
 
     private List<AffinityGroup> cachedAffinityGroups = new ArrayList<>();
     private List<Label> cachedAffinityLabels = new ArrayList<>();
@@ -85,6 +89,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private AffinityGroupDao affinityGroupDao;
     @Inject
     private LabelDao labelDao;
+    @Inject
+    private RoleDao roleDao;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -128,6 +134,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
             }
             removeInvalidAffinityGroups(importValidator);
             removeInvalidAffinityLabels(importValidator);
+            removeInavlidUsers(importValidator);
+            removeInavlidRoles(importValidator);
 
             setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
@@ -199,7 +207,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
-                getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
                 getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
 
                 // For quota, update disks when required
@@ -238,6 +245,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         } else {
             getParameters().setAffinityLabels(fullEntityOvfData.getAffinityLabels());
         }
+        if (getParameters().getDomainMap() != null) {
+            getParameters().setDbUsers(drMappingHelper.mapDbUsers(fullEntityOvfData.getDbUsers(),
+                    getParameters().getDomainMap()));
+        } else {
+            getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
+        }
     }
 
     private void mapVnicProfiles(List<VmNetworkInterface> vnics) {
@@ -245,9 +258,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 importedNetworkInfoUpdater.updateNetworkInfo(vnic, getParameters().getExternalVnicProfileMappings()));
     }
 
-    protected void mapDbUsers() {
-        drMappingHelper.mapDbUsers(getParameters().getDomainMap(),
-                getParameters().getDbUsers(),
+    protected void addPermissionsToDB() {
+        drMappingHelper.addPermissions(getParameters().getDbUsers(),
                 getParameters().getUserToRoles(),
                 getVmId(),
                 VdcObjectType.VM,
@@ -423,6 +435,32 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 val -> labelDao.getByName(val));
         candidateAffinityLabels.removeAll(missingAffinityLabels);
         candidateAffinityLabels.forEach(label -> cachedAffinityLabels.add(labelDao.getByName(label)));
+    }
+
+    private void removeInavlidUsers(ImportValidator importValidator) {
+        if (getParameters().getDbUsers() == null || getParameters().getDbUsers().isEmpty()) {
+            return;
+        }
+
+        log.info("Checking for missing users");
+        List<DbUser> dbMissingUsers = importValidator.findMissingUsers(getParameters().getDbUsers());
+        missingUsers = dbMissingUsers
+            .stream()
+            .map(dbUser -> String.format("%s@%s", dbUser.getLoginName(), dbUser.getDomain()))
+            .collect(Collectors.toList());
+        getParameters().getDbUsers().removeAll(dbMissingUsers);
+    }
+
+    private void removeInavlidRoles(ImportValidator importValidator) {
+        if (getParameters().getUserToRoles() == null || getParameters().getUserToRoles().isEmpty()) {
+            return;
+        }
+
+        Set<String> roles = new HashSet<>(getParameters().getRoleMap().values());
+        roles.addAll(getParameters().getRoleMap().keySet());
+        log.info("Checking for missing roles");
+        missingRoles = importValidator.findMissingEntities(roles, val -> roleDao.getByName(val));
+        getParameters().getUserToRoles().forEach((k, v) -> v.removeAll(missingRoles));
     }
 
     @Override

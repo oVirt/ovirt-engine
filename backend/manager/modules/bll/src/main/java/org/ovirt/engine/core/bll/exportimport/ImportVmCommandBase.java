@@ -472,7 +472,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             addVmToDb();
             addVmToAffinityGroups();
             addVmToAffinityLabels();
-            mapDbUsers();
+            addPermissionsToDB();
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
@@ -501,7 +501,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return Collections.EMPTY_LIST;
     }
 
-    protected void mapDbUsers() {
+    protected void addPermissionsToDB() {
         // Left empty to be overridden by ImportVmFromConfiguration
     }
 
