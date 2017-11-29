@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
@@ -26,7 +27,7 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     private List<AffinityGroup> affinityGroups;
     private Set<DbUser> dbUsers;
     private Map<String, Set<String>> userToRoles  = new HashMap<>();
-    private List<String> affinityLabels;
+    private List<Label> affinityLabels;
 
     public ImportVmFromConfParameters() {
         this(Collections.emptyList(), false);
@@ -114,11 +115,11 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
         this.affinityGroups = affinityGroups;
     }
 
-    public List<String> getAffinityLabels() {
+    public List<Label> getAffinityLabels() {
         return affinityLabels;
     }
 
-    public void setAffinityLabels(List<String> affinityLabels) {
+    public void setAffinityLabels(List<Label> affinityLabels) {
         this.affinityLabels = affinityLabels;
     }
 

@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -359,9 +358,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdatePa
                     fullEntityOvfData.setDiskImages(vmImages);
                     fullEntityOvfData.setLunDisks(lunDisks);
                     fullEntityOvfData.setAffinityGroups(affinityGroups);
-                    fullEntityOvfData.setAffinityLabels(affinityLabels.stream()
-                            .map(label -> label.getName())
-                            .collect(Collectors.toList()));
+                    fullEntityOvfData.setAffinityLabels(affinityLabels);
                     fullEntityOvfData.setDbUsers(dbUsers);
                     ovfHelper.populateUserToRoles(fullEntityOvfData, vm.getId());
                     proccessedOvfConfigurationsInfo.add(ovfUpdateProcessHelper.buildMetadataDictionaryForVm(vm,

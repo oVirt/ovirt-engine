@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -194,32 +193,40 @@ public class DrMappingHelper {
         return affinityGroupsToAdd;
     }
 
-    private List<Label> mapAffinityLabels(Map<String, String> affinityLabelMap,
-            Guid vmId,
-            List<String> affinityLabelsFromParam) {
+    public List<Label> mapAffinityLabels(Map<String, String> affinityLabelMap,
+                                         String vmName,
+                                         List<Label> affinityLabelsFromParam) {
         if (affinityLabelsFromParam == null) {
             return Collections.emptyList();
         }
-        List<Label> affinityLabels = new ArrayList<>();
+        List<Label> affinityLabelsToAdd = new ArrayList<>();
         affinityLabelsFromParam.forEach(affinityLabel -> {
             log.info("Mapping affinity label '{}' for vm '{}'.",
                     affinityLabel,
-                    vmId);
-            Label affLabel = getRelatedEntity(affinityLabelMap,
-                    affinityLabel,
-                    val -> labelDao.getByName((String) val));
-            if (affLabel != null) {
-                affinityLabels.add(affLabel);
+                    vmName);
+            String mappedAffinityLabelName = affinityLabelMap.get(affinityLabel.getName());
+            if (mappedAffinityLabelName == null) {
+                affinityLabelsToAdd.add(affinityLabel);
+                log.warn("Mapping for affinity label '{}' not found, will use the affinity label name from OVF",
+                        affinityLabel.getName());
+            } else {
+                if (labelDao.getByName(mappedAffinityLabelName) == null) {
+                    log.warn("Mapping for affinity label '{}' not found, will use the affinity label name from OVF",
+                            affinityLabel.getName());
+                    affinityLabelsToAdd.add(affinityLabel);
+                } else {
+                    log.info("Mapping for affinity label '{}' found, attempting to map to '{}'",
+                            affinityLabel.getName(),
+                            mappedAffinityLabelName);
+                    Label mappedAffinityLabel = labelDao.getByName(mappedAffinityLabelName);
+                    Label affinityLabelToAdd = Optional.ofNullable(mappedAffinityLabel).orElse(affinityLabel);
+                    log.info("Will try to add affinity label '{}'", affinityLabelToAdd.getName());
+                    affinityLabelsToAdd.add(affinityLabelToAdd);
+                }
             }
         });
-        return affinityLabels;
-    }
 
-    public void addVmToAffinityLabels(Map<String, String> affinityLabelMap, VM vm, List<String> affinityLabelsFromParam) {
-        mapAffinityLabels(affinityLabelMap, vm.getId(), affinityLabelsFromParam).forEach(affinityLabel -> {
-            affinityLabel.addVm(vm);
-            labelDao.update(affinityLabel);
-        });
+        return affinityLabelsToAdd;
     }
 
     public void mapDbUsers(Map<String, String> userDomainsMap,

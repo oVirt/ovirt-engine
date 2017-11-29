@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -193,7 +192,7 @@ public class OvfHelper {
         fullEntityOvfData.setDiskImages(allVmImages);
         fullEntityOvfData.setLunDisks(lunDisks);
         fullEntityOvfData.setAffinityGroups(affinityGroups);
-        fullEntityOvfData.setAffinityLabels(affinityLabels.stream().map(label -> label.getName()).collect(Collectors.toList()));
+        fullEntityOvfData.setAffinityLabels(affinityLabels);
         fullEntityOvfData.setDbUsers(dbUsers);
         populateUserToRoles(fullEntityOvfData, vm.getId());
         return ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));

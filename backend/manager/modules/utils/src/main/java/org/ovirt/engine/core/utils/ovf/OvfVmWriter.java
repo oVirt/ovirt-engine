@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -152,7 +153,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
     }
 
     private void writeAffinityLabels() {
-        List<String> affinityLabelsNames = fullEntityOvfData.getAffinityLabels();
+        List<Label> affinityLabelsNames = fullEntityOvfData.getAffinityLabels();
         if (affinityLabelsNames == null || affinityLabelsNames.isEmpty()) {
             return;
         }
@@ -160,9 +161,9 @@ public class OvfVmWriter extends OvfOvirtWriter {
         _writer.writeStartElement("Section");
         _writer.writeAttributeString(XSI_URI, "type", "ovf:AffinityLabelsSection_Type");
 
-        affinityLabelsNames.forEach(labelName -> {
+        affinityLabelsNames.forEach(label -> {
             _writer.writeStartElement(OvfProperties.AFFINITY_LABEL);
-            _writer.writeAttributeString(OVF_URI, "name", labelName);
+            _writer.writeAttributeString(OVF_URI, "name", label.getName());
             _writer.writeEndElement();
         });
 

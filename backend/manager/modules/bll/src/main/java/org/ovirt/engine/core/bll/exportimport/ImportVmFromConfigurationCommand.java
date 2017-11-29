@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -40,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -56,7 +58,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private VM vmFromConfiguration;
 
     private List<String> missingAffinityGroups = new ArrayList<>();
+    private List<String> missingAffinityLabels = new ArrayList<>();
+
     private List<AffinityGroup> cachedAffinityGroups = new ArrayList<>();
+    private List<Label> cachedAffinityLabels = new ArrayList<>();
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -78,6 +83,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private AffinityGroupDao affinityGroupDao;
+    @Inject
+    private LabelDao labelDao;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -120,6 +127,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 return false;
             }
             removeInvalidAffinityGroups(importValidator);
+            removeInvalidAffinityLabels(importValidator);
 
             setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
@@ -191,7 +199,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
-                getParameters().setAffinityLabels(fullEntityOvfData.getAffinityLabels());
                 getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
                 getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
 
@@ -224,6 +231,13 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         } else {
             getParameters().setAffinityGroups(fullEntityOvfData.getAffinityGroups());
         }
+        if (getParameters().getAffinityLabelMap() != null) {
+            getParameters().setAffinityLabels(drMappingHelper.mapAffinityLabels(getParameters().getAffinityLabelMap(),
+                    getParameters().getVm().getName(),
+                    fullEntityOvfData.getAffinityLabels()));
+        } else {
+            getParameters().setAffinityLabels(fullEntityOvfData.getAffinityLabels());
+        }
     }
 
     private void mapVnicProfiles(List<VmNetworkInterface> vnics) {
@@ -247,9 +261,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
     @Override
     public void addVmToAffinityLabels() {
-        drMappingHelper.addVmToAffinityLabels(getParameters().getAffinityLabelMap(),
-                getParameters().getVm(),
-                getParameters().getAffinityLabels());
+        cachedAffinityLabels.forEach(affinityLabel -> {
+            affinityLabel.addVm(getParameters().getVm());
+            labelDao.update(affinityLabel);
+        });
     }
 
     private static ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {
@@ -393,6 +408,21 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         }
 
         return canBeSaved;
+    }
+
+    private void removeInvalidAffinityLabels(ImportValidator importValidator) {
+        if (getParameters().getAffinityLabels() == null || getParameters().getAffinityLabels().isEmpty()) {
+            return;
+        }
+        List<String> candidateAffinityLabels = getParameters().getAffinityLabels()
+                .stream()
+                .map(Label::getName)
+                .collect(Collectors.toList());
+        log.info("Checking for missing affinity labels");
+        missingAffinityLabels = importValidator.findMissingEntities(candidateAffinityLabels,
+                val -> labelDao.getByName(val));
+        candidateAffinityLabels.removeAll(missingAffinityLabels);
+        candidateAffinityLabels.forEach(label -> cachedAffinityLabels.add(labelDao.getByName(label)));
     }
 
     @Override

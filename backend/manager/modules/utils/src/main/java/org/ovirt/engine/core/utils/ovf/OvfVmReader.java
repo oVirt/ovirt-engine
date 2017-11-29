@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.Label;
+import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -194,10 +196,12 @@ public class OvfVmReader extends OvfOvirtReader {
     @Override
     protected void readAffinityLabelsSection(XmlNode section) {
         XmlNodeList list = selectNodes(section, OvfProperties.AFFINITY_LABEL);
-        List<String> affinityLabels = new ArrayList<>();
+        List<Label> affinityLabels = new ArrayList<>();
         for (XmlNode node : list) {
             String affinityLabelName = node.attributes.get("ovf:name").innerText;
-            affinityLabels.add(affinityLabelName);
+            LabelBuilder builder = new LabelBuilder();
+            Label label = builder.name(affinityLabelName).build();
+            affinityLabels.add(label);
         }
 
         fullEntityOvfData.setAffinityLabels(affinityLabels);

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -27,7 +28,7 @@ public class FullEntityOvfData implements Serializable {
     private List<AffinityGroup> affinityGroups = new ArrayList<>();
     private Set<DbUser> dbUsers = new HashSet<>();
     private Map<String, Set<String>> userToRoles = new HashMap<>();
-    private List<String> affinityLabelsNames = new ArrayList<>();
+    private List<Label> affinityLabelsNames = new ArrayList<>();
 
     public FullEntityOvfData() {
     }
@@ -52,7 +53,7 @@ public class FullEntityOvfData implements Serializable {
             List<AffinityGroup> affinityGroups,
             Set<DbUser> dbUsers,
             Map<String, Set<String>> userToRoles,
-            List<String> affinityLabelsNames) {
+            List<Label> affinityLabelsNames) {
         this.diskImages = diskImages;
         this.lunDisks = lunDisks;
         this.interfaces = interfaces;
@@ -144,11 +145,11 @@ public class FullEntityOvfData implements Serializable {
         this.userToRoles = userToRoles;
     }
 
-    public List<String> getAffinityLabels() {
+    public List<Label> getAffinityLabels() {
         return affinityLabelsNames;
     }
 
-    public void setAffinityLabels(List<String> affinityLabelsNames) {
+    public void setAffinityLabels(List<Label> affinityLabelsNames) {
         this.affinityLabelsNames = affinityLabelsNames;
     }
 
