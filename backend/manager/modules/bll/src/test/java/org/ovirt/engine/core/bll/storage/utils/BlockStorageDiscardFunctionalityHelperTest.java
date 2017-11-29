@@ -125,7 +125,8 @@ public class BlockStorageDiscardFunctionalityHelperTest {
         createVmDiskOnSd(false, false);
         createVmDiskOnSd(true, false);
         createVmDiskOnSd(false, true);
-        createVmDiskOnSd(true, true);
+        Guid diskId = createVmDiskOnSd(true, true);
+        storageDomainVmDisks.add(createVmDisk(diskId, false));
         assertTrue(discardHelper.vmDiskWithPassDiscardAndWadExists(storageDomainDisks, storageDomainVmDisks));
     }
 
@@ -313,13 +314,14 @@ public class BlockStorageDiscardFunctionalityHelperTest {
         return diskVmElement;
     }
 
-    private void createVmDiskOnSd(boolean wipeAfterDelete, boolean passDiscard) {
+    private Guid createVmDiskOnSd(boolean wipeAfterDelete, boolean passDiscard) {
         DiskImage disk = new DiskImage();
         Guid diskId = Guid.newGuid();
         disk.setId(diskId);
         disk.setWipeAfterDelete(wipeAfterDelete);
         storageDomainDisks.add(disk);
         storageDomainVmDisks.add(createVmDisk(diskId, passDiscard));
+        return diskId;
     }
 
     private void assertGetLunsThatBreakPassDiscardFunctionalityContainsExpectedLuns(Collection<LUNs> luns,

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -171,11 +170,11 @@ public class BlockStorageDiscardFunctionalityHelper {
 
     protected boolean vmDiskWithPassDiscardAndWadExists(Collection<DiskImage> storageDomainDisks,
             Collection<DiskVmElement> storageDomainVmDisks) {
-        Map<Guid, DiskVmElement> diskVmElementsMap = storageDomainVmDisks.stream().collect(
-                Collectors.toMap(DiskVmElement::getDiskId, Function.identity()));
+        Map<Guid, List<DiskVmElement>> diskVmElementsMap = storageDomainVmDisks.stream()
+                .collect(Collectors.groupingBy(DiskVmElement::getDiskId));
         return storageDomainDisks.stream().anyMatch(sdDisk -> sdDisk.isWipeAfterDelete() &&
                 diskVmElementsMap.containsKey(sdDisk.getId()) &&
-                diskVmElementsMap.get(sdDisk.getId()).isPassDiscard());
+                diskVmElementsMap.get(sdDisk.getId()).stream().anyMatch(DiskVmElement::isPassDiscard));
     }
 
     protected Collection<LUNs> getLunsThatBreakPassDiscardSupport(Collection<LUNs> luns, Guid storageDomainId) {
