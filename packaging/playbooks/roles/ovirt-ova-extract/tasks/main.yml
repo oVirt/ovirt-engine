@@ -1,0 +1,11 @@
+---
+- name: Run extraction script
+  script: >
+    extract_ova.py
+    "{{ ovirt_import_ova_path }}"
+    "{{ ovirt_import_ova_disks }}"
+  register: extraction_result
+
+- fail:
+    msg: "Failed to extract OVA file"
+  when: extraction_result.rc is defined and extraction_result.rc != 0

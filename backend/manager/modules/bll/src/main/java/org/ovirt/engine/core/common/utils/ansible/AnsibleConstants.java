@@ -64,4 +64,9 @@ public class AnsibleConstants {
      * This is name of file which executes the ova-query via Ansible.
      */
     public static final String QUERY_OVA_PLAYBOOK = "ovirt-ova-query.yml";
+
+    /**
+     * This is name of file which executes the ova-import via Ansible.
+     */
+    public static final String IMPORT_OVA_PLAYBOOK = "ovirt-ova-import.yml";
 }
