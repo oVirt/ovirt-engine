@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
@@ -57,6 +58,8 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
@@ -97,6 +100,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     private DiskDao diskDao;
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Inject
+    private OvfDataUpdater ovfDataUpdater;
 
     @Inject
     protected ImagesHandler imagesHandler;
@@ -154,6 +159,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             return;
         }
         executeVmCommand();
+
+        if (shouldUpdateHostedEngineOvf() && getVm().isHostedEngine() && getSucceeded()) {
+            updateHeOvf();
+        }
     }
 
     protected void executeVmCommand() {
@@ -531,5 +540,35 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     public QuotaValidator createQuotaValidator(Guid quotaId) {
         return QuotaValidator.createInstance(quotaId, true);
+    }
+
+    /**
+     * Override if the command should immediately update the OVF of the hosted engine VM.
+     *
+     * @return false by default
+     */
+    protected boolean shouldUpdateHostedEngineOvf() {
+        return false;
+    }
+
+    private void updateHeOvf() {
+        // If there is no current transaction, trigger ovf update immediately
+        if (TransactionSupport.current() == null) {
+            ovfDataUpdater.triggerNow();
+            return;
+        }
+
+        // If there is a transaction, trigger update after it is committed.
+        registerRollbackHandler(new TransactionCompletionListener() {
+            @Override
+            public void onSuccess() {
+                ovfDataUpdater.triggerNow();
+            }
+
+            @Override
+            public void onRollback() {
+                // No notification is needed
+            }
+        });
     }
 }

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.IconValidator;
@@ -110,7 +109,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 
@@ -133,8 +131,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private ResourceManager resourceManager;
     @Inject
     private InClusterUpgradeValidator clusterUpgradeValidator;
-    @Inject
-    private OvfDataUpdater ovfDataUpdater;
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
     @Inject
@@ -244,21 +240,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
         newVmStatic.setQuotaId(getQuotaId());
         newVmStatic.setLeaseInfo(oldVm.getStaticData().getLeaseInfo());
-
-        // Trigger OVF update for hosted engine VM only
-        if (getVm().isHostedEngine()) {
-            registerRollbackHandler(new TransactionCompletionListener() {
-                @Override
-                public void onSuccess() {
-                    ovfDataUpdater.triggerNow();
-                }
-
-                @Override
-                public void onRollback() {
-                    // No notification is needed
-                }
-            });
-        }
 
         // save user selected value for hotplug before overriding with db values (when updating running vm)
         VM userVm = new VM();
@@ -1473,5 +1454,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 .map(Label::getId)
                 .collect(Collectors.toList());
         labelDao.updateLabelsForVm(getVmId(), labelIds);
+    }
+
+    @Override
+    protected boolean shouldUpdateHostedEngineOvf() {
+        return true;
     }
 }
