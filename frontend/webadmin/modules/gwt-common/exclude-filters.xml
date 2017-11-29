@@ -67,7 +67,7 @@
         UuF: Unused field (UUF_UNUSED_FIELD)
        -->
      <Match>
-       <Class name="org.ovirt.engine.ui.common.presenter.AddTabActionButton" />
+       <Class name="org.ovirt.engine.ui.common.presenter.AddActionButton" />
        <Bug code="UuF"/>
      </Match>
 

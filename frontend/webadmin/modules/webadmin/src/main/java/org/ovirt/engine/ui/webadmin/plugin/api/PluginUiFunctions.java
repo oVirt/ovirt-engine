@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.plugin.api;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.ui.common.presenter.AddTabActionButtonEvent;
+import org.ovirt.engine.ui.common.presenter.AddActionButtonEvent;
 import org.ovirt.engine.ui.common.presenter.RedrawDynamicTabContainerEvent;
 import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent;
 import org.ovirt.engine.ui.common.widget.AlertManager;
@@ -159,7 +159,7 @@ public class PluginUiFunctions implements HasHandlers {
         String historyToken = entityType.getMainHistoryToken();
 
         if (historyToken != null) {
-            AddTabActionButtonEvent.fire(this, historyToken,
+            AddActionButtonEvent.fire(this, historyToken,
                     createButtonDefinition(label, actionButtonInterface));
         }
     }
@@ -172,7 +172,7 @@ public class PluginUiFunctions implements HasHandlers {
         String historyToken = mainTabEntityType.getSubTabHistoryToken(subTabEntityType);
 
         if (historyToken != null) {
-            AddTabActionButtonEvent.fire(this, historyToken,
+            AddActionButtonEvent.fire(this, historyToken,
                     createButtonDefinition(label, actionButtonInterface));
         }
     }

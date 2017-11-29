@@ -8,7 +8,7 @@ import com.gwtplatform.dispatch.annotation.GenEvent;
  * Event triggered when {@link AbstractTabPresenter} should add new action button to its view.
  */
 @GenEvent
-public class AddTabActionButton {
+public class AddActionButton {
 
     String historyToken;
 

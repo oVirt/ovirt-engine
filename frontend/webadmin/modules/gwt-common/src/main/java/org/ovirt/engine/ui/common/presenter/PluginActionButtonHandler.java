@@ -16,7 +16,7 @@ public class PluginActionButtonHandler {
 
     @Inject
     public PluginActionButtonHandler(EventBus eventBus) {
-        eventBus.addHandler(AddTabActionButtonEvent.getType(),
+        eventBus.addHandler(AddActionButtonEvent.getType(),
             event -> {
                 List<ActionButtonDefinition<?>> buttonDefinitionList = definitionMap.get(event.getHistoryToken());
                 if (buttonDefinitionList == null) {

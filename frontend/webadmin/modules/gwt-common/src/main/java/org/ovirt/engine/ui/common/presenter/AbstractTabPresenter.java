@@ -47,7 +47,7 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
         Scheduler.get().scheduleDeferred(() -> addPluginActionButtons(actionButtonPluginHandler.getButtons(getProxy().getTargetHistoryToken())));
         //Register this handler for whichever tab opens first, it is bound before the plugin fires its events and
         //before the actionButtonPluginHandler is instantiated and listening to events.
-        registerHandler(getEventBus().addHandler(AddTabActionButtonEvent.getType(),
+        registerHandler(getEventBus().addHandler(AddActionButtonEvent.getType(),
             event -> {
                 if (getProxy().getTargetHistoryToken().equals(event.getHistoryToken())) {
                     List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
