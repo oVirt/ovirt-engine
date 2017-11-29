@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -21,6 +22,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -73,6 +75,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private DiskValidator diskValidator;
     @Mock
     private QuotaValidator quotaValidator;
+    @Mock
+    private QuotaManager quotaManager;
 
     /**
      * The command under test.
@@ -275,7 +279,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.NFS);
         mockQuotaValidator();
 
-        doCallRealMethod().when(command).validateQuota();
+        doCallRealMethod().when(command).setAndValidateQuota();
 
         Guid quotaId = Guid.newGuid();
         command.getImage().setQuotaId(quotaId);
@@ -294,7 +298,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.NFS);
         mockQuotaValidator();
 
-        doCallRealMethod().when(command).validateQuota();
+        doCallRealMethod().when(command).setAndValidateQuota();
 
         Guid quotaId = Guid.newGuid();
         command.getParameters().setQuotaId(quotaId);
@@ -349,7 +353,12 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
         doReturn(ActionType.MoveOrCopyDisk).when(command).getActionType();
-        doReturn(true).when(command).validateQuota();
+        doReturn(true).when(command).setAndValidateQuota();
+
+        doAnswer(invocation -> invocation.getArguments()[0] != null ?
+                invocation.getArguments()[0] : Guid.newGuid())
+                .when(quotaManager).getDefaultQuotaIfNull(any(), any());
+
         command.init();
     }
 

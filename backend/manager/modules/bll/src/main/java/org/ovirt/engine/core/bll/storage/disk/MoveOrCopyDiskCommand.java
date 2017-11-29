@@ -160,7 +160,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && checkCanBeMoveInVm()
                 && checkIfNeedToBeOverride()
                 && setAndValidateDiskProfiles()
-                && validateQuota()
+                && setAndValidateQuota()
                 && validatePassDiscardSupportedForDestinationStorageDomain();
     }
 
@@ -320,11 +320,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void executeCommand() {
-        // Use old quota, if no new quota is set
-        if (getDestinationQuotaId() == null) {
-            getParameters().setQuotaId(getImage().getQuotaId());
-        }
-
         if (isUnregisteredDiskExistsForCopyTemplate()) {
             addDiskMapping();
             return;
@@ -559,10 +554,19 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 getParameters().getStorageDomainId()), getCurrentUser()));
     }
 
-    public boolean validateQuota() {
-        Guid quotaId = getDestinationQuotaId() != null ? getDestinationQuotaId() : getImage().getQuotaId();
+    public boolean setAndValidateQuota() {
+        if (Guid.isNullOrEmpty(getDestinationQuotaId())) {
+            // Use old quota, if no new quota is set
+            // If both quotas are null, use the default for the destination storage pool
+            Guid quotaId = getQuotaManager().getDefaultQuotaIfNull(
+                    getImage().getQuotaId(),
+                    getStoragePoolId()
+            );
 
-        QuotaValidator validator = createQuotaValidator(quotaId);
+            getParameters().setQuotaId(quotaId);
+        }
+
+        QuotaValidator validator = createQuotaValidator(getDestinationQuotaId());
         return validate(validator.isValid()) &&
                 validate(validator.isDefinedForStorageDomain(getParameters().getStorageDomainId()));
     }
