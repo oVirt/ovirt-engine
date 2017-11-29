@@ -416,6 +416,10 @@ public final class VdsProperties {
     public static final String MIGRATION_OUTGOING_LIMIT = "outgoingLimit";
     public static final String MIGRATION_INCOMING_LIMIT = "incomingLimit";
 
+    // multipath health
+    public static final String MULTIPATH_HEALTH = "multipathHealth";
+    public static final String MULTIPATH_VALID_PATHS = "valid_paths";
+    public static final String MULTIPATH_FAILED_PATHS = "failed_paths";
 
     // storage domains
     public static final String code = "code";
