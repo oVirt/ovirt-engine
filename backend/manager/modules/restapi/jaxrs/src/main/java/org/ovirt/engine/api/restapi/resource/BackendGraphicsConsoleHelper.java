@@ -19,7 +19,7 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.core.utils.Ticketing.generateOTP;
 
 import java.net.URI;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -84,7 +84,7 @@ public class BackendGraphicsConsoleHelper {
         Map<org.ovirt.engine.core.common.businessentities.GraphicsType, GraphicsInfo> graphicsTypeToGraphicsInfo;
         List<org.ovirt.engine.core.common.businessentities.GraphicsType> graphicsTypes =
             DisplayHelper.getGraphicsTypesForEntity(resource, guid, true);
-        graphicsTypeToGraphicsInfo = new HashMap<>();
+        graphicsTypeToGraphicsInfo = new EnumMap<>(org.ovirt.engine.core.common.businessentities.GraphicsType.class);
         for (org.ovirt.engine.core.common.businessentities.GraphicsType type : graphicsTypes) {
             graphicsTypeToGraphicsInfo.put(type, null);
         }
