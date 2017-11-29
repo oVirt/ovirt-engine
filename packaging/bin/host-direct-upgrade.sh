@@ -298,14 +298,15 @@ function configure_new_host(){
 	local VM_STATUS=
 	local upgraded=
 	local time_count=0
+	local SUCCESS_MSG='\(upgrade_35_36\)\ Successfully\ upgraded'
 
 	output "Running 'vdsm-tool configure --force'"
 	run_cmd ${SSH} root@$host_adrs vdsm-tool configure --force
 	output "Starting ovirt-ha-agent service"
 	run_cmd ${SSH} root@$host_adrs service ovirt-ha-agent start
 
-	output "Wait for the 3.6 host to be operational, reaching score of 3400"
-	while [[ ! "${upgraded}" =~ "3400" ]] && [[ $time_count -lt $MAX_WAIT_TIME ]]; do
+	output "Wait for the 3.6 host to be operational"
+	while [[ -z "${upgraded}" ]] && [[ $time_count -lt $MAX_WAIT_TIME ]]; do
 
 		let time_count+=$WAIT_BETWEEN_CHECKS
 		if (( $time_count % $DIVIDER == 0 )); then
@@ -315,7 +316,7 @@ function configure_new_host(){
 		sleep $WAIT_BETWEEN_CHECKS
 		VM_STATUS="$($SSH root@$host_adrs hosted-engine --vm-status 2>&1)"
 		write_to_log "${VM_STATUS}"
-		upgraded=$(echo "${VM_STATUS}" | grep Score )
+		upgraded=$($SSH root@$host_adrs grep "${SUCCESS_MSG}" $AGENT_LOG 2>/dev/null)
 	done
 
 	if [[ $time_count -ge $MAX_WAIT_TIME ]]; then
