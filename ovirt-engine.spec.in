@@ -235,7 +235,7 @@ Requires:	rxjava
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
-Requires:	ovirt-ansible-roles
+Requires:	ovirt-ansible-roles >= 1.1.2
 Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
