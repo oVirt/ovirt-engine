@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -7,8 +8,11 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.AddTabActionButtonEvent;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.PluginActionButtonHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
@@ -70,6 +74,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     private final OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget;
 
+    private PluginActionButtonHandler actionButtonPluginHandler;
     private boolean resizing = false;
 
     @Inject
@@ -126,6 +131,18 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
             // Someone set search string before we were instantiated, update the search string.
             applySearchString(searchString);
         }
+        Scheduler.get().scheduleDeferred(() ->
+            addPluginActionButtons(actionButtonPluginHandler.getButtons(getProxy().getNameToken())));
+        registerHandler(getEventBus().addHandler(AddTabActionButtonEvent.getType(),
+            event -> {
+                if (getProxy().getNameToken().equals(event.getHistoryToken())) {
+                    List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
+                    pluginActionButtonList.add(event.getButtonDefinition());
+                    addPluginActionButtons(pluginActionButtonList);
+                }
+            }
+        ));
+
         if (hasSearchPanelPresenterWidget()) {
             setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
         }
@@ -234,5 +251,18 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     protected void setTags(List<TagModel> tags) {
         searchPanelPresenterWidget.setTags(tags);
+    }
+
+    private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList) {
+        if (hasActionPanelPresenterWidget()) {
+            for(ActionButtonDefinition<?> buttonDef: pluginActionButtonList) {
+                getActionPanelPresenterWidget().addActionButton((ActionButtonDefinition) buttonDef);
+            }
+        }
+    }
+
+    @Inject
+    public void setActionButtonPluginHandler(PluginActionButtonHandler actionButtonPluginHandler) {
+        this.actionButtonPluginHandler = actionButtonPluginHandler;
     }
 }

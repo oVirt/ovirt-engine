@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.plugin.api;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.presenter.AddTabActionButtonEvent;
@@ -184,21 +185,23 @@ public class PluginUiFunctions implements HasHandlers {
             @Override
             public void onClick(List<T> selectedItems) {
                 actionButtonInterface.onClick().invoke(
-                        EntityObject.arrayFrom(selectedItems), null);
+                        EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()), null);
             }
 
             @Override
             public boolean isEnabled(List<T> selectedItems) {
                 return JsFunctionResultHelper.invokeAndGetResultAsBoolean(
                         actionButtonInterface.isEnabled(),
-                        EntityObject.arrayFrom(selectedItems), null, true);
+                        EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()),
+                            null, true);
             }
 
             @Override
             public boolean isAccessible(List<T> selectedItems) {
                 return JsFunctionResultHelper.invokeAndGetResultAsBoolean(
                         actionButtonInterface.isAccessible(),
-                        EntityObject.arrayFrom(selectedItems), null, true);
+                        EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()),
+                            null, true);
             }
 
         };
