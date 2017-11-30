@@ -423,7 +423,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     }
 
     protected void mapDbUsers() {
-        // Left empty to override in ImportVmFromConfiguration
+        // Left empty to be overridden in ImportVmTemplateFromConfigurationCommand
     }
 
     private void updateOriginalTemplateNameOnDerivedVms() {
