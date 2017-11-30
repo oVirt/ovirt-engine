@@ -155,7 +155,7 @@ class Statement(base.Base):
         #
         if not host:
             connection = psycopg2.connect(
-                database=database,
+                dbname=database,
             )
         else:
             #
@@ -168,7 +168,7 @@ class Statement(base.Base):
                 port=str(port),
                 user=user,
                 password=password,
-                database=database,
+                dbname=database,
                 sslmode=sslmode,
             )
 
