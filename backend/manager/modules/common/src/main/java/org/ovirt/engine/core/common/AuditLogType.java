@@ -1112,6 +1112,8 @@ public enum AuditLogType {
     STORAGE_DOMAINS_COULD_NOT_BE_SYNCED(1046, AuditLogSeverity.ALERT),
     UPLOAD_IMAGE_CLIENT_ERROR(1047, AuditLogSeverity.ERROR),
     DIRECT_LUNS_COULD_NOT_BE_SYNCED(1048, AuditLogSeverity.ALERT),
+    OVF_STORES_UPDATE_IGNORED(1052, AuditLogSeverity.NORMAL),
+
 
     // Authentication
     USER_ACCOUNT_DISABLED_OR_LOCKED(160, AuditLogSeverity.ERROR,

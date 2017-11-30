@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -16,10 +19,14 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+
 
 @NonTransactiveCommandAttribute(forceCompensation = false)
 public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParametersBase> extends
         StorageDomainCommandBase<T> {
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public UpdateOvfStoreForStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -53,7 +60,8 @@ public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParame
                 return;
             }
         } else {
-            log.info("OVFs update was ignored - nothing to update for storage domain '{}'", storageDomainId);
+            addCustomValue("StorageDomainName", getStorageDomain().getName());
+            auditLogDirector.log(this, AuditLogType.OVF_STORES_UPDATE_IGNORED);
         }
         setSucceeded(true);
     }
