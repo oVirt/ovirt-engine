@@ -1129,6 +1129,9 @@ fi
 %{engine_data}/bin/engine-migrate-he.py
 
 %changelog
+* Thu Nov 30 2017 Sandro Bonazzola <sbonazzo@redhat.com> - 4.1.8.2-1
+- Bump version to 4.1.8.2
+
 * Tue Nov 21 2017 Lev Veyde <lveyde@redhat.com> - 4.1.8.1-1
 - Bump version to 4.1.8.1
 
