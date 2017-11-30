@@ -46,7 +46,8 @@ public class SsoPostLoginServlet extends HttpServlet {
         }
         appScope = getServletContext().getInitParameter("app-scope");
         if (appScope == null) {
-            throw new RuntimeException("No app-scope init parameter specified for SsoPostLoginServlet.");
+            // if app-scope is not specified in web.xml initialize it to ovirt-app-api to support older version of web-ui
+            appScope = "ovirt-app-api";
         }
     }
 
