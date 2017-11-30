@@ -127,7 +127,11 @@ public class HostedEngineConfigFetcher {
 
     private boolean isHostedEngineConfigDiskImage(DiskImage diskImage) {
         final String strConfigImageId = Config.getValue(ConfigValues.HostedEngineConfigurationImageGuid);
-        final Guid configImageId = (strConfigImageId == null || strConfigImageId.isEmpty()) ? null : Guid.createGuidFromString(strConfigImageId);
+        final Guid configImageId = (strConfigImageId == null || strConfigImageId.isEmpty())
+                ?
+                null
+                :
+                Guid.createGuidFromString(strConfigImageId);
 
         if (configImageId != null) {
             return diskImage.getId().equals(configImageId);
