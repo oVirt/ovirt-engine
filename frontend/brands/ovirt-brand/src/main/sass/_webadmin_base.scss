@@ -68,6 +68,12 @@ here. Please create new partials when it makes sense.
     margin-left: 61px;
 }
 
+.network-data-row dl {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    padding-top: 20px;
+}
+
 .rate-divider {
     width: 15px;
     background: linear-gradient(to top left,
@@ -76,11 +82,15 @@ here. Please create new partials when it makes sense.
            rgba(0,0,0,0.5) 50%,
            rgba(0,0,0,0) calc(50% + 0.8px),
            rgba(0,0,0,0) 100%);
-    float:left;
-    height:25px;
-    margin-top: 10px;
+    float: left;
+    height: 25px;
+    margin-top: 22px;
     margin-left: 5px;
     margin-right: 5px;
+}
+
+.vm-network-icon {
+    padding-top: 11px;
 }
 
 .nic-speed-drop {
@@ -109,6 +119,11 @@ here. Please create new partials when it makes sense.
 
 .list-view-icon-panel {
     padding-left: 5px;
+}
+
+.list-view-pf-icon-sm {
+    background-color: #f5f5f5 !important;
+    border: 2px solid #f5f5f5 !important;
 }
 
 .stacked-detail-item {

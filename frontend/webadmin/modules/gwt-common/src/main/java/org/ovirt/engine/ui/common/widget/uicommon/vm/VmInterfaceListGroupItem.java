@@ -40,6 +40,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private static final String DANGER = "text-danger"; // $NON-NLS-1$
     private static final String ROTATE_270 = "fa-rotate-270"; //$NON-NLS-1$
     private static final String DL_HORIZONTAL = "dl-horizontal"; // $NON-NLS-1$
+    private static final String VM_NETWORK_ICON = "vm-network-icon"; // $NON-NLS-1$
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
@@ -70,6 +71,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         networkFilterParameterExpand.setDetails(networkFilterParameterContainer);
         listGroupItem.add(networkFilterParameterContainer);
         displayImportantNicInfo(networkInterface);
+        iconPanel.addStyleName(VM_NETWORK_ICON);
     }
 
     private Container createNetworkFilterParametersContainerPanel(List<VmNicFilterParameter> networkFilterParameters) {

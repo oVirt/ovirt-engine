@@ -62,6 +62,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     private static final String EXPANSION_CONTAINER = "expansion-container"; // $NON-NLS-1$
     private static final String RATE_DIVIDER = "rate-divider"; // $NON-NLS-1$
     private static final String NIC_SPEED_DROP = "nic-speed-drop"; // $NON-NLS-1$
+    private static final String NETWORK_DATA_ROW = "network-data-row"; // $NON-NLS-1$
 
     private ExpandableListViewItem logicalNetworkExpand;
 
@@ -91,7 +92,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     private void applyHostInterfaceSpecificStyles() {
         // Modify some styling from a standard list view item to allow for what we are trying to achieve.
         mainInfoPanel.getElement().getStyle().setPaddingBottom(0, Unit.PX);
-        mainInfoPanel.getElement().getStyle().setPaddingTop(10, Unit.PX);
+        mainInfoPanel.getElement().getStyle().setPaddingTop(0, Unit.PX);
         detailedInfoContainer.getElement().getStyle().setMarginLeft(0, Unit.PX);
         detailedInfoContainer.getElement().getStyle().setWidth(100, Unit.PCT);
         descriptionPanel.getElement().getStyle().setWidth(10, Unit.PCT);
@@ -146,6 +147,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         VdsNetworkInterface vdsNetworkInterface = getNetworkInterface();
         Row networkRow = new Row();
         networkRow.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
+        networkRow.addStyleName(NETWORK_DATA_ROW);
         networkRow.add(createMacColumn(vdsNetworkInterface));
         networkRow.add(createRxColumn(hostInterface));
         networkRow.add(createTxColumn(hostInterface));
