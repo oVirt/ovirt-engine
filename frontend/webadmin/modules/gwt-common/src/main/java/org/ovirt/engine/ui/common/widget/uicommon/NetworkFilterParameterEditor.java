@@ -6,8 +6,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NetworkFilterParameterModel;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -59,11 +57,9 @@ public class NetworkFilterParameterEditor extends AbstractModelBoundPopupWidget<
     @Override
     public void edit(NetworkFilterParameterModel model) {
         driver.edit(model);
-        nameEditor.fireValueChangeOnKeyDown();
-        valueEditor.fireValueChangeOnKeyDown();
-        IEventListener<EventArgs> textChangeListener = (ev, sender, args) -> ValueChangeEvent.fire(NetworkFilterParameterEditor.this, model);
-        model.getName().getEntityChangedEvent().addListener(textChangeListener);
-        model.getValue().getEntityChangedEvent().addListener(textChangeListener);
+        model.getName()
+                .getEntityChangedEvent()
+                .addListener((ev, sender, args) -> ValueChangeEvent.fire(NetworkFilterParameterEditor.this, model));
     }
 
     @Override
