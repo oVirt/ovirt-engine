@@ -182,6 +182,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 // We should get only one entity, since we fetched the entity with a specific Storage Domain
                 ovfEntityData = ovfEntityList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmTemplateFromOvf(ovfEntityData.getOvfData());
+                vmTemplateFromConfiguration = fullEntityOvfData.getVmTemplate();
                 if (Guid.isNullOrEmpty(getParameters().getClusterId())) {
                     mapCluster(fullEntityOvfData);
                 }
@@ -215,7 +216,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     }
 
     private void mapCluster(FullEntityOvfData fullEntityOvfData) {
-        vmTemplateFromConfiguration = fullEntityOvfData.getVmTemplate();
         Cluster cluster =
                 drMappingHelper.getMappedCluster(fullEntityOvfData.getClusterName(),
                         vmTemplateFromConfiguration.getId(),
