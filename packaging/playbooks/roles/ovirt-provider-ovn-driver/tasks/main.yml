@@ -3,7 +3,7 @@
   - name: Install ovirt-provider-ovn-driver
     yum:
         name: ovirt-provider-ovn-driver
-        state: latest
+        state: present
 
   - name: Ensure ovn-controller is started
     service:
