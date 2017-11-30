@@ -96,6 +96,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
         // Style table
         table.setWidth("100%"); //$NON-NLS-1$
+        // This was the height of the header
+        table.setHeight("23px"); // $NON-NLS-1$
 
         // Add table as header widget
         treeHeader.add(table);
@@ -186,7 +188,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getRawValue(LunModel model) {
                 return model.getLunId();
             }
-        }, constants.lunIdSanStorage(), "35px"); //$NON-NLS-1$
+        }, constants.lunIdSanStorage());
 
         table.addColumn(new AbstractLunTextColumn() {
             @Override

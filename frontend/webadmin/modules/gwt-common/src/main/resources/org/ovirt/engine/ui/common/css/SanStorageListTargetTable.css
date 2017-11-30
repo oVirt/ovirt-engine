@@ -1,58 +1,59 @@
 .dataGridWidget {
-    width: 100%;
+	width: 100%;
 }
 
 .dataGridFirstColumn {
-    padding: 2px 0;
+	padding: 2px 0px;
 }
 
 .dataGridLastColumn {
+
 }
 
 .dataGridFooter {
 }
 
 .dataGridHeader {
-    border-top: 1px solid #E3EDF6;
-    border-bottom: 1px solid #E3EDF6;
-    border-left: 1px solid #D7D7E1;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 5px;
-    padding-right: 5px;
-    text-align: left;
-    color: grey;
-    font-size: 11px;
-    background-color: #F9F9F9;
-    white-space: normal;
-    overflow: auto;
+	border-top: 1px solid #E3EDF6;
+	border-bottom: 1px solid #E3EDF6;
+	border-left: 1px solid #D7D7E1;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+	text-align: left;
+	color: grey;
+	font-size: 11px;
+	background-color: #F9F9F9;
+	height: 24px !important;
+	white-space: normal;
 }
 
 .dataGridCell {
-    padding: 0 3px;
-    height: 24px !important;
-    border-top: 0;
-    border-bottom: 1px solid #EDEEF0;
-    border-right: 0;
-    border-left: 0;
-    white-space: normal;
-    cursor: pointer;
+	padding: 0px 3px;
+	height: 24px !important;
+	border-top: 0px;
+	border-bottom: 1px solid #EDEEF0;
+	border-right: 0px;
+	border-left: 0px;
+	white-space: normal;
+	cursor: pointer;
 }
 
 .dataGridEvenRow {
-    background-color: transparent;
+	background-color: transparent;
 }
 
 .dataGridOddRow {
-    background-color: transparent;
+	background-color: transparent;
 }
 
 .dataGridHoveredRow {
-    background-color: transparent;
+	background-color: transparent;
 }
 
 .dataGridSelectedRow {
-    background-color: transparent;
-    color: black;
-    overflow: auto;
+	background-color: transparent;
+	color: black;
+	overflow: auto;
 }
