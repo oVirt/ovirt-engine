@@ -85,6 +85,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
@@ -1177,6 +1178,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             "compatibilityVersion", getVm().getCompatibilityVersion()),
                     ReplacementUtils.createSetVariableString(
                             "architecture", getVm().getClusterArch()));
+        }
+
+        if (vmFromDB.getMemSizeMb() != vmFromParams.getMemSizeMb() &&
+                vmFromDB.isRunning() &&
+                isHotSetEnabled() &&
+                HugePageUtils.isBackedByHugepages(vmFromDB.getStaticData()) &&
+                (vmFromDB.getMemSizeMb() < vmFromParams.getMemSizeMb() ||
+                        (vmFromDB.getMemSizeMb() > vmFromParams.getMemSizeMb() &&
+                                getParameters().isMemoryHotUnplugEnabled()))
+                ) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_HOT_SET_NOT_SUPPORTED_FOR_HUGE_PAGES);
         }
 
         return true;
