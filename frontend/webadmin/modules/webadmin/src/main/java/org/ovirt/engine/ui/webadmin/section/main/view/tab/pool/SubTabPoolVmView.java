@@ -35,7 +35,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
     public SubTabPoolVmView(SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
