@@ -273,7 +273,7 @@ public class InitGlusterCommandHelper {
         resourceManager.getEventListener().vdsNonOperational(host.getId(), reason, true, Guid.Empty, customLogValues);
     }
 
-    private int getMaxRetriesGlusterProbeStatus() {
+    private static int getMaxRetriesGlusterProbeStatus() {
         if (MAX_RETRIES_GLUSTER_PROBE_STATUS == null) {
             MAX_RETRIES_GLUSTER_PROBE_STATUS = Config.<Integer> getValue(ConfigValues.GlusterPeerStatusRetries);
         }
