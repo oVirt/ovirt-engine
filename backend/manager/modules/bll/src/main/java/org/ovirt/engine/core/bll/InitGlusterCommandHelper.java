@@ -134,7 +134,7 @@ public class InitGlusterCommandHelper {
             Map<String, String> customLogValues = new HashMap<>();
             List<VDS> vdsList = vdsDao.getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up);
             // If the cluster already having Gluster servers, get an up server
-            if (vdsList != null && vdsList.size() > 0) {
+            if (vdsList.size() > 0) {
                 VDS upServer = null;
                 for (VDS existingVds : vdsList) {
                     if (!vds.getId().equals(existingVds.getId())) {
