@@ -1750,7 +1750,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                             AsyncDataProvider.getInstance().isMemoryHotUnplugSupported(getcurrentVm());
                     final boolean memoryHotPluggable =
                             VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm(), isMemoryHotUnplugSupported);
-                    final boolean vmLeaseUpdated = !Objects.equals(selectedItem.getLeaseStorageDomainId(), getcurrentVm().getLeaseStorageDomainId());
+                    final boolean vmLeaseUpdated = VmCommonUtils.isVmLeaseToBeHotPluggedOrUnplugged(selectedItem, getcurrentVm());
                     if (isHeadlessModeChanged) {
                         changedFields.add(constants.headlessMode());
                     }

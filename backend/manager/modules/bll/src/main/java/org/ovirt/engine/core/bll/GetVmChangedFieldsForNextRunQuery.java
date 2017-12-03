@@ -45,7 +45,7 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
         // with milliseconds in the DB.
         dstStatic.setCreationDate(srcStatic.getCreationDate());
 
-        // Hot plug CPU & memory are displayed separately in the confirmation dialog,
+        // Hot plug CPU, memory and VmLease are displayed separately in the confirmation dialog,
         // so it is not needed to include them into changed fields list.
         if (VmCommonUtils.isCpusToBeHotplugged(srcVm, dstVm)) {
             dstStatic.setNumOfSockets(srcStatic.getNumOfSockets());
@@ -54,6 +54,9 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
                 FeatureSupported.hotUnplugMemory(srcVm.getCompatibilityVersion(), srcVm.getClusterArch());
         if (VmCommonUtils.isMemoryToBeHotplugged(srcVm, dstVm, isMemoryHotUnplugSupported)) {
             dstStatic.setMemSizeMb(srcStatic.getMemSizeMb());
+        }
+        if (VmCommonUtils.isVmLeaseToBeHotPluggedOrUnplugged(srcVm, dstVm)) {
+            dstStatic.setLeaseStorageDomainId(srcStatic.getLeaseStorageDomainId());
         }
 
         VmPropertiesUtils vmPropertiesUtils = SimpleDependencyInjector.getInstance().get(VmPropertiesUtils.class);
