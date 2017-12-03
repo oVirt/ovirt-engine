@@ -1,0 +1,14 @@
+---
+- name: Run query script
+  script: >
+    query_ova.py
+    "{{ ovirt_query_ova_path }}"
+  register: extraction_result
+
+- fail:
+    msg: "Failed to extract OVF configuration from OVA file"
+  when: extraction_result.rc is defined and extraction_result.rc != 0
+
+- debug:
+    msg: "OVF: {{ extraction_result.stdout }} "
+  when: extraction_result.rc is defined and extraction_result.rc == 0

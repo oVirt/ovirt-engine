@@ -1149,6 +1149,7 @@ fi
 %{engine_data}/playbooks/ovirt-host-remove.yml
 %{engine_data}/playbooks/ovirt-host-upgrade.yml
 %{engine_data}/playbooks/ovirt-ova-export.yml
+%{engine_data}/playbooks/ovirt-ova-query.yml
 %{engine_data}/playbooks/roles/
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_data}/services/ovirt-fence-kdump-listener/
