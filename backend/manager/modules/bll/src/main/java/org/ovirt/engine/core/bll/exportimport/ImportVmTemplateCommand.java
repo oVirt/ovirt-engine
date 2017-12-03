@@ -641,6 +641,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             jobProperties =  super.getJobMessageProperties();
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(),
                     (getVmTemplateName() == null) ? "" : getVmTemplateName());
+            jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
         }
         return jobProperties;
     }
