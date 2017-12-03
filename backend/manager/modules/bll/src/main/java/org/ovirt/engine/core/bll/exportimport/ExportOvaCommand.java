@@ -313,7 +313,7 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
             // same as the disk<->vm element for the original disk
             destination.setDiskVmElements(Collections.singleton(diskVmElementDao.get(new VmDeviceId(source.getId(), getParameters().getEntityId()))));
         });
-        parameters.setDisks(getParameters().getDiskInfoDestinationMap().values());
+        parameters.setDiskInfoDestinationMap(getParameters().getDiskInfoDestinationMap());
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setDirectory(getParameters().getDirectory());
         parameters.setName(getParameters().getName());

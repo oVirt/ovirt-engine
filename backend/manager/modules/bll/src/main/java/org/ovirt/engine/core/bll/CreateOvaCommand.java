@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -13,11 +14,14 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.CreateOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -45,6 +49,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     @Inject
     private VmHandler vmHandler;
     @Inject
+    private VmDeviceUtils vmDeviceUtils;
+    @Inject
     private ImagesHandler imagesHandler;
 
     public static final String CREATE_OVA_LOG_DIRECTORY = "create-ova";
@@ -61,11 +67,15 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     @Override
     protected void executeCommand() {
-        Collection<DiskImage> disks = getParameters().getDisks();
+        Map<DiskImage, DiskImage> diskMappings = getParameters().getDiskInfoDestinationMap();
+        Collection<DiskImage> disks = diskMappings.values();
         Map<Guid, String> diskIdToPath = prepareImages(disks);
         fillDiskApparentSize(disks);
         VM vm = getParameters().getVm();
         vmHandler.updateNetworkInterfacesFromDb(vm);
+        vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+        vmDeviceUtils.setVmDevices(vm.getStaticData());
+        fixDiskDevices(vm, diskMappings);
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
         fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
         fullEntityOvfData.setInterfaces(vm.getInterfaces());
@@ -73,6 +83,24 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         log.debug("Exporting OVF: {}", ovf);
         boolean succeeded = runAnsiblePackOvaPlaybook(vm.getName(), ovf, disks, diskIdToPath);
         setSucceeded(succeeded);
+    }
+
+    private void fixDiskDevices(VM vm, Map<DiskImage, DiskImage> diskMappings) {
+        Map<Guid, Guid> diskIdMappings = new HashMap<>();
+        diskMappings.forEach((source, destination) -> diskIdMappings.put(source.getId(), destination.getId()));
+
+        List<VmDevice> diskDevices = vm.getStaticData().getManagedDeviceMap().values().stream()
+                .filter(VmDeviceCommonUtils::isDisk)
+                .collect(Collectors.toList());
+        diskDevices.forEach(diskDevice -> {
+            Guid sourceDiskId = diskDevice.getDeviceId();
+            Guid destinationDiskId = diskIdMappings.get(sourceDiskId);
+            if (destinationDiskId != null) {
+                vm.getStaticData().getManagedDeviceMap().remove(sourceDiskId);
+                diskDevice.setDeviceId(destinationDiskId);
+                vm.getStaticData().getManagedDeviceMap().put(destinationDiskId, diskDevice);
+            }
+        });
     }
 
     private Map<Guid, String> prepareImages(Collection<DiskImage> disks) {
