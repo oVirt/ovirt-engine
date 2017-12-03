@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ImportParameters;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
-import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -153,14 +152,9 @@ public class ImportValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateUnregisteredEntity(Queryable entityFromConfiguration,
-            OvfEntityData ovfEntityData) {
+    public ValidationResult validateUnregisteredEntity(OvfEntityData ovfEntityData) {
         if (ovfEntityData == null && !params.isImportAsNewEntity()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
-        }
-
-        if (entityFromConfiguration == null) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
         }
 
         if (!getStorageDomain().getStorageDomainType().isDataDomain()) {

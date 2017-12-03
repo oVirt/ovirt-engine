@@ -80,13 +80,16 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
     @Override
     protected boolean validate() {
+        if (!super.validate()) {
+            return false;
+        }
         if (isImagesAlreadyOnTarget()) {
             if (!validateExternalVnicProfileMapping()) {
                 return false;
             }
 
             ImportValidator importValidator = getImportValidator();
-            if (!validate(importValidator.validateUnregisteredEntity(vmFromConfiguration, ovfEntityData))) {
+            if (!validate(importValidator.validateUnregisteredEntity(ovfEntityData))) {
                 return false;
             }
             if (!validate(importValidator.validateDiskNotAlreadyExistOnDB(getImages(),
@@ -108,7 +111,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
             }
             setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
-        return super.validate();
+        return true;
     }
 
     private boolean validateExternalVnicProfileMapping() {

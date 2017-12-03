@@ -121,7 +121,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(any());
         doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(any());
-        when(validator.validateUnregisteredEntity(any(), any())) .thenReturn(ValidationResult.VALID);
+        when(validator.validateUnregisteredEntity(any())) .thenReturn(ValidationResult.VALID);
         when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any()))
                 .thenReturn(ValidationResult.VALID);
 
@@ -134,11 +134,13 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Test
     public void testImportVMFromConfigurationWhenStorageDomainIsInMaintenance() {
         initCommand(getOvfEntityData());
+        doReturn(true).when(cmd).validateBeforeCloneVm(any());
+        doReturn(true).when(cmd).validateAfterCloneVm(any());
         StorageDomain storageDomain = createStorageDomain();
         storageDomain.setStatus(StorageDomainStatus.Maintenance);
 
         doReturn(storageDomain).when(cmd).getStorageDomain();
-        when(validator.validateUnregisteredEntity(any(), any())).thenReturn(ValidationResult.VALID);
+        when(validator.validateUnregisteredEntity(any())).thenReturn(ValidationResult.VALID);
         when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any())).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 
@@ -149,10 +151,13 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Test
     public void testImportVMFromConfigurationWhenStorageDomainIsInactive() {
         initCommand(getOvfEntityData());
+        doReturn(true).when(cmd).validateBeforeCloneVm(any());
+        doReturn(true).when(cmd).validateAfterCloneVm(any());
+        doReturn(new StoragePool()).when(cmd).getStoragePool();
         StorageDomain storageDomain = createStorageDomain();
         storageDomain.setStatus(StorageDomainStatus.Inactive);
 
-        when(validator.validateUnregisteredEntity(any(), any())).thenReturn(ValidationResult.VALID);
+        when(validator.validateUnregisteredEntity(any())).thenReturn(ValidationResult.VALID);
         when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any())).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
 
@@ -163,7 +168,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Test
     public void testImportVMFromConfigurationWhenVMDoesNotExists() {
         initCommand(null);
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
@@ -173,10 +178,10 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         initCommand(ovfEntity);
         List<OvfEntityData> ovfEntityDataList = new ArrayList<>();
         ovfEntityDataList.add(ovfEntity);
+        doReturn(true).when(cmd).validateBeforeCloneVm(any());
+        doReturn(true).when(cmd).validateAfterCloneVm(any());
         when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntityDataList);
-        when(validator.validateUnregisteredEntity(
-                any(),
-                any())).
+        when(validator.validateUnregisteredEntity(any())).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED));
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
