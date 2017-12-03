@@ -56,11 +56,11 @@ public class OvfOvaReader extends OvfReader {
         } catch (Exception e) {
             vm.setId(Guid.newGuid());
         }
-        readGeneralData(virtualSystem);
         XmlNode os = selectSingleNode(virtualSystem, "OperatingSystemSection");
         readOsSection(os);
         XmlNode hardware = selectSingleNode(virtualSystem, "VirtualHardwareSection");
         readHardwareSection(hardware);
+        readGeneralData(virtualSystem);
     }
 
     @Override
