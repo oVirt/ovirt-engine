@@ -164,6 +164,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         Cluster cluster = new Cluster();
+        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(cmd).getCluster();
@@ -207,6 +208,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
         Cluster cluster = new Cluster();
         cluster.setId(Guid.newGuid());
+        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(cmd).getCluster();
@@ -249,6 +251,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         Cluster cluster = new Cluster();
+        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
         cluster.setClusterId(cmd.getParameters().getClusterId());
         doReturn(cluster).when(cmd).getCluster();
         doReturn(macPool).when(cmd).getMacPool();
@@ -268,7 +271,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         vm.setName("testVm");
         Guid clusterId = Guid.newGuid();
         vm.setClusterId(clusterId);
-        return new ImportVmParameters(vm, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), clusterId);
+        Guid spId = Guid.newGuid();
+        return new ImportVmParameters(vm, Guid.newGuid(), Guid.newGuid(), spId, clusterId);
     }
 
     protected VM createVmWithSnapshots() {
@@ -462,6 +466,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
         Cluster cluster = new Cluster();
+        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
         cluster.setId(cmd.getParameters().getClusterId());
         doReturn(cluster).when(cmd).getCluster();
 

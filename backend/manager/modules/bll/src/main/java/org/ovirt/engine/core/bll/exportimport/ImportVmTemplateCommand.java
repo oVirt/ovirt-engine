@@ -163,7 +163,13 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     @Override
     protected boolean validate() {
         if (getVmTemplate() == null) {
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+        if (getCluster() == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+        }
+        if (!getCluster().getStoragePoolId().equals(getStoragePoolId())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
         }
         setDescription(getVmTemplateName());
 

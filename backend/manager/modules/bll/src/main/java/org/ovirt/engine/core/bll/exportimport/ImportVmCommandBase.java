@@ -136,10 +136,17 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Override
     protected boolean validate() {
-        macPool = getMacPool();
+        if (getVm() == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
         if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
+        if (getParameters().getStoragePoolId() != null
+                && !getParameters().getStoragePoolId().equals(getCluster().getStoragePoolId())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
+        }
+        macPool = getMacPool();
 
         List<VmNetworkInterface> nicsUnableToBeImported = getVm().getInterfaces()
                 .stream()

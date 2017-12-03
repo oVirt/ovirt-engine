@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -187,6 +188,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).setAndValidateCpuProfile();
         doReturn(true).when(command).validateSpaceRequirements(any());
+        Cluster cluster = new Cluster();
+        cluster.setStoragePoolId(command.getStoragePoolId());
+        doReturn(cluster).when(command).getCluster();
     }
 
     private void mockStorageDomains() {
