@@ -141,12 +141,13 @@ public class DrMappingHelper {
     }
 
     public Cluster getMappedCluster(String clusterName, Guid vmId, Map<String, String> clusterMap) {
-        log.info("Mapping cluster '{}' for vm '{}'.",
-                clusterName,
-                vmId);
-        return getRelatedEntity(clusterMap,
+        Cluster mappedCluster = getRelatedEntity(clusterMap,
                 clusterName,
                 val -> clusterDao.getByName((String) val));
+        log.info("Mapping cluster '{}' to '{}' for vm '{}'.", mappedCluster,
+                clusterName,
+                vmId);
+        return mappedCluster;
     }
 
     public void mapExternalLunDisks(List<LunDisk> luns, Map<String, Object> externalLunMap) {
@@ -154,10 +155,14 @@ public class DrMappingHelper {
             if (externalLunMap != null) {
                 LunDisk targetLunDisk = (LunDisk) externalLunMap.get(lunDisk.getId().toString());
                 if (targetLunDisk != null) {
+                    log.info("Mapping LUN disk '{}' to '{}'", lunDisk.getLun().getLUNId(),
+                            targetLunDisk.getLun().getLUNId());
                     lunDisk.setLun(targetLunDisk.getLun());
                     lunDisk.getLun()
                             .getLunConnections()
                             .forEach(conn -> conn.setStorageType(lunDisk.getLun().getLunType()));
+                } else {
+                    log.warn("No LUN disk will be mapped, LUN '{}' was not found", targetLunDisk.getLun().getLUNId());
                 }
             }
         });
@@ -240,7 +245,15 @@ public class DrMappingHelper {
 
         dbUsers.forEach(dbUser -> {
             String destDomain = userDomainsMap.get(dbUser.getLoginName());
+            log.info("Attempting to map user '{}@{}' to '{}@{}'",
+                    dbUser.getLoginName(),
+                    dbUser.getDomain(),
+                    dbUser.getLoginName(),
+                    destDomain);
             if (destDomain == null) {
+                log.warn("Mapping for domain not found, falling back to OVF user '{}@{}'",
+                        dbUser.getLoginName(),
+                        dbUser.getDomain());
                 dbUsersToAdd.add(dbUser);
             } else {
                 DbUser destUser = dbUserDao.getByUsernameAndDomain(dbUser.getLoginName(), destDomain);
