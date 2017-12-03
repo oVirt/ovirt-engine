@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -28,7 +29,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
@@ -108,7 +108,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     @UiField(provided = true)
     @Path(value = "iso.selectedItem")
     @WithElementId("iso")
-    public ListModelListBoxOnlyEditor<String> cdImageEditor;
+    public ListModelListBoxOnlyEditor<RepoImage> cdImageEditor;
 
     @UiField(provided = true)
     @Path(value = "attachDrivers.entity")
@@ -309,7 +309,12 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
         });
 
         attachDriversEditor = new EntityModelCheckBoxEditor(Align.LEFT);
-        cdImageEditor = new ListModelListBoxOnlyEditor<>(new StringRenderer<String>());
+        cdImageEditor = new ListModelListBoxOnlyEditor<>(new NullSafeRenderer<RepoImage>() {
+            @Override
+            protected String renderNullSafe(RepoImage object) {
+                return object.getRepoImageId();
+            }
+        });
     }
 
     @Override

@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -388,8 +389,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         );
     }
 
-    protected void setImagesToModel(UnitVmModel model, List<String> images) {
-        String oldCdImage = model.getCdImage().getSelectedItem();
+    protected void setImagesToModel(UnitVmModel model, List<RepoImage> images) {
+        RepoImage oldCdImage = model.getCdImage().getSelectedItem();
         model.getCdImage().setItems(images);
         model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
                 : Linq.firstOrNull(images));
@@ -1255,8 +1256,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateSelectedCdImage(VmBase vmBase) {
-        getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
         boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
+        if (hasCd) {
+            getModel().getCdImage().setSelectedItem(new RepoImage(vmBase.getIsoPath()));
+        }
         getModel().getCdImage().setIsChangeable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
     }

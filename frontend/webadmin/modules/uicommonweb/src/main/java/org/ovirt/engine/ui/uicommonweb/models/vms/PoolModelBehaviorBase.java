@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -84,7 +85,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         getModel().setDataCentersAndClusters(getModel(),
                                 dataCenters,
                                 filteredClusters, null);
-                        initCdImage();
                         getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.EMPTY);
                     }
                 }),
@@ -92,6 +92,24 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     protected abstract List<Cluster> filterClusters(List<Cluster> clusters);
+
+    @Override
+    public void templateWithVersion_SelectedItemChanged() {
+        updateCdImage();
+    }
+
+    @Override
+    protected void setImagesToModel(UnitVmModel model, List<RepoImage> images) {
+        if (getModel().getTemplateWithVersion().getSelectedItem() == null) {
+            return;
+        }
+        VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
+        model.getCdImage().setItems(images);
+        if (!StringHelper.isNullOrEmpty(template.getIsoPath())) {
+            RepoImage oldCdImage = images.stream().filter(i -> i.getRepoImageId().equals(template.getIsoPath())).findFirst().orElse(null);
+            model.getCdImage().setSelectedItem(oldCdImage);
+        }
+    }
 
     protected void setupWindowModelFrom(final VmBase vmBase) {
         if (vmBase != null) {
@@ -108,9 +126,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
                 getModel().getCdImage().setIsChangeable(hasCd);
                 getModel().getCdAttached().setEntity(hasCd);
-                if (hasCd) {
-                    getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
-                }
 
                 updateTimeZone(vmBase.getTimeZone());
 
@@ -220,10 +235,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
         getModel().getMinAllocatedMemory()
                 .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
-    }
-
-    public void initCdImage() {
-        updateCdImage();
     }
 
     @Override

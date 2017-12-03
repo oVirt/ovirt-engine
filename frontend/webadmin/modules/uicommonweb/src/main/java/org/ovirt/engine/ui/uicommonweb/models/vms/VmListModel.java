@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VmWithStatusForExclusiveLoc
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -1636,21 +1637,20 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.setHashName("change_cd"); //$NON-NLS-1$
 
         AttachCdModel attachCdModel = (AttachCdModel) getWindow();
-        ArrayList<String> images1 =
-                new ArrayList<>(Arrays.asList(new String[] { ConstantsManager.getInstance()
-                        .getConstants()
-                        .noCds() }));
+        List<RepoImage> images1 = new ArrayList<>(
+                Arrays.asList(new RepoImage(ConstantsManager.getInstance().getConstants().noCds())));
         attachCdModel.getIsoImage().setItems(images1);
         attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrNull(images1));
 
         ImagesDataProvider.getISOImagesList(new AsyncQuery<>(images -> {
             AttachCdModel _attachCdModel = (AttachCdModel) getWindow();
-            images.add(0, ConsoleModel.getEjectLabel());
+            RepoImage eject = new RepoImage(ConsoleModel.getEjectLabel());
+            images.add(0, eject);
             _attachCdModel.getIsoImage().setItems(images);
             if (_attachCdModel.getIsoImage().getIsChangable()) {
-                String selectedIso =
-                        Linq.firstOrNull(images, s -> vm.getCurrentCd() != null && vm.getCurrentCd().equals(s));
-                _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? ConsoleModel.getEjectLabel() : selectedIso);
+                RepoImage selectedIso =
+                        Linq.firstOrNull(images, s -> vm.getCurrentCd() != null && vm.getCurrentCd().equals(s.getRepoImageId()));
+                _attachCdModel.getIsoImage().setSelectedItem(selectedIso == null ? eject : selectedIso);
             }
         }), vm.getStoragePoolId());
 
@@ -1672,14 +1672,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             return;
         }
 
-        if (Objects.equals(model.getIsoImage().getSelectedItem(), vm.getCurrentCd())) {
+        if (Objects.equals(model.getIsoImage().getSelectedItem().getRepoImageId(), vm.getCurrentCd())) {
             cancel();
             return;
         }
 
         String isoName =
-                Objects.equals(model.getIsoImage().getSelectedItem(), ConsoleModel.getEjectLabel()) ? "" //$NON-NLS-1$
-                        : model.getIsoImage().getSelectedItem();
+                Objects.equals(model.getIsoImage().getSelectedItem().getRepoImageId(), ConsoleModel.getEjectLabel()) ? "" //$NON-NLS-1$
+                        : model.getIsoImage().getSelectedItem().getRepoImageId();
 
         model.startProgress();
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -19,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -74,7 +74,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getIsDeleteProtected().getEntity()).thenReturn(true);
         when(model.extractSelectedSsoMethod()).thenReturn(SSO_METHOD);
         when(model.getBootSequence()).thenReturn(BOOT_SEQUENCE);
-        ListModel<String> cdListModel = mockCdListModel();
+        ListModel<RepoImage> cdListModel = mockCdListModel();
         when(model.getCdImage()).thenReturn(cdListModel);
         when(model.getIsHighlyAvailable().getEntity()).thenReturn(true);
         when(model.getInitrd_path().getEntity()).thenReturn(INITRD_PATH);
@@ -261,8 +261,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         return model;
     }
 
-    protected ListModel<String> mockCdListModel() {
-        final ListModel<String> model = mockListModel(ISO_NAME);
+    protected ListModel<RepoImage> mockCdListModel() {
+        final ListModel<RepoImage> model = mockListModel(new RepoImage(ISO_NAME));
         when(model.getIsChangable()).thenReturn(true);
 
         return model;

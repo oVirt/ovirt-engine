@@ -19,13 +19,13 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -51,7 +51,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     private VmImportDiskListModel importDiskListModel;
     private VmImportInterfaceListModel importInterfaceListModel;
     private List<VnicProfileView> networkProfiles;
-    private ListModel<String> iso;
+    private ListModel<RepoImage> iso;
     private EntityModel<Boolean> attachDrivers;
     private String winWithoutVirtioMessage;
     private boolean sourceIsNotKvm;
@@ -66,7 +66,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         setAllocation(new ListModel<VolumeType>());
         getAllocation().setItems(Arrays.asList(VolumeType.Sparse, VolumeType.Preallocated));
         sourceIsNotKvm = true;
-        setIso(new ListModel<String>());
+        setIso(new ListModel<>());
         setAttachDrivers(new EntityModel<>(false));
 
         vmImportGeneralModel.getOperatingSystems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateWindowsWarningMessage());
@@ -83,7 +83,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         }
 
         boolean attachDrivers = getAttachDrivers().getEntity();
-        boolean someDriverSelected = StringHelper.isNotNullOrEmpty(getIso().getSelectedItem());
+        boolean someDriverSelected = getIso().getSelectedItem() != null;
         boolean isWindows = AsyncDataProvider.getInstance().isWindowsOsType(selectedOS);
 
         if (isWindows && sourceIsNotKvm &&  (!attachDrivers || !someDriverSelected)) {
@@ -258,9 +258,9 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
                 false);
     }
 
-    private String tryToFindVirtioTools(List<String> isos) {
-        for (String iso : isos) {
-            if (iso.startsWith("virtio-win")) { //$NON-NLS-1$
+    private RepoImage tryToFindVirtioTools(List<RepoImage> isos) {
+        for (RepoImage iso : isos) {
+            if (iso.getRepoImageId().startsWith("virtio-win")) { //$NON-NLS-1$
                 return iso;
             }
         }
@@ -337,11 +337,11 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         return true;
     }
 
-    public ListModel<String> getIso() {
+    public ListModel<RepoImage> getIso() {
         return iso;
     }
 
-    public void setIso(ListModel<String> iso) {
+    public void setIso(ListModel<RepoImage> iso) {
         this.iso = iso;
     }
 

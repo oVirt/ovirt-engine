@@ -232,9 +232,6 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
                         boolean hasCd = !StringHelper.isNullOrEmpty(cdImage);
                         model.getCdImage().setIsChangeable(hasCd);
                         model.getCdAttached().setEntity(hasCd);
-                        if (hasCd) {
-                            model.getCdImage().setSelectedItem(cdImage);
-                        }
 
                         model.getProvisioning().setIsChangeable(false);
                         model.getStorageDomain().setIsChangeable(false);

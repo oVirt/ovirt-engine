@@ -69,7 +69,8 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
                 getCluster().getSelectedItem().getId());
         prm.setOvaPath(ovaPath);
         prm.setProxyHostId(hostId);
-        prm.setVirtioIsoName(getIso().getIsChangable() ? getIso().getSelectedItem() : null);
+        prm.setVirtioIsoName(getIso().getIsChangable() && getIso().getSelectedItem() != null ?
+                getIso().getSelectedItem().getRepoImageId() : null);
         prm.setExternalName(importVmData.getName());
 
         if (getClusterQuota().getSelectedItem() != null &&

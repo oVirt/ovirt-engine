@@ -21,7 +21,8 @@ public class ImagesDataProvider {
     private static final String ISO_PREFIX = "iso://"; //$NON-NLS-1$
 
     public static void getFloppyImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
-        getIrsImageList(aQuery, storagePoolId, false, ImageFileType.Floppy);
+        getIrsImageList(aQuery, storagePoolId, false, ImageFileType.Floppy,
+                new RepoImageToImageFileNameAsyncConverter());
     }
 
     public static void getUnknownImageList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
@@ -33,34 +34,26 @@ public class ImagesDataProvider {
                         image -> ImageFileType.Unknown == image.getFileType()));
     }
 
-    public static void getISOImagesList(AsyncQuery<List<String>> aQuery, Guid storagePoolId) {
+    public static void getISOImagesList(AsyncQuery<List<RepoImage>> aQuery, Guid storagePoolId) {
         getISOImagesList(aQuery, storagePoolId, false);
     }
 
-    public static void getISOImagesList(AsyncQuery<List<String>> aQuery, Guid storagePoolId, boolean forceRefresh) {
-        ImageFileType imageFileType = ImageFileType.ISO;
-        getIrsImageList(aQuery, storagePoolId, forceRefresh, imageFileType);
-    }
-
-    private static void getIrsImageList(AsyncQuery<List<String>> aQuery,
-            Guid storagePoolId,
-            boolean forceRefresh,
-            ImageFileType imageFileType) {
-
+    public static void getISOImagesList(AsyncQuery<List<RepoImage>> aQuery, Guid storagePoolId, boolean forceRefresh) {
         getIrsImageList(aQuery,
                 storagePoolId,
                 forceRefresh,
-                imageFileType,
-                new RepoImageToImageFileNameAsyncConverter());
+                ImageFileType.ISO,
+                new AsyncDataProvider.ListConverter());
     }
 
-    private static void getIrsImageList(AsyncQuery<List<String>> aQuery,
+    private static <T> void getIrsImageList(AsyncQuery<List<T>> aQuery,
             Guid storagePoolId,
             boolean forceRefresh,
             ImageFileType imageFileType,
-            Converter<List<String>, List<RepoImage>> converterCallBack) {
-
-        aQuery.converterCallback = converterCallBack;
+            Converter<List<T>, List<RepoImage>> converterCallBack) {
+        if (converterCallBack != null) {
+            aQuery.converterCallback = converterCallBack;
+        }
 
         GetImagesListByStoragePoolIdParameters parameters =
                 new GetImagesListByStoragePoolIdParameters(storagePoolId, imageFileType);

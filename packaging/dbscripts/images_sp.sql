@@ -173,3 +173,19 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION GetIsoDisksByStoragePool (v_storage_pool_id UUID)
+RETURNS SETOF repo_file_meta_data STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+    SELECT repo_domain_id,
+           repo_image_id,
+           size,
+           date_created,
+           last_refreshed,
+           file_type,
+           repo_image_name
+    FROM iso_disks_as_repo_images
+    WHERE storage_pool_id = v_storage_pool_id
+        AND status = 3;  -- The status of an active storage domain is 3
+END;$PROCEDURE$
+LANGUAGE plpgsql;

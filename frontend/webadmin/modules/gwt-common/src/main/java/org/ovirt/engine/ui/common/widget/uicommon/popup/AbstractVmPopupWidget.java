@@ -37,8 +37,10 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -857,7 +859,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "cdImage.selectedItem")
     @WithElementId("cdImage")
-    public ListModelListBoxEditor<String> cdImageEditor;
+    public ListModelListBoxEditor<RepoImage> cdImageEditor;
 
     @UiField(provided = true)
     @Path(value = "cdAttached.entity")
@@ -1460,10 +1462,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        cdImageEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<String>() {
+        cdImageEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<RepoImage>() {
             @Override
-            public String renderNullSafe(String object) {
-                return object;
+            public String renderNullSafe(RepoImage object) {
+                // For old ISO images from an ISO domain the image name is empty
+                if (StringHelper.isNullOrEmpty(object.getRepoImageName())) {
+                    return object.getRepoImageId();
+                }
+                return object.getRepoImageName();
             }
         }, new ModeSwitchingVisibilityRenderer());
         cdImageEditor.hideLabel();

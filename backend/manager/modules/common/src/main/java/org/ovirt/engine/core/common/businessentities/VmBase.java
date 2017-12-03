@@ -245,7 +245,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     @CopyOnNewVersion
     @EditableVmField
-    @Pattern(regexp = ValidationUtils.ISO_SUFFIX_PATTERN, flags = {Pattern.Flag.CASE_INSENSITIVE}, message = "ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT")
+    @Pattern(regexp = ValidationUtils.ISO_SUFFIX_PATTERN + "|" + ValidationUtils.GUID,
+            flags = {Pattern.Flag.CASE_INSENSITIVE}, message = "ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath;
 

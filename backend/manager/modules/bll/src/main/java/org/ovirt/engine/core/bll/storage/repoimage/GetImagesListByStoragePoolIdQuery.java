@@ -1,12 +1,17 @@
 package org.ovirt.engine.core.bll.storage.repoimage;
 
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
@@ -21,8 +26,19 @@ public class GetImagesListByStoragePoolIdQuery<P extends GetImagesListByStorageP
     @Inject
     private StoragePoolDao storagePoolDao;
 
+    @Inject
+    private DiskImageDao diskImageDao;
+
     public GetImagesListByStoragePoolIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
+    }
+
+    @Override protected void executeQueryCommand() {
+        super.executeQueryCommand();
+        if (ImageFileType.ISO == getParameters().getImageType()) {
+            ((List<RepoImage>) getQueryReturnValue().getReturnValue()).addAll(
+                    diskImageDao.getIsoDisksForStoragePoolAsRepoImages(getParameters().getStoragePoolId()));
+        }
     }
 
     /**

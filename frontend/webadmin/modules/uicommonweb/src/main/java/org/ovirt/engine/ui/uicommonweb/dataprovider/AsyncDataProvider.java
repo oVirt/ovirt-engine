@@ -3047,7 +3047,7 @@ public class AsyncDataProvider {
         }
     }
 
-    private static class ListConverter<T> implements Converter<List<T>, List<T>> {
+    static class ListConverter<T> implements Converter<List<T>, List<T>> {
         @Override
         public List<T> convert(List<T> source) {
             return source != null ? source : new ArrayList<T>();

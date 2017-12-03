@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
@@ -1060,13 +1061,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         privateSecondBootDevice = value;
     }
 
-    private NotChangableForVmInPoolListModel<String> privateCdImage;
+    private NotChangableForVmInPoolListModel<RepoImage> privateCdImage;
 
-    public ListModel<String> getCdImage() {
+    public ListModel<RepoImage> getCdImage() {
         return privateCdImage;
     }
 
-    private void setCdImage(NotChangableForVmInPoolListModel<String> value) {
+    private void setCdImage(NotChangableForVmInPoolListModel<RepoImage> value) {
         privateCdImage = value;
     }
 
@@ -1556,7 +1557,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getLabelList().getSelectedItemsChangedEvent().addListener(this);
         getLabelList().setIsAvailable(false);
 
-        setCdImage(new NotChangableForVmInPoolListModel<String>());
+        setCdImage(new NotChangableForVmInPoolListModel<>());
         getCdImage().setIsChangeable(false);
 
         setMemoryBalloonDeviceEnabled(new EntityModel<Boolean>());

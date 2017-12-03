@@ -27,7 +27,8 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setClusterId(model.getSelectedCluster() != null ? model.getSelectedCluster().getId() : null);
         vm.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? model.getTimeZone()
                 .getSelectedItem().getTimeZoneKey() : ""); //$NON-NLS-1$
-        vm.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
+        vm.setIsoPath(model.getCdImage().getIsChangable() && model.getCdImage().getSelectedItem() != null ?
+                model.getCdImage().getSelectedItem().getRepoImageId() : ""); //$NON-NLS-1$
         vm.setDeleteProtected(model.getIsDeleteProtected().getEntity());
         vm.setOsId(model.getOSType().getSelectedItem());
         Guid largeIconId = IconCache.getInstance().getId(model.getIcon().getEntity().getIcon());

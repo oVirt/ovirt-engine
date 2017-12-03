@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
@@ -125,7 +127,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                         getModel().getDataCenterWithClustersList().setItems(Arrays.asList(dataCenterWithCluster));
                         getModel().getDataCenterWithClustersList().setSelectedItem(dataCenterWithCluster);
                         behavior.initTemplate();
-                        behavior.initCdImage();
+                        behavior.updateCdImage();
                     }
 
                 }),
@@ -143,7 +145,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                             filteredClusters, vm.getClusterId());
                     updateCompatibilityVersion();
                     initTemplate();
-                    initCdImage();
+                    updateCdImage();
                 }),
                 true, false);
     }
@@ -320,14 +322,19 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         setupTemplateWithVersion(vm.getVmtGuid(), vm.isUseLatestVersion(), false);
     }
 
-    public void initCdImage() {
-        getModel().getCdImage().setSelectedItem(vm.getIsoPath());
+    @Override
+    protected void setImagesToModel(UnitVmModel model, List<RepoImage> images) {
+        model.getCdImage().setItems(images);
 
         boolean hasCd = !StringHelper.isNullOrEmpty(vm.getIsoPath());
         getModel().getCdImage().setIsChangeable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
 
-        updateCdImage();
+        if (hasCd) {
+            RepoImage selectedImage = images.stream().filter(i -> vm.getIsoPath().equals(i.getRepoImageId())).findFirst().orElse(null);
+            model.getCdImage().setSelectedItem((selectedImage != null) ? selectedImage
+                    : Linq.firstOrNull(images));
+        }
     }
 
     private void toggleAutoSetVmHostname() {

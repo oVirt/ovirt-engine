@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
@@ -328,5 +329,14 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
         protected CinderDisk createDiskEntity() {
             return new CinderDisk();
         }
+    }
+
+    @Override
+    public List<RepoImage> getIsoDisksForStoragePoolAsRepoImages(Guid storagePoolId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_pool_id", storagePoolId);
+
+        return getCallsHandler().executeReadList("GetIsoDisksByStoragePool",
+                RepoFileMetaDataDaoImpl.repoImageMapper, parameterSource);
     }
 }

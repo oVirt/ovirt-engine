@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -93,13 +94,13 @@ public abstract class RunOnceModel extends Model {
         privateAttachIso = value;
     }
 
-    private ListModel<String> privateIsoImage;
+    private ListModel<RepoImage> privateIsoImage;
 
-    public ListModel<String> getIsoImage() {
+    public ListModel<RepoImage> getIsoImage() {
         return privateIsoImage;
     }
 
-    private void setIsoImage(ListModel<String> value) {
+    private void setIsoImage(ListModel<RepoImage> value) {
         privateIsoImage = value;
     }
 
@@ -533,7 +534,7 @@ public abstract class RunOnceModel extends Model {
 
     public String getIsoImagePath() {
         if (getAttachIso().getEntity()) {
-            return getIsoImage().getSelectedItem();
+            return getIsoImage().getSelectedItem().getRepoImageId();
         } else {
             return ""; //$NON-NLS-1$
         }
@@ -544,7 +545,8 @@ public abstract class RunOnceModel extends Model {
             getAttachIso().setEntity(false);
         } else {
             getAttachIso().setEntity(true);
-            getIsoImage().setSelectedItem(isoPath);
+            RepoImage iso = new RepoImage(isoPath);
+            getIsoImage().setSelectedItem(iso);
         }
     }
 
@@ -559,7 +561,7 @@ public abstract class RunOnceModel extends Model {
         getFloppyImage().getSelectedItemChangedEvent().addListener(this);
         setAttachIso(new EntityModel<Boolean>());
         getAttachIso().getEntityChangedEvent().addListener(this);
-        setIsoImage(new ListModel<String>());
+        setIsoImage(new ListModel<>());
         getIsoImage().getSelectedItemChangedEvent().addListener(this);
         setDisplayProtocol(new ListModel<EntityModel<DisplayType>>());
         setBootSequence(new BootSequenceModel());
@@ -936,14 +938,15 @@ public abstract class RunOnceModel extends Model {
     public void updateIsoList(boolean forceRefresh) {
         ImagesDataProvider.getISOImagesList(new AsyncQuery<>(
                         images -> {
-                            final String lastSelectedIso = getIsoImage().getSelectedItem();
+                            final RepoImage lastSelectedIso = getIsoImage().getSelectedItem();
 
                             getIsoImage().setItems(images);
 
                             if (getIsoImage().getIsChangable()) {
                                 // try to preselect last image
-                                if (lastSelectedIso != null && images.contains(lastSelectedIso)) {
-                                    getIsoImage().setSelectedItem(lastSelectedIso);
+                                if (lastSelectedIso != null) {
+                                    getIsoImage().setSelectedItem(images.stream()
+                                            .filter(i -> i.getRepoImageId().equals(lastSelectedIso.getRepoImageId())).findFirst().orElse(null));
                                 } else {
                                     getIsoImage().setSelectedItem(Linq.firstOrNull(images));
                                 }

@@ -67,7 +67,8 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
             return failValidation(EngineMessage.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
-        if (StringUtils.isNotEmpty(cdImagePath) && !StringUtils.endsWithIgnoreCase(cdImagePath, ValidationUtils.ISO_SUFFIX)) {
+        if (StringUtils.isNotEmpty(cdImagePath) && !(StringUtils.endsWithIgnoreCase(cdImagePath, ValidationUtils.ISO_SUFFIX)
+                || cdImagePath.matches(ValidationUtils.GUID))) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT);
         }
 

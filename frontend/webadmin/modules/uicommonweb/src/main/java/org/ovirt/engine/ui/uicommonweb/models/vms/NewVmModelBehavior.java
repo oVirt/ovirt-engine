@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -125,7 +126,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getCdImage().setIsChangeable(hasCd);
             getModel().getCdAttached().setEntity(hasCd);
             if (hasCd) {
-                getModel().getCdImage().setSelectedItem(template.getIsoPath());
+                RepoImage currentCD = getModel().getCdImage().getItems().stream()
+                        .filter(i -> i.getRepoImageId().equals(template.getIsoPath())).findFirst().orElse(null);
+                getModel().getCdImage().setSelectedItem(currentCD);
             }
 
             updateTimeZone(template.getTimeZone());

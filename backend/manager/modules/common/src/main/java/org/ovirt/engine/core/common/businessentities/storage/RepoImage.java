@@ -29,6 +29,11 @@ public class RepoImage implements Queryable {
         dateCreated = new Date();
     }
 
+    public RepoImage(String repoImageId) {
+        this();
+        this.repoImageId = repoImageId;
+    }
+
     /**
      * @param storagePoolId
      *            the storage pool id to set

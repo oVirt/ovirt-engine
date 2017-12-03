@@ -1,9 +1,12 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachCdModel;
 
@@ -25,18 +28,32 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "isoImage.selectedItem")
     @WithElementId("isoImage")
-    ListModelListBoxEditor<String> isoImageEditor;
+    ListModelListBoxEditor<RepoImage> isoImageEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
     public VmChangeCDPopupWidget() {
+        initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
         isoImageEditor.hideLabel();
+    }
+
+    private void initListBoxEditors() {
+        isoImageEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<RepoImage>() {
+            @Override
+            protected String renderNullSafe(RepoImage object) {
+                // For old ISO images from an ISO domain the image name is empty
+                if (StringHelper.isNullOrEmpty(object.getRepoImageName())) {
+                    return object.getRepoImageId();
+                }
+                return object.getRepoImageName();
+            }
+        });
     }
 
     @Override

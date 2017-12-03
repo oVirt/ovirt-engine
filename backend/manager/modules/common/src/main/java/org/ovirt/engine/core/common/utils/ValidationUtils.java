@@ -52,6 +52,9 @@ public class ValidationUtils {
     public static final String KEY_EQUALS_VALUE_SPACE_SEPARATED = "^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$";
     public static final String EMPTY_STRING = "^$";
     public static final String NO_WHITESPACE = "[^\\s]+";
+    public static final String GUID = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}";
+
+
 
     /**
      * the mask will be replaced with zero-padded number in the generated names of the VMs in the pool, see

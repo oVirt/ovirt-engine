@@ -3804,3 +3804,24 @@ CREATE OR REPLACE VIEW disk_vm_element_extended AS
     JOIN vm_device vd
         ON dve.disk_id = vd.device_id
             AND dve.vm_id = vd.vm_id;
+
+
+
+CREATE OR REPLACE VIEW iso_disks_as_repo_images AS
+   SELECT sds.id AS repo_domain_id,
+       bd.disk_id::VARCHAR(256) AS repo_image_id,
+       img.size AS size,
+       img.creation_date AS date_created,
+       (EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)*1000)::BIGINT AS last_refreshed,
+       1 AS file_type,
+       bd.disk_alias::VARCHAR(256) AS repo_image_name,
+       spim.storage_pool_id,
+       spim.status
+   FROM base_disks bd
+   JOIN images img ON bd.disk_id = img.image_group_id
+   JOIN image_storage_domain_map isdm ON isdm.image_id = img.image_guid
+   JOIN storage_domain_static sds ON sds.id = isdm.storage_domain_id
+   JOIN storage_pool_iso_map spim ON spim.storage_id = sds.id
+
+   WHERE bd.disk_content_type=4;
+

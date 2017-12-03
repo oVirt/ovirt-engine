@@ -4,6 +4,8 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -27,6 +29,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
@@ -145,10 +148,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Ignore
     KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
-    @UiField
+    @UiField(provided=true)
     @Path(value = "isoImage.selectedItem")
     @WithElementId("isoImage")
-    ListModelListBoxEditor<String> isoImageEditor;
+    ListModelListBoxEditor<RepoImage> isoImageEditor;
 
     @UiField(provided = true)
     @Path(value = "attachFloppy.entity")
@@ -413,6 +416,17 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
                 false,
                 new VisibilityRenderer.SimpleVisibilityRenderer(),
                 constants.empty());
+
+        isoImageEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<RepoImage>() {
+            @Override
+            protected String renderNullSafe(RepoImage object) {
+                // For old ISO images from an ISO domain the image name is empty
+                if (StringHelper.isNullOrEmpty(object.getRepoImageName())) {
+                    return object.getRepoImageId();
+                }
+                return object.getRepoImageName();
+            }
+        });
     }
 
     void initRadioButtonEditors() {

@@ -67,7 +67,7 @@ public class RepoFileMetaDataDaoImpl extends BaseDao implements RepoFileMetaData
         return getCallsHandler().executeReadList("GetRepo_files_by_storage_domain", repoImageMapper, parameterSource);
     }
 
-    private static final RowMapper<RepoImage> repoImageMapper= (rs, rowNum) -> {
+    static final RowMapper<RepoImage> repoImageMapper= (rs, rowNum) -> {
         RepoImage entity = new RepoImage();
         entity.setRepoDomainId(getGuidDefaultEmpty(rs, "repo_domain_id"));
         entity.setRepoImageId(rs.getString("repo_image_id"));

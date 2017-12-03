@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -147,4 +148,12 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
      * @return List of child snpashots
      */
     Set<DiskImage> getAllSnapshotsForParents(Collection<Guid> parentIds);
+
+    /**
+     * Returns all the disks of content type ISO residing on active domain in the specified storage pool
+     *
+     * @param storagePoolId The ID of the storage pool
+     * @return List of the ISO disks as RepoImage
+     */
+    List<RepoImage> getIsoDisksForStoragePoolAsRepoImages(Guid storagePoolId);
 }
