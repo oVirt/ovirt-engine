@@ -77,9 +77,7 @@ public class ImportValidator {
                             String.format("$diskAliases %s", diskImage.getDiskAlias()));
                 }
                 failedDisksToImport.putIfAbsent(image.getId(), image.getDiskAlias());
-                if (imageToDestinationDomainMap != null) {
-                    imageToDestinationDomainMap.remove(image.getId());
-                }
+                imageToDestinationDomainMap.remove(image.getId());
                 images.remove(image);
             }
         }
