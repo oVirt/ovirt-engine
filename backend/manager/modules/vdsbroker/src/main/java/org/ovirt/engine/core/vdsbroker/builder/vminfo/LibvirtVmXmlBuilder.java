@@ -168,10 +168,10 @@ public class LibvirtVmXmlBuilder {
         this.vdsCpuThreads = vdsCpuThreads;
         this.volatileRun = volatileRun;
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
-        payloadIndex = -1;
-        cdRomIndex = -1;
-        vnicMetadata = new HashMap<>();
-        diskMetadata = new HashMap<>();
+        initHostSpecificSuppliers(hostId);
+    }
+
+    private void initHostSpecificSuppliers(Guid hostId) {
         hostDevicesSupplier = new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
                 .stream()
                 .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device)));
@@ -181,6 +181,10 @@ public class LibvirtVmXmlBuilder {
 
     @PostConstruct
     private void init() {
+        payloadIndex = -1;
+        cdRomIndex = -1;
+        vnicMetadata = new HashMap<>();
+        diskMetadata = new HashMap<>();
         hypervEnabled = osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion());
         cdInterface = osRepository.getCdInterface(
                 vm.getOs(),
@@ -1969,7 +1973,7 @@ public class LibvirtVmXmlBuilder {
             String vfDeviceName = passthroughVnicToVfMap.get(nic.getId());
             Map<String, String> sourceAddress = hostDevicesSupplier.get().get(vfDeviceName).getAddress();
             sourceAddress.put("type", "pci");
-            sourceAddress.forEach((key, value) -> writer.writeAttributeString(key, value));
+            sourceAddress.forEach(writer::writeAttributeString);
             writer.writeEndElement();
             writer.writeEndElement();
             break;
@@ -2158,7 +2162,7 @@ public class LibvirtVmXmlBuilder {
     private void writeAddress(Map<String, String> addressMap) {
         if (!addressMap.isEmpty()) {
             writer.writeStartElement("address");
-            addressMap.forEach((key, value) -> writer.writeAttributeString(key, value));
+            addressMap.forEach(writer::writeAttributeString);
             writer.writeEndElement();
         }
     }

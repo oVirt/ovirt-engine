@@ -1,18 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -20,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuilder;
@@ -74,28 +67,11 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
                 getParameters().isVolatileRun(),
                 getParameters().getPassthroughVnicToVfMap()));
         String libvirtXml = builder.build();
-        String prettyLibvirtXml = prettify(libvirtXml);
+        String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
         if (prettyLibvirtXml != null) {
             log.info("VM {}", prettyLibvirtXml);
         }
         return libvirtXml;
-    }
-
-    public static String prettify(String input) {
-        Source xmlInput = new StreamSource(new StringReader(input));
-        StringWriter stringWriter = new StringWriter();
-        try {
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            transformer.transform(xmlInput, new StreamResult(stringWriter));
-            return stringWriter.toString().replace("\r\n", "\n");
-        } catch (Exception ex) {
-            log.error("Failed to produce pretty-print of {}", input);
-            log.error("Exception:", ex);
-            return null;
-        }
     }
 
     private VmInfoBuilder createBuilder() {
