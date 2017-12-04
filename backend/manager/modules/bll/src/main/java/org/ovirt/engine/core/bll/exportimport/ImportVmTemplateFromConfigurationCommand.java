@@ -263,8 +263,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     public void executeCommand() {
-        addAuditLogForPartialVMs();
         super.executeCommand();
+        addAuditLogForPartialVMs();
         if (getParameters().isImagesExistOnTargetStorageDomain()) {
             if (!getImages().isEmpty()) {
                 findAndSaveDiskCopies();
