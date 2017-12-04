@@ -55,6 +55,14 @@ public class VnicProfileMappingEntity {
         return externalVnicProfileMapping;
     }
 
+    public boolean isSameSourceProfile(VnicProfileMappingEntity other) {
+        return externalVnicProfileMapping.isSameSourceProfile(other.externalVnicProfileMapping);
+    }
+
+    /**
+     * warning: this equals only compares the source profile
+     * @return true if the source profile of o is the same as that of this
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -64,7 +72,7 @@ public class VnicProfileMappingEntity {
             return false;
         }
         final VnicProfileMappingEntity that = (VnicProfileMappingEntity) o;
-        return Objects.equals(externalVnicProfileMapping, that.externalVnicProfileMapping);
+        return isSameSourceProfile(that);
     }
 
     @Override

@@ -47,6 +47,15 @@ public class ExternalVnicProfileMapping implements Serializable {
         this.vnicProfileId = vnicProfileId;
     }
 
+    public boolean isSameSourceProfile(ExternalVnicProfileMapping other) {
+        return Objects.equals(externalNetworkName, other.externalNetworkName) &&
+                Objects.equals(externalNetworkProfileName, other.externalNetworkProfileName);
+    }
+
+    /**
+     * warning: this equals only compares the source profile
+     * @return true if the source profile of o is the same as that of this
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -56,8 +65,7 @@ public class ExternalVnicProfileMapping implements Serializable {
             return false;
         }
         final ExternalVnicProfileMapping that = (ExternalVnicProfileMapping) o;
-        return Objects.equals(externalNetworkName, that.externalNetworkName) &&
-                Objects.equals(externalNetworkProfileName, that.externalNetworkProfileName);
+        return isSameSourceProfile(that);
     }
 
     @Override

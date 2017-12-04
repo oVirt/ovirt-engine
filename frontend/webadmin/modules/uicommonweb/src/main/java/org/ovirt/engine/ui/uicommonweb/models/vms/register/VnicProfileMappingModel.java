@@ -94,6 +94,8 @@ public class VnicProfileMappingModel extends Model {
     }
 
     private <T> void addOrReplace(Set<T> set, T e) {
+        // warning: the remove() and add() methods of the Set use the equals of
+        // {@link VnicProfileMappingEntity} which only compares the source profile
         set.remove(e);
         set.add(e);
     }
