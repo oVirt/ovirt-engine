@@ -339,7 +339,7 @@ public class RunVmValidatorTest {
                 .getPredefinedVMProperties(any());
         doReturn("").
                 when(utils)
-                .getUserdefinedVMProperties(any());
+                .getUserDefinedVMProperties(any());
         doReturn(new HashSet<>(Arrays.asList(Version.v3_6, Version.v4_0))).
                 when(utils)
                 .getSupportedClusterLevels();

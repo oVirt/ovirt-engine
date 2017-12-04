@@ -42,7 +42,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
                 userdefinedProperties.put(version, new HashMap<>());
                 allVmProperties.put(version, new HashMap<>());
                 parsePropertiesRegex(getPredefinedVMProperties(version), predefinedProperties.get(version));
-                parsePropertiesRegex(getUserdefinedVMProperties(version), userdefinedProperties.get(version));
+                parsePropertiesRegex(getUserDefinedVMProperties(version), userdefinedProperties.get(version));
                 allVmProperties.get(version).putAll(predefinedProperties.get(version));
                 allVmProperties.get(version).putAll(userdefinedProperties.get(version));
             }
@@ -51,7 +51,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         }
     }
 
-    public String getUserdefinedVMProperties(Version version) {
+    public String getUserDefinedVMProperties(Version version) {
         return Config.getValue(ConfigValues.UserDefinedVMProperties, version.getValue());
     }
 
@@ -72,7 +72,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
             return predefinedProperties;
         }
 
-        public String getUseDefinedProperties() {
+        public String getUserDefinedProperties() {
             return userDefinedProperties;
         }
     }
@@ -194,7 +194,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         String customProperties = vmBase.getCustomProperties();
         VMCustomProperties properties = parseProperties(version, customProperties);
         vmBase.setPredefinedProperties(properties.getPredefinedProperties());
-        vmBase.setUserDefinedProperties(properties.getUseDefinedProperties());
+        vmBase.setUserDefinedProperties(properties.getUserDefinedProperties());
     }
 
     /**
