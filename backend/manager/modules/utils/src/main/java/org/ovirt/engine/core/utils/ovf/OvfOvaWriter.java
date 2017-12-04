@@ -66,6 +66,7 @@ public abstract class OvfOvaWriter extends OvfWriter {
     protected void writeOS() {
         _writer.writeStartElement("OperatingSystemSection");
         _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "id", Integer.toString(mapOsId(vmBase.getOsId())));
+        _writer.writeAttributeString(OVIRT_URI, "id", Integer.toString(vmBase.getOsId()));
         _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "required", "false");
         _writer.writeElement("Info", "Guest Operating System");
         _writer.writeElement("Description", osRepository.getOsName(vmBase.getOsId()));
