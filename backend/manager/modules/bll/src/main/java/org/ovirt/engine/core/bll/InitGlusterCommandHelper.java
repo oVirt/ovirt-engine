@@ -134,7 +134,7 @@ public class InitGlusterCommandHelper {
             Map<String, String> customLogValues = new HashMap<>();
             List<VDS> vdsList = vdsDao.getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up);
             // If the cluster already having Gluster servers, get an up server
-            if (vdsList.size() > 0) {
+            if (!vdsList.isEmpty()) {
                 VDS upServer = null;
                 for (VDS existingVds : vdsList) {
                     if (!vds.getId().equals(existingVds.getId())) {
@@ -147,7 +147,7 @@ public class InitGlusterCommandHelper {
                 if (upServer != null) {
                     List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer);
                     customLogValues.put("Server", upServer.getHostName());
-                    if (glusterServers.size() == 0) {
+                    if (glusterServers.isEmpty()) {
                         customLogValues.put("Command", "gluster peer status");
                         setNonOperational(vds, NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                         return false;
