@@ -155,7 +155,7 @@ public class DownloadImageHandler {
         return disks != null && !disks.isEmpty() && disks.stream()
                 .allMatch((Predicate<Disk>) disk ->
                         disk instanceof DiskImage
-                        && disk.getImageTransferPhase() == ImageTransferPhase.TRANSFERRING
-                        && !UploadImageManager.getInstance().isUploadImageHandlerExists(disk.getId()));
+                        && disk.getTransferType() == TransferType.Download
+                        && disk.getImageTransferPhase() == ImageTransferPhase.TRANSFERRING);
     }
 }

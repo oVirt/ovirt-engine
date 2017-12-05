@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -478,9 +479,9 @@ public class UploadImageModel extends Model implements ICommandTarget {
         }
         for (Disk disk : disks) {
             if (!(disk instanceof DiskImage)
+                    || disk.getTransferType() != TransferType.Upload
                     || disk.getImageTransferPhase() == null
-                    || !disk.getImageTransferPhase().canBeCancelled()
-                    || isImageUploadViaAPI((DiskImage) disk)) {
+                    || !disk.getImageTransferPhase().canBeCancelled()) {
                 return false;
             }
         }
@@ -493,6 +494,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         }
         for (Disk disk : disks) {
             if (!(disk instanceof DiskImage)
+                    || disk.getTransferType() != TransferType.Upload
                     || disk.getImageTransferPhase() == null
                     || !disk.getImageTransferPhase().canBePaused()
                     || isImageUploadViaAPI((DiskImage) disk)) {
@@ -506,6 +508,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         return disks != null
                 && disks.size() == 1
                 && disks.get(0) instanceof DiskImage
+                && disks.get(0).getTransferType() == TransferType.Upload
                 && disks.get(0).getImageTransferPhase() != null
                 && disks.get(0).getImageTransferPhase().canBeResumed()
                 && !isImageUploadViaAPI((DiskImage) disks.get(0));
