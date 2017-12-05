@@ -2,13 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditTemplateInterfaceModel;
@@ -49,8 +47,6 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
     private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
     }
-
-    private Cluster cluster = null;
 
     public TemplateInterfaceListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
@@ -97,7 +93,7 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
         VmInterfaceModel model =
                 NewTemplateInterfaceModel.createInstance(getEntity(),
                         getEntity().getStoragePoolId(),
-                        cluster.getCompatibilityVersion(),
+                        getEntity().getCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         this);
         setWindow(model);
@@ -113,7 +109,7 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
         VmInterfaceModel model =
                 EditTemplateInterfaceModel.createInstance(getEntity(),
                         getEntity().getStoragePoolId(),
-                        cluster.getCompatibilityVersion(),
+                        getEntity().getCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         getSelectedItem(),
                         this);
@@ -146,9 +142,9 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
     }
 
     private void updateActionAvailability() {
-        getNewCommand().setIsExecutionAllowed(cluster != null);
+        getNewCommand().setIsExecutionAllowed(getEntity() != null);
         getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
-                && getSelectedItem() != null && cluster != null);
+                && getSelectedItem() != null);
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
     }
 
@@ -167,19 +163,6 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
         }
         else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-    }
-
-    @Override
-    public void setEntity(VmTemplate value) {
-        cluster = null;
-        super.setEntity(value);
-
-        if (getEntity() != null) {
-            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(returnValue -> {
-                cluster = returnValue;
-                updateActionAvailability();
-            }), getEntity().getClusterId());
         }
     }
 
