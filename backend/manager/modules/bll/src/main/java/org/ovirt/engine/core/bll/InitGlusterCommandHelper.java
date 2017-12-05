@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -135,16 +136,13 @@ public class InitGlusterCommandHelper {
             List<VDS> vdsList = vdsDao.getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up);
             // If the cluster already having Gluster servers, get an up server
             if (!vdsList.isEmpty()) {
-                VDS upServer = null;
-                for (VDS existingVds : vdsList) {
-                    if (!vds.getId().equals(existingVds.getId())) {
-                        upServer = existingVds;
-                        break;
-                    }
-                }
 
                 // If new server is not part of the existing gluster peers, add into peer group
-                if (upServer != null) {
+                Optional<VDS> potentialUpServer =
+                        vdsList.stream().filter(existingVds -> !vds.getId().equals(existingVds.getId())).findFirst();
+
+                if (potentialUpServer.isPresent()) {
+                    VDS upServer = potentialUpServer.get();
                     List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer);
                     customLogValues.put("Server", upServer.getHostName());
                     if (glusterServers.isEmpty()) {
@@ -214,14 +212,10 @@ public class InitGlusterCommandHelper {
 
     private VDS getNewUpServer(VDS vds, VDS upServer) {
         List<VDS> vdsList = vdsDao.getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up);
-        VDS newUpServer = null;
-        for (VDS existingVds : vdsList) {
-            if (!vds.getId().equals(existingVds.getId()) && !upServer.getId().equals(existingVds.getId())) {
-                newUpServer = vds;
-                break;
-            }
-        }
-        return newUpServer;
+        return vdsList.stream()
+                .filter(v -> !vds.getId().equals(v.getId()) && !upServer.getId().equals(v.getId()))
+                .findFirst()
+                .orElse(null);
     }
 
 
