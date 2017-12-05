@@ -261,6 +261,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL();
 
+    String ACTION_TYPE_FAILED_VM_WITH_LOCALDISK_USER_PROPERTY();
+
     String ACTION_TYPE_FAILED_VM_IS_RUNNING();
 
     String ACTION_TYPE_FAILED_VM_IS_BEING_CLONED();

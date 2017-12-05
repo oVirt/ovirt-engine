@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -110,6 +112,18 @@ public class VmValidator {
     public ValidationResult vmNotIlegal() {
         if (vm.getStatus() == VMStatus.ImageIllegal) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult vmWithoutLocalDiskUserProperty() {
+        Map<String, String>
+                properties = VmPropertiesUtils.getInstance().getVMProperties(
+                vm.getCompatibilityVersion(),
+                vm.getStaticData());
+        if (properties.containsKey("localdisk")) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_WITH_LOCALDISK_USER_PROPERTY);
         }
 
         return ValidationResult.VALID;

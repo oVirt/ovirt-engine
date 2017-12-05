@@ -729,7 +729,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (disksList.size() > 0) {
             DiskImagesValidator diskImagesValidator = createDiskImageValidator(disksList);
             if (!(validate(diskImagesValidator.diskImagesNotLocked())
-                    && validate(diskImagesValidator.diskImagesNotIllegal()))) {
+                    && validate(diskImagesValidator.diskImagesNotIllegal())
+                    && validate(vmValidator.vmWithoutLocalDiskUserProperty()))) {
                 return false;
             }
         }
