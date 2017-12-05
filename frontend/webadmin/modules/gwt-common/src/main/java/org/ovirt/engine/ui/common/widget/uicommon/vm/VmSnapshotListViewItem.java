@@ -111,10 +111,10 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()), nic.getMacAddress(), dl);
             addDetailItem(templates.sub(constants.rxRate(), constants.mbps()),
                     rateRenderer.render(new Double[] { nic.getStatistics().getReceiveRate(),
-                            nic.getSpeed().doubleValue() }), dl);
+                            nic.hasSpeed() ? nic.getSpeed().doubleValue() : 0}), dl);
             addDetailItem(templates.sub(constants.txRate(), constants.mbps()),
                     rateRenderer.render(new Double[] { nic.getStatistics().getTransmitRate(),
-                            nic.getSpeed().doubleValue() }), dl);
+                            nic.hasSpeed() ? nic.getSpeed().doubleValue() : 0}), dl);
             addDetailItem(templates.sub(constants.dropsInterface(), constants.pkts()),
                     String.valueOf(nic.getStatistics().getReceiveDropRate() != null ? nic.getStatistics().getReceiveDropRate() : ""
                             + nic.getStatistics().getTransmitDropRate()), dl);

@@ -160,7 +160,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
 
         addDetailItem(templates.sub(constants.txRate(), constants.mbps()),
                 rateRenderer.render(new Double[] { networkInterface.getStatistics().getTransmitRate(),
-                        networkInterface.getSpeed().doubleValue() }), dl);
+                        networkInterface.hasSpeed() ? networkInterface.getSpeed().doubleValue() : 0}), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.rxTotal()),
                 totalRenderer.render(networkInterface.getStatistics().getReceivedBytes()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.txTotal()),
