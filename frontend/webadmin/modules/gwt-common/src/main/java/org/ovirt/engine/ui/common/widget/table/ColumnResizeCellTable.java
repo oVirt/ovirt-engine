@@ -483,8 +483,10 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         column.setCellStyleNames(columnVisible ? GRID_VISIBLE : GRID_HIDDEN);
 
         int index = getColumnIndex(column);
-        removeColumnStyleName(index, columnVisible ? GRID_HIDDEN : GRID_VISIBLE);
-        addColumnStyleName(index, columnVisible ? GRID_VISIBLE : GRID_HIDDEN);
+        if (index >= 0) {
+            removeColumnStyleName(index, columnVisible ? GRID_HIDDEN : GRID_VISIBLE);
+            addColumnStyleName(index, columnVisible ? GRID_VISIBLE : GRID_HIDDEN);
+        }
         redraw();
     }
 

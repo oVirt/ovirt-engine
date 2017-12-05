@@ -44,9 +44,7 @@
 				</g:FlowPanel>
 				<ge:EntityModelCheckBoxEditor ui:field="latch" visible="false"/>
 				<g:Label ui:field="selectNewDSDLabel" addStyleNames="{style.selectNewDSDLabel}"/>
-				<g:ScrollPanel ui:field="sdItemsScrollPanel" addStyleNames="{style.sdItemsPanel}">
-					<e:EntityModelCellTable ui:field="storageDomainItems"/>
-				</g:ScrollPanel>
+				<e:EntityModelCellTable ui:field="storageDomainItems" height="87px" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

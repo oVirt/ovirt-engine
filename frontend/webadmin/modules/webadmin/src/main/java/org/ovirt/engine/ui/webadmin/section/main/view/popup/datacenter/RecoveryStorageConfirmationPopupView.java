@@ -26,7 +26,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
 
 public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopupView<ConfirmationModel> implements RecoveryStoragePopupPresenterWidget.ViewDef {
@@ -63,9 +62,6 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     @Ignore
     @WithElementId
     EntityModelCellTable<ListModel> storageDomainItems;
-
-    @UiField
-    ScrollPanel sdItemsScrollPanel;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -138,8 +134,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
             }
         };
 
-        storageDomainItems.setColumnWidth(nameColumn, "280px"); //$NON-NLS-1$
-        storageDomainItems.addColumn(nameColumn, constants.nameStorage());
+        storageDomainItems.addColumn(nameColumn, constants.nameStorage(), "280px"); //$NON-NLS-1$
 
         AbstractEntityModelTextColumn<StorageDomain> freeSpaceColumn = new AbstractEntityModelTextColumn<StorageDomain>() {
             @Override
@@ -151,8 +146,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
             }
         };
 
-        storageDomainItems.setColumnWidth(freeSpaceColumn, "80px"); //$NON-NLS-1$
-        storageDomainItems.addColumn(freeSpaceColumn, constants.freeSpaceStorage());
+        storageDomainItems.addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "80px"); //$NON-NLS-1$
     }
 
 }
