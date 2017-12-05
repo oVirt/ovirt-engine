@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -1877,7 +1878,7 @@ public class LibvirtVmXmlBuilder {
 
     }
 
-    private void writeInterface(VmDevice device, VmNetworkInterface nic) {
+    private void writeInterface(VmDevice device, VmNic nic) {
         //  <interface type="bridge">
         //    <mac address="aa:bb:dd:dd:aa:bb"/>
         //    <model type="virtio"/>
@@ -1935,7 +1936,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             String queues = vnicProfile != null ? vnicProfile.getCustomProperties().remove("queues") : null;
-            String driverName = getDriverNameForNetwork(nic.getNetworkName(), properties);
+            String driverName = getDriverNameForNetwork(network != null ? network.getName() : "", properties);
             if (queues != null || driverName != null) {
                 writer.writeStartElement("driver");
                 if (queues != null) {
