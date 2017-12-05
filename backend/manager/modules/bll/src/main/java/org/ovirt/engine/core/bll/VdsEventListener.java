@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -627,11 +626,6 @@ public class VdsEventListener implements IVdsEventListener {
         if (callables.size() > 0) {
             ThreadPoolUtil.invokeAll(callables);
         }
-    }
-
-    @Override
-    public void importHostedEngineVm(final VM vm) {
-        ThreadPoolUtil.execute(() -> hostedEngineImporterProvider.get().doImport(vm));
     }
 
     @Override

@@ -79,7 +79,5 @@ public interface IVdsEventListener {
 
     void refreshHostCapabilities(Guid hostId);
 
-    void importHostedEngineVm(VM vm);
-
     void restartVmsWithLease(List<Guid> vmIds);
 }
