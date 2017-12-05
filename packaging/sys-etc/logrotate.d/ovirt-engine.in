@@ -15,6 +15,14 @@
 	rotate 1
 }
 
+"@ENGINE_LOG@/ansible"/*.log {
+	monthly
+	missingok
+	compress
+	nocreate
+	rotate 1
+}
+
 "@ENGINE_LOG@/dump"/*.hprof {
 	daily
 	missingok
