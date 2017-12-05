@@ -3,7 +3,6 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
              xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
              xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
@@ -12,7 +11,7 @@
     <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.UploadImagePopupView.WidgetStyle">
+    <ui:style>
         .sectionTitle {
             display: block;
             float: left;
@@ -48,15 +47,6 @@
             color: #333;
         }
 
-        /* The following styles are applied within the application code */
-        .imageUriEditor {
-            width: 560px;
-        }
-        .imageUriEditorContent {
-            float: right;
-            width: 460px;
-        }
-
         .fileUploadButton {
             margin: 0 10px;
         }
@@ -83,11 +73,6 @@
                     </g:HorizontalPanel>
 
                     <s:ImageInfoForm ui:field="imageInfoForm"/>
-
-                    <g:FlowPanel ui:field="imageFileDownloadPanel">
-                        <g:FlowPanel ui:field="downloadMessagePanel" visible="false" addStyleNames="{style.messagePanel}" />
-                        <ge:StringEntityModelTextBoxEditor ui:field="imageUriEditor" />
-                    </g:FlowPanel>
 
                     <g:FlowPanel ui:field="uploadMessagePanel" visible="false" addStyleNames="{style.messagePanel}" />
                 </g:FlowPanel>

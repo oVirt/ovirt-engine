@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.RadioButtonPanel;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.ImageInfoForm;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
@@ -16,9 +15,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadI
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.InputElement;
-import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FileUpload;
@@ -35,14 +32,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, UploadImagePopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    interface WidgetStyle extends CssResource {
-        String imageUriEditor();
-        String imageUriEditorContent();
-    }
-
-    @UiField
-    WidgetStyle style;
 
     @UiField
     @Ignore
@@ -70,17 +59,6 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
 
     @UiField
     @Ignore
-    FlowPanel imageFileDownloadPanel;
-
-    @UiField
-    FlowPanel downloadMessagePanel;
-
-    @UiField
-    @Editor.Path(value = "imageUri.entity")
-    StringEntityModelTextBoxEditor imageUriEditor;
-
-    @UiField
-    @Ignore
     Label diskOptionsLabel;
 
     @UiField(provided = true)
@@ -102,19 +80,12 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         vmDiskPopupWidget = new VmDiskPopupWidget(false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
-        addStyles();
         driver.initialize(this);
     }
 
     void localize() {
         imageSourceLabel.setText(constants.uploadImageSourceLabel());
-        imageUriEditor.setLabel(constants.uploadImageUriLabel());
         diskOptionsLabel.setText(constants.uploadImageDiskOptionsLabel());
-    }
-
-    void addStyles() {
-        imageUriEditor.addContentWidgetContainerStyleName(style.imageUriEditorContent());
-        imageUriEditor.addStyleName(style.imageUriEditor());
     }
 
     @Override
@@ -189,19 +160,12 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
 
     private void setSourceVisibility(final UploadImageModel model) {
         imageFileUploadPanel.setVisible(model.getImageSourceLocalEnabled().getEntity());
-        imageFileDownloadPanel.setVisible(!model.getImageSourceLocalEnabled().getEntity());
     }
 
     private void setPanelMessage(FlowPanel panel, String message) {
         panel.clear();
         panel.add(new Label(message));
         panel.setVisible(message != null && !message.isEmpty());
-    }
-
-    private void setDownloadMessage(String message) {
-        downloadMessagePanel.clear();
-        downloadMessagePanel.add(new Label(message));
-        downloadMessagePanel.setVisible(message != null && !message.isEmpty());
     }
 
     @Override

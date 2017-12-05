@@ -45,7 +45,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
     private EntityModel<Boolean> imageSourceLocalEnabled;
     private EntityModel<String> imagePath;
-    private EntityModel<String> imageUri;
     private AbstractDiskModel diskModel;
 
     private UICommand okCommand;
@@ -70,14 +69,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
     public void setImagePath(EntityModel<String> imagePath) {
         this.imagePath = imagePath;
-    }
-
-    public EntityModel<String> getImageUri() {
-        return imageUri;
-    }
-
-    public void setImageUri(EntityModel<String> imageUri) {
-        this.imageUri = imageUri;
     }
 
     public AbstractDiskModel getDiskModel() {
@@ -179,7 +170,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
         getImageSourceLocalEnabled().getEntityChangedEvent().addListener(this);
 
         setImagePath(new EntityModel<>());
-        setImageUri(new EntityModel<>());
 
         setBrowserSupportsUpload(browserSupportsUploadAPIs());
 

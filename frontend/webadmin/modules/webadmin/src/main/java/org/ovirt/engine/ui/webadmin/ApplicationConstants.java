@@ -1408,8 +1408,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String uploadImageFileLabel();
 
-    String uploadImageUriLabel();
-
     String uploadImageUploadNotSupportedMessage();
 
     String uploadImageDiskOptionsLabel();
