@@ -1183,8 +1183,10 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         }
         String selectedHost = server.getHostName();
         boolean isMultipleBricks = false;
-        if(volumeEntity.getBrickDirectories().contains(selectedHost) && !selectedHost.equals(existingBrick.getServerName())) {
-            isMultipleBricks = true;
+        for(String brick : volumeEntity.getBrickDirectories()) {
+            if(brick.contains(selectedHost) && !selectedHost.equals(existingBrick.getServerName())) {
+                isMultipleBricks = true;
+            }
         }
 
         if (volumeEntity.getVolumeType().isReplicatedType() && isMultipleBricks) {
