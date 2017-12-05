@@ -22,7 +22,14 @@ package org.ovirt.engine.core.common.utils.ansible;
  */
 public class AnsibleReturnValue {
 
+    /**
+     * Is set to return code which is returned by ansible-playbook command.
+     */
     private AnsibleReturnCode ansibleReturnCode;
+
+    /**
+     * Stdout of playbook execution. It is set only if user is using custom stdout callback plugin.
+     */
     private String stdout;
 
     public AnsibleReturnValue(AnsibleReturnCode ansibleReturnCode) {

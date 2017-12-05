@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -262,7 +263,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         logable.setCorrelationId(getCorrelationId());
         auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_STARTED);
 
-        if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+        if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
             throw new VdsInstallException(
                 VDSStatus.InstallFailed,
                 String.format(

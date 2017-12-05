@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -48,12 +47,10 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                 .hostnames(host.getHostName())
                 .checkMode(true)
                 .enableLogging(false)
+                .stdoutCallback(AnsibleConstants.HOST_UPGRADE_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
 
-            AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
-                command,
-                new Pair<>("ANSIBLE_STDOUT_CALLBACK", AnsibleConstants.HOST_UPGRADE_CALLBACK_PLUGIN)
-            );
+            AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
                 String error = String.format("Failed to run check-update of host '%1$s'.", host.getHostName());
                 log.error(error);

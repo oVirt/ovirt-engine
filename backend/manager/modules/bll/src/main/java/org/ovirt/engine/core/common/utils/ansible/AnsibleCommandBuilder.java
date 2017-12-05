@@ -23,12 +23,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
@@ -56,7 +57,6 @@ public class AnsibleCommandBuilder {
     private Path inventoryFile;
     private String playbook;
     private boolean checkMode;
-    private boolean enableLogging;
 
     // Logging:
     private File logFile;
@@ -64,13 +64,23 @@ public class AnsibleCommandBuilder {
     private String logFilePrefix;
     private String logFileSuffix;
     private String logFileName;
+    /*
+     * By default Ansible logs to syslog of the host where the playbook is being executed.
+     * If this parameter is set to true the logging will be done to file which you can specify by log* methods.
+     * If this parameters is set to false, the logging wil be done to syslog on hosts.
+     */
+    private boolean enableLogging;
 
     private EngineLocalConfig config;
     private Path playbookDir;
 
+    // ENV variables
+    private Map<String, String> envVars;
+
     public AnsibleCommandBuilder() {
         cluster = "unspecified";
         enableLogging = true;
+        envVars = new HashMap<>();
         verboseLevel = AnsibleVerbosity.LEVEL0;
         config = EngineLocalConfig.getInstance();
         playbookDir = Paths.get(config.getUsrDir().getPath(),  "playbooks");
@@ -144,6 +154,11 @@ public class AnsibleCommandBuilder {
         return this;
     }
 
+    public AnsibleCommandBuilder stdoutCallback(String stdoutCallback) {
+        this.envVars.put(AnsibleEnvironmentConstants.ANSIBLE_STDOUT_CALLBACK, stdoutCallback);
+        return this;
+    }
+
     public String playbook() {
         return playbook;
     }
@@ -191,6 +206,10 @@ public class AnsibleCommandBuilder {
 
     public String logFileSuffix() {
         return logFileSuffix;
+    }
+
+    public String stdoutCallback() {
+        return envVars.get(AnsibleEnvironmentConstants.ANSIBLE_STDOUT_CALLBACK);
     }
 
     public boolean enableLogging() {
@@ -264,6 +283,23 @@ public class AnsibleCommandBuilder {
 
     @Override
     public String toString() {
-        return StringUtils.join(build(), " ");
+        StringBuilder sb = new StringBuilder();
+
+        // Env vars:
+        sb.append(
+            envVars.entrySet()
+                .stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining(" "))
+        );
+        // Command:
+        sb.append(" ");
+        sb.append(build());
+        sb.append(" ");
+
+        // Log file
+        sb.append(String.format("[Logfile: %1$s]", logFile()));
+
+        return sb.toString();
     }
 }
