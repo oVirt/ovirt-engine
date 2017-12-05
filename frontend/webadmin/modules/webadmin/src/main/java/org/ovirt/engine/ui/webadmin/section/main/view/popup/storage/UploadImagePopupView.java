@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.RadioButtonPanel;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.ImageInfoForm;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
@@ -16,10 +17,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadI
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
@@ -45,7 +46,7 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     HorizontalPanel imageFileUploadPanel;
 
     @UiField
-    FlowPanel uploadMessagePanel;
+    AlertPanel messagePanel;
 
     @UiField
     FileUpload imageFileUpload;
@@ -98,12 +99,12 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
 
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("Message".equals(args.propertyName)) { //$NON-NLS-1$
-                setPanelMessage(uploadMessagePanel, model.getMessage());
+                setPanelMessage(messagePanel, model.getMessage(), AlertPanel.Type.WARNING);
             }
             else if ("IsValid".equals(args.propertyName)) { //$NON-NLS-1$
-                uploadMessagePanel.clear();
+                hidePanelMessage();
                 if (!model.getIsValid() && !model.getInvalidityReasons().isEmpty()) {
-                    setPanelMessage(uploadMessagePanel, model.getInvalidityReasons().get(0));
+                    setPanelMessage(messagePanel, model.getInvalidityReasons().get(0), AlertPanel.Type.WARNING);
                 }
             }
         });
@@ -153,7 +154,7 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         if (!model.getBrowserSupportsUpload()) {
             model.getOkCommand().setIsExecutionAllowed(false);
             imageFileUpload.setEnabled(false);
-            setPanelMessage(uploadMessagePanel, constants.uploadImageUploadNotSupportedMessage());
+            setPanelMessage(messagePanel, constants.uploadImageUploadNotSupportedMessage(), AlertPanel.Type.DANGER);
             model.getImageSourceLocalEnabled().setEntity(false);
         }
     }
@@ -162,10 +163,19 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
         imageFileUploadPanel.setVisible(model.getImageSourceLocalEnabled().getEntity());
     }
 
-    private void setPanelMessage(FlowPanel panel, String message) {
-        panel.clear();
-        panel.add(new Label(message));
-        panel.setVisible(message != null && !message.isEmpty());
+    private void setPanelMessage(AlertPanel panel, String message, AlertPanel.Type type) {
+        panel.clearMessages();
+        panel.setVisible(false);
+        if (message != null && !message.isEmpty()) {
+            panel.setType(type);
+            panel.addMessage(SafeHtmlUtils.fromString(message));
+            panel.setVisible(true);
+        }
+    }
+
+    private void hidePanelMessage() {
+        messagePanel.clearMessages();
+        messagePanel.setVisible(false);
     }
 
     @Override
