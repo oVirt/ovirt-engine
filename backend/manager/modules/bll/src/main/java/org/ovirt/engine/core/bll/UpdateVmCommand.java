@@ -239,14 +239,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             vmHandler.createNextRunSnapshot(
                     getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContext());
             vmHandler.setVmDestroyOnReboot(getVm());
-        } else if (!updateVmLease()) {
-            return;
         }
 
         vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
         vmStaticDao.incrementDbGeneration(getVm().getId());
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
         newVmStatic.setQuotaId(getQuotaId());
+        newVmStatic.setLeaseInfo(oldVm.getStaticData().getLeaseInfo());
 
         // Trigger OVF update for hosted engine VM only
         if (getVm().isHostedEngine()) {
@@ -295,6 +294,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         updateVmNetworks();
         updateVmNumaNodes();
         updateAffinityLabels();
+        if (!updateVmLease()) {
+            return;
+        }
 
         if (isHotSetEnabled()) {
             hotSetCpus(userVm);
@@ -331,7 +333,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 return false;
             }
         }
-        else {
+        else if (isHotSetEnabled()) {
             if (oldVm.getLeaseStorageDomainId() == null) {
                 VmLeaseParameters params = new VmLeaseParameters(getStoragePoolId(),
                         newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId());
@@ -351,7 +353,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 auditLog(this, AuditLogType.HOT_UNPLUG_LEASE_FAILED);
             }
         }
+        // In case of remove lease only, VM lease info should set to null
+        if (oldVm.getLeaseStorageDomainId() != null && newVmStatic.getLeaseStorageDomainId() == null) {
+            newVmStatic.setLeaseInfo(null);
 
+        }
         // best effort to remove the lease from the previous storage domain
         removeVmLease(oldVm.getLeaseStorageDomainId(), oldVm.getId());
         return true;

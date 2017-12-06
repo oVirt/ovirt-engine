@@ -357,7 +357,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     @CopyOnNewVersion
     @EditableVmField(
-            onHostedEngine = false,
             hotSettableOnStatus = VMStatus.Group.RUNNING_OR_PAUSED,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
