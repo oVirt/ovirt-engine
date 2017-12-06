@@ -230,6 +230,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     protected void initMainTable() {
         this.table = new ListModelObjectCellTable<>();
+        table.enableColumnResizing();
 
         AbstractImageResourceColumn<Object> isProblematicImportVmColumn = new AbstractImageResourceColumn<Object>() {
             @Override
@@ -258,7 +259,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 return problem != null ? SafeHtmlUtils.fromSafeConstant(problem) : null;
             }
         };
-        table.addColumn(isProblematicImportVmColumn, constants.empty(), "20px"); //$NON-NLS-1$
+        table.addColumn(isProblematicImportVmColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
             @Override
@@ -300,7 +301,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 return superTooltip;
             }
         };
-        table.addColumn(collapseSnapshotsColumn, constants.collapseSnapshots(), "10px"); //$NON-NLS-1$
+        table.addColumn(collapseSnapshotsColumn, constants.collapseSnapshots(), "130px"); //$NON-NLS-1$
 
         AbstractCheckboxColumn<Object> cloneVMColumn = new AbstractCheckboxColumn<Object>((index, model, value) -> {
             ((ImportVmData) model).getClone().setEntity(value);
@@ -345,7 +346,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 return messages.megabytes(String.valueOf(((ImportVmData) object).getVm().getVmMemSizeMb()));
             }
         };
-        table.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
+        table.addColumn(memoryColumn, constants.memoryVm(), "90px"); //$NON-NLS-1$
 
         AbstractTextColumn<Object> cpuColumn = new AbstractTextColumn<Object>() {
             @Override
@@ -361,7 +362,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 return String.valueOf(((ImportVmData) object).getVm().getClusterArch());
             }
         };
-        table.addColumn(archColumn, constants.architectureVm(), "50px"); //$NON-NLS-1$
+        table.addColumn(archColumn, constants.architectureVm(), "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<Object> diskColumn = new AbstractTextColumn<Object>() {
             @Override
@@ -369,7 +370,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 return String.valueOf(((ImportVmData) object).getVm().getDiskMap().size());
             }
         };
-        table.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
+        table.addColumn(diskColumn, constants.disksVm(), "55px"); //$NON-NLS-1$
 
         isObjectInSystemColumn = new AbstractImageResourceColumn<Object>() {
             @Override
@@ -377,7 +378,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 return ((ImportVmData) object).isExistsInSystem() ? resources.logNormalImage() : null;
             }
         };
-        table.addColumn(isObjectInSystemColumn, constants.vmInSetup(), "60px"); //$NON-NLS-1$
+        table.addColumn(isObjectInSystemColumn, constants.vmInSetup(), "100px"); //$NON-NLS-1$
 
         table.getSelectionModel().addSelectionChangeHandler(event -> {
             ImportVmData selectedObject =
