@@ -32,7 +32,7 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
                 addValidationMessage(EngineMessage.VAR__TYPE__ROLE);
                 addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
             } else {
-                if (permissionDao.getAllForRole(getParameters().getRoleId()).size() != 0) {
+                if (!permissionDao.getAllForRole(getParameters().getRoleId()).isEmpty()) {
                     returnValue = false;
                     addValidationMessage(EngineMessage.ERROR_CANNOT_REMOVE_ROLE_ATTACHED_TO_PERMISSION);
 
