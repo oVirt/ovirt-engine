@@ -25,8 +25,18 @@ public class QuotaValidator {
         return Injector.injectMembers(new QuotaValidator(quotaId, allowNullId));
     }
 
+    public static QuotaValidator createInstance(Quota quota, boolean allowNullId) {
+        return Injector.injectMembers(new QuotaValidator(quota, allowNullId));
+    }
+
     protected QuotaValidator(Guid quotaId, boolean allowNullId) {
         this.quotaId = quotaId;
+        this.allowNullId = allowNullId;
+    }
+
+    protected QuotaValidator(Quota quota, boolean allowNullId) {
+        this.quota = quota;
+        this.quotaId = quota.getId();
         this.allowNullId = allowNullId;
     }
 
@@ -44,6 +54,14 @@ public class QuotaValidator {
 
         if (quota.isEmptyStorageQuota() || quota.isEmptyClusterQuota()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+        }
+
+        if (quota.isGlobalClusterQuota() && quota.getQuotaClusters() != null && !quota.getQuotaClusters().isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL);
+        }
+
+        if (quota.isGlobalStorageQuota() && quota.getQuotaStorages() != null && !quota.getQuotaStorages().isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_SPECIFIC_AND_GENERAL);
         }
 
         return ValidationResult.VALID;
