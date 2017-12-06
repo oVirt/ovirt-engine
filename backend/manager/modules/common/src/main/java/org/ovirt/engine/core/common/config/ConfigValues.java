@@ -712,6 +712,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     GetImageTicketSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    TestImageIOProxyConnectionSupported,
+
     @Reloadable
     @TypeConverterAttribute(Long.class)
     SetupNetworksPollingTimeout,

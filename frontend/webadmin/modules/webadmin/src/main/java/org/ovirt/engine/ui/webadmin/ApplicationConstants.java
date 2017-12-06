@@ -258,6 +258,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String downloadImageCancel();
 
+    String testImageIOProxyConnection();
+
+    String testImageIOProxyConnectionSuccess();
+
     String storageTypeShared();
 
     String storageTypeLocal();

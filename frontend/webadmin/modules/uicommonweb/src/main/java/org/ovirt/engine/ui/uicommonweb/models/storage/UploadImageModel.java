@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -17,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -26,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
@@ -33,13 +37,21 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ReadOnlyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 
 public class UploadImageModel extends Model implements ICommandTarget {
 
+    private static final Logger log = Logger.getLogger(UploadImageModel.class.getName());
     private static UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static UIMessages messages = ConstantsManager.getInstance().getMessages();
 
@@ -49,11 +61,13 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
     private UICommand okCommand;
     private UICommand cancelCommand;
+    private UICommand testCommand;
 
     private boolean isResumeUpload;
     private Element imageFileUploadElement;
     private boolean browserSupportsUpload;
     private ImageInfoModel imageInfoModel;
+    private EntityModel<Response> testResponse;
 
     public EntityModel<Boolean> getImageSourceLocalEnabled() {
         return imageSourceLocalEnabled;
@@ -96,6 +110,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
         this.cancelCommand = cancelCommand;
     }
 
+    public UICommand getTestCommand() {
+        return testCommand;
+    }
+
+    private void setTestCommand(UICommand value) {
+        testCommand = value;
+    }
+
     public boolean getIsResumeUpload() {
         return isResumeUpload;
     }
@@ -118,6 +140,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
     public void setBrowserSupportsUpload(boolean browserSupportsUpload) {
         this.browserSupportsUpload = browserSupportsUpload;
+    }
+
+    public EntityModel<Response> getTestResponse() {
+        return testResponse;
+    }
+
+    public void setTestResponse(EntityModel<Response> testResponse) {
+        this.testResponse = testResponse;
     }
 
     public UploadImageModel(final Guid limitToStorageDomainId, final DiskImage resumeUploadDisk) {
@@ -177,10 +207,15 @@ public class UploadImageModel extends Model implements ICommandTarget {
         getOkCommand().setIsExecutionAllowed(true);
         getCommands().add(getOkCommand());
 
+        setTestCommand(new UICommand("OnTest", this)); //$NON-NLS-1$
+        getTestCommand().setIsAvailable(false);
+        setTestResponse(new EntityModel<>());
+
         getDiskModel().getStorageDomain().getSelectedItemChangedEvent().addListener(this);
         getDiskModel().getVolumeType().setIsAvailable(false);
 
         getDiskModel().getHost().setIsAvailable(true);
+        getDiskModel().getHost().getSelectedItemChangedEvent().addListener(this);
 
         imageInfoModel = new ImageInfoModel();
     }
@@ -210,6 +245,27 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         if (getOkCommand().equals(command)) {
             onUpload();
+        } else if (getTestCommand().equals(command)) {
+            onTest();
+        }
+    }
+
+    @Override
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+        super.eventRaised(ev, sender, args);
+
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
+            if (sender == getDiskModel().getHost()) {
+                host_SelectedItemChanged();
+            }
+        }
+    }
+
+    private void host_SelectedItemChanged() {
+        VDS selectedHost = getDiskModel().getHost().getSelectedItem();
+        if (selectedHost != null) {
+            getTestCommand().setIsAvailable(AsyncDataProvider.getInstance().isTestImageIOProxyConnectionSupported(
+                    selectedHost.getClusterCompatibilityVersion()));
         }
     }
 
@@ -225,6 +281,38 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 initiateResumeUpload();
             }
         }
+    }
+
+    private void onTest() {
+        String imageProxyAddress = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                ConfigValues.ImageProxyAddress);
+        String url = "https://" + imageProxyAddress + "/info/"; //$NON-NLS-1$ //$NON-NLS-2$
+
+        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
+        try {
+            requestBuilder.sendRequest(null, new RequestCallback() {
+                @Override
+                public void onError(Request request, Throwable ex) {
+                    onTestError(ex);
+                }
+
+                @Override
+                public void onResponseReceived(Request request, Response response) {
+                    try {
+                        getTestResponse().setEntity(response);
+                    } catch (IllegalArgumentException ex) {
+                        onTestError(ex);
+                    }
+                }
+            });
+        } catch (RequestException ex) {
+            onTestError(ex);
+        }
+    }
+
+    private void onTestError(Throwable ex) {
+        getTestResponse().getEntityChangedEvent().raise(this, EventArgs.EMPTY);
+        log.severe("Connection to ovirt-imageio-image has failed:" + ex.getMessage()); //$NON-NLS-1$
     }
 
     public boolean flush() {

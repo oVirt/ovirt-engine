@@ -3,7 +3,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.RadioButtonPanel;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
@@ -11,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.ImageInfoForm;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadImagePopupPresenterWidget;
 
@@ -20,6 +23,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -71,9 +75,14 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     @Ignore
     ImageInfoForm imageInfoForm;
 
+    @UiField
+    UiCommandButton testButton;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+
+    private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public UploadImagePopupView(EventBus eventBus) {
@@ -193,5 +202,31 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     public int setTabIndexes(int nextTabIndex) {
         nextTabIndex = vmDiskPopupWidget.setTabIndexes(nextTabIndex);
         return nextTabIndex;
+    }
+
+    @Override
+    public HasUiCommandClickHandlers getTestButton() {
+        return testButton;
+    }
+
+    @Override
+    public void updateTestResult(boolean succeeded) {
+        messagePanel.clearMessages();
+        messagePanel.setVisible(true);
+        if (succeeded) {
+            messagePanel.setType(AlertPanel.Type.SUCCESS);
+            messagePanel.addMessage(SafeHtmlUtils.fromSafeConstant(
+                    constants.testImageIOProxyConnectionSuccess()));
+        } else {
+            messagePanel.setType(AlertPanel.Type.WARNING);
+            messagePanel.addMessage(SafeHtmlUtils.fromSafeConstant(
+                    messages.testImageIOProxyConnectionFailure(
+                            Window.Location.getProtocol() + "//" + Window.Location.getHost()))); //$NON-NLS-1$
+        }
+    }
+
+    @Override
+    public void showTestCommand(boolean show) {
+        testButton.setVisible(show);
     }
 }

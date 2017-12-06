@@ -55,7 +55,7 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="700px">
+    <d:SimpleDialogPanel width="700px" height="775px">
         <d:content>
             <g:FlowPanel>
                 <!-- Should be re-enabled once uploading from URI is supported -->
@@ -64,16 +64,13 @@
                     <w:RadioButtonPanel ui:field="imageSourcePanel" name="imageSourcePanel" dataToggle="BUTTONS" addStyleNames="{style.imageSourcePanel}" />
                 </g:HorizontalPanel>
 
-                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="130px">
+                <g:FlowPanel addStyleNames="{style.optionsPanel}" height="120px">
                     <g:HorizontalPanel ui:field="imageFileUploadPanel">
                         <g:FileUpload ui:field="imageFileUpload" visible="false" />
                         <d:SimpleDialogButton addStyleNames="{style.fileUploadButton}" ui:field="imageFileUploadButton" text="{constants.uploadImageChooseFile}" />
                         <g:Label addStyleNames="{style.fileUploadLabel}" ui:field="imageFileUploadLabel" text="{constants.uploadImageNoFileChosen}" />
                     </g:HorizontalPanel>
-
                     <s:ImageInfoForm ui:field="imageInfoForm"/>
-
-                    <p:AlertPanel ui:field="messagePanel" addStyleNames="col-sm-11 {style.messagePanel}" visible="false" />
                 </g:FlowPanel>
 
                 <b:Panel>
@@ -84,7 +81,8 @@
                         <vm:VmDiskPopupWidget ui:field="vmDiskPopupWidget" />
                     </b:PanelBody>
                 </b:Panel>
-
+                <w:UiCommandButton ui:field="testButton" label="{constants.testImageIOProxyConnection}" visible="false" />
+                <p:AlertPanel ui:field="messagePanel" addStyleNames="col-sm-11 {style.messagePanel}" visible="false" />
             </g:FlowPanel>
         </d:content>
     </d:SimpleDialogPanel>
