@@ -435,6 +435,7 @@ public enum ActionType {
     AddNetworkWithSubnetOnProvider(1608, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
     AddSubnetToProvider(1606, false, QuotaDependency.NONE),
     RemoveSubnetFromProvider(1607, false, QuotaDependency.NONE),
+    SyncNetworkProvider(1609, false, QuotaDependency.NONE),
 
     AddWatchdog(1700, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
     UpdateWatchdog(1701, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
