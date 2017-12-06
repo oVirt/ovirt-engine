@@ -1719,8 +1719,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         final ArchitectureType selectedArchitecture = getArchitecture().getSelectedItem();
         final FilteredListModel.Filter<ServerCpu> filter = selectedArchitecture == null
                 || selectedArchitecture.equals(ArchitectureType.undefined)
-                ? null
-                : cpu -> selectedArchitecture.equals(cpu.getArchitecture());
+                ? cpu -> cpu.getLevel() > 0
+                : cpu -> selectedArchitecture.equals(cpu.getArchitecture()) && cpu.getLevel() > 0;
         getCPU().filterItems(filter);
     }
 
