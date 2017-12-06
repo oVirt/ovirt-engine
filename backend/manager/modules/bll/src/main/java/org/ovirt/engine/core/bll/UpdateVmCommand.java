@@ -188,8 +188,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         newVmStatic = getParameters().getVmStaticData();
         if (isRunningConfigurationNeeded()) {
             createNextRunSnapshot();
-        } else if (!updateVmLease()) {
-            return;
         }
 
         vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
@@ -239,6 +237,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         updateVmNetworks();
         updateVmNumaNodes();
         updateAffinityLabels();
+        if (!updateVmLease()) {
+            return;
+        }
 
         if (isHotSetEnabled()) {
             hotSetCpus(userVm);
@@ -274,7 +275,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 return false;
             }
         }
-        else {
+        else if (isHotSetEnabled()) {
             if (oldVm.getLeaseStorageDomainId() == null) {
                 VmLeaseParameters params = new VmLeaseParameters(getStoragePoolId(),
                         newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId());

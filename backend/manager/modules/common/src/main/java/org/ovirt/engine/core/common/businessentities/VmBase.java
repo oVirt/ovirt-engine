@@ -347,7 +347,6 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
 
     @CopyOnNewVersion
     @EditableVmField(
-            onHostedEngine = false,
             hotsetAllowed = true,
             onStatuses = VMStatus.Down)
     @EditableVmTemplateField
