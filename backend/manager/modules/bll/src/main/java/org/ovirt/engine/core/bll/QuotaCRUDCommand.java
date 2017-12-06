@@ -38,6 +38,11 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     }
 
     @Override
+    protected void init() {
+        fillQuotaParameter();
+    }
+
+    @Override
     protected boolean validate() {
         Quota quota = getParameters().getQuota();
 
@@ -107,8 +112,69 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
         return isValid;
     }
 
+
+    /**
+     * Fills missing data in the quota parameter
+     */
+    private void fillQuotaParameter() {
+        Quota quotaParameter = getParameters().getQuota();
+
+        setQuotaStorage(quotaParameter);
+        setQuotaCluster(quotaParameter);
+        setQuotaThresholdDefaults(quotaParameter);
+    }
+
+    private void setQuotaStorage(Quota quota) {
+        // Create unlimited global storage quota if no other is specified
+        if (quota.isEmptyStorageQuota()) {
+            quota.setGlobalQuotaStorage(new QuotaStorage(Guid.newGuid(),
+                    quota.getId(),
+                    null,
+                    -1L,
+                    0.0));
+            return;
+        }
+
+        if (quota.isGlobalStorageQuota()) {
+            quota.getGlobalQuotaStorage().setQuotaId(quota.getId());
+            quota.getGlobalQuotaStorage().setQuotaStorageId(Guid.newGuid());
+            return;
+        }
+
+        for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
+            quotaStorage.setQuotaId(quota.getId());
+            quotaStorage.setQuotaStorageId(Guid.newGuid());
+        }
+    }
+
+    private void setQuotaCluster(Quota quota) {
+        // Create unlimited global cluster quota if no other is specified
+        if (quota.isEmptyClusterQuota()) {
+            quota.setGlobalQuotaCluster(new QuotaCluster(Guid.newGuid(),
+                    quota.getId(),
+                    null,
+                    -1,
+                    0,
+                    -1L,
+                    0L));
+
+            return;
+        }
+
+        if (quota.isGlobalClusterQuota()) {
+            quota.getGlobalQuotaCluster().setQuotaId(quota.getId());
+            quota.getGlobalQuotaCluster().setQuotaClusterId(Guid.newGuid());
+            return;
+        }
+
+        for (QuotaCluster quotaCluster : quota.getQuotaClusters()) {
+            quotaCluster.setQuotaId(quota.getId());
+            quotaCluster.setQuotaClusterId(Guid.newGuid());
+        }
+    }
+
     // Setting defaults for hard and soft limits, for REST
-    protected void setQuotaThresholdDefaults(Quota quotaParameter) {
+    private void setQuotaThresholdDefaults(Quota quotaParameter) {
         if (quotaParameter.getGraceStoragePercentage() == 0) {
             quotaParameter.setGraceStoragePercentage(Config.<Integer> getValue(ConfigValues.QuotaGraceStorage));
         }

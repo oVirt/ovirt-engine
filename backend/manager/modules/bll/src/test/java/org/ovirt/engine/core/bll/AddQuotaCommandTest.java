@@ -40,6 +40,7 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     @Before
     public void testSetup() {
         when(quotaDao.getById(any())).thenReturn(mockGeneralStorageQuota());
+        command.init();
     }
 
     @Test

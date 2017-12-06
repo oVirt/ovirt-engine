@@ -12,9 +12,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaCluster;
-import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -36,8 +33,14 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     }
 
     @Override
+    protected void init() {
+        getParameters().getQuota().setId(Guid.newGuid());
+        super.init();
+    }
+
+    @Override
     protected void executeCommand() {
-        setQuotaParameter();
+        setQuota(getParameters().getQuota());
         if (getParameters().isCopyPermissions()) {
             TransactionSupport.executeInNewTransaction(() -> executeAddQuota());
         } else {
@@ -73,28 +76,6 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__ADD);
         addValidationMessage(EngineMessage.VAR__TYPE__QUOTA);
-    }
-
-    /**
-     * Set quota from the parameter
-     */
-    private void setQuotaParameter() {
-        Quota quotaParameter = getParameters().getQuota();
-        quotaParameter.setId(Guid.newGuid());
-        if (quotaParameter.getQuotaStorages() != null) {
-            for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
-                quotaStorage.setQuotaId(quotaParameter.getId());
-                quotaStorage.setQuotaStorageId(Guid.newGuid());
-            }
-        }
-        if (quotaParameter.getQuotaClusters() != null) {
-            for (QuotaCluster quotaCluster : quotaParameter.getQuotaClusters()) {
-                quotaCluster.setQuotaId(quotaParameter.getId());
-                quotaCluster.setQuotaClusterId(Guid.newGuid());
-            }
-        }
-        setQuotaThresholdDefaults(quotaParameter);
-        setQuota(quotaParameter);
     }
 
     @Override

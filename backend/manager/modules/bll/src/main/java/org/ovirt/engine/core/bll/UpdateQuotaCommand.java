@@ -10,12 +10,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaCluster;
-import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.QuotaDao;
 
@@ -53,7 +49,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
     @Override
     protected void executeCommand() {
         removeQuotaFromCache();
-        setQuotaParameter();
+        setQuota(getParameters().getQuota());
         quotaDao.update(getParameters().getQuota());
         getReturnValue().setSucceeded(true);
         afterUpdate();
@@ -78,28 +74,6 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_UPDATE_QUOTA : AuditLogType.USER_FAILED_UPDATE_QUOTA;
-    }
-
-    /**
-     * Set quota from the parameter
-     *
-     */
-    private void setQuotaParameter() {
-        Quota quotaParameter = getParameters().getQuota();
-        if (!quotaParameter.isEmptyStorageQuota()) {
-            for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
-                quotaStorage.setQuotaId(getQuotaId());
-                quotaStorage.setQuotaStorageId(Guid.newGuid());
-            }
-        }
-        if (!quotaParameter.isEmptyClusterQuota()) {
-            for (QuotaCluster quotaCluster : quotaParameter.getQuotaClusters()) {
-                quotaCluster.setQuotaId(getQuotaId());
-                quotaCluster.setQuotaClusterId(Guid.newGuid());
-            }
-        }
-        setQuotaThresholdDefaults(quotaParameter);
-        setQuota(quotaParameter);
     }
 
     protected void afterUpdate() {

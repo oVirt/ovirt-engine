@@ -63,6 +63,8 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
 
         doNothing().when(command).removeQuotaFromCache();
         doNothing().when(command).afterUpdate();
+
+        command.init();
     }
 
     private Quota setUpQuota(Guid guid) {
