@@ -154,7 +154,7 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
                     new Pair<>("target_directory", getParameters().getDirectory()),
                     new Pair<>("validate_only", "True")
                 )
-                // /var/log/ovirt-engine/create-ova/ovirt-export-ova-validate-ansible-{hostname}-{correlationid}-{timestamp}.log
+                // /var/log/ovirt-engine/ova/ovirt-export-ova-validate-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CreateOvaCommand.CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-validate-ansible")
                 .logFileName(getVds().getHostName())

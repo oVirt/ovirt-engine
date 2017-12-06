@@ -53,7 +53,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     @Inject
     private ImagesHandler imagesHandler;
 
-    public static final String CREATE_OVA_LOG_DIRECTORY = "create-ova";
+    public static final String CREATE_OVA_LOG_DIRECTORY = "ova";
 
     public CreateOvaCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -143,7 +143,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                     new Pair<>("ovirt_ova_pack_ovf", genOvfParameter(ovf)),
                     new Pair<>("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath))
                 )
-                // /var/log/ovirt-engine/create-ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
+                // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-ansible")
                 .logFileName(getVds().getHostName())

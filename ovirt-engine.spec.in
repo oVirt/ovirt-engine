@@ -657,7 +657,7 @@ rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
 # /var creation
 #
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
-install -dm 755 "%{buildroot}/%{engine_log}"/{ova,create-ova,host-deploy,setup,notifier,dump,ansible}
+install -dm 755 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 
