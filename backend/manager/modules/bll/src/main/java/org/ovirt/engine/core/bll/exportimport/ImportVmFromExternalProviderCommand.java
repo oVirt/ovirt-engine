@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -437,11 +438,9 @@ implements QuotaStorageDependent {
     }
 
     protected List<DiskImage> getDisks() {
-        List<DiskImage> disks = new ArrayList<>();
-        for (Guid diskId : getParameters().getDisks()) {
-            disks.add(getDisk(diskId));
-        }
-        return disks;
+        return getParameters().getDisks().stream()
+                .map(this::getDisk)
+                .collect(Collectors.toList());
     }
 
     private DiskImage getDisk(Guid diskId) {
