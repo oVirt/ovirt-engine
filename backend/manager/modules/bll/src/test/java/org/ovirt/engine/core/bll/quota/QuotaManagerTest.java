@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,13 +23,16 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDao;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,7 +85,7 @@ public class QuotaManagerTest {
 
     private StoragePool storage_pool = new StoragePool();
     private ArrayList<String> validationMessages = new ArrayList<>();
-    private QuotaConsumptionParametersWrapper parametersWrapper;
+    private CommandBase<?> command;
     private int dbCalls = 0;
     private static final String EXPECTED_NUMBER_OF_DB_CALLS = "%d DB calls were expected. %d invoked";
 
@@ -94,10 +98,20 @@ public class QuotaManagerTest {
 
         doNothing().when(quotaManagerAuditLogger).auditLog(any(), any());
 
-        AuditLogableBase auditLogable = new AuditLogableBase();
-        auditLogable.setStoragePool(storage_pool);
-        parametersWrapper = new QuotaConsumptionParametersWrapper(auditLogable, validationMessages);
-        parametersWrapper.setParameters(new ArrayList<>());
+        ActionParametersBase param = new ActionParametersBase();
+        command = new CommandBase<ActionParametersBase>(
+                param, CommandContext.createContext(param.getSessionId())) {
+            @Override
+            protected void executeCommand() {}
+
+            @Override
+            public List<PermissionSubject> getPermissionCheckSubjects() {
+                return null;
+            }
+        };
+
+        command.setStoragePool(storage_pool);
+        command.getReturnValue().setValidationMessages(validationMessages);
     }
 
     private void mockQuotaDao() {
@@ -159,71 +173,69 @@ public class QuotaManagerTest {
         dbCalls = 0;
     }
 
-    private boolean consumeForStorageQuota(Guid quotaId) throws CloneNotSupportedException {
-        QuotaConsumptionParametersWrapper parameters = parametersWrapper.clone();
-        parameters.getParameters().add(new QuotaStorageConsumptionParameter(
-                quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1d));
-        return quotaManager.consume(parameters);
+    private boolean consumeForStorageQuota(Guid quotaId) {
+        return quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
+                quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1d
+        )));
     }
 
-    private boolean consumeForVdsQuota(Guid quotaId) throws CloneNotSupportedException {
-        QuotaConsumptionParametersWrapper parameters = parametersWrapper.clone();
-        parameters.getParameters().add(new QuotaClusterConsumptionParameter(
-                quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 1));
-        return quotaManager.consume(parameters);
+    private boolean consumeForVdsQuota(Guid quotaId) {
+        return quotaManager.consume(command, Collections.singletonList(new QuotaClusterConsumptionParameter(
+                quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 1
+        )));
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaGlobalNotExceeded() throws Exception {
+    public void testValidateAndSetStorageQuotaGlobalNotExceeded() {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaGlobalOverThreshold() throws Exception {
+    public void testValidateAndSetStorageQuotaGlobalOverThreshold() {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaGlobalInGrace() throws Exception {
+    public void testValidateAndSetStorageQuotaGlobalInGrace() {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_IN_GRACE));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaGlobalOverGrace() throws Exception {
+    public void testValidateAndSetStorageQuotaGlobalOverGrace() {
         assertFalse(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_OVER_GRACE));
         assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaSpecificNotExceeded() throws Exception {
+    public void testValidateAndSetStorageQuotaSpecificNotExceeded() {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaSpecificOverThreshold() throws Exception {
+    public void testValidateAndSetStorageQuotaSpecificOverThreshold() {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaSpecificInGrace() throws Exception {
+    public void testValidateAndSetStorageQuotaSpecificInGrace() {
         assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_IN_GRACE));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaSpecificOverGrace() throws Exception {
+    public void testValidateAndSetStorageQuotaSpecificOverGrace() {
         assertFalse(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_OVER_GRACE));
         assertNotEmptyValidateMessage();
         assertAuditLogWritten();
@@ -231,26 +243,22 @@ public class QuotaManagerTest {
 
     @Test
     public void testDecreaseStorageQuota() throws Exception {
-        QuotaConsumptionParametersWrapper parameters = parametersWrapper.clone();
-
-        parameters.getParameters().add(new QuotaStorageConsumptionParameter(
+        // decrease the quota usage from 104 GB to 96 (our of 100 GB quota)
+        quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
                 STORAGE_QUOTA_GLOBAL_IN_GRACE,
                 null,
                 QuotaConsumptionParameter.QuotaAction.RELEASE,
                 DESTINATION_GUID,
-                8d));
-        // decrease the quota usage from 104 GB to 96 (our of 100 GB quota)
-        quotaManager.consume(parameters);
+                8d)));
 
-        parameters.getParameters().clear();
         // try to consume 1 GB from the same quota (will reach 97 GB out of 100 GB)
-        parameters.getParameters().add(new QuotaStorageConsumptionParameter(
+        assertTrue(quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
                 STORAGE_QUOTA_GLOBAL_IN_GRACE,
                 null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
-                1d));
-        assertTrue(quotaManager.consume(parameters));
+                1d))));
+
         assertEmptyValidateMessage();
         validationMessages.clear();
     }
@@ -369,18 +377,19 @@ public class QuotaManagerTest {
 
     @Test
     public void testRemoveFromCache() throws Exception {
-        QuotaConsumptionParametersWrapper parameters = parametersWrapper.clone();
-        parameters.getParameters().add(new QuotaStorageConsumptionParameter(
+        List<QuotaConsumptionParameter> parameters = new ArrayList<>();
+
+        parameters.add(new QuotaStorageConsumptionParameter(
                 STORAGE_QUOTA_GLOBAL_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
-        parameters.getParameters().add(new QuotaStorageConsumptionParameter(
+        parameters.add(new QuotaStorageConsumptionParameter(
                 STORAGE_QUOTA_SPECIFIC_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
-        parameters.getParameters().add(new QuotaClusterConsumptionParameter(
+        parameters.add(new QuotaClusterConsumptionParameter(
                 VCPU_QUOTA_GLOBAL_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 6, 1));
-        parameters.getParameters().add(new QuotaClusterConsumptionParameter(
+        parameters.add(new QuotaClusterConsumptionParameter(
                 MEM_QUOTA_SPECIFIC_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 300));
 
         // ask for a valid consumption (116 out of 120 and 113 out of 120)
-        quotaManager.consume(parameters);
+        quotaManager.consume(command, parameters);
 
         // roll back the consumption
         quotaManager.removeStoragePoolFromCache(storage_pool.getId());
@@ -392,32 +401,32 @@ public class QuotaManagerTest {
         when(quotaDao.getById(MEM_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockMemQuotaSpecificInGrace());
 
         // ask again for same consumption
-        quotaManager.consume(parameters);
+        quotaManager.consume(command, parameters);
     }
 
     @Test
     public void testRemoveQuotaFromCache() throws Exception {
-        QuotaConsumptionParametersWrapper parameters = parametersWrapper.clone();
+        List<QuotaConsumptionParameter> parameters = new ArrayList<>();
 
-        parameters.getParameters().add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED, null,
+        parameters.add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED, null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1d));
-        parameters.getParameters().add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED, null,
+        parameters.add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED, null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1d));
-        parameters.getParameters().add(new QuotaClusterConsumptionParameter(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED, null,
+        parameters.add(new QuotaClusterConsumptionParameter(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED, null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1, 1));
-        parameters.getParameters().add(new QuotaClusterConsumptionParameter(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED, null,
+        parameters.add(new QuotaClusterConsumptionParameter(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED, null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1, 1));
 
         // add 6 quotas to the cache
-        quotaManager.consume(parameters);
+        quotaManager.consume(command, parameters);
 
         // reset db call flag
         dbCalls = 0;
@@ -429,12 +438,12 @@ public class QuotaManagerTest {
         quotaManager.removeQuotaFromCache(storage_pool.getId(), MEM_QUOTA_SPECIFIC_NOT_EXCEEDED);
 
         // call same quotas again and make sure db was called for every one of them
-        quotaManager.consume(parameters);
+        quotaManager.consume(command, parameters);
         assertDbWasCalled(4);
     }
 
     @Test
-    public void testUseDefaultQuotaStorage() throws CloneNotSupportedException {
+    public void testUseDefaultQuotaStorage() {
         assertTrue(consumeForStorageQuota(null));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();

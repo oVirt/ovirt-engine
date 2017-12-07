@@ -34,7 +34,6 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.InvalidQuotaParametersException;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaConsumptionParametersWrapper;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -809,11 +808,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
             return true;
         }
 
-        QuotaConsumptionParametersWrapper quotaConsumptionParametersWrapper = new QuotaConsumptionParametersWrapper(this,
-                getReturnValue().getValidationMessages());
-        quotaConsumptionParametersWrapper.setParameters(getQuotaConsumptionParameters());
-
-        List<QuotaConsumptionParameter> quotaParams = quotaConsumptionParametersWrapper.getParameters();
+        List<QuotaConsumptionParameter> quotaParams = getQuotaConsumptionParameters();
         if (quotaParams == null) {
             throw new InvalidQuotaParametersException("Command: " + this.getClass().getName()
                     + ". No Quota parameters available.");
@@ -831,7 +826,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
                     + ". Storage pool is not available for quota calculation. ");
         }
 
-        boolean result = getQuotaManager().consume(quotaConsumptionParametersWrapper);
+        boolean result = getQuotaManager().consume(this, quotaParams);
         setQuotaChanged(result);
         return result;
     }
