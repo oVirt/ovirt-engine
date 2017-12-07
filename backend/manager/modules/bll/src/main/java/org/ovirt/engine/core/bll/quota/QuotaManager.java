@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -46,7 +47,6 @@ public class QuotaManager implements BackendService {
     private Map<Guid, Guid> storagePoolDefaultQuotaIdMap = new HashMap<>();
 
     private final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
-    private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<>();
     private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<>();
 
     @Inject
@@ -112,423 +112,6 @@ public class QuotaManager implements BackendService {
             storagePoolDefaultQuotaIdMap.remove(storagePoolId);
         } finally {
             lock.writeLock().unlock();
-        }
-    }
-
-    private boolean validateAndSetStorageQuotaHelper(List<QuotaConsumptionParameter> parameters,
-            CommandBase<?> command,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
-        Map<Guid, Quota> quotaMap = storagePoolQuotaMap.get(command.getStoragePoolId());
-        Map<Guid, Map<Guid, Double>> desiredStorageSizeQuotaMap = new HashMap<>();
-
-        Map<Guid, Double> newUsedGlobalStorageSize = new HashMap<>();
-        Map<Guid, Map<Guid, Double>> newUsedSpecificStorageSize = new HashMap<>();
-
-        generateDesiredStorageSizeQuotaMap(parameters, desiredStorageSizeQuotaMap);
-
-        for (Guid quotaId : desiredStorageSizeQuotaMap.keySet()) {
-            Quota quota = quotaMap.get(quotaId);
-            if (quota.getGlobalQuotaStorage() != null) {
-                if (!checkConsumptionForGlobalStorageQuota(desiredStorageSizeQuotaMap,
-                        newUsedGlobalStorageSize,
-                        quotaId,
-                        quota,
-                        command,
-                        auditLogPair)) {
-                    return false;
-                }
-            } else {
-                if (!checkConsumptionForSpecificStorageQuota(desiredStorageSizeQuotaMap,
-                        newUsedSpecificStorageSize,
-                        quotaId,
-                        quota,
-                        command,
-                        auditLogPair)) {
-                    return false;
-                }
-            }
-        }
-        saveNewConsumptionValues(quotaMap, newUsedGlobalStorageSize, newUsedSpecificStorageSize);
-        return true;
-    }
-
-    private boolean checkConsumptionForSpecificStorageQuota(Map<Guid, Map<Guid, Double>> desiredStorageSizeQuotaMap,
-            Map<Guid, Map<Guid, Double>> newUsedSpecificStorageSize,
-            Guid quotaId,
-            Quota quota,
-            CommandBase<?> command,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
-        newUsedSpecificStorageSize.put(quotaId, new HashMap<>());
-        for (Guid storageId : desiredStorageSizeQuotaMap.get(quotaId).keySet()) {
-            boolean hasStorageId = false;
-            for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
-                if (quotaStorage.getStorageId().equals(storageId)) {
-                    hasStorageId = true;
-                    if (!QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
-                        double storageUsagePercentage = quotaStorage.getStorageSizeGBUsage()
-                                / quotaStorage.getStorageSizeGB() * 100;
-                        double storageRequestPercentage =
-                                desiredStorageSizeQuotaMap.get(quotaId)
-                                        .get(storageId)
-                                        / quotaStorage.getStorageSizeGB() * 100;
-
-                        if (!checkQuotaStorageLimits(command.getStoragePool().getQuotaEnforcementType(),
-                                quota,
-                                quotaStorage.getStorageSizeGB(),
-                                storageUsagePercentage, storageRequestPercentage,
-                                command.getReturnValue().getValidationMessages(),
-                                auditLogPair)) {
-                            return false;
-                        }
-                        newUsedSpecificStorageSize.get(quotaId).put(storageId,
-                                quotaStorage.getStorageSizeGBUsage()
-                                        + desiredStorageSizeQuotaMap.get(quotaId).get(storageId));
-                    }
-                }
-            }
-            if (!hasStorageId){
-                if(quota.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT){
-                    command.getReturnValue().getValidationMessages()
-                    .add(EngineMessage.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
-                    return false;
-                } else {
-                    auditLogPair.setFirst(AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE);
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean checkConsumptionForGlobalStorageQuota(Map<Guid, Map<Guid, Double>> desiredStorageSizeQuotaMap,
-            Map<Guid, Double> newUsedGlobalStorageSize,
-            Guid quotaId,
-            Quota quota,
-            CommandBase<?> command,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
-        if (!QuotaStorage.UNLIMITED.equals(quota.getGlobalQuotaStorage().getStorageSizeGB())) {
-            double sum = 0.0;
-            for (Double size : desiredStorageSizeQuotaMap.get(quotaId).values()) {
-                sum += size;
-            }
-
-            double storageUsagePercentage = quota.getGlobalQuotaStorage().getStorageSizeGBUsage()
-                    / quota.getGlobalQuotaStorage().getStorageSizeGB() * 100;
-            double storageRequestPercentage = sum
-                    / quota.getGlobalQuotaStorage().getStorageSizeGB() * 100;
-
-            if (!checkQuotaStorageLimits(command.getStoragePool().getQuotaEnforcementType(),
-                    quota,
-                    quota.getGlobalQuotaStorage().getStorageSizeGB(),
-                    storageUsagePercentage, storageRequestPercentage,
-                    command.getReturnValue().getValidationMessages(),
-                    auditLogPair)) {
-                return false;
-            }
-            newUsedGlobalStorageSize.put(quotaId, sum
-                    + quota.getGlobalQuotaStorage().getStorageSizeGBUsage());
-        }
-        return true;
-    }
-
-    private void saveNewConsumptionValues(Map<Guid, Quota> quotaMap,
-            Map<Guid, Double> newUsedGlobalStorageSize,
-            Map<Guid, Map<Guid, Double>> newUsedSpecificStorageSize) {
-        // cache new storage size.
-        for (Map.Entry<Guid, Double> entry : newUsedGlobalStorageSize.entrySet()) {
-            Quota quota = quotaMap.get(entry.getKey());
-            double value = entry.getValue();
-            if (value < 0) {
-                log.error("Quota id '{}' cached storage size is negative, removing from cache", entry.getKey());
-                quotaMap.remove(entry.getKey());
-                continue;
-            }
-            quota.getGlobalQuotaStorage().setStorageSizeGBUsage(value);
-        }
-        for (Map.Entry<Guid, Map<Guid, Double>> quotaStorageEntry : newUsedSpecificStorageSize.entrySet()) {
-            Quota quota = quotaMap.get(quotaStorageEntry.getKey());
-            for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
-                if (quotaStorageEntry.getValue().containsKey(quotaStorage.getStorageId())) {
-                    double value = quotaStorageEntry.getValue()
-                            .get(quotaStorage.getStorageId());
-                    if (value < 0) {
-                        log.error("Quota id '{}' cached storage size is negative, removing from cache",
-                                quotaStorageEntry.getKey());
-                        quotaMap.remove(quotaStorageEntry.getKey());
-                        continue;
-                    }
-                    quotaStorage.setStorageSizeGBUsage(value);
-                }
-            }
-        }
-    }
-
-    private void generateDesiredStorageSizeQuotaMap(List<QuotaConsumptionParameter> parameters,
-            Map<Guid, Map<Guid, Double>> desiredStorageSizeQuotaMap) {
-
-        for (QuotaConsumptionParameter param : parameters) {
-            QuotaStorageConsumptionParameter storageConsumptionParameter;
-            if (param.getParameterType() != QuotaConsumptionParameter.ParameterType.STORAGE) {
-                continue;
-            } else {
-                storageConsumptionParameter = (QuotaStorageConsumptionParameter)param;
-            }
-            if (!desiredStorageSizeQuotaMap.containsKey(param.getQuotaGuid())) {
-                desiredStorageSizeQuotaMap.put(param.getQuotaGuid(), new HashMap<>());
-            }
-            Map<Guid, Double> quotaStorageMap = desiredStorageSizeQuotaMap.get(param.getQuotaGuid());
-            if (!quotaStorageMap.containsKey(storageConsumptionParameter.getStorageDomainId())) {
-                quotaStorageMap.put(storageConsumptionParameter.getStorageDomainId(), 0.0);
-            }
-
-            double requestedStorage =
-                    storageConsumptionParameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
-                            storageConsumptionParameter.getRequestedStorageGB() :
-                            -storageConsumptionParameter.getRequestedStorageGB();
-            double currentValue = quotaStorageMap.get(storageConsumptionParameter.getStorageDomainId());
-
-            quotaStorageMap.put(storageConsumptionParameter.getStorageDomainId(), currentValue + requestedStorage);
-        }
-    }
-
-    private boolean checkQuotaStorageLimits(QuotaEnforcementTypeEnum quotaEnforcementTypeEnum,
-            Quota quota,
-            double limit,
-            double storageUsagePercentage,
-            double storageRequestPercentage,
-            List<String> validationMessages,
-            Pair<AuditLogType, AuditLogableBase> log) {
-        double storageTotalPercentage = storageUsagePercentage + storageRequestPercentage;
-
-        boolean requestIsApproved;
-        if (limit == QuotaStorage.UNLIMITED
-                || storageTotalPercentage <= quota.getThresholdStoragePercentage()
-                || storageRequestPercentage <= 0) {
-            requestIsApproved = true;
-        } else if (storageTotalPercentage <= 100) {
-            log.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD);
-            quotaManagerAuditLogger.addCustomValuesStorage(log.getSecond(),
-                    quota.getQuotaName(),
-                    quota.getId(),
-                    storageUsagePercentage + storageRequestPercentage,
-                    storageRequestPercentage);
-            requestIsApproved = true;
-        } else if (storageTotalPercentage <= quota.getGraceStoragePercentage() + 100) {
-            log.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT);
-            quotaManagerAuditLogger.addCustomValuesStorage(log.getSecond(),
-                    quota.getQuotaName(),
-                    quota.getId(),
-                    storageUsagePercentage + storageRequestPercentage,
-                    storageRequestPercentage);
-            requestIsApproved = true;
-        } else {
-            log.setFirst(quotaEnforcementTypeEnum == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT ?
-                    AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT :
-                    AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT_PERMISSIVE_MODE);
-            quotaManagerAuditLogger.addCustomValuesStorage(log.getSecond(),
-                    quota.getQuotaName(),
-                    quota.getId(),
-                    storageUsagePercentage,
-                    storageRequestPercentage);
-            if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == quotaEnforcementTypeEnum) {
-                validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED.toString());
-                requestIsApproved = false;
-            } else {
-                requestIsApproved = true;
-            }
-        }
-
-        if (!requestIsApproved) {
-            log.getSecond().setQuotaIdForLog(quota.getId());
-        }
-        return requestIsApproved;
-    }
-
-    private boolean checkQuotaClusterLimits(QuotaEnforcementTypeEnum quotaEnforcementTypeEnum,
-            Quota quota,
-            QuotaCluster quotaCluster,
-            long memToAdd,
-            int vcpuToAdd,
-            List<String> validationMessages,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
-        if (quotaCluster.getVirtualCpu() == 0 || quotaCluster.getMemSizeMB() == 0) {
-            return false;
-        }
-
-        double vcpuToAddPercentage = (double) vcpuToAdd / (double) quotaCluster.getVirtualCpu() * 100;
-        double vcpuCurrentPercentage =
-                (double) quotaCluster.getVirtualCpuUsage() / (double) quotaCluster.getVirtualCpu() * 100;
-        double newVcpuPercent = vcpuToAddPercentage + vcpuCurrentPercentage;
-        double memToAddPercentage = (double) memToAdd / (double) quotaCluster.getMemSizeMB() * 100;
-        double memCurrentPercentage =
-                (double) quotaCluster.getMemSizeMBUsage() / (double) quotaCluster.getMemSizeMB() * 100;
-        double newMemoryPercent = memToAddPercentage + memCurrentPercentage;
-        long newMemory = memToAdd + quotaCluster.getMemSizeMBUsage();
-        int newVcpu = vcpuToAdd + quotaCluster.getVirtualCpuUsage();
-
-        long memLimit = quotaCluster.getMemSizeMB();
-        int cpuLimit = quotaCluster.getVirtualCpu();
-        boolean requestIsApproved;
-        if (memLimit == QuotaCluster.UNLIMITED_MEM && cpuLimit == QuotaCluster.UNLIMITED_VCPU) {
-            // if both cpu and
-            // mem are unlimited
-            requestIsApproved = true;
-        } else if ((newVcpuPercent <= quota.getThresholdClusterPercentage() // if cpu and mem usages are under the limit
-                && newMemoryPercent <= quota.getThresholdClusterPercentage())
-                || (vcpuToAdd <= 0 && memToAdd <= 0)) {
-            requestIsApproved = true;
-        } else if (newVcpuPercent <= 100
-                && newMemoryPercent <= 100) { // passed the threshold (not the quota limit)
-            auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_THRESHOLD);
-            quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
-                    quota.getQuotaName(),
-                    quota.getId(),
-                    vcpuCurrentPercentage + vcpuToAddPercentage,
-                    vcpuToAddPercentage,
-                    memCurrentPercentage + memToAddPercentage,
-                    memToAddPercentage,
-                    newVcpuPercent > quota.getThresholdClusterPercentage(),
-                    newMemoryPercent > quota.getThresholdClusterPercentage());
-            requestIsApproved = true;
-        } else if (newVcpuPercent <= quota.getGraceClusterPercentage() + 100
-                && newMemoryPercent <= quota.getGraceClusterPercentage() + 100) { // passed the quota limit (not the
-            // grace)
-            auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_LIMIT);
-            quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
-                    quota.getQuotaName(),
-                    quota.getId(),
-                    vcpuCurrentPercentage + vcpuToAddPercentage,
-                    vcpuToAddPercentage,
-                    memCurrentPercentage + memToAddPercentage,
-                    memToAddPercentage,
-                    newVcpuPercent > 100,
-                    newMemoryPercent > 100);
-            requestIsApproved = true;
-        } else {
-            auditLogPair.setFirst(quotaEnforcementTypeEnum == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT ?
-                    AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT:
-                    AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT_PERMISSIVE_MODE); // passed the grace
-            quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
-                    quota.getQuotaName(),
-                    quota.getId(),
-                    vcpuCurrentPercentage,
-                    vcpuToAddPercentage,
-                    memCurrentPercentage,
-                    memToAddPercentage,
-                    newVcpuPercent > quota.getGraceClusterPercentage() + 100,
-                    newMemoryPercent > quota.getGraceClusterPercentage() + 100);
-            if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == quotaEnforcementTypeEnum) {
-                validationMessages.add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_CLUSTER_LIMIT_EXCEEDED.toString());
-                requestIsApproved = false;
-            } else {
-                requestIsApproved = true;
-            }
-        }
-        // cache
-        if(requestIsApproved) {
-            cacheNewValues(quotaCluster, newMemory, newVcpu);
-        } else {
-            auditLogPair.getSecond().setQuotaIdForLog(quota.getId());
-        }
-        return requestIsApproved;
-    }
-
-    private void cacheNewValues(QuotaCluster quotaCluster, long newMemory, int newVcpu) {
-        quotaCluster.setVirtualCpuUsage(newVcpu);
-        quotaCluster.setMemSizeMBUsage(newMemory);
-    }
-
-    private boolean validateAndSetClusterQuota(List<QuotaConsumptionParameter> parameters,
-            CommandBase<?> command,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
-        boolean result = true;
-        Map<Guid, Quota> quotaMap = storagePoolQuotaMap.get(command.getStoragePoolId());
-        List<QuotaClusterConsumptionParameter> executed = new ArrayList<>();
-        for (QuotaConsumptionParameter parameter : parameters) {
-            QuotaClusterConsumptionParameter clusterConsumptionParameter;
-            if (parameter.getParameterType() != QuotaConsumptionParameter.ParameterType.CLUSTER) {
-                continue;
-            } else {
-                clusterConsumptionParameter = (QuotaClusterConsumptionParameter) parameter;
-            }
-            Quota quota = quotaMap.get(parameter.getQuotaGuid());
-            QuotaCluster quotaCluster = null;
-
-            if (quota.getGlobalQuotaCluster() != null) { // global cluster quota
-                quotaCluster = quota.getGlobalQuotaCluster();
-            } else {
-                for (QuotaCluster cluster : quota.getQuotaClusters()) {
-                    if (cluster.getClusterId().equals(clusterConsumptionParameter.getClusterId())) {
-                        quotaCluster = cluster;
-                        break;
-                    }
-                }
-            }
-            if (quotaCluster == null) {
-                command.getReturnValue().getValidationMessages()
-                        .add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-                result = false;
-                break;
-            }
-
-            long requestedMemory =
-                    clusterConsumptionParameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
-                    clusterConsumptionParameter.getRequestedMemory() : -clusterConsumptionParameter.getRequestedMemory();
-            int requestedCpu =
-                    clusterConsumptionParameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
-                    clusterConsumptionParameter.getRequestedCpu() : -clusterConsumptionParameter.getRequestedCpu();
-
-            if (checkQuotaClusterLimits(
-                    command.getStoragePool().getQuotaEnforcementType(),
-                    quota,
-                    quotaCluster,
-                    requestedMemory,
-                    requestedCpu,
-                    command.getReturnValue().getValidationMessages(),
-                    auditLogPair)) {
-                executed.add(clusterConsumptionParameter);
-            } else {
-                result = false;
-                break;
-            }
-        }
-
-        //if result is false (one or more parameters did not pass) - roll back the parameters that did pass
-        if(!result) {
-            rollBackClusterConsumptionParameters(executed, quotaMap);
-        }
-
-        return result;
-    }
-
-    private void rollBackClusterConsumptionParameters(List<QuotaClusterConsumptionParameter> executed,
-            Map<Guid, Quota> quotaMap) {
-
-        for (QuotaClusterConsumptionParameter parameter : executed) {
-            long requestedMemory =
-                    parameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
-                            -parameter.getRequestedMemory() : parameter.getRequestedMemory();
-            int requestedCpu =
-                    parameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
-                            -parameter.getRequestedCpu() : parameter.getRequestedCpu();
-
-            QuotaCluster quotaCluster = null;
-            Quota quota = quotaMap.get(parameter.getQuotaGuid());
-            if (quota.getGlobalQuotaCluster() != null) { // global cluster quota
-                quotaCluster = quota.getGlobalQuotaCluster();
-            } else {
-                for (QuotaCluster cluster : quota.getQuotaClusters()) {
-                    if (cluster.getClusterId().equals(parameter.getClusterId())) {
-                        quotaCluster = cluster;
-                        break;
-                    }
-                }
-            }
-
-            if (quotaCluster != null) {
-                long newMemory = requestedMemory + quotaCluster.getMemSizeMBUsage();
-                int newVcpu = requestedCpu + quotaCluster.getVirtualCpuUsage();
-                cacheNewValues(quotaCluster, newMemory, newVcpu);
-            }
         }
     }
 
@@ -625,8 +208,7 @@ public class QuotaManager implements BackendService {
         try {
             if (command.getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
                 synchronized (storagePoolQuotaMap.get(storagePool.getId())) {
-                    return validateAndCompleteParameters(params, command, auditLogPair)
-                            && internalConsumeAndReleaseHandler(params, command, auditLogPair);
+                    return consumeQuotaParameters(params, command, auditLogPair);
                 }
             }
         } finally {
@@ -634,198 +216,6 @@ public class QuotaManager implements BackendService {
             getQuotaManagerAuditLogger().auditLog(auditLogPair.getFirst(), auditLogPair.getSecond());
         }
 
-        return true;
-    }
-
-    /**
-     * This is the start point for all quota consumption and release. This method is called after the parameters were
-     * validated and competed, and the cache was updated to support all the requests in the parameters.
-     *
-     *
-     * @param parameters
-     *            - Quota consumption parameters
-     * @param auditLogPair - auditLog pair
-     * @return - true if the request was validated and set
-     */
-    private boolean internalConsumeAndReleaseHandler(List<QuotaConsumptionParameter> parameters,
-            CommandBase<?> command,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
-        boolean result = validateAndSetStorageQuotaHelper(parameters, command, auditLogPair);
-        if (result) {
-            result = validateAndSetClusterQuota(parameters, command, auditLogPair);
-            if (result) {
-                return true;
-            } else {
-                List<QuotaConsumptionParameter> revertedParams = revertParametersQuantities(parameters);
-                validateAndSetStorageQuotaHelper(revertedParams, command, auditLogPair);
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Revert the quantities of the storage, cpu and mem So that a request for 5GB storage is reverted to (-5)GB request
-     *
-     * @param parameters
-     *            the consumption properties. This object would not be mutated.
-     * @return new QuotaConsumptionParameters object with reverted quantities,
-     */
-    private List<QuotaConsumptionParameter> revertParametersQuantities(List<QuotaConsumptionParameter> parameters) {
-        if (parameters == null) {
-            return null;
-        }
-
-        try {
-            List<QuotaConsumptionParameter> revertedParams = new ArrayList<>();
-            for (QuotaConsumptionParameter parameter : parameters) {
-                QuotaConsumptionParameter revertedParam = parameter.clone();
-                revertedParam.setQuotaAction(QuotaConsumptionParameter.QuotaAction.CONSUME == parameter.getQuotaAction() ?
-                        QuotaConsumptionParameter.QuotaAction.RELEASE : QuotaConsumptionParameter.QuotaAction.CONSUME);
-                revertedParams.add(revertedParam);
-            }
-            return revertedParams;
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Validate parameters. Look for null pointers and missing data Complete the missing data in the parameters from DB
-     * and cache all the needed entities.
-     *
-     * @param parameters
-     *            - Quota consumption parameters
-     */
-
-    private boolean validateAndCompleteParameters(List<QuotaConsumptionParameter> parameters,
-            CommandBase<?> command,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) throws InvalidQuotaParametersException {
-
-        boolean hardEnforcement =
-                QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == command.getStoragePool().getQuotaEnforcementType();
-
-        // for each parameter - check and complete
-        for (QuotaConsumptionParameter param : parameters) {
-            // check that quota id is valid and fetch the quota from db (or cache). add the quota to the param
-            Optional<Quota> quota = checkAndFetchQuota(param, command, auditLogPair);
-            boolean validCluster = true;
-            boolean  validStorageDomain = true;
-
-            if (quota.isPresent()) {
-                // In case this param is a QuotaVdsConsumptionParameter - check that it has a valid
-                // vds group id which is handled by this quota
-                if (param instanceof QuotaClusterConsumptionParameter) {
-                    validCluster = checkClusterMatchQuota((QuotaClusterConsumptionParameter) param, quota.get(), command);
-                }
-
-                // In case this param is a QuotaStorageConsumptionParameter - check that it has a valid
-                // storage domain id which is handled by this quota
-                if (param instanceof QuotaStorageConsumptionParameter) {
-                    validStorageDomain = checkStoragePoolMatchQuota((QuotaStorageConsumptionParameter) param, quota.get(), command);
-                }
-            }
-
-            if (!quota.isPresent() || !validCluster || !validStorageDomain) {
-                // if in hard enforcement - return false
-                if (hardEnforcement) {
-                    return false;
-                } else {
-                    // clear any messages written to the validationMessages
-                    command.getReturnValue().getValidationMessages().clear();
-                }
-            }
-        }
-        parameters.removeAll(corruptedParameters);
-        corruptedParameters.clear();
-
-        return true;
-    }
-
-    // check that quota id is valid and fetch the quota from db (or cache).
-    private Optional<Quota> checkAndFetchQuota(QuotaConsumptionParameter param,
-            CommandBase<?> command,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair)
-            throws InvalidQuotaParametersException {
-
-        if(param.getQuotaGuid() == null || Guid.Empty.equals(param.getQuotaGuid())) {
-            param.setQuotaGuid(storagePoolDefaultQuotaIdMap.get(command.getStoragePoolId()));
-        }
-
-        Quota quota = fetchQuotaFromCache(param.getQuotaGuid(), command.getStoragePoolId());
-        if (quota == null) {
-            command.getReturnValue().getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NO_LONGER_AVAILABLE_IN_SYSTEM.toString());
-            command.getReturnValue().getValidationMessages().add(String.format("$VmName %1$s", command.getVmName()));
-            auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
-                    AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE :
-                    AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
-            log.error("The quota id '{}' is not found in backend and DB.", param.getQuotaGuid());
-            corruptedParameters.add(param);
-            return Optional.empty();
-        }
-
-        return Optional.of(quota);
-    }
-
-    // In case this param is a QuotaVdsConsumptionParameter - check that it has a valid
-    // vds group id which is handled by this quota
-    private boolean checkClusterMatchQuota(QuotaClusterConsumptionParameter param, Quota quota, CommandBase<?> command) {
-
-        if (param.getClusterId() == null) {
-            command.getReturnValue().getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-            log.error("Quota Vds parameters from command '{}' are missing vds group id",
-                    command.getClass().getName());
-            return false;
-        }
-        boolean clusterInQuota = false;
-        if(quota.getGlobalQuotaCluster() != null) {
-            clusterInQuota = true;
-        } else {
-            for (QuotaCluster cluster : quota.getQuotaClusters()) {
-                if (cluster.getClusterId().equals(param.getClusterId())) {
-                    clusterInQuota = true;
-                    break;
-                }
-            }
-        }
-
-        if (!clusterInQuota) {
-            command.getReturnValue().getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-            log.error("Quota Vds parameters from command '{}'. Vds group does not match quota",
-                    command.getClass().getName());
-            return false;
-        }
-        return true;
-    }
-
-    // In case this param is a QuotaStorageConsumptionParameter - check that it has a valid
-    // storage domain id which is handled by this quota
-    private boolean checkStoragePoolMatchQuota(QuotaStorageConsumptionParameter param, Quota quota, CommandBase<?> command) {
-
-        if (param.getStorageDomainId() == null) {
-            command.getReturnValue().getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-            log.error("Quota storage parameters from command '{}' are missing storage domain id",
-                    command.getClass().getName());
-            return false;
-        }
-        boolean storageDomainInQuota = false;
-        if(quota.getGlobalQuotaStorage() != null) {
-            storageDomainInQuota = true;
-        } else {
-            for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
-                if (quotaStorage.getStorageId().equals(param.getStorageDomainId())) {
-                    storageDomainInQuota = true;
-                    break;
-                }
-            }
-        }
-
-        if (!storageDomainInQuota) {
-            command.getReturnValue().getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
-            log.error("Quota storage parameters from command '{}'. Storage domain does not match quota",
-                    command.getClass().getName());
-            return false;
-        }
         return true;
     }
 
@@ -1163,5 +553,417 @@ public class QuotaManager implements BackendService {
         return quotaId != null && !Guid.Empty.equals(quotaId) ?
                 quotaId :
                 getDefaultQuotaId(storagePoolId);
+    }
+
+    private boolean consumeQuotaParameters(List<QuotaConsumptionParameter> parameters,
+            CommandBase<?> command,
+            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
+
+        boolean hardEnforcement =
+                QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == command.getStoragePool().getQuotaEnforcementType();
+
+        // Process the quota consumption parameters to a list of Requests
+        // Each Request instance aggregates all requested consumptions against a single quota limit
+        Optional<List<Request>> requests = createRequests(parameters, command, hardEnforcement, auditLogPair);
+        if (!requests.isPresent()) {
+            return false;
+        }
+
+        // Validate that all requests satisfy the quota limits
+        for (Request request : requests.get()) {
+            ValidationResult validation = request.validate(hardEnforcement, auditLogPair);
+            if(!validation.isValid()) {
+                command.getReturnValue().getValidationMessages().addAll(validation.getMessagesAsStrings());
+                return false;
+            }
+        }
+
+        // After successful validation, the requests are applied.
+        // This changes only the cached quota objects in the QuotaManager, nothing is written to the DB.
+        requests.get().forEach(Request::apply);
+        return true;
+    }
+
+    /**
+     * Processes the list of QuotaConsumptionParameter, and creates a list of quota Request objects.
+     * Each Request instance aggregates all requests against a singe quota limit.
+     * Otherwise the validation would not be correct.
+     */
+    private Optional<List<Request>> createRequests(List<QuotaConsumptionParameter> parameters,
+            CommandBase<?> command,
+            boolean hardEnforcement,
+            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
+
+        // The key is: Pair <Quota id, Cluster id>
+        Map<Pair<Guid, Guid>, ClusterRequest> clusterRequests = new HashMap<>();
+
+        // The key is: Pair <Quota id, Storage domain id>
+        Map<Pair<Guid, Guid>, StorageRequest> storageRequests = new HashMap<>();
+
+        for (QuotaConsumptionParameter param: parameters) {
+            // Use default quota if the id is empty
+            if(Guid.isNullOrEmpty(param.getQuotaGuid())) {
+                param.setQuotaGuid(storagePoolDefaultQuotaIdMap.get(command.getStoragePoolId()));
+            }
+
+            Quota quota = fetchQuotaFromCache(param.getQuotaGuid(), command.getStoragePoolId());
+            if (quota == null) {
+                log.error("The quota id '{}' is not found in backend and DB.", param.getQuotaGuid());
+                if (hardEnforcement) {
+                    command.getReturnValue().getValidationMessages().add(
+                            EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NO_LONGER_AVAILABLE_IN_SYSTEM.toString());
+                    command.getReturnValue().getValidationMessages().add(
+                            String.format("$VmName %1$s", command.getVmName()));
+
+                    return Optional.empty();
+                }
+
+                auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
+                        AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE :
+                        AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
+                continue;
+            }
+
+            ValidationResult validation = ValidationResult.VALID;
+            if (param instanceof QuotaClusterConsumptionParameter) {
+                validation = validateAndAddToClusterRequests((QuotaClusterConsumptionParameter) param,
+                        quota,
+                        command.getClass().getName(),
+                        clusterRequests);
+            } else if (param instanceof QuotaStorageConsumptionParameter) {
+                validation = validateAndAddToStorageRequests((QuotaStorageConsumptionParameter) param,
+                        quota,
+                        command.getClass().getName(),
+                        storageRequests);
+            }
+
+            if (!validation.isValid() && hardEnforcement) {
+                command.getReturnValue().getValidationMessages().addAll(validation.getMessagesAsStrings());
+                return Optional.empty();
+            }
+        }
+
+        List<Request> result = new ArrayList<>(clusterRequests.values());
+        result.addAll(storageRequests.values());
+        return Optional.of(result);
+    }
+
+    /**
+     * Checks that the QuotaClusterConsumptionParameter is valid for the Quota.
+     *
+     * If the parameter is valid, it is added to the corresponding Request in the requestMap.
+     */
+    private ValidationResult validateAndAddToClusterRequests(QuotaClusterConsumptionParameter param,
+            Quota quota,
+            String commandClassName,
+            Map<Pair<Guid, Guid>, ClusterRequest> requestMap) {
+
+        if (param.getClusterId() == null) {
+            log.error("Quota Vds parameters from command '{}' are missing vds group id", commandClassName);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+        }
+
+        Pair<Guid, Guid> key = quota.isGlobalClusterQuota()?
+                new Pair<>(quota.getId(), null) :
+                new Pair<>(quota.getId(), param.getClusterId());
+
+        if (!requestMap.containsKey(key)) {
+            // Quota must be a global cluster quota or be defined for the same cluster as is the consumption parameter.
+            QuotaCluster quotaCluster = quota.isGlobalClusterQuota() ?
+                    quota.getGlobalQuotaCluster() :
+                    quota.getQuotaClusters().stream()
+                            .filter(c -> c.getClusterId().equals(param.getClusterId()))
+                            .findAny().orElse(null);
+
+            if (quotaCluster == null) {
+                log.error("Quota Vds parameters from command '{}'. Vds group does not match quota", commandClassName);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+            }
+
+            requestMap.put(key, new ClusterRequest(quota, quotaCluster));
+        }
+
+        // If the quota is released, the values in the request will be negative
+        int quotaActionCoef = 1;
+        if (param.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.RELEASE) {
+            quotaActionCoef = -1;
+        }
+
+        // Get the ClusterRequest corresponding to the quota and cluster,
+        // and add the new requested memory and cpu.
+        ClusterRequest request = requestMap.get(key);
+        request.addCpu(quotaActionCoef * param.getRequestedCpu());
+        request.addMemory(quotaActionCoef * param.getRequestedMemory());
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Checks that the QuotaStorageConsumptionParameter is valid for the Quota.
+     *
+     * If the parameter is valid, it is added to the corresponding Request in the requestMap.
+     */
+    private ValidationResult validateAndAddToStorageRequests(QuotaStorageConsumptionParameter param,
+            Quota quota,
+            String commandClassName,
+            Map<Pair<Guid, Guid>, StorageRequest> requestMap) {
+
+        if (param.getStorageDomainId() == null) {
+            log.error("Quota storage parameters from command '{}' are missing storage domain id", commandClassName);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+        }
+
+        Pair<Guid, Guid> key = quota.isGlobalStorageQuota() ?
+                new Pair<>(quota.getId(), null) :
+                new Pair<>(quota.getId(), param.getStorageDomainId());
+
+        if (!requestMap.containsKey(key)) {
+            // Quota must be a global storage quota or be defined for
+            // the same storage domain as is the consumption parameter.
+            QuotaStorage quotaStorage = quota.isGlobalStorageQuota() ?
+                    quota.getGlobalQuotaStorage() :
+                    quota.getQuotaStorages().stream()
+                            .filter(s -> s.getStorageId().equals(param.getStorageDomainId()))
+                            .findAny().orElse(null);
+
+            if (quotaStorage == null) {
+                log.error("Quota storage parameters from command '{}'. Storage domain does not match quota", commandClassName);
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN);
+            }
+
+            requestMap.put(key, new StorageRequest(quota, quotaStorage));
+        }
+
+        // If the quota is released, the values in the request will be negative
+        int quotaActionCoef = 1;
+        if (param.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.RELEASE) {
+            quotaActionCoef = -1;
+        }
+
+        // Get the StorageRequest corresponding to the quota and storage domain,
+        // and add the new requested storage.
+        StorageRequest request = requestMap.get(key);
+        request.addStorage(quotaActionCoef * param.getRequestedStorageGB());
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Base class for quota consumption request.
+     */
+    private abstract class Request {
+        private Quota quota;
+
+        protected Request(Quota quota) {
+            this.quota = quota;
+        }
+
+        public Quota getQuota() {
+            return quota;
+        }
+
+        /**
+         * Validate that the request satisfies quota limits
+         */
+        public abstract ValidationResult validate(boolean hardEnforcement, Pair<AuditLogType, AuditLogableBase> auditLogPair);
+
+        /**
+         * Apply the request on the current quota in the QuotaManager cache
+         */
+        public abstract void apply();
+    }
+
+    /**
+     * Request for cluster quota
+     */
+    private class ClusterRequest extends Request{
+        private QuotaCluster quotaCluster;
+        private int coresRequest = 0;
+        private long memoryRequestMB = 0L;
+
+        public ClusterRequest(Quota quota, QuotaCluster quotaCluster) {
+            super(quota);
+            this.quotaCluster = quotaCluster;
+        }
+
+        public void addCpu(int cpu) {
+            coresRequest += cpu;
+        }
+
+        public void addMemory(long memMB) {
+            memoryRequestMB += memMB;
+        }
+
+        @Override
+        public ValidationResult validate(boolean hardEnforcement, Pair<AuditLogType, AuditLogableBase> auditLogPair) {
+            // The ClusterQuota must allow cpu and memory
+            if (quotaCluster.getVirtualCpu() == 0 || quotaCluster.getMemSizeMB() == 0) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
+            }
+
+            int cpuLimit = quotaCluster.getVirtualCpu();
+            long memLimit = quotaCluster.getMemSizeMB();
+
+            // Valid if both, CPU and memory, are unlimited
+            if (memLimit == QuotaCluster.UNLIMITED_MEM && cpuLimit == QuotaCluster.UNLIMITED_VCPU) {
+                return ValidationResult.VALID;
+            }
+
+            // Valid if the request releases quota, not consumes it.
+            if (coresRequest <=0 && memoryRequestMB <= 0) {
+                return ValidationResult.VALID;
+            }
+
+            double requestedCoresPercent = 100 * ((double) coresRequest / (double) cpuLimit);
+            double currentCoresPercent = 100 * ((double) quotaCluster.getVirtualCpuUsage() / (double) cpuLimit);
+            double newCoresPercent = requestedCoresPercent + currentCoresPercent;
+
+            double requestedMemoryPercent = 100 * ((double) memoryRequestMB / (double) memLimit);
+            double currentMemoryPercent = 100 * ((double) quotaCluster.getMemSizeMBUsage() / (double) memLimit);
+            double newMemoryPercent = requestedMemoryPercent + currentMemoryPercent;
+
+            int threshold = getQuota().getThresholdClusterPercentage();
+            int grace = getQuota().getGraceClusterPercentage() + 100;
+
+            // Valid if CPU and memory usages are below grace
+            if (newCoresPercent <= grace && newMemoryPercent <= grace) {
+                // Warn if the cluster limit or threshold is exceeded
+                if (newCoresPercent > 100 || newMemoryPercent > 100) {
+                    auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_LIMIT);
+                    quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
+                            getQuota().getQuotaName(),
+                            getQuota().getId(),
+                            currentCoresPercent + requestedCoresPercent,
+                            requestedCoresPercent,
+                            currentMemoryPercent + requestedMemoryPercent,
+                            requestedMemoryPercent,
+                            newCoresPercent > 100,
+                            newMemoryPercent > 100);
+                } else if (newCoresPercent > threshold || newMemoryPercent > threshold) {
+                    auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_THRESHOLD);
+                    quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
+                            getQuota().getQuotaName(),
+                            getQuota().getId(),
+                            currentCoresPercent + requestedCoresPercent,
+                            requestedCoresPercent,
+                            currentMemoryPercent + requestedMemoryPercent,
+                            requestedMemoryPercent,
+                            newCoresPercent > threshold,
+                            newMemoryPercent > threshold);
+                }
+
+                return ValidationResult.VALID;
+            }
+
+            // CPU or memory is above the grace - fail if enforcement is hard
+            auditLogPair.setFirst(hardEnforcement ?
+                    AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT:
+                    AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT_PERMISSIVE_MODE);
+            quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
+                    getQuota().getQuotaName(),
+                    getQuota().getId(),
+                    currentCoresPercent,
+                    requestedCoresPercent,
+                    currentMemoryPercent,
+                    requestedMemoryPercent,
+                    newCoresPercent > grace,
+                    newMemoryPercent > grace);
+
+            if (!hardEnforcement) {
+                return ValidationResult.VALID;
+            }
+
+            auditLogPair.getSecond().setQuotaIdForLog(getQuota().getId());
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_CLUSTER_LIMIT_EXCEEDED);
+        }
+
+        @Override
+        public void apply() {
+            quotaCluster.setVirtualCpuUsage(coresRequest);
+            quotaCluster.setMemSizeMBUsage(memoryRequestMB);
+        }
+    }
+
+    /**
+     * Request for storage quota
+     */
+    private class StorageRequest extends Request {
+        private QuotaStorage quotaStorage;
+        private double storageRequestGB = 0.0;
+
+        public StorageRequest(Quota quota, QuotaStorage quotaStorage) {
+            super(quota);
+            this.quotaStorage = quotaStorage;
+        }
+
+        public void addStorage(double storageGB) {
+            storageRequestGB += storageGB;
+        }
+
+        @Override
+        public ValidationResult validate(boolean hardEnforcement, Pair<AuditLogType, AuditLogableBase> auditLogPair) {
+            long storageLimit = quotaStorage.getStorageSizeGB();
+
+            // Valid if quota is unlimited
+            if (storageLimit == QuotaStorage.UNLIMITED) {
+                return ValidationResult.VALID;
+            }
+
+            // Valid if the request releases quota, not consumes it.
+            if (storageRequestGB <= 0) {
+                return ValidationResult.VALID;
+            }
+
+            double requestStoragePercent = 100 * (storageRequestGB / (double) storageLimit);
+            double currentStoragePercent = 100 * (quotaStorage.getStorageSizeGBUsage() / (double) storageLimit);
+            double newStoragePercent = currentStoragePercent + requestStoragePercent;
+
+            int threshold = getQuota().getThresholdStoragePercentage();
+            int grace = getQuota().getGraceStoragePercentage() + 100;
+
+            // Valid if below grace
+            if (newStoragePercent <= grace) {
+                // Warn if storage limit or threshold is exceeded
+                if (newStoragePercent > 100) {
+                    auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT);
+                    quotaManagerAuditLogger.addCustomValuesStorage(auditLogPair.getSecond(),
+                            getQuota().getQuotaName(),
+                            getQuota().getId(),
+                            currentStoragePercent + requestStoragePercent,
+                            requestStoragePercent);
+                } else if (newStoragePercent > threshold) {
+                    auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD);
+                    quotaManagerAuditLogger.addCustomValuesStorage(auditLogPair.getSecond(),
+                            getQuota().getQuotaName(),
+                            getQuota().getId(),
+                            currentStoragePercent + requestStoragePercent,
+                            requestStoragePercent);
+                }
+
+                return ValidationResult.VALID;
+            }
+
+            // Storage is above the grace - fail if hard enforcement
+            auditLogPair.setFirst(hardEnforcement ?
+                    AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT :
+                    AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT_PERMISSIVE_MODE);
+            quotaManagerAuditLogger.addCustomValuesStorage(auditLogPair.getSecond(),
+                    getQuota().getQuotaName(),
+                    getQuota().getId(),
+                    currentStoragePercent,
+                    requestStoragePercent);
+
+            if (!hardEnforcement) {
+                return ValidationResult.VALID;
+            }
+
+            auditLogPair.getSecond().setQuotaIdForLog(getQuota().getId());
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED);
+        }
+
+        @Override
+        public void apply() {
+            quotaStorage.setStorageSizeGBUsage(storageRequestGB);
+        }
     }
 }
