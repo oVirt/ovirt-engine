@@ -72,7 +72,7 @@ public class DownloadImageHandler {
     }
 
     public void stop() {
-        closeSession(ImageTransferPhase.FINALIZING_SUCCESS, null);
+        closeSession(ImageTransferPhase.CANCELLED, null);
     }
 
     private void initiateDownload(ImageTransfer imageTransfer) {
