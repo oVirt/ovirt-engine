@@ -40,7 +40,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Versions of the API model and tools: -->
-    <metamodel.version>1.2.15</metamodel.version>
+    <metamodel.version>1.2.16</metamodel.version>
     <model.version>4.2.26</model.version>
 
     <!-- oVirt extensions versions -->
