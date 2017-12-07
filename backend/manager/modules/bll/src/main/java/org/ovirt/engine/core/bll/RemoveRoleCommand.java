@@ -29,8 +29,6 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
         } else {
             if (checkIfRoleIsReadOnly(getReturnValue().getValidationMessages())) {
                 returnValue = false;
-                addValidationMessage(EngineMessage.VAR__TYPE__ROLE);
-                addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
             } else {
                 if (!permissionDao.getAllForRole(getParameters().getRoleId()).isEmpty()) {
                     returnValue = false;
@@ -40,6 +38,12 @@ public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesComman
             }
         }
         return returnValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__TYPE__ROLE);
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
     @Override
