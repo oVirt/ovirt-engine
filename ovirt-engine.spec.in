@@ -313,7 +313,7 @@ Requires:	openvswitch
 Requires:	openvswitch-ovn-common
 Requires:	openvswitch-ovn-central
 Requires:	python-openvswitch
-Requires:	ovirt-provider-ovn
+Requires:	ovirt-provider-ovn >= 1.2.1
 
 %description
 %{ovirt_product_name} is a feature-rich server virtualization management
@@ -449,7 +449,7 @@ Conflicts:	%{name} < 4.1.7
 # OVS/OVN stuff, for firewalld service files
 Requires:	openvswitch-ovn-central >= 0:2.7
 Conflicts:	openvswitch-ovn-central = 1:2.6.1
-Requires:	ovirt-provider-ovn
+Requires:	ovirt-provider-ovn >= 1.2.1
 
 %description setup-plugin-ovirt-engine
 Setup and upgrade specific plugins for %{ovirt_product_name_short}
