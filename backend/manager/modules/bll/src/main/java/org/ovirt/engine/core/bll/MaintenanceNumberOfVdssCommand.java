@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
@@ -272,6 +273,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             }
                         }
 
+                        List<AsyncTask> asyncTasks = null;
                         if (nonMigratableVmDescriptionsToFrontEnd.size() > 0) {
                             hostsWithNonMigratableVms.add(vds.getName());
                             nonMigratableVms.addAll(nonMigratableVmDescriptionsToFrontEnd);
@@ -295,7 +297,12 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                                 && vds.getSpmStatus() != VdsSpmStatus.None) {
                             result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
                         } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up &&
-                                asyncTaskDao.getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
+                                ((asyncTasks = asyncTaskDao.getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()))).size() > 0) {
+                            String runningTasks = asyncTasks
+                                    .stream()
+                                    .map(AsyncTask::toString)
+                                    .collect(Collectors.joining(", "));
+                            log.warn("There are running tasks on the SPM: '{}'", runningTasks);
                             result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
                         } else if (!validateNoRunningJobs(vds)) {
                             result = false;

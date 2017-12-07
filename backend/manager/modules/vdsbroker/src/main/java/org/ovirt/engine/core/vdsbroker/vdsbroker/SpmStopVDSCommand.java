@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -55,6 +56,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                 }
 
                 boolean performSpmStop = true;
+                Map<Guid, AsyncTaskStatus> unclearedTasks = null;
                 try {
                     VDSReturnValue vdsReturnValue = resourceManager
                             .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
@@ -68,7 +70,8 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                     getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
 
                     if (vdsReturnValue.getReturnValue() != null) {
-                        performSpmStop = ((HashMap<Guid, AsyncTaskStatus>) vdsReturnValue.getReturnValue()).isEmpty();
+                        unclearedTasks = (HashMap<Guid, AsyncTaskStatus>) vdsReturnValue.getReturnValue();
+                        performSpmStop = unclearedTasks.isEmpty();
                     }
                 } catch (Exception e) {
                     performSpmStop = false;
@@ -85,11 +88,16 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                 } else {
                     getVDSReturnValue().setSucceeded(false);
                     if (getVDSReturnValue().getVdsError() == null) {
-                        log.info("SpmStopVDSCommand::Not stopping SPM on vds '{}', pool id '{}' as there are uncleared tasks",
+                        String unclearedTasksDetails = unclearedTasks
+                                .entrySet()
+                                .stream()
+                                .map(entry -> String.format("Task '%s', status '%s'", entry.getKey(), entry.getValue().getStatus()))
+                                .collect(Collectors.joining(", "));
+                        log.error("SpmStopVDSCommand::Not stopping SPM on vds '{}', pool id '{}' as there are uncleared tasks '{}'",
                                 getVds().getName(),
-                                getParameters().getStoragePoolId());
-                        VDSError error = new VDSError();
-                        error.setCode(EngineError.TaskInProgress);
+                                getParameters().getStoragePoolId(),
+                                unclearedTasksDetails);
+                        VDSError error = new VDSError(EngineError.TaskInProgress, unclearedTasksDetails);
                         getVDSReturnValue().setVdsError(error);
                     } else if (getVDSReturnValue().getVdsError().getCode() == EngineError.VDS_NETWORK_ERROR) {
                         log.info(

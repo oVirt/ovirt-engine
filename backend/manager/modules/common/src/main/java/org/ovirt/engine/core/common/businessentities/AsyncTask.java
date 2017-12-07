@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -255,5 +256,20 @@ public class AsyncTask implements Serializable {
 
     public void setUserId(Guid userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        ToStringBuilder stringBuilder = ToStringBuilder.forInstance(this);
+        stringBuilder.append("commandId", commandId)
+                .append("rootCommandId", rootCommandId)
+                .append("storagePoolId", storagePoolId)
+                .append("taskId", taskId)
+                .append("vdsmTaskId", vdsmTaskId)
+                .append("stepId", stepId)
+                .append("taskType", taskType)
+                .append("status", status);
+
+        return stringBuilder.build();
     }
 }
