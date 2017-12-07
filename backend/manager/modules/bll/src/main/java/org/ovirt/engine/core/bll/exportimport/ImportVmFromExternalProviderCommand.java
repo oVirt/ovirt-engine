@@ -57,6 +57,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -425,7 +426,13 @@ implements QuotaStorageDependent {
     protected void endWithFailure() {
         // Since AddDisk is called internally, its audit log on end-action will not be logged
         auditLog(this, AuditLogType.ADD_DISK_INTERNAL_FAILURE);
-        endActionOnDisks();
+        // This command uses compensation so if we won't execute the following block in a new
+        // transaction then the images might be updated within this transaction scope and block
+        // RemoveVm that also tries to update the images later on
+        TransactionSupport.executeInNewTransaction(() -> {
+            endActionOnDisks();
+            return null;
+        });
         removeVm();
         setSucceeded(true);
     }
