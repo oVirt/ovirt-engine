@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -440,7 +441,7 @@ public class QuotaManager implements BackendService {
             CommandBase<?> command,
             Pair<AuditLogType, AuditLogableBase> auditLogPair) {
         boolean result = true;
-
+        Map<Guid, Quota> quotaMap = storagePoolQuotaMap.get(command.getStoragePoolId());
         List<QuotaClusterConsumptionParameter> executed = new ArrayList<>();
         for (QuotaConsumptionParameter parameter : parameters) {
             QuotaClusterConsumptionParameter clusterConsumptionParameter;
@@ -449,7 +450,7 @@ public class QuotaManager implements BackendService {
             } else {
                 clusterConsumptionParameter = (QuotaClusterConsumptionParameter) parameter;
             }
-            Quota quota = parameter.getQuota();
+            Quota quota = quotaMap.get(parameter.getQuotaGuid());
             QuotaCluster quotaCluster = null;
 
             if (quota.getGlobalQuotaCluster() != null) { // global cluster quota
@@ -493,13 +494,15 @@ public class QuotaManager implements BackendService {
 
         //if result is false (one or more parameters did not pass) - roll back the parameters that did pass
         if(!result) {
-            rollBackClusterConsumptionParameters(executed);
+            rollBackClusterConsumptionParameters(executed, quotaMap);
         }
 
         return result;
     }
 
-    private void rollBackClusterConsumptionParameters(List<QuotaClusterConsumptionParameter> executed) {
+    private void rollBackClusterConsumptionParameters(List<QuotaClusterConsumptionParameter> executed,
+            Map<Guid, Quota> quotaMap) {
+
         for (QuotaClusterConsumptionParameter parameter : executed) {
             long requestedMemory =
                     parameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
@@ -509,7 +512,7 @@ public class QuotaManager implements BackendService {
                             -parameter.getRequestedCpu() : parameter.getRequestedCpu();
 
             QuotaCluster quotaCluster = null;
-            Quota quota = parameter.getQuota();
+            Quota quota = quotaMap.get(parameter.getQuotaGuid());
             if (quota.getGlobalQuotaCluster() != null) { // global cluster quota
                 quotaCluster = quota.getGlobalQuotaCluster();
             } else {
@@ -705,25 +708,25 @@ public class QuotaManager implements BackendService {
         // for each parameter - check and complete
         for (QuotaConsumptionParameter param : parameters) {
             // check that quota id is valid and fetch the quota from db (or cache). add the quota to the param
-            boolean validQuotaId = checkAndFetchQuota(param, command, auditLogPair);
+            Optional<Quota> quota = checkAndFetchQuota(param, command, auditLogPair);
             boolean validCluster = true;
             boolean  validStorageDomain = true;
 
-            if (validQuotaId) {
+            if (quota.isPresent()) {
                 // In case this param is a QuotaVdsConsumptionParameter - check that it has a valid
                 // vds group id which is handled by this quota
                 if (param instanceof QuotaClusterConsumptionParameter) {
-                    validCluster = checkClusterMatchQuota((QuotaClusterConsumptionParameter) param, command);
+                    validCluster = checkClusterMatchQuota((QuotaClusterConsumptionParameter) param, quota.get(), command);
                 }
 
                 // In case this param is a QuotaStorageConsumptionParameter - check that it has a valid
                 // storage domain id which is handled by this quota
                 if (param instanceof QuotaStorageConsumptionParameter) {
-                    validStorageDomain = checkStoragePoolMatchQuota((QuotaStorageConsumptionParameter) param, command);
+                    validStorageDomain = checkStoragePoolMatchQuota((QuotaStorageConsumptionParameter) param, quota.get(), command);
                 }
             }
 
-            if (!validQuotaId || !validCluster || !validStorageDomain) {
+            if (!quota.isPresent() || !validCluster || !validStorageDomain) {
                 // if in hard enforcement - return false
                 if (hardEnforcement) {
                     return false;
@@ -739,8 +742,8 @@ public class QuotaManager implements BackendService {
         return true;
     }
 
-    // check that quota id is valid and fetch the quota from db (or cache). add the quota to the param
-    private boolean checkAndFetchQuota(QuotaConsumptionParameter param,
+    // check that quota id is valid and fetch the quota from db (or cache).
+    private Optional<Quota> checkAndFetchQuota(QuotaConsumptionParameter param,
             CommandBase<?> command,
             Pair<AuditLogType, AuditLogableBase> auditLogPair)
             throws InvalidQuotaParametersException {
@@ -758,17 +761,15 @@ public class QuotaManager implements BackendService {
                     AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
             log.error("The quota id '{}' is not found in backend and DB.", param.getQuotaGuid());
             corruptedParameters.add(param);
-            return false;
+            return Optional.empty();
         }
 
-        param.setQuota(quota);
-        return true;
+        return Optional.of(quota);
     }
 
     // In case this param is a QuotaVdsConsumptionParameter - check that it has a valid
     // vds group id which is handled by this quota
-    private boolean checkClusterMatchQuota(QuotaClusterConsumptionParameter param, CommandBase<?> command) {
-        Quota quota = param.getQuota();
+    private boolean checkClusterMatchQuota(QuotaClusterConsumptionParameter param, Quota quota, CommandBase<?> command) {
 
         if (param.getClusterId() == null) {
             command.getReturnValue().getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
@@ -799,8 +800,7 @@ public class QuotaManager implements BackendService {
 
     // In case this param is a QuotaStorageConsumptionParameter - check that it has a valid
     // storage domain id which is handled by this quota
-    private boolean checkStoragePoolMatchQuota(QuotaStorageConsumptionParameter param, CommandBase<?> command) {
-        Quota quota = param.getQuota();
+    private boolean checkStoragePoolMatchQuota(QuotaStorageConsumptionParameter param, Quota quota, CommandBase<?> command) {
 
         if (param.getStorageDomainId() == null) {
             command.getReturnValue().getValidationMessages().add(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());

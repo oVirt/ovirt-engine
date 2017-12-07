@@ -797,7 +797,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             if (differentNewQuota) {
                 list.add(new QuotaStorageConsumptionParameter(
                         oldDiskImage.getQuotaId(),
-                        null,
                         QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
                         //TODO: Shared Disk?
                         oldDiskImage.getStorageIds().get(0),
@@ -814,7 +813,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private QuotaConsumptionParameter generateQuotaConsumeParameters(DiskImage newDiskImage, long sizeInGigabytes) {
         return new QuotaStorageConsumptionParameter(
                newDiskImage.getQuotaId(),
-               null,
                QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
                //TODO: Shared Disk?
                newDiskImage.getStorageIds().get(0),

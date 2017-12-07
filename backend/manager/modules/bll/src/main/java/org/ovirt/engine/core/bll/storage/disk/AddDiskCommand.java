@@ -751,7 +751,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getParameters().getDiskInfo().getDiskStorageType().isInternal()) {
             list.add(new QuotaStorageConsumptionParameter(
                 getQuotaId(),
-                null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getStorageDomainId(),
                 getRequestDiskSpace()));

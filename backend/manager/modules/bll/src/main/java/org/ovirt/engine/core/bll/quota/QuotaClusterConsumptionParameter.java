@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.quota;
 
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
 
 public class QuotaClusterConsumptionParameter extends QuotaConsumptionParameter {
@@ -10,12 +9,11 @@ public class QuotaClusterConsumptionParameter extends QuotaConsumptionParameter 
     private long requestedMemory;
 
     public QuotaClusterConsumptionParameter(Guid quotaGuid,
-            Quota quota,
             QuotaAction quotaAction,
             Guid clusterId,
             int requestedCpu,
             long requestedMemory) {
-        super(quotaGuid, quota, quotaAction);
+        super(quotaGuid, quotaAction);
         this.clusterId = clusterId;
         this.requestedCpu = requestedCpu;
         this.requestedMemory = requestedMemory;
@@ -49,7 +47,6 @@ public class QuotaClusterConsumptionParameter extends QuotaConsumptionParameter 
     public QuotaClusterConsumptionParameter clone() throws CloneNotSupportedException {
         return new QuotaClusterConsumptionParameter(
                 getQuotaGuid(),
-                getQuota(),
                 getQuotaAction(),
                 clusterId,
                 requestedCpu,

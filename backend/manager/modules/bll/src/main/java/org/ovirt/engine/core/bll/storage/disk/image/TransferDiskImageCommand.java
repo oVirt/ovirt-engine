@@ -250,7 +250,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             AddDiskParameters parameters = getAddDiskParameters();
             list.add(new QuotaStorageConsumptionParameter(
                     ((DiskImage) parameters.getDiskInfo()).getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     getStorageDomainId(),
                     (double) parameters.getDiskInfo().getSize() / SizeConverter.BYTES_IN_GB));

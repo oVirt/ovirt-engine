@@ -175,13 +175,13 @@ public class QuotaManagerTest {
 
     private boolean consumeForStorageQuota(Guid quotaId) {
         return quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
-                quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1d
+                quotaId, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1d
         )));
     }
 
     private boolean consumeForVdsQuota(Guid quotaId) {
         return quotaManager.consume(command, Collections.singletonList(new QuotaClusterConsumptionParameter(
-                quotaId, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 1
+                quotaId, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 1
         )));
     }
 
@@ -246,7 +246,6 @@ public class QuotaManagerTest {
         // decrease the quota usage from 104 GB to 96 (our of 100 GB quota)
         quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
                 STORAGE_QUOTA_GLOBAL_IN_GRACE,
-                null,
                 QuotaConsumptionParameter.QuotaAction.RELEASE,
                 DESTINATION_GUID,
                 8d)));
@@ -254,7 +253,6 @@ public class QuotaManagerTest {
         // try to consume 1 GB from the same quota (will reach 97 GB out of 100 GB)
         assertTrue(quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
                 STORAGE_QUOTA_GLOBAL_IN_GRACE,
-                null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1d))));
@@ -380,13 +378,13 @@ public class QuotaManagerTest {
         List<QuotaConsumptionParameter> parameters = new ArrayList<>();
 
         parameters.add(new QuotaStorageConsumptionParameter(
-                STORAGE_QUOTA_GLOBAL_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
+                STORAGE_QUOTA_GLOBAL_IN_GRACE, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
         parameters.add(new QuotaStorageConsumptionParameter(
-                STORAGE_QUOTA_SPECIFIC_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
+                STORAGE_QUOTA_SPECIFIC_IN_GRACE, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
         parameters.add(new QuotaClusterConsumptionParameter(
-                VCPU_QUOTA_GLOBAL_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 6, 1));
+                VCPU_QUOTA_GLOBAL_IN_GRACE, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 6, 1));
         parameters.add(new QuotaClusterConsumptionParameter(
-                MEM_QUOTA_SPECIFIC_IN_GRACE, null, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 300));
+                MEM_QUOTA_SPECIFIC_IN_GRACE, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 300));
 
         // ask for a valid consumption (116 out of 120 and 113 out of 120)
         quotaManager.consume(command, parameters);
@@ -408,19 +406,19 @@ public class QuotaManagerTest {
     public void testRemoveQuotaFromCache() throws Exception {
         List<QuotaConsumptionParameter> parameters = new ArrayList<>();
 
-        parameters.add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED, null,
+        parameters.add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1d));
-        parameters.add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED, null,
+        parameters.add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1d));
-        parameters.add(new QuotaClusterConsumptionParameter(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED, null,
+        parameters.add(new QuotaClusterConsumptionParameter(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1, 1));
-        parameters.add(new QuotaClusterConsumptionParameter(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED, null,
+        parameters.add(new QuotaClusterConsumptionParameter(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 DESTINATION_GUID,
                 1, 1));

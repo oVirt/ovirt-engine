@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.quota;
 
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
 
 public class QuotaStorageConsumptionParameter extends QuotaConsumptionParameter {
@@ -9,11 +8,10 @@ public class QuotaStorageConsumptionParameter extends QuotaConsumptionParameter 
     private double requestedStorageGB;
 
     public QuotaStorageConsumptionParameter(Guid quotaGuid,
-            Quota quota,
             QuotaAction quotaAction,
             Guid storageDomainId,
             Double requestedStorageGB) {
-        super(quotaGuid, quota, quotaAction);
+        super(quotaGuid, quotaAction);
         this.storageDomainId = storageDomainId;
         this.requestedStorageGB = requestedStorageGB;
     }
@@ -38,7 +36,6 @@ public class QuotaStorageConsumptionParameter extends QuotaConsumptionParameter 
     public QuotaStorageConsumptionParameter clone() throws CloneNotSupportedException {
         return new QuotaStorageConsumptionParameter(
                 getQuotaGuid(),
-                getQuota(),
                 getQuotaAction(),
                 storageDomainId,
                 requestedStorageGB);

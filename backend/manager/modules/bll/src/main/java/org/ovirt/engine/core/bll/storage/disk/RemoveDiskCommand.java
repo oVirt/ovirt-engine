@@ -604,7 +604,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 && !Guid.Empty.equals(getQuotaId())) {
             list.add(new QuotaStorageConsumptionParameter(
                     getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
                     getStorageDomainId(),
                     (double) getDiskImage().getSizeInGigabytes()));

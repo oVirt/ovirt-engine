@@ -838,7 +838,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             for (DiskImage image : disks) {
                 if (!image.getImage().isActive() && image.getQuotaId() != null
                         && !Guid.Empty.equals(image.getQuotaId())) {
-                    list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
+                    list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(),
                             QuotaConsumptionParameter.QuotaAction.RELEASE,
                             image.getStorageIds().get(0),
                             image.getActualSize()));

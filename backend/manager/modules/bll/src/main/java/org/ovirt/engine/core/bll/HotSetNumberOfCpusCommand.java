@@ -146,7 +146,6 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
         if (cpuToConsume > 0) {
             // Consume CPU quota
             list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     getVm().getClusterId(),
                     getVm().getCpuPerSocket() * getVm().getThreadsPerCpu() * cpuToConsume,
@@ -155,7 +154,6 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
         } else if (cpuToConsume < 0) {
             // Release CPU quota
             list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
                     getVm().getClusterId(),
                     getVm().getCpuPerSocket() * getVm().getThreadsPerCpu() * Math.abs(cpuToConsume),

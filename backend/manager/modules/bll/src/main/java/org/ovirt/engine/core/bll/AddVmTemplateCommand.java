@@ -1239,7 +1239,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 .stream()
                 .map(disk -> new QuotaStorageConsumptionParameter(
                         getQuotaIdForDisk(disk),
-                        null,
                         QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
                         disk.getStorageIds().get(0),
                         (double) disk.getSizeInGigabytes()))
@@ -1253,7 +1252,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 getStoragePoolId());
 
         List<QuotaConsumptionParameter> list = new ArrayList<>();
-        list.add(new QuotaSanityParameter(quotaId, null));
+        list.add(new QuotaSanityParameter(quotaId));
         return list;
     }
 

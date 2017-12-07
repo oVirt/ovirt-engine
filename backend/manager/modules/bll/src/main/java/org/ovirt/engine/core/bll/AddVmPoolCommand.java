@@ -162,7 +162,7 @@ public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoo
                 getParameters().getVmStaticData().getQuotaId(),
                 getStoragePoolId());
 
-        return Collections.singletonList(new QuotaSanityParameter(quotaId, null));
+        return Collections.singletonList(new QuotaSanityParameter(quotaId));
     }
 
     @Override

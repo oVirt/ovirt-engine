@@ -189,7 +189,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         //if runAsStateless
         if (isRunAsStateless()) {
             for (DiskImage image : getVm().getDiskList()) {
-                list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
+                list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(),
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
                         image.getStorageIds().get(0), image.getActualSize()));
             }

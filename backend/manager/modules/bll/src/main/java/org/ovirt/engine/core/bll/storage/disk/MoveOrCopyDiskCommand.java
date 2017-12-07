@@ -641,7 +641,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         list.add(new QuotaStorageConsumptionParameter(
                 getDestinationQuotaId(),
-                null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getParameters().getStorageDomainId(),
                 (double)getImage().getSizeInGigabytes()));
@@ -650,7 +649,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             if (getImage().getQuotaId() != null && !Guid.Empty.equals(getImage().getQuotaId())) {
                 list.add(new QuotaStorageConsumptionParameter(
                         getImage().getQuotaId(),
-                        null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getParameters().getSourceDomainId(),
                         (double)getImage().getSizeInGigabytes()));

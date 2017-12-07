@@ -313,7 +313,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
         list.add(new QuotaStorageConsumptionParameter(
-                getParameters().getQuotaId(), null, QuotaConsumptionParameter.QuotaAction.CONSUME,
+                getParameters().getQuotaId(), QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getParameters().getStorageDomainId(), (double) getDiskImage().getSizeInGigabytes()));
         return list;
     }

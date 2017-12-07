@@ -357,7 +357,6 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
             setStoragePoolId(vm.getStoragePoolId());
 
             list.add(new QuotaClusterConsumptionParameter(vm.getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     vm.getClusterId(),
                     vm.getCpuPerSocket() * vm.getNumOfSockets(),

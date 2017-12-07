@@ -1,16 +1,13 @@
 package org.ovirt.engine.core.bll.quota;
 
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class QuotaConsumptionParameter implements Cloneable{
     private Guid quotaGuid;
-    private Quota quota;
     private QuotaAction quotaAction;
 
-    protected QuotaConsumptionParameter(Guid quotaGuid, Quota quota, QuotaAction quotaAction) {
+    protected QuotaConsumptionParameter(Guid quotaGuid, QuotaAction quotaAction) {
         this.quotaGuid = quotaGuid;
-        this.quota = quota;
         this.quotaAction = quotaAction;
     }
 
@@ -20,14 +17,6 @@ public abstract class QuotaConsumptionParameter implements Cloneable{
 
     public void setQuotaGuid(Guid quotaGuid) {
         this.quotaGuid = quotaGuid;
-    }
-
-    public Quota getQuota() {
-        return quota;
-    }
-
-    public void setQuota(Quota quota) {
-        this.quota = quota;
     }
 
     public QuotaAction getQuotaAction() {

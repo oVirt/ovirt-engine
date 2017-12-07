@@ -250,7 +250,6 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         for (DiskImage diskImage : getVm().getImages()) {
             list.add(new QuotaStorageConsumptionParameter(
                     diskImage.getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     getStorageDomainId(),
                     (double)diskImage.getSizeInGigabytes()));

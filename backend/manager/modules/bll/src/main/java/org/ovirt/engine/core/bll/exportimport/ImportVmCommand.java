@@ -1485,7 +1485,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 DiskImage diskImage = (DiskImage) disk;
                 list.add(new QuotaStorageConsumptionParameter(
                         diskImage.getQuotaId(),
-                        null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
                         imageToDestinationDomainMap.get(diskImage.getId()),
                         (double) diskImage.getSizeInGigabytes()));

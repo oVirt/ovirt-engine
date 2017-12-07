@@ -432,14 +432,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                         if (snapshot.getActive()) {
                             list.add(new QuotaStorageConsumptionParameter(
                                     snapshot.getQuotaId(),
-                                    null,
                                     QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
                                     disk.getStorageIds().get(0),
                                     (double) snapshot.getSizeInGigabytes()));
                         } else {
                             list.add(new QuotaStorageConsumptionParameter(
                                     snapshot.getQuotaId(),
-                                    null,
                                     QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
                                     disk.getStorageIds().get(0),
                                     snapshot.getActualSize()));

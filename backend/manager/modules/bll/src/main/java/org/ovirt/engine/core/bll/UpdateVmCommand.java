@@ -1377,18 +1377,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // The cases must be persistent with the create_functions_sp
         if (!getQuotaManager().isVmStatusQuotaCountable(getVm().getStatus())) {
-            list.add(new QuotaSanityParameter(getQuotaId(), null));
+            list.add(new QuotaSanityParameter(getQuotaId()));
             quotaSanityOnly = true;
         } else {
             if (!getQuotaId().equals(getVm().getQuotaId())) {
                 list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
-                        null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getClusterId(),
                         getVm().getNumOfCpus(),
                         getVm().getMemSizeMb()));
                 list.add(new QuotaClusterConsumptionParameter(getQuotaId(),
-                        null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
                         getParameters().getVmStaticData().getClusterId(),
                         getParameters().getVmStaticData().getNumOfCpus(),

@@ -83,14 +83,12 @@ public class ChangeQuotaForDiskCommand extends CommandBase<ChangeQuotaParameters
             if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
                 list.add(new QuotaStorageConsumptionParameter(
                         disk.getQuotaId(),
-                        null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getParameters().getContainerId(),
                         getDiskSize()));
             }
             list.add(new QuotaStorageConsumptionParameter(
                     getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     getParameters().getContainerId(),
                     getDiskSize()));

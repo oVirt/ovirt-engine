@@ -131,7 +131,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         for (DiskImage disk : getDisksList()) {
             list.add(new QuotaStorageConsumptionParameter(
                     disk.getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     disk.getStorageIds().get(0),
                     disk.getActualSize()));

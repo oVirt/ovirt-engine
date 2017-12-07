@@ -612,7 +612,6 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         return diskInfoDestinationMap.values().stream()
                 .map(disk -> new QuotaStorageConsumptionParameter(
                         disk.getQuotaId(),
-                        null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
                         disk.getStorageIds().get(0),
                         (double)(disk.getSizeInGigabytes() * getParameters().getVmsCount())))

@@ -143,7 +143,6 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
                 QuotaConsumptionParameter.QuotaAction.RELEASE;
 
         list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
-                null,
                 quotaAction,
                 getVm().getClusterId(),
                 0,

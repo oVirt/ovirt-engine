@@ -1664,7 +1664,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 .stream()
                 .map(disk -> new QuotaStorageConsumptionParameter(
                         disk.getQuotaId(),
-                        null,
                         QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
                         disk.getStorageIds().get(0),
                         (double) disk.getSizeInGigabytes()))
@@ -1674,7 +1673,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
-        list.add(new QuotaSanityParameter(getQuotaId(), null));
+        list.add(new QuotaSanityParameter(getQuotaId()));
         return list;
     }
 

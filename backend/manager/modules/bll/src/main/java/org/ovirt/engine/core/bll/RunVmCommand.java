@@ -1232,7 +1232,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
-                null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getVm().getClusterId(),
                 getVm().getCpuPerSocket() * getVm().getNumOfSockets(),

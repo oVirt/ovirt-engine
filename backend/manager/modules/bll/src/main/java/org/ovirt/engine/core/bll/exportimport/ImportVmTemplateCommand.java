@@ -699,7 +699,6 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             //TODO: handle import more than once;
             list.add(new QuotaStorageConsumptionParameter(
                     disk.getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     imageToDestinationDomainMap.get(disk.getId()),
                     (double)disk.getSizeInGigabytes()));

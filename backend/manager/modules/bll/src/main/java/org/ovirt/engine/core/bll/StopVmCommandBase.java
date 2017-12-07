@@ -191,7 +191,6 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         if (getVm().getQuotaId() != null && !Guid.Empty.equals(getVm().getQuotaId())
                 && getQuotaManager().isVmStatusQuotaCountable(getVm().getStatus())) {
             list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
-                    null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
                     getVm().getClusterId(),
                     getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
@@ -209,7 +208,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         //if runAsStateless
         for (DiskImage image : getVm().getDiskList()) {
             if (image.getQuotaId() != null) {
-                list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
+                list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(),
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         image.getStorageIds().get(0), image.getActualSize()));
             }
