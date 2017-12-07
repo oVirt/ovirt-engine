@@ -447,7 +447,8 @@ Requires:       postgresql-server >= 9.5
 Conflicts:	%{name} < 4.1.7
 
 # OVS/OVN stuff, for firewalld service files
-Requires:	openvswitch-ovn-central
+Requires:	openvswitch-ovn-central >= 0:2.7
+Conflicts:	openvswitch-ovn-central = 1:2.6.1
 Requires:	ovirt-provider-ovn
 
 %description setup-plugin-ovirt-engine
