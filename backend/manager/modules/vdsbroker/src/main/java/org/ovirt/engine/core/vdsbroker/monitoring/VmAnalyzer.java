@@ -266,6 +266,12 @@ public class VmAnalyzer {
 
         // VM is running on another host - must be during migration
         if (!isVmRunningInDatabaseOnMonitoredHost()) {
+            if (dbVm.getStatus() == VMStatus.MigratingFrom) {
+                log.error("Migration of VM '{}' to host '{}' failed: {}.",
+                        getVmManager().getName(),
+                        vdsManager.getVdsName(),
+                        vdsmVm.getVmDynamic().getExitMessage());
+            }
             return;
         }
 
