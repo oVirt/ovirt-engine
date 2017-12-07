@@ -1787,8 +1787,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getKsmPolicyForNumaSelection().setChangeProhibitionReason(ConstantsManager.getInstance()
                 .getConstants()
                 .ksmWithNumaAwarnessNotAvailable());
-        // enable NUMA aware KSM by default (matching kernel's default)
-        setKsmPolicyForNuma(true);
     }
 
     private void refreshAdditionalClusterFeaturesList() {
