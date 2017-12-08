@@ -4,7 +4,7 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <g:FlowPanel>
+    <g:FlowPanel ui:field="container">
         <b:Breadcrumbs ui:field="breadCrumbs" />
     </g:FlowPanel>
 </ui:UiBinder>

@@ -25,6 +25,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -40,6 +41,9 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
 
     @UiField
     Breadcrumbs breadCrumbs;
+
+    @UiField
+    FlowPanel container;
 
     private OvirtPopover popover;
     private ListModelSearchBox<T, ?> searchBox;
@@ -60,7 +64,9 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
     @Override
     public void buildCrumbs(String modelTitle, String modelHref) {
         // Clear the existing path.
-        breadCrumbs.clear();
+        container.clear();
+        breadCrumbs = new Breadcrumbs();
+        container.add(breadCrumbs);
 
         // Add primary menu label.
         String primaryLabel = menuDetailsProvider.getLabelFromHref(modelHref);
