@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.QuotaDao;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,10 +54,13 @@ public class QuotaManagerTest {
 
     @Mock
     private QuotaDao quotaDao;
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
+
+    @InjectMocks
     @Spy
     private QuotaManager quotaManager = new QuotaManager();
-    @Spy
-    private QuotaManagerAuditLogger quotaManagerAuditLogger = quotaManager.getQuotaManagerAuditLogger();
 
     private StoragePool storage_pool = new StoragePool();
     private ArrayList<String> validationMessages = new ArrayList<>();
@@ -74,9 +79,6 @@ public class QuotaManagerTest {
         when(quotaDao.getDefaultQuotaForStoragePool(any())).thenReturn(mockDefaultQuota());
 
         doReturn(quotaDao).when(quotaManager).getQuotaDao();
-        doReturn(quotaManagerAuditLogger).when(quotaManager).getQuotaManagerAuditLogger();
-
-        doNothing().when(quotaManagerAuditLogger).auditLog(any(), any());
 
         ActionParametersBase param = new ActionParametersBase();
         command = new CommandBase<ActionParametersBase>(
@@ -107,11 +109,11 @@ public class QuotaManagerTest {
     }
 
     private void assertAuditLogWritten(AuditLogType type) {
-        verify(quotaManagerAuditLogger).auditLog(eq(type), any());
+        verify(auditLogDirector).log(any(), eq(type));
     }
 
     private void assertAuditLogNotWritten() {
-        assertAuditLogWritten(null);
+        verify(auditLogDirector, never()).log(any(), any());
     }
 
     private boolean consumeForStorageQuota(double requestedStorageGB) {

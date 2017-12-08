@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
@@ -46,7 +46,6 @@ public class QuotaManager implements BackendService {
     private Map<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<>();
     private Map<Guid, Guid> storagePoolDefaultQuotaIdMap = new HashMap<>();
 
-    private final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
     private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<>();
 
     @Inject
@@ -54,6 +53,9 @@ public class QuotaManager implements BackendService {
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
@@ -71,10 +73,6 @@ public class QuotaManager implements BackendService {
                 quotaCacheIntervalInMinutes,
                 TimeUnit.MINUTES
         );
-    }
-
-    protected QuotaManagerAuditLogger getQuotaManagerAuditLogger() {
-        return quotaManagerAuditLogger;
     }
 
     /**
@@ -194,9 +192,6 @@ public class QuotaManager implements BackendService {
      * @return - true if the request was validated and set
      */
     public boolean consume(CommandBase<?> command, List<QuotaConsumptionParameter> params) throws InvalidQuotaParametersException {
-        Pair<AuditLogType, AuditLogableBase> auditLogPair = new Pair<>();
-        auditLogPair.setSecond(command);
-
         StoragePool storagePool = command.getStoragePool();
         if (storagePool == null) {
             throw new InvalidQuotaParametersException("Null storage pool passed to QuotaManager");
@@ -204,16 +199,17 @@ public class QuotaManager implements BackendService {
 
         addStoragePoolToCacheWithLock(storagePool.getId());
 
+        QuotaManagerAuditLogger auditLogger = new QuotaManagerAuditLogger(command, auditLogDirector);
+
         lock.readLock().lock();
         try {
             if (command.getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
                 synchronized (storagePoolQuotaMap.get(storagePool.getId())) {
-                    return consumeQuotaParameters(params, command, auditLogPair);
+                    return consumeQuotaParameters(params, command, auditLogger);
                 }
             }
         } finally {
             lock.readLock().unlock();
-            getQuotaManagerAuditLogger().auditLog(auditLogPair.getFirst(), auditLogPair.getSecond());
         }
 
         return true;
@@ -557,21 +553,21 @@ public class QuotaManager implements BackendService {
 
     private boolean consumeQuotaParameters(List<QuotaConsumptionParameter> parameters,
             CommandBase<?> command,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
+            QuotaManagerAuditLogger auditLogger) {
 
         boolean hardEnforcement =
                 QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == command.getStoragePool().getQuotaEnforcementType();
 
         // Process the quota consumption parameters to a list of Requests
         // Each Request instance aggregates all requested consumptions against a single quota limit
-        Optional<List<Request>> requests = createRequests(parameters, command, hardEnforcement, auditLogPair);
+        Optional<List<Request>> requests = createRequests(parameters, command, hardEnforcement, auditLogger);
         if (!requests.isPresent()) {
             return false;
         }
 
         // Validate that all requests satisfy the quota limits
         for (Request request : requests.get()) {
-            ValidationResult validation = request.validate(hardEnforcement, auditLogPair);
+            ValidationResult validation = request.validate(hardEnforcement, auditLogger);
             if(!validation.isValid()) {
                 command.getReturnValue().getValidationMessages().addAll(validation.getMessagesAsStrings());
                 return false;
@@ -592,7 +588,7 @@ public class QuotaManager implements BackendService {
     private Optional<List<Request>> createRequests(List<QuotaConsumptionParameter> parameters,
             CommandBase<?> command,
             boolean hardEnforcement,
-            Pair<AuditLogType, AuditLogableBase> auditLogPair) {
+            QuotaManagerAuditLogger auditLogger) {
 
         // The key is: Pair <Quota id, Cluster id>
         Map<Pair<Guid, Guid>, ClusterRequest> clusterRequests = new HashMap<>();
@@ -618,7 +614,7 @@ public class QuotaManager implements BackendService {
                     return Optional.empty();
                 }
 
-                auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
+                auditLogger.log(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
                         AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE :
                         AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
                 continue;
@@ -765,7 +761,7 @@ public class QuotaManager implements BackendService {
         /**
          * Validate that the request satisfies quota limits
          */
-        public abstract ValidationResult validate(boolean hardEnforcement, Pair<AuditLogType, AuditLogableBase> auditLogPair);
+        public abstract ValidationResult validate(boolean hardEnforcement, QuotaManagerAuditLogger auditLogger);
 
         /**
          * Apply the request on the current quota in the QuotaManager cache
@@ -795,7 +791,7 @@ public class QuotaManager implements BackendService {
         }
 
         @Override
-        public ValidationResult validate(boolean hardEnforcement, Pair<AuditLogType, AuditLogableBase> auditLogPair) {
+        public ValidationResult validate(boolean hardEnforcement, QuotaManagerAuditLogger auditLogger) {
             // The ClusterQuota must allow cpu and memory
             if (quotaCluster.getVirtualCpu() == 0 || quotaCluster.getMemSizeMB() == 0) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
@@ -829,51 +825,35 @@ public class QuotaManager implements BackendService {
             if (newCoresPercent <= grace && newMemoryPercent <= grace) {
                 // Warn if the cluster limit or threshold is exceeded
                 if (newCoresPercent > 100 || newMemoryPercent > 100) {
-                    auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_LIMIT);
-                    quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
+                    auditLogger.logClusterLimitExceeded(
                             getQuota().getQuotaName(),
                             getQuota().getId(),
-                            currentCoresPercent + requestedCoresPercent,
-                            requestedCoresPercent,
-                            currentMemoryPercent + requestedMemoryPercent,
-                            requestedMemoryPercent,
-                            newCoresPercent > 100,
-                            newMemoryPercent > 100);
+                            (newCoresPercent > 100) ? newCoresPercent : null,
+                            (newMemoryPercent > 100) ? newMemoryPercent : null);
                 } else if (newCoresPercent > threshold || newMemoryPercent > threshold) {
-                    auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_THRESHOLD);
-                    quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
+                    auditLogger.logClusterThresholdExceeded(
                             getQuota().getQuotaName(),
                             getQuota().getId(),
-                            currentCoresPercent + requestedCoresPercent,
-                            requestedCoresPercent,
-                            currentMemoryPercent + requestedMemoryPercent,
-                            requestedMemoryPercent,
-                            newCoresPercent > threshold,
-                            newMemoryPercent > threshold);
+                            (newCoresPercent > threshold) ? newCoresPercent : null,
+                            (newMemoryPercent > threshold) ? newMemoryPercent : null);
                 }
 
                 return ValidationResult.VALID;
             }
 
             // CPU or memory is above the grace - fail if enforcement is hard
-            auditLogPair.setFirst(hardEnforcement ?
-                    AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT:
-                    AuditLogType.USER_EXCEEDED_QUOTA_CLUSTER_GRACE_LIMIT_PERMISSIVE_MODE);
-            quotaManagerAuditLogger.addCustomValuesCluster(auditLogPair.getSecond(),
+            auditLogger.logClusterGraceExceeded(
                     getQuota().getQuotaName(),
                     getQuota().getId(),
-                    currentCoresPercent,
-                    requestedCoresPercent,
-                    currentMemoryPercent,
-                    requestedMemoryPercent,
-                    newCoresPercent > grace,
-                    newMemoryPercent > grace);
+                    (newCoresPercent > grace) ? currentCoresPercent : null,
+                    (newCoresPercent > grace) ? requestedCoresPercent : null,
+                    (newMemoryPercent > grace) ? currentMemoryPercent : null,
+                    (newMemoryPercent > grace) ? requestedMemoryPercent : null,
+                    hardEnforcement);
 
             if (!hardEnforcement) {
                 return ValidationResult.VALID;
             }
-
-            auditLogPair.getSecond().setQuotaIdForLog(getQuota().getId());
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_CLUSTER_LIMIT_EXCEEDED);
         }
 
@@ -901,7 +881,7 @@ public class QuotaManager implements BackendService {
         }
 
         @Override
-        public ValidationResult validate(boolean hardEnforcement, Pair<AuditLogType, AuditLogableBase> auditLogPair) {
+        public ValidationResult validate(boolean hardEnforcement, QuotaManagerAuditLogger auditLogger) {
             long storageLimit = quotaStorage.getStorageSizeGB();
 
             // Valid if quota is unlimited
@@ -925,39 +905,31 @@ public class QuotaManager implements BackendService {
             if (newStoragePercent <= grace) {
                 // Warn if storage limit or threshold is exceeded
                 if (newStoragePercent > 100) {
-                    auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT);
-                    quotaManagerAuditLogger.addCustomValuesStorage(auditLogPair.getSecond(),
+                    auditLogger.logStorageLimitExceeded(
                             getQuota().getQuotaName(),
                             getQuota().getId(),
-                            currentStoragePercent + requestStoragePercent,
-                            requestStoragePercent);
+                            newStoragePercent);
                 } else if (newStoragePercent > threshold) {
-                    auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD);
-                    quotaManagerAuditLogger.addCustomValuesStorage(auditLogPair.getSecond(),
+                    auditLogger.logStorageThresholdExceeded(
                             getQuota().getQuotaName(),
                             getQuota().getId(),
-                            currentStoragePercent + requestStoragePercent,
-                            requestStoragePercent);
+                            newStoragePercent);
                 }
 
                 return ValidationResult.VALID;
             }
 
             // Storage is above the grace - fail if hard enforcement
-            auditLogPair.setFirst(hardEnforcement ?
-                    AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT :
-                    AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT_PERMISSIVE_MODE);
-            quotaManagerAuditLogger.addCustomValuesStorage(auditLogPair.getSecond(),
+            auditLogger.logStorageGraceExceeded(
                     getQuota().getQuotaName(),
                     getQuota().getId(),
                     currentStoragePercent,
-                    requestStoragePercent);
+                    requestStoragePercent,
+                    hardEnforcement);
 
             if (!hardEnforcement) {
                 return ValidationResult.VALID;
             }
-
-            auditLogPair.getSecond().setQuotaIdForLog(getQuota().getId());
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED);
         }
 
