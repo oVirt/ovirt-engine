@@ -92,7 +92,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue(SMALL_ICON_ID_COLUMN, entity.getSmallIconId())
                 .addValue(LARGE_ICON_ID_COLUMN, entity.getLargeIconId())
                 .addValue("console_disconnect_action", entity.getConsoleDisconnectAction().toString())
-                .addValue("resume_behavior", entity.getResumeBehavior().toString())
+                .addValue("resume_behavior", entity.getResumeBehavior() == null ? null : entity.getResumeBehavior().toString())
                 .addValue("custom_compatibility_version", entity.getCustomCompatibilityVersion())
                 .addValue("migration_policy_id", entity.getMigrationPolicyId())
                 .addValue("lease_sd_id", entity.getLeaseStorageDomainId());
