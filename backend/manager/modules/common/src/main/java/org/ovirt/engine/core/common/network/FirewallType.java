@@ -19,7 +19,9 @@ package org.ovirt.engine.core.common.network;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum FirewallType {
+import org.ovirt.engine.core.common.businessentities.Identifiable;
+
+public enum FirewallType implements Identifiable {
 
     IPTABLES(0),
     FIREWALLD(1);
