@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPo
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
@@ -73,8 +74,8 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     }
 
     @Override
-    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
-        asWidget().setKeyPressHandler(handler);
+    public HandlerRegistration setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
+        return asWidget().setKeyPressHandler(handler);
     }
 
     @Override

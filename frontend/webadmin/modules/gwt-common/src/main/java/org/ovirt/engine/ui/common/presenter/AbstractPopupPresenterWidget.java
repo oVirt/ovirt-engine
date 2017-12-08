@@ -36,7 +36,7 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
         /**
          * Used to handle native key press events that occur within pop-ups.
          */
-        void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
+        HandlerRegistration setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
 
         /**
          * @return The handler used to re-position the dialog on Window resize.
@@ -69,7 +69,7 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
             registerHandler(closeIconButton.addClickHandler(event -> AbstractPopupPresenterWidget.this.onClose()));
         }
 
-        getView().setPopupKeyPressHandler(event -> AbstractPopupPresenterWidget.this.onKeyPress(event));
+        registerHandler(getView().setPopupKeyPressHandler(event -> AbstractPopupPresenterWidget.this.onKeyPress(event)));
 
         registerHandler(getEventBus().addHandler(UserLoginChangeEvent.getType(), event -> {
             if (isVisible()) {

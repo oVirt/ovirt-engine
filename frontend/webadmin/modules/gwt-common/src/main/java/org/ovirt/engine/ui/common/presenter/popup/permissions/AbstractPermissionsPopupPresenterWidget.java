@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.presenter.popup.permissions;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
-import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
 
@@ -39,8 +38,6 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
 
         HasHandlers getSearchStringEditor();
 
-        PopupNativeKeyPressHandler getNativeKeyPressHandler();
-
         void changeStateOfElementsWhenAccessIsForEveryoneOrMyGroups(boolean isEveryone, boolean isMyGroups);
 
         void hideRoleSelection(boolean indic);
@@ -51,6 +48,8 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
 
         void setLoadingState(LoadingState state);
     }
+
+    private boolean searchStringEditorHasFocus;
 
     public AbstractPermissionsPopupPresenterWidget(EventBus eventBus, V view) {
         super(eventBus, view);
@@ -123,36 +122,24 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         model.getIsEveryoneSelectionHidden().getPropertyChangedEvent().addListener((ev, sender, args) -> getView().hideEveryoneSelection(Boolean.parseBoolean(model.getIsRoleListHiddenModel()
                 .getEntity().toString())));
 
-        PermissionPopupNativeKeyPressHandler keyPressHandler =
-                new PermissionPopupNativeKeyPressHandler(getView().getNativeKeyPressHandler(), model);
-        getView().setPopupKeyPressHandler(keyPressHandler);
-
+        HasHandlers searchStringEditor = getView().getSearchStringEditor();
+        if (searchStringEditor instanceof HasFocusHandlers) {
+            registerHandler(((HasFocusHandlers) searchStringEditor).addFocusHandler(event -> searchStringEditorHasFocus = true));
+        }
+        if (searchStringEditor instanceof HasBlurHandlers) {
+            registerHandler(((HasBlurHandlers) searchStringEditor).addBlurHandler(event -> searchStringEditorHasFocus = false));
+        }
     }
 
-    class PermissionPopupNativeKeyPressHandler implements PopupNativeKeyPressHandler {
+    @Override
+    protected void onKeyPress(NativeEvent event) {
+        M model = getModel();
 
-        private final PopupNativeKeyPressHandler decorated;
-        private final M model;
-
-        private boolean hasFocus = false;
-
-        public PermissionPopupNativeKeyPressHandler(PopupNativeKeyPressHandler decorated, M model) {
-            this.decorated = decorated;
-            this.model = model;
-
-            ((HasFocusHandlers) getView().getSearchStringEditor()).addFocusHandler(event -> hasFocus = true);
-
-            ((HasBlurHandlers) getView().getSearchStringEditor()).addBlurHandler(event -> hasFocus = false);
-        }
-
-        @Override
-        public void onKeyPress(NativeEvent event) {
-            if (hasFocus && KeyCodes.KEY_ENTER == event.getKeyCode()) {
-                model.setSearchString(getView().getSearchString().getValue());
-                getView().getSearchButton().getCommand().execute();
-            } else {
-                decorated.onKeyPress(event);
-            }
+        if (searchStringEditorHasFocus && KeyCodes.KEY_ENTER == event.getKeyCode()) {
+            model.setSearchString(getView().getSearchString().getValue());
+            getView().getSearchButton().getCommand().execute();
+        } else {
+            super.onKeyPress(event);
         }
     }
 
@@ -165,4 +152,5 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         }
         getView().userTypeChanged(searchType, true);
     }
+
 }

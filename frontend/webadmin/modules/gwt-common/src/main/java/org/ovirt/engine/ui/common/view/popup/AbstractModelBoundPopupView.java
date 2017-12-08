@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -190,8 +191,8 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
     }
 
     @Override
-    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
-        asWidget().setKeyPressHandler(handler);
+    public HandlerRegistration setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
+        return asWidget().setKeyPressHandler(handler);
     }
 
     @Override

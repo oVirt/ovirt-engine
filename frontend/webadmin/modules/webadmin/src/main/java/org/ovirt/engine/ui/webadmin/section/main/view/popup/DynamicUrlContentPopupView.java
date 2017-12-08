@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
@@ -43,8 +44,8 @@ public class DynamicUrlContentPopupView extends AbstractPopupView<SimpleDialogPa
     }
 
     @Override
-    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler) {
-        asWidget().setKeyPressHandler(keyPressHandler);
+    public HandlerRegistration setPopupKeyPressHandler(PopupNativeKeyPressHandler keyPressHandler) {
+        return asWidget().setKeyPressHandler(keyPressHandler);
     }
 
     @Override

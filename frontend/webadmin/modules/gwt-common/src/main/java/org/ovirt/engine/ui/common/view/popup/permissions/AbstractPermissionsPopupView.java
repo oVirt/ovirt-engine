@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.presenter.popup.permissions.AbstractPermission
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
-import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -22,7 +21,6 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 
 import com.google.gwt.core.client.GWT;
@@ -121,7 +119,6 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     private AbstractEntityModelTextColumn<DbUser> lastNameColumn;
     private AbstractEntityModelTextColumn<DbUser> userNameColumn;
     private AbstractEntityModelTextColumn<DbUser> displayNameColumn;
-    private PopupNativeKeyPressHandler nativeKeyPressHandler;
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -231,7 +228,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     @Override
     public void edit(final T object) {
-        searchItems.setRowData(new ArrayList<EntityModel>());
+        searchItems.setRowData(new ArrayList<>());
         searchItems.asEditor().edit(object);
     }
 
@@ -277,19 +274,8 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     }
 
     @Override
-    public PopupNativeKeyPressHandler getNativeKeyPressHandler() {
-        return nativeKeyPressHandler;
-    }
-
-    @Override
     public HasHandlers getSearchStringEditor() {
         return searchStringEditor;
-    }
-
-    @Override
-    public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
-        super.setPopupKeyPressHandler(handler);
-        this.nativeKeyPressHandler = handler;
     }
 
     @Override
