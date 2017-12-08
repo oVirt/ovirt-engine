@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.Anchor;
@@ -55,8 +56,6 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
 
     private int rowCount;
 
-    private Range range = new Range(0, 10);
-
     private HasData<T> hasDataDelegate = new HasDataMinimalDelegate<T>() {
         @Override
         public int getRowCount() {
@@ -70,7 +69,15 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
 
         @Override
         public Range getVisibleRange() {
-            return range;
+            int topEnd = 1000;
+            M model = listModelProvider.getModel();
+            if (model != null) {
+                Collection<?> items = model.getItems();
+                if (items != null) {
+                    topEnd = items.size();
+                }
+            }
+            return new Range(0, topEnd);
         }
     };
 
