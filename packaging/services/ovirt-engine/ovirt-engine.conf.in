@@ -178,12 +178,10 @@ ENGINE_PROXY_HTTPS_PORT=443
 # when the HTTPS connector is enabled. The possible values are the
 # following:
 #
-#   SSLv3
-#   TLSv1
 #   TLSv1.1
 #   TLSv1.2
 #
-ENGINE_HTTPS_PROTOCOLS=SSLv3,TLSv1,TLSv1.1,TLSv1.2
+ENGINE_HTTPS_PROTOCOLS=TLSv1.1,TLSv1.2
 
 #
 # Engine host fully qualified domain name:
