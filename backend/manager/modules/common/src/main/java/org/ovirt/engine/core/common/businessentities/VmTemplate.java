@@ -8,9 +8,7 @@ import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
@@ -276,10 +274,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public double getActualDiskSize() {
         double result = 0;
-        for (Disk disk : getDiskImageMap().values()) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                result += ((DiskImage) disk).getActualSize();
-            }
+        for (DiskImage disk : getDiskImageMap().values()) {
+            result += disk.getActualSize();
         }
         return result;
     }
