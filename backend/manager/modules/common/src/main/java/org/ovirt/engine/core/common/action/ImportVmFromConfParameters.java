@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Label;
@@ -28,6 +29,7 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     private Set<DbUser> dbUsers;
     private Map<String, Set<String>> userToRoles  = new HashMap<>();
     private List<Label> affinityLabels;
+    private Collection<ExternalVnicProfileMapping> externalVnicProfileMappings;
 
     public ImportVmFromConfParameters() {
         this(Collections.emptyList(), false);
@@ -36,7 +38,8 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
     public ImportVmFromConfParameters(
             Collection<ExternalVnicProfileMapping> externalVnicProfileMappings,
             boolean reassignBadMacs) {
-        super(externalVnicProfileMappings, reassignBadMacs);
+        super(reassignBadMacs);
+        this.externalVnicProfileMappings = Objects.requireNonNull(externalVnicProfileMappings);
     }
 
     public ImportVmFromConfParameters(VM vm,
@@ -137,5 +140,15 @@ public class ImportVmFromConfParameters extends ImportVmParameters implements Im
 
     public void setUserToRoles(Map<String, Set<String>> userToRoles) {
         this.userToRoles = userToRoles;
+    }
+
+    @Override
+    public Collection<ExternalVnicProfileMapping> getExternalVnicProfileMappings() {
+        return externalVnicProfileMappings;
+    }
+
+    @Override
+    public void setExternalVnicProfileMappings(Collection<ExternalVnicProfileMapping> externalVnicProfileMappings) {
+        this.externalVnicProfileMappings = externalVnicProfileMappings;
     }
 }

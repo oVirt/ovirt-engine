@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.Collection;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 
 public interface ImportFromConfParameters {
 
@@ -27,4 +30,8 @@ public interface ImportFromConfParameters {
     Map<String, Object> getExternalLunMap();
 
     void setExternalLunMap(Map<String, Object> externalLunMap);
+
+    Collection<ExternalVnicProfileMapping> getExternalVnicProfileMappings();
+
+    void setExternalVnicProfileMappings(Collection<ExternalVnicProfileMapping> externalVnicProfilesMap);
 }

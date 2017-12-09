@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,6 +22,11 @@ public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParamete
     private Set<DbUser> dbUsers;
     private Map<String, Set<String>> userToRoles  = new HashMap<>();
     private Collection<ExternalVnicProfileMapping> externalVnicProfileMappings;
+
+    public ImportVmTemplateFromConfParameters() {
+        super();
+        this.externalVnicProfileMappings = Collections.emptyList();
+    }
 
     public ImportVmTemplateFromConfParameters(Guid storagePoolId,
             Guid sourceDomainId,
@@ -103,14 +109,12 @@ public class ImportVmTemplateFromConfParameters extends ImportVmTemplateParamete
         this.userToRoles = userToRoles;
     }
 
-    public ImportVmTemplateFromConfParameters() {
-        super();
-    }
-
+    @Override
     public Collection<ExternalVnicProfileMapping> getExternalVnicProfileMappings() {
         return externalVnicProfileMappings;
     }
 
+    @Override
     public void setExternalVnicProfileMappings(Collection<ExternalVnicProfileMapping> externalVnicProfileMappings) {
         this.externalVnicProfileMappings = Objects.requireNonNull(externalVnicProfileMappings);
     }

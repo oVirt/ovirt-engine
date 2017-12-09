@@ -1,15 +1,11 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -33,19 +29,16 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
     private Guid containerId;
     private Guid storageDomainId;
     private boolean importAsNewEntity;
-    private Collection<ExternalVnicProfileMapping> externalVnicProfileMappings;
     private boolean reassignBadMacs;
 
     public ImportVmParameters() {
-        this(Collections.emptyList(), false);
+        this(false);
     }
 
     public ImportVmParameters(
-            Collection<ExternalVnicProfileMapping> externalVnicProfileMappings,
             boolean reassignBadMacs) {
         this.sourceDomainId = Guid.Empty;
         this.destDomainId = Guid.Empty;
-        this.externalVnicProfileMappings = Objects.requireNonNull(externalVnicProfileMappings);
         this.reassignBadMacs = reassignBadMacs;
     }
 
@@ -185,12 +178,11 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
     public void setImportAsNewEntity(boolean importAsNewEntity) {
         this.importAsNewEntity = importAsNewEntity;
     }
-
-    public Collection<ExternalVnicProfileMapping> getExternalVnicProfileMappings() {
-        return externalVnicProfileMappings;
-    }
-
     public boolean isReassignBadMacs() {
         return reassignBadMacs;
+    }
+
+    public void setReassignBadMacs(boolean reassignBadMacs) {
+        this.reassignBadMacs = reassignBadMacs;
     }
 }
