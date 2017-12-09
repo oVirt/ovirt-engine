@@ -72,7 +72,7 @@ public class BackendStorageDomainVmResource
 
     @Override
     public Response register(Action action) {
-        BackendVnicProfileHelper.validateVnicMappings(this, action);
+        ImportVmFromConfParameters params = new ImportVmFromConfParameters();
         if (action.isSetRegistrationConfiguration()) {
             validateClusterMappings(action);
             validateRoleMappings(action);
@@ -80,9 +80,21 @@ public class BackendStorageDomainVmResource
             validateAffinityGroupMappings(action);
             validateAffinityLabelMappings(action);
             validateLunMappings(action);
+            BackendVnicProfileHelper.validateRegistrationVnicMappings(this, action);
+        }
+        if (BackendVnicProfileHelper.foundDeprecatedVnicProfileMapping(action)) {
+            // This code block is for backward compatibility with {@link VnicProfileMapping}s that are specified
+            // outside the registration_configuration code. This specification is deprecated since 4.2.1 .
+            // When these mappings are removed from the ovirt-engine-api-model, this whole code block can be removed
+            // as well. In the meantime, if there are {@link VnicProfileMapping}s outside the registration_configuration
+            // block and no {@link RegistrationVnicProfileMapping}s inside it, they will be processed and used.
+            BackendVnicProfileHelper.validateVnicMappings(this, action);
+            Collection<ExternalVnicProfileMapping> vnicProfileMappings = ExternalVnicProfileMappingMapper.mapFromModel(
+                    action.getVnicProfileMappings());
+            params.setExternalVnicProfileMappings(vnicProfileMappings);
+            params.setReassignBadMacs(getReassignBadMacs(action));
         }
 
-        ImportVmFromConfParameters params = new ImportVmFromConfParameters(getVnicProfileMappings(action), getReassignBadMacs(action));
         ExternalRegistrationConfigurationMapper.mapFromModel(action.getRegistrationConfiguration(), params);
         params.setContainerId(guid);
         params.setStorageDomainId(parent.getStorageDomainId());
@@ -257,10 +269,6 @@ public class BackendStorageDomainVmResource
 
     private boolean getReassignBadMacs(Action action) {
         return action.isSetReassignBadMacs() && action.isReassignBadMacs();
-    }
-
-    private Collection<ExternalVnicProfileMapping> getVnicProfileMappings(Action action) {
-        return ExternalVnicProfileMappingMapper.mapFromModel(action.getVnicProfileMappings());
     }
 
     private void setVolumesTypeFormat(Action action) {

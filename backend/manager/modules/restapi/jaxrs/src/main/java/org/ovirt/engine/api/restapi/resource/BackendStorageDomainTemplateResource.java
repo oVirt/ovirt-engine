@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Collection;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -55,8 +58,22 @@ public class BackendStorageDomainTemplateResource
 
     @Override
     public Response register(Action action) {
-        BackendVnicProfileHelper.validateVnicMappings(this, action);
         ImportVmTemplateFromConfParameters params = new ImportVmTemplateFromConfParameters();
+        if (action.isSetRegistrationConfiguration()) {
+            BackendVnicProfileHelper.validateRegistrationVnicMappings(this, action);
+        }
+        if (BackendVnicProfileHelper.foundDeprecatedVnicProfileMapping(action)) {
+            // This code block is for backward compatibility with {@link VnicProfileMapping}s that are specified
+            // outside the registration_configuration code, which is deprecated since 4.2.1 . When these mappings
+            // are removed from the ovirt-engine-api-model, this whole code block can be removed as well.
+            // In the meantime, if there are {@link VnicProfileMapping}s outside the registration_configuration
+            // block and no {@link RegistrationVnicProfileMapping}s inside it, they will be processed and used.
+            BackendVnicProfileHelper.validateVnicMappings(this, action);
+            Collection<ExternalVnicProfileMapping> vnicProfileMappings = ExternalVnicProfileMappingMapper.mapFromModel(
+                    action.getVnicProfileMappings());
+            params.setExternalVnicProfileMappings(vnicProfileMappings);
+        }
+
         ExternalRegistrationConfigurationMapper.mapFromModel(action.getRegistrationConfiguration(), params);
         params.setContainerId(guid);
         params.setStorageDomainId(parent.getStorageDomainId());
@@ -64,7 +81,6 @@ public class BackendStorageDomainTemplateResource
             params.setClusterId(getClusterId(action));
         }
         params.setImagesExistOnTargetStorageDomain(true);
-        params.setExternalVnicProfileMappings(ExternalVnicProfileMappingMapper.mapFromModel(action.getVnicProfileMappings()));
 
         if (action.isSetClone()) {
             params.setImportAsNewEntity(action.isClone());
@@ -75,7 +91,6 @@ public class BackendStorageDomainTemplateResource
         if (action.isSetAllowPartialImport()) {
             params.setAllowPartialImport(action.isAllowPartialImport());
         }
-
         return doAction(ActionType.ImportVmTemplateFromConfiguration, params, action);
     }
 

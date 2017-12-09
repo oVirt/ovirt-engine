@@ -10,11 +10,13 @@ import org.ovirt.engine.api.model.VnicProfileMappings;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.compat.Guid;
 
+@Deprecated
 public class ExternalVnicProfileMappingMapper {
 
     // hide me
     private ExternalVnicProfileMappingMapper() {}
 
+    @Deprecated
     public static Collection<ExternalVnicProfileMapping> mapFromModel(VnicProfileMappings vnicProfileMappings) {
         return isVnicProfileMappingSupplied(vnicProfileMappings)
                 ? mapVnicProfileMappings(vnicProfileMappings)
@@ -42,6 +44,7 @@ public class ExternalVnicProfileMappingMapper {
     private static Guid getTargetVnicProfileId(VnicProfileMapping model) {
         return model.isSetTargetVnicProfile()
                 ? Guid.createGuidFromString(model.getTargetVnicProfile().getId())
+                //this will set the target vnic profile to <empty> (no profile)
                 : null;
     }
 }

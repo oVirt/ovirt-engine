@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -10,7 +11,10 @@ import org.ovirt.engine.api.model.RegistrationConfiguration;
 import org.ovirt.engine.api.model.RegistrationDomainMappings;
 import org.ovirt.engine.api.model.RegistrationLunMappings;
 import org.ovirt.engine.api.model.RegistrationRoleMappings;
+import org.ovirt.engine.api.model.RegistrationVnicProfileMappings;
 import org.ovirt.engine.core.common.action.ImportFromConfParameters;
+import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ExternalRegistrationConfigurationMapper {
 
@@ -43,6 +47,21 @@ public class ExternalRegistrationConfigurationMapper {
         if (registrationConfiguration.getDomainMappings() != null && registrationConfiguration.isSetDomainMappings()) {
             params.setDomainMap(mapExternalDomainMapping(registrationConfiguration.getDomainMappings()));
         }
+        if (registrationConfiguration.isSetVnicProfileMappings()) {
+            params.setExternalVnicProfileMappings(
+                    mapVnicProfilesMapping(registrationConfiguration.getVnicProfileMappings()));
+        }
+    }
+
+    private static Collection<ExternalVnicProfileMapping> mapVnicProfilesMapping(
+            RegistrationVnicProfileMappings model) {
+        return model.getRegistrationVnicProfileMappings()
+                .stream()
+                .map(regMapping -> new ExternalVnicProfileMapping(
+                        regMapping.getFrom().getNetwork().getName(),
+                        regMapping.getFrom().getName(),
+                        regMapping.getTo() != null ? new Guid(regMapping.getTo().getId()) : null))
+                .collect(Collectors.toList());
     }
 
     private static Map<String, String> mapAffinityGroupMapping(RegistrationAffinityGroupMappings model) {
