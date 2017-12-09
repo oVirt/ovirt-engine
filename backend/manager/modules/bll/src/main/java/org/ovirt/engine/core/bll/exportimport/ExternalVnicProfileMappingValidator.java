@@ -22,6 +22,10 @@ public class ExternalVnicProfileMappingValidator {
     public ValidationResult validateExternalVnicProfileMapping(
             Collection<ExternalVnicProfileMapping> externalVnicProfileMappings,
             Guid clusterId) {
+        if (externalVnicProfileMappings == null) {
+            //vnic profile mappings are optional
+            return ValidationResult.VALID;
+        }
         return externalVnicProfileMappings
                 .stream()
                 .map(ExternalVnicProfileMapping::getVnicProfileId)

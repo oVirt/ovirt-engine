@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -79,8 +78,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     @Inject
     private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
 
-    @Inject
-    private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;
     @Inject
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
     @Inject
@@ -203,7 +200,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                     }
                 }
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
-                mapVnicProfiles(vmFromConfiguration.getInterfaces());
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
@@ -253,11 +249,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         }
     }
 
-    private void mapVnicProfiles(List<VmNetworkInterface> vnics) {
-        vnics.forEach(vnic ->
-                importedNetworkInfoUpdater.updateNetworkInfo(vnic, getParameters().getExternalVnicProfileMappings()));
-    }
-
     protected void addPermissionsToDB() {
         drMappingHelper.addPermissions(getParameters().getDbUsers(),
                 getParameters().getUserToRoles(),
@@ -292,6 +283,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     @Override
     public void executeVmCommand() {
         addAuditLogForPartialVMs();
+        // vnic profile mapping should be done only after all validation (including validating the requested
+        // vnic profile id against the DAO) passes and after the vmFromConfiguration object has been initialized
+        drMappingHelper.mapVnicProfiles(vmFromConfiguration.getInterfaces(), getParameters().getExternalVnicProfileMappings());
         super.executeVmCommand();
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
