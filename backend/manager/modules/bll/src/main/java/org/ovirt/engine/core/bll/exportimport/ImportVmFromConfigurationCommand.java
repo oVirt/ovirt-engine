@@ -309,9 +309,31 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     }
 
     private void addAuditLogForPartialVMs() {
+        StringBuilder missingEntities = new StringBuilder();
         if (getParameters().isAllowPartialImport() && !failedDisksToImportForAuditLog.isEmpty()) {
-            addCustomValue("DiskAliases", StringUtils.join(failedDisksToImportForAuditLog.values(), ", "));
-            auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_PARTIAL_VM_DISKS_NOT_EXISTS);
+            missingEntities.append("Disks: ");
+            missingEntities.append(StringUtils.join(failedDisksToImportForAuditLog.values(), ", ") + " ");
+        }
+        if (!missingAffinityGroups.isEmpty()) {
+            missingEntities.append("Affinity groups: ");
+            missingEntities.append(StringUtils.join(missingAffinityGroups, ", ") + " ");
+        }
+        if (!missingAffinityLabels.isEmpty()) {
+            missingEntities.append("Affinity labels: ");
+            missingEntities.append(StringUtils.join(missingAffinityLabels, ", ") + " ");
+        }
+        if (!missingUsers.isEmpty()) {
+            missingEntities.append("Users: ");
+            missingEntities.append(StringUtils.join(missingUsers, ", ") + " ");
+        }
+        if (!missingRoles.isEmpty()) {
+            missingEntities.append("Roles: ");
+            missingEntities.append(StringUtils.join(missingRoles, ", ") + " ");
+        }
+
+        if (missingEntities.length() > 0) {
+            addCustomValue("MissingEntities", missingEntities.toString());
+            auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_PARTIAL_VM_MISSING_ENTITIES);
         }
     }
 

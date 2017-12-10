@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -59,6 +60,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private OvfEntityData ovfEntityData;
     VmTemplate vmTemplateFromConfiguration;
     private ArrayList<DiskImage> imagesList;
+    private List<String> missingUsers = new ArrayList<>();
     private List<String> missingRoles = new ArrayList<>();
 
     @Inject
@@ -126,7 +128,10 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         log.info("Checking for missing users");
         List<DbUser> dbMissingUsers = getImportValidator().findMissingUsers(getParameters().getDbUsers());
         getParameters().getDbUsers().removeAll(dbMissingUsers);
-
+        missingUsers = dbMissingUsers
+                .stream()
+                .map(dbUser -> String.format("%s@%s", dbUser.getLoginName(), dbUser.getDomain()))
+                .collect(Collectors.toList());
         Set<String> roles = new HashSet<>(getParameters().getRoleMap().values());
         roles.addAll(getParameters().getRoleMap().keySet());
         log.info("Checking for missing roles");
@@ -302,9 +307,23 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     }
 
     private void addAuditLogForPartialVMs() {
+        StringBuilder missingEntities = new StringBuilder();
         if (getParameters().isAllowPartialImport() && !failedDisksToImportForAuditLog.isEmpty()) {
-            addCustomValue("DiskAliases", StringUtils.join(failedDisksToImportForAuditLog.values(), ", "));
-            auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_PARTIAL_TEMPLATE_DISKS_NOT_EXISTS);
+            missingEntities.append("Disks: ");
+            missingEntities.append(StringUtils.join(failedDisksToImportForAuditLog.values(), ", ") + " ");
+        }
+        if (!missingUsers.isEmpty()) {
+            missingEntities.append("Users: ");
+            missingEntities.append(StringUtils.join(missingUsers, ", ") + " ");
+        }
+        if (!missingRoles.isEmpty()) {
+            missingEntities.append("Roles: ");
+            missingEntities.append(StringUtils.join(missingRoles, ", ") + " ");
+        }
+
+        if (missingEntities.length() > 0) {
+            addCustomValue("MissingEntities", missingEntities.toString());
+            auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_PARTIAL_TEMPLATE_MISSING_ENTITIES);
         }
     }
 
