@@ -273,11 +273,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     }
 
     public double getActualDiskSize() {
-        double result = 0;
-        for (DiskImage disk : getDiskImageMap().values()) {
-            result += disk.getActualSize();
-        }
-        return result;
+        return getDiskImageMap().values().stream().mapToDouble(DiskImage::getActualSize).sum();
     }
 
     @JsonIgnore
