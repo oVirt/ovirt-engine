@@ -525,13 +525,13 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                 && model.getVmNumaNodes().stream().filter(x -> !x.getVdsNumaNodeList().isEmpty()).count() > 0;
         confirmModel.addRecommendationForVirtNumaSetAndPinned(isVmVirtNumaSet, isVmVirtNumaPinned);
 
-        // Handle KSM (Kernel Same Page Merging)
-        confirmModel.addRecommendationForKsm(model.getSelectedCluster().isEnableKsm(), model.getSelectedCluster().getName());
-
         // Handle Huge Pages
         KeyValueModel keyValue = model.getCustomPropertySheet();
         final boolean isVmHugePagesSet = keyValue != null && keyValue.getUsedKeys().contains("hugepages"); //$NON-NLS-1$
         confirmModel.addRecommendationForHugePages(isVmHugePagesSet);
+
+        // Handle KSM (Kernel Same Page Merging)
+        confirmModel.addRecommendationForKsm(model.getSelectedCluster().isEnableKsm(), model.getSelectedCluster().getName());
 
         // If there are recommendations to display and it is not a Pool VM then display the popup
         if (!confirmModel.getRecommendationsList().isEmpty() && !model.isVmAttachedToPool()) {

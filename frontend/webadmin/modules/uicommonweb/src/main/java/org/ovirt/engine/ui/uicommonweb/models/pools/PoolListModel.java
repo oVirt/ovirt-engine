@@ -595,13 +595,13 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
                 && model.getCpuPinning().getEntity() != null && !model.getCpuPinning().getEntity().isEmpty();
         confirmModel.addRecommendationForCpuPinning(isVmAssignedToSpecificHosts, isVmCpuPinningSet);
 
-        // Handle KSM (Kernel Same Page Merging)
-        confirmModel.addRecommendationForKsm(model.getSelectedCluster().isEnableKsm(), model.getSelectedCluster().getName());
-
         // Handle Huge Pages
         KeyValueModel keyValue = model.getCustomPropertySheet();
         final boolean isVmHugePagesSet = keyValue != null && keyValue.getUsedKeys().contains("hugepages"); //$NON-NLS-1$
         confirmModel.addRecommendationForHugePages(isVmHugePagesSet);
+
+        // Handle KSM (Kernel Same Page Merging)
+        confirmModel.addRecommendationForKsm(model.getSelectedCluster().isEnableKsm(), model.getSelectedCluster().getName());
 
         if (!confirmModel.getRecommendationsList().isEmpty()) {
             confirmModel.setTitle(ConstantsManager.getInstance()
