@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll.storage.ovfstore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -163,37 +163,35 @@ public class DrMappingHelper {
         });
     }
 
-    private List<AffinityGroup> mapAffinityGroups(Map<String, String> affinityGroupMap,
+    public List<AffinityGroup> mapAffinityGroups(Map<String, String> affinityGroupMap,
             List<AffinityGroup> affinityGroupsFromParam,
-            Guid vmId) {
+            String vmName) {
         if (affinityGroupsFromParam == null) {
             return Collections.emptyList();
         }
-        List<AffinityGroup> affinityGroups = new ArrayList<>();
+
+        List<AffinityGroup> affinityGroupsToAdd = new ArrayList<>();
         affinityGroupsFromParam.forEach(affinityGroup -> {
-            log.info("Mapping affinity group '{}/{} for vm '{}'.", affinityGroup.getId(), affinityGroup.getName(), vmId);
-            AffinityGroup affGroup =
-                    getRelatedEntity(affinityGroupMap,
-                            affinityGroup.getName(),
-                            val -> affinityGroupDao.getByName((String) val));
-            if (affGroup != null) {
-                affinityGroups.add(affGroup);
+            log.info("Mapping affinity group '{}' for vm '{}'.",
+                    affinityGroup.getName(),
+                    vmName);
+            String mappedAffinityGroupName = affinityGroupMap.get(affinityGroup.getName());
+            if (mappedAffinityGroupName == null) {
+                log.warn("Mapping for affinity group '{}' not found, will use the affinity group name from OVF",
+                        affinityGroup.getName());
+                affinityGroupsToAdd.add(affinityGroup);
+            } else {
+                log.info("Mapping for affinity group '{}' found, attempting to map to '{}'",
+                        affinityGroup.getName(),
+                        mappedAffinityGroupName);
+                AffinityGroup mappedAffinityGroup = affinityGroupDao.getByName(mappedAffinityGroupName);
+                AffinityGroup affinityGroupToAdd = Optional.ofNullable(mappedAffinityGroup).orElse(affinityGroup);
+                log.info("Will try to add affinity group: {}", affinityGroupToAdd.getName());
+                affinityGroupsToAdd.add(affinityGroupToAdd);
             }
         });
-        return affinityGroups;
-    }
 
-    public void addVmToAffinityGroups(Guid clusterId,
-            Guid vmId,
-            Map<String, String> affinityGroupMap,
-            List<AffinityGroup> affinityGroupsFromParam) {
-        mapAffinityGroups(affinityGroupMap, affinityGroupsFromParam, vmId).forEach(affinityGroup -> {
-            affinityGroup.setClusterId(clusterId);
-            Set<Guid> vmIds = new HashSet<>(affinityGroup.getVmIds());
-            vmIds.add(vmId);
-            affinityGroup.setVmIds(new ArrayList<>(vmIds));
-            affinityGroupDao.update(affinityGroup);
-        });
+        return affinityGroupsToAdd;
     }
 
     private List<Label> mapAffinityLabels(Map<String, String> affinityLabelMap,

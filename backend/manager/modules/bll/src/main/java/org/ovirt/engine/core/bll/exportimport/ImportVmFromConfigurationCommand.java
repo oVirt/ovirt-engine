@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
@@ -34,10 +37,12 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
+import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +54,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
     private VM vmFromConfiguration;
+
+    private List<String> missingAffinityGroups = new ArrayList<>();
+    private List<AffinityGroup> cachedAffinityGroups = new ArrayList<>();
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -68,6 +76,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
     @Inject
     private UnregisteredDisksDao unregisteredDisksDao;
+    @Inject
+    private AffinityGroupDao affinityGroupDao;
 
     public ImportVmFromConfigurationCommand(Guid commandId) {
         super(commandId);
@@ -109,6 +119,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                     failedDisksToImportForAuditLog))) {
                 return false;
             }
+            removeInvalidAffinityGroups(importValidator);
+
             setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
         return true;
@@ -179,7 +191,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 getParameters().setVm(vmFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
-                getParameters().setAffinityGroups(fullEntityOvfData.getAffinityGroups());
                 getParameters().setAffinityLabels(fullEntityOvfData.getAffinityLabels());
                 getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
                 getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
@@ -195,12 +206,23 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 // there.
                 drMappingHelper.mapExternalLunDisks(DisksFilter.filterLunDisks(vmFromConfiguration.getDiskMap().values()),
                         getParameters().getExternalLunMap());
+                mapEntities(fullEntityOvfData);
             } catch (OvfReaderException e) {
                 log.error("Failed to parse a given ovf configuration: {}:\n{}",
                         e.getMessage(),
                         ovfEntityData.getOvfData());
                 log.debug("Exception", e);
             }
+        }
+    }
+
+    private void mapEntities(FullEntityOvfData fullEntityOvfData) {
+        if (getParameters().getAffinityGroupMap() != null) {
+            getParameters().setAffinityGroups(drMappingHelper.mapAffinityGroups(getParameters().getAffinityGroupMap(),
+                    fullEntityOvfData.getAffinityGroups(),
+                    getParameters().getVm().getName()));
+        } else {
+            getParameters().setAffinityGroups(fullEntityOvfData.getAffinityGroups());
         }
     }
 
@@ -220,10 +242,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
     @Override
     public void addVmToAffinityGroups() {
-        drMappingHelper.addVmToAffinityGroups(getParameters().getClusterId(),
-                getParameters().getVmId(),
-                getParameters().getAffinityGroupMap(),
-                getParameters().getAffinityGroups());
+        cachedAffinityGroups.forEach(affinityGroup -> affinityGroupDao.update(affinityGroup));
     }
 
     @Override
@@ -294,6 +313,86 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         }
 
         return AuditLogType.VM_IMPORT_FROM_CONFIGURATION_EXECUTED_SUCCESSFULLY;
+    }
+
+    private void removeInvalidAffinityGroups(ImportValidator importValidator) {
+        if (getParameters().getAffinityGroups() == null || getParameters().getAffinityGroups().isEmpty()) {
+            return;
+        }
+
+        List<String> affinityGroupsToAdd = getParameters()
+                .getAffinityGroups()
+                .stream()
+                .map(AffinityGroup::getName)
+                .collect(Collectors.toList());
+        log.info("Checking for invalid affinity groups");
+        missingAffinityGroups = importValidator.findMissingEntities(affinityGroupsToAdd,
+                val -> affinityGroupDao.getByName(val));
+        affinityGroupsToAdd.removeAll(missingAffinityGroups);
+        affinityGroupsToAdd.forEach(affinityGroup -> cachedAffinityGroups.add(affinityGroupDao.getByName(affinityGroup)));
+
+        // Add the VM to the affinity group so it can be checked for conflicts
+        cachedAffinityGroups.forEach(affinityGroup -> {
+            Set<Guid> vmIds = new HashSet<>(affinityGroup.getVmIds());
+            vmIds.add(getVmId());
+            affinityGroup.setVmIds(new ArrayList<>(vmIds));
+        });
+
+        // Remove all conflicted affinity groups so the VM won't be added to them
+        cachedAffinityGroups.removeAll(getConflictedAffinityGroups(cachedAffinityGroups));
+
+        List<AffinityGroup> faultyAffinityGroups =
+                importValidator.findFaultyAffinityGroups(cachedAffinityGroups, getClusterId());
+        cachedAffinityGroups.removeAll(faultyAffinityGroups);
+    }
+
+    private List<AffinityGroup> getConflictedAffinityGroups(List<AffinityGroup> affinityGroups) {
+        List<AffinityRulesUtils.AffinityGroupConflicts> conflicts =
+                AffinityRulesUtils.checkForAffinityGroupHostsConflict(affinityGroups);
+
+        return conflicts
+                .stream()
+                .filter(conflict -> !affinityGroupConflictFilter(conflict))
+                .flatMap(conflict -> conflict.getAffinityGroups().stream())
+                .collect(Collectors.toList());
+    }
+
+    private boolean affinityGroupConflictFilter(AffinityRulesUtils.AffinityGroupConflicts conflict) {
+        boolean canBeSaved = conflict.getType().canBeSaved();
+        if (canBeSaved) {
+            log.warn("Affinity groups '{}' have a conflict, but can be added",
+                    conflict
+                            .getAffinityGroups()
+                            .stream()
+                            .map(AffinityGroup::getName)
+                            .collect(Collectors.joining(", ")));
+        } else {
+            if (conflict.isVmToVmAffinity()) {
+                log.warn(conflict.getType().getMessage(),
+                        conflict.getVms()
+                                .stream()
+                                .map(id -> id.toString())
+                                .collect(Collectors.joining(",")),
+                        AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups()),
+                        conflict.getNegativeVms()
+                                .stream()
+                                .map(id -> id.toString())
+                                .collect(Collectors.joining(",")));
+            } else {
+                log.warn(conflict.getType().getMessage(),
+                        AffinityRulesUtils.getAffinityGroupsNames(conflict.getAffinityGroups()),
+                        conflict.getHosts()
+                                .stream()
+                                .map(id -> id.toString())
+                                .collect(Collectors.joining(",")),
+                        conflict.getVms()
+                                .stream()
+                                .map(id -> id.toString())
+                                .collect(Collectors.joining(",")));
+            }
+        }
+
+        return canBeSaved;
     }
 
     @Override

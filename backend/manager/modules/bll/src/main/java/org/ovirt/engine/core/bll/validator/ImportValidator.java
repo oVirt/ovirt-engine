@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -229,5 +232,38 @@ public class ImportValidator {
             cachedStorageDomain = getStorageDomainDao().get(params.getStorageDomainId());
         }
         return cachedStorageDomain;
+    }
+
+    public <T extends String, R> List<T> findMissingEntities(Collection<T> collection, Function<T, R> getterFunction) {
+        List<T> missingEntities = new ArrayList<>();
+
+        collection.forEach(entity -> {
+            if (getterFunction.apply(entity) == null) {
+                missingEntities.add(entity);
+            }
+        });
+
+        if (!missingEntities.isEmpty()) {
+            log.warn("Missing entities found: {}", missingEntities
+                    .stream()
+                    .collect(Collectors.joining(", ")));
+        }
+
+        return missingEntities;
+    }
+
+    public List<AffinityGroup> findFaultyAffinityGroups(List<AffinityGroup> affinityGroups, Guid clusterId) {
+        List<AffinityGroup> faultyAffinityGroups = new ArrayList<>(affinityGroups.size());
+        for (AffinityGroup affinityGroup : affinityGroups) {
+            if (!clusterId.equals(affinityGroup.getClusterId())) {
+                log.warn("Affinity group {} for cluster id {} does not match VM cluster id {}",
+                        affinityGroup.getName(),
+                        affinityGroup.getClusterId(),
+                        clusterId);
+                faultyAffinityGroups.add(affinityGroup);
+            }
+        }
+
+        return faultyAffinityGroups;
     }
 }
