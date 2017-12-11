@@ -268,9 +268,9 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
         return ovfData;
     }
 
-    protected void updateOvfStoreContent() {
+    protected boolean updateOvfStoreContent() {
         if (domainOvfStoresInfoForUpdate.isEmpty()) {
-            return;
+            return true;
         }
 
         updateDate = new Date();
@@ -321,7 +321,9 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
             addCustomValue("StorageDomainName", getStorageDomain().getName());
             addCustomValue("DisksIds", StringUtils.join(failedOvfDisks, ", "));
             auditLogDirector.log(this, AuditLogType.UPDATE_FOR_OVF_STORES_FAILED);
+            return false;
         }
+        return true;
     }
 
     @Override
@@ -430,7 +432,11 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
     public boolean performNextOperation(int completedChildCount) {
         if (getParameters().getOvfUpdateStep() == OvfUpdateStep.OVF_STORES_CREATION) {
             setOvfUpdateStep(OvfUpdateStep.OVF_UPLOAD);
-            updateOvfStoreContent();
+            if (!updateOvfStoreContent()) {
+                setSucceeded(false);
+                log.error("Failed to update OVF_STORE content");
+                throw new RuntimeException();
+            }
             return true;
         }
 
@@ -447,8 +453,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
         int missingDiskCount = getMissingDiskCount();
         if (missingDiskCount <= 0) {
             setOvfUpdateStep(OvfUpdateStep.OVF_UPLOAD);
-            updateOvfStoreContent();
-            setSucceeded(true);
+            setSucceeded(updateOvfStoreContent());
         } else {
             setOvfUpdateStep(OvfUpdateStep.OVF_STORES_CREATION);
             setSucceeded(createOvfStoreDisks(getMissingDiskCount()));
