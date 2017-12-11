@@ -5,7 +5,7 @@ import tarfile
 
 if len(sys.argv) < 2:
     print ("Usage: query_ova.py ova_path")
-    quit()
+    sys.exit(2)
 
 ova_path = sys.argv[1]
 with tarfile.open(ova_path) as ova_file:

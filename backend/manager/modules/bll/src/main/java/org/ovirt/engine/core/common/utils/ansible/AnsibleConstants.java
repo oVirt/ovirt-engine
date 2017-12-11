@@ -69,4 +69,9 @@ public class AnsibleConstants {
      * This is name of file which executes the ova-import via Ansible.
      */
     public static final String IMPORT_OVA_PLAYBOOK = "ovirt-ova-import.yml";
+
+    /**
+     * This is name of callback plugin which is used to get OVF from an OVA.
+     */
+    public static final String OVA_QUERY_CALLBACK_PLUGIN = "ovaqueryplugin";
 }

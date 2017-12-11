@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.exportimport.ExtractOvaCommand;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -33,16 +32,13 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
     @Inject
     private OvfHelper ovfHelper;
 
-    private static final Pattern OVF_PATTERN = Pattern.compile(".*(<(?:ovf:Envelope|Envelope).*</(?:ovf:Envelope|Envelope)>).*", Pattern.DOTALL);
-
     public GetVmFromOvaQuery(T parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 
     @Override
     protected void executeQueryCommand() {
-        String stdout = runAnsibleQueryOvaInfoPlaybook();
-        String ovf = parseOvfFromStdout(stdout);
+        String ovf = runAnsibleQueryOvaInfoPlaybook();
 
         boolean originOvirt = ovf.contains("xmlns:ovirt");
         VM vm = null;
@@ -80,12 +76,17 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
     }
 
     private String runAnsibleQueryOvaInfoPlaybook() {
+        String hostname = vdsStaticDao.get(getParameters().getVdsId()).getHostName();
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
-                .hostnames(vdsStaticDao.get(getParameters().getVdsId()).getHostName())
+                .hostnames(hostname)
                 .variables(
                     new Pair<>("ovirt_query_ova_path", getParameters().getPath())
                 )
-                .enableLogging(false)
+                // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
+                .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-query-ova-ansible")
+                .logFileName(hostname)
+                .stdoutCallback(AnsibleConstants.OVA_QUERY_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
         boolean succeeded = false;
@@ -103,23 +104,6 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
         }
 
         return ansibleReturnValue.getStdout();
-    }
-
-    private String parseOvfFromStdout(String stdout) {
-        if (stdout == null) {
-            return null;
-        }
-
-        Matcher m = OVF_PATTERN.matcher(stdout);
-        if (m.matches() && m.groupCount() > 0) {
-            String ovf = m.group(1);
-            ovf = ovf.replaceAll("\\\\\"", "\"");
-            log.info("Retrieved the following OVF from OVA '{}':\n {}", getParameters().getPath(), ovf);
-            return ovf;
-        }
-
-        log.error("Failed to parse OVF from:\n{}", stdout);
-        throw new EngineException(EngineError.GeneralException, "Failed to parse OVF from OVA");
     }
 
     private VM readVmFromOva(String ovf) throws OvfReaderException {

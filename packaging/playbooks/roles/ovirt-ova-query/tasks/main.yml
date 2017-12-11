@@ -8,7 +8,3 @@
 - fail:
     msg: "Failed to extract OVF configuration from OVA file"
   when: extraction_result.rc is defined and extraction_result.rc != 0
-
-- debug:
-    msg: "OVF: {{ extraction_result.stdout }} "
-  when: extraction_result.rc is defined and extraction_result.rc == 0
