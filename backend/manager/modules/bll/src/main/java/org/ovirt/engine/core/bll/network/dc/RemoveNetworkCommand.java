@@ -58,10 +58,14 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     @Override
     protected Network getNetwork() {
         if (network == null) {
-            network = networkDao.get(getParameters().getId());
+            network = networkDao.get(getNetworkId());
         }
 
         return network;
+    }
+
+    private Guid getNetworkId() {
+        return getParameters().getId();
     }
 
     private Provider<?> getProvider() {
@@ -125,9 +129,9 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     @Override
     protected boolean validate() {
-        NetworkValidator validator = new NetworkValidator(vmDao, networkDao.get(getNetwork().getId()));
+        NetworkValidator validator = new NetworkValidator(vmDao, getNetwork());
 
-        return validate(validator.networkIsSet(getParameters().getId()))
+        return validate(validator.networkIsSet(getNetworkId()))
                 && validate(validator.notRemovingManagementNetwork())
                 && validate(validator.notIscsiBondNetwork())
                 && validate(validator.networkNotUsedByVms())
