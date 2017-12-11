@@ -752,9 +752,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 logable.addCustomValue("EntityType", entityType);
                 logable.addCustomValue("OldEntityName", oldEntityName);
                 logable.addCustomValue("NewEntityName", newEntityName);
-                logable.addCustomValue("UserName", getCurrentUser().getLoginName());
+                if (getCurrentUser() != null) {
+                    logable.addCustomValue("UserName", getCurrentUser().getLoginName());
+                }
                 renameable.setEntityId(logable);
-                auditLog(logable, AuditLogType.ENTITY_RENAMED);
+                auditLog(logable, getCurrentUser() != null ?
+                        AuditLogType.ENTITY_RENAMED
+                        : AuditLogType.ENTITY_RENAMED_INTERNALLY);
             }
         }
     }

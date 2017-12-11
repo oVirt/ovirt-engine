@@ -1121,6 +1121,7 @@ public enum AuditLogType {
 
     // General
     ENTITY_RENAMED(1200),
+    ENTITY_RENAMED_INTERNALLY(1400),
 
     VDS_ALERT_FENCE_IS_NOT_CONFIGURED(9000, AuditLogSeverity.ALERT),
     VDS_ALERT_FENCE_TEST_FAILED(9001, AuditLogSeverity.ALERT),
