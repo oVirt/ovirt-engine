@@ -32,6 +32,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String detaCenterForceRemovePopupMessageLabel(String dcName);
 
+    String detachRequiredNetworkWarning(String networkOperationMessage);
+
     String clusterPopupMemoryOptimizationForServerLabel(String a);
 
     String clusterPopupMemoryOptimizationForDesktopLabel(String a);

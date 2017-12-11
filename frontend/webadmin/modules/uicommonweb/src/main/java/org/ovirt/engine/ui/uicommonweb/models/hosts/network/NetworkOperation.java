@@ -101,6 +101,11 @@ public enum NetworkOperation {
             return isDisplayNetwork(logicalNetworkModel);
         }
 
+        @Override
+        public boolean isRequiredNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            final LogicalNetworkModel logicalNetworkModel = (LogicalNetworkModel) op1;
+            return logicalNetworkModel.getNetwork().getCluster().isRequired();
+        }
     },
     ATTACH_NETWORK {
 
@@ -799,6 +804,10 @@ public enum NetworkOperation {
     }
 
     public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+        return false;
+    }
+
+    public boolean isRequiredNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
         return false;
     }
 
