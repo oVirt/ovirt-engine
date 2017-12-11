@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
@@ -46,7 +47,13 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
         vm.setCustomProperties(model.getCustomPropertySheet().serialize());
         vm.setConsoleDisconnectAction(model.getConsoleDisconnectAction().getSelectedItem());
-        vm.setResumeBehavior(model.getResumeBehavior().getSelectedItem());
+        VmResumeBehavior selectedResumeBehavior = model.getResumeBehavior().getSelectedItem();
+        if (selectedResumeBehavior == null) {
+            // the default
+            vm.setResumeBehavior(VmResumeBehavior.AUTO_RESUME);
+        } else {
+            vm.setResumeBehavior(selectedResumeBehavior);
+        }
         if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) {
             vm.setCpuShares(model.getCpuSharesAmount().getEntity());
         }
