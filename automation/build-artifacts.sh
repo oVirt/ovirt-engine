@@ -5,6 +5,7 @@ source automation/jvm-opts.sh
 MAVEN_OPTS="$MAVEN_OPTS $JVM_MEM_OPTS"
 export MAVEN_OPTS
 
+SUFFIX=".git$(git rev-parse --short HEAD)"
 
 if [ -d /root/.m2/repository/org/ovirt ]; then
     echo "Deleting ovirt folder from maven cache"
@@ -19,7 +20,9 @@ export BUILD_JAVA_OPTS_MAVEN="\
 "
 
 # build permutations for chrome and firefox
-export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
+export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS \
+    -D gwt.userAgent=gecko1_8,safari \
+"
 
 export BUILD_JAVA_OPTS_GWT="$JVM_MEM_OPTS"
 
@@ -66,6 +69,7 @@ make dist
 rpmbuild \
     -D "_srcrpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
+    -D "release_suffix ${SUFFIX}" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     -ts ./*.gz
 
@@ -76,9 +80,10 @@ yum-builddep output/*src.rpm
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
-    -D "ovirt_build_ut 1" \
-    -D "ovirt_build_all_user_agents 1" \
-    -D "ovirt_build_locales 1" \
+    -D "release_suffix ${SUFFIX}" \
+    -D "ovirt_build_ut 0" \
+    -D "ovirt_build_all_user_agents 0" \
+    -D "ovirt_build_locales 0" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
     --rebuild output/*.src.rpm
 
