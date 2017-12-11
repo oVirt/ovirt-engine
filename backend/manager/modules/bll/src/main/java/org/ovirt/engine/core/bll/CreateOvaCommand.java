@@ -17,7 +17,10 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.CreateOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -31,6 +34,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
@@ -52,6 +58,12 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     private VmDeviceUtils vmDeviceUtils;
     @Inject
     private ImagesHandler imagesHandler;
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     public static final String CREATE_OVA_LOG_DIRECTORY = "ova";
 
@@ -71,35 +83,54 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         Collection<DiskImage> disks = diskMappings.values();
         Map<Guid, String> diskIdToPath = prepareImages(disks);
         fillDiskApparentSize(disks);
-        VM vm = getParameters().getVm();
-        vmHandler.updateNetworkInterfacesFromDb(vm);
-        vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
-        vmDeviceUtils.setVmDevices(vm.getStaticData());
-        fixDiskDevices(vm, diskMappings);
-        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
-        fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
-        fullEntityOvfData.setInterfaces(vm.getInterfaces());
-        String ovf = ovfManager.exportOva(vm, fullEntityOvfData, vm.getCompatibilityVersion());
+        String ovf = createOvf(disks, diskMappings);
         log.debug("Exporting OVF: {}", ovf);
-        boolean succeeded = runAnsiblePackOvaPlaybook(vm.getName(), ovf, disks, diskIdToPath);
+        boolean succeeded = runAnsiblePackOvaPlaybook(ovf, disks, diskIdToPath);
         teardownImages(disks);
         setSucceeded(succeeded);
     }
 
-    private void fixDiskDevices(VM vm, Map<DiskImage, DiskImage> diskMappings) {
+    private String createOvf(Collection<DiskImage> disks, Map<DiskImage, DiskImage> diskMappings) {
+        switch(getParameters().getEntityType()) {
+        case TEMPLATE:
+            VmTemplate template = vmTemplateDao.get(getParameters().getEntityId());
+            vmHandler.updateVmInitFromDB(template, true);
+            vmDeviceUtils.setVmDevices(template);
+            List<VmNetworkInterface> interfaces = vmNetworkInterfaceDao.getAllForTemplate(template.getId());
+            template.setInterfaces(interfaces);
+            fixDiskDevices(template, diskMappings);
+            FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
+            fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
+            fullEntityOvfData.setInterfaces(interfaces);
+            return ovfManager.exportOva(template, fullEntityOvfData, template.getCompatibilityVersion());
+
+        default:
+            VM vm = vmDao.get(getParameters().getEntityId());
+            vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+            interfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
+            vm.setInterfaces(interfaces);
+            vmDeviceUtils.setVmDevices(vm.getStaticData());
+            fixDiskDevices(vm.getStaticData(), diskMappings);
+            fullEntityOvfData = new FullEntityOvfData(vm);
+            fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
+            fullEntityOvfData.setInterfaces(interfaces);
+            return ovfManager.exportOva(vm, fullEntityOvfData, vm.getCompatibilityVersion());
+        }
+    }
+    private void fixDiskDevices(VmBase vmBase, Map<DiskImage, DiskImage> diskMappings) {
         Map<Guid, Guid> diskIdMappings = new HashMap<>();
         diskMappings.forEach((source, destination) -> diskIdMappings.put(source.getId(), destination.getId()));
 
-        List<VmDevice> diskDevices = vm.getStaticData().getManagedDeviceMap().values().stream()
+        List<VmDevice> diskDevices = vmBase.getManagedDeviceMap().values().stream()
                 .filter(VmDeviceCommonUtils::isDisk)
                 .collect(Collectors.toList());
         diskDevices.forEach(diskDevice -> {
             Guid sourceDiskId = diskDevice.getDeviceId();
             Guid destinationDiskId = diskIdMappings.get(sourceDiskId);
             if (destinationDiskId != null) {
-                vm.getStaticData().getManagedDeviceMap().remove(sourceDiskId);
+                vmBase.getManagedDeviceMap().remove(sourceDiskId);
                 diskDevice.setDeviceId(destinationDiskId);
-                vm.getStaticData().getManagedDeviceMap().put(destinationDiskId, diskDevice);
+                vmBase.getManagedDeviceMap().put(destinationDiskId, diskDevice);
             }
         });
     }
@@ -150,7 +181,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         });
     }
 
-    private boolean runAnsiblePackOvaPlaybook(String vmName, String ovf, Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
+    private boolean runAnsiblePackOvaPlaybook(String ovf, Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(getVds().getHostName())
                 .variables(

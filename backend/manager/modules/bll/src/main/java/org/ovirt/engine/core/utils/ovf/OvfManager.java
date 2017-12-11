@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -83,6 +84,10 @@ public class OvfManager {
 
     public String exportOva(VM vm, FullEntityOvfData fullEntityOvfData, Version version) {
         return new OvfOvaVmWriter(vm, fullEntityOvfData, version, osRepository).build().getStringRepresentation();
+    }
+
+    public String exportOva(VmTemplate template, FullEntityOvfData fullEntityOvfData, Version version) {
+        return new OvfOvaTemplateWriter(template, fullEntityOvfData, version, osRepository).build().getStringRepresentation();
     }
 
     public void importVm(String ovfstring,

@@ -63,15 +63,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase<T> implements SerialChildExecutingCommand {
 
     @Inject
     private DiskDao diskDao;
-    @Inject
-    private VmDao vmDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
     @Inject
@@ -94,7 +91,7 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
             getParameters().setDirectory(path.substring(0, path.length()-1));
         }
         if (StringUtils.isEmpty(getParameters().getName())) {
-            getParameters().setName(String.format("%s.ova", getVm().getName()));
+            getParameters().setName(String.format("%s.ova", getEntity().getName()));
         }
         setVdsId(getParameters().getProxyHostId());
         if (getParameters().getDiskInfoDestinationMap() == null) {
@@ -220,14 +217,8 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     }
 
     private List<DiskImage> getDisks() {
-        if (getParameters().getEntityType() == VmEntityType.TEMPLATE) {
-            // TODO: add the ability to export a template
-            return Collections.emptyList();
-        }
-        else {
-            List<Disk> allDisks = diskDao.getAllForVm(getParameters().getEntityId());
-            return DisksFilter.filterImageDisks(allDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
-        }
+        List<Disk> allDisks = diskDao.getAllForVm(getParameters().getEntityId());
+        return DisksFilter.filterImageDisks(allDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
     }
 
     @Override
@@ -305,7 +296,8 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
 
     private CreateOvaParameters buildCreateOvaParameters() {
         CreateOvaParameters parameters = new CreateOvaParameters();
-        parameters.setVm(vmDao.get(getParameters().getEntityId()));
+        parameters.setEntityType(getParameters().getEntityType());
+        parameters.setEntityId(getParameters().getEntityId());
         getParameters().getDiskInfoDestinationMap().forEach((source, destination) -> {
             // same as the disk<->vm element for the original disk
             destination.setDiskVmElements(Collections.singleton(diskVmElementDao.get(new VmDeviceId(source.getId(), getParameters().getEntityId()))));
