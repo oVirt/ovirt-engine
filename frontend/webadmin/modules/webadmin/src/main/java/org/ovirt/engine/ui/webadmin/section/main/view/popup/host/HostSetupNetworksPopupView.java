@@ -196,6 +196,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                     if (candidate.isDisplayNetworkAffected(op1, op2)) {
                         setWarningStatus(messages.moveDisplayNetworkWarning(candidate.getMessage(op1,
                                 op2)));
+                    } else if (candidate.isRequiredNetworkAffected(op1, op2)) {
+                        setWarningStatus(messages.detachRequiredNetworkWarning(candidate.getMessage(op1, op2)));
                     } else {
                         setValidStatus(candidate.getMessage(op1, op2));
                     }
