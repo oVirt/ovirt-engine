@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class OvfOvaVmWriter extends OvfOvaWriter {
@@ -19,8 +20,7 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
     @Override
     protected void writeGeneralData() {
         super.writeGeneralData();
-        _writer.writeElement(TEMPLATE_ID, vm.getVmtGuid().toString());
-        _writer.writeElement(TEMPLATE_NAME, vm.getVmtName());
+        _writer.writeElement(TEMPLATE_ID, Guid.Empty.toString());
         if (vm.getInstanceTypeId() != null ) {
             _writer.writeElement(INSTANCE_TYPE_ID, vm.getInstanceTypeId().toString());
         }
