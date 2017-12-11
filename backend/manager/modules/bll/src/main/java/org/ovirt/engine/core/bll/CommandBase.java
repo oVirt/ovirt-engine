@@ -21,6 +21,7 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.aaa.SsoSessionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -703,7 +704,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     public void endActionInTransactionScope() {
-        boolean exceptionOccurred = false;
+        boolean useCompensation = false;
         try {
             if (isEndSuccessfully()) {
                 internalEndSuccessfully();
@@ -711,9 +712,12 @@ public abstract class CommandBase<T extends ActionParametersBase>
             } else {
                 internalEndWithFailure();
                 setCommandStatus(CommandStatus.ENDED_WITH_FAILURE, false);
+                if (getCommandCompensationPhase() == CommandCompensationPhase.END_COMMAND) {
+                    useCompensation = true;
+                }
             }
         } catch (RuntimeException e) {
-            exceptionOccurred = true;
+            useCompensation = true;
             throw e;
         } finally {
             if (TransactionSupport.current() == null) {
@@ -724,7 +728,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
                 }
             } else {
                 try {
-                    if (!exceptionOccurred && TransactionSupport.current().getStatus() == Status.STATUS_ACTIVE) {
+                    if (!useCompensation && TransactionSupport.current().getStatus() == Status.STATUS_ACTIVE) {
                         getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
                     } else {
                         compensate();
@@ -1247,7 +1251,9 @@ public abstract class CommandBase<T extends ActionParametersBase>
                         commandStatus == CommandStatus.ACTIVE) {
                     setCommandStatus(CommandStatus.ENDED_SUCCESSFULLY);
                 }
-                getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
+                if (getCommandCompensationPhase() == CommandCompensationPhase.EXECUTION) {
+                    getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
+                }
             }
         }
         return functionReturnValue;
@@ -1443,6 +1449,13 @@ public abstract class CommandBase<T extends ActionParametersBase>
     private boolean getForceCompensation() {
         NonTransactiveCommandAttribute annotation = getClass().getAnnotation(NonTransactiveCommandAttribute.class);
         return annotation != null && annotation.forceCompensation();
+    }
+
+    private CommandCompensationPhase getCommandCompensationPhase() {
+        NonTransactiveCommandAttribute annotation = getClass().getAnnotation(NonTransactiveCommandAttribute.class);
+        return annotation != null ?
+                annotation.compensationPhase() :
+                CommandCompensationPhase.EXECUTION;
     }
 
     protected abstract void executeCommand();
