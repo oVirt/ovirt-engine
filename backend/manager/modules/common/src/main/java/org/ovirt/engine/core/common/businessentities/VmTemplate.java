@@ -56,6 +56,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     @EditableVmTemplateField
     private String templateVersionName;
 
+    private double cachedActualSize = -1.0;
+
     public VmTemplate() {
         setNiceLevel(0);
         setCpuShares(0);
@@ -273,7 +275,10 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     }
 
     public double getActualDiskSize() {
-        return getDiskImageMap().values().stream().mapToDouble(DiskImage::getActualSize).sum();
+        if (cachedActualSize < 0.0) {
+            cachedActualSize = getDiskImageMap().values().stream().mapToDouble(DiskImage::getActualSize).sum();
+        }
+        return cachedActualSize;
     }
 
     @JsonIgnore
