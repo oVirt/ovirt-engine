@@ -237,7 +237,9 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeElement(CLUSTER_COMPATIBILITY_VERSION, String.valueOf(version));// cluster version the VM/Snapshot
                                                                                      // originates from
         _writer.writeElement(VM_TYPE, String.valueOf(vmBase.getVmType().getValue()));
-        _writer.writeElement(RESUME_BEHAVIOR, String.valueOf(vmBase.getResumeBehavior()));
+        if (vmBase.getResumeBehavior() != null) {
+            _writer.writeElement(RESUME_BEHAVIOR, String.valueOf(vmBase.getResumeBehavior()));
+        }
 
         if (vmBase.getTunnelMigration() != null) {
             _writer.writeElement(TUNNEL_MIGRATION, String.valueOf(vmBase.getTunnelMigration()));
