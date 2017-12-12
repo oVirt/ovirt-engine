@@ -424,6 +424,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         } else {
             cnx.setPort(DEFAULT_ISCSI_PORT);
         }
+        if (iscsiDetails.isSetPortal()) {
+            cnx.setPortal(iscsiDetails.getPortal());
+        }
         if (iscsiDetails.isSetUsername()) {
             cnx.setUserName(iscsiDetails.getUsername());
         }
