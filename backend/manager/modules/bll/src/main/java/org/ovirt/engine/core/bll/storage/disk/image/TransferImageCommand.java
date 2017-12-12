@@ -451,6 +451,9 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
                     ImageStatus.ILLEGAL : ImageStatus.OK);
         }
+        // Teardown is required for all scenarios as we call prepareImage when
+        // starting a new session.
+        tearDownImage(context.entity.getVdsId());
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
         setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
     }
