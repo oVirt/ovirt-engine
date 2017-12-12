@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -124,8 +125,22 @@ public class ClusterValidatorTest {
     }
 
     @Test
-    public void dataCenterVersionValidWhenNotAttachedToDataCenter() {
-        assertThat(validator.dataCenterVersionMismatch(), isValid());
+    public void invalidClusterFirewallTypeForClusterVersion() {
+        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_6);
+        when(cluster.getFirewallType()).thenReturn(FirewallType.FIREWALLD);
+
+        assertThat(
+            validator.supportedFirewallTypeForClusterVersion(),
+            failsWith(EngineMessage.UNSUPPORTED_FIREWALL_TYPE_FOR_CLUSTER_VERSION)
+        );
+    }
+
+    @Test
+    public void validClusterFirewallTypeForClusterVersion() {
+        when(cluster.getCompatibilityVersion()).thenReturn(Version.v4_0);
+        when(cluster.getFirewallType()).thenReturn(FirewallType.FIREWALLD);
+
+        assertThat(validator.supportedFirewallTypeForClusterVersion(), isValid());
     }
 
     @Test
@@ -152,6 +167,11 @@ public class ClusterValidatorTest {
 
         assertThat(validator.dataCenterVersionMismatch(),
                 failsWith(EngineMessage.CLUSTER_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL));
+    }
+
+    @Test
+    public void dataCenterVersionValidWhenNotAttachedToDataCenter() {
+        assertThat(validator.dataCenterVersionMismatch(), isValid());
     }
 
     @Test

@@ -251,7 +251,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("switch_type", cluster.getRequiredSwitchTypeForCluster().getOptionValue())
                 .addValue("skip_fencing_if_gluster_bricks_up", cluster.getFencingPolicy().isSkipFencingIfGlusterBricksUp())
                 .addValue("skip_fencing_if_gluster_quorum_not_met", cluster.getFencingPolicy().isSkipFencingIfGlusterQuorumNotMet())
-                .addValue("firewall_type", cluster.getFirewallType().getValue())
+                .addValue("firewall_type", cluster.getFirewallType())
                 .addValue("default_network_provider_id", cluster.getDefaultNetworkProviderId());
     }
 

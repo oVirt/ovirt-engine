@@ -15,9 +15,12 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.network.FirewallType;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class ClusterValidator {
 
@@ -66,6 +69,17 @@ public class ClusterValidator {
                 .failWith(EngineMessage.CLUSTER_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL)
                 .when(dataCenter != null && cluster.supportsVirtService() &&
                         dataCenter.getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0);
+    }
+
+    public ValidationResult supportedFirewallTypeForClusterVersion() {
+        return ValidationResult
+            .failWith(
+                EngineMessage.UNSUPPORTED_FIREWALL_TYPE_FOR_CLUSTER_VERSION,
+                ReplacementUtils.createSetVariableString("clusterVersion", cluster.getCompatibilityVersion()),
+                ReplacementUtils.createSetVariableString("firewallType", cluster.getFirewallType())
+            )
+            .when(cluster.getCompatibilityVersion().lessOrEquals(Version.v3_6) &&
+                   FirewallType.FIREWALLD.equals(cluster.getFirewallType()));
     }
 
     public ValidationResult localStoragePoolAttachedToSingleCluster() {

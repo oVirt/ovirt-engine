@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
@@ -71,6 +72,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         newGroup.setCustomMigrationNetworkBandwidth(1000);
         newGroup.setMigrationPolicyId(Guid.newGuid());
         newGroup.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
+        newGroup.setFirewallType(FirewallType.FIREWALLD);
     }
 
     /**

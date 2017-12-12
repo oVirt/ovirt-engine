@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -47,6 +48,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
         cluster.setCompatibilityVersion(Version.v3_6);
         cluster.setArchitecture(ArchitectureType.x86);
         cluster.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
+        cluster.setFirewallType(FirewallType.IPTABLES);
 
         clusterDao.save(cluster);
 

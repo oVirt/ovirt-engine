@@ -738,7 +738,8 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 && validate(clusterValidator.rngSourcesAllowed())
                 && validate(clusterValidator.memoryOptimizationConfiguration())
                 && validate(moveMacs.canMigrateMacsToAnotherMacPool(oldCluster, getNewMacPoolId()))
-                && validateDefaultNetworkProvider();
+                && validateDefaultNetworkProvider()
+                && validate(clusterValidator.supportedFirewallTypeForClusterVersion());
 
         return result;
     }
