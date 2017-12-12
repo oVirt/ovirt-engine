@@ -10,6 +10,6 @@ public class VmTemplateComparerByDiskSize implements Comparator<VmTemplate>, Ser
 
     @Override
     public int compare(VmTemplate x, VmTemplate y) {
-        return (int) (x.getActualDiskSize() - y.getActualDiskSize());
+        return Double.compare(x.getActualDiskSize(), y.getActualDiskSize());
     }
 }
