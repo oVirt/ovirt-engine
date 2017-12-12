@@ -46,7 +46,7 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="930px" height="765px">
+    <d:SimpleDialogPanel width="950px" height="765px">
         <d:content>
             <b:Container addStyleNames="{style.container}">
                 <b:Row addStyleNames="{style.topElement}">
