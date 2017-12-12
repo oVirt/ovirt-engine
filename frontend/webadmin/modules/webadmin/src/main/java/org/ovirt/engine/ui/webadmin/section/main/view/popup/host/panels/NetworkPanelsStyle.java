@@ -35,6 +35,10 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String networkPanel();
 
+    String networkPanelWithVlan();
+
+    String networkPanelWithoutVlan();
+
     String networkPanelAttached();
 
     String networkPanelNotAttached();

@@ -112,7 +112,7 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
         actionButton.setVisible(item.getAttachedToNic() != null
                 && (item.isManaged() || !item.isAttachedViaLabel()));
 
-        Grid rowPanel = new Grid(1, 10);
+        Grid rowPanel = new Grid(item.hasVlan() ? 2 : 1, 10);
         rowPanel.setCellSpacing(0);
         rowPanel.setWidth("100%"); //$NON-NLS-1$
         rowPanel.setHeight("100%"); //$NON-NLS-1$
@@ -148,6 +148,13 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
         rowPanel.setWidget(0, 7, glusterNwImage);
         rowPanel.setWidget(0, 8, defaultRouteImage);
         rowPanel.setWidget(0, 9, actionButton);
+        if (item.hasVlan()) {
+            rowPanel.setWidget(1, 2, createVlanPanel());
+            for (int i = 3; i < rowPanel.getColumnCount(); i++) {
+                // we need to clear the unused widgets, otherwise there will be few pixels wide empty space
+                rowPanel.setWidget(1, i, null);
+            }
+        }
 
         return rowPanel;
     }
@@ -158,12 +165,18 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
         Panel titlePanel = new HorizontalPanel();
         titlePanel.getElement().addClassName(style.fixedTable());
         titlePanel.add(titleLabel);
-        if (item.hasVlan()) {
-            Label vlanLabel = new Label(messages.vlanNetwork(item.getVlanId()));
-            vlanLabel.getElement().addClassName(style.vlanLabel());
-            titlePanel.add(vlanLabel);
-        }
+
         return titlePanel;
+    }
+
+    private Panel createVlanPanel() {
+        Panel vlanPanel = new HorizontalPanel();
+        Label vlanLabel = new Label(messages.vlanNetwork(item.getVlanId()));
+        vlanLabel.getElement().addClassName(style.vlanLabel());
+        vlanPanel.getElement().addClassName(style.fixedTable());
+        vlanPanel.add(vlanLabel);
+
+        return vlanPanel;
     }
 
     @Override

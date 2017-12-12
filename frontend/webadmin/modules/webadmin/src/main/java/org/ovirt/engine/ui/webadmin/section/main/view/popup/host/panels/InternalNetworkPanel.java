@@ -18,6 +18,7 @@ public class InternalNetworkPanel extends NetworkPanel {
     public InternalNetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style, boolean draggable) {
         super(item, style, draggable);
         getElement().addClassName(style.networkPanel());
+        getElement().addClassName(item.hasVlan() ? style.networkPanelWithVlan() : style.networkPanelWithoutVlan());
     }
 
     @Override
