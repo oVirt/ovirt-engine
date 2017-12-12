@@ -2547,33 +2547,4 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         return entity.getStoragePoolId();
     }
 
-    protected void exportOva2() {
-        VM selectedEntity = getSelectedItem();
-        if (selectedEntity == null) {
-            return;
-        }
-
-        if (getWindow() != null) {
-            return;
-        }
-
-//        ExportOvaModel model = (ExportOvaModel) getWindow();
-//        ArrayList<ActionParametersBase> list = new ArrayList<>();
-//        for (Object item : getSelectedItems()) {
-//            VM a = (VM) item;
-//            MoveOrCopyParameters parameters = new MoveOrCopyParameters(a.getId(), storageDomainId);
-//            parameters.setForceOverride(model.getForceOverride().getEntity());
-//            parameters.setCopyCollapse(model.getCollapseSnapshots().getEntity());
-//            parameters.setTemplateMustExists(false);
-//
-//            list.add(parameters);
-//        }
-//
-//        model.startProgress();
-
-        ExportOvaParameters parameters = new ExportOvaParameters();
-        parameters.setEntityType(VmEntityType.VM);
-        parameters.setEntityId(selectedEntity.getId());
-        Frontend.getInstance().runAction(ActionType.ExportOva, parameters);
-    }
 }
