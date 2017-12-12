@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -65,6 +66,7 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
             getReturnValue().setActionReturnValue(getNetwork().getId());
             return null;
         });
+        postAddNetwork(getProvider().getId(), getNetwork().getProvidedBy().getExternalId());
     }
 
     @Override
@@ -85,5 +87,8 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
             return network.getMtu() == 0 ? ValidationResult.VALID
                     : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_HAVE_MTU);
         }
+    }
+
+    protected void postAddNetwork(Guid providerId, String externalId) {
     }
 }
