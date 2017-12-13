@@ -575,6 +575,8 @@ public interface UIConstants extends Constants {
 
     String exportTemplateTitle();
 
+    String exportTemplateAsOvaTitle();
+
     String templatesNotFoundOnExportDomainTitle();
 
     String baseTemplatesNotFoundOnExportDomainTitle();

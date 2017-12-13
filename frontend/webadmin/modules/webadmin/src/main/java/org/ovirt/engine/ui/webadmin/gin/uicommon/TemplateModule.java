@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmHighPerformanceConfigurationModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ova.ExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateEditPresenterWidget;
@@ -61,6 +62,7 @@ public class TemplateModule extends AbstractGinModule {
             final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<TemplateEditPresenterWidget> popupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
+            final Provider<ExportOvaPopupPresenterWidget> exportOvaPopupProvider,
             final Provider<VmPopupPresenterWidget> createVmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<TemplateListModel> modelProvider,
@@ -79,6 +81,8 @@ public class TemplateModule extends AbstractGinModule {
                             return popupProvider.get();
                         } else if (lastExecutedCommand == getModel().getExportCommand()) {
                             return exportPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getExportOvaCommand()) {
+                            return exportOvaPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCreateVmFromTemplateCommand()) {
                             if (windowModel instanceof AttachDiskModel) {
                                 return attachDiskPopupProvider.get();

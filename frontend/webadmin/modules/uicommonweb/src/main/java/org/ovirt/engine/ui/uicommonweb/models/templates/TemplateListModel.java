@@ -5,17 +5,21 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ExportOvaParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -42,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ExportOvaModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewVmFromTemplateModelBehavior;
@@ -86,6 +91,16 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
 
     private void setExportCommand(UICommand value) {
         privateExportCommand = value;
+    }
+
+    private UICommand privateExportOvaCommand;
+
+    public UICommand getExportOvaCommand() {
+        return privateExportOvaCommand;
+    }
+
+    private void setExportOvaCommand(UICommand value) {
+        privateExportOvaCommand = value;
     }
 
     private UICommand privateCreateVmfromTemplateCommand;
@@ -171,6 +186,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
+        setExportOvaCommand(new UICommand("ExportOva", this)); //$NON-NLS-1$
         setCreateVmFromTemplateCommand(new UICommand("CreateVM", this)); //$NON-NLS-1$
 
         updateActionsAvailability();
@@ -193,6 +209,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         model.setHelpTag(HelpTag.export_template);
         model.setHashName("export_template"); //$NON-NLS-1$
         model.getCollapseSnapshots().setIsAvailable(false);
+    }
+
+    @Override
+    protected void setupExportOvaModel(ExportOvaModel model) {
+        super.setupExportOvaModel(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().exportTemplateAsOvaTitle());
+        model.setHelpTag(HelpTag.export_template);
+        model.setHashName("export_template"); //$NON-NLS-1$
     }
 
     @Override
@@ -269,6 +293,35 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         model.startProgress();
 
         getTemplatesNotPresentOnExportDomain();
+    }
+
+    public void onExportOva() {
+        ExportOvaModel model = (ExportOvaModel) getWindow();
+        if (!model.validate()) {
+            return;
+        }
+
+        model.startProgress();
+
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
+        for (Object item : getSelectedItems()) {
+            VmTemplate template = (VmTemplate) item;
+            ExportOvaParameters parameters = new ExportOvaParameters();
+            parameters.setEntityId(template.getId());
+            parameters.setEntityType(VmEntityType.TEMPLATE);
+            parameters.setProxyHostId(model.getProxy().getSelectedItem().getId());
+            parameters.setDirectory(model.getPath().getEntity());
+            parameters.setName(model.getName().getEntity());
+
+            list.add(parameters);
+        }
+
+        Frontend.getInstance().runMultipleAction(ActionType.ExportVmTemplateToOva, list,
+                result -> {
+                    ExportOvaModel localModel = (ExportOvaModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
+                }, model);
     }
 
     private void getTemplatesNotPresentOnExportDomain() {
@@ -801,6 +854,16 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             getExportCommand().setIsExecutionAllowed(false);
         }
 
+        getExportOvaCommand().setIsExecutionAllowed(items.size() > 0
+                && ActionUtils.canExecute(items, VmTemplate.class, ActionType.ExportVmTemplate));
+
+        if (getExportOvaCommand().getIsExecutionAllowed() && blankSelected) {
+            getExportOvaCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .blankTemplateCannotBeExported());
+            getExportOvaCommand().setIsExecutionAllowed(false);
+        }
+
         getCreateVmFromTemplateCommand().setIsExecutionAllowed(items.size() == 1 && item != null
                 && item.getStatus() != VmTemplateStatus.Locked);
     }
@@ -842,12 +905,16 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             remove();
         } else if (command == getExportCommand()) {
             export();
+        } else if (command == getExportOvaCommand()) {
+            exportOva();
         } else if (command == getCreateVmFromTemplateCommand()) {
             createVMFromTemplate();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
             onExport();
+        } else if ("OnExportOva".equals(command.getName())) { //$NON-NLS-1$
+            onExportOva();
         } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         } else if ("OnSaveVm".equals(command.getName())) { //$NON-NLS-1$
@@ -868,6 +935,28 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             }
             saveOrUpdateVM(model);
         }
+    }
+
+    protected void exportOva() {
+        VmTemplate selectedEntity = getSelectedItem();
+        if (selectedEntity == null) {
+            return;
+        }
+
+        if (getWindow() != null) {
+            return;
+        }
+
+        ExportOvaModel model = getSelectedItems().size() == 1 ? new ExportOvaModel(selectedEntity.getName())
+                : new ExportOvaModel();
+        setWindow(model);
+        model.startProgress();
+        setupExportOvaModel(model);
+        AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery<>(
+                hosts -> postExportOvaGetHosts(hosts.stream()
+                        .filter(host -> host.getStatus() == VDSStatus.Up)
+                        .collect(Collectors.toList()))
+                ), extractStoragePoolIdNullSafe(selectedEntity));
     }
 
     @Override

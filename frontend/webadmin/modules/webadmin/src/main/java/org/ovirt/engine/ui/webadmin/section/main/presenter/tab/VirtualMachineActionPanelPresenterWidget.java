@@ -170,13 +170,13 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
         });
         addDividerToKebab();
         // Management operations drop down
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.exportVmToExportDomain()) {
+        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.exportToExportDomain()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getExportCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.exportVmToOva()) {
+        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.exportToOva()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getExportOvaCommand();

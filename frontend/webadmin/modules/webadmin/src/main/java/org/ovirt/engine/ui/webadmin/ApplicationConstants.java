@@ -1496,9 +1496,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String exportVm();
 
-    String exportVmToExportDomain();
+    String exportToExportDomain();
 
-    String exportVmToOva();
+    String exportToOva();
 
     String createSnapshotVM();
 
