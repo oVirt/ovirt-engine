@@ -82,6 +82,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         String ovf = ovfManager.exportOva(vm, fullEntityOvfData, vm.getCompatibilityVersion());
         log.debug("Exporting OVF: {}", ovf);
         boolean succeeded = runAnsiblePackOvaPlaybook(vm.getName(), ovf, disks, diskIdToPath);
+        teardownImages(disks);
         setSucceeded(succeeded);
     }
 
@@ -104,18 +105,33 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private Map<Guid, String> prepareImages(Collection<DiskImage> disks) {
-        Map<Guid, String> diskIdToPath = new HashMap<>();
-        for (DiskImage disk : disks) {
-            VDSReturnValue vdsRetVal = imagesHandler.prepareImage(
-                    disk.getStoragePoolId(),
-                    disk.getStorageIds().get(0),
-                    disk.getId(),
-                    disk.getImageId(),
-                    getParameters().getProxyHostId());
-            String path = ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
-            diskIdToPath.put(disk.getId(), path);
-        }
-        return diskIdToPath;
+        return disks.stream()
+                .collect(Collectors.toMap(
+                        DiskImage::getId,
+                        image -> prepareImage(image).getImagePath()));
+    }
+
+    private PrepareImageReturn prepareImage(DiskImage image) {
+        VDSReturnValue vdsRetVal = imagesHandler.prepareImage(
+                image.getStoragePoolId(),
+                image.getStorageIds().get(0),
+                image.getId(),
+                image.getImageId(),
+                getParameters().getProxyHostId());
+        return (PrepareImageReturn) vdsRetVal.getReturnValue();
+    }
+
+    private void teardownImages(Collection<DiskImage> disks) {
+        disks.forEach(this::teardownImage);
+    }
+
+    private void teardownImage(DiskImage image) {
+        imagesHandler.teardownImage(
+                image.getStoragePoolId(),
+                image.getStorageIds().get(0),
+                image.getId(),
+                image.getImageId(),
+                getParameters().getProxyHostId());
     }
 
     private void fillDiskApparentSize(Collection<DiskImage> disks) {
