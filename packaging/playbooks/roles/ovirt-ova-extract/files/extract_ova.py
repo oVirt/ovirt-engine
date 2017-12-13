@@ -24,7 +24,8 @@ class SendAdapter(object):
 
 
 def extract_disk(ova_path, pos, disk_size, image_path):
-    send = directio.Send(ova_path, None, offset=pos, buffersize=BUF_SIZE)
+    send = directio.Send(ova_path, None, offset=pos, size=disk_size,
+                         buffersize=BUF_SIZE)
     op = directio.Receive(image_path, SendAdapter(send), size=disk_size,
                           buffersize=BUF_SIZE)
     op.run()
