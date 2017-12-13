@@ -32,7 +32,6 @@ import time
 
 import daemon
 
-
 from dateutil import tz
 
 from . import base
