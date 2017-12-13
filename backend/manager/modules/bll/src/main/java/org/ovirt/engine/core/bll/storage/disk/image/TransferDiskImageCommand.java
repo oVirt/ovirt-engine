@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -127,12 +128,18 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected void tearDownImage(Guid vdsId) {
-        VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
-                getImageActionsParameters(vdsId));
-        if (!vdsRetVal.getSucceeded()) {
+        try {
+            VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
+                    getImageActionsParameters(vdsId));
+            if (!vdsRetVal.getSucceeded()) {
+                EngineException engineException = new EngineException();
+                engineException.setVdsError(vdsRetVal.getVdsError());
+                throw engineException;
+            }
+        } catch (EngineException e) {
             DiskImage image = getDiskImage();
             log.warn("Failed to tear down image '{}' for image transfer session: {}",
-                    image, vdsRetVal.getVdsError());
+                    image, e.getVdsError());
 
             // Invoke log method directly rather than relying on infra, because teardown
             // failure may occur during command execution, e.g. if the upload is paused.
