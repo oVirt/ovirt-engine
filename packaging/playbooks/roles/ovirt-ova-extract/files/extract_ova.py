@@ -53,4 +53,4 @@ if len(sys.argv) < 3:
 ova_path = sys.argv[1]
 with tarfile.open(ova_path) as ova_file:
     ova_entries = ova_file.getmembers()
-extract_disks(ova_path, ova_entries, sys.argv[2].split(','))
+extract_disks(ova_path, ova_entries, sys.argv[2].split('+'))

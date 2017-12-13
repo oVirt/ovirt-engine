@@ -186,12 +186,11 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private String genDiskParameters(Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
-        StringBuilder builder = new StringBuilder();
-        disks.forEach(disk -> {
-            String size = String.valueOf(disk.getActualSizeInBytes());
-            builder.append(String.format("%s::%s ", diskIdToPath.get(disk.getId()), size));
-        });
-        return builder.toString().trim();
+        return disks.stream()
+                .map(disk -> String.format("%s::%s",
+                        diskIdToPath.get(disk.getId()),
+                        String.valueOf(disk.getActualSizeInBytes())))
+                .collect(Collectors.joining("+"));
     }
 
     @Override

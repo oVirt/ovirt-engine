@@ -59,7 +59,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .hostnames(getVds().getHostName())
                 .variables(
                     new Pair<>("ovirt_import_ova_path", getParameters().getOvaPath()),
-                    new Pair<>("ovirt_import_ova_disks", String.join(",", diskPaths))
+                    new Pair<>("ovirt_import_ova_disks", String.join("+", diskPaths))
                 )
                 // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)

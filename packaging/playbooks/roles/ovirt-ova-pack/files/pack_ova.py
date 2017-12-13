@@ -61,12 +61,13 @@ def write_null_blocks(ova_file):
 
 if len(sys.argv) < 3:
     print ("Usage: pack_ova.py output_path ovf [disks_info]")
-    quit()
+    sys.exit(2)
 
 ova_path = sys.argv[1]
 print ("opening for write: %s" % ova_path)
 with io.FileIO(ova_path, "w") as ova_file:
     write_ovf(ova_file, sys.argv[2])
-    write_disks(ova_file, sys.argv[3:])
+    if len(sys.argv) > 3:
+        write_disks(ova_file, sys.argv[3].split('+'))
     # writing two null blocks at the end of the file
     write_null_blocks(ova_file)
