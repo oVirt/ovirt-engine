@@ -336,6 +336,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             connection.setIqn(model.getName());
             connection.setConnection(model.getAddress());
             connection.setPort(String.valueOf(model.getPort()));
+            connection.setPortal(model.getPortal());
 
             actionTypes.add(ActionType.ConnectStorageToVds);
             parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
@@ -400,6 +401,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             SanTargetModel model = new SanTargetModel();
             model.setAddress(a.getConnection());
             model.setPort(a.getPort());
+            model.setPortal(a.getPortal());
             model.setName(a.getIqn());
             model.setLuns(new ObservableCollection<>());
             model.getLoggedInEvent().addListener(this);
@@ -700,6 +702,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 SanTargetModel model = new SanTargetModel();
                 model.setAddress(b.getConnection());
                 model.setPort(b.getPort());
+                model.setPortal(b.getPortal());
                 model.setName(b.getIqn());
                 model.setIsSelected(true);
                 model.setIsLoggedIn(true);

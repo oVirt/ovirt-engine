@@ -62,6 +62,19 @@ public class SanTargetModel extends EntityModel<StorageServerConnections> {
         }
     }
 
+    private String portal;
+
+    public String getPortal() {
+        return portal;
+    }
+
+    public void setPortal(String value) {
+        if (!Objects.equals(portal, value)) {
+            portal = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Portal")); //$NON-NLS-1$
+        }
+    }
+
     private String name;
 
     public String getName() {
