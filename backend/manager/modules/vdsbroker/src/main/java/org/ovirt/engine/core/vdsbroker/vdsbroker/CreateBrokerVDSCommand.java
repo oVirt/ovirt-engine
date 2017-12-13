@@ -66,7 +66,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
                 getVds().getCpuThreads(),
                 getParameters().isVolatileRun(),
                 getParameters().getPassthroughVnicToVfMap()));
-        String libvirtXml = builder.build();
+        String libvirtXml = builder.buildCreateVm();
         String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
         if (prettyLibvirtXml != null) {
             log.info("VM {}", prettyLibvirtXml);

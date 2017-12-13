@@ -154,6 +154,10 @@ public class LibvirtVmXmlBuilder {
     private Map<String, Map<String, Object>> diskMetadata;
     private Pair<String, VmPayload> payloadMetadata;
 
+    /** Hot-set fields */
+    private VmNic nic;
+    private VmDevice device;
+
     public LibvirtVmXmlBuilder(
             Map<String, Object> createInfo,
             VM vm,
@@ -168,6 +172,19 @@ public class LibvirtVmXmlBuilder {
         this.vdsCpuThreads = vdsCpuThreads;
         this.volatileRun = volatileRun;
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
+        initHostSpecificSuppliers(hostId);
+    }
+
+    public LibvirtVmXmlBuilder(
+            VM vm,
+            Guid hostId,
+            VmNic nic,
+            VmDevice device,
+            Map<Guid, String> passthroughVnicToVfMap) {
+        this.vm = vm;
+        this.passthroughVnicToVfMap = passthroughVnicToVfMap;
+        this.nic = nic;
+        this.device = device;
         initHostSpecificSuppliers(hostId);
     }
 
@@ -194,7 +211,7 @@ public class LibvirtVmXmlBuilder {
         qosCache = new HashMap<>();
     }
 
-    public String build() {
+    public String buildCreateVm() {
         writeHeader();
         writeName();
         writeId();
@@ -215,6 +232,25 @@ public class LibvirtVmXmlBuilder {
         writeOs();
         writeMemoryBacking();
         writeMetadata();
+        return writer.getStringXML();
+    }
+
+    public String buildHotplugNic() {
+        writer.writeStartDocument(false);
+        writer.writeStartElement("hotplug");
+
+        writer.writeStartElement("devices");
+        writeInterface(device, nic);
+        writer.writeEndElement();
+
+        writer.writeStartElement("metadata");
+        writer.setPrefix(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        writer.writeStartElement(OVIRT_VM_URI, "vm");
+        writeNetworkInterfaceMetadata();
+        writer.writeEndElement();
+        writer.writeEndElement();
+
         return writer.getStringXML();
     }
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,10 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.StringMapUtils;
+import org.ovirt.engine.core.utils.XmlUtils;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
@@ -28,6 +32,7 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
 
         struct.put(VdsProperties.vm_guid, getParameters().getVm().getId().toString());
         struct.put(VdsProperties.VM_NETWORK_INTERFACE, initNicStructure());
+        struct.put(VdsProperties.engineXml, generateDomainXml());
 
         return struct;
     }
@@ -60,6 +65,25 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
             vmInfoBuildUtils.addNetworkVirtualFunctionProperties(map, nic, vmDevice, vmDevice.getHostDevice(), vm);
         }
         return map;
+    }
+
+    private String generateDomainXml() {
+        VmNic nic = getParameters().getNic();
+        VmDevice vmDevice = getParameters().getVmDevice();
+        LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
+                getParameters().getVm(),
+                getVds().getId(),
+                nic,
+                vmDevice,
+                nic.isPassthrough() ?
+                        Collections.singletonMap(nic.getId(), vmDevice.getHostDevice())
+                        : Collections.emptyMap()));
+        String libvirtXml = builder.buildHotplugNic();
+        String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
+        if (prettyLibvirtXml != null) {
+            log.info("NIC hot-set: {}", prettyLibvirtXml);
+        }
+        return libvirtXml;
     }
 
 }
