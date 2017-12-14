@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,9 +49,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.ticket.TicketEncoder;
+import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
 
 @NonTransactiveCommandAttribute
 public abstract class TransferImageCommand<T extends TransferImageParameters> extends BaseImagesCommand<T> {
@@ -65,6 +70,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     private static final String HTTP_SCHEME = "http://";
     private static final String HTTPS_SCHEME = "https://";
     private static final String IMAGES_PATH = "/images";
+    private static final String TICKETS_PATH = "/tickets/";
 
     @Inject
     private ImageTransferUpdater imageTransferUpdater;
@@ -536,6 +542,9 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         if (!addImageTicketToDaemon(imagedTicketId, timeout)) {
             return false;
         }
+        if (!addImageTicketToProxy(imagedTicketId, signedTicket)) {
+            return false;
+        }
 
         ImageTransfer updates = new ImageTransfer();
         updates.setVdsId(getVdsId());
@@ -590,6 +599,47 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                 imagedTicketId.toString(), timeout);
 
         return true;
+    }
+
+    private boolean addImageTicketToProxy(Guid imagedTicketId, String signedTicket) {
+        log.info("Adding image ticket to ovirt-imageio-proxy, id {}", imagedTicketId);
+        try {
+            HttpURLConnection connection = getProxyConnection(getProxyUri() + TICKETS_PATH);
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            connection.setRequestMethod("PUT");
+            // Send request
+            try (OutputStream outputStream = connection.getOutputStream()) {
+                outputStream.write(signedTicket.getBytes(StandardCharsets.UTF_8));
+                outputStream.flush();
+                outputStream.close();
+            }
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new RuntimeException(String.format(
+                        "Request to imageio-proxy failed, response code: %s", responseCode));
+            }
+        } catch (Exception ex) {
+            log.error("Failed to add image ticket to ovirt-imageio-proxy", ex.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private HttpURLConnection getProxyConnection(String url) {
+        try {
+            HttpURLConnectionBuilder builder = new HttpURLConnectionBuilder().setURL(url);
+            // Set SSL details
+            builder.setTrustStore(EngineLocalConfig.getInstance().getPKITrustStore().getAbsolutePath())
+                    .setTrustStorePassword(EngineLocalConfig.getInstance().getPKITrustStorePassword())
+                    .setTrustStoreType(EngineLocalConfig.getInstance().getPKITrustStoreType())
+                    .setHttpsProtocol(Config.getValue(ConfigValues.ExternalCommunicationProtocol));
+            HttpURLConnection connection = builder.create();
+            connection.setDoOutput(true);
+            return connection;
+        } catch (Exception ex) {
+            throw new RuntimeException(String.format(
+                    "Failed to communicate with ovirt-imageio-proxy: %s", ex.getMessage()));
+        }
     }
 
     private boolean setVolumeLegalityInStorage(boolean legal) {
