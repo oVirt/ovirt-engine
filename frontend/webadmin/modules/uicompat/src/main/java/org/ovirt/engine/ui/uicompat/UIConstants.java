@@ -1715,6 +1715,8 @@ public interface UIConstants extends Constants {
 
     String clusterCanOnlyBeChangedWhenHostInMaintMode();
 
+    String clusterNoDefaultNetworkProvider();
+
     String timeZoneCannotBeChangedAfterVMInit();
 
     String qosNotSupportedDcVersion();

@@ -1426,14 +1426,17 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     private void initDefaultNetworkProvider() {
         AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(result -> {
             List<Provider> providers = (List) result;
-            providers.add(0, null);
+            Provider noDefaultNetworkProvider = new Provider();
+            noDefaultNetworkProvider.setName(
+                    ConstantsManager.getInstance().getConstants().clusterNoDefaultNetworkProvider());
+
+            providers.add(0, noDefaultNetworkProvider);
             getDefaultNetworkProvider().setItems(providers);
             Cluster cluster = getEntity();
             if (cluster != null) {
                 Provider defaultNetworkProvider = providers.stream()
-                        .filter(provider -> provider != null)
-                        .filter(provider -> provider.getId().equals(cluster.getDefaultNetworkProviderId()))
-                        .findFirst().orElse(null);
+                        .filter(provider -> Objects.equals(provider.getId(), cluster.getDefaultNetworkProviderId()))
+                        .findFirst().orElse(noDefaultNetworkProvider);
                 getDefaultNetworkProvider().setSelectedItem(defaultNetworkProvider);
             }
         }), ProviderType.OPENSTACK_NETWORK, ProviderType.EXTERNAL_NETWORK);
