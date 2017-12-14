@@ -533,6 +533,23 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         }
 
         long timeout = getHostTicketLifetime();
+        if (!addImageTicketToDaemon(imagedTicketId, timeout)) {
+            return false;
+        }
+
+        ImageTransfer updates = new ImageTransfer();
+        updates.setVdsId(getVdsId());
+        updates.setImagedTicketId(imagedTicketId);
+        updates.setProxyUri(getProxyUri() + IMAGES_PATH);
+        updates.setDaemonUri(getImageDaemonUri(getVds().getHostName()) + IMAGES_PATH);
+        updates.setSignedTicket(signedTicket);
+        updateEntity(updates);
+
+        setNewSessionExpiration(timeout);
+        return true;
+    }
+
+    private boolean addImageTicketToDaemon(Guid imagedTicketId, long timeout) {
         String imagePath;
         try {
             imagePath = prepareImage(getVdsId());
@@ -572,15 +589,6 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         log.info("Started transfer session with ticket id {}, timeout {} seconds",
                 imagedTicketId.toString(), timeout);
 
-        ImageTransfer updates = new ImageTransfer();
-        updates.setVdsId(getVdsId());
-        updates.setImagedTicketId(imagedTicketId);
-        updates.setProxyUri(getProxyUri() + IMAGES_PATH);
-        updates.setDaemonUri(getImageDaemonUri(getVds().getHostName()) + IMAGES_PATH);
-        updates.setSignedTicket(signedTicket);
-        updateEntity(updates);
-
-        setNewSessionExpiration(timeout);
         return true;
     }
 
