@@ -148,6 +148,59 @@ class Plugin(plugin.PluginBase):
                     )
                 )
 
+    def _checkInvalidImages(self):
+        statement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
+
+        invalidImagesForVms = statement.execute(
+            statement="""
+                SELECT
+                    disk_alias,
+                    image_guid,
+                    vm_name
+                FROM
+                    images
+                INNER JOIN vm_device ON
+                    images.image_group_id = vm_device.device_id
+                INNER JOIN vm_static ON vm_device.vm_id = vm_static.vm_guid
+                INNER JOIN base_disks ON
+                    images.image_group_id = base_disks.disk_id
+                AND vm_static.entity_type = 'VM'
+                AND vm_device.type = 'disk'
+                AND vm_device.device = 'disk'
+                AND images.vm_snapshot_id =
+                    '00000000-0000-0000-0000-000000000000';
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+
+        if invalidImagesForVms:
+            self.logger.warn(
+                _(
+                    'Engine DB is inconsistent due to the existence of invalid'
+                    ' {num} image(s) for virtual machine(s) as follows:\n'
+                    '{imagesList}.\n'
+                    '\nPlease consult support to resolve this issue. '
+                    'Note that the upgrade will be blocked in the subsequent '
+                    'release (4.3) if the issue isn\'t resolved.\n'
+                    'If you choose to ignore this problem then snapshot '
+                    'operations on the above virtual machine(s) may fail or '
+                    'may corrupt the disk(s).\nTo fix this issue, you can '
+                    'clone the virtual machine(s) by starting the engine, '
+                    'searching for the affected\nvirtual machine(s) by name '
+                    '(as listed above) and clicking on \'Clone VM\' for each '
+                    'virtual machine in the list.\n'
+                    'Warning: If there are snapshots for the cloned virtual '
+                    'machine(s), they will be collapsed.\n\n'
+                ).format(
+                    num=len(invalidImagesForVms),
+                    imagesList=invalidImagesForVms
+                )
+            )
+
     def _checkDatabaseOwnership(self):
         statement = database.Statement(
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
@@ -288,6 +341,7 @@ class Plugin(plugin.PluginBase):
         self._checkDatabaseOwnership()
         self._checkSupportedVersionsPresent()
         self._checkCompatibilityVersion()
+        self._checkInvalidImages()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
