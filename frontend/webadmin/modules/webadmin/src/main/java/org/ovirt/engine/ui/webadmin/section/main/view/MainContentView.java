@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
-import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 
@@ -15,7 +14,7 @@ public class MainContentView extends AbstractView implements MainContentPresente
     private final FlowPanel overlayContainer = new FlowPanel();
 
     @Inject
-    public MainContentView(final ClientStorage clientStorage) {
+    public MainContentView() {
         container.add(contentContainer);
         container.add(overlayContainer);
         initWidget(container);
