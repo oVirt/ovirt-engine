@@ -54,7 +54,7 @@ public class NotificationListWidget extends Composite implements ActionWidget {
 
     private PanelBody eventPanelBody;
 
-    private Range range = new Range(0, 10);
+    private Range range = new Range(0, 100);
 
     private Toggle toggle = Toggle.COLLAPSE;
     private String parentWidgetId;
@@ -123,6 +123,7 @@ public class NotificationListWidget extends Composite implements ActionWidget {
     private void setInternalRowData(int start, List<? extends AuditLog> values) {
         // Compare the new values with the ones currently displayed, if no changes, don't refresh.
         if (values != null && !valuesEquals(values)) {
+            rowCount = values.size();
             boolean collapsed = checkIfCollapsed();
             currentValues = values;
             content.clear();
