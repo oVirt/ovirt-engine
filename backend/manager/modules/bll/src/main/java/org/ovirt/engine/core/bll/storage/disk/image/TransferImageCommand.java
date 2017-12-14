@@ -721,29 +721,32 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             return false;
         }
 
-        Guid resourceId = entity.getImagedTicketId();
-        RemoveImageTicketVDSCommandParameters parameters = new RemoveImageTicketVDSCommandParameters(
-                entity.getVdsId(), resourceId);
+        if (!removeImageTicketFromDaemon(entity.getImagedTicketId(), entity.getVdsId())) {
+            return false;
+        }
 
-        // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
+        ImageTransfer updates = new ImageTransfer();
+        updateEntity(updates, true);
+        return true;
+    }
+
+    private boolean removeImageTicketFromDaemon(Guid imagedTicketId, Guid vdsId) {
+        RemoveImageTicketVDSCommandParameters parameters = new RemoveImageTicketVDSCommandParameters(
+                vdsId, imagedTicketId);
         VDSReturnValue vdsRetVal;
         try {
             vdsRetVal = getBackend().getResourceManager().runVdsCommand(
                     VDSCommandType.RemoveImageTicket, parameters);
         } catch (RuntimeException e) {
-            log.error("Failed to stop image transfer session for ticket '{}': {}", resourceId.toString(), e);
+            log.error("Failed to stop image transfer session for ticket '{}': {}", imagedTicketId, e);
             return false;
         }
 
         if (!vdsRetVal.getSucceeded()) {
-            log.warn("Failed to stop image transfer session for ticket '{}'", resourceId.toString());
+            log.warn("Failed to stop image transfer session for ticket '{}'", imagedTicketId);
             return false;
         }
-        log.info("Successfully stopped image transfer session for ticket '{}'", resourceId.toString());
-
-        ImageTransfer updates = new ImageTransfer();
-        boolean clearResourceId = true;
-        updateEntity(updates, clearResourceId);
+        log.info("Successfully stopped image transfer session for ticket '{}'", imagedTicketId);
         return true;
     }
 
