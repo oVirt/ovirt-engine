@@ -19,17 +19,11 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -80,47 +74,12 @@ public class DownloadImageHandler {
 
         log.info("Initiating download: " + url); //$NON-NLS-1$
 
-        String sessionsUrl = imageTransfer.getProxyUri().replace(
-                "images", "sessions/"); //$NON-NLS-1$ //$NON-NLS-2$
-        startSession(sessionsUrl, imageTransfer, sessionId -> {
-            if (sessionId == null) {
-                logError(url);
-                return;
-            }
-
-            // Invoke download
-            String params = "?session_id=" + sessionId; //$NON-NLS-1$
-            Frame frame = new Frame(url + params);
-            frame.addLoadHandler(loadEvent -> Scheduler.get().scheduleDeferred(() ->
-                    RootPanel.get().remove(frame)));
-            frame.getElement().getStyle().setDisplay(Style.Display.NONE);
-            RootPanel.get().add(frame);
-        });
-    }
-
-    private void startSession(String url, ImageTransfer imageTransfer, final AsyncCallback<String> callback) {
-        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.POST, url);
-        requestBuilder.setHeader("Authorization", imageTransfer.getSignedTicket()); //$NON-NLS-1$
-        try {
-            requestBuilder.sendRequest(null, new RequestCallback() {
-                @Override
-                public void onError(Request request, Throwable exception) {
-                    callback.onSuccess(null);
-                }
-
-                @Override
-                public void onResponseReceived(Request request, Response response) {
-                    try {
-                        String sessionId = response.getHeader("Session-Id"); //$NON-NLS-1$
-                        callback.onSuccess(sessionId);
-                    } catch (IllegalArgumentException ex) {
-                        callback.onSuccess(null);
-                    }
-                }
-            });
-        } catch (RequestException ignore) {
-            callback.onSuccess(null);
-        }
+        // Invoke download
+        Frame frame = new Frame(url);
+        frame.addLoadHandler(loadEvent -> Scheduler.get().scheduleDeferred(() ->
+                RootPanel.get().remove(frame)));
+        frame.getElement().getStyle().setDisplay(Style.Display.NONE);
+        RootPanel.get().add(frame);
     }
 
     private void closeSession(ImageTransferPhase imageTransferPhase, AuditLogType auditLogType) {
