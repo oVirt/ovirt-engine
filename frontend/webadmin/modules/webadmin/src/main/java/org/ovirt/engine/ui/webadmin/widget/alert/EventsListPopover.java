@@ -50,6 +50,13 @@ public class EventsListPopover extends OvirtPopover {
     public EventsListPopover(String title, HasCssName iconType) {
         eventListButton.addStyleName(PatternflyConstants.PF_DRAWER_TRIGGER);
         eventListButton.addStyleName(Styles.DROPDOWN);
+        eventListButton.addClickHandler(e -> {
+            if (isVisible()) {
+                hide();
+            } else {
+                show();
+            }
+        });
         eventListButtonTooltip = new WidgetTooltip(eventListButton);
         eventListButtonTooltip.setHtml(SafeHtmlUtils.fromSafeConstant(constants.eventsAndAlerts()));
         eventListButtonTooltip.setPlacement(Placement.BOTTOM);
@@ -68,7 +75,7 @@ public class EventsListPopover extends OvirtPopover {
         content.add(createTitleHeader(title));
         content.add(contentPanel);
         addContent(content, CONTENT);
-        setTrigger(Trigger.CLICK);
+        setTrigger(Trigger.MANUAL);
         setPlacement(Placement.BOTTOM);
         setAlternateTemplate(TEMPLATE);
         addHideHandler(e -> {
@@ -98,10 +105,14 @@ public class EventsListPopover extends OvirtPopover {
         header.addStyleName(PatternflyConstants.PF_DRAWER_TITLE);
         titleAnchor = new Anchor();
         titleAnchor.addStyleName(PatternflyConstants.PF_DRAWER_TOGGLE_EXPAND);
-        titleAnchor.addClickHandler(e -> {
-            toggle();
-        });
+        titleAnchor.addClickHandler(e -> toggle());
         header.add(titleAnchor);
+        Anchor closeAnchor = new Anchor();
+        closeAnchor.addStyleName(PatternflyConstants.PF_DRAWER_CLOSE);
+        closeAnchor.addStyleName(PatternflyConstants.PFICON);
+        closeAnchor.addStyleName(PatternflyConstants.PFICON_CLOSE);
+        closeAnchor.addClickHandler(e -> hide());
+        header.add(closeAnchor);
         Heading titleHeading = new Heading(HeadingSize.H3, title);
         titleHeading.addStyleName(PatternflyConstants.CENTER_TEXT);
         header.add(titleHeading);

@@ -50,6 +50,7 @@ public class PatternflyConstants {
     public static final String PF_DRAWER_ACTION = "drawer-pf-action"; // $NON-NLS-1$
     public static final String PF_DRAWER_TITLE = "drawer-pf-title"; // $NON-NLS-1$
     public static final String PF_DRAWER_TOGGLE_EXPAND = "drawer-pf-toggle-expand"; // $NON-NLS-1$
+    public static final String PF_DRAWER_CLOSE = "drawer-pf-close"; // $NON-NLS-1$
 
     public static final String PF_DATE = "date"; // $NON-NLS-1$
     public static final String PF_TIME = "time"; // $NON-NLS-1$
