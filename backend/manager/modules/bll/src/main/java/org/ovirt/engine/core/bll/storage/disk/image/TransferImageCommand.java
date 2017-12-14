@@ -724,6 +724,9 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         if (!removeImageTicketFromDaemon(entity.getImagedTicketId(), entity.getVdsId())) {
             return false;
         }
+        if (!removeImageTicketFromProxy(entity.getImagedTicketId())) {
+            return false;
+        }
 
         ImageTransfer updates = new ImageTransfer();
         updateEntity(updates, true);
@@ -747,6 +750,25 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             return false;
         }
         log.info("Successfully stopped image transfer session for ticket '{}'", imagedTicketId);
+        return true;
+    }
+
+    private boolean removeImageTicketFromProxy(Guid imagedTicketId) {
+        log.info("Removing image ticket from ovirt-imageio-proxy, id {}", imagedTicketId);
+        try {
+            HttpURLConnection connection = getProxyConnection(getProxyUri() + TICKETS_PATH + imagedTicketId);
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            connection.setRequestMethod("DELETE");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) {
+                throw new RuntimeException(String.format(
+                        "Request to imageio-proxy failed, response code: %s", responseCode));
+            }
+        } catch (Exception ex) {
+            log.error("Failed to remove image ticket from ovirt-imageio-proxy", ex.getMessage());
+            return false;
+        }
         return true;
     }
 
