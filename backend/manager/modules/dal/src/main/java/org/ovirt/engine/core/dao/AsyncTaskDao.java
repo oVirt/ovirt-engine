@@ -36,7 +36,7 @@ public interface AsyncTaskDao extends Dao {
      * on the given storage pool
      * @param storagePoolId ID of storage pool to return running tasks for
      */
-    List<Guid> getAsyncTaskIdsByStoragePoolId(Guid storagePoolId);
+    List<AsyncTask> getAsyncTaskIdsByStoragePoolId(Guid storagePoolId);
 
 
     /**

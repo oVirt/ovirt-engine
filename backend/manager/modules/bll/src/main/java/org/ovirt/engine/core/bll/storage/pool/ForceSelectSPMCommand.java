@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -105,7 +106,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
     }
 
     private boolean isAsyncTasksRunningOnPool(Guid storagePoolId) {
-        List<Guid> tasks = asyncTaskDao.getAsyncTaskIdsByStoragePoolId(storagePoolId);
+        List<AsyncTask> tasks = asyncTaskDao.getAsyncTaskIdsByStoragePoolId(storagePoolId);
         return !tasks.isEmpty();
     }
 

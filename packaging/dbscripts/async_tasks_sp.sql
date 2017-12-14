@@ -211,11 +211,11 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAsyncTasksByStoragePoolId (v_storage_pool_id UUID)
-RETURNS SETOF idUuidType STABLE AS $PROCEDURE$
+RETURNS SETOF async_tasks STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT async_tasks.task_id
+    SELECT *
     FROM async_tasks
     WHERE storage_pool_id = v_storage_pool_id;
 END;$PROCEDURE$
