@@ -10,6 +10,6 @@ public class VmsComparerByDiskSize implements Comparator<VM>, Serializable {
 
     @Override
     public int compare(VM o1, VM o2) {
-        return (int) (o1.getActualDiskWithSnapshotsSize() - o2.getActualDiskWithSnapshotsSize());
+        return Double.compare(o1.getActualDiskWithSnapshotsSize(), o2.getActualDiskWithSnapshotsSize());
     }
 }
