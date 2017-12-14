@@ -15,6 +15,7 @@ import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -24,6 +25,8 @@ import com.google.gwt.user.client.ui.RadioButton;
  */
 public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLabel<Boolean, EntityModelRadioButton>
         implements IsEditor<WidgetWithLabelEditor<Boolean, EntityModelRadioButtonEditor>> {
+
+    private static final String MAX_WIDTH = "maxWidth"; //$NON-NLS-1$
 
     private final WidgetWithLabelEditor<Boolean, EntityModelRadioButtonEditor> editor;
 
@@ -80,9 +83,11 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
         if (use) {
             getRadioButtonWidgetLabel().getStyle().setPaddingLeft(10, Unit.PX);
             getRadioButtonWidgetLabel().getStyle().setPosition(Position.RELATIVE);
+            getRadioButtonWidgetLabel().getStyle().setProperty(MAX_WIDTH, "94%"); //$NON-NLS-1$
             getValidatedWidgetStyle().clearPadding();
             // checkboxes don't use form-control
             getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
+            getContentWidgetElement().getStyle().setVerticalAlign(VerticalAlign.TOP);
             removeContentWidgetStyleName(Styles.FORM_CONTROL);
         }
     }

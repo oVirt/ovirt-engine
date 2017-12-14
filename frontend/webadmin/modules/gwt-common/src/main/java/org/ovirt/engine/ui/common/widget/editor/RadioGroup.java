@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -29,6 +30,8 @@ import com.google.gwt.user.client.ui.HasConstrainedValue;
 import com.google.gwt.user.client.ui.RadioButton;
 
 public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstrainedValue<K> {
+
+    private static final String MAX_WIDTH = "maxWidth"; //$NON-NLS-1$
 
     private final Map<K, RadioButton> buttons = new HashMap<>();
     private final Map<K, FlowPanel> panels = new HashMap<>();
@@ -139,9 +142,11 @@ public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstr
             if (usePatternfly) {
                 // patternfly hacks
                 Element.as(radioButton.getElement().getChild(0)).addClassName("cbe_checkbox_pfly_fix"); //$NON-NLS-1$
+                Element.as(radioButton.getElement().getChild(0)).getStyle().setVerticalAlign(VerticalAlign.TOP);
                 getRadioButtonWidgetLabel(radioButton).getStyle().setPaddingLeft(10, Unit.PX);
                 getRadioButtonWidgetLabel(radioButton).getStyle().setPosition(Position.RELATIVE);
-            }
+                getRadioButtonWidgetLabel(radioButton).getStyle().setProperty(MAX_WIDTH, "94%"); //$NON-NLS-1$
+        }
             if (entry.getKey().equals(selectedValue)) {
                 radioButton.setValue(true);
 
