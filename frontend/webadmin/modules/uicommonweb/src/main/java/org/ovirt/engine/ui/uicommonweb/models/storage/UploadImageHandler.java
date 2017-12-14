@@ -543,7 +543,6 @@ public class UploadImageHandler {
             xhr.setRequestHeader('Cache-Control', 'no-cache');
             xhr.setRequestHeader('Pragma', 'no-cache');
             xhr.setRequestHeader('Content-Range', contentRange);
-            xhr.setRequestHeader('Authorization', signedTicket);
 
             log.INFO('sendChunk: PUT ' + address + ' ' + contentRange);
             xhr.send(file.slice(bytesSent, bytesSent + bytesToSend, 'application/octet-stream'));
