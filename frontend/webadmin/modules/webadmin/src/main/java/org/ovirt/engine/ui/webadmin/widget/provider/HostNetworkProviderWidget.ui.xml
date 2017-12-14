@@ -21,7 +21,7 @@
         }
     </ui:style>
 
-    <g:FlowPanel addStyleNames="{style.hostNetworkProviderWidget}">
+    <b:Container addStyleNames="{style.hostNetworkProviderWidget}">
         <b:Row>
             <b:Column size="SM_12">
                 <ge:EntityModelCheckBoxEditor ui:field="useClusterDefaultNetworkProvider"
@@ -42,6 +42,6 @@
         <g:FlowPanel ui:field="neutronAgentPanel">
             <p:NeutronAgentWidget ui:field="neutronAgentWidget" />
         </g:FlowPanel>
-    </g:FlowPanel>
+    </b:Container>
 
 </ui:UiBinder>

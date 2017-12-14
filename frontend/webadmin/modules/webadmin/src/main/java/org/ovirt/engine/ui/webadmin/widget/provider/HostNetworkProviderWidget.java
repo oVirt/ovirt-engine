@@ -30,7 +30,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<HostNetworkProviderModel>
@@ -41,7 +41,7 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
 
     private final Driver driver = GWT.create(Driver.class);
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, HostNetworkProviderWidget> {
+    interface ViewUiBinder extends UiBinder<Widget, HostNetworkProviderWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -78,9 +78,6 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
     @WithElementId("providerPluginType")
     public ListModelSuggestBoxEditor providerPluginTypeEditor;
 
-    @UiField
-    FlowPanel neutronAgentPanel;
-
     @UiField(provided = true)
     @Ignore
     NeutronAgentWidget neutronAgentWidget;
@@ -112,10 +109,10 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
 
         final NeutronAgentModel neutronAgentModel = model.getNeutronAgentModel();
         neutronAgentWidget.edit(neutronAgentModel);
-        neutronAgentPanel.setVisible(neutronAgentModel.isPluginConfigurationAvailable().getEntity());
+        neutronAgentWidget.setVisible(neutronAgentModel.isPluginConfigurationAvailable().getEntity());
 
         IEventListener<EventArgs> providerPluginTypeListener =  (ev, sender, args) ->
-                neutronAgentPanel.setVisible( model.getNetworkProviderType().getSelectedItem() == OPENSTACK_NETWORK &&
+                neutronAgentWidget.setVisible( model.getNetworkProviderType().getSelectedItem() == OPENSTACK_NETWORK &&
                                 model.providerPluginTypeIsOpenstack());
 
         model.getNetworkProviderType().getSelectedItemChangedEvent().addListener(providerPluginTypeListener);
