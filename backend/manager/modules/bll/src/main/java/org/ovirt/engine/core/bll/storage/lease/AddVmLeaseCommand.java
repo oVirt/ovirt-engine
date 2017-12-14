@@ -81,6 +81,7 @@ public class AddVmLeaseCommand<T extends VmLeaseParameters> extends VmLeaseComma
             if (!hotPlugSucceeded) {
                 setVmId(getParameters().getVmId());
                 auditLog(this, AuditLogType.HOT_PLUG_LEASE_FAILED);
+                getReturnValue().setEndActionTryAgain(false);
                 setSucceeded(false);
                 return;
             }
