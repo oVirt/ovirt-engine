@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.comparators.VmsComparerByDiskSize;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -57,7 +57,7 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
                 }
 
             }
-            Collections.sort(vms, Collections.reverseOrder(new VmsComparerByDiskSize()));
+            Collections.sort(vms, Comparator.comparingDouble(VM::getActualDiskWithSnapshotsSize).reversed());
             getQueryReturnValue().setReturnValue(vms);
         }
         else {
