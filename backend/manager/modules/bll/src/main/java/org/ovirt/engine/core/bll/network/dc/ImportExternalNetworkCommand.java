@@ -2,11 +2,13 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.NetworkLocking;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.ImportExternalNetworkParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -29,6 +32,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
@@ -42,6 +46,10 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
     @Inject
     private NetworkHelper networkHelper;
 
+    @Inject
+    private NetworkLocking networkLocking;
+
+
     private Provider<?> provider;
     private Network network;
 
@@ -52,9 +60,13 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
 
     private Provider<?> getProvider() {
         if (provider == null) {
-            provider = providerDao.get(getParameters().getProviderId());
+            provider = providerDao.get(getProviderId());
         }
         return provider;
+    }
+
+    private Guid getProviderId() {
+        return getParameters().getProviderId();
     }
 
     private String getProviderName() {
@@ -164,4 +176,18 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
         addValidationMessage(EngineMessage.VAR__ACTION__IMPORT);
         addValidationMessage(EngineMessage.VAR__TYPE__NETWORK);
     }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        if (isInternalExecution()) {
+            return null;
+        }
+        return networkLocking.getNetworkProviderLock(getProviderId());
+    }
+
 }

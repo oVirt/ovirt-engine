@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NetworkLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -47,6 +49,8 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     private ProviderDao providerDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private NetworkLocking networkLocking;
 
     public AddNetworkCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -130,14 +134,19 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (getNetworkName() == null) {
-            return null;
+        final Network network = getNetwork();
+        Map<String, Pair<String, String>> locks = new HashMap<>();
+
+        if (getNetworkName() != null) {
+            locks.put(getNetworkName(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.NETWORK,
+                            EngineMessage.ACTION_TYPE_FAILED_NETWORK_IS_USED));
         }
 
-        Map<String, Pair<String, String>> locks = Collections.singletonMap(
-                getNetworkName(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.NETWORK,
-                        EngineMessage.ACTION_TYPE_FAILED_NETWORK_IS_USED));
+
+        if (network.isExternal() && !isInternalExecution()) {
+            locks.putAll(networkLocking.getNetworkProviderLock(network.getProvidedBy().getProviderId()));
+        }
 
         return locks;
     }

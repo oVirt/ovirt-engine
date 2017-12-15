@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.NetworkLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -12,12 +15,14 @@ import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -43,6 +48,8 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     private VmDao vmDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
+    @Inject
+    private NetworkLocking networkLocking;
 
     private Network network;
     private Provider<?> provider;
@@ -70,10 +77,15 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     private Provider<?> getProvider() {
         if (provider == null) {
-            provider = providerDao.get(getNetwork().getProvidedBy().getProviderId());
+            provider = providerDao.get(getProviderId());
         }
 
         return provider;
+    }
+
+    private Guid getProviderId() {
+        return (getNetwork()==null || !getNetwork().isExternal()) ?
+                null : getNetwork().getProvidedBy().getProviderId();
     }
 
     @Override
@@ -151,5 +163,19 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_REMOVE_NETWORK : AuditLogType.NETWORK_REMOVE_NETWORK_FAILED;
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        if (getNetwork().isExternal() && !isInternalExecution()) {
+            return networkLocking.getNetworkProviderLock(getProviderId());
+        } else {
+            return null;
+        }
     }
 }

@@ -15,6 +15,8 @@ public enum LockingGroup {
     VM_DISK_BOOT,
     VM_NAME,
     NETWORK,
+    /** this groups is used to lock networks of an external provider */
+    PROVIDER,
     STORAGE,
     STORAGE_CONNECTION,
     STORAGE_CONNECTION_EXTENSION,

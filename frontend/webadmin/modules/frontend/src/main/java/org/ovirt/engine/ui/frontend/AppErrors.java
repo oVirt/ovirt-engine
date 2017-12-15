@@ -1467,6 +1467,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_OBJECT_LOCKED();
 
+    String ACTION_TYPE_FAILED_PROVIDER_LOCKED();
+
     String ACTION_TYPE_FAILED_NETWORK_IS_USED();
 
     String ACTION_TYPE_FAILED_VM_POOL_IS_USED_FOR_CREATE_VM();
