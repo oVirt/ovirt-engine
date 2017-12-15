@@ -97,12 +97,12 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
         for (EditorData editorData : model.getEditorData()) {
             logger.log(Type.DEBUG, "Going over Field: " + editorData); //$NON-NLS-1$
             String path = editorData.getPath();
-            // Change first letter to Upper to comply with UiCommon Property Names
-            path = Character.toUpperCase(path.charAt(0)) + path.substring(1, path.length());
-
             if (path.length() == 0) {
                 continue;
             }
+
+            // Change first letter to Upper to comply with UiCommon Property Names
+            path = Character.toUpperCase(path.charAt(0)) + path.substring(1, path.length());
 
             // only relevant for top-level properties
             if (!editorData.isDeclaredPathNested()) {
@@ -249,6 +249,9 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
             sw.outdent();
             sw.println("}"); //$NON-NLS-1$
         }
+
+        // 3. clean up the Editor Driver itself
+        sw.println("cleanupEditorDriver();"); //$NON-NLS-1$
 
         sw.outdent();
         sw.println("}"); //$NON-NLS-1$

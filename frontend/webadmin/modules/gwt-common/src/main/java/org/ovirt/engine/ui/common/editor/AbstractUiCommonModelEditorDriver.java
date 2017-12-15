@@ -13,10 +13,8 @@ import com.google.gwt.editor.client.impl.BaseEditorDriver;
 /**
  * Base class for generated UiCommonEditorDriver implementations for editing EntityModel and ListModel instances.
  *
- * @param <T>
- *            the type being edited
- * @param <E>
- *            the Editor type
+ * @param <T> the type being edited
+ * @param <E> the Editor type
  */
 public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E extends Editor<T>>
         extends BaseEditorDriver<T, E> implements UiCommonEditorDriver<T, E> {
@@ -36,7 +34,7 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
             object.getPropertyChangedEvent().removeListener(propertyChangeListener);
         }
 
-        final UiCommonListenerMap listenerMap = getListenerMap();
+        UiCommonListenerMap listenerMap = getListenerMap();
 
         propertyChangeListener = (ev, sender, args) -> {
             String propName = args.propertyName;
@@ -51,7 +49,6 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
 
     /**
      * Get the {@code EditorVisitor}, creating one if it doesn't exist yet.
-     * @return THe {@code EditorVisitor}
      */
     protected EditorVisitor getEditorVisitor() {
         // Visit editors
@@ -73,13 +70,13 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
     }
 
     /**
-     * Returns a {@link UiCommonListenerMap} that contains a PropertyChanged Listener for each Property in the edited
-     * Model
+     * Returns a {@link UiCommonListenerMap} that contains a PropertyChanged listener
+     * for each property defined by the edited Model.
      */
     protected abstract UiCommonListenerMap getListenerMap();
 
     /**
-     * Returns a {@link UiCommonEventMap} for the edited Model
+     * Returns a {@link UiCommonEventMap} for the edited Model.
      */
     protected abstract UiCommonEventMap getEventMap();
 
@@ -87,5 +84,17 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
      * Returns a Map of the parent ListModel for all the ListModelBoxes being edited.
      */
     protected abstract Map<String, Model> getOwnerModels();
+
+    /**
+     * Clean up the Editor Driver itself.
+     */
+    protected void cleanupEditorDriver() {
+        // At this point, model cleanup is already done
+        propertyChangeListener = null;
+
+        getListenerMap().clear();
+        getEventMap().clear();
+        getOwnerModels().clear();
+    }
 
 }
