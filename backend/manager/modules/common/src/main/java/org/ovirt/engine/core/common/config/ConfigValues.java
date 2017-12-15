@@ -1559,6 +1559,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     GlusterEventingSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    LldpInformationSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

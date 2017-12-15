@@ -492,6 +492,7 @@ public enum EngineMessage {
     /**
      * "Cannot delete the server, there are desktop(s) running on the server.";
      */
+    HOST_ID_IS_NULL(ErrorType.BAD_PARAMETERS),
     NIC_ID_IS_NULL(ErrorType.BAD_PARAMETERS),
     NIC_ID_NOT_EXIST(ErrorType.BAD_PARAMETERS),
     INTERFACE_TYPE_NOT_SUPPORT_LLDP(ErrorType.BAD_PARAMETERS),

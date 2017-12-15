@@ -255,11 +255,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return null;
     }
 
-    public boolean isNetworkTlvsPresent(String name) {
-        if (networkLldpInfoByName != null) {
-            return networkLldpInfoByName.containsKey(name);
-        }
-        return false;
+    public boolean isNetworkLldpInfoPresent() {
+        return networkLldpInfoByName != null;
     }
 
     public Event<EventArgs> getNicsChangedEvent() {
@@ -1067,11 +1064,12 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 .runQuery(QueryType.GetMultipleTlvsByHostId,
                         new IdQueryParameters(getEntity().getId()),
                         new AsyncQuery<QueryReturnValue>(result -> {
-                            networkLldpInfoByName = result.getReturnValue();
+                            Map<String, LldpInfo> lldpInfoMap = result.getReturnValue();
+                            networkLldpInfoByName = lldpInfoMap == null ? new HashMap<>() : lldpInfoMap;
                             if (getProgress() == null) {
                                 redraw();
                             }
-                        }));
+                        }, true));
     }
 
     private void queryNetworkAttachments() {

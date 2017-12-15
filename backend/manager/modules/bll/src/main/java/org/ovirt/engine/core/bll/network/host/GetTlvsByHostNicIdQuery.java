@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.network.LldpInfo;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -12,11 +11,10 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetLldpVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
-public class GetTlvsByHostNicIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetTlvsByHostNicIdQuery<P extends IdQueryParameters> extends AbstractGetTlvsQuery<P> {
 
     private VdsNetworkInterface nic;
 
@@ -37,12 +35,12 @@ public class GetTlvsByHostNicIdQuery<P extends IdQueryParameters> extends Querie
     @Override
     protected void executeQueryCommand() {
         String interfaceName = getNic().getName();
-        GetLldpVDSCommandParameters parameters = new GetLldpVDSCommandParameters(getNic().getVdsId(),
-                new String[]{interfaceName});
+        setLldpVDSCommandParameters(new GetLldpVDSCommandParameters(getNic().getVdsId(),
+                new String[] { interfaceName }));
 
-        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.GetLldp, parameters);
+        super.executeQueryCommand();
 
-        Map<String, LldpInfo> lldpInfos = (Map<String, LldpInfo>) vdsReturnValue.getReturnValue();
+        Map<String, LldpInfo> lldpInfos = getQueryReturnValue().getReturnValue();
         if (lldpInfos != null) {
             LldpInfo lldpInfo = lldpInfos.get(interfaceName);
             getQueryReturnValue().setReturnValue(lldpInfo.isEnabled() ? lldpInfo.getTlvs() : null);
@@ -74,5 +72,10 @@ public class GetTlvsByHostNicIdQuery<P extends IdQueryParameters> extends Querie
         }
 
         return true;
+    }
+
+    @Override
+    protected Guid getHostId() {
+        return getNic().getVdsId();
     }
 }

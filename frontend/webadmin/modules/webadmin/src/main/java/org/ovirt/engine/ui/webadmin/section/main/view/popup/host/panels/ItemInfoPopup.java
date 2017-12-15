@@ -275,7 +275,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
                 addRow(SafeHtmlUtils.fromSafeConstant(constants.lldpInfoDisabled()));
             }
         } else {
-            if (model.isNetworkTlvsPresent(name)) {
+            if (model.isNetworkLldpInfoPresent()) {
                 addRow(SafeHtmlUtils.fromSafeConstant(constants.noLldpInfoAvailable()));
             } else {
                 addRow(SafeHtmlUtils.fromSafeConstant(constants.fetchingLldpInfo()));
