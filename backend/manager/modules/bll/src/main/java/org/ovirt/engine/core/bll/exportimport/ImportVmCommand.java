@@ -251,15 +251,19 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private List<EngineMessage> validateLunDisk(LunDisk lunDisk) {
         DiskValidator diskValidator = getDiskValidator(lunDisk);
         LUNs lun = lunDisk.getLun();
-        StorageType storageType = StorageType.UNKNOWN;
+        StorageType storageType;
         if (lun.getLunConnections() != null && !lun.getLunConnections().isEmpty()) {
             // We set the storage type based on the first connection since connections should be with the same
             // storage type
             storageType = lun.getLunConnections().get(0).getStorageType();
+        } else {
+            storageType = StorageType.FCP;
         }
-        ValidationResult connectionsInLunResult = diskValidator.validateConnectionsInLun(storageType);
-        if (!connectionsInLunResult.isValid()) {
-            return connectionsInLunResult.getMessages();
+        if (storageType == StorageType.ISCSI) {
+            ValidationResult connectionsInLunResult = diskValidator.validateConnectionsInLun(storageType);
+            if (!connectionsInLunResult.isValid()) {
+                return connectionsInLunResult.getMessages();
+            }
         }
 
         ValidationResult lunAlreadyInUseResult = diskValidator.validateLunAlreadyInUse();
@@ -282,7 +286,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         Guid vdsId = vdsCommandsHelper.getHostForExecution(getStoragePoolId());
         GetDeviceListVDSCommandParameters parameters =
                 new GetDeviceListVDSCommandParameters(vdsId,
-                        lun.getLunType(),
+                        storageType,
                         false,
                         Collections.singleton(lun.getLUNId()));
         if (validateLunExistsAndInitDeviceData(lun, parameters)) {
