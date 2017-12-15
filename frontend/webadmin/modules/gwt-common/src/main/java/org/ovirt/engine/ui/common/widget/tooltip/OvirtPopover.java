@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class OvirtPopover extends Popover {
+
     protected static final String HASH = "#"; // $NON-NLS-1$
     private static final String CONTAINER = "container"; // $NON-NLS-1$
 
@@ -25,18 +26,6 @@ public class OvirtPopover extends Popover {
 
     public OvirtPopover() {
         super();
-    }
-
-    public OvirtPopover(String title, String content) {
-        super(title, content);
-    }
-
-    public OvirtPopover(String title) {
-        super(title);
-    }
-
-    public OvirtPopover(Widget w, String title, String content) {
-        super(w, title, content);
     }
 
     public OvirtPopover(Widget w) {
@@ -100,10 +89,6 @@ public class OvirtPopover extends Popover {
         }
     }
 
-    public void addTitle(IsWidget titleWidget) {
-        contentContainer.add(titleWidget);
-    }
-
     public void addContent(IsWidget content, String contentId) {
         contentContainer.add(content);
         contentContainer.getElement().setId(contentId + CONTAINER);
@@ -132,7 +117,7 @@ public class OvirtPopover extends Popover {
         JavaScriptObject baseOptions = createOptions(element, isAnimated(), isHtml(), getSelector(),
                 getTrigger().getCssName(), getShowDelayMs(), getHideDelayMs(), getContainer(), prepareTemplate(),
                 getViewportSelector(), getViewportPadding());
-        popover(element, baseOptions, getContent(), HASH + contentId, HASH + contentContainer.getElement().getId());
+        popover(element, baseOptions, HASH + contentId, HASH + contentContainer.getElement().getId());
         bindJavaScriptEvents(element);
         setInitialized(true);
     }
@@ -140,18 +125,22 @@ public class OvirtPopover extends Popover {
     /**
      * Create the popover.
      */
-    private native void popover(Element e, JavaScriptObject options, String content, String contentId, String containerId) /*-{
-        var target = this;
-        var dataTarget = target.@org.gwtbootstrap3.client.ui.base.AbstractTooltip::dataTarget;
+    private native void popover(Element e, JavaScriptObject options, String contentId, String containerId) /*-{
+        var dataTarget = this.@org.gwtbootstrap3.client.ui.base.AbstractTooltip::dataTarget;
         var content;
+
         options['content'] = function() {
             return $wnd.jQuery(contentId);
         };
-        $wnd.jQuery(e).popover(options).on('hide.' + dataTarget, function (evt) {
-            content = $wnd.jQuery(contentId);
-        }).on('hidden.' + dataTarget, function (evt) {
-            $wnd.jQuery(containerId).append(content);
-        });
+
+        $wnd.jQuery(e).popover(options)
+            .on('hide.' + dataTarget, function () {
+                content = $wnd.jQuery(contentId);
+            })
+            .on('hidden.' + dataTarget, function () {
+                $wnd.jQuery(containerId).append(content);
+                content = null;
+            });
     }-*/;
 
 }

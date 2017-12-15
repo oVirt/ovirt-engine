@@ -341,4 +341,10 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         return model;
     }
 
+    @Override
+    protected void onHide() {
+        super.onHide();
+        getView().removeButtons();
+    }
+
 }
