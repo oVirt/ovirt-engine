@@ -3280,9 +3280,9 @@ public class AsyncDataProvider {
                     QueryReturnValue interfaceQueryValue = values.get(i);
                     if (interfaceQueryValue.getReturnValue() != null) {
                         vdsList.get(i).getInterfaces().addAll(interfaceQueryValue.getReturnValue());
-                        callback.run();
                     }
                 }
+                callback.run();
             });
         } else {
             callback.run();
