@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -9,6 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class HostNetworkProviderModel extends EntityModel {
 
@@ -80,10 +82,16 @@ public class HostNetworkProviderModel extends EntityModel {
         AsyncDataProvider.getInstance().getAllProvidersByType(new AsyncQuery<>(result -> {
             stopProgress();
             List<Provider<OpenstackNetworkProviderProperties>> providers = (List) result;
-            providers.add(0, null);
+            providers.add(0, getNoExternalNetworkProvider());
             getNetworkProviders().setItems(providers);
             selectDefaultProvider();
         }), ProviderType.OPENSTACK_NETWORK, ProviderType.EXTERNAL_NETWORK);
+    }
+
+    private Provider getNoExternalNetworkProvider() {
+        Provider provider = new Provider();
+        provider.setName(ConstantsManager.getInstance().getConstants().hostNoExternalNetworkProvider());
+        return provider;
     }
 
     private void selectDefaultProvider() {
@@ -95,9 +103,8 @@ public class HostNetworkProviderModel extends EntityModel {
     public void selectProviderById(Guid providerId) {
         if (getNetworkProviders().getItems() != null) {
             Provider provider = getNetworkProviders().getItems().stream()
-                    .filter(candidate -> candidate != null)
-                    .filter(candidate -> candidate.getId().equals(providerId))
-                    .findFirst().orElse(null);
+                    .filter(candidate -> Objects.equals(candidate.getId(), providerId))
+                    .findFirst().orElse(getNoExternalNetworkProvider());
             getNetworkProviders().setSelectedItem(provider);
         }
     }

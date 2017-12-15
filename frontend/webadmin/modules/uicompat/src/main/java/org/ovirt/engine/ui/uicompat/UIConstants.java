@@ -221,6 +221,8 @@ public interface UIConstants extends Constants {
 
     String hostNetworkQosTitle();
 
+    String hostNoExternalNetworkProvider();
+
     String volumesTitle();
 
     String newVolumeTitle();
