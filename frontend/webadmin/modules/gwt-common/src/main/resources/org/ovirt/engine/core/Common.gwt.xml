@@ -216,7 +216,6 @@
         <include name="common/businessentities/comparators/BusinessEntityComparator.java" />
         <include name="common/businessentities/comparators/DiskByDiskAliasComparator.java" />
         <include name="common/businessentities/comparators/UnregisteredDiskByDiskAliasComparator.java" />
-        <include name="common/businessentities/comparators/HostSpmPriorityComparator.java" />
         <include name="common/businessentities/comparators/LexoNumericComparator.java" />
         <include name="common/businessentities/comparators/LexoNumericNameableComparator.java" />
         <include name="common/businessentities/comparators/NameableComparator.java" />

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +46,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.comparators.HostSpmPriorityComparator;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -1190,7 +1190,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     public void activate() {
         ArrayList<ActionParametersBase> list = new ArrayList<>();
 
-        Collections.sort(getSelectedItems(), new HostSpmPriorityComparator());
+        Collections.sort(getSelectedItems(), Comparator.comparing(VDS::getVdsSpmPriority).reversed());
 
         for (VDS vds : getSelectedItems()) {
             list.add(new VdsActionParameters(vds.getId()));
