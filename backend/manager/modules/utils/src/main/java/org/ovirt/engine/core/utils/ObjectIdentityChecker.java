@@ -139,7 +139,7 @@ public class ObjectIdentityChecker {
                 returnValue = values != null ? values.contains(name) : false;
 
                 // if field is not updatable in this status, check if it's hotset request and an hotset allowed field
-                if (!returnValue) {
+                if (!returnValue && hotsetEnabled) {
                     returnValue = status instanceof VMStatus && isFieldHotSettableInStatus(name, (VMStatus) status);
                 }
             }
