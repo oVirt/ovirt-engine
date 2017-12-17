@@ -418,6 +418,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         }
         discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmTemplateId());
         checkTrustedService();
+        incrementDbGeneration();
         setSucceeded(true);
     }
 

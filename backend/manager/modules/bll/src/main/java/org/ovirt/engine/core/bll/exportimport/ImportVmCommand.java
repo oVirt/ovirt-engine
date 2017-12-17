@@ -862,6 +862,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 getParameters().setVm(getVm());
                 setVmId(getVm().getId());
             }
+            vmStaticDao.incrementDbGeneration(getVmId());
             return null;
 
         });
