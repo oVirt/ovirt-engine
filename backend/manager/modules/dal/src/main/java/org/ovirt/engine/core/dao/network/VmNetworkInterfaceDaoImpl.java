@@ -3,12 +3,12 @@ package org.ovirt.engine.core.dao.network;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.businessentities.comparators.InterfaceComparerByMAC;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultReadDao;
@@ -39,7 +39,7 @@ public class VmNetworkInterfaceDaoImpl extends DefaultReadDao<VmNetworkInterface
                 getCallsHandler().executeReadList("GetVmNetworkInterfaceViewByVmId",
                         VmNetworkInterfaceRowMapper.INSTANCE,
                         parameterSource);
-        Collections.sort(results, new InterfaceComparerByMAC());
+        Collections.sort(results, Comparator.comparing(VmNetworkInterface::getMacAddress));
         return results;
     }
 
