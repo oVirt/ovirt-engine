@@ -26,10 +26,8 @@ public abstract class GetAllTemplateBasedEntityQuery<P extends QueryParametersBa
 
     @Override
     protected void executeQueryCommand() {
-        List<VmTemplate> retval = vmTemplateDao.getAll(getUserID(), getParameters().isFiltered(), entityType);
-        for (VmTemplate template : retval) {
-            vmTemplateHandler.updateDisksFromDb(template);
-        }
-        getQueryReturnValue().setReturnValue(retval);
+        List<VmTemplate> templates = vmTemplateDao.getAll(getUserID(), getParameters().isFiltered(), entityType);
+        templates.forEach(vmTemplateHandler::updateDisksFromDb);
+        getQueryReturnValue().setReturnValue(templates);
     }
 }
