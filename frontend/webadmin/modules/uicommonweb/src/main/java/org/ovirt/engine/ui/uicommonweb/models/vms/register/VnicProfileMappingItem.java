@@ -44,7 +44,7 @@ public class VnicProfileMappingItem extends EntityModel<VnicProfileMappingEntity
         } else {
             predicate = vnicProfile ->
                     Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getNetworkName())
-                    && Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getName());
+                    && Objects.equals(getEntity().getExternalNetworkProfileName(), vnicProfile.getName());
         }
         selectTargetVnicProfileByPredicate(predicate);
     }
