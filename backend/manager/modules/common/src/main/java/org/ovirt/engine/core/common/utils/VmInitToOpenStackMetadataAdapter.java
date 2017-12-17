@@ -91,7 +91,7 @@ public class VmInitToOpenStackMetadataAdapter {
         networkIPv4.put("link", vmInitNetwork.getName());
 
         if (vmInitNetwork.getBootProtocol() == Ipv4BootProtocol.DHCP) {
-            networkIPv4.put("type", "dhcp4");
+            networkIPv4.put("type", "ipv4_dhcp");
         }
         else if (vmInitNetwork.getBootProtocol() == Ipv4BootProtocol.STATIC_IP) {
             networkIPv4.put("type", "ipv4");
@@ -123,7 +123,7 @@ public class VmInitToOpenStackMetadataAdapter {
         networkIPv6.put("link", vmInitNetwork.getName());
 
         if (vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.DHCP) {
-            networkIPv6.put("type", "dhcp6");
+            networkIPv6.put("type", "ipv6_dhcp");
         }
         else if (vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.STATIC_IP) {
             networkIPv6.put("type", "ipv6");
