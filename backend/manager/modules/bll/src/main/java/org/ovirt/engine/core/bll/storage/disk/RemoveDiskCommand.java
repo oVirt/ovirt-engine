@@ -431,6 +431,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private void removeLunDisk() {
         TransactionSupport.executeInNewTransaction(() -> {
             imagesHandler.removeLunDisk((LunDisk) getDisk());
+            incrementVmsGeneration();
             return null;
         });
         setSucceeded(true);

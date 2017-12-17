@@ -80,6 +80,7 @@ import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -109,6 +110,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private SnapshotDao snapshotDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    private VmStaticDao vmStaticDao;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -472,6 +475,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 // boot order is determined so the VM device creation depends on the existence of the disk VM element
                 addDiskVmElementForDisk(getDiskVmElement());
                 addManagedDeviceForDisk(getParameters().getDiskInfo().getId());
+                vmStaticDao.incrementDbGeneration(getVmId());
             }
             return null;
         });
