@@ -104,6 +104,7 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -284,12 +285,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         Guid vdsId = vdsCommandsHelper.getHostForExecution(getStoragePoolId());
-        GetDeviceListVDSCommandParameters parameters =
-                new GetDeviceListVDSCommandParameters(vdsId,
-                        storageType,
-                        false,
-                        Collections.singleton(lun.getLUNId()));
-        if (validateLunExistsAndInitDeviceData(lun, parameters)) {
+        if (!validateLunExistsAndInitDeviceData(lun, storageType, vdsId)) {
             return Arrays.asList(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
         }
 
@@ -302,11 +298,27 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return Collections.emptyList();
     }
 
-    private boolean validateLunExistsAndInitDeviceData(LUNs lun, GetDeviceListVDSCommandParameters parameters) {
-        List<LUNs> lunFromStorage =
-                (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
+    private boolean validateLunExistsAndInitDeviceData(LUNs lun, StorageType storageType, Guid vdsId) {
+        List<LUNs> lunFromStorage = null;
+        try {
+            StorageServerConnectionManagementVDSParameters connectParams =
+                    new StorageServerConnectionManagementVDSParameters(vdsId,
+                            Guid.Empty,
+                            storageType,
+                            lun.getLunConnections());
+            runVdsCommand(VDSCommandType.ConnectStorageServer, connectParams);
+            GetDeviceListVDSCommandParameters parameters =
+                    new GetDeviceListVDSCommandParameters(vdsId,
+                            storageType,
+                            false,
+                            Collections.singleton(lun.getLUNId()));
+            lunFromStorage = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
+        } catch (EngineException e) {
+            log.debug("Exception while validating LUN disk: '{}'", e);
+            return false;
+        }
         if (lunFromStorage == null || lunFromStorage.isEmpty()) {
-            return true;
+            return false;
         } else {
             LUNs luns = lunFromStorage.get(0);
             lun.setSerial(luns.getSerial());
@@ -317,7 +329,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             lun.setDiscardMaxSize(luns.getDiscardMaxSize());
             lun.setPvSize(luns.getPvSize());
         }
-        return false;
+        return true;
     }
 
     private ValidationResult isVirtIoScsiValid(VM vm, DiskVmElementValidator diskVmElementValidator) {
