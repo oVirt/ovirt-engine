@@ -158,28 +158,15 @@
 
     <servlet>
         <servlet-name>docs</servlet-name>
-        <servlet-class>org.ovirt.engine.core.utils.servlet.DocsServlet</servlet-class>
+        <servlet-class>org.ovirt.engine.docs.utils.servlet.DocsServlet</servlet-class>
         <init-param>
             <param-name>file</param-name>
             <param-value>%{ENGINE_MANUAL}</param-value>
         </init-param>
-        <init-param>
-            <param-name>localeDocsMissingURI</param-name>
-            <param-value>/docsmissing</param-value>
-        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>docs</servlet-name>
-        <url-pattern>/manual/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>docsmissing</servlet-name>
-        <jsp-file>/WEB-INF/no_lang.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>docsmissing</servlet-name>
-        <url-pattern>/docsmissing</url-pattern>
+        <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
     <error-page>

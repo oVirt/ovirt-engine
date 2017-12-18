@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
  */
 public class BrandingTheme {
 
+    private Locale DEFAULT_US_LOCALE = Locale.US;
+
     /**
      * The logger.
      */
@@ -319,7 +321,7 @@ public class BrandingTheme {
         String result = "";
         try {
             final String templateFileName = filePath + "/" + brandingProperties.getProperty(TEMPLATE_KEY); //$NON-NLS-1$
-            result = readWelcomeTemplateFile(templateFileName);
+            result = readTemplateFile(templateFileName);
         } catch (IOException ioe) {
             log.error("Unable to load welcome template", ioe); //$NON-NLS-1$
         } catch (NullPointerException e) {
@@ -329,13 +331,61 @@ public class BrandingTheme {
     }
 
     /**
-     * Read the welcome page template file. The template is standard HTML format, but with one difference.
+     * Return the raw docs template as a string.
+     */
+    public String getDocsSectionTemplate(Locale locale) {
+        String result = "";
+        try {
+            String docsSectionTemplatePath = getDocsSectionTemplatePath(filePath, locale);
+            File file = new File(docsSectionTemplatePath);
+
+            if (file.exists() && file.isFile() && file.canRead()) {
+                result = readTemplateFile(docsSectionTemplatePath);
+            }
+
+            if (result.isEmpty() && !DEFAULT_US_LOCALE.equals(locale)) {
+                // try English
+                docsSectionTemplatePath = getDocsSectionTemplatePath(filePath, DEFAULT_US_LOCALE);
+                file = new File(docsSectionTemplatePath);
+                if (file.exists() && file.isFile() && file.canRead()) {
+                    result = readTemplateFile(docsSectionTemplatePath);
+                }
+            }
+
+            if (result.isEmpty()) {
+                // try fallback docs template
+                docsSectionTemplatePath = getDocsSectionFallbackTemplatePath(filePath);
+                file = new File(docsSectionTemplatePath);
+                if (file.exists() && file.isFile() && file.canRead()) {
+                    result = readTemplateFile(docsSectionTemplatePath);
+                }
+            }
+
+        }
+        catch (IOException ioe) {
+            log.error("Exception loading docs template", ioe); //$NON-NLS-1$
+        }
+
+        return result;
+    }
+
+    protected String getDocsSectionTemplatePath(String filePath, Locale locale) {
+        return filePath + "/docs_" + locale.toLanguageTag() + ".template";
+    }
+
+    protected String getDocsSectionFallbackTemplatePath(String filePath) {
+        return filePath + "/docs_fallback.template";
+    }
+
+
+    /**
+     * Read a page template file. The template is standard HTML format, but with one difference.
      * If a line starts with '#' it is considered a comment and will not end up in the output.
      * @param fileName The name of the file to read.
      * @return The contents of the file as a string.
      * @throws IOException if unable to read the template file.
      */
-    private String readWelcomeTemplateFile(final String fileName) throws IOException {
+    private String readTemplateFile(final String fileName) throws IOException {
         StringBuilder templateBuilder = new StringBuilder();
 
         try (

@@ -20,14 +20,10 @@
 
 
 import gettext
-import os.path
 
 from otopi import plugin
 from otopi import util
 
-from ovirt_engine import configfile
-
-from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
@@ -45,46 +41,7 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._dwhHost = None
-        self._engine_manual = None
         self._statement = None
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_INIT,
-    )
-    def _init(self):
-        config = configfile.ConfigFile([
-            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
-            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG,
-        ])
-        if config.get('ENGINE_MANUAL'):
-            self._engine_manual = config.get('ENGINE_MANUAL')
-
-        if os.path.isdir(self._engine_manual):
-            self.environment.setdefault(
-                osetupcons.DocsEnv.DOCS_LOCAL,
-                True
-            )
-            self.environment.setdefault(
-                osetupcons.DocsEnv.DWH_DOC_URL,
-                osetupcons.Const.DWH_DOC_URI
-            )
-            self.environment.setdefault(
-                osetupcons.DocsEnv.REPORTS_DOC_URL,
-                osetupcons.Const.REPORTS_DOC_URI
-            )
-        else:
-            self.environment.setdefault(
-                osetupcons.DocsEnv.DOCS_LOCAL,
-                False
-            )
-            self.environment.setdefault(
-                osetupcons.DocsEnv.DWH_DOC_URL,
-                osetupcons.Const.DWH_DOC_URL
-            )
-            self.environment.setdefault(
-                osetupcons.DocsEnv.REPORTS_DOC_URL,
-                osetupcons.Const.REPORTS_DOC_URL
-            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

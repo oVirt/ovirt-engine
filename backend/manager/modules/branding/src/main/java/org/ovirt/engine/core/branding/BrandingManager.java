@@ -55,6 +55,8 @@ public class BrandingManager {
      */
     private static final Pattern TEMPLATE_PATTERN = Pattern.compile("\\{(\\D[\\w|\\.]*)\\}"); //$NON-NLS-1$
 
+    private static final String DOCS_TEMPLATE_PATTERN = "\\{\\{\\{docs\\}\\}\\}";
+
     /**
      * Only load branding themes for the current branding version. This allows for multiple version of a particular
      * branding theme to exist on the file system without interfering with each other. There is no backwards
@@ -254,6 +256,7 @@ public class BrandingManager {
         StringBuilder templateBuilder = new StringBuilder();
         for (BrandingTheme theme: brandingThemes) {
             String template = theme.getWelcomePageSectionTemplate();
+            template = insertDocsSection(template, locale);
             String replacedTemplate = template;
             Matcher keyMatcher = TEMPLATE_PATTERN.matcher(template);
             while (keyMatcher.find()) {
@@ -273,6 +276,23 @@ public class BrandingManager {
             templateBuilder.append(replacedTemplate);
         }
         return templateBuilder.toString();
+    }
+
+    /**
+     * Welcome templates can have a {{{docs}}} key in them.
+     * Replace that with the docs_&lt;locale&gt;.template contents, usually provided by a documentation package.
+     * @param locale The {@code Locale} to use to look up documentation template.
+     */
+    private String insertDocsSection(String template, Locale locale) {
+        String lastOneWins = "";
+        for (BrandingTheme theme : getBrandingThemes()) {
+            String docsSection = theme.getDocsSectionTemplate(locale);
+            if (!docsSection.isEmpty()) {
+                lastOneWins = docsSection;
+            }
+        }
+
+        return template.replaceAll(DOCS_TEMPLATE_PATTERN, lastOneWins);
     }
 
     /**

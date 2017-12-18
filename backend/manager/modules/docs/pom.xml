@@ -15,7 +15,8 @@
 
   <artifactId>docs</artifactId>
   <packaging>war</packaging>
-  <name>oVirt Engine Web Docs</name>
+  <name>ovirt-engine docs</name>
+  <description>oVirt servlets for in-product documentation and context-sensitive help</description>
 
   <dependencies>
 
