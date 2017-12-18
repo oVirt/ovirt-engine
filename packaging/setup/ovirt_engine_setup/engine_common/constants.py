@@ -320,6 +320,8 @@ class ProvisioningEnv(object):
         'OVESETUP_PROVISIONING/postgresAutovacuumMaintenanceWorkMem'
     PG_WORK_MEM_KB =\
         'OVESETUP_PROVISIONING/postgresWorkMemKb'
+    PG_UPGRADE_INPLACE = 'OVESETUP_PROVISIONING/postgresUpgradeInplace'
+    PG_UPGRADE_CLEANOLD = 'OVESETUP_PROVISIONING/postgresUpgradeCleanold'
 
 
 @util.export

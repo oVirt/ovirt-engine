@@ -817,11 +817,12 @@ class DBMSUpgradeTransaction(transaction.TransactionElement):
                 state=True,
             )
             shutil.rmtree(
-                os.path.dirname(
+                path=os.path.dirname(
                     self.environment[
                         oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
                     ]
-                )
+                ),
+                ignore_errors=True,
             )
         else:
             self.logger.error(_(

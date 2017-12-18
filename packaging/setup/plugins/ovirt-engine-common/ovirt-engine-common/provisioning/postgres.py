@@ -94,5 +94,13 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ProvisioningEnv.OLD_POSTGRES_SERVICE,
             oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_SERVICE
         )
+        self.environment.setdefault(
+            oengcommcons.ProvisioningEnv.PG_UPGRADE_INPLACE,
+            False
+        )
+        self.environment.setdefault(
+            oengcommcons.ProvisioningEnv.PG_UPGRADE_CLEANOLD,
+            False
+        )
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -20,8 +20,8 @@
 
 import gettext
 
+from otopi import constants as otopicons
 from otopi import plugin
-from otopi import transaction
 from otopi import util
 
 from ovirt_engine_setup.engine import constants as oenginecons
@@ -80,17 +80,16 @@ class Plugin(plugin.PluginBase):
     )
     def _updateDBMS(self):
         self.logger.info(_('Upgrading PostgreSQL'))
-        with transaction.Transaction() as localtransaction:
-            localtransaction.append(
-                postgres.DBMSUpgradeTransaction(
-                    parent=self,
-                    inplace=self._upgrade_approved_inplace,
-                    cleanupold=self._upgrade_approved_cleanupold,
-                    upgrade_from=self.environment[
-                        oengcommcons.ProvisioningEnv.OLD_POSTGRES_SERVICE
-                    ],
-                )
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            postgres.DBMSUpgradeTransaction(
+                parent=self,
+                inplace=self._upgrade_approved_inplace,
+                cleanupold=self._upgrade_approved_cleanupold,
+                upgrade_from=self.environment[
+                    oengcommcons.ProvisioningEnv.OLD_POSTGRES_SERVICE
+                ],
             )
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

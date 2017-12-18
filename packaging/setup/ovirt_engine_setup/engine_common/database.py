@@ -1503,7 +1503,7 @@ class OvirtUtils(base.Base):
         self.logger.warning(
             _(
                 'This release requires PostgreSQL server {cv} but the '
-                '{db} database is currently hosted on PostgreSQL server {sv}'
+                '{db} database is currently hosted on PostgreSQL server {sv}.'
             ).format(
                 cv=client_v,
                 sv=server_v,
@@ -1558,37 +1558,12 @@ class OvirtUtils(base.Base):
                     db=which_db,
                 )
             )
-        upgrade_approved_inplace = dialog.queryBoolean(
-            dialog=self.dialog,
-            name='UPGRADE_DBMS_INPLACE',
-            note=_(
-                'The size of the PostgreSQL instance used by {db} '
-                'database is {i_s}.\n'
-                'The destination DB will be created under \'{pgdata}\' '
-                'where you currently have {a_s} available.\n'
-                'This tool can perform the DBMS upgrade:\n'
-                ' - copying the data files to the new instance\n'
-                ' - in-place hard-linking them\n'
-                'Upgrading in-place is faster and doesn\'t require '
-                '{i_s} free on the target directory, but '
-                'it cannot be automatically rolled-back on failures. '
-                'Please ensure you are able to restore your DBMS '
-                'instance using engine-backup or other means '
-                '(DB backup, FS backup, LVM snapshot).\n'
-                'The in-place upgrade has the data files of '
-                'the source instance on the same filesystem of the target '
-                'instance (hard-links).\n'
-                'Do you want to perform an in-place upgrade? '
-                '(@VALUES@) [@DEFAULT@]: '
-            ).format(
-                i_s=self._HumanReadableSize(instance_size),
-                a_s=self._HumanReadableSize(available_space),
-                pgdata=pgdata,
-                db=which_db,
-            ),
-            prompt=True,
-            default=False,
-        )
+        # Do not allow in-place upgrade, it's too risky. See also:
+        # https://bugzilla.redhat.com/1492138
+        upgrade_approved_inplace = False
+        self.environment[
+            oengcommcons.ProvisioningEnv.PG_UPGRADE_INPLACE
+        ] = upgrade_approved_inplace
         if upgrade_approved_inplace:
             upgrade_approved_cleanupold = False
             self.logger.warning(_(
@@ -1608,6 +1583,8 @@ class OvirtUtils(base.Base):
                 dialog=self.dialog,
                 name='UPGRADE_DBMS_CLEANUPOLD',
                 note=_(
+                    'PostgreSQL will be upgraded by copying its data '
+                    'to a new directory.\n'
                     'Do you want to automatically clean up the old data '
                     'directory on success to reclaim its space ({s})? '
                     '(@VALUES@) [@DEFAULT@]: '
@@ -1618,6 +1595,9 @@ class OvirtUtils(base.Base):
                 default=True,
             )
 
+        self.environment[
+            oengcommcons.ProvisioningEnv.PG_UPGRADE_CLEANOLD
+        ] = upgrade_approved_cleanupold
         self.logger.info(_(
             'Any further action on the DB will be performed only '
             'after PostgreSQL has been successfully upgraded to 9.5.'
