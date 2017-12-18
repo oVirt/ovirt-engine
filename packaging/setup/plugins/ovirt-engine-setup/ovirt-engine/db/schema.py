@@ -354,8 +354,14 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         backupFile = None
 
+        # If we are upgrading to a newer postgresql, do not backup.
+        # If we upgrade by copying, we can rollback by using the old
+        # version. If we upgrade in-place, we do not support rollback,
+        # and user should take care of backups elsewhere.
         if not self.environment[
             oenginecons.EngineDBEnv.NEW_DATABASE
+        ] and not self.environment[
+            oenginecons.EngineDBEnv.NEED_DBMSUPGRADE
         ]:
             dbovirtutils = database.OvirtUtils(
                 plugin=self,
