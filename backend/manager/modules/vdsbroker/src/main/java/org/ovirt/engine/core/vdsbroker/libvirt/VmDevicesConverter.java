@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
@@ -421,9 +422,15 @@ public class VmDevicesConverter {
         List<VmNetworkInterface> dbInterfaces = vmNetworkInterfaceDao.getAllForVm(vmId);
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.INTERFACE)) {
+            String type = parseAttribute(node, TYPE);
             Map<String, Object> dev = new HashMap<>();
+
+            if (VmDeviceType.HOST_DEVICE.getName().equals(type)) {
+                dev.put(VdsProperties.HostDev, getHostDeviceName(node));
+            }
+
             dev.put(VdsProperties.Type, VmDeviceGeneralType.INTERFACE.getValue());
-            dev.put(VdsProperties.Device, parseAttribute(node, TYPE));
+            dev.put(VdsProperties.Device, type);
             dev.put(VdsProperties.Address, parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
@@ -446,6 +453,18 @@ public class VmDevicesConverter {
             result.add(dev);
         }
         return result;
+    }
+
+    private String getHostDeviceName(XmlNode hostDevInterfaceNode) {
+        Map<String, String> hostAddress = parseHostAddress(hostDevInterfaceNode);
+        if (hostAddress == null) {
+            return null;
+        }
+        HostDevice hostDevice = addressToHostDeviceSupplier.get().get(hostAddress);
+        if (hostDevice == null) {
+            return null;
+        }
+        return hostDevice.getDeviceName();
     }
 
     private List<Map<String, Object>> parseVideos(XmlDocument document, List<VmDevice> devices) {
