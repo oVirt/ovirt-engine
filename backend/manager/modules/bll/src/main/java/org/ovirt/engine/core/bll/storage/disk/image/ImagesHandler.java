@@ -726,6 +726,9 @@ public class ImagesHandler {
      * substituting a new disk in its place if a new disk is provided to the method.
      */
     public Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage, OvfManager ovfManager) {
+        if (snapshot == null) {
+            return null;
+        }
         try {
             String snapConfig = snapshot.getVmConfiguration();
 
