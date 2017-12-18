@@ -501,7 +501,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                         queryAuthz = getDefaultAuthz();
                     }
                     // get namespace
-                    HashMap<String, List<String>> namespacesMap =
+                    Map<String, List<String>> namespacesMap =
                             backend.runInternalQuery(QueryType.GetAvailableNamespaces,
                                     new QueryParametersBase(getParameters().getSessionId())).getReturnValue();
                     List<String> namespaces = namespacesMap.get(queryAuthz);
