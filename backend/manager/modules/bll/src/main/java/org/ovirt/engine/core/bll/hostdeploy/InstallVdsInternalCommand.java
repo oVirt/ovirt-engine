@@ -240,6 +240,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             .hostnames(getVds().getHostName())
             .variables(
                 new Pair<>("host_deploy_cluster_version", hostCluster.getCompatibilityVersion()),
+                new Pair<>("host_deploy_cluster_name", hostCluster.getName()),
                 new Pair<>("host_deploy_gluster_enabled", hostCluster.supportsGlusterService()),
                 new Pair<>("host_deploy_virt_enabled", hostCluster.supportsVirtService()),
                 new Pair<>("host_deploy_vdsm_port", getVds().getPort()),
