@@ -57,6 +57,14 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     IscsiLunToTargetView iscsiLunToTargetView;
 
+    @UiField
+    @Ignore
+    Label mainLabel;
+
+    @UiField
+    @Ignore
+    Label subLabel;
+
     private double treeCollapsedHeight = 206;
     private double treeExpandedHeight = 305;
     private double lunsTreeHeight = 342;
@@ -125,6 +133,20 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         // Update selected tab and list
         dialogTabPanel.switchTab(object.getIsGrouppedByTarget() ? targetsToLunTab : lunToTargetsTab);
         updateListByGropping(object);
+
+        // Set labels above table
+        if (!object.getContainer().isNewStorage()) {
+            switch (object.getContainer().getStorage().getStatus()) {
+            case Maintenance:
+                mainLabel.setText(constants.storageIscsiRemoveLUNsLabel());
+                subLabel.setText(constants.storageIscsiAvailableActionsOnMaintenanceLabel());
+                break;
+            case Active:
+                mainLabel.setText(constants.storageIscsiActionsLabel());
+                subLabel.setText(constants.storageIscsiAvailableActionsForActiveDomainsLabel());
+                break;
+            }
+        }
     }
 
     void initLists(IscsiStorageModel object) {

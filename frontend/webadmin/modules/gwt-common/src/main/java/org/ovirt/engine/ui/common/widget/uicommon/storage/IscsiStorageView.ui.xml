@@ -15,7 +15,7 @@
 
         .bar {
             width: 50px;
-            top: 210px;
+            top: 230px;
             height: 376px;
         }
 
@@ -48,9 +48,22 @@
         .labelWidth {
             width: 188px !important;
         }
+
+        .mainLabel {
+            font-size: 16px;
+            padding-left: 50px;
+        }
+        .subLabel {
+            font-size: 12px;
+            padding-left: 50px;
+        }
     </ui:style>
 
     <b:Container fluid="true">
+        <b:Row>
+            <g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
+            <g:Label ui:field="subLabel" addStyleNames="{style.subLabel}" />
+        </b:Row>
         <b:Row addStyleNames="{style.message}">
             <b:Column size="SM_12">
                 <g:Label ui:field="message"/>
