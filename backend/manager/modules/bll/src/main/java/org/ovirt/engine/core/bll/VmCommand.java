@@ -37,16 +37,20 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -55,6 +59,7 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
@@ -88,6 +93,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     private QuotaDao quotaDao;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     @Inject
     protected ImagesHandler imagesHandler;
@@ -457,6 +466,13 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId, Guid vdsId) {
         if (StringUtils.isEmpty(windowsPath)) {
             return ""; // empty string is used for 'eject'
+        }
+
+        if (windowsPath.matches(ValidationUtils.GUID)) {
+            BaseDisk disk = diskDao.get(Guid.createGuidFromString(windowsPath));
+            if (disk != null) {
+                return vmInfoBuildUtils.getPathToImage((DiskImage) disk);
+            }
         }
         return cdPathWindowsToLinux(windowsPath, getIsoPrefix(storagePoolId, vdsId));
     }

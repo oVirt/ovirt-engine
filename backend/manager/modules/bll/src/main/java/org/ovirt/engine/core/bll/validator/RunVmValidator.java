@@ -35,7 +35,10 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -46,7 +49,9 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -57,6 +62,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
@@ -64,6 +70,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
@@ -92,6 +99,12 @@ public class RunVmValidator {
 
     @Inject
     private VmValidationUtils vmValidationUtils;
+
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+
+    @Inject
+    private DiskDao diskDao;
 
     public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution, Guid activeIsoDomainId) {
         this.vm = vm;
@@ -142,7 +155,7 @@ public class RunVmValidator {
 
         return
                 validateVmProperties(vm, messages) &&
-                validate(validateBootSequence(vm, getVmDisks(), activeIsoDomainId), messages) &&
+                validate(validateBootSequence(vm, getVmDisks()), messages) &&
                 validate(validateDisplayType(), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
                 validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()), messages) &&
@@ -274,18 +287,12 @@ public class RunVmValidator {
                         messages);
     }
 
-    protected ValidationResult validateBootSequence(VM vm, List<Disk> vmDisks, Guid activeIsoDomainId) {
+    protected ValidationResult validateBootSequence(VM vm, List<Disk> vmDisks) {
         BootSequence bootSequence = vm.getBootSequence();
         // Block from running a VM with no HDD when its first boot device is
         // HD and no other boot devices are configured
         if (bootSequence == BootSequence.C && vmDisks.isEmpty()) {
             return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
-        }
-
-        // If CD appears as first and there is no ISO in storage
-        // pool/ISO inactive - you cannot run this VM
-        if (bootSequence == BootSequence.CD && activeIsoDomainId == null) {
-            return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
         // if there is network in the boot sequence, check that the
@@ -363,7 +370,7 @@ public class RunVmValidator {
         return new MultipleDiskVmElementValidator(diskToDiskVmElement);
     }
 
-    private ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath, Guid activeIsoDomainId) {
+    protected ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath, Guid activeIsoDomainId) {
         if (vm.isAutoStartup()) {
             return ValidationResult.VALID;
         }
@@ -372,12 +379,32 @@ public class RunVmValidator {
             return ValidationResult.VALID;
         }
 
-        if (activeIsoDomainId == null) {
+        if (!StringUtils.isEmpty(floppyPath) && activeIsoDomainId == null) {
             return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
-        if (!StringUtils.isEmpty(diskPath) && !isRepoImageExists(diskPath, activeIsoDomainId, ImageFileType.ISO)) {
-            return new ValidationResult(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+        String effectiveIsoPath = StringUtils.isEmpty(diskPath) ? vm.getIsoPath() : diskPath;
+
+        if (!StringUtils.isEmpty(effectiveIsoPath)) {
+            if (effectiveIsoPath.matches(ValidationUtils.GUID)) {
+                BaseDisk disk = diskDao.get(Guid.createGuidFromString(effectiveIsoPath));
+                if (disk == null || disk.getContentType() != DiskContentType.ISO) {
+                    return new ValidationResult(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+                }
+                Guid domainId = ((DiskImage) disk).getStorageIds().get(0);
+                StoragePoolIsoMap spim = storagePoolIsoMapDao.get(new StoragePoolIsoMapId(domainId, vm.getStoragePoolId()));
+                if (spim == null || spim.getStatus() != StorageDomainStatus.Active) {
+                    return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+                }
+            }
+            else if (activeIsoDomainId == null) {
+                return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+            }
+            else if (!isRepoImageExists(effectiveIsoPath, activeIsoDomainId, ImageFileType.ISO)) {
+                return new ValidationResult(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+            }
+
+            return ValidationResult.VALID;
         }
 
         if (!StringUtils.isEmpty(floppyPath) && !isRepoImageExists(floppyPath, activeIsoDomainId, ImageFileType.Floppy)) {
@@ -543,10 +570,6 @@ public class RunVmValidator {
         return VmPropertiesUtils.getInstance();
     }
 
-    private DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
-    }
-
     private boolean isRepoImageExists(String repoImagePath, Guid storageDomainId, ImageFileType imageFileType) {
         QueryReturnValue ret = getBackend().runInternalQuery(
                 QueryType.GetImagesList,
@@ -576,7 +599,7 @@ public class RunVmValidator {
 
     protected List<Disk> getVmDisks() {
         if (cachedVmDisks == null) {
-            cachedVmDisks = getDiskDao().getAllForVm(vm.getId(), true);
+            cachedVmDisks = diskDao.getAllForVm(vm.getId(), true);
         }
 
         return cachedVmDisks;

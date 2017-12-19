@@ -35,9 +35,12 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -47,6 +50,8 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -70,6 +75,10 @@ public class RunVmValidatorTest {
     private RunVmValidator runVmValidator = new RunVmValidator();
     @Mock
     private SnapshotsValidator snapshotValidator;
+    @Mock
+    private DiskDao diskDao;
+    @Mock
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     @Before
     public void setup() throws InitializationException {
@@ -124,7 +133,7 @@ public class RunVmValidatorTest {
 
     @Test
     public void testVmFailNoDisks() {
-        validateResult(runVmValidator.validateBootSequence(new VM(), new ArrayList<>(), null),
+        validateResult(runVmValidator.validateBootSequence(new VM(), new ArrayList<>()),
                        false,
                        EngineMessage.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
     }
@@ -133,25 +142,52 @@ public class RunVmValidatorTest {
     public void testVmWithDisks() {
         List<Disk> disks = new ArrayList<>();
         disks.add(new DiskImage());
-        validateResult(runVmValidator.validateBootSequence(new VM(), disks, null),
+        validateResult(runVmValidator.validateBootSequence(new VM(), disks),
                 true,
                 null);
     }
 
     @Test
-    public void testNoIsoDomain() {
+    public void testNoIsoDomainIsoOnIsoDomain() {
         VM vm = new VM();
         vm.setBootSequence(BootSequence.CD);
-        validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>(), null),
+        validateResult(runVmValidator.validateIsoPath(vm, "Iso_name.iso", null , null),
                 false,
                 EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+    }
+
+    @Test
+    public void testNoIsoDomainIsoOnDataDomain() {
+        VM vm = new VM();
+        vm.setStoragePoolId(Guid.newGuid());
+        vm.setBootSequence(BootSequence.CD);
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setId(Guid.newGuid());
+        DiskImage diskImage = new DiskImage();
+        diskImage.setStorageIds(Collections.singletonList(storageDomain.getId()));
+        diskImage.setContentType(DiskContentType.ISO);
+        when(diskDao.get(any(Guid.class))).thenReturn(diskImage);
+        when(storagePoolIsoMapDao.get(new StoragePoolIsoMapId(storageDomain.getId(), vm.getStoragePoolId()))).thenReturn(null);
+        validateResult(runVmValidator.validateIsoPath(vm, Guid.newGuid().toString(), null , null),
+                false,
+                EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+    }
+
+    @Test
+    public void testIsoOnDataDomainNotExists() {
+        VM vm = new VM();
+        vm.setBootSequence(BootSequence.CD);
+        when(diskDao.get(any(Guid.class))).thenReturn(null);
+        validateResult(runVmValidator.validateIsoPath(vm, Guid.newGuid().toString(), null , null),
+                false,
+                EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
     }
 
     @Test
     public void testNoDiskBootFromIsoDomain() {
         VM vm = new VM();
         vm.setBootSequence(BootSequence.CD);
-        validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>(), Guid.newGuid()),
+        validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>()),
                 true,
                 null);
     }
@@ -162,7 +198,7 @@ public class RunVmValidatorTest {
         doReturn(dao).when(runVmValidator).getVmNicDao();
         VM vm = new VM();
         vm.setBootSequence(BootSequence.N);
-        validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>(), null),
+        validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>()),
                 false,
                 EngineMessage.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
     }

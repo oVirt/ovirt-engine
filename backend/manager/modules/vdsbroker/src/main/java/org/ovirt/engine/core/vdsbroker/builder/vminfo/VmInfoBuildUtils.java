@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -70,6 +71,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -126,6 +128,12 @@ public class VmInfoBuildUtils {
     private final StorageDomainStaticDao storageDomainStaticDao;
     private final StorageServerConnectionDao storageServerConnectionDao;
 
+    private static final String BLOCK_DOMAIN_DISK_PATH = "/rhev/data-center/mnt/blockSD/%s/images/%s/%s";
+    private static final String FILE_DOMAIN_DISK_PATH = "/rhev/data-center/%s/%s/images/%s/%s";
+
+    private static final Pattern BLOCK_DOMAIN_MATCHER =
+            Pattern.compile(String.format(BLOCK_DOMAIN_DISK_PATH, ValidationUtils.GUID,
+                    ValidationUtils.GUID, ValidationUtils.GUID));
 
     @Inject
     VmInfoBuildUtils(
@@ -1054,5 +1062,24 @@ public class VmInfoBuildUtils {
     private static VdsNumaNode getNumaNodeWithLowerCpuIds(VdsNumaNode mostPinnedPnumaNode, VdsNumaNode currNode) {
         return Objects.compare(currNode.getCpuIds(), mostPinnedPnumaNode.getCpuIds(), Comparator.comparing(Collections::min)) < 0 ?
                 currNode: mostPinnedPnumaNode;
+    }
+
+
+    public String getPathToImage(DiskImage diskImage) {
+        if (diskImage.getStorageTypes().get(0).isBlockDomain()) {
+            return String.format(BLOCK_DOMAIN_DISK_PATH,
+                    diskImage.getStorageIds().get(0),
+                    diskImage.getId(),
+                    diskImage.getImageId());
+        }
+        return String.format(FILE_DOMAIN_DISK_PATH,
+                diskImage.getStoragePoolId(),
+                diskImage.getStorageIds().get(0),
+                diskImage.getId(),
+                diskImage.getImageId());
+    }
+
+    public boolean isBlockDomainPath(String path) {
+        return BLOCK_DOMAIN_MATCHER.matcher(path).matches();
     }
 }

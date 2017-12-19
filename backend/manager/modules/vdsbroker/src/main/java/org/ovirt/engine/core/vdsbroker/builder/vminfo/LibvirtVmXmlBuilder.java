@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,6 +61,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -1661,20 +1664,11 @@ public class LibvirtVmXmlBuilder {
             switch (diskType) {
             case "block":
                 writer.writeAttributeString(
-                        "dev",
-                        String.format("/rhev/data-center/mnt/blockSD/%s/images/%s/%s",
-                                diskImage.getStorageIds().get(0),
-                                diskImage.getId(),
-                                diskImage.getImageId()));
+                        "dev", vmInfoBuildUtils.getPathToImage(diskImage));
                 break;
             case "file":
                 writer.writeAttributeString(
-                        "file",
-                        String.format("/rhev/data-center/%s/%s/images/%s/%s",
-                                diskImage.getStoragePoolId(),
-                                diskImage.getStorageIds().get(0),
-                                diskImage.getId(),
-                                diskImage.getImageId()));
+                        "file", vmInfoBuildUtils.getPathToImage(diskImage));
                 break;
             case "network":
                 writer.writeAttributeString("protocol", "gluster");
@@ -1692,12 +1686,7 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
                 break;
             }
-            Map<String, Object> diskUuids = new HashMap<>();
-            diskUuids.put("poolID", diskImage.getStoragePoolId());
-            diskUuids.put("domainID", diskImage.getStorageIds().get(0));
-            diskUuids.put("imageID", diskImage.getId());
-            diskUuids.put("volumeID", diskImage.getImageId());
-            diskMetadata.put(dev, diskUuids);
+            diskMetadata.put(dev, createDiskUuidsMap(diskImage));
             break;
 
         case LUN:
@@ -1729,6 +1718,20 @@ public class LibvirtVmXmlBuilder {
             break;
         }
         writer.writeEndElement();
+    }
+
+    private Map<String, Object> createDiskUuidsMap(DiskImage diskImage) {
+        return createDiskUuidsMap(diskImage.getStoragePoolId(), diskImage.getStorageIds().get(0),
+                diskImage.getId(), diskImage.getImageId());
+    }
+
+    private Map<String, Object> createDiskUuidsMap(Guid poolId, Guid domainId, Guid imageId, Guid volumeId) {
+        Map<String, Object> diskUuids = new HashMap<>();
+        diskUuids.put("poolID", poolId);
+        diskUuids.put("domainID", domainId);
+        diskUuids.put("imageID", imageId);
+        diskUuids.put("volumeID", volumeId);
+        return diskUuids;
     }
 
     private String writeDiskTarget(DiskVmElement dve, int index) {
@@ -1883,8 +1886,25 @@ public class LibvirtVmXmlBuilder {
                 .findAny().orElse(null);
         if (nonPayload != null || (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath()))) {
             // add a device that points to vm.getCdPath()
+            cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
+
+            boolean isoOnBlockDomain = false;
+            if (vm.getIsoPath() != null && vm.getIsoPath().matches(ValidationUtils.GUID)
+                    && vmInfoBuildUtils.isBlockDomainPath(vm.getCdPath())) {
+                isoOnBlockDomain = true;
+                String dev = vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex);
+                Matcher m = Pattern.compile(ValidationUtils.GUID).matcher(vm.getCdPath());
+                m.find();
+                Guid domainId = Guid.createGuidFromString(m.group());
+                m.find();
+                Guid imageId = Guid.createGuidFromString(m.group());
+                m.find();
+                Guid volumeId = Guid.createGuidFromString(m.group());
+                diskMetadata.put(dev, createDiskUuidsMap(vm.getStoragePoolId(), domainId, imageId, volumeId));
+            }
+
             writer.writeStartElement("disk");
-            writer.writeAttributeString("type", "file");
+            writer.writeAttributeString("type", isoOnBlockDomain ? "block" : "file");
             writer.writeAttributeString("device", "cdrom");
             writer.writeAttributeString("snapshot", "no");
 
@@ -1895,11 +1915,9 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             writer.writeStartElement("source");
-            writer.writeAttributeString("file", vm.getCdPath());
+            writer.writeAttributeString(isoOnBlockDomain ? "dev" : "file", vm.getCdPath());
             writer.writeAttributeString("startupPolicy", "optional");
             writer.writeEndElement();
-
-            cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
 
             writer.writeStartElement("target");
             writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex));
