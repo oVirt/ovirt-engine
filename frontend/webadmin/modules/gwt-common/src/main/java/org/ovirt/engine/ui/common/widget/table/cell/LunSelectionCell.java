@@ -51,6 +51,9 @@ public class LunSelectionCell extends AbstractCell<LunModel> {
         ImageResourceCell imageCell = new ImageResourceCell();
         imageCell.setStyle("text-align: center;"); //$NON-NLS-1$
 
+        if (value.isRemoveLunSelected()) {
+            imageCell.setStyle("text-align: center; opacity: 0.2; filter: alpha(opacity=20);"); //$NON-NLS-1$
+        }
         if (value.getIsIncluded()) {
             // ImageResourceCell sets the id
             imageCell.render(context, resources.okSmallImage(), sb, id);

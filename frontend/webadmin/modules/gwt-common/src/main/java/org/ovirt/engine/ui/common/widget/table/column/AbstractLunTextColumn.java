@@ -19,9 +19,12 @@ public abstract class AbstractLunTextColumn extends AbstractSafeHtmlColumn<LunMo
         String color = ""; //$NON-NLS-1$
 
         if (object != null) {
-            if (object.getIsGrayedOut()) {
+            if (!object.getIsIncluded() && (!object.getIsSelected() || object.getIsGrayedOut()) ||
+                    object.isRemoveLunSelected()) {
                 color = "gray"; //$NON-NLS-1$
-            } else if (!object.getIsAccessible()) {
+            } else if (object.getIsSelected()) {
+                color = "midnightblue"; //$NON-NLS-1$
+            } else if (!object.getIsAccessible() && !object.getIsGrayedOut()) {
                 color = "orange"; //$NON-NLS-1$
             } else {
                 color = "black"; //$NON-NLS-1$

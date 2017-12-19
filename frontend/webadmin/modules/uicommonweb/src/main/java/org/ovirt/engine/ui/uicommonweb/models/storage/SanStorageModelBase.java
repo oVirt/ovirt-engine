@@ -645,7 +645,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 lunModel.setRemoveLunSelected(false);
                 lunModel.setIsAccessible(a.getAccessible());
                 lunModel.setStatus(a.getStatus());
-                lunModel.setIsIncluded(isIncluded);
+                lunModel.setIsIncluded(lunModel.getIsIncluded() || isIncluded);
                 lunModel.setIsSelected(containsLun(lunModel, selectedItems, isIncluded));
                 lunModel.setEntity(a);
 
