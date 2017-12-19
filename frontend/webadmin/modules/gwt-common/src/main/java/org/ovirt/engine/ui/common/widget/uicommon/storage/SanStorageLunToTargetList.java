@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractLunAddOrExtendColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunActionsColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunRemoveColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
@@ -228,7 +228,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         if (model.getContainer().isNewStorage() ||
                 model.getContainer().getStorage().getStatus() != StorageDomainStatus.Maintenance) {
             if (multiSelection) {
-                addAbstractLunAddOrExtendColumn(table,
+                addAbstractLunActionsColumn(table,
                         model.getContainer().isNewStorage() ? constants.addSanStorage() : constants.actionsSanStorage());
             }
         } else {
@@ -251,8 +251,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         }
     }
 
-    private void addAbstractLunAddOrExtendColumn(EntityModelCellTable<ListModel<LunModel>> table, String headerString) {
-        table.addColumn(new AbstractLunAddOrExtendColumn() {
+    private void addAbstractLunActionsColumn(EntityModelCellTable<ListModel<LunModel>> table, String headerString) {
+        table.addColumn(new AbstractLunActionsColumn() {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;

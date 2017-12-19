@@ -13,13 +13,13 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public abstract class AbstractLunAddOrExtendColumn extends AbstractColumn<LunModel, LunModel> {
+public abstract class AbstractLunActionsColumn extends AbstractColumn<LunModel, LunModel> {
 
     private static final UIConstants uiConstants = ConstantsManager.getInstance().getConstants();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
-    public AbstractLunAddOrExtendColumn() {
+    public AbstractLunActionsColumn() {
         super(new AbstractToggleButtonCell<LunModel>() {
             @Override
             public void onClickEvent(LunModel lunModel) {

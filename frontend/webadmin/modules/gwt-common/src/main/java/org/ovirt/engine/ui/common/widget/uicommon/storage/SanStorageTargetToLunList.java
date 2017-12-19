@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractLunAddOrExtendColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunActionsColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunRemoveColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
@@ -258,7 +258,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         if (model.getContainer().isNewStorage() ||
                 model.getContainer().getStorage().getStatus() != StorageDomainStatus.Maintenance) {
             if (multiSelection) {
-                addAbstractLunAddOrExtendColumn(table,
+                addAbstractLunActionsColumn(table,
                         model.getContainer().isNewStorage() ? constants.addSanStorage() : constants.actionsSanStorage());
             }
         } else {
@@ -334,14 +334,14 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         Scheduler.get().scheduleDeferred(() -> treeContainer.setVerticalScrollPosition(treeScrollPosition));
     }
 
-    private void addAbstractLunAddOrExtendColumn(EntityModelCellTable<ListModel<LunModel>> table, String headerString) {
-        AbstractLunAddOrExtendColumn addOrExtendColumn = new AbstractLunAddOrExtendColumn() {
+    private void addAbstractLunActionsColumn(EntityModelCellTable<ListModel<LunModel>> table, String headerString) {
+        AbstractLunActionsColumn actionsColumn = new AbstractLunActionsColumn() {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;
             }
         };
-        addOrExtendColumn.makeSortable();
-        table.addColumn(addOrExtendColumn, headerString, "95px"); //$NON-NLS-1$
+        actionsColumn.makeSortable();
+        table.addColumn(actionsColumn, headerString, "95px"); //$NON-NLS-1$
     }
 }
