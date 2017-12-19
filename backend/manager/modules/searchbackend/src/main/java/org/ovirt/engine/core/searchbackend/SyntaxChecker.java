@@ -1092,6 +1092,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                     // standard condition with specific AC
                     prev = objIter.previous();
                     objName = prev.getBody();
+                    if (SearchObjects.VDS_OBJ_NAME.equals(objName) && SearchObjects.AUDIT_OBJ_NAME.equals(searchObjStr)) {
+                        objName = SearchObjects.VDS_OBJ_NAME + SearchObjects.AUDIT_OBJ_NAME;
+                    }
                     conditionFieldAC = searchObjectAC.getFieldAutoCompleter(objName);
                     conditionType = ConditionType.ConditionwithSpesificObj;
                 }
@@ -1186,6 +1189,9 @@ public class SyntaxChecker implements ISyntaxChecker {
             tableName = searchObjectAC.getRelatedTableName(objName, true);
         } else {
             tableName = searchObjectAC.getRelatedTableName(objName, fieldName, useTags);
+        }
+        if (tableName.indexOf(")") != -1) {
+            tableName = tableName.substring(tableName.indexOf(")") + 1).trim();
         }
         ConditionData conditionData = new ConditionData();
         switch (conditionType) {

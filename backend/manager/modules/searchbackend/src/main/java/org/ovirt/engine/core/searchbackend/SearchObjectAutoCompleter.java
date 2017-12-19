@@ -353,6 +353,13 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vds_id",
                             "vds_name ASC ",
                             false));
+                    put(SearchObjects.VDS_OBJ_NAME + SearchObjects.AUDIT_OBJ_NAME, new EntitySearchInfo(new VdsCrossRefAutoCompleter(),
+                            new VdsConditionFieldAutoCompleter(),
+                            "vds",
+                            "(SELECT distinct vds_id, vds_name FROM vds_with_tags) vds_with_tags_temp",
+                            "vds_id",
+                            "vds_name ASC ",
+                            false));
                     put(SearchObjects.VM_OBJ_NAME, new EntitySearchInfo(new VmCrossRefAutoCompleter(),
                             new VmConditionFieldAutoCompleter(),
                             "vms",
@@ -538,11 +545,19 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     public String getInnerJoin(String searchObj, String crossRefObj, boolean useTags) {
         final String[] joinKey = joinDictionary.get(StringFormat.format("%1$s.%2$s", searchObj, crossRefObj));
         // For joins, the table we join with is always the full view (including the tags)
-        final String crossRefTable = getRelatedTableName(crossRefObj, true);
+        String crossRefTable;
+        String crossRefTableName;
+        if (SearchObjects.VDS_OBJ_NAME.equals(crossRefObj) && SearchObjects.AUDIT_OBJ_NAME.equals(searchObj)) {
+            crossRefTable = getRelatedTableName(SearchObjects.VDS_OBJ_NAME + SearchObjects.AUDIT_OBJ_NAME, true);
+            crossRefTableName = crossRefTable.substring(crossRefTable.indexOf(")") + 1).trim();
+        } else {
+            crossRefTable = getRelatedTableName(crossRefObj, true);
+            crossRefTableName = crossRefTable;
+        }
         final String searchObjTable = getRelatedTableName(searchObj, useTags);
 
-        return StringFormat.format(" LEFT OUTER JOIN %3$s ON %1$s.%2$s=%3$s.%4$s ", searchObjTable, joinKey[0],
-                crossRefTable, joinKey[1]);
+        return StringFormat.format(" LEFT OUTER JOIN %3$s ON %1$s.%2$s=%4$s.%5$s ", searchObjTable, joinKey[0],
+                crossRefTable, crossRefTableName, joinKey[1]);
     }
 
     public IConditionFieldAutoCompleter getFieldAutoCompleter(String obj) {

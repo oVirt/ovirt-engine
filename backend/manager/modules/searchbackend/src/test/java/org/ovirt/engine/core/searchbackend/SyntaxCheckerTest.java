@@ -205,7 +205,7 @@ public class SyntaxCheckerTest {
         // "SELECT * FROM (SELECT * FROM audit_log WHERE ( audit_log_id > 0 and audit_log_id IN (SELECT audit_log.audit_log_id FROM  audit_log   LEFT OUTER JOIN vds_with_tags ON audit_log.vds_id=vds_with_tags.vds_id    WHERE  vds_with_tags.vds_name LIKE host1 ) and not deleted)  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 9ms
         testValidSql("Event: host.name = \"host1\" ",
-                "SELECT * FROM ((SELECT  audit_log.* FROM  audit_log   LEFT OUTER JOIN vds_with_tags ON audit_log.vds_id=vds_with_tags.vds_id    WHERE  vds_with_tags.vds_name LIKE host1  AND not deleted)  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT  audit_log.* FROM  audit_log   LEFT OUTER JOIN (SELECT distinct vds_id, vds_name FROM vds_with_tags) vds_with_tags_temp ON audit_log.vds_id=vds_with_tags_temp.vds_id    WHERE  vds_with_tags_temp.vds_name LIKE host1  AND not deleted)  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
