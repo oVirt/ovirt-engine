@@ -82,7 +82,11 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
     }
 
     private void initListener() {
-        expander.addClickHandler(event -> expanderContent.getStyle().setDisplay(expander.isDown() ? Display.BLOCK : Display.NONE));
+        expander.addClickHandler(event -> updateContentDisplay());
+    }
+
+    private void updateContentDisplay() {
+        expanderContent.getStyle().setDisplay(expander.isDown() ? Display.BLOCK : Display.NONE);
     }
 
     public void addClickHandler(ClickHandler clickHandler) {
@@ -107,5 +111,10 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
     public void setTitleWhenCollapsed(String title) {
         titleCollapsed = title;
         initStyle();
+    }
+
+    public void toggleExpander(boolean expand) {
+        expander.setValue(expand);
+        updateContentDisplay();
     }
 }

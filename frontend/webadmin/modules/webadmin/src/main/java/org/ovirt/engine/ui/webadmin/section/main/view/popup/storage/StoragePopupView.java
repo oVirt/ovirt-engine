@@ -346,4 +346,10 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     public boolean handleEnterKeyDisabled() {
         return storageView.isSubViewFocused();
     }
+
+    @Override
+    public void focusDiscardAfterDelete() {
+        advancedParametersExpander.toggleExpander(true);
+        discardAfterDeleteEditor.setFocus(true);
+    }
 }
