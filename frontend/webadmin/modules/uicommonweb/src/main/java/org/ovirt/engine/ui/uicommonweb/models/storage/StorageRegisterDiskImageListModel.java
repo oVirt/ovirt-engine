@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.comparators.UnregisteredDiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
@@ -83,7 +83,7 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         Frontend.getInstance().runQuery(QueryType.GetUnregisteredDisksFromDB, parameters,
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<UnregisteredDisk> unregisteredDisks = returnValue.getReturnValue();
-                    Collections.sort(unregisteredDisks, new UnregisteredDiskByDiskAliasComparator());
+                    Collections.sort(unregisteredDisks, Comparator.comparing(UnregisteredDisk::getDiskAlias));
                     ArrayList<Disk> diskItems = new ArrayList<>();
                     for (UnregisteredDisk unregisteredDisk : unregisteredDisks) {
                         diskItems.add(unregisteredDisk.getDiskImage());
