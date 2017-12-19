@@ -23,7 +23,7 @@ import datetime
 import gettext
 import os
 
-from otopi import common
+from otopi import constants as otopicons
 from otopi import plugin
 from otopi import util
 
@@ -56,6 +56,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLEANUP,
+        after=(
+            otopicons.Stages.ANSWER_FILE_GENERATED,
+        ),
         priority=plugin.Stages.PRIORITY_LAST,
     )
     def _cleanup(self):
@@ -86,52 +89,10 @@ class Plugin(plugin.PluginBase):
                 with open(self.resolveFile(answer), 'w') as f:
                     os.fchmod(f.fileno(), 0o600)
                     f.write(
-                        (
-                            '# action=%s\n'
-                            '[environment:default]\n'
-                        ) % (
-                            self.environment[
-                                osetupcons.CoreEnv.ACTION
-                            ],
-                        )
+                        self.environment[
+                            otopicons.DialogEnv.ANSWER_FILE_CONTENT
+                        ]
                     )
-                    consts = []
-                    wlist = []
-                    for constobj in self.environment[
-                        osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-                    ]:
-                        consts.extend(constobj.__dict__['__osetup_attrs__'])
-                    for c in consts:
-                        for k in c.__dict__.values():
-                            if hasattr(k, '__osetup_attrs__'):
-                                if (
-                                        k.__osetup_attrs__['answerfile'] and
-                                        k.__osetup_attrs__[
-                                            'answerfile_condition'
-                                        ](self.environment)
-                                ):
-                                    k = k.fget(None)
-                                    if (
-                                        k in self.environment and
-                                        k not in wlist
-                                    ):
-                                        v = self.environment[k]
-                                        f.write(
-                                            '%s=%s:%s\n' % (
-                                                k,
-                                                common.typeName(v),
-                                                '\n '.join(v)
-                                                # We want the next lines to be
-                                                # indented, so that
-                                                # configparser will treat them
-                                                # as a single multi-line value.
-                                                # So we join with '\n '.
-                                                if isinstance(v, list)
-                                                else v,
-                                            )
-                                        )
-                                        wlist.append(k)
-
             except IOError as e:
                 self.logger.warning(
                     _(

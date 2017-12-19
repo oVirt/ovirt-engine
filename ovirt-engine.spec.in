@@ -414,7 +414,7 @@ Requires:	bind-utils
 Requires:	iproute
 Requires:	libxml2-python
 Requires:	logrotate
-Requires:	otopi >= 1.7.1
+Requires:	otopi >= 1.7.6
 Requires:	python-paramiko
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 3.6.0
