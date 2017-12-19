@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -32,7 +33,9 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
 
         struct.put(VdsProperties.vm_guid, getParameters().getVm().getId().toString());
         struct.put(VdsProperties.VM_NETWORK_INTERFACE, initNicStructure());
-        struct.put(VdsProperties.engineXml, generateDomainXml());
+        if (FeatureSupported.isDomainXMLSupported(getParameters().getVm().getClusterCompatibilityVersion())) {
+            struct.put(VdsProperties.engineXml, generateDomainXml());
+        }
 
         return struct;
     }
