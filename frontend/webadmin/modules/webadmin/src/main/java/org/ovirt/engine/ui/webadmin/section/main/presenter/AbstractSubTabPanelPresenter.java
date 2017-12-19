@@ -10,12 +10,10 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
-import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.TabView;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
@@ -36,11 +34,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
 
     }
 
-    private final AbstractMainSelectedItems<?> selectedItems;
     private final Map<TabData, Model> detailTabToModelMapping = new HashMap<>();
-
-    @Inject
-    private PlaceManager placeManager;
 
     public AbstractSubTabPanelPresenter(EventBus eventBus, V view, P proxy,
             Object tabContentSlot,
@@ -59,7 +53,6 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
                 slot);
-        this.selectedItems = selectedItems;
     }
 
     protected abstract void initDetailTabToModelMapping(Map<TabData, Model> mapping);
