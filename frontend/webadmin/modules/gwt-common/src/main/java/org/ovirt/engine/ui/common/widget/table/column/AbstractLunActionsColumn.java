@@ -39,7 +39,7 @@ public abstract class AbstractLunActionsColumn extends AbstractColumn<LunModel, 
 
                 boolean isGrayedOut = value.getIsGrayedOut();
                 String inputId = id + "_input"; //$NON-NLS-1$
-                SafeHtml input = null;
+                SafeHtml input;
 
                 if (!isGrayedOut && !value.getIsSelected()) {
                     input = templates.toggledUp(inputId, constants.addSanStorage());
