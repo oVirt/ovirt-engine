@@ -27,7 +27,6 @@ from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup.engine_common import postgres
 from ovirt_engine_setup.engine_common.constants import ProvisioningEnv
-from ovirt_engine_setup.provisiondb import constants as oprovisioncons
 
 from ovirt_setup_lib import dialog
 
@@ -44,8 +43,8 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
         self._provisioning = postgres.Provisioning(
             plugin=self,
-            dbenvkeys=oprovisioncons.Const.PROVISION_DB_ENV_KEYS,
-            defaults=oprovisioncons.Const.DEFAULT_PROVISION_DB_ENV_KEYS,
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            defaults=oenginecons.Const.DEFAULT_ENGINE_DB_ENV_KEYS,
         )
 
     def _setupOwnsDB(self):
