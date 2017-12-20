@@ -34,13 +34,13 @@ public class BlockStorageDiscardFunctionalityHelperTest {
     private List<DiskVmElement> storageDomainVmDisks;
 
     @InjectMocks
-    public BlockStorageDiscardFunctionalityHelper discardHelper;
+    private BlockStorageDiscardFunctionalityHelper discardHelper;
 
     @Mock
-    public DiskImageDao diskImageDao;
+    private DiskImageDao diskImageDao;
 
     @Mock
-    public DiskVmElementDao diskVmElementDao;
+    private DiskVmElementDao diskVmElementDao;
 
     @Before
     public void setUp() {
