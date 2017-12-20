@@ -214,7 +214,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
                     .map(Map.Entry::getValue)
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
-            discardHelper.logIfLunsBreakStorageDomainDiscardFunctionality(lunsToUpdateInDb, getStorageDomainId());
+            discardHelper.logIfLunsBreakStorageDomainDiscardFunctionality(lunsToUpdateInDb, getStorageDomain());
         }
     }
 

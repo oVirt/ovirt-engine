@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BlockStorageDiscardFunctionalityHelperTest {
@@ -43,9 +42,6 @@ public class BlockStorageDiscardFunctionalityHelperTest {
     @Mock
     public DiskVmElementDao diskVmElementDao;
 
-    @Mock
-    private StorageDomainDao storageDomainDao;
-
     @Before
     public void setUp() {
         createStorageDomain();
@@ -55,8 +51,6 @@ public class BlockStorageDiscardFunctionalityHelperTest {
 
         storageDomainVmDisks = new LinkedList<>();
         when(diskVmElementDao.getAllDiskVmElementsByDisksIds(anyCollection())).thenReturn(storageDomainVmDisks);
-
-        when(storageDomainDao.get(storageDomain.getId())).thenReturn(storageDomain);
     }
 
     @Test
@@ -249,7 +243,7 @@ public class BlockStorageDiscardFunctionalityHelperTest {
     private void assertGetLunsThatBreakDiscardAfterDeleteSupportContainsExpectedLuns(Collection<LUNs> luns,
             Collection<LUNs> expectedLunsThatBreakDiscardAfterDeleteSupport) {
         Collection<LUNs> lunsThatBreakDiscardAfterDeleteSupport =
-                discardHelper.getLunsThatBreakDiscardAfterDeleteSupport(luns, storageDomain.getId());
+                discardHelper.getLunsThatBreakDiscardAfterDeleteSupport(luns, storageDomain);
         assertTrue(CollectionUtils.isEqualCollection(lunsThatBreakDiscardAfterDeleteSupport,
                 expectedLunsThatBreakDiscardAfterDeleteSupport));
     }

@@ -27,7 +27,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @Singleton
 public class BlockStorageDiscardFunctionalityHelper {
@@ -40,9 +39,6 @@ public class BlockStorageDiscardFunctionalityHelper {
 
     @Inject
     private DiskVmElementDao diskVmElementDao;
-
-    @Inject
-    private StorageDomainDao storageDomainDao;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -112,15 +108,16 @@ public class BlockStorageDiscardFunctionalityHelper {
         return true;
     }
 
-    public void logIfLunsBreakStorageDomainDiscardFunctionality(Collection<LUNs> luns, Guid storageDomainId) {
-        Collection<LUNs> lunsThatBreakPassDiscardSupport = getLunsThatBreakPassDiscardSupport(luns, storageDomainId);
+    public void logIfLunsBreakStorageDomainDiscardFunctionality(Collection<LUNs> luns, StorageDomain storageDomain) {
+        Collection<LUNs> lunsThatBreakPassDiscardSupport = getLunsThatBreakPassDiscardSupport(luns,
+                storageDomain.getId());
         if (!lunsThatBreakPassDiscardSupport.isEmpty()) {
-            logLunsBrokeStorageDomainPassDiscardSupport(lunsThatBreakPassDiscardSupport, storageDomainId);
+            logLunsBrokeStorageDomainPassDiscardSupport(lunsThatBreakPassDiscardSupport, storageDomain);
         }
         Collection<LUNs> lunsThatBreakDiscardAfterDeleteSupport =
-                getLunsThatBreakDiscardAfterDeleteSupport(luns, storageDomainId);
+                getLunsThatBreakDiscardAfterDeleteSupport(luns, storageDomain);
         if (!lunsThatBreakDiscardAfterDeleteSupport.isEmpty()) {
-            logLunsBrokeStorageDomainDiscardAfterDeleteSupport(lunsThatBreakDiscardAfterDeleteSupport, storageDomainId);
+            logLunsBrokeStorageDomainDiscardAfterDeleteSupport(lunsThatBreakDiscardAfterDeleteSupport, storageDomain);
         }
     }
 
@@ -164,8 +161,8 @@ public class BlockStorageDiscardFunctionalityHelper {
         return Collections.emptyList();
     }
 
-    protected Collection<LUNs> getLunsThatBreakDiscardAfterDeleteSupport(Collection<LUNs> luns, Guid storageDomainId) {
-        StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
+    protected Collection<LUNs> getLunsThatBreakDiscardAfterDeleteSupport(Collection<LUNs> luns,
+            StorageDomain storageDomain) {
         if (storageDomain.getDiscardAfterDelete()) {
             return luns.stream()
                     .filter(lun -> !lun.supportsDiscard())
@@ -175,18 +172,20 @@ public class BlockStorageDiscardFunctionalityHelper {
     }
 
     private void logLunsBrokeStorageDomainPassDiscardSupport(Collection<LUNs> lunsThatBreakSdPassDiscardSupport,
-            Guid storageDomainId) {
+            StorageDomain storageDomain) {
         AuditLogable auditLog = new AuditLogableImpl();
-        auditLog.setStorageDomainId(storageDomainId);
+        auditLog.setStorageDomainId(storageDomain.getId());
+        auditLog.setStorageDomainName(storageDomain.getName());
         auditLog.addCustomValue("LunsIds",
                 lunsThatBreakSdPassDiscardSupport.stream().map(LUNs::getLUNId).collect(Collectors.joining(", ")));
         auditLogDirector.log(auditLog, AuditLogType.LUNS_BROKE_SD_PASS_DISCARD_SUPPORT);
     }
 
     private void logLunsBrokeStorageDomainDiscardAfterDeleteSupport(
-            Collection<LUNs> lunsThatBreakSdDiscardAfterDeleteSupport, Guid storageDomainId) {
+            Collection<LUNs> lunsThatBreakSdDiscardAfterDeleteSupport, StorageDomain storageDomain) {
         AuditLogable auditLog = new AuditLogableImpl();
-        auditLog.setStorageDomainId(storageDomainId);
+        auditLog.setStorageDomainId(storageDomain.getId());
+        auditLog.setStorageDomainName(storageDomain.getName());
         auditLog.addCustomValue("LunsIds", lunsThatBreakSdDiscardAfterDeleteSupport.stream()
                 .map(LUNs::getLUNId).collect(Collectors.joining(", ")));
         auditLogDirector.log(auditLog, AuditLogType.LUNS_BROKE_SD_DISCARD_AFTER_DELETE_SUPPORT);
