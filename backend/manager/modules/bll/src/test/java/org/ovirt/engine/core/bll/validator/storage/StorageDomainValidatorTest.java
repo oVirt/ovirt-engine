@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -266,12 +267,30 @@ public class StorageDomainValidatorTest {
         List<VmBase> vmLeases = new ArrayList<>();
         VM vm1 = new VM();
         vm1.setName("firstVM");
+        vm1.setStatus(VMStatus.PoweringUp);
         vmLeases.add(vm1.getStaticData());
         ret.setReturnValue(vmLeases);
         ret.setSucceeded(true);
         doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
+        when(vmDao.get(vm1.getId())).thenReturn(vm1);
         assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_RUNNING_VM_OR_VM_LEASES_PRESENT_ON_STORAGE_DOMAIN));
+    }
+
+    @Test
+    public void validVmLeasesForBackupDomain() {
+        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(Collections.EMPTY_LIST);
+        QueryReturnValue ret = new QueryReturnValue();
+        List<VmBase> vmLeases = new ArrayList<>();
+        VM vm1 = new VM();
+        vm1.setName("firstVM");
+        vm1.setStatus(VMStatus.Down);
+        vmLeases.add(vm1.getStaticData());
+        ret.setReturnValue(vmLeases);
+        ret.setSucceeded(true);
+        doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
+        when(vmDao.get(vm1.getId())).thenReturn(vm1);
+        assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler), isValid());
     }
 
     @Test

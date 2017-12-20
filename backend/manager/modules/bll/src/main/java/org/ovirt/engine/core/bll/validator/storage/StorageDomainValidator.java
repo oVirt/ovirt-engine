@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -472,7 +473,12 @@ public class StorageDomainValidator {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_RETRIEVE_VMS_FOR_WITH_LEASES);
         }
         if (!getRetVal(ret).isEmpty()) {
-            getRetVal(ret).stream().forEach(vmBase -> invalidVmsForBackupStorageDomain.add(vmBase.getName()));
+            getRetVal(ret).stream().forEach(vmBase -> {
+                VM vm = getVmDao().get(vmBase.getId());
+                if (vm != null && vm.getStatus() != VMStatus.Down) {
+                    invalidVmsForBackupStorageDomain.add(vmBase.getName());
+                }
+            });
         }
         List<VM> vms = getVmDao().getAllActiveForStorageDomain(storageDomain.getId());
         for (VM vm : vms) {
