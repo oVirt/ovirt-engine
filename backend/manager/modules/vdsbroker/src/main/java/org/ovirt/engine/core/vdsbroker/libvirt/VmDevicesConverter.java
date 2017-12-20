@@ -32,8 +32,10 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +74,38 @@ public class VmDevicesConverter {
                 xml.indexOf(DEVICES_START_ELEMENT),
                 xml.indexOf(DEVICES_END_ELEMENT) + DEVICES_END_ELEMENT.length());
         XmlDocument document = new XmlDocument(devicesXml);
+        XmlNode metadata = new XmlDocument(xml).selectSingleNode("domain/metadata");
         Map<String, Object> result = new HashMap<>();
         result.put(VdsProperties.vm_guid, vmId.toString());
         result.put(VdsProperties.Devices, parseDevices(vmId, hostId, document));
+        result.put(VdsProperties.GuestDiskMapping, parseDiskMapping(metadata));
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> parseDiskMapping(XmlNode metadata) throws Exception {
+        if (metadata == null) {
+            return null;
+        }
+        XmlNamespaceManager xmlNS = new XmlNamespaceManager();
+        xmlNS.addNamespace(LibvirtVmXmlBuilder.OVIRT_VM_PREFIX, LibvirtVmXmlBuilder.OVIRT_VM_URI);
+        XmlNode vm = metadata.selectSingleNode("ovirt-vm:vm", xmlNS);
+        if (vm == null) {
+            return null;
+        }
+        Map<String, Object> result = new HashMap<>();
+        for (XmlNode node : vm.selectNodes("ovirt-vm:device", xmlNS)) {
+            if (!VmDeviceGeneralType.DISK.getValue().equals(parseAttribute(node, "devtype"))) {
+                continue;
+            }
+
+            XmlNode guestNameNode = node.selectSingleNode("ovirt-vm:guestName", xmlNS);
+            if (guestNameNode != null) {
+                // guest disk mapping is not available for LUNs at the moment
+                result.put(node.selectSingleNode("ovirt-vm:imageID", xmlNS).innerText,
+                        Collections.singletonMap(VdsProperties.Name, guestNameNode.innerText));
+            }
+        }
         return result;
     }
 

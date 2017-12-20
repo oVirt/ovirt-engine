@@ -55,6 +55,18 @@ public class XmlNode {
         }
     }
 
+    public XmlNodeList selectNodes(String string, XmlNamespaceManager xmlns) {
+        try {
+            XPathFactory factory = XPathFactory.newInstance();
+            XPath xPath = factory.newXPath();
+            xPath.setNamespaceContext(xmlns);
+            Object o = xPath.evaluate(string, node, XPathConstants.NODESET);
+            return new XmlNodeList((NodeList) o);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Failed to evaluate xpath: " + string, e);
+        }
+    }
+
     public NodeList getChildNodes() {
         return node.getChildNodes();
     }
