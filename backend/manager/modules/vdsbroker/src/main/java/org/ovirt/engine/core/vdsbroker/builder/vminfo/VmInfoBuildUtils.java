@@ -611,7 +611,9 @@ public class VmInfoBuildUtils {
         // drive to be first (important for IDE to be index 0) !
         List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
         Collections.sort(disks, new LexoNumericNameableComparator<>());
-        Collections.sort(disks, Collections.reverseOrder(new DiskByBootAndSnapshotComparator(vm.getId())));
+        Collections.sort(disks,
+                Comparator.comparing((Disk d) -> !d.getDiskVmElementForVm(vm.getId()).isBoot())
+                        .thenComparing(d -> d.getDiskVmElementForVm(vm.getId()).isBoot() && d.isDiskSnapshot()));
         return disks;
     }
 
