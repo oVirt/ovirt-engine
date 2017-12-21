@@ -111,11 +111,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         else if (EXTERNAL_STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ExternalStatus.class);
         }
-        else if (Stream.of(WIPE_AFTER_DELETE, DISCARD_AFTER_DELETE)
+        else if (Stream.of(WIPE_AFTER_DELETE, DISCARD_AFTER_DELETE, BACKUP)
                 .anyMatch(s -> s.equals(fieldName))) {
-            retval = new BitValueAutoCompleter();
-        }
-        else if (BACKUP.equals(fieldName)) {
             retval = new BitValueAutoCompleter();
         }
         return retval;
