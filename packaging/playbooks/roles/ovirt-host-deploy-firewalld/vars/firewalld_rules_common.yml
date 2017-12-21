@@ -4,7 +4,4 @@ host_deploy_firewalld_rules:
   - service: libvirt-tls
   - service: snmp
   - service: vdsm
-
-  ## Port definition:
-  # ovirt-imageio-daemon
-  - port: 54322/tcp
+  - service: ovirt-imageio

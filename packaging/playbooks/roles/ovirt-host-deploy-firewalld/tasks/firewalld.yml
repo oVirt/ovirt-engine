@@ -9,7 +9,6 @@
     include_vars:
       file: "{{ firewald_rules_file }}"
       name: cluster_vars
-    ignore_errors: yes
     register: include_cluster_vars
 
   # We need to ignore errors in case the service doesn't exist.
@@ -20,7 +19,6 @@
       permanent: yes
       immediate: yes
       state: enabled
-    ignore_errors: yes
     with_items: "{{ cluster_vars.host_deploy_firewalld_rules | default([]) }}"
     when: "cluster_vars is defined and not include_cluster_vars.failed | default(false)"
 
