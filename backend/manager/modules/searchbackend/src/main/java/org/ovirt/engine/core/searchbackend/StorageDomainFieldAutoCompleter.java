@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.stream.Stream;
+
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -18,6 +20,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String COMMENT = "COMMENT";
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String WIPE_AFTER_DELETE = "WIPE_AFTER_DELETE";
+    public static final String DISCARD_AFTER_DELETE = "DISCARD_AFTER_DELETE";
     public static final String LOW_SPACE_THRESHOLD = "LOW_SPACE_THRESHOLD (%)";
     public static final String CRITICAL_SPACE_THRESHOLD = "CRITICAL_SPACE_THRESHOLD (GB)";
     public static final String BACKUP = "BACKUP";
@@ -36,6 +39,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         verbs.add(COMMENT);
         verbs.add(DESCRIPTION);
         verbs.add(WIPE_AFTER_DELETE);
+        verbs.add(DISCARD_AFTER_DELETE);
         verbs.add(LOW_SPACE_THRESHOLD);
         verbs.add(CRITICAL_SPACE_THRESHOLD);
         verbs.add(BACKUP);
@@ -55,6 +59,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(WIPE_AFTER_DELETE, Boolean.class);
+        getTypeDictionary().put(DISCARD_AFTER_DELETE, Boolean.class);
         getTypeDictionary().put(LOW_SPACE_THRESHOLD, Integer.class);
         getTypeDictionary().put(CRITICAL_SPACE_THRESHOLD, Integer.class);
         getTypeDictionary().put(BACKUP, Boolean.class);
@@ -72,6 +77,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(COMMENT, "storage_comment");
         columnNameDict.put(DESCRIPTION, "storage_description");
         columnNameDict.put(WIPE_AFTER_DELETE, "wipe_after_delete");
+        columnNameDict.put(DISCARD_AFTER_DELETE, "discard_after_delete");
         columnNameDict.put(LOW_SPACE_THRESHOLD, "warning_low_space_indicator");
         columnNameDict.put(CRITICAL_SPACE_THRESHOLD, "critical_space_action_blocker");
         columnNameDict.put(BACKUP, "backup");
@@ -105,7 +111,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         else if (EXTERNAL_STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ExternalStatus.class);
         }
-        else if (WIPE_AFTER_DELETE.equals(fieldName)) {
+        else if (Stream.of(WIPE_AFTER_DELETE, DISCARD_AFTER_DELETE)
+                .anyMatch(s -> s.equals(fieldName))) {
             retval = new BitValueAutoCompleter();
         }
         else if (BACKUP.equals(fieldName)) {
