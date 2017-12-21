@@ -229,7 +229,11 @@ public class VdsBrokerObjectsBuilder {
                     nic.setName((String) deviceMap.get(VdsProperties.Name));
                     // FIXME we can't deduce the network profile by the network name. its many to many.
                     nic.setNetworkName((String) deviceMap.get(VdsProperties.NETWORK));
-                    nic.setType(VmInterfaceType.valueOf((String) deviceMap.get(VdsProperties.NIC_TYPE)).getValue());
+                    String nicModel = (String) deviceMap.get(VdsProperties.NIC_TYPE);
+                    if ("virtio".equals(nicModel)) {
+                        nicModel = "pv";
+                    }
+                    nic.setType(VmInterfaceType.valueOf(nicModel).getValue());
                     if (deviceMap.containsKey(VdsProperties.Model)) {
                         String model = (String) deviceMap.get(VdsProperties.Model);
                         for (VmInterfaceType type : VmInterfaceType.values()) {
