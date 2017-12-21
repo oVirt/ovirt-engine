@@ -607,13 +607,15 @@ public class VmInfoBuildUtils {
     }
 
     public List<Disk> getSortedDisks(VM vm) {
-        // order first by drive numbers and then order by boot for the bootable
-        // drive to be first (important for IDE to be index 0) !
+        // Order the drives as following:
+        // - Boot devices of non-snapshot disks
+        // - Boot devices of snapshot disks (i.e., boot disks of other VMs plugged to this one
+        // - Then by the disk alias
         List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
-        Collections.sort(disks, new LexoNumericNameableComparator<>());
         Collections.sort(disks,
                 Comparator.comparing((Disk d) -> !d.getDiskVmElementForVm(vm.getId()).isBoot())
-                        .thenComparing(d -> d.getDiskVmElementForVm(vm.getId()).isBoot() && d.isDiskSnapshot()));
+                        .thenComparing(d -> d.getDiskVmElementForVm(vm.getId()).isBoot() && d.isDiskSnapshot())
+                        .thenComparing(new LexoNumericNameableComparator<>()));
         return disks;
     }
 
