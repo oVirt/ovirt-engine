@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.common.presenter;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -11,7 +13,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public enum FragmentParams {
     SEARCH("search"), //$NON-NLS-1$
-    NAME("name"); //$NON-NLS-1$
+    NAME("name"), //$NON-NLS-1$
+    DATACENTER("dataCenter"), //$NON-NLS-1$
+    NETWORK("network"); //$NON-NLS-1$
 
     private final String paramName;
 
@@ -34,13 +38,13 @@ public enum FragmentParams {
         return result;
     }
 
-    public static <T> T findItemByName(String name, SearchableListModel<?, T> model) {
+    public static <T> List<T> findItemByName(String name, SearchableListModel<?, T> model) {
         Collection<T> items = model.getItems();
-        T namedItem = null;
+        List<T> namedItems = null;
         if (items != null) {
-            namedItem = items.stream().filter(item ->
-                item instanceof Nameable && name.equals(((Nameable)item).getName())).findFirst().orElse(null);
+            namedItems = items.stream().filter(item ->
+                item instanceof Nameable && name.equals(((Nameable)item).getName())).collect(Collectors.toList());
         }
-        return namedItem;
+        return namedItems;
     }
 }

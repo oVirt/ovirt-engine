@@ -80,8 +80,6 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     private PluginActionButtonHandler actionButtonPluginHandler;
     private boolean resizing = false;
-    private String parameterName = null;
-    private T switchToItem = null;
 
     @Inject
     private SearchStringCollector searchStringCollector;
@@ -145,21 +143,6 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
             }
         ));
 
-        getModel().getItemsChangedEvent().addListener((ev, sender, args) -> {
-            if (this.parameterName != null) {
-                switchToName(parameterName);
-                parameterName = null;
-            }
-        });
-        getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
-            if (switchToItem != null) {
-                // This needs to be deferred otherwise the main view will be shown second overriding this one.
-                Scheduler.get().scheduleDeferred(() -> {
-                    handlePlaceTransition(true);
-                    switchToItem = null;
-                });
-            }
-        });
         if (hasSearchPanelPresenterWidget()) {
             setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
         }
@@ -212,9 +195,6 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         Set<FragmentParams> params = FragmentParams.getParams(currentPlace);
         params.forEach(param -> {
             switch(param) {
-            case NAME:
-                switchToName(currentPlace.getParameter(FragmentParams.NAME.getName(), ""));
-                break;
             case SEARCH:
                 String search = currentPlace.getParameter(FragmentParams.SEARCH.getName(), "");
                 if (!"".equals(search)) {
@@ -227,26 +207,6 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
                 break;
             }
         });
-    }
-
-    @SuppressWarnings("unchecked")
-    private void switchToName(String name) {
-        if (!"".equals(name)) {
-            T namedItem = (T) FragmentParams.findItemByName(name, getModel());
-            if (namedItem != null) {
-                getModel().getSelectionModel().clear();
-                getModel().getSelectionModel().setSelected(namedItem, true);
-                // Simulate a click on the link.
-                switchToItem = namedItem;
-            } else if (getModel().getItems() != null) {
-                // Couldn't find the named item, and the items have loaded, try to search for it by query.
-                applySearchString(getModel().getDefaultSearchString() + "name=" + name); // $NON-NLS-1$
-                Scheduler.get().scheduleDeferred(() -> parameterName = name);
-            } else {
-                // items haven't loaded yet, store the name for use when the items have loaded.
-                parameterName = name;
-            }
-        }
     }
 
     @Override

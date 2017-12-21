@@ -1,9 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
@@ -30,5 +35,20 @@ public abstract class AbstractSubTabVnicProfilePresenter<D extends HasEntity<?>,
     @Override
     protected PlaceRequest getMainContentRequest() {
         return PlaceRequestFactory.get(WebAdminApplicationPlaces.vnicProfileMainPlace);
+    }
+
+    @Override
+    protected List<VnicProfileView> filterByAdditionalParams(List<VnicProfileView> namedItems, PlaceRequest request) {
+        Set<FragmentParams> params = FragmentParams.getParams(request);
+        final String dataCenterFragmentNameValue = request.getParameter(FragmentParams.DATACENTER.getName(), "");
+        final String networkFragmentNameValue = request.getParameter(FragmentParams.NETWORK.getName(), "");
+        if (params.contains(FragmentParams.DATACENTER) && !"".equals(dataCenterFragmentNameValue) &&
+                params.contains(FragmentParams.NETWORK) && !"".equals(networkFragmentNameValue)) {
+            return namedItems.stream().filter(item -> dataCenterFragmentNameValue.equals(item.getDataCenterName()) &&
+                    networkFragmentNameValue.equals(item.getNetworkName()))
+                    .collect(Collectors.toList());
+        } else {
+            return namedItems;
+        }
     }
 }

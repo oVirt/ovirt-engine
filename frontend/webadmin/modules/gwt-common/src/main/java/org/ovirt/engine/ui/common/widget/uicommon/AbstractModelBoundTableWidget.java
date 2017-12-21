@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -39,6 +40,7 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     private final SimpleActionTable<T> table;
     private final FlowPanel wrappedWidget;
     private HandlerRegistration registration;
+    private PlaceTransitionHandler placeTransitionHandler;
 
     public AbstractModelBoundTableWidget(SearchableTableModelProvider<T, M> modelProvider,
             EventBus eventBus, DetailActionPanelPresenterWidget<T, ?, M> actionPanel, ClientStorage clientStorage,
@@ -128,6 +130,14 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
 
     protected SearchableTableModelProvider<T, M> getModelProvider() {
         return modelProvider;
+    }
+
+    public void setPlaceTransitionHandler(PlaceTransitionHandler handler) {
+        placeTransitionHandler = handler;
+    }
+
+    protected PlaceTransitionHandler getPlaceTransitionHandler() {
+        return placeTransitionHandler;
     }
 
     /**

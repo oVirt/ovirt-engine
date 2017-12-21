@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,12 +11,15 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -24,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -78,7 +83,18 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
         statusIconColumn.setContextMenuTitle(constants.statusIconNetwork());
         getTable().addColumn(statusIconColumn, "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        AbstractTextColumn<Network> nameColumn = new AbstractTextColumn<Network>() {
+        AbstractTextColumn<Network> nameColumn = new AbstractLinkColumn<Network>(
+                new FieldUpdater<Network, String>() {
+            @Override
+            public void update(int index, Network network, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), network.getName());
+                parameters.put(FragmentParams.DATACENTER.getName(),
+                        getModelProvider().getMainModel().getSelectedItem().getStoragePoolName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.networkGeneralSubTabPlace, parameters);
+            }
+        }) {
             @Override
             public String getValue(Network object) {
                 return object.getName();

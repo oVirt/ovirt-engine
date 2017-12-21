@@ -88,6 +88,7 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
     @Override
     public void setPlaceTransitionHandler(PlaceTransitionHandler handler) {
         placeTransitionHandler = handler;
+        getModelBoundTableWidget().setPlaceTransitionHandler(handler);
     }
 
     protected PlaceTransitionHandler getPlaceTransitionHandler() {

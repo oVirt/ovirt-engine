@@ -200,23 +200,23 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         Set<FragmentParams> params = FragmentParams.getParams(request);
 
         final String fragmentNameValue = request.getParameter(FragmentParams.NAME.getName(), "");
-        final T itemToSwitchTo;
+        final List<T> itemToSwitchTo;
         if (params.contains(FragmentParams.NAME)) {
             // Someone passed a fragment with a name here.
-            itemToSwitchTo = switchToName(fragmentNameValue);
-            if (itemToSwitchTo == null) {
+            itemToSwitchTo = switchToName(fragmentNameValue, request);
+            if (itemToSwitchTo == null || itemToSwitchTo.isEmpty()) {
                 currentPlace = request;
             } else {
                 currentPlace = null;
             }
         } else {
-            itemToSwitchTo = getMainModel().getSelectionModel().getFirstSelectedObject();
+            itemToSwitchTo = getMainModel().getSelectionModel().getSelectedObjects();
             currentPlace = null;
         }
         // Give the selection model time to resolve before trying to reveal the detail tab.
         Scheduler.get().scheduleDeferred(() -> {
             // Check if there is a name parameter so we can preselect something.
-            if (itemToSwitchTo != null) {
+            if (itemToSwitchTo != null && !itemToSwitchTo.isEmpty()) {
                 // Reveal presenter only when there is something selected in the main tab
                 getProxy().manualReveal(this);
             } else if ("".equals(fragmentNameValue) ||
@@ -236,17 +236,19 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         });
     }
 
-    private T switchToName(String name) {
+    private List<T> switchToName(String name, PlaceRequest request) {
         if (!"".equals(name)) {
-            T namedItem = (T) FragmentParams.findItemByName(name, getMainModel());
-            if (namedItem != null) {
+            List<T> namedItems = (List<T>) FragmentParams.findItemByName(name, getMainModel());
+            if (namedItems != null && !namedItems.isEmpty()) {
+                final List<T> filteredItems = filterByAdditionalParams(namedItems, request);
                 getMainModel().getSelectionModel().clear();
                 // This needs to be deferred, so the 'clear' is registered by the selection model. The selection model
                 // schedules its resolution of changes so we want the clear to happen so when we select the entity
                 // it updates properly in case what we selected was already selected
                 // (so a selection changed event fires).
-                Scheduler.get().scheduleDeferred(() -> getMainModel().getSelectionModel().setSelected(namedItem, true));
-                return namedItem;
+                Scheduler.get().scheduleDeferred(
+                        () -> filteredItems.forEach(item -> getMainModel().getSelectionModel().setSelected(item, true)));
+                namedItems = filteredItems;
             } else if (getMainModel().getItems() != null) {
                 // Items loaded and not found.
                 String searchForNameString = getMainModel().getDefaultSearchString() + "name=" + name; //$NON-NLS-1$
@@ -261,13 +263,23 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 // Not loaded yet, load items.
                 getMainModel().getSearchCommand().execute();
             }
-            return namedItem;
+            return namedItems;
         }
         return null;
     }
 
+    /**
+     * Filter by any additional fragment parameters.
+     * @param namedItems The list of un-filtered items.
+     * @param param The set of parameters.
+     * @return the filtered list of named items.
+     */
+    protected List<T> filterByAdditionalParams(List<T> namedItems, PlaceRequest request) {
+        return namedItems;
+    }
+
     @SuppressWarnings("unchecked")
-    private ListWithDetailsModel<M, D, T> getMainModel() {
+    protected ListWithDetailsModel<M, D, T> getMainModel() {
         return modelProvider.getMainModel();
     }
 
