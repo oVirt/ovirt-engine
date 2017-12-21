@@ -649,7 +649,7 @@ public class VmDevicesMonitoring {
         Guid newDeviceId = Guid.newGuid();
         VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
         Object deviceReadonlyValue = device.get(VdsProperties.ReadOnly);
-        boolean isReadOnly = deviceReadonlyValue != null && Boolean.getBoolean((String) deviceReadonlyValue);
+        boolean isReadOnly = deviceReadonlyValue != null && Boolean.getBoolean(deviceReadonlyValue.toString());
         VmDevice newDevice = new VmDevice(
                 id,
                 VmDeviceGeneralType.forValue(typeName),
