@@ -612,10 +612,9 @@ public class VmInfoBuildUtils {
         // - Boot devices of snapshot disks (i.e., boot disks of other VMs plugged to this one
         // - Then by the disk alias
         List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
-        Collections.sort(disks,
-                Comparator.comparing((Disk d) -> !d.getDiskVmElementForVm(vm.getId()).isBoot())
-                        .thenComparing(d -> d.getDiskVmElementForVm(vm.getId()).isBoot() && d.isDiskSnapshot())
-                        .thenComparing(new LexoNumericNameableComparator<>()));
+        disks.sort(Comparator.comparing((Disk d) -> !d.getDiskVmElementForVm(vm.getId()).isBoot())
+                .thenComparing(d -> d.getDiskVmElementForVm(vm.getId()).isBoot() && d.isDiskSnapshot())
+                .thenComparing(new LexoNumericNameableComparator<>()));
         return disks;
     }
 
