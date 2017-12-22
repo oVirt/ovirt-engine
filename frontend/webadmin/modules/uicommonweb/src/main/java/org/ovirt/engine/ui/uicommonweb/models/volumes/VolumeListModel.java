@@ -869,7 +869,9 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         closeProfilingStats.setIsCancel(true);
         profileStatsModel.getCommands().add(closeProfilingStats);
 
-        profileStatsModel.queryBackend(true);
+        if (selectedVolume.isNfsEnabled()) {
+            profileStatsModel.queryBackend(true);
+        }
         profileStatsModel.queryBackend(false);
     }
 
