@@ -141,7 +141,7 @@ public class BackendNetworksResourceTest
         setUpEntityQueryExpectations(1);
         setUriInfo(setUpBasicUriExpectations());
                 List<Network> networks = getCollection();
-        Collections.sort(networks, new NetworkIdComparator());
+        Collections.sort(networks, Comparator.comparing(Network::getId));
         verifyCollection(networks);
     }
 
@@ -160,17 +160,5 @@ public class BackendNetworksResourceTest
         StoragePool pool = mock(StoragePool.class);
         when(pool.getId()).thenReturn(id);
         return pool;
-    }
-
-    class NetworkIdComparator implements Comparator<Network>{
-
-        @Override
-        public int compare(Network n1, Network n2) {
-            if (n1.getId().equals(n2.getId())) {
-                return 0;
-            } else {
-                return n1.getId().compareTo(n2.getId());
-            }
-        }
     }
 }
