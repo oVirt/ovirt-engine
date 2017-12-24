@@ -178,12 +178,17 @@ public class VdsBrokerObjectsBuilder {
                 if (VdsProperties.Disk.equals(deviceMap.get(VdsProperties.Device))) {
                     DiskImage image = new DiskImage();
                     image.setDiskAlias((String) deviceMap.get(VdsProperties.Alias));
-                    image.setSize(Long.parseLong((String) deviceMap.get("apparentsize")));
-                    image.setActualSize(Long.parseLong((String) deviceMap.get("truesize")));
-                    image.setId(Guid.newGuid());
+                    Long size = assignLongValue(deviceMap, VdsProperties.disk_apparent_size);
+                    image.setSize(size != null ? size : 0);
+                    Double actualSize = assignDoubleValue(deviceMap, VdsProperties.disk_true_size);
+                    image.setActualSize(actualSize != null ? actualSize : 0);
                     image.setVolumeFormat(VolumeFormat.valueOf(((String) deviceMap.get(VdsProperties.Format)).toUpperCase()));
                     image.setShareable(false);
-                    image.setId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.DeviceId)));
+                    String id = assignStringValue(deviceMap, VdsProperties.DeviceId);
+                    if (id == null) {
+                        id = assignStringValue(deviceMap, VdsProperties.ImageId);
+                    }
+                    image.setId(Guid.createGuidFromString(id));
                     image.setImageId(Guid.createGuidFromString((String) deviceMap.get(VdsProperties.VolumeId)));
                     Guid domainId = Guid.createGuidFromString((String) deviceMap.get(VdsProperties.DomainId));
                     List<Guid> domainIds = Collections.singletonList(domainId);
@@ -198,6 +203,7 @@ public class VdsBrokerObjectsBuilder {
                         dve.setDiskInterface(DiskInterface.VirtIO);
                         break;
                     case "iscsi":
+                    case "scsi":
                         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
                         break;
                     case "ide":

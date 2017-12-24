@@ -205,6 +205,7 @@ public final class VdsProperties {
     public static final String vm_disk_write_latency = "writeLatency";
     public static final String vm_disk_flush_latency = "flushLatency";
     public static final String disk_true_size = "truesize";
+    public static final String disk_apparent_size = "apparentsize";
     public static final String image_group_id = "imageID";
     public static final String size = "size";
     public static final String lun_guid = "lunGUID";
