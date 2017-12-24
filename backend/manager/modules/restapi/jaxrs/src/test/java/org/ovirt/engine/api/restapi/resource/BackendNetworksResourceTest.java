@@ -5,7 +5,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -141,7 +140,7 @@ public class BackendNetworksResourceTest
         setUpEntityQueryExpectations(1);
         setUriInfo(setUpBasicUriExpectations());
                 List<Network> networks = getCollection();
-        Collections.sort(networks, Comparator.comparing(Network::getId));
+        networks.sort(Comparator.comparing(Network::getId));
         verifyCollection(networks);
     }
 
