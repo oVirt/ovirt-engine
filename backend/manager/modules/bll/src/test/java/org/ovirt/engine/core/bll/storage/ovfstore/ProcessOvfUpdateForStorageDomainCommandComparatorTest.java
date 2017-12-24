@@ -33,7 +33,7 @@ public class ProcessOvfUpdateForStorageDomainCommandComparatorTest {
         );
         List<StorageDomainOvfInfo> actual = new LinkedList<>(expected);
         Collections.shuffle(actual);
-        Collections.sort(actual, ProcessOvfUpdateForStorageDomainCommand.OVF_INFO_COMPARATOR);
+        actual.sort(ProcessOvfUpdateForStorageDomainCommand.OVF_INFO_COMPARATOR);
 
         assertEquals(expected, actual);
     }

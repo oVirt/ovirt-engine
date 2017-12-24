@@ -151,7 +151,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
         List<StorageDomainOvfInfo> storageDomainOvfInfos =
                 storageDomainOvfInfoDao.getAllForDomain(getStorageDomainId());
         ovfDiskCount = storageDomainOvfInfos.size();
-        Collections.sort(storageDomainOvfInfos, OVF_INFO_COMPARATOR);
+        storageDomainOvfInfos.sort(OVF_INFO_COMPARATOR);
 
         for (StorageDomainOvfInfo storageDomainOvfInfo : storageDomainOvfInfos) {
             if (storageDomainOvfInfo.getStatus() != StorageDomainOvfInfoStatus.DISABLED) {
