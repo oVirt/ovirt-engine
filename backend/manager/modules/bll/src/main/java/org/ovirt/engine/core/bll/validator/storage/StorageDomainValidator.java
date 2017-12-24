@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -472,18 +474,14 @@ public class StorageDomainValidator {
         if (!ret.getSucceeded()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_RETRIEVE_VMS_FOR_WITH_LEASES);
         }
-        if (!getRetVal(ret).isEmpty()) {
-            getRetVal(ret).stream().forEach(vmBase -> {
-                VM vm = getVmDao().get(vmBase.getId());
-                if (vm != null && vm.getStatus() != VMStatus.Down) {
-                    invalidVmsForBackupStorageDomain.add(vmBase.getName());
-                }
-            });
-        }
+        getRetVal(ret).forEach(vmBase -> {
+            VmDynamic vm = getVmDynamicDao().get(vmBase.getId());
+            if (vm != null && vm.getStatus() != VMStatus.Down) {
+                invalidVmsForBackupStorageDomain.add(vmBase.getName());
+            }
+        });
         List<VM> vms = getVmDao().getAllActiveForStorageDomain(storageDomain.getId());
-        for (VM vm : vms) {
-            vmHandler.updateDisksFromDb(vm);
-        }
+        vms.forEach(vmHandler::updateDisksFromDb);
         invalidVmsForBackupStorageDomain.addAll(vms.stream()
                         .filter(vm -> vm.getDiskMap()
                                 .values()
@@ -492,7 +490,7 @@ public class StorageDomainValidator {
                                 .filter(DisksFilter.ONLY_PLUGGED)
                                 .map(DiskImage.class::cast)
                                 .anyMatch(vmDisk -> vmDisk.getStorageIds().get(0).equals(storageDomain.getId())))
-                        .map(vm -> vm.getName())
+                        .map(VM::getName)
                         .collect(Collectors.toList()));
         if (!invalidVmsForBackupStorageDomain.isEmpty()) {
             log.warn("Can't update the backup property of the storage domain since it contains VMs with " +
@@ -521,5 +519,9 @@ public class StorageDomainValidator {
 
     protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
+    }
+
+    protected VmDynamicDao getVmDynamicDao() {
+        return DbFacade.getInstance().getVmDynamicDao();
     }
 }

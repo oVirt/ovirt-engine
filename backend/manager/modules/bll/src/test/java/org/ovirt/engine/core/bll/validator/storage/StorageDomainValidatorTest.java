@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -62,6 +63,9 @@ public class StorageDomainValidatorTest {
     @Mock
     private VmDao vmDao;
 
+    @Mock
+    private VmDynamicDao vmDynamicDao;
+
     @ClassRule
     public static InjectorRule injectorRule = new InjectorRule();
 
@@ -77,6 +81,7 @@ public class StorageDomainValidatorTest {
         domain = new StorageDomain();
         validator = spy(new StorageDomainValidator(domain));
         doReturn(vmDao).when(validator).getVmDao();
+        doReturn(vmDynamicDao).when(validator).getVmDynamicDao();
     }
 
     @Test
@@ -272,7 +277,7 @@ public class StorageDomainValidatorTest {
         ret.setReturnValue(vmLeases);
         ret.setSucceeded(true);
         doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
-        when(vmDao.get(vm1.getId())).thenReturn(vm1);
+        when(vmDynamicDao.get(vm1.getId())).thenReturn(vm1.getDynamicData());
         assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_RUNNING_VM_OR_VM_LEASES_PRESENT_ON_STORAGE_DOMAIN));
     }
