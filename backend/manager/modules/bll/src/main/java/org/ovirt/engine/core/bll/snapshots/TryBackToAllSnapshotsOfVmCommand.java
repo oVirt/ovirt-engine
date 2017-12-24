@@ -473,7 +473,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
           DiskImagesValidator diskImagesToPreviewValidator = new DiskImagesValidator(getImagesToPreview());
           if (!validate(diskImagesToPreviewValidator.diskImagesNotIllegal()) ||
-                  !validate(diskImagesToPreviewValidator.diskImagesNotLocked())) {
+                  !validate(diskImagesToPreviewValidator.diskImagesNotLocked()) ||
+                  !validate(diskImagesToPreviewValidator.diskImagesSnapshotsAttachedToVm(getVmId()))) {
               return false;
           }
 

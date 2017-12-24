@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
@@ -143,6 +144,31 @@ public class DiskImagesValidator {
 
         return ValidationResult.VALID;
     }
+
+    public ValidationResult diskImagesSnapshotsAttachedToVm(Guid vmId) {
+        LinkedList<String> diskSnapshotInfo = new LinkedList<>();
+        VM vm = getVmDao().get(vmId);
+        for (DiskImage diskImage : diskImages) {
+            List<VmDevice> devices = getVmDeviceDao().getVmDevicesByDeviceId(diskImage.getId(), vmId);
+            if (devices.isEmpty()) {
+                // The specified disk image does not belong to the vm
+                Snapshot snapshot = getSnapshotDao().get(diskImage.getSnapshotId());
+                Disk disk = getDbFacade().getDiskDao().get(diskImage.getId());
+                diskSnapshotInfo.add(String.format("%s ,%s",
+                        disk.getDiskAlias(), snapshot.getDescription()));
+            }
+        }
+
+        if (!diskSnapshotInfo.isEmpty()) {
+            EngineMessage message = EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_NOT_ATTACHED_TO_VM;
+            return new ValidationResult(message,
+                    String.format("$disksInfo %s", String.format(StringUtils.join(diskSnapshotInfo, "%n"))),
+                    String.format("$vmName %s", vm.getName()));
+        }
+
+        return ValidationResult.VALID;
+    }
+
 
     /**
      * checks that the given disks has no derived disks on the given storage domain.
