@@ -221,18 +221,28 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION ClearAllAuditLogEvents (v_severity INT)
 RETURNS VOID AS $PROCEDURE$
 BEGIN
+
     UPDATE audit_log
     SET deleted = true
-    WHERE severity != v_severity;
+    FROM ( SELECT * FROM audit_log
+           WHERE severity != v_severity
+               AND NOT deleted
+           FOR UPDATE) AS s;
+
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DisplayAllAuditLogEvents (v_severity INT)
 RETURNS VOID AS $PROCEDURE$
 BEGIN
+
     UPDATE audit_log
     SET deleted = false
-    WHERE severity != v_severity;
+    FROM ( SELECT * FROM audit_log
+           WHERE severity != v_severity
+               AND deleted
+           FOR UPDATE) AS s;
+
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -242,9 +252,15 @@ CREATE OR REPLACE FUNCTION SetAllAuditLogAlerts (
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
+
+
     UPDATE audit_log
     SET deleted = v_value
-    WHERE severity = v_severity;
+    FROM ( SELECT * FROM audit_log
+           WHERE severity = v_severity
+               AND deleted != v_value
+           FOR UPDATE) AS s;
+
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
