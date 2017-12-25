@@ -22,9 +22,11 @@ import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -51,6 +53,8 @@ public class VmDevicesConverter {
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private DiskLunMapDao diskLunMapDao;
+    @Inject
+    private DiskImageDao diskImageDao;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -409,6 +413,10 @@ public class VmDevicesConverter {
                         case "floppy":
                             return diskType.equals(d.getDevice());
                         default:
+                            if (d.getSnapshotId() != null && path.contains(VdsProperties.Transient)) {
+                                DiskImage diskImage =  diskImageDao.getDiskSnapshotForVmSnapshot(d.getDeviceId(), d.getSnapshotId());
+                                return diskImage != null && path.contains(diskImage.getImageId().toString());
+                            }
                             Guid diskId = d.getId().getDeviceId();
                             return path.contains(diskId.toString()) ||
                                     isPathContainsLunIdOfDisk(path, diskId, diskToLunSupplier);

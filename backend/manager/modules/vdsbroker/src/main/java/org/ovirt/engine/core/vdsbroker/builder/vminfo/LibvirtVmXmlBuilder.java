@@ -1686,7 +1686,8 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
                 break;
             }
-            diskMetadata.put(dev, createDiskUuidsMap(diskImage));
+            diskMetadata.put(dev, createDiskParams(diskImage));
+
             break;
 
         case LUN:
@@ -1720,9 +1721,16 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private Map<String, Object> createDiskUuidsMap(DiskImage diskImage) {
-        return createDiskUuidsMap(diskImage.getStoragePoolId(), diskImage.getStorageIds().get(0),
-                diskImage.getId(), diskImage.getImageId());
+    private Map<String, Object> createDiskParams(DiskImage diskImage) {
+        Map<String, Object> diskParams =
+                createDiskUuidsMap(diskImage.getStoragePoolId(),
+                        diskImage.getStorageIds().get(0),
+                        diskImage.getId(),
+                        diskImage.getImageId());
+        if (!diskImage.getActive()) {
+            diskParams.put(VdsProperties.Shareable, VdsProperties.Transient);
+        }
+        return diskParams;
     }
 
     private Map<String, Object> createDiskUuidsMap(Guid poolId, Guid domainId, Guid imageId, Guid volumeId) {
