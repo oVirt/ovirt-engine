@@ -38,7 +38,7 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
  *
  * By default:
  * 1) We don't use any cluster.
- * 2) We don't use verbose mode.
+ * 2) We use verbose mode level 1 (-v).
  * 3) Playbook directory is $PREFIX/usr/share/ovirt-ansible-roles/playbooks
  * 4) Private key used is $PREFIX/etc/pki/ovirt-engine/keys/engine_id_rsa
  * 5) Log file is $PREFIX/var/log/ovirt-engine/ansible/{prefix}-{timestamp}-{playbook-name}[-{suffix}].log
@@ -81,7 +81,7 @@ public class AnsibleCommandBuilder {
         cluster = "unspecified";
         enableLogging = true;
         envVars = new HashMap<>();
-        verboseLevel = AnsibleVerbosity.LEVEL0;
+        verboseLevel = AnsibleVerbosity.LEVEL1;
         config = EngineLocalConfig.getInstance();
         playbookDir = Paths.get(config.getUsrDir().getPath(),  "playbooks");
         privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");

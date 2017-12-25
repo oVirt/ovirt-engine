@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleVerbosity;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -103,7 +102,6 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         try {
             AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(host.getHostName())
-                .verboseLevel(AnsibleVerbosity.LEVEL1)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-mgmt-ansible")

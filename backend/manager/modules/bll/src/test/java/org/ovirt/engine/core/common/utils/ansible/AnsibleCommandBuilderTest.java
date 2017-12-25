@@ -32,6 +32,7 @@ public class AnsibleCommandBuilderTest {
     private static final String PRIVATE_KEY = "--private-key=/etc/pki/ovirt-engine/keys/engine_id_rsa";
     private static final String ANSIBLE_PLAYBOOK = "myplaybook.yml";
     private static final String ANSIBLE_PLAYBOOK_FULL_PATH = "/usr/share/ovirt-engine/playbooks/myplaybook.yml";
+    private static final String ANSIBLE_LOG_LEVEL = "-v";
 
     @ClassRule
     public static MockEngineLocalConfigRule mockEngineLocalConfigRule;
@@ -48,7 +49,15 @@ public class AnsibleCommandBuilderTest {
     @Test
     public void testAllEmpty() {
         String command = createCommand(new AnsibleCommandBuilder().playbook(ANSIBLE_PLAYBOOK));
-        assertEquals(join(AnsibleCommandBuilder.ANSIBLE_COMMAND, PRIVATE_KEY, ANSIBLE_PLAYBOOK_FULL_PATH), command);
+        assertEquals(
+            join(
+                AnsibleCommandBuilder.ANSIBLE_COMMAND,
+                ANSIBLE_LOG_LEVEL,
+                PRIVATE_KEY,
+                ANSIBLE_PLAYBOOK_FULL_PATH
+            ),
+            command
+        );
     }
 
     @Test
@@ -73,6 +82,7 @@ public class AnsibleCommandBuilderTest {
         assertEquals(
             join(
                 AnsibleCommandBuilder.ANSIBLE_COMMAND,
+                ANSIBLE_LOG_LEVEL,
                 PRIVATE_KEY,
                 "--inventory=" + inventoryFile,
                 ANSIBLE_PLAYBOOK_FULL_PATH
@@ -95,6 +105,19 @@ public class AnsibleCommandBuilderTest {
     }
 
     @Test
+    public void testVerbosityLevelZero() {
+        String command = createCommand(
+            new AnsibleCommandBuilder()
+                .verboseLevel(AnsibleVerbosity.LEVEL0)
+                .playbook(ANSIBLE_PLAYBOOK)
+        );
+        assertEquals(
+            join(AnsibleCommandBuilder.ANSIBLE_COMMAND, PRIVATE_KEY, ANSIBLE_PLAYBOOK_FULL_PATH),
+            command
+        );
+    }
+
+    @Test
     public void testExtraVariables() {
         String command = createCommand(
             new AnsibleCommandBuilder()
@@ -108,6 +131,7 @@ public class AnsibleCommandBuilderTest {
         assertEquals(
             join(
                 AnsibleCommandBuilder.ANSIBLE_COMMAND,
+                ANSIBLE_LOG_LEVEL,
                 PRIVATE_KEY,
                 "--extra-vars=a=1",
                 "--extra-vars=b=2",
