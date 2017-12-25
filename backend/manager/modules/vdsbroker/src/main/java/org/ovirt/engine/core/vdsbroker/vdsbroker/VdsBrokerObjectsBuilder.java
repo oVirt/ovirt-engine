@@ -1789,6 +1789,25 @@ public class VdsBrokerObjectsBuilder {
         if (struct.containsKey(VdsProperties.netConfigDirty)) {
             vds.setNetConfigDirty(assignBoolValue(struct, VdsProperties.netConfigDirty));
         }
+
+        setVlanSpeeds(vds);
+    }
+
+    private static void setVlanSpeeds(VDS vds) {
+        List<VdsNetworkInterface> interfaces = vds.getInterfaces();
+        List<VdsNetworkInterface> vlans = interfaces
+                .stream()
+                .filter(iface -> NetworkCommonUtils.isVlan(iface))
+                .collect(Collectors.toList());
+
+        for (VdsNetworkInterface vlanIface : vlans) {
+            VdsNetworkInterface baseInterface = interfaces
+                    .stream()
+                    .filter(iface -> iface.getName().equals(vlanIface.getBaseInterface()))
+                    .findFirst()
+                    .get();
+            vlanIface.setSpeed(baseInterface.getSpeed());
+        }
     }
 
     /***
