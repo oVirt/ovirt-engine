@@ -1,18 +1,27 @@
-- name: Include firewalld rules
-  include_vars:
-    file: "{{ firewald_rules_file }}"
-    name: cluster_vars
-  ignore_errors: yes
-  register: include_cluster_vars
+- name: Check for firewalld rules file
+  local_action:
+    module: stat
+    path: "{{ role_path }}/vars/{{ firewald_rules_file }}"
+  register: firewalld_rule_file_stat
 
-# We need to ignore errors in case the service doesn't exist.
-- name: Enable firewalld rules
-  firewalld:
-    port: "{{ item.port | default(omit) }}"
-    service: "{{ item.service | default(omit) }}"
-    permanent: yes
-    immediate: yes
-    state: enabled
-  ignore_errors: yes
-  with_items: "{{ cluster_vars.host_deploy_firewalld_rules | default([]) }}"
-  when: "cluster_vars is defined and not include_cluster_vars.failed | default(false)"
+- block:
+  - name: Include firewalld rules
+    include_vars:
+      file: "{{ firewald_rules_file }}"
+      name: cluster_vars
+    ignore_errors: yes
+    register: include_cluster_vars
+
+  # We need to ignore errors in case the service doesn't exist.
+  - name: Enable firewalld rules
+    firewalld:
+      port: "{{ item.port | default(omit) }}"
+      service: "{{ item.service | default(omit) }}"
+      permanent: yes
+      immediate: yes
+      state: enabled
+    ignore_errors: yes
+    with_items: "{{ cluster_vars.host_deploy_firewalld_rules | default([]) }}"
+    when: "cluster_vars is defined and not include_cluster_vars.failed | default(false)"
+
+  when: firewalld_rule_file_stat.stat.exists
