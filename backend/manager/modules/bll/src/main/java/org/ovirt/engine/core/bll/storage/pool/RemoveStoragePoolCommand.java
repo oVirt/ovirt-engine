@@ -92,8 +92,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         List<StorageDomain> storageDomains = storageDomainDao.getAllForStoragePool(getStoragePool().getId());
         Collections.sort(storageDomains, Comparator.comparing(StorageDomain::getStorageDomainType));
 
-        if (storageDomains.size() > 0) {
-            if (!getParameters().isForceDelete() && getAllRunningVdssInPool().size() > 0) {
+        if (!storageDomains.isEmpty()) {
+            if (!getParameters().isForceDelete() && !getAllRunningVdssInPool().isEmpty()) {
                 if(!regularRemoveStorageDomains(storageDomains)) {
                     setSucceeded(false);
                     return;
