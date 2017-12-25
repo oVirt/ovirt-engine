@@ -25,8 +25,8 @@ public class AddDiskParameters extends VmDiskOperationParameterBase {
         this(new DiskVmElement(Guid.Empty, null), diskInfo);
     }
 
-    public AddDiskParameters(DiskVmElement diskVmElement, Disk DiskInfo) {
-        super(diskVmElement, DiskInfo);
+    public AddDiskParameters(DiskVmElement diskVmElement, Disk diskInfo) {
+        super(diskVmElement, diskInfo);
         storageDomainId = Guid.Empty;
     }
 
