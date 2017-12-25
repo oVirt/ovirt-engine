@@ -649,4 +649,7 @@ public class ProviderModel extends Model {
         getTestResult().setEntity(errorMessage);
     }
 
+    public boolean isEditProviderMode () {
+        return action == ActionType.UpdateProvider;
+    }
 }

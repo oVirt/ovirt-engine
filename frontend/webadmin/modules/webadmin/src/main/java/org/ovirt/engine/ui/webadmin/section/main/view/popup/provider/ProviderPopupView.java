@@ -192,6 +192,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         vmwarePropertiesWidget.edit(model.getVmwarePropertiesModel());
         kvmPropertiesWidget.edit(model.getKvmPropertiesModel());
         xenPropertiesWidget.edit(model.getXenPropertiesModel());
+
+        if (model.isEditProviderMode()) {
+            setCurrentActiveProviderWidget();
+        }
     }
 
     @Override
