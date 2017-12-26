@@ -39,10 +39,8 @@ import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
@@ -65,11 +63,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     @Inject
     private VmNicDao vmNicDao;
     @Inject
-    private StorageDomainStaticDao storageDomainStaticDao;
-    @Inject
     private VdsDao vdsDao;
-    @Inject
-    private VmDao vmDao;
 
     private Map<String, Pair<String, String>> sharedLocks;
 
