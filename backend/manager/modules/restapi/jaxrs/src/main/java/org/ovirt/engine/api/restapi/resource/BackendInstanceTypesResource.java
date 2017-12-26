@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendInstanceTypesResource
@@ -61,6 +62,7 @@ public class BackendInstanceTypesResource
         }
 
         vm.setVmDescription(description);
+        updateMaxMemoryIfUnspecified(instanceType, vm);
 
         AddVmTemplateParameters addInstanceTypeParameters =
                 new AddVmTemplateParameters(vm, name, description);
@@ -91,6 +93,12 @@ public class BackendInstanceTypesResource
         }
 
         return response;
+    }
+
+    private void updateMaxMemoryIfUnspecified(InstanceType instanceType, VM vm) {
+        if (!(instanceType.isSetMemoryPolicy() && instanceType.getMemoryPolicy().isSetMax()) && instanceType.isSetMemory()) {
+            vm.setMaxMemorySizeMb(VmCommonUtils.getMaxMemorySizeDefault(vm.getMemSizeMb()));
+        }
     }
 
     @Override
