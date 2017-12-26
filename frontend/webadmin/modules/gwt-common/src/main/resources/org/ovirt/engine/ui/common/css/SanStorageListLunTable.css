@@ -29,6 +29,12 @@
 	white-space: normal;
 }
 
+.dataGridHeader > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .dataGridCell {
 	padding: 0px 3px;
 	height: 24px !important;
@@ -38,6 +44,12 @@
 	border-left: 0px;
 	white-space: normal;
 	cursor: pointer;
+}
+
+.dataGridCell > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .dataGridEvenRow {

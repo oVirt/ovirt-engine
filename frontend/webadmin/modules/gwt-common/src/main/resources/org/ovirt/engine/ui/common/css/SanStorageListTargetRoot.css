@@ -24,6 +24,12 @@
 	cursor: pointer;
 }
 
+.dataGridCell > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .dataGridEvenRow {
 	background-color: transparent;
 }

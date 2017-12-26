@@ -149,4 +149,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("{0} Pkts")
     SafeHtml dropRate(double speed);
+
+    @Template("<div title=\"{0}\" style='white-space: nowrap; text-overflow: ellipsis; overflow: hidden;'>{0}</div>")
+    SafeHtml textWithToolTip(String text);
 }
