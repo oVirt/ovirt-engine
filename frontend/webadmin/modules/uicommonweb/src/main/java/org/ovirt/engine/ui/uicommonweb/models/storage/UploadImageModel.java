@@ -353,7 +353,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             } });
 
             StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
-            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate(storageFormatType);
+            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate(storageFormatType, getImageSize());
 
             getInvalidityReasons().addAll(getImagePath().getInvalidityReasons());
             getInvalidityReasons().addAll(getImageInfoModel().getInvalidityReasons());

@@ -521,6 +521,8 @@ public interface UIConstants extends Constants {
 
     String uploadImageCannotBeOpened();
 
+    String uploadImageInvalidAlignment();
+
     String snapshotsTitle();
 
     String deleteSnapshotTitle();

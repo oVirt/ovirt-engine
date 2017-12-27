@@ -194,7 +194,7 @@ public class ImageInfoModel extends EntityModel<String> {
         getEntityChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
-    public boolean validate(StorageFormatType storageFormatType) {
+    public boolean validate(StorageFormatType storageFormatType, long imageSize) {
         if (!fileLoaded) {
             getInvalidityReasons().add(constants.uploadImageCannotBeOpened());
             return false;
@@ -213,6 +213,12 @@ public class ImageInfoModel extends EntityModel<String> {
                             qcowCompat.getValue(), storageFormatType.name()));
                     return false;
             }
+        }
+
+        // Uploaded image must be aligned to sector size (512 bytes in vdsm)
+        if (imageSize % 512 != 0) {
+            getInvalidityReasons().add(constants.uploadImageInvalidAlignment());
+            return false;
         }
 
         return true;
