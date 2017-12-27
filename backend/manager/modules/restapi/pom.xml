@@ -32,7 +32,7 @@
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxrs</artifactId>
-        <version>3.0.14.Final</version>
+        <version>3.0.24.Final</version>
       </dependency>
 
     </dependencies>
