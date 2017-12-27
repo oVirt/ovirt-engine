@@ -750,7 +750,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     /**
-     * Organizes items according to the current groupping flag. When new items provided takes them in account and add to
+     * Organizes items according to the current grouping flag. When new items provided takes them in account and add to
      * the Items collection.
      */
     protected void initializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets) {
@@ -793,7 +793,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 isTargetModelList = false;
             }
             else {
-                // Convert to list of another type as neccessary.
+                // Convert to list of another type as necessary.
                 if (isTargetModelList) {
                     setItems(toLunModelList((List<SanTargetModel>) getItems()));
                 }
