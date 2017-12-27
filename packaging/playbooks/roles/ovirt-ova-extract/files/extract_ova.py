@@ -65,17 +65,6 @@ def extract_disks(ova_path, image_paths):
     buf = mmap.mmap(-1, TAR_BLOCK_SIZE)
     with io.FileIO(fd, "r", closefd=True) as ova_file, \
             closing(buf):
-        # read the tar info of the ovf
-        ova_file.readinto(buf)
-        size = nti(buf[124:136])
-        jump = size
-        # the ovf is typically not aligned to blocks of 512 bytes
-        remainder = size % TAR_BLOCK_SIZE
-        if remainder:
-            jump += TAR_BLOCK_SIZE - remainder
-        ova_file.seek(jump, 1)
-
-        # extract the disks
         while True:
             # read next tar info
             ova_file.readinto(buf)
@@ -88,10 +77,18 @@ def extract_disks(ova_path, image_paths):
             # extract the next disk to the corresponding image
             name = nts(info[0:100], 'utf-8', 'surrogateescape')
             size = nti(info[124:136])
-            for image_path in image_paths:
-                if name in image_path:
-                    extract_disk(ova_file, size, image_path)
-                    break
+            if name.lower().endswith('ovf'):
+                jump = size
+                # ovf is typically not aligned to 512 bytes blocks
+                remainder = size % TAR_BLOCK_SIZE
+                if remainder:
+                    jump += TAR_BLOCK_SIZE - remainder
+                ova_file.seek(jump, 1)
+            else:
+                for image_path in image_paths:
+                    if name in image_path:
+                        extract_disk(ova_file, size, image_path)
+                        break
 
 
 if len(sys.argv) < 3:

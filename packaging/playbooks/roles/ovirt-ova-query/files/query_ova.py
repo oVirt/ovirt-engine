@@ -9,6 +9,8 @@ if len(sys.argv) < 2:
 
 ova_path = sys.argv[1]
 with tarfile.open(ova_path) as ova_file:
-    ova_entries = ova_file.getmembers()
-    ovf_file = ova_file.extractfile(ova_entries[0])
-    print (ovf_file.read())
+    for ova_entry in ova_file.getmembers():
+        if ova_entry.name.lower().endswith('ovf'):
+            ovf_file = ova_file.extractfile(ova_entry)
+            print (ovf_file.read())
+            break
