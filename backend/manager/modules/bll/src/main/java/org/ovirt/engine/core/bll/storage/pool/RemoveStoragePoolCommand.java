@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +83,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
         // Detach master storage domain last.
         List<StorageDomain> storageDomains = storageDomainDao.getAllForStoragePool(getStoragePool().getId());
-        Collections.sort(storageDomains, Comparator.comparing(StorageDomain::getStorageDomainType));
+        storageDomains.sort(Comparator.comparing(StorageDomain::getStorageDomainType));
 
         if (!storageDomains.isEmpty()) {
             if (!getParameters().isForceDelete() && !getAllRunningVdssInPool().isEmpty()) {
