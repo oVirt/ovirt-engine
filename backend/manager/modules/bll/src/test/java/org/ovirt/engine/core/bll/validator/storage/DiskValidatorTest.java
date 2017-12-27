@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.InjectorRule;
@@ -54,6 +56,9 @@ public class DiskValidatorTest {
 
     @Mock
     private StorageDomainDao storageDomainDao;
+
+    @Mock
+    private DiskImageDao diskImageDao;
 
     private DiskValidator validator;
     private DiskImage disk;
@@ -91,6 +96,7 @@ public class DiskValidatorTest {
         disk.setDiskAlias("disk1");
         validator = spy(new DiskValidator(disk));
         doReturn(vmDao).when(validator).getVmDao();
+        doReturn(diskImageDao).when(validator).getDiskImageDao();
     }
 
     private void setupForLun() {
@@ -276,6 +282,32 @@ public class DiskValidatorTest {
         disk.getImage().setVolumeType(VolumeType.Preallocated);
         assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
                 .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_PREALLOCATED));
+    }
+
+    @Test
+    public void canCopyDiskFails() {
+        StorageDomain domain = createStorageDomainForDisk(StorageType.ISCSI);
+        domain.setStorageFormat(StorageFormatType.V3);
+        disk.setSize(1000);
+
+        DiskImage child = createDiskImage();
+        child.setSize(1000);
+        child.setStorageIds(Collections.singletonList(domain.getId()));
+        DiskImage parent = createDiskImage();
+        parent.setId(Guid.newGuid());
+        parent.setSize(500);
+        parent.setStorageIds(Collections.singletonList(domain.getId()));
+
+        child.setParentId(parent.getParentId());
+
+        List<DiskImage> diskImages = new ArrayList<>(2);
+        diskImages.add(parent);
+        diskImages.add(child);
+
+        when(validator.getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId())).thenReturn(diskImages);
+
+        assertThat(validator.diskWasExtendedAfterSnapshotWasTaken(domain),
+                failsWith(EngineMessage.CANNOT_MOVE_DISK));
     }
 
     private LunDisk createLunDisk(ScsiGenericIO sgio) {
