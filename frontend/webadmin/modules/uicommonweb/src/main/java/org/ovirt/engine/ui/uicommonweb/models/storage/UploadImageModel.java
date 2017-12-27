@@ -352,30 +352,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 return result;
             } });
 
-            if (getImagePath().getIsValid()) {
-                getImageInfoModel().validateEntity(new IValidation[]{
-                        value -> {
-                            ValidationResult result = new ValidationResult();
-
-                            ImageInfoModel.QemuCompat qcowCompat = getImageInfoModel().getQcowCompat();
-                            if (qcowCompat != null && qcowCompat != ImageInfoModel.QemuCompat.V2) {
-                                StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
-                                switch (storageFormatType) {
-                                    case V1:
-                                    case V2:
-                                    case V3:
-                                        result.setSuccess(false);
-                                        result.getReasons().add(messages.uploadImageQemuCompatUnsupported(
-                                                qcowCompat.getValue(), storageFormatType.name()));
-                                        break;
-                                }
-                            }
-                            return result;
-                        }
-                });
-            }
-
-            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate();
+            StorageFormatType storageFormatType = getDiskModel().getStorageDomain().getSelectedItem().getStorageFormat();
+            uploadImageIsValid = getImagePath().getIsValid() && getImageInfoModel().validate(storageFormatType);
 
             getInvalidityReasons().addAll(getImagePath().getInvalidityReasons());
             getInvalidityReasons().addAll(getImageInfoModel().getInvalidityReasons());

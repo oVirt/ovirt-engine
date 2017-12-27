@@ -3,18 +3,21 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.gwt.dom.client.Element;
 
 public class ImageInfoModel extends EntityModel<String> {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private VolumeFormat format;
     private int actualSize;
@@ -191,7 +194,7 @@ public class ImageInfoModel extends EntityModel<String> {
         getEntityChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
-    public boolean validate() {
+    public boolean validate(StorageFormatType storageFormatType) {
         if (!fileLoaded) {
             getInvalidityReasons().add(constants.uploadImageCannotBeOpened());
             return false;
@@ -200,6 +203,18 @@ public class ImageInfoModel extends EntityModel<String> {
             getInvalidityReasons().add(constants.uploadImageBackingFileUnsupported());
             return false;
         }
+
+        if (qcowCompat != null && qcowCompat != ImageInfoModel.QemuCompat.V2) {
+            switch (storageFormatType) {
+                case V1:
+                case V2:
+                case V3:
+                    getInvalidityReasons().add(messages.uploadImageQemuCompatUnsupported(
+                            qcowCompat.getValue(), storageFormatType.name()));
+                    return false;
+            }
+        }
+
         return true;
     }
 
