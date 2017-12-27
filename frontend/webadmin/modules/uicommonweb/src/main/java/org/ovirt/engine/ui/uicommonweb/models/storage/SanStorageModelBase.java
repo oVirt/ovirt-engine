@@ -664,6 +664,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         initializeItems(newItems, null);
         proposeDiscover();
+        getContainer().stopProgress();
     }
 
     private int getAdditionalAvailableSize(LUNs lun) {
@@ -1121,6 +1122,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         setValuesForMaintenance(model);
 
+        getContainer().startProgress();
         AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery<>(lunList ->
                 model.applyData(lunList, true, Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem()),
                         isInMaintenance, metadata)), storage.getStorage(), hostId);
