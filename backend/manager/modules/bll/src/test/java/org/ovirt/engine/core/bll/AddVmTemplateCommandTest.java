@@ -26,7 +26,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ValidationResultMatchers;
-import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -45,10 +44,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 
 /**
  * A test case for {@link AddVmTemplateCommand}
@@ -70,19 +67,11 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
     @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
     @Mock
-    private DiskImagesValidator diskImagesValidator;
-    @Mock
-    private VmDeviceDao deviceDao;
-    @Mock
-    private DiskVmElementDao diskVmElementDao;
-    @Mock
     private DiskHandler diskHandler;
     @Mock
     private ImagesHandler imagesHandler;
-
     @Mock
     private VmHandler vmHandler;
-
     @Mock
     private VmDeviceUtils vmDeviceUtils;
 
