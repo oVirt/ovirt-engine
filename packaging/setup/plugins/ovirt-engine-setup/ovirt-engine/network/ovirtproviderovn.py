@@ -45,6 +45,7 @@ from ovirt_engine_setup.engine.constants import FileLocations
 from ovirt_engine_setup.engine.constants import OvnEnv
 from ovirt_engine_setup.engine.constants import OvnFileLocations
 from ovirt_engine_setup.engine_common import constants as oengcommcons
+from ovirt_engine_setup.engine_common import database
 
 from ovirt_setup_lib import dialog
 
@@ -72,6 +73,8 @@ class Plugin(plugin.PluginBase):
 
     CONNECTION_TCP = 'tcp'
     CONNECTION_SSL = 'ssl'
+
+    PROVIDER_NAME = 'ovirt-provider-ovn'
 
     # TODO: OVN north db will be temporarily configured to
     # connect over TCP, not SSL.
@@ -118,11 +121,54 @@ class Plugin(plugin.PluginBase):
             Defaults.DEFAULT_OVN_FIREWALLD_SERVICES
         )
 
+    def _check_provider_exists(self):
+        statement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
+        results = statement.execute(
+            statement="""
+                select id from GetProviderByName(
+                    v_name:=%(provider_name)s
+                )
+            """,
+            args=dict(
+                provider_name=self.PROVIDER_NAME,
+            ),
+            ownConnection=True,
+        )
+        if not results:
+            return None
+
+        return results[0]['id']
+
+    def _notify_provider_already_exists(self, existing_provider_id):
+        short_error_message = _(
+            'Cannot add ovirt-provider-ovn: '
+            'Provider name must be unique.'
+        )
+        long_error_message = _(
+            'Cannot install ovirt-provider-ovn. '
+            'A provider named "{provider_name}" '
+            'already exists in the database and is not '
+            'recognized as an engine-setup managed provider.'
+            'To add a new ovirt-provider-ovn, please '
+            'rename or remove the existing provider.'
+            'The offending provider id is: {provider_id}'
+            .format(
+                provider_name=self.PROVIDER_NAME,
+                provider_id=existing_provider_id
+            )
+        )
+        self.dialog.note(
+            text=long_error_message
+        )
+        raise RuntimeError(short_error_message)
+
     def _add_provider_to_db(self):
         auth_required = self._user is not None
         fqdn = self.environment[osetupcons.ConfigEnv.FQDN]
         provider_id = str(uuid.uuid4())
-
         self.logger.info(_('Adding default OVN provider to database'))
 
         password = (
@@ -152,7 +198,7 @@ class Plugin(plugin.PluginBase):
             """,
             args=dict(
                 provider_id=provider_id,
-                provider_name='ovirt-provider-ovn',
+                provider_name=self.PROVIDER_NAME,
                 provider_description='oVirt network provider for OVN',
                 provider_url='https://%s:9696' % fqdn,
                 provider_type='EXTERNAL_NETWORK',
@@ -828,6 +874,26 @@ class Plugin(plugin.PluginBase):
     )
     def _restart_provider_service(self):
         self._restart_service(OvnEnv.OVIRT_PROVIDER_OVN_SERVICE)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        before=(
+            oenginecons.Stages.OVN_PROVIDER_OVN_DB,
+        ),
+        after=(
+            oengcommcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
+        ),
+        condition=lambda self: (
+            self._enabled and
+            not self.environment[
+                oenginecons.EngineDBEnv.NEW_DATABASE
+            ],
+        )
+    )
+    def _validate_provider_uniqueness(self):
+        existing_provider_id = self._check_provider_exists()
+        if existing_provider_id:
+            self._notify_provider_already_exists(existing_provider_id)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
