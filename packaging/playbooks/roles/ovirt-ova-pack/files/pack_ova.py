@@ -7,6 +7,7 @@ import sys
 import tarfile
 import time
 
+
 from contextlib import closing
 
 TAR_BLOCK_SIZE = 512

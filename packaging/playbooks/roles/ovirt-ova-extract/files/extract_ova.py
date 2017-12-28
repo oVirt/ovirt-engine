@@ -5,6 +5,7 @@ import mmap
 import os
 import sys
 
+
 from contextlib import closing
 
 NUL = b"\0"
