@@ -2059,15 +2059,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     public boolean validate(boolean validateCpu) {
-        return validate(true, validateCpu, true);
-    }
-
-    public boolean validate(boolean validateStoragePool, boolean validateCpu, boolean validateCustomProperties) {
         validateName();
 
-        if (validateStoragePool) {
-            getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        }
+        getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         if (validateCpu) {
             validateCPU();
@@ -2076,9 +2070,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getCPU().validateSelectedItem(new IValidation[] {});
         }
 
-        if (validateCustomProperties) {
-            getCustomPropertySheet().setIsValid(getCustomPropertySheet().validate());
-        }
+        getCustomPropertySheet().setIsValid(getCustomPropertySheet().validate());
         setValidTab(TabName.CLUSTER_POLICY_TAB, getCustomPropertySheet().getIsValid());
 
         final IValidation[] versionValidations = new IValidation[] { new NotEmptyValidation() };
