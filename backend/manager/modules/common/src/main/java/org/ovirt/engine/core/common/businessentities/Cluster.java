@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
-import org.ovirt.engine.core.common.validation.annotation.ValidCluster;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.annotation.ValidSerialNumberPolicy;
 import org.ovirt.engine.core.common.validation.annotation.ValidUri;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-@ValidCluster(groups = { CreateEntity.class })
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class})
 public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions {
