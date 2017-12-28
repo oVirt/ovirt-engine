@@ -3400,5 +3400,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String hostReinstallRequired();
 
     String hostHasNoDefaultRoute();
+
+    String autoDetect();
 }
 

@@ -1086,11 +1086,6 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
             return;
         }
 
-        if (!model.validate(model.getEnableOvirtService().getEntity())) { // CPU is mandatory only if the
-                                                                                  // cluster is virt enabled
-            return;
-        }
-
         // Save changes.
         Version version = model.getVersion().getSelectedItem();
 

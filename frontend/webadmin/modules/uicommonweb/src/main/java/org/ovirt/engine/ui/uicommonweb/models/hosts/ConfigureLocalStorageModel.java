@@ -167,8 +167,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         boolean isClusterValid = true;
         if (getCandidateCluster() == null) {
             getCluster().validateName();
-            getCluster().validateCPU();
-            isClusterValid = getCluster().getName().getIsValid() && getCluster().getCPU().getIsValid();
+            isClusterValid = getCluster().getName().getIsValid();
         }
 
         setValidTab(TabName.GENERAL_TAB, isStorageValid && isDataCenterValid && isClusterValid);

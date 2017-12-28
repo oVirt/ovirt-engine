@@ -1715,8 +1715,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         final ArchitectureType selectedArchitecture = getArchitecture().getSelectedItem();
         final FilteredListModel.Filter<ServerCpu> filter = selectedArchitecture == null
                 || selectedArchitecture.equals(ArchitectureType.undefined)
-                ? cpu -> cpu.getLevel() > 0
-                : cpu -> selectedArchitecture.equals(cpu.getArchitecture()) && cpu.getLevel() > 0;
+                ? cpu -> cpu == null || cpu.getLevel() > 0
+                : cpu -> cpu != null && selectedArchitecture.equals(cpu.getArchitecture()) && cpu.getLevel() > 0;
         getCPU().filterItems(filter);
     }
 
@@ -1746,6 +1746,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     }
                 }), getEntity().getId());
             } else {
+                cpus.add(0, null);
                 populateCPUList(cpus, true);
             }
         }), version);
@@ -1936,7 +1937,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         Collection<ArchitectureType> archsWithSupportingCpus = new HashSet<>();
         archsWithSupportingCpus.add(ArchitectureType.undefined);
         for (ServerCpu cpu: getCPU().getItems()) {
-            archsWithSupportingCpus.add(cpu.getArchitecture());
+            if (cpu != null) {
+                archsWithSupportingCpus.add(cpu.getArchitecture());
+            }
         }
         getArchitecture().setItems(archsWithSupportingCpus);
     }
@@ -2058,17 +2061,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
-    public boolean validate(boolean validateCpu) {
+    public boolean validate() {
         validateName();
 
         getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-
-        if (validateCpu) {
-            validateCPU();
-        }
-        else {
-            getCPU().validateSelectedItem(new IValidation[] {});
-        }
 
         getCustomPropertySheet().setIsValid(getCustomPropertySheet().validate());
         setValidTab(TabName.CLUSTER_POLICY_TAB, getCustomPropertySheet().getIsValid());
@@ -2152,10 +2148,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 new NotEmptyValidation(),
                 new LengthValidation(40),
                 new I18NNameValidation() });
-    }
-
-    public void validateCPU() {
-        getCPU().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
     }
 
     private String defaultClusterRngSourcesCsv(Version ver) {

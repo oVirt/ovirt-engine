@@ -557,14 +557,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     public void onSave() {
         ClusterModel model = (ClusterModel) getWindow();
 
-        boolean validateCpu =
-                (model.getIsNew() && model.getEnableOvirtService().getEntity())
-                        || (model.getIsEdit() && getSelectedItem().getCpuName() != null);
-
-        if (!model.validate(validateCpu)) {
-            return;
-        }
-        else if (model.getIsNew()) {
+        if (model.getIsNew()) {
             onPreSaveInternal(model);
         }
         else {
