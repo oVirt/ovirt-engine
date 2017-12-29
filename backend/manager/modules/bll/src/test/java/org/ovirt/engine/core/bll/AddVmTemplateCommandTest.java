@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -236,7 +237,7 @@ public class AddVmTemplateCommandTest extends BaseCommandTest {
 
         List<PermissionSubject> permissionCheckSubjects = cmd.getPermissionCheckSubjects();
         for(PermissionSubject permissionSubject : permissionCheckSubjects){
-            assertFalse(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES.equals(permissionSubject.getActionGroup()));
+            assertNotEquals(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES, permissionSubject.getActionGroup());
         }
     }
 
