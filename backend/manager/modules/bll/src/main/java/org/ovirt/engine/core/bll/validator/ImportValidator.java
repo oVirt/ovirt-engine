@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -21,12 +20,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDao;
@@ -212,11 +207,6 @@ public class ImportValidator {
     public MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(Collection<DiskImage> diskImages) {
         return new MultipleStorageDomainsValidator(params.getStoragePoolId(),
                 ImagesHandler.getAllStorageIdsForImageIds(diskImages));
-    }
-
-    protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
-            throws EngineException {
-        return Backend.getInstance().getResourceManager().runVdsCommand(commandType, parameters);
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {
