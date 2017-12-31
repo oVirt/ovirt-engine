@@ -6,6 +6,7 @@ import static org.ovirt.engine.core.common.businessentities.network.ReportedConf
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -212,18 +213,13 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     private void addDnsConfiguration(ReportedConfigurations result) {
-        List<NameServer> nameServersOfHost = getNameServers(reportedDnsResolverConfiguration);
-
         if (isDefaultRouteNetwork) {
+            List<NameServer> nameServersOfHost = getNameServers(reportedDnsResolverConfiguration);
             List<NameServer> expectedNameServers = getExpectedNameServers();
-            boolean engineDefineDnsConfiguration = expectedNameServers != null;
-
-            if (engineDefineDnsConfiguration) {
-                result.add(DNS_CONFIGURATION,
-                        addressesAsString(nameServersOfHost),
-                        addressesAsString(expectedNameServers),
-                        Objects.equals(nameServersOfHost, expectedNameServers));
-            }
+            result.add(DNS_CONFIGURATION,
+                    addressesAsString(nameServersOfHost),
+                    addressesAsString(expectedNameServers),
+                    nameServersOfHost.containsAll(expectedNameServers));
         }
     }
 
@@ -233,11 +229,11 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
         List<NameServer> nameServersOfNetwork = getNameServers(network.getDnsResolverConfiguration());
 
-        return nameServersOfNetworkAttachment != null ? nameServersOfNetworkAttachment : nameServersOfNetwork;
+        return nameServersOfNetworkAttachment.isEmpty() ? nameServersOfNetwork : nameServersOfNetworkAttachment;
     }
 
     private String addressesAsString(List<NameServer> nameServers) {
-        if (nameServers == null) {
+        if (nameServers.isEmpty()) {
             return null;
         }
         return nameServers.stream().map(NameServer::getAddress).sorted().collect(Collectors.joining(","));
@@ -245,12 +241,12 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
     private List<NameServer> getNameServers(DnsResolverConfiguration dnsResolverConfiguration) {
         if (dnsResolverConfiguration == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<NameServer> nameServers = dnsResolverConfiguration.getNameServers();
         if (nameServers == null || nameServers.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
 
         return nameServers;
