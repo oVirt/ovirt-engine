@@ -51,8 +51,12 @@ public abstract class OvfOvaWriter extends OvfWriter {
         _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk-interface", dve.getDiskInterface().toString());
         _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "boot", String.valueOf(dve.isBoot()));
         _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "pass-discard", String.valueOf(dve.isPassDiscard()));
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk-alias", image.getDiskAlias());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk-description", image.getDiskDescription());
+        if (image.getDiskAlias() != null) {
+            _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk-alias", image.getDiskAlias());
+        }
+        if (image.getDiskDescription() != null) {
+            _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk-description", image.getDiskDescription());
+        }
         _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "wipe-after-delete",
                 String.valueOf(image.isWipeAfterDelete()));
         _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "description",
