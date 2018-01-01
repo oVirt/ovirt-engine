@@ -20,7 +20,12 @@ def extract_disk(ova_file, disk_size, image_path):
         copied = 0
         while copied < disk_size:
             read = ova_file.readinto(buf)
-            read = min(read, disk_size - copied)
+            remaining = disk_size - copied
+            if remaining < read:
+                # read too much (disk size is not aligned
+                # with BUF_SIZE), thus need to go back
+                ova_file.seek(remaining - read, 1)
+                read = remaining
             written = 0
             while written < read:
                 wbuf = buffer(buf, written, read - written)
