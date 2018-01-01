@@ -1980,8 +1980,14 @@ public class LibvirtVmXmlBuilder {
         case "bridge":
             writer.writeAttributeString("type", "bridge");
             writer.writeStartElement("model");
-            VmInterfaceType ifaceType = nic.getType() != null ? VmInterfaceType.forValue(nic.getType()) : VmInterfaceType.rtl8139;
-            writer.writeAttributeString("type", ifaceType == VmInterfaceType.pv ? "virtio" : ifaceType.getInternalName());
+            VmInterfaceType ifaceType = nic.getType() != null ?
+                    VmInterfaceType.forValue(nic.getType())
+                    : VmInterfaceType.rtl8139;
+            String evaluatedIfaceType = vmInfoBuildUtils.evaluateInterfaceType(ifaceType, vm.getHasAgent());
+            if ("pv".equals(evaluatedIfaceType)) {
+                evaluatedIfaceType = "virtio";
+            }
+            writer.writeAttributeString("type", evaluatedIfaceType);
             writer.writeEndElement();
 
             writer.writeStartElement("link");
