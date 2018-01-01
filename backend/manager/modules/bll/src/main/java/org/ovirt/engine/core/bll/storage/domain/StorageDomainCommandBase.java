@@ -49,9 +49,12 @@ import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -75,6 +78,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     private LunDao lunDao;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private StorageDomainDynamicDao storageDomainDynamicDao;
     @Inject
     private VmDao vmDao;
 
@@ -448,6 +453,20 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             DiskProfileParameters diskProfileParameters = new DiskProfileParameters(diskProfile, true);
             runInternalActionWithTasksContext(ActionType.AddDiskProfile, diskProfileParameters);
             getCompensationContext().snapshotNewEntity(diskProfile);
+            getCompensationContext().stateChanged();
+            return null;
+        });
+    }
+
+    protected void updateStorageDomainDynamicFromIrs() {
+        final StorageDomain sd =
+                (StorageDomain) runVdsCommand(VDSCommandType.GetStorageDomainStats,
+                        new GetStorageDomainStatsVDSCommandParameters(getVds().getId(),
+                                getStorageDomain().getId()))
+                        .getReturnValue();
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntity(getStorageDomain().getStorageDynamicData());
+            storageDomainDynamicDao.update(sd.getStorageDynamicData());
             getCompensationContext().stateChanged();
             return null;
         });

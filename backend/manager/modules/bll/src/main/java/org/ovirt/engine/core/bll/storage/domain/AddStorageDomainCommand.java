@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateStorageDomainVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -117,20 +116,6 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         if (getStorageDomain().getStorageDomainType().isDataDomain()) {
             createDefaultDiskProfile();
         }
-    }
-
-    protected void updateStorageDomainDynamicFromIrs() {
-        final StorageDomain sd =
-                (StorageDomain) runVdsCommand(VDSCommandType.GetStorageDomainStats,
-                                new GetStorageDomainStatsVDSCommandParameters(getVds().getId(),
-                                        getStorageDomain().getId()))
-                        .getReturnValue();
-        TransactionSupport.executeInNewTransaction(() -> {
-            getCompensationContext().snapshotEntity(getStorageDomain().getStorageDynamicData());
-            storageDomainDynamicDao.update(sd.getStorageDynamicData());
-            getCompensationContext().stateChanged();
-            return null;
-        });
     }
 
     @Override
