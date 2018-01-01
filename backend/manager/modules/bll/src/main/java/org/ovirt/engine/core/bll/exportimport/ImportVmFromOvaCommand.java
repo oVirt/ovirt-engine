@@ -92,7 +92,9 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
 
     @Override
     protected void addNetworkInterfaceDevices() {
-        // no-op
+        if (getParameters().getVm().getOrigin() != OriginType.OVIRT) {
+            super.addNetworkInterfaceDevices();
+        }
     }
 
     private boolean extractOva() {
