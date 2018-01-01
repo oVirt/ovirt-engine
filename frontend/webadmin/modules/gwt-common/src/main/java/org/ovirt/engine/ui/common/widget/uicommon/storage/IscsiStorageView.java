@@ -110,7 +110,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
             if (propName.equals("IsValid")) { //$NON-NLS-1$
                 onIsValidPropertyChange(object);
             }
-            else if (propName.equals("IsGrouppedByTarget")) { //$NON-NLS-1$
+            else if (propName.equals("IsGroupedByTarget")) { //$NON-NLS-1$
                 updateListByGropping(object);
             }
         });
@@ -122,16 +122,16 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         // Add click handlers
         targetsToLunTab.addClickHandler(event -> {
             iscsiLunToTargetView.disableItemsUpdate();
-            object.setIsGrouppedByTarget(true);
+            object.setIsGroupedByTarget(true);
         });
 
         lunToTargetsTab.addClickHandler(event -> {
             iscsiTargetToLunView.disableItemsUpdate();
-            object.setIsGrouppedByTarget(false);
+            object.setIsGroupedByTarget(false);
         });
 
         // Update selected tab and list
-        dialogTabPanel.switchTab(object.getIsGrouppedByTarget() ? targetsToLunTab : lunToTargetsTab);
+        dialogTabPanel.switchTab(object.getIsGroupedByTarget() ? targetsToLunTab : lunToTargetsTab);
         updateListByGropping(object);
 
         // Set labels above table
@@ -163,8 +163,8 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     }
 
     void updateListByGropping(IscsiStorageModel object) {
-        // Update view by 'IsGrouppedByTarget' flag
-        if (object.getIsGrouppedByTarget()) {
+        // Update view by 'IsGroupedByTarget' flag
+        if (object.getIsGroupedByTarget()) {
             iscsiTargetToLunView.activateItemsUpdate();
         }
         else {

@@ -53,7 +53,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-    private boolean isGrouppedByTarget;
+    private boolean isGroupedByTarget;
     private VDS previousGetLunsByVGIdHost;
 
     private final List<LunModel> includedLUNs;
@@ -534,15 +534,15 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     /**
      * Gets or sets the value determining whether the items containing target/LUNs or LUN/targets.
      */
-    public boolean getIsGrouppedByTarget() {
-        return isGrouppedByTarget;
+    public boolean getIsGroupedByTarget() {
+        return isGroupedByTarget;
     }
 
-    public void setIsGrouppedByTarget(boolean value) {
-        if (isGrouppedByTarget != value) {
-            isGrouppedByTarget = value;
-            isGrouppedByTargetChanged();
-            onPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget")); //$NON-NLS-1$
+    public void setIsGroupedByTarget(boolean value) {
+        if (isGroupedByTarget != value) {
+            isGroupedByTarget = value;
+            isGroupedByTargetChanged();
+            onPropertyChanged(new PropertyChangedEventArgs("IsGroupedByTarget")); //$NON-NLS-1$
         }
     }
 
@@ -592,7 +592,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             return;
         }
 
-        if (getIsGrouppedByTarget()) {
+        if (getIsGroupedByTarget()) {
             List<SanTargetModel> items = (List<SanTargetModel>) getItems();
             items.removeIf(target -> {
                 boolean found = false;
@@ -746,7 +746,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
-    private void isGrouppedByTargetChanged() {
+    private void isGroupedByTargetChanged() {
         initializeItems(null, null);
     }
 
@@ -755,7 +755,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
      * the Items collection.
      */
     protected void initializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets) {
-        if (getIsGrouppedByTarget()) {
+        if (getIsGroupedByTarget()) {
             if (getItems() == null) {
                 setItems(new ObservableCollection<SanTargetModel>());
                 isTargetModelList = true;
@@ -966,7 +966,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     protected void isAllLunsSelectedChanged() {
-        if (!getIsGrouppedByTarget()) {
+        if (!getIsGroupedByTarget()) {
             ((List<LunModel>) getItems()).stream().filter(lun -> !lun.getIsIncluded() && lun.getIsAccessible())
                     .forEach(lun -> lun.setIsSelected(getIsAllLunsSelected()));
         }
@@ -996,7 +996,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private ArrayList<LunModel> getLuns(boolean selectedLuns, boolean includedLuns) {
         ArrayList<LunModel> luns = new ArrayList<>();
         if (getItems() != null) {
-            if (getIsGrouppedByTarget()) {
+            if (getIsGroupedByTarget()) {
                 List<SanTargetModel> items = (List<SanTargetModel>) getItems();
                 for (SanTargetModel item : items) {
                     aggregateAddedLuns(item.getLuns(), selectedLuns, includedLuns, luns);
@@ -1023,7 +1023,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     public Set<String> getLunsToRefresh() {
-        if (!getIsGrouppedByTarget()) {
+        if (!getIsGroupedByTarget()) {
             return filterLunsToRefresh(((List<LunModel>) getItems()).stream());
 
         }
@@ -1033,7 +1033,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     public Set<String> getLunsToRemove() {
-        if (getIsGrouppedByTarget()) {
+        if (getIsGroupedByTarget()) {
             return filterLunsToRemove(((List<SanTargetModel>) getItems()).stream()
                     .map(SanTargetModel::getLuns)
                     .flatMap(List::stream));

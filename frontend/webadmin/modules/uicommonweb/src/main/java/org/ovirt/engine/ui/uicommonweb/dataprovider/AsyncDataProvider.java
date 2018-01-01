@@ -2873,7 +2873,7 @@ public class AsyncDataProvider {
         ArrayList<IStorageModel> models = new ArrayList<>();
 
         IscsiStorageModel iscsiDataModel = new IscsiStorageModel();
-        iscsiDataModel.setIsGrouppedByTarget(true);
+        iscsiDataModel.setIsGroupedByTarget(true);
         models.add(iscsiDataModel);
 
         FcpStorageModel fcpDataModel = new FcpStorageModel();
