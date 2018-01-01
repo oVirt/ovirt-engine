@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public final class StoragePoolStatusHandler {
     private static final Logger log = LoggerFactory.getLogger(StoragePoolStatusHandler.class);
 
-    private static final HashMap<Guid, StoragePoolStatusHandler> nonOperationalPools = new HashMap<>();
+    private static final Map<Guid, StoragePoolStatusHandler> nonOperationalPools = new HashMap<>();
 
     private final Guid poolId;
     private ScheduledFuture scheduledTask;
