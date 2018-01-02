@@ -543,4 +543,9 @@ public interface IVdsServer {
     StatusOnlyReturn hotunplugLease(Guid vmId, Guid storageDomainId);
 
     LldpReturn getLldp(String[] interfaces);
+
+    StatusOnlyReturn glusterVolumeResetBrickStart(String volumeName, String existingBrickDir);
+
+    StatusOnlyReturn glusterVolumeResetBrickCommitForce(String volumeName,
+            String existingBrickDir);
 }

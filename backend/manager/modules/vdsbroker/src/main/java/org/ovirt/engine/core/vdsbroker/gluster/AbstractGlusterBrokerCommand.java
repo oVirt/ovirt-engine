@@ -121,6 +121,8 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterWebhookSyncException:
         case GlusterWebhookUpdateException:
         case GlusterWebhookDeleteException:
+        case GlusterVolumeResetBrickStartFailed:
+        case GlusterVolumeResetBrickFailed:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().message));
             getVDSReturnValue().setSucceeded(false);
