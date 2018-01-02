@@ -26,7 +26,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
+import org.ovirt.engine.core.utils.transaction.TransactionRollbackListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
@@ -49,7 +49,19 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
 
     @Override
     protected void executeCommand() {
-        registerRollbackHandler(new CustomTransactionCompletionListener());
+        registerRollbackHandler((TransactionRollbackListener)() -> {
+            TransactionSupport.executeInNewTransaction(() -> {
+                if (!getParameters().isLeaveLocked()) {
+                    DiskImage diskImage = getDestinationDiskImage();
+                    if (diskImage != null) {
+                        imageDao.updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
+                    }
+                    unLockImage();
+                }
+                return null;
+            });
+        });
+
         Guid storagePoolId = (getDiskImage().getStoragePoolId() != null) ?
                 getDiskImage().getStoragePoolId() : Guid.Empty;
 
@@ -119,21 +131,5 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         }
 
         setSucceeded(true);
-    }
-
-    private class CustomTransactionCompletionListener extends NoOpTransactionCompletionListener {
-        @Override
-        public void onRollback() {
-            TransactionSupport.executeInNewTransaction(() -> {
-                if (!getParameters().isLeaveLocked()) {
-                    DiskImage diskImage = getDestinationDiskImage();
-                    if (diskImage != null) {
-                        imageDao.updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
-                    }
-                    unLockImage();
-                }
-                return null;
-            });
-        }
     }
 }

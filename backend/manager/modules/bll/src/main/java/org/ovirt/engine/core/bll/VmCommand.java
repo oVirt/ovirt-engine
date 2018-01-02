@@ -58,7 +58,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
+import org.ovirt.engine.core.utils.transaction.TransactionSuccessListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
@@ -559,16 +559,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
 
         // If there is a transaction, trigger update after it is committed.
-        registerRollbackHandler(new TransactionCompletionListener() {
-            @Override
-            public void onSuccess() {
-                ovfDataUpdater.triggerNow();
-            }
-
-            @Override
-            public void onRollback() {
-                // No notification is needed
-            }
-        });
+        registerRollbackHandler((TransactionSuccessListener) () -> ovfDataUpdater.triggerNow());
     }
 }

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
+import org.ovirt.engine.core.utils.transaction.TransactionRollbackListener;
 
 public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
 
@@ -67,7 +67,7 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
 
     @Override
     protected void executeCommand() {
-        registerRollbackHandler(new CustomTransactionCompletionListener());
+        registerRollbackHandler((TransactionRollbackListener)() -> macPoolPerCluster.modifyPool(oldMacPool));
 
         macPoolDao.update(getMacPoolEntity());
         macPoolPerCluster.modifyPool(getMacPoolEntity());
@@ -94,13 +94,5 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
         return ValidationResult.failWith(
                 EngineMessage.ACTION_TYPE_FAILED_CHANGING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED)
                 .when(defaultChanged);
-    }
-
-    private class CustomTransactionCompletionListener extends NoOpTransactionCompletionListener {
-
-        @Override
-        public void onRollback() {
-            macPoolPerCluster.modifyPool(oldMacPool);
-        }
     }
 }

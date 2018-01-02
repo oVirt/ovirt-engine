@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
+import org.ovirt.engine.core.utils.transaction.TransactionRollbackListener;
 
 public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdParameters> {
 
@@ -39,7 +39,7 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
 
     @Override
     protected void executeCommand() {
-        registerRollbackHandler(new CustomTransactionCompletionListener());
+        registerRollbackHandler((TransactionRollbackListener)() -> macPoolPerCluster.createPool(getOldMacPool()));
 
         macPoolDao.remove(getMacPoolId());
         macPoolPerCluster.removePool(getMacPoolId());
@@ -82,12 +82,5 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
             oldMacPool = macPoolDao.get(getMacPoolId());
         }
         return oldMacPool;
-    }
-
-    private class CustomTransactionCompletionListener extends NoOpTransactionCompletionListener {
-        @Override
-        public void onRollback() {
-            macPoolPerCluster.createPool(getOldMacPool());
-        }
     }
 }

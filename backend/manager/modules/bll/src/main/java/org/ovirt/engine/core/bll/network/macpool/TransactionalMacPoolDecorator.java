@@ -11,8 +11,9 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.businessentities.ReleaseMacsTransientCompensation;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
+import org.ovirt.engine.core.utils.transaction.TransactionRollbackListener;
+import org.ovirt.engine.core.utils.transaction.TransactionSuccessListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,12 +214,18 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
 
         @Override
         public void releaseMacsInCaseOfRollback(List<String> macs) {
-            registerRollbackHandler(new ReturnToPoolAfterRollback(macs));
+            registerRollbackHandler((TransactionRollbackListener)() -> {
+                log.debug("Rollback occurred, releasing macs {}.", macs);
+                macPool.freeMacs(macs);
+            });
         }
 
         @Override
         public void releaseMacsOnCommit(List<String> macs) {
-            registerRollbackHandler(new ReturnToPoolOnCommit(macs));
+            registerRollbackHandler((TransactionSuccessListener)() -> {
+                log.debug("Command succeeded, releasing macs {}.", macs);
+                macPool.freeMacs(macs);
+            });
         }
 
         private void registerRollbackHandler(TransactionCompletionListener rollbackHandler) {
@@ -229,43 +236,6 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
         @Override
         public String toString() {
             return ToStringBuilder.forInstance(this).build();
-        }
-
-        private class ReturnToPoolOnCommit extends ReleaseMacsAfterEndOfTransaction {
-            public ReturnToPoolOnCommit(List<String> macs) {
-                super(macs);
-            }
-
-            @Override
-            public void onSuccess() {
-                log.debug("Command succeeded, releasing macs {}.", super.macs);
-                releaseMacs();
-            }
-        }
-
-        private class ReturnToPoolAfterRollback extends ReleaseMacsAfterEndOfTransaction {
-            public ReturnToPoolAfterRollback(List<String> macs) {
-                super(macs);
-            }
-
-            @Override
-            public void onRollback() {
-                log.debug("Rollback occurred, releasing macs {}.", super.macs);
-                releaseMacs();
-            }
-
-        }
-
-        private abstract class ReleaseMacsAfterEndOfTransaction extends NoOpTransactionCompletionListener {
-            private final List<String> macs;
-
-            public ReleaseMacsAfterEndOfTransaction(List<String> macs) {
-                this.macs = macs;
-            }
-
-            protected void releaseMacs() {
-                macPool.freeMacs(macs);
-            }
         }
     }
 

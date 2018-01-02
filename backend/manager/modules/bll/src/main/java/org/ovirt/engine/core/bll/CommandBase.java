@@ -97,9 +97,9 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.transaction.NoOpTransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionRollbackListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1268,7 +1268,17 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     private void executeActionInTransactionScope() {
-        registerRollbackHandler(new DefaultCommandTransactionCompletionListener());
+        registerRollbackHandler((TransactionRollbackListener)() -> {
+            log.error("Transaction rolled-back for command '{}'.", getClass().getName());
+            try {
+                if (isQuotaDependant()) {
+                    rollbackQuota();
+                }
+            } catch (NullPointerException e) {
+                log.error("RollbackQuota: failed (may be because quota is disabled)", e);
+            }
+            cancelTasks();
+        });
 
         // If we didn't managed to acquire lock for command or the object wasn't managed to execute properly, then
         // rollback the transaction.
@@ -2402,22 +2412,5 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     protected CommandActionState getActionState() {
         return actionState;
-    }
-
-    private class DefaultCommandTransactionCompletionListener extends NoOpTransactionCompletionListener {
-
-        @Override
-        public void onRollback() {
-            log.error("Transaction rolled-back for command '{}'.", CommandBase.this.getClass().getName());
-            try {
-                if (isQuotaDependant()) {
-                    rollbackQuota();
-                }
-            } catch (NullPointerException e) {
-                log.error("RollbackQuota: failed (may be because quota is disabled)", e);
-            }
-            cancelTasks();
-        }
-
     }
 }
