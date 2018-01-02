@@ -21,14 +21,12 @@ import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainDiskPresenter;
 
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -106,13 +104,10 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         onDiskViewTypeOrContentTypeChanged();
     };
 
-    final IEventListener<EventArgs> diskContentTypeChangedEventListener = new IEventListener<EventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            EntityModel<DiskContentType> diskContentType = (EntityModel<DiskContentType>) sender;
-            disksContentTypeRadioGroup.setDiskContentType(diskContentType.getEntity());
-            onDiskViewTypeOrContentTypeChanged();
-        }
+    final IEventListener<EventArgs> diskContentTypeChangedEventListener = (ev, sender, args) -> {
+        EntityModel<DiskContentType> diskContentType = (EntityModel<DiskContentType>) sender;
+        disksContentTypeRadioGroup.setDiskContentType(diskContentType.getEntity());
+        onDiskViewTypeOrContentTypeChanged();
     };
 
 
@@ -230,12 +225,9 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     void initTableColumns() {
         getTable().enableColumnResizing();
 
-        aliasColumn = DisksViewColumns.getAliasColumn(new FieldUpdater<Disk, String>() {
-            @Override
-            public void update(int index, Disk disk, String value) {
-                //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
-            }
+        aliasColumn = DisksViewColumns.getAliasColumn((index, disk, value) -> {
+            //The link was clicked, now fire an event to switch to details.
+            transitionHandler.handlePlaceTransition(true);
         }, DiskConditionFieldAutoCompleter.ALIAS);
 
         idColumn = DisksViewColumns.getIdColumn(DiskConditionFieldAutoCompleter.ID);
