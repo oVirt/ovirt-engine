@@ -1038,13 +1038,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      */
     private void copyDiskVmElements() {
         for (Map.Entry<Guid, Guid> srcToDst : getSrcDiskIdToTargetDiskIdMapping().entrySet()) {
-            DiskVmElement srcDve = getImagesToCheckDestinationStorageDomains().
+            getImagesToCheckDestinationStorageDomains().
                     stream().
                     filter(d -> d.getId().equals(srcToDst.getKey())).
                     findFirst().
-                    get().
-                    getDiskVmElementForVm(getSourceVmId());
-            createAndSaveNewDiskVmElement(srcToDst.getValue(), getVmId(), srcDve);
+                    map(d -> d.getDiskVmElementForVm(getSourceVmId())).
+                    ifPresent(srcDve -> createAndSaveNewDiskVmElement(srcToDst.getValue(), getVmId(), srcDve));
         }
     }
 
