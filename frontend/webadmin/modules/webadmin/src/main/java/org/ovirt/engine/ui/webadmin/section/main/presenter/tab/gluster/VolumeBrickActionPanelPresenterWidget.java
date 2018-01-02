@@ -49,6 +49,13 @@ public class VolumeBrickActionPanelPresenterWidget extends
             }
         });
 
+        addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.resetBrickBrick()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getResetBrickCommand();
+            }
+        });
+
         addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.advancedDetailsBrick()) {
             @Override
             protected UICommand resolveCommand() {

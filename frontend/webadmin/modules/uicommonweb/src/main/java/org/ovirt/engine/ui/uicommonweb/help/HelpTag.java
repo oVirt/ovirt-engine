@@ -664,7 +664,9 @@ public enum HelpTag {
 
     repin_host("repin_host", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Pin to another Host"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    errata("errata", HelpTagType.WEBADMIN, "System tree > Errata"); //$NON-NLS-1$ //$NON-NLS-2$
+    errata("errata", HelpTagType.WEBADMIN, "System tree > Errata"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    reset_brick("reset_brick", HelpTagType.WEBADMIN, "Volumes Tab > Bricks Sub-Tab > Reset Bricks"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public final String name;
 

@@ -2122,5 +2122,9 @@ public interface UIConstants extends Constants {
     String selectCacheDevicePath();
 
     String selectCacheMode();
+
+    String resetBrickTitle();
+
+    String resetBrickMessage();
 }
 

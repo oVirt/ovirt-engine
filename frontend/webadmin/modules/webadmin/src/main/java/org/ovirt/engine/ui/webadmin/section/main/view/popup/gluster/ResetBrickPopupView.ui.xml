@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:pa="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <d:SimpleDialogPanel width="450px" height="320px">
+        <d:content>
+            <b:Container fluid="true">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <pa:AlertWithIcon ui:field="message" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>
