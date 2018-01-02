@@ -10,7 +10,6 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
@@ -22,6 +21,7 @@ import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -65,7 +65,7 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
-public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends CommandBase<T> implements SerialChildExecutingCommand, QuotaStorageDependent {
+public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends BaseImagesCommand<T> implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
