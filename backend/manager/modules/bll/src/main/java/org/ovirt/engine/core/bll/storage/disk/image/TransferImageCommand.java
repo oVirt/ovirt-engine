@@ -239,9 +239,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         getParameters().setDestinationImageId(image.getImageId());
 
         // ovirt-imageio-daemon must know the boundaries of the target image for writing permissions.
-        if (getParameters().getTransferSize() == 0) {
-            getParameters().setTransferSize(getTransferSize(image, domainId));
-        }
+        getParameters().setTransferSize(getTransferSize(image, domainId));
 
         persistCommand(getParameters().getParentCommand(), true);
         setImage(image);
@@ -275,7 +273,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             return imageInfoFromVdsm.getApparentSizeInBytes();
         } else {
             // Upload
-            return getDiskImage().getSize();
+            return getParameters().getTransferSize() != 0 ?
+                    getParameters().getTransferSize() : getDiskImage().getActualSizeInBytes();
         }
     }
 
@@ -365,7 +364,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     private void finalizeDownloadIfNecessary(final StateContext context, ImageTransfer upToDateImageTransfer) {
         if (upToDateImageTransfer.getBytesTotal() != 0 &&
                 // Frontend flow (REST API should close the connection on its own).
-                upToDateImageTransfer.getBytesTotal().equals(upToDateImageTransfer.getBytesSent()) &&
+                getParameters().getTransferSize() == upToDateImageTransfer.getBytesSent() &&
                 !upToDateImageTransfer.getActive()) {
             // Heuristic - once the transfer is inactive, we want to wait another COCO iteration
             // to decrease the chances that the few last packets are still on the way to the client.

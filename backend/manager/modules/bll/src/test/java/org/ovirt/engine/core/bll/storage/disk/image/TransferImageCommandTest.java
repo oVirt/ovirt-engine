@@ -162,7 +162,7 @@ public class TransferImageCommandTest extends BaseCommandTest{
         transferImageCommand.handleImageIsReadyForTransfer();
 
         assertTrue(transferImageCommand.getParameters().getStorageDomainId().equals(readyImage.getStorageIds().get(0)));
-        assertTrue(transferImageCommand.getParameters().getTransferSize() == readyImage.getSize());
+        assertTrue(transferImageCommand.getParameters().getTransferSize() == readyImage.getActualSizeInBytes());
     }
 
     @Test
