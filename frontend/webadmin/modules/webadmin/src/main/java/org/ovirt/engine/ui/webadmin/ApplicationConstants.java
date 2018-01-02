@@ -3422,5 +3422,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String cacheMode();
 
     String cacheSize();
+
+    String resetBrickBrick();
 }
 

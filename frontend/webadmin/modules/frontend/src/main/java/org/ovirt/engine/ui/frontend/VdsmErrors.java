@@ -912,5 +912,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String ResourceExhausted();
 
     String FailedToCreateLease();
+
+    String GlusterVolumeResetBrickStartFailed();
 }
 

@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.Gluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ResetBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeGeoRepSessionDetailsPopUpPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
@@ -120,6 +121,7 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<RemoveBrickStatusPopupPresenterWidget> removeBricksStatusPopupProvider,
             final Provider<ReplaceBrickPopupPresenterWidget> replaceBrickPopupProvider,
             final Provider<BrickAdvancedDetailsPopupPresenterWidget> brickDetailsPopupProvider,
+            final Provider<ResetBrickPopupPresenterWidget> resetBrickPopupProvider,
             final Provider<VolumeListModel> mainModelProvider,
             final Provider<VolumeBrickListModel> modelProvider) {
         SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> result =
@@ -141,6 +143,8 @@ public class VolumeModule extends AbstractGinModule {
                     return replaceBrickPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getBrickAdvancedDetailsCommand()) {
                     return brickDetailsPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getResetBrickCommand()) {
+                    return resetBrickPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
