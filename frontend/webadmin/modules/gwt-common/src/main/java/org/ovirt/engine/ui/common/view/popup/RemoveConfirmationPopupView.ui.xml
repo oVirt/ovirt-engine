@@ -30,8 +30,8 @@
             <g:FlowPanel addStyleNames="{style.panelPadding}">
                 <g:HTML ui:field="messageHTML" />
                 <g:FlowPanel ui:field="itemPanel" addStyleNames="{style.items}" />
-                <ge:EntityModelCheckBoxEditor ui:field="latch" visible="false" />
-                <ge:EntityModelCheckBoxEditor ui:field="force" visible="false" />
+                <ge:EntityModelCheckBoxEditor ui:field="latch" visible="false" usePatternFly="true" />
+                <ge:EntityModelCheckBoxEditor ui:field="force" visible="false" usePatternFly="true" />
                 <g:HTML ui:field="noteHTML" addStyleNames="{style.noteHTML}"/>
                 <g:FlowPanel ui:field="reasonPanel">
                     <ge:StringEntityModelTextBoxEditor ui:field="reasonEditor" />
