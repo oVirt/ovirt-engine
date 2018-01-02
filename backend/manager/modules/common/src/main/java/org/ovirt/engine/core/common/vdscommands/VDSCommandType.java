@@ -215,6 +215,7 @@ public enum VDSCommandType {
     AddGlusterWebhook("org.ovirt.engine.core.vdsbroker.gluster"),
     SyncGlusterWebhook("org.ovirt.engine.core.vdsbroker.gluster"),
     DeleteGlusterWebhook("org.ovirt.engine.core.vdsbroker.gluster"),
+    ResetGlusterVolumeBrick("org.ovirt.engine.core.vdsbroker.gluster"),
 
     SetNumberOfCpus("org.ovirt.engine.core.vdsbroker"),
     SetAmountOfMemory("org.ovirt.engine.core.vdsbroker"),

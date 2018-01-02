@@ -2325,6 +2325,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturn(response);
     }
 
+    @Override
     public DomainXmlListReturn dumpxmls(List<String> vmIds) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.dumpxmls").withOptionalParameterAsList("vmList", vmIds).build();
@@ -2412,4 +2413,25 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturn(response);
     }
 
+    @Override
+    public StatusOnlyReturn glusterVolumeResetBrickStart(String volumeName,
+            String existingBrickDir) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.resetBrickStart").withParameter("volumeName", volumeName)
+                        .withParameter("existingBrick", existingBrickDir)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public StatusOnlyReturn glusterVolumeResetBrickCommitForce(String volumeName,
+            String existingBrickDir) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.resetBrickCommitForce").withParameter("volumeName", volumeName)
+                        .withParameter("existingBrick", existingBrickDir)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
 }

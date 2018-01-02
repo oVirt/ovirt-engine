@@ -483,6 +483,8 @@ public enum EngineError {
     GlusterWebhookSyncException(4753),
     GlusterWebhookDeleteException(4754),
     UnsupportedGlusterVolumeReplicaCountError(480),
+    GlusterVolumeResetBrickStartFailed(4710),
+    GlusterVolumeResetBrickFailed(4711),
 
     UnicodeArgumentException(4900),
 

@@ -1581,6 +1581,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     MemoryDisksOnDifferentDomainsSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    ResetBrickSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
