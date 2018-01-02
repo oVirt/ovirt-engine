@@ -111,7 +111,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
                 onIsValidPropertyChange(object);
             }
             else if (propName.equals("IsGroupedByTarget")) { //$NON-NLS-1$
-                updateListByGropping(object);
+                updateListByGrouping(object);
             }
         });
 
@@ -132,7 +132,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
         // Update selected tab and list
         dialogTabPanel.switchTab(object.getIsGroupedByTarget() ? targetsToLunTab : lunToTargetsTab);
-        updateListByGropping(object);
+        updateListByGrouping(object);
 
         // Set labels above table
         if (!object.getContainer().isNewStorage()) {
@@ -162,7 +162,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         targetsToLunsPanel.setWidget(iscsiTargetToLunView);
     }
 
-    void updateListByGropping(IscsiStorageModel object) {
+    void updateListByGrouping(IscsiStorageModel object) {
         // Update view by 'IsGroupedByTarget' flag
         if (object.getIsGroupedByTarget()) {
             iscsiTargetToLunView.activateItemsUpdate();
