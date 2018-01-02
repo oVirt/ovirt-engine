@@ -196,6 +196,8 @@ select fn_db_add_config_value('ReduceVolumeSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ReduceVolumeSupported', 'false', '4.1');
 select fn_db_add_config_value_for_versions_up_to('ContentType', 'false', '4.1');
 select fn_db_add_config_value('ContentType', 'true', '4.2');
+select fn_db_add_config_value_for_versions_up_to('IsoOnDataDomain', 'false', '4.1');
+select fn_db_add_config_value('IsoOnDataDomain', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ResumeBehaviorSupported', 'false', '4.1');
 select fn_db_add_config_value('ResumeBehaviorSupported', 'true', '4.2');
 

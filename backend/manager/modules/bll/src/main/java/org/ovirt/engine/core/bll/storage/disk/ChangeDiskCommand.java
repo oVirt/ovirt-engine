@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.VmOperationCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -62,7 +63,8 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
             return failVmStatusIllegal();
         }
 
-        if ((isoDomainListSynchronizer.findActiveISODomain(getVm().getStoragePoolId()) == null)
+        if (!FeatureSupported.isIsoOnDataDomainSupported(getVm().getCompatibilityVersion()) &&
+                isoDomainListSynchronizer.findActiveISODomain(getVm().getStoragePoolId()) == null
                 && !StringUtils.isEmpty(cdImagePath)) {
             return failValidation(EngineMessage.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }

@@ -1544,6 +1544,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     ContentType,
+
+    @TypeConverterAttribute(Boolean.class)
+    IsoOnDataDomain,
+
     /**
      * Determines if the resume behavior can be configured in this compatibility level.
      *

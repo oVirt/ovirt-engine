@@ -240,6 +240,10 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ContentType, version);
     }
 
+    public static boolean isIsoOnDataDomainSupported(Version version) {
+        return supportedInConfig(ConfigValues.IsoOnDataDomain, version);
+    }
+
     public static boolean isDefaultRouteReportedByVdsm(Version version) {
         return supportedInConfig(ConfigValues.DefaultRouteReportedByVdsm, version);
     }
