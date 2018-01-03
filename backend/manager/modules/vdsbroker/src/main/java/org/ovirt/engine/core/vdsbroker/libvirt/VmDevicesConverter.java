@@ -67,13 +67,8 @@ public class VmDevicesConverter {
     private static final String DEVICES_START_ELEMENT = "<devices>";
     private static final String DEVICES_END_ELEMENT = "</devices>";
 
-    private MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier;
 
     public Map<String, Object> convert(Guid vmId, Guid hostId, String xml) throws Exception {
-        addressToHostDeviceSupplier = new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
-                .stream()
-                .filter(device -> !device.getAddress().isEmpty())
-                .collect(Collectors.toMap(HostDevice::getAddress, device -> device)));
         String devicesXml = xml.substring(
                 xml.indexOf(DEVICES_START_ELEMENT),
                 xml.indexOf(DEVICES_END_ELEMENT) + DEVICES_END_ELEMENT.length());
@@ -116,6 +111,11 @@ public class VmDevicesConverter {
     @SuppressWarnings("unchecked")
     private Map<String, Object>[] parseDevices(Guid vmId, Guid hostId, XmlDocument document) throws Exception {
         List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId);
+        MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier =
+                new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
+                        .stream()
+                        .filter(device -> !device.getAddress().isEmpty())
+                        .collect(Collectors.toMap(HostDevice::getAddress, device -> device)));
 
         List<Map<String, Object>> result = new ArrayList<>();
         result.add(parseBalloon(document, devices)); // memballoon
@@ -127,12 +127,12 @@ public class VmDevicesConverter {
         result.addAll(parseChannels(document, devices));
         result.addAll(parseControllers(document, devices));
         result.addAll(parseVideos(document, devices));
-        result.addAll(parseInterfaces(document, devices, vmId));
+        result.addAll(parseInterfaces(document, devices, vmId, addressToHostDeviceSupplier));
         result.addAll(parseDisks(document, devices));
         result.addAll(parseRedirs(document, devices));
         result.addAll(parseMemories(document, devices));
-        result.addAll(parseManagedHostDevices(document, devices, hostId));
-        result.addAll(parseUnmanagedHostDevices(document, devices, hostId));
+        result.addAll(parseManagedHostDevices(document, devices, hostId, addressToHostDeviceSupplier));
+        result.addAll(parseUnmanagedHostDevices(document, devices, hostId, addressToHostDeviceSupplier));
         return result.stream()
                 .filter(map -> !map.isEmpty())
                 .toArray(Map[]::new);
@@ -274,7 +274,8 @@ public class VmDevicesConverter {
         return String.valueOf(intKbValue / 1024);
     }
 
-    private List<Map<String, Object>> parseUnmanagedHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId) {
+    private List<Map<String, Object>> parseUnmanagedHostDevices(XmlDocument document, List<VmDevice> devices,
+            Guid hostId, MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.HOSTDEV);
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -313,7 +314,8 @@ public class VmDevicesConverter {
      * with one of the devices of the host. Host devices that were designed to be added as
      * unmanaged devices, like mdev devices, are handled separately.
      */
-    private List<Map<String, Object>> parseManagedHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId) {
+    private List<Map<String, Object>> parseManagedHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId,
+            MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.HOSTDEV);
         if (dbDevices.isEmpty()) {
             return Collections.emptyList();
@@ -452,7 +454,8 @@ public class VmDevicesConverter {
         return lunId != null && path.contains(lunId);
     }
 
-    private List<Map<String, Object>> parseInterfaces(XmlDocument document, List<VmDevice> devices, Guid vmId) {
+    private List<Map<String, Object>> parseInterfaces(XmlDocument document, List<VmDevice> devices, Guid vmId,
+            MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.INTERFACE);
         Map<Guid, VmDevice> devIdToDbDev = dbDevices.stream().collect(Collectors.toMap(
                 device -> device.getId().getDeviceId(),
@@ -465,7 +468,7 @@ public class VmDevicesConverter {
             Map<String, Object> dev = new HashMap<>();
 
             if (VmDeviceType.HOST_DEVICE.getName().equals(type)) {
-                dev.put(VdsProperties.HostDev, getHostDeviceName(node));
+                dev.put(VdsProperties.HostDev, getHostDeviceName(node, addressToHostDeviceSupplier));
             }
 
             dev.put(VdsProperties.Type, VmDeviceGeneralType.INTERFACE.getValue());
@@ -494,7 +497,8 @@ public class VmDevicesConverter {
         return result;
     }
 
-    private String getHostDeviceName(XmlNode hostDevInterfaceNode) {
+    private String getHostDeviceName(XmlNode hostDevInterfaceNode,
+            MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         Map<String, String> hostAddress = parseHostAddress(hostDevInterfaceNode);
         if (hostAddress == null) {
             return null;
