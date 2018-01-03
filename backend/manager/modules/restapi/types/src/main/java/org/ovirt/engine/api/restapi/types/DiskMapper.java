@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskContentType;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskProfile;
@@ -90,6 +91,9 @@ public class DiskMapper {
         } else {
             mapDiskToDiskImageProperties(disk, (DiskImage) engineDisk);
         }
+        if (disk.isSetContentType()) {
+            engineDisk.setContentType(mapDiskContentType(disk.getContentType()));
+        }
         return engineDisk;
     }
 
@@ -161,6 +165,7 @@ public class DiskMapper {
                 model.setSgio(map(entity.getSgio(), null));
             }
         }
+        model.setContentType(mapDiskContentType(entity.getContentType()));
         return model;
     }
 
@@ -386,6 +391,46 @@ public class DiskMapper {
             return DiskInterface.SPAPR_VSCSI;
         default:
             throw new IllegalArgumentException("Unknown disk interface \"" + diskInterface + "\"");
+        }
+    }
+
+    public static org.ovirt.engine.core.common.businessentities.storage.DiskContentType mapDiskContentType(DiskContentType contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        switch (contentType) {
+        case DATA:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.DATA;
+        case ISO:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.ISO;
+        case MEMORY_DUMP_VOLUME:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.MEMORY_DUMP_VOLUME;
+        case MEMORY_METADATA_VOLUME:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.MEMORY_METADATA_VOLUME;
+        case OVF_STORE:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.OVF_STORE;
+        default:
+            throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
+        }
+    }
+
+    public static DiskContentType mapDiskContentType(org.ovirt.engine.core.common.businessentities.storage.DiskContentType contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        switch (contentType) {
+        case DATA:
+            return DiskContentType.DATA;
+        case ISO:
+            return DiskContentType.ISO;
+        case MEMORY_DUMP_VOLUME:
+            return DiskContentType.MEMORY_DUMP_VOLUME;
+        case MEMORY_METADATA_VOLUME:
+            return DiskContentType.MEMORY_METADATA_VOLUME;
+        case OVF_STORE:
+            return DiskContentType.OVF_STORE;
+        default:
+            throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
         }
     }
 }
