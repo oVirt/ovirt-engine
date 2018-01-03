@@ -403,29 +403,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             String path = parseDiskPath(node);
-            VmDevice dbDev = dbDevices.stream()
-                    .filter(d -> {
-                        switch(diskType) {
-                        case "cdrom":
-                            if (!diskType.equals(d.getDevice())) {
-                                return false;
-                            }
-                            String devicePath = (String) d.getSpecParams().get("path");
-                            return devicePath == null || path.contains(devicePath);
-                        case "floppy":
-                            return diskType.equals(d.getDevice());
-                        default:
-                            if (d.getSnapshotId() != null && path.contains(VdsProperties.Transient)) {
-                                DiskImage diskImage =  diskImageDao.getDiskSnapshotForVmSnapshot(d.getDeviceId(), d.getSnapshotId());
-                                return diskImage != null && path.contains(diskImage.getImageId().toString());
-                            }
-                            Guid diskId = d.getId().getDeviceId();
-                            return path.contains(diskId.toString()) ||
-                                    isPathContainsLunIdOfDisk(path, diskId, diskToLunSupplier);
-                        }
-                    })
-                    .findFirst()
-                    .orElse(null);
+            VmDevice dbDev = findDiskDeviceInDbByPath(dbDevices, diskType, path, diskToLunSupplier);
 
             if (dbDev == null) {
                 log.warn("unmanaged disk with path '{}' is ignored", path);
@@ -446,6 +424,33 @@ public class VmDevicesConverter {
             result.add(dev);
         }
         return result;
+    }
+
+    private VmDevice findDiskDeviceInDbByPath(List<VmDevice> dbDevices, String diskType, String path,
+            MemoizingSupplier<Map<Guid, String>> diskToLunSupplier) {
+        return dbDevices.stream()
+                .filter(d -> {
+                    switch(diskType) {
+                    case "cdrom":
+                        if (!diskType.equals(d.getDevice())) {
+                            return false;
+                        }
+                        String devicePath = (String) d.getSpecParams().get("path");
+                        return devicePath == null || path.contains(devicePath);
+                    case "floppy":
+                        return diskType.equals(d.getDevice());
+                    default:
+                        if (d.getSnapshotId() != null && path.contains(VdsProperties.Transient)) {
+                            DiskImage diskImage =  diskImageDao.getDiskSnapshotForVmSnapshot(d.getDeviceId(), d.getSnapshotId());
+                            return diskImage != null && path.contains(diskImage.getImageId().toString());
+                        }
+                        Guid diskId = d.getId().getDeviceId();
+                        return path.contains(diskId.toString()) ||
+                                isPathContainsLunIdOfDisk(path, diskId, diskToLunSupplier);
+                    }
+                })
+                .findFirst()
+                .orElse(null);
     }
 
     private boolean isPathContainsLunIdOfDisk(String path, Guid diskId,
