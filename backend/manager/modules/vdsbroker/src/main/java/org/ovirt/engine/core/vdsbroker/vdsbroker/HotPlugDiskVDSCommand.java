@@ -19,13 +19,15 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends VdsBrokerCommand<P> {
 
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
 
     protected Map<String, Object> sendInfo = new HashMap<>();
 
@@ -64,7 +66,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                 vmDevice.setSpecParams(new HashMap<>());
             }
 
-            List<DiskVmElement> diskVmElements = DbFacade.getInstance().getDiskVmElementDao().getAllPluggedToVm(getParameters().getVmId());
+            List<DiskVmElement> diskVmElements = diskVmElementDao.getAllPluggedToVm(getParameters().getVmId());
             int numOfAttachedVirtioInterfaces = 0;
             for (DiskVmElement dve : diskVmElements) {
                 if (dve.getDiskInterface() == DiskInterface.VirtIO) {
