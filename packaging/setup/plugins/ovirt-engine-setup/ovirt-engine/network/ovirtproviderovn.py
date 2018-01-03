@@ -703,10 +703,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-            osetupcons.Stages.DISTRO_RPM_PACKAGE_UPDATE_CHECK,
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_PACKAGES,
+            osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
         ),
     )
     def _customization(self):
