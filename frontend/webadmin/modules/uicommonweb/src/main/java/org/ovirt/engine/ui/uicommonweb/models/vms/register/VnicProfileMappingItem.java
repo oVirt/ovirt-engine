@@ -59,7 +59,7 @@ public class VnicProfileMappingItem extends EntityModel<VnicProfileMappingEntity
                 @Override
                 public boolean match(VnicProfileView vnicProfile) {
                     return Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getNetworkName())
-                            && Objects.equals(getEntity().getExternalNetworkName(), vnicProfile.getName());
+                            && Objects.equals(getEntity().getExternalNetworkProfileName(), vnicProfile.getName());
                 }
             };
         }
