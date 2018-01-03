@@ -156,7 +156,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
     }
 
     private void updateActionAvailability() {
-        List<DiskImage> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<DiskImage>();
+        List<DiskImage> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<>();
 
         getRemoveCommand().setIsExecutionAllowed(disks.size() > 0 && isRemoveCommandAvailable(disks));
         getUploadCommand().setIsExecutionAllowed(isUploadCommandAvailable());
