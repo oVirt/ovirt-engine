@@ -168,15 +168,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
     }
 
     private boolean isRemoveCommandAvailable(List<DiskImage> disks) {
-        for (DiskImage disk : disks) {
-            boolean isImageLocked = disk.getImageStatus() == ImageStatus.LOCKED;
-
-            if (isImageLocked) {
-                return false;
-            }
-        }
-
-        return true;
+        return disks.stream().noneMatch(d -> d.getImageStatus() == ImageStatus.LOCKED);
     }
 
     private boolean isUploadCommandAvailable() {
