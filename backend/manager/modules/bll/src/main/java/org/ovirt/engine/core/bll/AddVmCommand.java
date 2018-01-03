@@ -4,7 +4,7 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTI
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
 import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +22,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -636,7 +635,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
             // otherwise, we save the content in base64 string
             for (Map.Entry<String, String> entry : getParameters().getVmPayload().getFiles().entrySet()) {
-                entry.setValue(new String(BASE_64.encode(entry.getValue().getBytes()), Charset.forName(CharEncoding.UTF_8)));
+                entry.setValue(new String(BASE_64.encode(entry.getValue().getBytes()), StandardCharsets.UTF_8));
             }
         }
 

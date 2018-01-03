@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +25,6 @@ import java.util.stream.IntStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -819,7 +818,7 @@ public class VmInfoBuildUtils {
         vmPayload.setDeviceType(VmDeviceType.FLOPPY);
         vmPayload.getFiles().put(
                 osRepository.getSysprepFileName(vm.getOs(), vm.getCompatibilityVersion()),
-                new String(BASE_64.encode(sysPrepContent.getBytes()), Charset.forName(CharEncoding.UTF_8)));
+                new String(BASE_64.encode(sysPrepContent.getBytes()), StandardCharsets.UTF_8));
 
         return new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                 VmDeviceGeneralType.DISK,
@@ -841,7 +840,7 @@ public class VmInfoBuildUtils {
         vmPayload.setVolumeId(CLOUD_INIT_VOL_ID);
         for (Entry<String, byte[]> entry : cloudInitContent.entrySet()) {
             vmPayload.getFiles().put(entry.getKey(),
-                    new String(BASE_64.encode(entry.getValue()), Charset.forName(CharEncoding.UTF_8)));
+                    new String(BASE_64.encode(entry.getValue()), StandardCharsets.UTF_8));
         }
 
         return new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),

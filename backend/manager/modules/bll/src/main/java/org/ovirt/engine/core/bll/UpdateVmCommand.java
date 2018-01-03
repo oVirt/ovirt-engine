@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -998,7 +997,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
             // we save the content in base64 string
             for (Map.Entry<String, String> entry : getParameters().getVmPayload().getFiles().entrySet()) {
-                entry.setValue(new String(BASE_64.encode(entry.getValue().getBytes()), Charset.forName(CharEncoding.UTF_8)));
+                entry.setValue(new String(BASE_64.encode(entry.getValue().getBytes()), StandardCharsets.UTF_8));
             }
         }
 
