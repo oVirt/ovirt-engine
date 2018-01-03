@@ -133,7 +133,9 @@ public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extend
 
     void updateViewSearchString() {
         getView().setSearchStringPrefix(model.getDefaultSearchString());
-        getView().setSearchString(model.getSearchString());
+        String searchString = model.getSearchString().trim().equals(model.getDefaultSearchString().trim()) ? ""
+                : model.getSearchString();
+        getView().setSearchString(searchString);
     }
 
     private void updateViewSearchStringPrefix() {

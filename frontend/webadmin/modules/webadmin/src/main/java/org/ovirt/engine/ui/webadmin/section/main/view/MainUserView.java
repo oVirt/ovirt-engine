@@ -160,7 +160,7 @@ public class MainUserView extends AbstractMainWithDetailsTableView<DbUser, UserL
         String userSearchString = inputSearchString.substring(inputSearchStringPrefix.length());
 
         inputSearchStringPrefix = usersSearchPrefix + VdcUserConditionFieldAutoCompleter.TYPE.toLowerCase()
-                + " = " + userType.name().toLowerCase(); //$NON-NLS-1$
+                + " = " + userType.name().toLowerCase() + " "; //$NON-NLS-1$ $NON-NLS-2$
         if (inputSearchString.equals(usersSearchPrefix.toLowerCase())) {
             inputSearchString = inputSearchStringPrefix;
         } else {

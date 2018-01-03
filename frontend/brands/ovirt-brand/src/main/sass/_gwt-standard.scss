@@ -681,6 +681,7 @@ modified and overridden.
 }
 .gwt-SuggestBoxPopup {
   margin-left: 3px;
+  z-index: 2 !important;
 }
 .gwt-SuggestBoxPopup .item {
   padding: 2px 6px;

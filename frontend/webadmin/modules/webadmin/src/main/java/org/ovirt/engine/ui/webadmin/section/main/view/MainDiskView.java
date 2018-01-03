@@ -303,7 +303,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 userSearchString = searchConjunctionAnd + userSearchString.trim();
             }
         }
-        String searchString = searchStringPrefix + userSearchString;
+        String searchString = searchStringPrefix.trim() + space + userSearchString.trim();
 
         getTable().getSelectionModel().clear();
         getMainModel().setItems(null);
