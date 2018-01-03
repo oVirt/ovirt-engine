@@ -18,7 +18,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String SIZE = "SIZE";
     public static final String ACTUAL_SIZE = "ACTUAL_SIZE";
     public static final String CREATION_DATE = "CREATION_DATE";
-    public static final String BOOTABLE = "BOOTABLE";
     public static final String SHAREABLE = "SHAREABLE";
     public static final String STATUS = "STATUS";
     public static final String DISK_TYPE = "DISK_TYPE";
@@ -38,7 +37,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         verbs.add(SIZE);
         verbs.add(ACTUAL_SIZE);
         verbs.add(CREATION_DATE);
-        verbs.add(BOOTABLE);
         verbs.add(SHAREABLE);
         verbs.add(STATUS);
         verbs.add(DISK_TYPE);
@@ -60,7 +58,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(SIZE, Long.class);
         getTypeDictionary().put(ACTUAL_SIZE, Long.class);
         getTypeDictionary().put(CREATION_DATE, Date.class);
-        getTypeDictionary().put(BOOTABLE, Boolean.class);
         getTypeDictionary().put(SHAREABLE, Boolean.class);
         getTypeDictionary().put(STATUS, ImageStatus.class);
         getTypeDictionary().put(DISK_TYPE, DiskStorageType.class);
@@ -79,7 +76,6 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(SIZE, "size");
         columnNameDict.put(ACTUAL_SIZE, "actual_size");
         columnNameDict.put(CREATION_DATE, "creation_date");
-        columnNameDict.put(BOOTABLE, "boot");
         columnNameDict.put(SHAREABLE, "shareable");
         columnNameDict.put(STATUS, "imageStatus");
         columnNameDict.put(DISK_TYPE, "disk_storage_type");
@@ -116,8 +112,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
             return new EnumValueAutoCompleter(DiskStorageType.class);
         } else if (DISK_CONTENT_TYPE.equals(fieldName)) {
             return new EnumValueAutoCompleter(DiskContentType.class);
-        } else if (BOOTABLE.equals(fieldName) ||
-                SHAREABLE.equals(fieldName) ||
+        } else if (SHAREABLE.equals(fieldName) ||
                 WIPE_AFTER_DELETE.equals(fieldName)) {
             return new BitValueAutoCompleter();
         }
