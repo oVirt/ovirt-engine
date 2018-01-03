@@ -1613,12 +1613,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(new RemoveVmParameters(entry.getKey(), false, (Boolean) entry.getValue().getEntity()));
         }
 
-        selectNextItem();
         model.startProgress();
-
+        selectNextItem();
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVm, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
+                        restorePreviousSelectedItem();
+                    }
                     localModel.stopProgress();
                     cancel();
                 }, model);

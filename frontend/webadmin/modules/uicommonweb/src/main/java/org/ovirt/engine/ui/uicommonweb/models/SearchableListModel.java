@@ -437,33 +437,54 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
     }
 
-    private T determineNextSelectedItem() {
+    private int previousSelectedIndex = -1;
+
+    protected int determineNextSelectedIndex() {
         T currentItem = getSelectedItem() != null ? getSelectedItem() : getSelectedItems() != null ?
                 getSelectedItems().get(0) : null;
-        T nextItem = null;
+        int nextIndex = -1;
         Collection<T> items = getItems();
         if (items != null && currentItem != null) {
             List<T> itemsList = new ArrayList<>(items);
             int currentIndex = itemsList.indexOf(currentItem);
             if (currentIndex > -1 && currentIndex < itemsList.size()) {
+                previousSelectedIndex = currentIndex;
                 if (currentIndex + 1 < itemsList.size()) {
                     // Try next item.
-                    nextItem = itemsList.get(currentIndex + 1);
+                    nextIndex = currentIndex + 1;
                 } else if (currentIndex - 1 > -1) {
                     // Try previous item
-                    nextItem = itemsList.get(currentIndex - 1);
+                    nextIndex = currentIndex - 1;
                 }
                 // If neither worked, next selected item will be null.
             }
         }
-        return nextItem;
+        return nextIndex;
+    }
+
+    private T findByIndex(int index) {
+        List<T> itemsList = new ArrayList<>(items);
+        if (index > -1) {
+            return itemsList.get(index);
+        } else {
+            return null;
+        }
+    }
+
+    public void restorePreviousSelectedItem() {
+        T nextSelectedItem = findByIndex(previousSelectedIndex);
+        selectItem(nextSelectedItem);
     }
 
     public void selectNextItem() {
-        T nextSelectedItem = determineNextSelectedItem();
-        setSelectedItem(nextSelectedItem);
-        if (nextSelectedItem != null) {
-            getSelectionModel().setSelected(nextSelectedItem, true);
+        T nextSelectedItem = findByIndex(determineNextSelectedIndex());
+        selectItem(nextSelectedItem);
+    }
+
+    private void selectItem(T item) {
+        // Set the selection in the selection model which will propagate it to the selectedItem(s) as well.
+        if (item != null) {
+            getSelectionModel().setSelected(item, true);
         } else {
             getSelectionModel().clear();
         }

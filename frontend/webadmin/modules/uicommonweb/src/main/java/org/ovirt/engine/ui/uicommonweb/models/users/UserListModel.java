@@ -460,6 +460,9 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         IFrontendMultipleActionAsyncCallback lastCallback = result -> Scheduler.get().scheduleDeferred(() -> {
             //Refresh user list.
             syncSearch();
+            if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
+                restorePreviousSelectedItem();
+            }
             cancel();
         });
         selectNextItem();

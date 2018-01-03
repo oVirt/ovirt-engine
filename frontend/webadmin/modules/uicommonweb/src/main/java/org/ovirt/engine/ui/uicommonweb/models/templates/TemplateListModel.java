@@ -541,8 +541,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVmTemplate, list,
                 result -> {
-
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
+                        restorePreviousSelectedItem();
+                    }
                     localModel.stopProgress();
                     cancel();
 

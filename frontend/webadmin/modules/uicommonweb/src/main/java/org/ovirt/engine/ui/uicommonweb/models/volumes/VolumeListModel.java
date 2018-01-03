@@ -422,8 +422,10 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         Frontend.getInstance().runMultipleAction(ActionType.DeleteGlusterVolume, list,
                 result -> {
-
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                    if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
+                        restorePreviousSelectedItem();
+                    }
                     localModel.stopProgress();
                     cancel();
                 }, model);
