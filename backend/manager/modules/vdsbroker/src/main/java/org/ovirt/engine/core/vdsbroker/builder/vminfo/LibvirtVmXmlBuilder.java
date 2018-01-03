@@ -1661,29 +1661,36 @@ public class LibvirtVmXmlBuilder {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
             String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage);
+
             switch (diskType) {
             case "block":
                 writer.writeAttributeString(
                         "dev", vmInfoBuildUtils.getPathToImage(diskImage));
                 break;
+            case "network":
+                String[] volInfo = vmInfoBuildUtils.getGlusterVolInfo(disk);
+                // Sometimes gluster methods return garbage instead of
+                // correct volume info string and, as we can't parse it,
+                // we will have a null volInfo. In that case we will just
+                //drop to the 'file' case as a fallback.
+                if (volInfo != null) {
+                    writer.writeAttributeString("protocol", "gluster");
+                    writer.writeAttributeString(
+                            "name",
+                            String.format("%s/%s/images/%s/%s",
+                                    volInfo[1],
+                                    diskImage.getStorageIds().get(0),
+                                    diskImage.getId(),
+                                    diskImage.getImageId()));
+                    writer.writeStartElement("host");
+                    writer.writeAttributeString("name", volInfo[0]);
+                    writer.writeAttributeString("port", "0");
+                    writer.writeEndElement();
+                    break;
+                }
             case "file":
                 writer.writeAttributeString(
                         "file", vmInfoBuildUtils.getPathToImage(diskImage));
-                break;
-            case "network":
-                writer.writeAttributeString("protocol", "gluster");
-                String[] volInfo = vmInfoBuildUtils.getGlusterVolInfo(disk);
-                writer.writeAttributeString(
-                        "name",
-                        String.format("%s/%s/images/%s/%s",
-                                volInfo[1],
-                                diskImage.getStorageIds().get(0),
-                                diskImage.getId(),
-                                diskImage.getImageId()));
-                writer.writeStartElement("host");
-                writer.writeAttributeString("name", volInfo[0]);
-                writer.writeAttributeString("port", "0");
-                writer.writeEndElement();
                 break;
             }
             diskMetadata.put(dev, createDiskParams(diskImage));

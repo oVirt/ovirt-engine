@@ -939,7 +939,12 @@ public class VmInfoBuildUtils {
         StorageDomainStatic dom = this.storageDomainStaticDao.get(((DiskImage) disk).getStorageIds().get(0));
         StorageServerConnections con = this.storageServerConnectionDao.getAllForDomain(dom.getId()).get(0);
         String path = con.getConnection(); // host:/volume
-        return path.split(":/");
+        String[] volInfo = path.split(":/");
+        if (volInfo.length != 2) {
+            log.error("Invalid volInfo value: {}", path);
+            return null;
+        }
+        return volInfo;
     }
 
     private String findCpusToPinIoAndEmulator(VM vm, Map<String, Object> cpuPinning, MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier, int vdsCpuThreads) {
