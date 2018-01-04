@@ -93,7 +93,7 @@ public final class StoragePoolStatusHandler {
 
     private static void nonOperationalPoolTreatment(StoragePool pool) {
         boolean changeStatus = false;
-        if (getAllRunningVdssInPool(pool).size() > 0) {
+        if (!getAllRunningVdssInPool(pool).isEmpty()) {
             changeStatus = true;
         }
         if (changeStatus) {
