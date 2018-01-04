@@ -12,12 +12,12 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
     <ui:style>
-        .container {
-            width: 100%;
-        }
-
         .content textarea {
             resize: none;
+        }
+
+        .memoryTable {
+            overflow-y: auto;
         }
     </ui:style>
 
@@ -27,7 +27,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="generalTab" label="{constants.generalBrickAdvancedPopupLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row>
                                     <ge:StringEntityModelLabelEditor ui:field="brickEditor" label="{constants.brickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                                 </b:Row>
@@ -71,7 +71,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="clientsTab" label="{constants.clientsBrickAdvancedPopupLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row>
                                     <b:Column size="SM_12">
                                         <e:EntityModelCellTable ui:field="clientsTable" />
@@ -84,7 +84,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="memoryStatsTab" label="{constants.memoryStatsBrickAdvancedPopupLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row>
                                     <ge:IntegerEntityModelLabelEditor ui:field="totalAllocatedEditor" label="{constants.totalAllocatedBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
@@ -122,10 +122,12 @@
                 <t:tab>
                     <t:DialogTab ui:field="memoryPoolsTab" label="{constants.memoryPoolsBrickAdvancedPopupLabel}">
                         <t:content>
-                            <b:Container addStyleNames="{style.container}">
+                            <b:Container fluid="true">
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <e:EntityModelCellTable ui:field="memoryPoolsTable"/>
+	                                    <g:SimplePanel addStyleNames="{style.memoryTable}">
+	                                        <e:EntityModelCellTable ui:field="memoryPoolsTable"/>
+                                        </g:SimplePanel>
                                     </b:Column>
                                 </b:Row>
                             </b:Container>

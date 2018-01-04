@@ -198,6 +198,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         statusEditor = new EntityModelLabelEditor<>(new EnumRenderer<GlusterStatus>());
         clientsTable = new EntityModelCellTable<>(false, true);
         memoryPoolsTable = new EntityModelCellTable<>(false, true);
+        memoryPoolsTable.setWidth("1000px"); //$NON-NLS-1$
     }
 
     private void initTableColumns() {
