@@ -87,7 +87,6 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     }
 
     private void initEntityModelCellTable() {
-        networks.enableColumnResizing();
         boolean multiCluster = networks.asEditor().flush().isMultiCluster();
 
         networks.addColumn(new NetworkNameTextColumnWithTooltip(), constants.nameNetwork(), "85px"); //$NON-NLS-1$
@@ -106,29 +105,29 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         networks.addColumn(
                 new ManagementNetworkIndicatorCheckboxColumn(multiCluster, new ManagementNetworkIndicatorFieldUpdater()),
-                constants.managementItemInfo(), "80px"); //$NON-NLS-1$
+                constants.managementItemInfo(), "100px"); //$NON-NLS-1$
 
         networks.addColumn(
                 new DisplayNetworkIndicatorCheckboxColumn(multiCluster,
                         new DisplayNetworkIndicatorFieldUpdater()),
                 new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(constants.displayNetwork()),
                         SafeHtmlUtils.fromSafeConstant(constants.changeDisplayNetworkWarning())),
-                "100px"); //$NON-NLS-1$
+                "120px"); //$NON-NLS-1$
 
         networks.addColumn(
                 new MigrationNetworkIndicatorCheckboxColumn(multiCluster,
                         new MigrationNetworkIndicatorFieldUpdater()),
-                constants.migrationNetwork(), "105px"); //$NON-NLS-1$
+                constants.migrationNetwork(), "125px"); //$NON-NLS-1$
 
         networks.addColumn(
                 new GlusterNetworkIndicatorCheckboxColumn(multiCluster,
                         new GlusterNetworkIndicatorFieldUpdater()),
-                constants.glusterNetwork(), "100px"); //$NON-NLS-1$
+                constants.glusterNetwork(), "120px"); //$NON-NLS-1$
 
         networks.addColumn(
                 new DefaultRouteNetworkIndicatorCheckboxColumn(
                         multiCluster, new DefaultRouteNetworkIndicatorFieldUpdater()),
-                constants.defaultRouteNetwork(), "100px"); //$NON-NLS-1$
+                constants.defaultRouteNetwork(), "120px"); //$NON-NLS-1$
     }
 
     @Override
