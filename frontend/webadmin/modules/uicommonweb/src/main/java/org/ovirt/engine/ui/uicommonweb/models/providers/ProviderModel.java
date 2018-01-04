@@ -225,6 +225,7 @@ public class ProviderModel extends Model {
         this.action = action;
         this.provider = provider;
 
+        getRequiresAuthentication().setEntity(false);
         getRequiresAuthentication().getEntityChangedEvent().addListener((ev, sender, args) -> {
             setAuthFieldsChangeableStatus(requiresAuthentication.getEntity(), isUnmanaged.getEntity());
         });
