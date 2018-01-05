@@ -559,3 +559,8 @@ ENGINE_SCHEDULED_THREAD_POOL_SIZE=100
 # thread pool usage. To change the value permanentaly create a conf file 99-engine-monitoring-interval.conf in
 # /etc/ovirt-engine/engine.conf.d/
 THREAD_POOL_MONITORING_INTERVAL_IN_SECONDS=600
+
+# Specify the ansible-playbook command execution timeout in minutes. It's used for any task, which executes
+# AnsibleExecutor class. To change the value permanentaly create a conf file 99-ansible-playbook-timeout.conf in
+# /etc/ovirt-engine/engine.conf.d/
+ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT=30
