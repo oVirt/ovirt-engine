@@ -36,7 +36,7 @@
 
 .cellTableCell > div > a {
     margin-top: 2px;
-    display: block;
+    display: inline-table;
 }
 
 .cellTableEvenRow {

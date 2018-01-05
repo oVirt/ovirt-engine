@@ -36,7 +36,7 @@
 
 .dataGridCell > div > a {
     margin-top: 2px;
-    display: block;
+    display: inline-table;
 }
 
 .dataGridEvenRow {
