@@ -92,11 +92,7 @@ public final class StoragePoolStatusHandler {
     }
 
     private static void nonOperationalPoolTreatment(StoragePool pool) {
-        boolean changeStatus = false;
         if (!getAllRunningVdssInPool(pool).isEmpty()) {
-            changeStatus = true;
-        }
-        if (changeStatus) {
             log.info("Moving data center '{}' with Id '{}' to status Problematic from status NotOperational on a one"
                     + " time basis to try to recover",
                     pool.getName(),
