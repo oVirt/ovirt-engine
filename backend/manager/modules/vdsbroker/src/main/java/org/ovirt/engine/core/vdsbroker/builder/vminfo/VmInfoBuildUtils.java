@@ -939,11 +939,12 @@ public class VmInfoBuildUtils {
         StorageDomainStatic dom = this.storageDomainStaticDao.get(((DiskImage) disk).getStorageIds().get(0));
         StorageServerConnections con = this.storageServerConnectionDao.getAllForDomain(dom.getId()).get(0);
         String path = con.getConnection(); // host:/volume
-        String[] volInfo = path.split(":/");
+        String[] volInfo = path.split(":");
         if (volInfo.length != 2) {
             log.error("Invalid volInfo value: {}", path);
             return null;
         }
+        volInfo[1] = volInfo[1].replaceFirst("^/", "");
         return volInfo;
     }
 
