@@ -8,11 +8,11 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
@@ -82,7 +82,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private NetworkDeviceHelper networkDeviceHelper;
 
     @Inject
-    private HostDeviceManager hostDeviceManager;
+    private HostLocking hostLocking;
+
     @Inject
     private VmDeviceDao vmDeviceDao;
     @Inject
@@ -328,10 +329,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private String acquireVF() {
         try {
-            hostDeviceManager.acquireHostDevicesLock(getVdsId());
+            hostLocking.acquireHostDevicesLock(getVdsId());
             return findFreeVf();
         } finally {
-            hostDeviceManager.releaseHostDevicesLock(getVdsId());
+            hostLocking.releaseHostDevicesLock(getVdsId());
         }
     }
 

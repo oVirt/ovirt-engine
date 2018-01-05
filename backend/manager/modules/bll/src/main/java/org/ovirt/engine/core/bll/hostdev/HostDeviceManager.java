@@ -1,16 +1,13 @@
 package org.ovirt.engine.core.bll.hostdev;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.BackendService;
@@ -22,27 +19,19 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.lock.LockManager;
 
 @ApplicationScoped
 public class HostDeviceManager implements BackendService {
 
     @Inject
     private VdsDynamicDao hostDynamicDao;
-
-    @Inject
-    private LockManager lockManager;
 
     @Inject
     private HostDeviceDao hostDeviceDao;
@@ -123,22 +112,6 @@ public class HostDeviceManager implements BackendService {
 
     public void freeVmHostDevices(Guid vmId) {
         hostDeviceDao.freeHostDevicesUsedByVmId(vmId);
-    }
-
-    public void acquireHostDevicesLock(Guid vdsId) {
-        lockManager.acquireLockWait(new EngineLock(getExclusiveLockForHostDevices(vdsId)));
-    }
-
-    public void releaseHostDevicesLock(Guid vdsId) {
-        lockManager.releaseLock(new EngineLock(getExclusiveLockForHostDevices(vdsId)));
-    }
-
-    private static Map<String, Pair<String, String>> getExclusiveLockForHostDevices(Guid vdsId) {
-        return Collections.singletonMap(
-                vdsId.toString(),
-                LockMessagesMatchUtil.makeLockingPair(
-                        LockingGroup.HOST_DEVICES,
-                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     /**

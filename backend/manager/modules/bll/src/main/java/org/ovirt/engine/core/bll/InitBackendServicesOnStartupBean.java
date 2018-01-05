@@ -83,11 +83,11 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
                 log.error("Initialization of device custom properties failed.", e);
             }
 
+            serviceLoader.load(HostDeviceManager.class);
             serviceLoader.load(SchedulingManager.class);
 
             sessionDataContainer.cleanupEngineSessionsOnStartup();
 
-            serviceLoader.load(HostDeviceManager.class);
             serviceLoader.load(DwhHeartBeat.class);
 
             serviceLoader.load(AsyncTaskManager.class);

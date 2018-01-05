@@ -58,6 +58,22 @@ public class HostLocking {
                 EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
     }
 
+    public void acquireHostDevicesLock(Guid vdsId) {
+        lockManager.acquireLockWait(new EngineLock(getExclusiveLockForHostDevices(vdsId)));
+    }
+
+    public void releaseHostDevicesLock(Guid vdsId) {
+        lockManager.releaseLock(new EngineLock(getExclusiveLockForHostDevices(vdsId)));
+    }
+
+    private Map<String, Pair<String, String>> getExclusiveLockForHostDevices(Guid vdsId) {
+        return Collections.singletonMap(
+                vdsId.toString(),
+                LockMessagesMatchUtil.makeLockingPair(
+                        LockingGroup.HOST_DEVICES,
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
     private static class HostEngineLock extends EngineLock implements AutoCloseable {
         public final String closingMessage;
         private final Logger log;

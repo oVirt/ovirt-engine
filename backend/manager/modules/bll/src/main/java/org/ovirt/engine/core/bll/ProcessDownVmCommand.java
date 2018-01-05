@@ -55,6 +55,8 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     @Inject
     private HostDeviceManager hostDeviceManager;
     @Inject
+    private HostLocking hostLocking;
+    @Inject
     private NetworkDeviceHelper networkDeviceHelper;
     @Inject
     private SnapshotsManager snapshotsManager;
@@ -139,11 +141,11 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         if (hostDeviceManager.checkVmNeedsDirectPassthrough(getVm())) {
             try {
                 // Only single dedicated host allowed for host devices, verified on validates
-                hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
+                hostLocking.acquireHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
                 hostDeviceManager.freeVmHostDevices(getVmId());
             } finally {
                 // Only single dedicated host allowed for host devices, verified on validates
-                hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
+                hostLocking.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
             }
             return true;
         }

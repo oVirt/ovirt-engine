@@ -129,6 +129,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Inject
     private HostDeviceManager hostDeviceManager;
+
+    @Inject
+    private HostLocking hostLocking;
     @Inject
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
     @Inject
@@ -346,14 +349,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void acquireHostDevicesLock() {
         if (needsHostDevices) {
             // Only single dedicated host allowed for host devices, verified on validates
-            hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
+            hostLocking.acquireHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
         }
     }
 
     private void releaseHostDevicesLock() {
         if (needsHostDevices) {
             // Only single dedicated host allowed for host devices, verified on validates
-            hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
+            hostLocking.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
         }
     }
 

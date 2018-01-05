@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
@@ -102,7 +102,7 @@ public class SchedulingManager implements BackendService {
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
     @Inject
-    private HostDeviceManager hostDeviceManager;
+    private HostLocking hostLocking;
     @Inject
     private VmOverheadCalculator vmOverheadCalculator;
     @Inject
@@ -398,7 +398,7 @@ public class SchedulingManager implements BackendService {
         }
 
         try {
-            hostDeviceManager.acquireHostDevicesLock(bestHostId);
+            hostLocking.acquireHostDevicesLock(bestHostId);
             Collection<String> virtualFunctions = passthroughVnicToVfMap.values();
 
             log.debug("Marking following VF as used by VM({}) on selected host({}): {}",
@@ -408,7 +408,7 @@ public class SchedulingManager implements BackendService {
 
             networkDeviceHelper.setVmIdOnVfs(bestHostId, vm.getId(), new HashSet<>(virtualFunctions));
         } finally {
-            hostDeviceManager.releaseHostDevicesLock(bestHostId);
+            hostLocking.releaseHostDevicesLock(bestHostId);
         }
     }
 

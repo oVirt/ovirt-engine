@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RefreshHostInfoCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -44,7 +45,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     private HostDeviceDao hostDeviceDao;
 
     @Inject
-    private HostDeviceManager hostDeviceManager;
+    private HostLocking hostLocking;
 
     @Inject
     private HostNicVfsConfigDao hostNicVfsConfigDao;
@@ -112,7 +113,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         }
 
         try {
-            hostDeviceManager.acquireHostDevicesLock(getVdsId());
+            hostLocking.acquireHostDevicesLock(getVdsId());
             TransactionSupport.executeInNewTransaction(() -> {
 
                 hostDeviceDao.saveAllInBatch(newDevices);
@@ -126,7 +127,7 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
                 return null;
             });
         } finally {
-            hostDeviceManager.releaseHostDevicesLock(getVdsId());
+            hostLocking.releaseHostDevicesLock(getVdsId());
         }
 
         setSucceeded(true);
