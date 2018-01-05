@@ -1889,8 +1889,13 @@ public class VdsBrokerObjectsBuilder {
                             iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
                         }
 
-                        iface.setIpv4Gateway(v4gateway);
-                        iface.setIpv6Gateway(v6gateway);
+                        if (StringUtils.isNotEmpty(v4gateway)) {
+                            iface.setIpv4Gateway(v4gateway);
+                        }
+
+                        if (StringUtils.isNotEmpty(v6gateway)) {
+                            iface.setIpv6Gateway(v6gateway);
+                        }
 
                         if (bridgedNetwork) {
                             addBootProtocol(effectiveProperties, iface);
