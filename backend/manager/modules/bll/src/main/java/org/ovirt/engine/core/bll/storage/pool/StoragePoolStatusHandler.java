@@ -83,9 +83,9 @@ public final class StoragePoolStatusHandler {
                 nonOperationalPools.remove(poolId);
             }
         } else if (status == StoragePoolStatus.NotOperational) {
+            final StoragePoolStatusHandler storagePoolStatusHandler =
+                    Injector.injectMembers(new StoragePoolStatusHandler(poolId));
             synchronized (nonOperationalPools) {
-                final StoragePoolStatusHandler storagePoolStatusHandler =
-                        Injector.injectMembers(new StoragePoolStatusHandler(poolId));
                 nonOperationalPools.put(poolId, storagePoolStatusHandler.scheduleTimeout());
             }
         }
