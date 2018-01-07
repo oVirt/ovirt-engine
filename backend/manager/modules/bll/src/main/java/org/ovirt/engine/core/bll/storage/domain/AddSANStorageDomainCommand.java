@@ -100,6 +100,9 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     @Override
     @SuppressWarnings("unchecked")
     protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
+        if (!getStorageDomain().getDiscardAfterDelete()) {
+            return true;
+        }
         ArrayList<LUNs> luns = (ArrayList<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList,
                 new GetDeviceListVDSCommandParameters(getVds().getId(), getStorageDomain().getStorageType(), false,
                         getParameters().getLunIds())).getReturnValue();
