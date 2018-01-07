@@ -1111,7 +1111,8 @@ public class LibvirtVmXmlBuilder {
             }
 
             if (device.isManaged()) {
-                writeManagedDisk(device, disk, dve, index);
+                String dev = vmInfoBuildUtils.makeDiskName(dve.getDiskInterface().getName(), index);
+                writeManagedDisk(device, disk, dve, dev);
             }
             // TODO: else
         }
@@ -1532,7 +1533,7 @@ public class LibvirtVmXmlBuilder {
             VmDevice device,
             Disk disk,
             DiskVmElement dve,
-            int index) {
+            String dev) {
         // <disk type='file' device='disk' snapshot='no'>
         //   <driver name='qemu' type='qcow2' cache='none'/>
         //   <source file='/path/to/image'/>
@@ -1542,7 +1543,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("disk");
 
         writeGeneralDiskAttributes(device, disk, dve);
-        String dev = writeDiskTarget(dve, index);
+        writeDiskTarget(dve, dev);
         writeDiskSource(disk, dev);
         writeDiskDriver(device, disk, dve);
         writeAddress(device);
@@ -1749,24 +1750,20 @@ public class LibvirtVmXmlBuilder {
         return diskUuids;
     }
 
-    private String writeDiskTarget(DiskVmElement dve, int index) {
-        String dev = null;
+    private void writeDiskTarget(DiskVmElement dve, String dev) {
         writer.writeStartElement("target");
         switch (dve.getDiskInterface()) {
         case IDE:
-            dev = vmInfoBuildUtils.makeDiskName("ide", index);
             writer.writeAttributeString("dev", dev);
             writer.writeAttributeString("bus", "ide");
             break;
         case VirtIO:
-            dev = vmInfoBuildUtils.makeDiskName("virtio", index);
             writer.writeAttributeString("dev", dev);
             writer.writeAttributeString("bus", "virtio");
 
             // TODO: index
             break;
         case VirtIO_SCSI:
-            dev = vmInfoBuildUtils.makeDiskName("scsi", index);
             writer.writeAttributeString("dev", dev);
             writer.writeAttributeString("bus", "scsi");
 
@@ -1779,7 +1776,6 @@ public class LibvirtVmXmlBuilder {
             log.error("Unsupported interface type, ISCSI interface type is not supported.");
         }
         writer.writeEndElement();
-        return dev;
     }
 
     private void writeGeneralDiskAttributes(VmDevice device, Disk disk, DiskVmElement dve) {
