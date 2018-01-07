@@ -110,8 +110,8 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
 
     @Override
     protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
-        return validate(storageDomainValidator.isDiscardAfterDeleteLegalForNewBlockStorageDomain(
-                getLUNsFromVgInfo()));
+        return !getStorageDomain().getDiscardAfterDelete() ||
+                validate(storageDomainValidator.isDiscardAfterDeleteLegalForNewBlockStorageDomain(getLUNsFromVgInfo()));
     }
 
     protected List<LUNs> getLUNsFromVgInfo() {
