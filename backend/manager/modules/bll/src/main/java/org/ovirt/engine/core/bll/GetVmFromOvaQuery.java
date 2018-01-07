@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleVerbosity;
 import org.ovirt.engine.core.common.vdscommands.GetOvaInfoParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -86,6 +87,7 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
                 .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-query-ova-ansible")
                 .logFileName(hostname)
+                .verboseLevel(AnsibleVerbosity.LEVEL0)
                 .stdoutCallback(AnsibleConstants.OVA_QUERY_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
