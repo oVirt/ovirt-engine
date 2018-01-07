@@ -98,6 +98,8 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         if (diskImage != null && getImage().getSize() != diskImage.getSize()) {
             getReturnValue().setActionReturnValue(diskImage.getSize());
             imageDao.updateImageSize(diskImage.getImageId(), diskImage.getSize());
+            setDestinationImageId(diskImage.getImageId());
+            completeImageData(diskImage);
             updateAuditLog(AuditLogType.USER_EXTEND_DISK_SIZE_SUCCESS, diskImage.getSizeInGigabytes());
         }
 
