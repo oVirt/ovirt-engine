@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -201,7 +202,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
                         new AsyncQuery<QueryReturnValue>(result -> {
                             List<Network> networks = result.getReturnValue();
                             if (networks != null) {
-                                getDatacenterPhysicalNetwork().setItems(networks);
+                                getDatacenterPhysicalNetwork().setItems(networks.stream()
+                                        .filter(network -> !network.isExternal())
+                                        .collect(Collectors.toList()));
                                 selectPhysicalDatacenterNetwork();
                             }
                         }));

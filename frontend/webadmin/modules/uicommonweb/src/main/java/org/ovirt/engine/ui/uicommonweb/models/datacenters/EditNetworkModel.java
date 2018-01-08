@@ -112,6 +112,10 @@ public class EditNetworkModel extends NetworkModel {
             getIsVmNetwork().setIsChangeable(false);
             getNetworkLabel().setIsChangeable(false);
             getCustomPhysicalNetwork().setIsChangeable(false);
+            getConnectedToPhysicalNetwork().setIsChangeable(false);
+            getUsePhysicalNetworkFromDatacenter().setIsChangeable(false);
+            getUsePhysicalNetworkFromCustom().setIsChangeable(false);
+            getDatacenterPhysicalNetwork().setIsChangeable(false);
         }
     }
 

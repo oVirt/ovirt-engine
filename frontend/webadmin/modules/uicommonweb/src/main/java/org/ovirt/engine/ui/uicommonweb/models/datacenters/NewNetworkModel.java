@@ -152,6 +152,12 @@ public class NewNetworkModel extends NetworkModel {
                 getSubnetModel().flush();
                 parameters.setExternalSubnet(getSubnetModel().getSubnet());
             }
+
+            if (getConnectedToPhysicalNetwork().getEntity() && getUsePhysicalNetworkFromDatacenter().getEntity()) {
+                Network network = getDatacenterPhysicalNetwork().getSelectedItem();
+                providerNetwork.setPhysicalNetworkId(network.getId());
+            }
+
             Frontend.getInstance().runAction(
                 hasDefinedSubnet() ? ActionType.AddNetworkWithSubnetOnProvider : ActionType.AddNetworkOnProvider,
                 parameters, addNetworkCallback(), null);
