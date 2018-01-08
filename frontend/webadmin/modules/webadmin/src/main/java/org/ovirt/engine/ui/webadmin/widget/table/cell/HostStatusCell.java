@@ -3,9 +3,11 @@ package org.ovirt.engine.ui.webadmin.widget.table.cell;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.ui.common.utils.JqueryUtils;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -100,7 +102,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         // - host reinstall is required
         if (hasPMAlert(vds) || hasNetconfigDirty(vds) || hasGlusterAlert(vds)
                 || vds.getStaticData().isReinstallRequired()
-                || !NetworkCommonUtils.hasDefaultRoute(vds.getInterfaces())) {
+                || hasDefaultRouteAlert(vds)) {
             sb.append(alertImageHtml);
         }
         sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
@@ -181,7 +183,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
             appendLine(sb, constants.hostReinstallRequired());
         }
 
-        if (!NetworkCommonUtils.hasDefaultRoute(vds.getInterfaces())) {
+        if (hasDefaultRouteAlert(vds)) {
             appendLine(sb, constants.hostHasNoDefaultRoute());
         }
 
@@ -203,5 +205,12 @@ public class HostStatusCell extends AbstractCell<VDS> {
 
     private boolean hasGlusterAlert(VDS vds) {
         return vds.getClusterSupportsGlusterService() && vds.getGlusterPeerStatus() != PeerStatus.CONNECTED;
+    }
+
+    private boolean hasDefaultRouteAlert(VDS vds) {
+        return (Boolean) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigValues.DefaultRouteReportedByVdsm,
+                        vds.getClusterCompatibilityVersion().getValue())
+                && !NetworkCommonUtils.hasDefaultRoute(vds.getInterfaces());
     }
 }
