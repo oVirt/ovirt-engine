@@ -1255,6 +1255,20 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION UpdateVmLeaseStorageDomainId(
+v_vm_guid UUID,
+v_sd_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE vm_static
+      SET lease_sd_id = v_sd_id
+      WHERE vm_guid = v_vm_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 
 Create or replace FUNCTION GetVmStaticByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_static STABLE
    AS $procedure$

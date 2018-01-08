@@ -207,6 +207,14 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
                 getCustomMapSqlParameterSource().addValue("vds_id", id));
     }
 
+    @Override
+    public void updateVmLeaseStorageDomainId(Guid vmId, Guid storageDomainId) {
+        getCallsHandler().executeModification("UpdateVmLeaseStorageDomainId",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", vmId)
+                        .addValue("sd_id", storageDomainId));
+    }
+
     /**
      * JDBC row mapper for VM static
      */
