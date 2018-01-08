@@ -1,0 +1,2 @@
+# Used to set the CPU time quota to processes, defaulting to using 4 cores
+gluster_cgroup_cpu_quota: 400

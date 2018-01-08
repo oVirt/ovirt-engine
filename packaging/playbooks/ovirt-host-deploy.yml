@@ -2,7 +2,9 @@
   remote_user: root
 
   roles:
-    - ovirt-host-deploy
+    - role: ovirt-host-deploy
+    - role: hc-gluster-cgroups
+      when: host_deploy_virt_enabled and host_deploy_gluster_enabled
 
   tasks:
     - name: Check if post tasks file exists
