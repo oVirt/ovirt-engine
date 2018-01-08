@@ -46,6 +46,10 @@ public class AddGlusterWebhookInternalCommand<T extends VdsActionParameters> ext
 
     @Override
     protected boolean validate() {
+        if (!super.validate()) {
+            return false;
+        }
+
         if (!supportedInConfig(ConfigValues.GlusterEventingSupported, getCluster().getCompatibilityVersion())) {
             //if eventing is not supported, we do not want to process further
             return false;
