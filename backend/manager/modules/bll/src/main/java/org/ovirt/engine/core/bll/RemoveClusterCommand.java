@@ -54,19 +54,19 @@ public class RemoveClusterCommand<T extends ClusterParametersBase> extends Clust
                 returnValue = false;
             }
 
-            if (vdsStaticDao.getAllForCluster(getCluster().getId()).size() != 0) {
+            if (!vdsStaticDao.getAllForCluster(getCluster().getId()).isEmpty()) {
                 addValidationMessage(EngineMessage.VDS_CANNOT_REMOVE_CLUSTER_VDS_DETECTED);
                 returnValue = false;
             }
-            if (vmStaticDao.getAllByCluster(getCluster().getId()).size() != 0) {
+            if (!vmStaticDao.getAllByCluster(getCluster().getId()).isEmpty()) {
                 addValidationMessage(EngineMessage.VM_CANNOT_REMOVE_CLUSTER_VMS_DETECTED);
                 returnValue = false;
             }
-            if (vmTemplateDao.getAllForCluster(getCluster().getId()).size() != 0) {
+            if (!vmTemplateDao.getAllForCluster(getCluster().getId()).isEmpty()) {
                 addValidationMessage(EngineMessage.VMT_CANNOT_REMOVE_CLUSTER_VMTS_DETECTED);
                 returnValue = false;
             }
-            if ((list = vmPoolDao.getAll()).size() > 0) {
+            if (!(list = vmPoolDao.getAll()).isEmpty()) {
                 for (VmPool pool : list) {
                     if (pool.getClusterId().equals(getCluster().getId())) {
                         addValidationMessage(EngineMessage.CLUSTER_CANNOT_REMOVE_HAS_VM_POOLS);
