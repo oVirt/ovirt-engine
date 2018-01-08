@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 public enum ProviderType implements Identifiable {
     OPENSTACK_NETWORK(0, true, true, true, true, false, VdcObjectType.Network),
     FOREMAN(1, false, false, false, false, false, VdcObjectType.VDS),
-    OPENSTACK_IMAGE(2, false, true, true, false, false, VdcObjectType.Storage),
-    OPENSTACK_VOLUME(3, false, true, true, false, false, VdcObjectType.Storage),
+    OPENSTACK_IMAGE(2, true, true, false, true, false, VdcObjectType.Storage),
+    OPENSTACK_VOLUME(3, true, true, false, true, false, VdcObjectType.Storage),
     VMWARE(4, false, false, false, false, false, VdcObjectType.VM),
     EXTERNAL_NETWORK(5, true, true, true, false, true, VdcObjectType.Network),
     KVM(6, false, false, false, false, false, VdcObjectType.VM),
