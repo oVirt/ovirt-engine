@@ -1566,6 +1566,12 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     LldpInformationSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    Ping2SupportedByVdsm,
+
+    @TypeConverterAttribute(Boolean.class)
+    ConfirmConnectivitySupportedByVdsm,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

@@ -275,4 +275,20 @@ public class FeatureSupported {
     public static boolean isLlldpInformationSupported(Version version) {
         return supportedInConfig(ConfigValues.LldpInformationSupported, version);
     }
+
+    /**
+     * @param version Compatibility version to check for.
+     * @return {@code true} if verb Host.ping2 is supported for this version.
+     */
+    public static boolean isPing2SupportedByVdsm(Version version) {
+        return supportedInConfig(ConfigValues.Ping2SupportedByVdsm, version);
+    }
+
+    /**
+     * @param version Compatibility version to check for.
+     * @return {@code true} if verb Host.confirmConnectivity is supported for this version.
+     */
+    public static boolean isConfirmConnectivitySupportedByVdsm(Version version) {
+        return supportedInConfig(ConfigValues.ConfirmConnectivitySupportedByVdsm, version);
+    }
 }
