@@ -93,6 +93,7 @@ public final class Cloner {
         vm.setDiskMap(instance.getDiskMap());
         vm.setDiskSize(instance.getDiskSize());
         vm.setImages(instance.getImages());
+        vm.setSnapshots(instance.getSnapshots());
         // TODO: this is also an object, so needs to be cloned as well. while it is only accessed via VM.DiskMap, which
         // creates a dictionary
         // from it - actually the DiskImage's themselves are probably sharing the same reference...
