@@ -115,6 +115,6 @@ public class DownloadImageHandler {
                 .allMatch((Predicate<Disk>) disk ->
                         disk instanceof DiskImage
                         && disk.getTransferType() == TransferType.Download
-                        && disk.getImageTransferPhase() == ImageTransferPhase.TRANSFERRING);
+                        && disk.getImageTransferPhase().canBeCancelled());
     }
 }
