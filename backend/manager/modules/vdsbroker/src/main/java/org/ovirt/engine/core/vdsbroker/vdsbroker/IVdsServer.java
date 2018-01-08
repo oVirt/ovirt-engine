@@ -213,9 +213,33 @@ public interface IVdsServer {
 
     StatusOnlyReturn vmUpdateDevice(String vmId, Map device);
 
+    /**
+     * @since engine 4.2.1
+     * @since cluster compatibility version >= 4.2
+     */
+    @Deprecated
     FutureTask<Map<String, Object>> poll();
 
+    /**
+     * @since engine 4.2.1
+     * @since cluster compatibility version >= 4.2
+     */
+    @Deprecated
     FutureTask<Map<String, Object>> timeBoundPoll(long timeout, TimeUnit unit);
+
+    /**
+     * poll2 performs Host.ping2. It is available for cluster compatibility >= 4.2 and replaces
+     * poll() which performs Host.ping. poll2 is used by the engine to ascertain that vdsm is
+     * reachable.
+     */
+    FutureTask<Map<String, Object>> timeBoundPoll2(long timeout, TimeUnit unit);
+
+    /**
+     * PollConfirmConnectivity performs Host.confirmConnectivity. It is a new verb for cluster
+     * compatibility >= 4.2
+     * PollConfirmConnectivity is used by vdsm to ascertain that the engine is reachable.
+     */
+    FutureTask<Map<String, Object>> timeBoundPollConfirmConnectivity(long timeout, TimeUnit unit);
 
     StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks);
 

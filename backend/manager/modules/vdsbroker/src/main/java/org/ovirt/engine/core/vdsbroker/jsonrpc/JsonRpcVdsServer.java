@@ -951,14 +951,38 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturn(response);
     }
 
+    /**
+     * @since engine 4.2.1
+     * @since cluster compatibility version >= 4.2
+     */
+    @Deprecated
     @Override
     public FutureTask<Map<String, Object>> poll() {
         return timeBoundPoll(2, TimeUnit.SECONDS);
     }
 
+    /**
+     * @since engine 4.2.1
+     * @since cluster compatibility version >= 4.2
+     */
+    @Deprecated
     @Override
     public FutureTask<Map<String, Object>> timeBoundPoll(final long timeout, final TimeUnit unit) {
-        final JsonRpcRequest request = new RequestBuilder("Host.ping").build();
+        return timeBoundPollInternal(timeout, unit, "Host.ping");
+    }
+
+    @Override
+    public FutureTask<Map<String, Object>> timeBoundPoll2(final long timeout, final TimeUnit unit) {
+        return timeBoundPollInternal(timeout, unit, "Host.ping2");
+    }
+
+    @Override
+    public FutureTask<Map<String, Object>> timeBoundPollConfirmConnectivity(final long timeout, final TimeUnit unit) {
+        return timeBoundPollInternal(timeout, unit, "Host.confirmConnectivity");
+    }
+
+    private FutureTask<Map<String, Object>> timeBoundPollInternal(final long timeout, final TimeUnit unit, String verb) {
+        final JsonRpcRequest request = new RequestBuilder(verb).build();
         final FutureCallable callable = new FutureCallable(() -> new FutureMap(client, request, timeout, unit, true));
 
         FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {

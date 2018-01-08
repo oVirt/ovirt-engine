@@ -1,8 +1,13 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.CONFIRM_CONNECTIVITY;
+import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.POLL;
+import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.POLL2;
+
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
@@ -15,9 +20,10 @@ import org.slf4j.LoggerFactory;
  * detected (configurable behavior)
  */
 @Logged(executionLevel = LogLevel.TRACE, errorLevel = LogLevel.DEBUG)
-public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends FutureVDSCommand<P> {
+public class PollVDSCommand<P extends TimeBoundPollVDSCommandParameters> extends FutureVDSCommand<P> {
 
     private static final Logger log = LoggerFactory.getLogger(PollVDSCommand.class);
+    private static final int TIMEOUT = 2;
 
     public PollVDSCommand(P parameters) {
         super(parameters);
@@ -25,7 +31,15 @@ public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends Fut
 
     @Override
     protected void executeVdsBrokerCommand() {
-        httpTask = getBroker().poll();
+        if (getParameters().getPollTechnique().equals(POLL)) {
+            httpTask = getBroker().poll();
+        }
+        else if (getParameters().getPollTechnique().equals(POLL2)) {
+            httpTask = getBroker().timeBoundPoll2(TIMEOUT, TimeUnit.SECONDS);
+        }
+        else if (getParameters().getPollTechnique().equals(CONFIRM_CONNECTIVITY)) {
+            httpTask = getBroker().timeBoundPollConfirmConnectivity(TIMEOUT, TimeUnit.SECONDS);
+        }
     }
 
     @Override
