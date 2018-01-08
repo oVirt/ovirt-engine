@@ -43,8 +43,11 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId()));
             }
-            disk.setDiskVmElements(Collections.singletonList(getDiskVmElement(disk)));
-            disks.add(disk);
+            DiskVmElement dve = getDiskVmElement(disk);
+            if (dve != null) {
+                disk.setDiskVmElements(Collections.singletonList(dve));
+                disks.add(disk);
+            }
         }
         getQueryReturnValue().setReturnValue(disks);
     }
