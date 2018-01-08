@@ -14,7 +14,7 @@ public enum ProviderType implements Identifiable {
     OPENSTACK_IMAGE(2, false, true, true, false, false, VdcObjectType.Storage),
     OPENSTACK_VOLUME(3, false, true, true, false, false, VdcObjectType.Storage),
     VMWARE(4, false, false, false, false, false, VdcObjectType.VM),
-    EXTERNAL_NETWORK(5, true, true, true, true, true, VdcObjectType.Network),
+    EXTERNAL_NETWORK(5, true, true, true, false, true, VdcObjectType.Network),
     KVM(6, false, false, false, false, false, VdcObjectType.VM),
     XEN(7, false, false, false, false, false, VdcObjectType.VM);
 
