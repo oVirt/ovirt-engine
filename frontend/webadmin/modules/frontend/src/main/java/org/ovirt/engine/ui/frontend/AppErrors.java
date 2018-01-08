@@ -2243,6 +2243,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND();
 
+    String ACTION_TYPE_FAILED_EXTERNAL_EVENT_DUPLICATE_CUSTOM_ID();
+
     String VAR__TYPE__EXTERNAL_JOB();
 
     String VAR__TYPE__EXTERNAL_STEP();

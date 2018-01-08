@@ -44,6 +44,11 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
                 || AuditLog.OVIRT_ORIGIN.equalsIgnoreCase(getEvent().getOrigin())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
         }
+        AuditLog auditLog =
+                auditLogDao.getByOriginAndCustomEventId(getEvent().getOrigin(), getEvent().getCustomEventId());
+        if (auditLog != null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_EVENT_DUPLICATE_CUSTOM_ID);
+        }
 
         return true;
     }
