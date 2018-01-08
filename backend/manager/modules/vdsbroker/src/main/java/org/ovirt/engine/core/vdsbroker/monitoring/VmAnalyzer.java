@@ -1001,14 +1001,16 @@ public class VmAnalyzer {
         }
 
         List<String> ips = new ArrayList<>();
+        List<String> ips_v6 = new ArrayList<>();
         for (VmGuestAgentInterface nic : nics) {
             if (nic.getIpv4Addresses() != null) {
                 ips.addAll(nic.getIpv4Addresses());
             }
             if (nic.getIpv6Addresses() != null) {
-                ips.addAll(nic.getIpv6Addresses());
+                ips_v6.addAll(nic.getIpv6Addresses());
             }
         }
+        ips.addAll(ips_v6);
         return ips.isEmpty() ? null : String.join(" ", ips);
     }
 
