@@ -11,6 +11,10 @@ public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBas
     private Guid dstSnapshotId;
     private boolean restoreMemory;
     private Set<Guid> imageIds;
+    private Guid dstLeaseDomainId;
+    // keep the lease action in order to save calculation on endSuccessfully phase,
+    // update vmStatic when the preview finished
+    private LeaseAction leaseAction;
 
     public TryBackToAllSnapshotsOfVmParameters() {
         dstSnapshotId = Guid.Empty;
@@ -55,5 +59,28 @@ public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBas
 
     public void setImageIds(Set<Guid> imageIds) {
         this.imageIds = imageIds;
+    }
+
+    public Guid getDstLeaseDomainId() {
+        return dstLeaseDomainId;
+    }
+
+    public void setDstLeaseDomainId(Guid dstLeaseDomainId) {
+        this.dstLeaseDomainId = dstLeaseDomainId;
+    }
+
+    public LeaseAction getLeaseAction() {
+        return leaseAction;
+    }
+
+    public void setLeaseAction(LeaseAction leaseAction) {
+        this.leaseAction = leaseAction;
+    }
+
+    public enum LeaseAction {
+        CREATE_NEW_LEASE,
+        UPDATE_LEASE_INFO,
+        UPDATE_LEASE_INFO_AND_LEASE_DOMAIN_ID,
+        DO_NOTHING
     }
 }

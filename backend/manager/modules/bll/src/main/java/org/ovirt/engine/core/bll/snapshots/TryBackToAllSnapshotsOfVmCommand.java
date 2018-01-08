@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
+import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters.LeaseAction;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -72,6 +73,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -158,8 +160,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void endSuccessfully() {
-        vmStaticDao.incrementDbGeneration(getVm().getId());
         endActionOnDisks();
+        vmStaticDao.incrementDbGeneration(getVm().getId());
 
         boolean succeeded = false;
         if (getVm() != null) {
@@ -201,6 +203,11 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 SnapshotStatus.LOCKED),
                 SnapshotStatus.OK);
 
+        Guid activeSnapshotLeaseDomainId = null;
+        if (isLeaseDomainIdUpdateNeeded()) {
+            activeSnapshotLeaseDomainId = getVm().getStaticData().getLeaseStorageDomainId();
+        }
+
         getSnapshotsManager().attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 getDstSnapshot(),
                 snapshotDao.getId(getVm().getId(), SnapshotType.ACTIVE),
@@ -209,6 +216,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getCurrentUser(),
                 new VmInterfaceManager(getMacPool()),
                 isRestoreMemory());
+
+        if (isLeaseDomainIdUpdateNeeded()) {
+            vmStaticDao.updateVmLeaseStorageDomainId(getVm().getId(), activeSnapshotLeaseDomainId);
+        }
     }
 
     @Override
@@ -269,6 +280,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             return null;
         });
 
+        initializeSnapshotsLeasesParams();
+
         if (!filteredImages.isEmpty()) {
             vmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
             freeLock();
@@ -295,6 +308,16 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                             throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
                         }
                     }
+
+                    if (getParameters().getLeaseAction() == LeaseAction.CREATE_NEW_LEASE) {
+                        if (!addVmLease(getParameters().getDstLeaseDomainId(), getVm().getId(), false)) {
+                            log.error("Failed to create lease for VM '{}' on storage domain '{}'",
+                                    getVm().getName(),
+                                    getParameters().getDstLeaseDomainId());
+                            throw new EngineException(EngineError.FailedToCreateLease);
+                        }
+                    }
+
                     if (!cinderDisks.isEmpty() &&
                             !tryBackAllCinderDisks(cinderDisks, newActiveSnapshotId)) {
                         throw new EngineException(EngineError.CINDER_ERROR, "Failed to preview a snapshot!");
@@ -321,6 +344,32 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         }
 
         setSucceeded(true);
+    }
+
+    private void initializeSnapshotsLeasesParams() {
+        // save the destination lease domain id and the required lease action in order to use again in endSuccessfully
+        if (getDstSnapshot().getVmConfiguration() != null) {
+            getParameters().setDstLeaseDomainId(OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration()));
+        }
+        getParameters().setLeaseAction(determineLeaseAction(getVm().getStaticData().getLeaseStorageDomainId(),
+                getParameters().getDstLeaseDomainId()));
+    }
+
+    private boolean isLeaseDomainIdUpdateNeeded() {
+        return getParameters().getLeaseAction() == LeaseAction.UPDATE_LEASE_INFO_AND_LEASE_DOMAIN_ID;
+    }
+
+    private LeaseAction determineLeaseAction(Guid srcLeaseDomainId, Guid dstLeaseDomainId) {
+        // if the current VM snapshot has a lease
+        if (srcLeaseDomainId != null && getVm().getLeaseInfo() != null) {
+            // if both snapshots have leases - use the active snapshot lease
+            if (dstLeaseDomainId != null) {
+                return srcLeaseDomainId.equals(dstLeaseDomainId) ?
+                        LeaseAction.UPDATE_LEASE_INFO :
+                        LeaseAction.UPDATE_LEASE_INFO_AND_LEASE_DOMAIN_ID;
+            }
+        }
+        return dstLeaseDomainId != null ? LeaseAction.CREATE_NEW_LEASE : LeaseAction.DO_NOTHING;
     }
 
     private boolean isRestoreMemory() {
@@ -494,6 +543,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
           }
 
           Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(diskImages);
+          // verify lease storage domain status
+          if (getDstSnapshot().getVmConfiguration() != null) {
+              storageIds.add(OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration()));
+          }
           MultipleStorageDomainsValidator storageValidator =
                     new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
             if (!validate(storageValidator.allDomainsExistAndActive())

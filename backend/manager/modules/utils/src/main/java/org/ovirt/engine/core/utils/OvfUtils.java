@@ -258,6 +258,20 @@ public class OvfUtils {
         return false;
     }
 
+    public static Guid fetchLeaseDomainId(String ovfData) {
+        Guid leaseDomainId = null;
+        try {
+            XmlDocument xmlDocument = new XmlDocument(ovfData);
+            XmlNode xmlNode = xmlDocument.selectSingleNode("//*/Content").selectSingleNode("LeaseDomainId");
+            if (xmlNode != null) {
+                leaseDomainId = Guid.createGuidFromString(xmlNode.innerText);
+            }
+        } catch (Exception e) {
+            log.debug("failed to parse a given ovf configuration: \n" + ovfData, e);
+        }
+        return leaseDomainId;
+    }
+
     public void updateUnregisteredDisksWithVMs(List<UnregisteredDisk> unregisteredDisks,
             Guid entityId,
             String vmName,

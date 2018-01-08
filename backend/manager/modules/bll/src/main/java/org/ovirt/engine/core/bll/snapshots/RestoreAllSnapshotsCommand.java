@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -64,11 +65,16 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.utils.OvfUtils;
 
 /**
  * Restores the given snapshot, including all the VM configuration that was stored in it.<br>
@@ -89,6 +95,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     @Inject
     private VmStaticDao vmStaticDao;
     @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
     private SnapshotDao snapshotDao;
     @Inject
     private DiskImageDao diskImageDao;
@@ -104,6 +112,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private Snapshot snapshot;
     List<DiskImage> imagesToRestore = new ArrayList<>();
     List<DiskImage> imagesFromPreviewSnapshot = new ArrayList<>();
+    private Guid activeBeforeSnapshotLeaseDomainId;
+    private Guid previewedSnapshotLeaseDomainId;
 
     /**
      * The snapshot which will be removed (the stateless/preview/active image).
@@ -136,10 +146,12 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 freeLock();
             }
         }
+        initializeSnapshotsLeasesDomainIds();
 
         restoreSnapshotAndRemoveObsoleteSnapshots(getSnapshot());
 
-        boolean succeeded = true;
+        boolean succeeded = removeLeaseIfNeeded();
+
         List<CinderDisk> cinderDisksToRestore = new ArrayList<>();
         for (DiskImage image : imagesToRestore) {
             if (image.getImageStatus() != ImageStatus.ILLEGAL) {
@@ -168,6 +180,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         removeSnapshotsFromDB();
+        succeeded = updateLeaseInfoIfNeeded() && succeeded;
 
         if (!getTaskIdList().isEmpty() || !cinderDisksToRestore.isEmpty() || !cinderVolumesToRemove.isEmpty()) {
             deleteOrphanedImages(cinderDisksToRemove);
@@ -184,6 +197,85 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         setSucceeded(succeeded);
+    }
+
+    private void initializeSnapshotsLeasesDomainIds() {
+        previewedSnapshotLeaseDomainId = getVm().getLeaseStorageDomainId();
+        Snapshot activeBeforeSnapshot = snapshotDao.get(getVmId(), SnapshotType.PREVIEW);
+        if (activeBeforeSnapshot.getVmConfiguration() != null) {
+            activeBeforeSnapshotLeaseDomainId = OvfUtils.fetchLeaseDomainId(activeBeforeSnapshot.getVmConfiguration());
+        }
+    }
+
+    private boolean removeLeaseIfNeeded() {
+        if (isRemoveLeaseNeeded(activeBeforeSnapshotLeaseDomainId, previewedSnapshotLeaseDomainId)) {
+            // remove the lease which created for the previewed snapshot or ,in case of commit, the
+            // lease of the active before snapshot
+            Guid leaseDomainIdToRemove = getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO ?
+                    previewedSnapshotLeaseDomainId : activeBeforeSnapshotLeaseDomainId;
+            if (!removeVmLease(leaseDomainIdToRemove, getVmId())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isRemoveLeaseNeeded(Guid srcLeaseDomainId, Guid dstLeaseDomainId) {
+        switch (getParameters().getSnapshotAction()) {
+        case UNDO:
+            return !Objects.equals(srcLeaseDomainId, dstLeaseDomainId) ||
+                    (srcLeaseDomainId == null && dstLeaseDomainId != null);
+        case COMMIT:
+            return !Objects.equals(srcLeaseDomainId, dstLeaseDomainId) ||
+                    (srcLeaseDomainId != null && dstLeaseDomainId == null);
+        default:
+            return false;
+        }
+    }
+
+    private boolean updateLeaseInfoIfNeeded() {
+        if (isLeaseInfoUpdateNeeded(activeBeforeSnapshotLeaseDomainId, previewedSnapshotLeaseDomainId)) {
+            return getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO ?
+                    updateLeaseInfo(activeBeforeSnapshotLeaseDomainId) : updateLeaseInfo(previewedSnapshotLeaseDomainId);
+        }
+        return true;
+    }
+
+    private boolean isLeaseInfoUpdateNeeded(Guid srcLeaseDomainId, Guid dstLeaseDomainId) {
+        return (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO
+                && !(srcLeaseDomainId == null && dstLeaseDomainId == null)) || (
+                getParameters().getSnapshotAction() == SnapshotActionEnum.COMMIT && (srcLeaseDomainId != null
+                        && dstLeaseDomainId == null));
+    }
+
+    private boolean updateLeaseInfo(Guid snapshotLeaseDomainId) {
+        if (snapshotLeaseDomainId == null) {
+            // there was no lease for the snapshot
+            vmDynamicDao.updateVmLeaseInfo(getParameters().getVmId(), null);
+            return true;
+        }
+
+        VDSReturnValue retVal = null;
+        try {
+            retVal = runVdsCommand(VDSCommandType.GetVmLeaseInfo,
+                    new VmLeaseVDSParameters(getStoragePoolId(),
+                            snapshotLeaseDomainId,
+                            getParameters().getVmId()));
+        } catch (EngineException e) {
+            log.error("Failure in getting lease info for VM {}, message: {}",
+                    getParameters().getVmId(), e.getMessage());
+        }
+
+        if (retVal == null || !retVal.getSucceeded()) {
+            log.error("Failed to get info on the lease of VM {}", getParameters().getVmId());
+            return false;
+        }
+
+        vmDynamicDao.updateVmLeaseInfo(
+                getParameters().getVmId(),
+                (Map<String, String>) retVal.getReturnValue());
+
+        return true;
     }
 
     protected boolean restoreAllCinderDisks(List<CinderDisk> cinderDisksToRestore,

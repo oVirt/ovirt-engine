@@ -356,6 +356,7 @@ public enum EngineError {
     StorageDomainIsMemberOfPool(900),
     InvalidParameterException(1000),
     InvalidDefaultExceptionException(1001),
+    FailedToCreateLease(1002),
 
     // Vdsm failing errors
     ResourceExhausted(1100),
