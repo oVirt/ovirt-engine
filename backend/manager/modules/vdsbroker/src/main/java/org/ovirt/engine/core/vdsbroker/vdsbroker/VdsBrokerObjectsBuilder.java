@@ -558,17 +558,6 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
-        if (struct.containsKey(VdsProperties.VM_IP)) {
-            vm.setIp(assignStringValue(struct, VdsProperties.VM_IP));
-        }
-        if (vm.getIp() != null) {
-            if (vm.getIp().startsWith("127.0.")) {
-                vm.setIp(null);
-            } else {
-                vm.setIp(vm.getIp().trim());
-            }
-        }
-
         if (struct.containsKey(VdsProperties.exit_code)) {
             String exitCodeStr = struct.get(VdsProperties.exit_code).toString();
             vm.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));
