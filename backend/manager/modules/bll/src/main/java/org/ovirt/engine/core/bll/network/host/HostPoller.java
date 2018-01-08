@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -8,18 +9,21 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.PollVDSCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@code HostSetupNetworkPoller} class uses {@link FutureVDSCall} to poll the VDSM (with ping verb).
+ * The {@code HostPoller} class uses {@link PollVDSCommand} to poll the VDSM.
+ * The parameters object passed to its constructor determines the polling
+ * verb that will be used by {@link PollVDSCommand} for the actual poll.
+ * @see TimeBoundPollVDSCommandParameters.PollTechnique
  */
-public class HostSetupNetworkPoller {
+public class HostPoller {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HostSetupNetworkPoller.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HostPoller.class);
 
     /**
      * Time millis between polling attempts, to prevent flooding the host/network.
@@ -27,19 +31,24 @@ public class HostSetupNetworkPoller {
     private static final long POLLING_BREAK = 500;
     private static final long POLLING_BREAK_IN_NANOS = TimeUnit.MILLISECONDS.toNanos(POLLING_BREAK);
     private Long timestampOfEndOfPreviousInvocation;
+    private TimeBoundPollVDSCommandParameters parameters;
 
-    public boolean poll(Guid hostId) {
+    public HostPoller(TimeBoundPollVDSCommandParameters parameters) {
+        this.parameters = Objects.requireNonNull(parameters);
+    }
+
+    public boolean poll() {
         waitBetweenPolls();
 
-        LOGGER.trace("Request to do poll for host {}.", hostId);
+        LOGGER.trace("Request to do poll for host {}.", parameters.getVdsId());
         FutureVDSCall<VDSReturnValue> task =
                 Backend.getInstance()
                         .getResourceManager()
-                        .runFutureVdsCommand(FutureVDSCommandType.Poll, new VdsIdVDSCommandParametersBase(hostId));
-        LOGGER.trace("FutureVDSCommandType.Poll executed for host{}.", hostId);
+                        .runFutureVdsCommand(FutureVDSCommandType.Poll, parameters);
+        LOGGER.trace("FutureVDSCommandType.Poll executed for host{}.", parameters.getVdsId());
 
         boolean succeeded = getValue(task);
-        LOGGER.trace("Result of FutureVDSCommandType.Poll for host {}: {}", hostId, succeeded);
+        LOGGER.trace("Result of FutureVDSCommandType.Poll for host {}: {}", parameters.getVdsId(), succeeded);
         timestampOfEndOfPreviousInvocation = currentTimestamp();
         return succeeded;
     }
