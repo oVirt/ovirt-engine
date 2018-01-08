@@ -274,11 +274,16 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                     }
                 };
                 table.addColumn(removeColumn, constants.removeSanStorage(), "95px"); //$NON-NLS-1$
-                model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
-                    table.redraw();
-                });
             }
         }
+
+        model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (Boolean.TRUE.equals(model.getRequireTableRefresh().getEntity())) {
+                if (!multiSelection) {
+                    updateLunSelectionModel(table, items);
+                }
+            }
+        });
 
         table.setRowData(items);
         final Object selectedItem = sortedLeafModel.getSelectedItem();
@@ -289,18 +294,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         table.setWidth("100%"); // $NON-NLS-1$
 
         if (!multiSelection) {
-            for (LunModel lunModel : items) {
-                if (lunModel.getIsSelected()) {
-                    table.getSelectionModel().setSelected(lunModel, true);
-                }
-            }
-
             table.getSelectionModel().addSelectionChangeHandler(event -> {
                 SingleSelectionModel SingleSelectionModel = (SingleSelectionModel) event.getSource();
                 selectedLunModel = SingleSelectionModel.getSelectedObject() == null ? selectedLunModel :
                         (LunModel) SingleSelectionModel.getSelectedObject();
 
-                if (selectedLunModel != null) {
+                if (selectedLunModel != null && !selectedLunModel.getIsGrayedOut()) {
                     updateSelectedLunWarning(selectedLunModel);
                     sortedLeafModel.setSelectedItem(selectedLunModel);
                 }
@@ -325,6 +324,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         addOpenHandlerToTree(tree, item, table);
 
         return item;
+    }
+
+    void updateLunSelectionModel(EntityModelCellTable<ListModel<LunModel>> table, List<LunModel> items) {
+        for (LunModel lunModel : items) {
+            table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
+        }
     }
 
     @Override
