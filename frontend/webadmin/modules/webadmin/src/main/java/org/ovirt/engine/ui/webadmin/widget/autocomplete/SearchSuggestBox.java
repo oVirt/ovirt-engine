@@ -33,6 +33,8 @@ import com.google.gwt.view.client.SingleSelectionModel;
  */
 public class SearchSuggestBox extends SuggestBox implements HasElementId {
 
+    private static final int ZINDEX_SUGGESTION = 2;
+
     // NOTE: bootstrap3 'SuggestBox.CustomSuggestionDisplay' has some position code
     //       that would be good to borrow but we can't inherit directly since it is
     //       default scoped
@@ -58,6 +60,7 @@ public class SearchSuggestBox extends SuggestBox implements HasElementId {
                 final PopupPanel suggestionPopup) {
             this.suggestBox = suggestBox;
             this.suggestionPopup = suggestionPopup;
+            suggestionPopup.getElement().getStyle().setZIndex(ZINDEX_SUGGESTION);
 
             // Create suggestions table
             final SuggestCellTable<SearchSuggestion> suggestionsTable =
