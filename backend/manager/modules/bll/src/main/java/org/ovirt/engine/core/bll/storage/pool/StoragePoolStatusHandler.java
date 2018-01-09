@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public final class StoragePoolStatusHandler {
     private static final Logger log = LoggerFactory.getLogger(StoragePoolStatusHandler.class);
 
-    private static final Map<Guid, StoragePoolStatusHandler> nonOperationalPools = new HashMap<>();
+    private static final Map<Guid, StoragePoolStatusHandler> nonOperationalPools = new ConcurrentHashMap<>();
 
     private final Guid poolId;
     private ScheduledFuture scheduledTask;
@@ -79,15 +79,11 @@ public final class StoragePoolStatusHandler {
                     handler.deScheduleTimeout();
                 }
             }
-            synchronized (nonOperationalPools) {
-                nonOperationalPools.remove(poolId);
-            }
+            nonOperationalPools.remove(poolId);
         } else if (status == StoragePoolStatus.NotOperational) {
             final StoragePoolStatusHandler storagePoolStatusHandler =
                     Injector.injectMembers(new StoragePoolStatusHandler(poolId));
-            synchronized (nonOperationalPools) {
-                nonOperationalPools.put(poolId, storagePoolStatusHandler.scheduleTimeout());
-            }
+            nonOperationalPools.put(poolId, storagePoolStatusHandler.scheduleTimeout());
         }
     }
 
@@ -101,9 +97,7 @@ public final class StoragePoolStatusHandler {
                     ActionType.SetStoragePoolStatus,
                     new SetStoragePoolStatusParameters(pool.getId(), StoragePoolStatus.NonResponsive,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_FROM_NON_OPERATIONAL));
-            synchronized (nonOperationalPools) {
-                nonOperationalPools.remove(pool.getId());
-            }
+            nonOperationalPools.remove(pool.getId());
         }
     }
 
