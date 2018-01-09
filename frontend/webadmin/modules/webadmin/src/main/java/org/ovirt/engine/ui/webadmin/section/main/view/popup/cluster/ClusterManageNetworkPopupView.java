@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -52,7 +53,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationMessages messages = AssetProvider.getMessages();
 
-    protected static final int MAX_CLUSTER_NETWORK_GRID_HEIGHT = 253;
+    protected static final int MAX_CLUSTER_NETWORK_GRID_HEIGHT = 353;
 
     private final SafeHtml vmImage;
     private final SafeHtml emptyImage;
@@ -64,12 +65,14 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         this.networks = new EntityModelCellTable<ClusterNetworkManageModel>(SelectionMode.NONE, true) {
             @Override
             public void updateGridSize(final int rowHeight) {
-                int gridHeaderHeight = getGridHeaderHeight();
-                if (rowHeight + gridHeaderHeight > MAX_CLUSTER_NETWORK_GRID_HEIGHT) {
-                    resizeGridToContentHeight(MAX_CLUSTER_NETWORK_GRID_HEIGHT);
-                } else {
-                    super.updateGridSize(rowHeight);
-                }
+                Scheduler.get().scheduleDeferred(() -> {
+                    int gridHeaderHeight = getGridHeaderHeight();
+                    if (rowHeight + gridHeaderHeight > MAX_CLUSTER_NETWORK_GRID_HEIGHT) {
+                        resizeGridToContentHeight(MAX_CLUSTER_NETWORK_GRID_HEIGHT);
+                    } else {
+                        super.updateGridSize(rowHeight);
+                    }
+                });
             }
         };
         vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
@@ -149,9 +152,6 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     private void changeIsAttached(ClusterNetworkModel clusterNetworkModel, Boolean value) {
         clusterNetworkModel.setAttached(value);
         if (!value) {
-            if (clusterNetworkModel.isDisplayNetwork()) {
-                updateDisplayNetwork(clusterNetworkModel, false);
-            }
             if (clusterNetworkModel.isMigrationNetwork()) {
                 updateMigrationNetwork(clusterNetworkModel, false);
             }
@@ -163,6 +163,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             }
             if (clusterNetworkModel.isDefaultRouteNetwork()) {
                 updateDefaultRouteNetwork(clusterNetworkModel, false);
+            }
+            if (clusterNetworkModel.isDisplayNetwork()) {
+                updateDisplayNetwork(clusterNetworkModel, false);
             }
         }
     }
