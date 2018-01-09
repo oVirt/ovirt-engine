@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleVerbosity;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -41,15 +42,17 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Override
     public HostUpgradeManagerResult checkForUpdates(final VDS host) {
+        AnsibleReturnValue ansibleReturnValue = null;
         try {
             AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(host.getHostName())
                 .checkMode(true)
                 .enableLogging(false)
+                .verboseLevel(AnsibleVerbosity.LEVEL0)
                 .stdoutCallback(AnsibleConstants.HOST_UPGRADE_CALLBACK_PLUGIN)
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK);
 
-            AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+            ansibleReturnValue = ansibleExecutor.runCommand(command);
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
                 String error = String.format("Failed to run check-update of host '%1$s'.", host.getHostName());
                 log.error(error);
@@ -87,6 +90,12 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                 }
             }
             return hostUpgradeManagerResult;
+        } catch (final IOException e) {
+            log.error("Failed to read host packages: {}", e.getMessage());
+            if (ansibleReturnValue != null) {
+                log.debug("Ansible packages output: {}", ansibleReturnValue.getStdout());
+            }
+            throw new RuntimeException(e.getMessage(), e);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
