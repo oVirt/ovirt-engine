@@ -29,6 +29,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     StringValueLabel oS = new StringValueLabel();
     StringValueLabel cpuInfo = new StringValueLabel();
     StringValueLabel guestCpuCount = new StringValueLabel();
+    StringValueLabel guestCpuType = new StringValueLabel();
     StringValueLabel graphicsType = new StringValueLabel();
     StringValueLabel defaultDisplayType = new StringValueLabel();
     StringValueLabel origin = new StringValueLabel();
@@ -54,7 +55,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     private final Driver driver = GWT.create(Driver.class);
 
     public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider) {
-        super(modelProvider, 3, 9);
+        super(modelProvider, 3, 10);
     }
 
     /**
@@ -88,10 +89,11 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         cpuInfoWithTooltip.setHtml(SafeHtmlUtils.fromString(constants.numOfCpuCoresTooltip()));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 4, 1));
-        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 5, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 6, 1));
-        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 7, 1));
-        formBuilder.addFormItem(new FormItem(constants.createdByUserVm(), createdByUser, 8, 1) {
+        formBuilder.addFormItem(new FormItem(constants.GuestCpuType(), guestCpuType, 5, 1));
+        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 6, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 7, 1));
+        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 8, 1));
+        formBuilder.addFormItem(new FormItem(constants.createdByUserVm(), createdByUser, 9, 1) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasCreatedByUser();

@@ -471,6 +471,21 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private String guestCpuType;
+
+    public String getGuestCpuType() {
+        return guestCpuType != null
+                ? guestCpuType
+                : ConstantsManager.getInstance().getConstants().notAvailableLabel();
+    }
+
+    public void setGuestCpuType(String value) {
+        if (!Objects.equals(guestCpuType, value)) {
+            guestCpuType = value;
+            onPropertyChanged(new PropertyChangedEventArgs("GuestCpuType")); //$NON-NLS-1$
+        }
+    }
+
     static {
         updateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class); //$NON-NLS-1$
     }
@@ -633,6 +648,13 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         else {
             setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
+
+        final String guestCpuType = vm.getCpuName() != null
+                ? vm.getCpuName()
+                : (vm.getCustomCpuName() != null
+                        ? vm.getCustomCpuName()
+                        : vm.getClusterCpuName());
+        setGuestCpuType(guestCpuType);
     }
 
     @Override

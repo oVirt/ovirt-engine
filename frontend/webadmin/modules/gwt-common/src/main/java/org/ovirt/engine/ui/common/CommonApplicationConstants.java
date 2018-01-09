@@ -1391,6 +1391,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String GuestCpuCount();
 
+    String GuestCpuType();
+
     String rngDevEnabled();
 
     String rngPeriod();
