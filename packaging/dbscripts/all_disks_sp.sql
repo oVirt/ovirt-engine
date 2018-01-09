@@ -181,6 +181,7 @@ BEGIN
                 AND all_disks.imagestatus != 2
                 )
             )
+        AND all_disks.disk_content_type = 0 -- Allow attaching of data disks only
         AND (
             v_vm_id IS NULL
             OR v_vm_id NOT IN (
