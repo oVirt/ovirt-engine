@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -379,12 +380,11 @@ implements QuotaStorageDependent {
         super.addVmToDb();
         if (getVm().getOrigin() == OriginType.KVM) {
             importUtils.updateGraphicsDevices(getVm().getStaticData(), getStoragePool().getCompatibilityVersion());
+            Collection<VmDevice> devices = getVm().getStaticData().getManagedDeviceMap().values();
             if (getParameters().isImportAsNewEntity()) {
-                for (VmDevice device : getVm().getStaticData().getManagedDeviceMap().values()) {
-                    device.getId().setVmId(getVmId());
-                }
+                devices.forEach(dev -> dev.getId().setVmId(getVmId()));
             }
-            vmDeviceDao.saveAll(getVm().getStaticData().getManagedDeviceMap().values());
+            vmDeviceDao.saveAll(devices);
         }
     }
 
