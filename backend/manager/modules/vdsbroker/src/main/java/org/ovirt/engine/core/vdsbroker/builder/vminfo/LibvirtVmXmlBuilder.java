@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HugePage;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -82,6 +84,7 @@ import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,12 +149,12 @@ public class LibvirtVmXmlBuilder {
     private boolean volatileRun;
     private Map<Guid, String> passthroughVnicToVfMap;
 
-    private Map<String, Object> createInfo;
     private VM vm;
     private int vdsCpuThreads;
     private MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier;
     private MemoizingSupplier<VdsStatistics> hostStatisticsSupplier;
     private MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier;
+    private MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
     private Map<String, Map<String, Object>> diskMetadata;
@@ -162,20 +165,18 @@ public class LibvirtVmXmlBuilder {
     private VmDevice device;
 
     public LibvirtVmXmlBuilder(
-            Map<String, Object> createInfo,
             VM vm,
             Guid hostId,
             VmDevice payload,
             int vdsCpuThreads,
             boolean volatileRun,
             Map<Guid, String> passthroughVnicToVfMap) {
-        this.createInfo = createInfo;
         this.vm = vm;
         this.payload = payload;
         this.vdsCpuThreads = vdsCpuThreads;
         this.volatileRun = volatileRun;
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
-        initHostSpecificSuppliers(hostId);
+        initSuppliers(hostId);
     }
 
     public LibvirtVmXmlBuilder(
@@ -188,15 +189,16 @@ public class LibvirtVmXmlBuilder {
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
         this.nic = nic;
         this.device = device;
-        initHostSpecificSuppliers(hostId);
+        initSuppliers(hostId);
     }
 
-    private void initHostSpecificSuppliers(Guid hostId) {
+    private void initSuppliers(Guid hostId) {
         hostDevicesSupplier = new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
                 .stream()
                 .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device)));
         hostStatisticsSupplier = new MemoizingSupplier<>(() -> vdsStatisticsDao.get(hostId));
         hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(hostId));
+        vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
     }
 
     @PostConstruct
@@ -226,9 +228,12 @@ public class LibvirtVmXmlBuilder {
         writeClock();
         writePowerEvents();
         writeFeatures();
-        writeCpu();
-        writeCpuTune();
-        writeNumaTune();
+        boolean numaEnabled = vmInfoBuildUtils.isNumaEnabled(hostNumaNodesSupplier, vmNumaNodesSupplier, vm);
+        if (numaEnabled) {
+            writeNumaTune();
+        }
+        writeCpu(numaEnabled);
+        writeCpuTune(numaEnabled);
         writeDevices();
         writePowerManagement();
         // note that this must be called after writeDevices to get the serial console, if exists
@@ -312,10 +317,14 @@ public class LibvirtVmXmlBuilder {
     }
 
     @SuppressWarnings("incomplete-switch")
-    private void writeCpu() {
+    private void writeCpu(boolean numaEnabled) {
         writer.writeStartElement("cpu");
 
-        String cpuType = createInfo.get(VdsProperties.cpuType).toString();
+        String cpuType = vm.getCpuName();
+        if (vm.isUseHostCpuFlags()){
+            cpuType = "hostPassthrough";
+        }
+
         switch(vm.getClusterArch().getFamily()) {
         case x86:
             writer.writeAttributeString("match", "exact");
@@ -337,9 +346,7 @@ public class LibvirtVmXmlBuilder {
             }
             break;
         case ppc:
-            writer.writeStartElement("model");
-            writer.writeRaw(cpuType);
-            writer.writeEndElement();
+            writer.writeElement("model", cpuType);
         }
 
         if ((boolean) Config.getValue(ConfigValues.SendSMPOnRunVm)) {
@@ -353,11 +360,9 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        if (createInfo.containsKey(VdsProperties.VM_NUMA_NODES)) {
+        if (numaEnabled) {
             writer.writeStartElement("numa");
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> createVmNumaNodes = (List<Map<String, Object>>) createInfo.get(VdsProperties.VM_NUMA_NODES);
-            for (Map<String, Object> vmNumaNode : createVmNumaNodes) {
+            NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodesSupplier.get()).forEach(vmNumaNode -> {
                 writer.writeStartElement("cell");
                 writer.writeAttributeString("cpus", vmNumaNode.get(VdsProperties.NUMA_NODE_CPU_LIST).toString());
                 writer.writeAttributeString("memory", String.valueOf(Integer.parseInt((String) vmNumaNode.get(VdsProperties.VM_NUMA_NODE_MEM)) * 1024));
@@ -365,7 +370,7 @@ public class LibvirtVmXmlBuilder {
                     writer.writeAttributeString("memAccess", "shared");
                 }
                 writer.writeEndElement();
-            }
+            });
             writer.writeEndElement();
         }
 
@@ -379,18 +384,21 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeCpuTune() {
+    private void writeCpuTune(boolean numaEnabled) {
         writer.writeStartElement("cputune");
-        @SuppressWarnings("unchecked")
-        Map<String, Object> cpuPinning = (Map<String, Object>) createInfo.get(VdsProperties.cpuPinning);
-        if (cpuPinning != null) {
-            cpuPinning.forEach((vcpu, cpuset) -> {
-                writer.writeStartElement("vcpupin");
-                writer.writeAttributeString("vcpu", vcpu);
-                writer.writeAttributeString("cpuset", (String) cpuset);
-                writer.writeEndElement();
-            });
+        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(vm.getCpuPinning());
+        if (cpuPinning.isEmpty() && numaEnabled) {
+            cpuPinning = NumaSettingFactory.buildCpuPinningWithNumaSetting(
+                    vmNumaNodesSupplier.get(),
+                    hostNumaNodesSupplier.get());
         }
+        cpuPinning.forEach((vcpu, cpuset) -> {
+            writer.writeStartElement("vcpupin");
+            writer.writeAttributeString("vcpu", vcpu);
+            writer.writeAttributeString("cpuset", (String) cpuset);
+            writer.writeEndElement();
+        });
+
         if (vm.getCpuShares() > 0) {
             writer.writeElement("shares", String.valueOf(vm.getCpuShares()));
         }
@@ -464,7 +472,15 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeNumaTune() {
-        if (!createInfo.containsKey(VdsProperties.NUMA_TUNE)) {
+        NumaTuneMode numaTune = vm.getNumaTuneMode();
+        if (numaTune == null) {
+            return;
+        }
+
+        Map<String, Object> numaTuneSetting = NumaSettingFactory.buildVmNumatuneSetting(
+                numaTune,
+                vmNumaNodesSupplier.get());
+        if (numaTuneSetting.isEmpty()) {
             return;
         }
 
@@ -472,8 +488,6 @@ public class LibvirtVmXmlBuilder {
         //   <memory mode='strict' nodeset='0-1'/>
         //   <memnode cellid='0' mode='strict' nodeset='1'>
         // </numatune>
-        @SuppressWarnings("unchecked")
-        Map<String, Object> numaTuneSetting = (Map<String, Object>) createInfo.get(VdsProperties.NUMA_TUNE);
         String nodeSet = (String) numaTuneSetting.get(VdsProperties.NUMA_TUNE_NODESET);
         String mode = (String) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MODE);
         @SuppressWarnings("unchecked")

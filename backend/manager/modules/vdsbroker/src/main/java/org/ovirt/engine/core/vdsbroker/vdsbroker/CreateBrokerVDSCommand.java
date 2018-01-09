@@ -25,8 +25,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     private static final Logger log = LoggerFactory.getLogger(CreateBrokerVDSCommand.class);
 
     protected VM vm;
-    protected Map<String, Object> createInfo;
-    protected VmInfoBuilder builder;
+
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
     @Inject
@@ -35,31 +34,35 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     public CreateBrokerVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
         vm = parameters.getVm();
-        createInfo = new HashMap<>();
-        builder = createBuilder();
     }
 
     @Override
     protected void executeVdsBrokerCommand() {
-        buildVmData();
-        log.info("VM {}", createInfo);
-        if (FeatureSupported.isDomainXMLSupported(vm.getClusterCompatibilityVersion())) {
-            String hibernationVolHandle = getParameters().getHibernationVolHandle();
-            if (StringUtils.isEmpty(hibernationVolHandle)) {
-                createInfo = Collections.singletonMap(VdsProperties.engineXml, generateDomainXml());
-            } else {
-                createInfo = Collections.singletonMap(VdsProperties.hiberVolHandle, hibernationVolHandle);
-            }
-        }
-        vmReturn = getBroker().create(createInfo);
+        vmReturn = getBroker().create(createInfo());
         proceedProxyReturnValue();
         VdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
                 vmReturn.vm, getVds());
     }
 
+    private Map<String, Object> createInfo() {
+        if (FeatureSupported.isDomainXMLSupported(vm.getClusterCompatibilityVersion())) {
+            String hibernationVolHandle = getParameters().getHibernationVolHandle();
+            if (StringUtils.isEmpty(hibernationVolHandle)) {
+                return Collections.singletonMap(VdsProperties.engineXml, generateDomainXml());
+            } else {
+                return Collections.singletonMap(VdsProperties.hiberVolHandle, hibernationVolHandle);
+            }
+        } else {
+            Map<String, Object> createInfo = new HashMap<>();
+            VmInfoBuilder builder = createBuilder(createInfo);
+            buildVmData(builder);
+            log.info("VM {}", createInfo);
+            return createInfo;
+        }
+    }
+
     private String generateDomainXml() {
         LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
-                createInfo,
                 vm,
                 getVds().getId(),
                 getPayload(),
@@ -74,12 +77,12 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         return libvirtXml;
     }
 
-    private VmInfoBuilder createBuilder() {
+    private VmInfoBuilder createBuilder(Map<String, Object> createInfo) {
         final VmInfoBuilderFactory vmInfoBuilderFactory = Injector.get(VmInfoBuilderFactory.class);
         return vmInfoBuilderFactory.createVmInfoBuilder(vm, getParameters().getVdsId(), createInfo);
     }
 
-    private void buildVmData() {
+    private void buildVmData(VmInfoBuilder builder) {
         builder.buildVmProperties(getParameters().getHibernationVolHandle());
         builder.buildVmVideoCards();
         builder.buildVmGraphicsDevices();

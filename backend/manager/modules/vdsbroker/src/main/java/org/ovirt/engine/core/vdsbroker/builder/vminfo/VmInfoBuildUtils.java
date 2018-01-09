@@ -1126,4 +1126,20 @@ public class VmInfoBuildUtils {
                 .map(pin -> pin.split("#"))
                 .collect(Collectors.toMap(split -> split[0], split -> split[1]));
     }
+
+    public boolean isNumaEnabled(MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier,
+            MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier, VM vm) {
+        List<VdsNumaNode> hostNumaNodes = hostNumaNodesSupplier.get();
+        if (hostNumaNodes.isEmpty()) {
+            log.warn("No host NUMA nodes found for vm {} ({})", vm.getName(), vm.getId());
+            return false;
+        }
+
+        List<VmNumaNode> vmNumaNodes = vmNumaNodesSupplier.get();
+        if (vmNumaNodes.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
 }
