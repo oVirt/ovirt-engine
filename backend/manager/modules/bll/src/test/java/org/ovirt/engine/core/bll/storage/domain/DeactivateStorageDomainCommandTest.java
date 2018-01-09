@@ -112,15 +112,27 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         domain.setStorageDomainType(StorageDomainType.ISO);
         doReturn(domain).when(cmd).getStorageDomain();
 
-        VmStatic vmStatic = new VmStatic();
-        vmStatic.setName("TestVM");
-        vmStatic.setId(Guid.newGuid());
-        doReturn(Collections.singletonList(vmStatic)).when(cmd).getVmsWithAttachedISO();
+        doReturn(Collections.singletonList("TestVM")).when(cmd).getVmsWithAttachedISO();
         assertFalse(cmd.isRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED.toString()));
     }
+
+    @Test
+    public void vmsWithIsoOnDataDomainAttached() {
+        mockDomain();
+        domain.setStorageDomainType(StorageDomainType.Data);
+        doReturn(domain).when(cmd).getStorageDomain();
+        doReturn(domain.getId()).when(cmd).getStorageDomainId();
+
+        doReturn(Collections.singletonList("TestVM")).when(vmStaticDao).getAllRunningNamesWithIsoOnStorageDomain(domain.getId());
+        assertFalse(cmd.isRunningVmsWithIsoAttached());
+        assertTrue(cmd.getReturnValue()
+                .getValidationMessages()
+                .contains(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED.toString()));
+    }
+
 
     @Test
     public void deactivateNoExistingDomainFails() {

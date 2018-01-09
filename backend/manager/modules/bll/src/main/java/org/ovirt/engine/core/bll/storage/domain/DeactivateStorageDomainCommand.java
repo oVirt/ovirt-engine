@@ -215,12 +215,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     protected boolean isRunningVmsWithIsoAttached() {
-        if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
-            List<String> vmNames = getVmsWithAttachedISO();
-            if (!vmNames.isEmpty()) {
-                return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED,
-                        String.format("$VmNames %1$s", StringUtils.join(vmNames, ",")));
-            }
+        List<String> vmNames = getStorageDomain().getStorageDomainType() == StorageDomainType.ISO ?
+                 getVmsWithAttachedISO() : vmStaticDao.getAllRunningNamesWithIsoOnStorageDomain(getStorageDomainId());
+        if (!vmNames.isEmpty()) {
+            return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED,
+                    String.format("$VmNames %1$s", String.join(",", vmNames)));
         }
         return true;
     }

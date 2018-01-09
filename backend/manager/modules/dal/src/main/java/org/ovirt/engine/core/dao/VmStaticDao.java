@@ -126,6 +126,15 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
     List<VmStatic> getAllRunningWithLeaseOnStorageDomain(Guid storageDomain);
 
     /**
+     * Retrieves all running VMs with an ISO attached as a CDROM on the given storage domain.
+     *
+     * @param storageDomain
+     *            the storage domain's ID
+     * @return the running VMs with an ISO on the storage domain
+     */
+    List<String> getAllRunningNamesWithIsoOnStorageDomain(Guid storageDomain);
+
+    /**
      * Retrieves a list of VMs with a lease on the given storage domain.
      *
      * @param storageDomain
