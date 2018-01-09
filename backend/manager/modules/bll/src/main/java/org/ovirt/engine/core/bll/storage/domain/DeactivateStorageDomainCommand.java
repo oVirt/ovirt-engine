@@ -146,7 +146,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return false;
             }
 
-            if (!isRunningVmsWithIsoAttached()) {
+            if (!isNoRunningVmsWithIsoAttached()) {
                 return false;
             }
 
@@ -214,7 +214,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         return true;
     }
 
-    protected boolean isRunningVmsWithIsoAttached() {
+    protected boolean isNoRunningVmsWithIsoAttached() {
         List<String> vmNames = getStorageDomain().getStorageDomainType() == StorageDomainType.ISO ?
                  getVmsWithAttachedISO() : vmStaticDao.getAllRunningNamesWithIsoOnStorageDomain(getStorageDomainId());
         if (!vmNames.isEmpty()) {

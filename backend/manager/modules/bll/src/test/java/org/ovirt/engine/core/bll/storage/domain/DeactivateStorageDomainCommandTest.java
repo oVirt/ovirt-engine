@@ -102,7 +102,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     public void vmsWithNoIsoAttached() {
         mockDomain();
         doReturn(domain).when(cmd).getStorageDomain();
-        assertTrue(cmd.isRunningVmsWithIsoAttached());
+        assertTrue(cmd.isNoRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue().getValidationMessages().isEmpty());
     }
 
@@ -113,7 +113,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(domain).when(cmd).getStorageDomain();
 
         doReturn(Collections.singletonList("TestVM")).when(cmd).getVmsWithAttachedISO();
-        assertFalse(cmd.isRunningVmsWithIsoAttached());
+        assertFalse(cmd.isNoRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED.toString()));
@@ -127,7 +127,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         doReturn(domain.getId()).when(cmd).getStorageDomainId();
 
         doReturn(Collections.singletonList("TestVM")).when(vmStaticDao).getAllRunningNamesWithIsoOnStorageDomain(domain.getId());
-        assertFalse(cmd.isRunningVmsWithIsoAttached());
+        assertFalse(cmd.isNoRunningVmsWithIsoAttached());
         assertTrue(cmd.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ERROR_CANNOT_DEACTIVATE_STORAGE_DOMAIN_WITH_ISO_ATTACHED.toString()));
