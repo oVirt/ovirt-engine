@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VnicProfileMappingModel extends Model {
@@ -28,13 +29,13 @@ public class VnicProfileMappingModel extends Model {
 
     private final ListModel<VnicProfileMappingItem> mappingModelRows;
 
-    private final Model originModel;
+    private final RegisterEntityModel originModel;
 
     private final Map<Cluster, List<VnicProfileMappingItem>> shownMappingRows;
 
     private Map<Cluster, Set<VnicProfileMappingEntity>> externalVnicProfiles;
 
-    public VnicProfileMappingModel(Model originModel,
+    public VnicProfileMappingModel(RegisterEntityModel originModel,
             Map<Cluster, Set<VnicProfileMappingEntity>> externalVnicProfiles) {
         this.originModel = originModel;
         this.externalVnicProfiles = externalVnicProfiles;
@@ -71,6 +72,7 @@ public class VnicProfileMappingModel extends Model {
             closeDialog();
         } else if (OK_COMMAND.equals(command.getName())) {
             mergeShownRows();
+            originModel.setMappingChangeConfirmed(true);
             closeDialog();
         }
     }

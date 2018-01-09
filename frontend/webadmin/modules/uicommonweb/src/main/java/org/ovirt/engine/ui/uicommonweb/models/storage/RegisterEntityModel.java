@@ -52,6 +52,7 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
     private ListModel<Quota> storageQuota;
     private Guid storageDomainId;
     private StoragePool storagePool;
+    public boolean isMappingChangeConfirmed;
 
     public RegisterEntityModel() {
         setEntities(new ListModel<E>());
@@ -62,6 +63,7 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
         getDiskQuotaMap().setEntity(new HashMap<>());
         setStorageQuota(new ListModel<>());
         setExternalVnicProfilesPerTargetCluster(new HashMap<>());
+        setMappingChangeConfirmed(false);
     }
 
     protected abstract void onSave();
@@ -76,7 +78,7 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
     }
 
     public Collection<ExternalVnicProfileMapping> cloneExternalVnicProfiles(Cluster cluster) {
-        if (externalVnicProfilesPerTargetCluster.get(cluster) == null) {
+        if (!isMappingChangeConfirmed) {
             return Collections.emptyList();
         }
         return externalVnicProfilesPerTargetCluster.get(cluster).stream()
@@ -356,5 +358,9 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
 
     public void setExternalVnicProfilesPerTargetCluster(Map<Cluster, Set<VnicProfileMappingEntity>> externalVnicProfilesPerTargetCluster) {
         this.externalVnicProfilesPerTargetCluster = externalVnicProfilesPerTargetCluster;
+    }
+
+    public void setMappingChangeConfirmed(boolean mappingChangeConfirmed) {
+        isMappingChangeConfirmed = mappingChangeConfirmed;
     }
 }
