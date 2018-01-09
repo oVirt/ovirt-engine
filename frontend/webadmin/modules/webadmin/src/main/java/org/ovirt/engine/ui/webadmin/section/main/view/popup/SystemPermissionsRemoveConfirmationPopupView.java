@@ -20,7 +20,7 @@ public class SystemPermissionsRemoveConfirmationPopupView extends RemoveConfirma
     @Inject
     public SystemPermissionsRemoveConfirmationPopupView(EventBus eventBus) {
         super(eventBus);
-        itemPanel.setHeight("80%"); //$NON-NLS-1$
+        itemColumn.setHeight("80%"); //$NON-NLS-1$
     }
 
     @Override

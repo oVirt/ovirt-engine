@@ -23,7 +23,6 @@ public class RolePermissionsRemoveConfirmationPopupView extends RemoveConfirmati
     @Inject
     public RolePermissionsRemoveConfirmationPopupView(EventBus eventBus) {
         super(eventBus);
-        itemPanel.setHeight("80%"); //$NON-NLS-1$
     }
 
     @Override

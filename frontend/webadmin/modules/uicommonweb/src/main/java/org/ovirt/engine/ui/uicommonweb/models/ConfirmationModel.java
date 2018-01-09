@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class ConfirmationModel extends ListModel {
 
     private EntityModel<Boolean> privateLatch;

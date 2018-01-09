@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.common.view.popup;
 
+import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.widget.AlertWithIcon;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -21,7 +23,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
@@ -42,10 +43,9 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     private final Driver driver = GWT.create(Driver.class);
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @UiField
-    protected FlowPanel itemPanel;
+    protected Column itemColumn;
 
     @UiField(provided = true)
     @Path(value = "latch.entity")
@@ -58,8 +58,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     protected EntityModelCheckBoxEditor force;
 
     @UiField
-    @Ignore
-    protected HTML noteHTML;
+    protected AlertWithIcon notePanel;
 
     @UiField
     @Path(value = "reason.entity")
@@ -67,7 +66,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     StringEntityModelTextBoxEditor reasonEditor;
 
     @UiField
-    FlowPanel reasonPanel;
+    Row reasonRow;
 
     @Inject
     public RemoveConfirmationPopupView(EventBus eventBus) {
@@ -81,7 +80,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
         driver.initialize(this);
-        reasonPanel.setVisible(false);
+        reasonRow.setVisible(false);
     }
 
     @Override
@@ -94,12 +93,13 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         if (items != null) {
             addItems(items);
         } else {
-            itemPanel.clear();
+            itemColumn.clear();
         }
     }
 
     void setNote(String note) {
-        noteHTML.setHTML(SafeHtmlUtils.fromString(note != null ? note : "").asString().replace("\n", "<br>")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        notePanel.setVisible(note != null && !note.isEmpty());
+        notePanel.setText(SafeHtmlUtils.fromString(note != null ? note : "").asString().replace("\n", "<br>")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     protected void addItems(Iterable<?> items) {
@@ -113,11 +113,11 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     }
 
     protected void addItemLabel(String text) {
-        itemPanel.add(new Label(text));
+        itemColumn.add(new Label(text));
     }
 
     protected void addItemLabel(SafeHtml html) {
-        itemPanel.add(new HTML(html));
+        itemColumn.add(new HTML(html));
     }
 
     protected String getItemTextFormatted(String itemText) {
@@ -131,7 +131,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         // Bind "Latch.IsAvailable"
         object.getLatch().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                EntityModel entity = (EntityModel) sender;
+                EntityModel<?> entity = (EntityModel<?>) sender;
                 if (entity.getIsAvailable()) {
                     latch.setVisible(true);
                 }
@@ -169,12 +169,11 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     }
 
     public void updateReasonVisibility(ConfirmationModel model) {
-        reasonPanel.setVisible(model.getReasonVisible());
+        reasonRow.setVisible(model.getReasonVisible());
     }
 
     protected void localize() {
-        latch.setLabel(constants.latchApproveOperationLabel());
-        reasonEditor.setLabel(constants.reasonLabel());
+        // No-op, but here in case sub classes override this.
     }
 
     @Override

@@ -12,8 +12,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView implements DefaultConfirmationPopupPresenterWidget.ViewDef {
@@ -30,7 +30,7 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     }
 
     @UiField
-    VerticalPanel descriptionPanel;
+    FlowPanel descriptionPanel;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -56,7 +56,7 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     }
 
     private String getItemTextFormatted(String itemText) {
-        return "- " + itemText; //$NON-NLS-1$
+        return "- " + itemText + "<br/>"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override

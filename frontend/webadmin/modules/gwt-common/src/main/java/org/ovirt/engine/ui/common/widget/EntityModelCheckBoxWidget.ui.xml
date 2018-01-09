@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.checkBox {
-			float: right;
-			text-align:right;
-		}
-	</ui:style>
-
-	<g:HorizontalPanel width="100%" verticalAlignment="middle">
-		<g:Label ui:field="checkBoxTitle"/>
-		<ge:EntityModelCheckBoxEditor ui:field="checkBoxEditor" addStyleNames="{style.checkBox}"/>
-	</g:HorizontalPanel>
+    <b:Row>
+        <b:Column size="SM_6">
+            <g:Label ui:field="checkBoxTitle"/>
+        </b:Column>
+        <b:Column size="SM_6">
+            <ge:EntityModelCheckBoxEditor ui:field="checkBoxEditor" addStyleNames="pull-right" removeFormGroup="true" usePatternFly="true" />
+        </b:Column>
+    </b:Row>
 
 </ui:UiBinder>

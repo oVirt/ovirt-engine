@@ -1,42 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:style>
-        .items {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            height: 60%;
-            overflow: auto;
-        }
-
-        .noteHTML {
-            position: absolute;
-            margin-top: 20px;
-            line-height: 20px;
-            color: red;
-            font-size: 12px;
-        }
-
-        .panelPadding {
-            padding: 10px;
-        }
-
-    </ui:style>
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <d:SimpleDialogPanel width="500px" height="400px">
         <d:content>
-            <g:FlowPanel addStyleNames="{style.panelPadding}">
-                <g:HTML ui:field="messageHTML" />
-                <g:FlowPanel ui:field="itemPanel" addStyleNames="{style.items}" />
-                <ge:EntityModelCheckBoxEditor ui:field="latch" visible="false" usePatternFly="true" />
-                <ge:EntityModelCheckBoxEditor ui:field="force" visible="false" usePatternFly="true" />
-                <g:HTML ui:field="noteHTML" addStyleNames="{style.noteHTML}"/>
-                <g:FlowPanel ui:field="reasonPanel">
-                    <ge:StringEntityModelTextBoxEditor ui:field="reasonEditor" />
-                </g:FlowPanel>
-            </g:FlowPanel>
+            <b:Container fluid="true">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <w:AlertWithIcon ui:field="messagePanel" alertType="WARNING" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12" ui:field="itemColumn"></b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="latch" label="{constants.latchApproveOperationLabel}" visible="false" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="force" visible="false" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <w:AlertWithIcon ui:field="notePanel" alertType="INFO" visible="false" />
+                    </b:Column>
+                </b:Row>
+                <b:Row ui:field="reasonRow">
+                    <ge:StringEntityModelTextBoxEditor ui:field="reasonEditor" label="{constants.reasonLabel}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_9" />
+                </b:Row>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

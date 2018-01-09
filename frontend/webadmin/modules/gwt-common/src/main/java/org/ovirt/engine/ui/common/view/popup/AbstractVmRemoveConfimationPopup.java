@@ -12,7 +12,6 @@ import com.google.gwt.event.shared.EventBus;
 public class AbstractVmRemoveConfimationPopup extends RemoveConfirmationPopupView {
     public AbstractVmRemoveConfimationPopup(EventBus eventBus) {
         super(eventBus);
-        itemPanel.setHeight("80%"); //$NON-NLS-1$
     }
 
     @SuppressWarnings("unchecked")
@@ -24,6 +23,6 @@ public class AbstractVmRemoveConfimationPopup extends RemoveConfirmationPopupVie
                         "- " + entry.getValue().getMessage(), entry.getValue().getTitle()); //$NON-NLS-1$
 
         cb.edit(entry.getValue());
-        itemPanel.add(cb);
+        itemColumn.add(cb);
     }
 }
