@@ -26,10 +26,14 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BackendSnapshotsResource
         extends AbstractBackendCollectionResource<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot>
         implements SnapshotsResource {
+
+    private static final Logger log = LoggerFactory.getLogger(BackendSnapshotsResource.class);
 
     protected Guid parentId;
 
@@ -102,7 +106,19 @@ public class BackendSnapshotsResource
             Snapshot snapshot = map(entity, null);
             snapshot = populate(snapshot, entity);
             snapshot = addLinks(snapshot);
-            snapshot = addVmConfiguration(entity, snapshot);
+            try {
+                snapshot = addVmConfiguration(entity, snapshot);
+            } catch (WebFaultException wfe) {
+                // Avoid adding the snapshot to the response if the VM configuration is missing.
+                // This scenario might be caused by initiating a snapshot deletion request
+                // right before listing the snapshots. See: https://bugzilla.redhat.com/1530603
+                if (Response.Status.NOT_FOUND.getStatusCode() == wfe.getResponse().getStatus()) {
+                    log.warn("Missing VM configuration for snapshot \"{}\". " +
+                             "Excluding the snapshot from response.", snapshot.getDescription());
+                    continue;
+                }
+                throw wfe;
+            }
             snapshots.getSnapshots().add(snapshot);
         }
         return snapshots;
