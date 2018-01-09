@@ -49,6 +49,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -110,6 +111,8 @@ public class VmInfoBuildUtilsTest {
     private StorageDomainStaticDao storageDomainStaticDao;
     @Mock
     private StorageServerConnectionDao storageServerConnectionDao;
+    @Mock
+    private VdsNumaNodeDao vdsNumaNodeDao;
 
 
     @InjectMocks

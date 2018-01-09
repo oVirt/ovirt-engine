@@ -10,18 +10,14 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @Singleton
 public class VmInfoBuilderFactory {
     private final ClusterDao clusterDao;
     private final NetworkDao networkDao;
-    private final VdsNumaNodeDao vdsNumaNodeDao;
     private final VmDeviceDao vmDeviceDao;
-    private final VmNumaNodeDao vmNumaNodeDao;
     private final VmInfoBuildUtils vmInfoBuildUtils;
     private final OsRepository osRepository;
 
@@ -29,16 +25,12 @@ public class VmInfoBuilderFactory {
     VmInfoBuilderFactory(
             ClusterDao clusterDao,
             NetworkDao networkDao,
-            VdsNumaNodeDao vdsNumaNodeDao,
             VmDeviceDao vmDeviceDao,
-            VmNumaNodeDao vmNumaNodeDao,
             VmInfoBuildUtils vmInfoBuildUtils,
             OsRepository osRepository) {
         this.clusterDao = Objects.requireNonNull(clusterDao);
         this.networkDao = Objects.requireNonNull(networkDao);
-        this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
-        this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
         this.vmInfoBuildUtils = Objects.requireNonNull(vmInfoBuildUtils);
         this.osRepository = Objects.requireNonNull(osRepository);
     }
@@ -50,9 +42,7 @@ public class VmInfoBuilderFactory {
                 createInfo,
                 clusterDao,
                 networkDao,
-                vdsNumaNodeDao,
                 vmDeviceDao,
-                vmNumaNodeDao,
                 vmInfoBuildUtils,
                 osRepository);
     }

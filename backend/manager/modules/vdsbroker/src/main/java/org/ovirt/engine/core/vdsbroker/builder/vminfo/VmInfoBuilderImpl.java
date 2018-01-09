@@ -50,9 +50,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.collections.ComparatorUtils;
@@ -74,8 +72,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     private static final String USB_BUS = "usb";
 
     private final VmInfoBuildUtils vmInfoBuildUtils;
-    private final VdsNumaNodeDao vdsNumaNodeDao;
-    private final VmNumaNodeDao vmNumaNodeDao;
     private final VmDeviceDao vmDeviceDao;
     private final ClusterDao clusterDao;
 
@@ -95,15 +91,11 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             Map<String, Object> createInfo,
             ClusterDao clusterDao,
             NetworkDao networkDao,
-            VdsNumaNodeDao vdsNumaNodeDao,
             VmDeviceDao vmDeviceDao,
-            VmNumaNodeDao vmNumaNodeDao,
             VmInfoBuildUtils vmInfoBuildUtils,
             OsRepository osRepository) {
         this.clusterDao = Objects.requireNonNull(clusterDao);
-        this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
-        this.vmNumaNodeDao = Objects.requireNonNull(vmNumaNodeDao);
         this.vmInfoBuildUtils = Objects.requireNonNull(vmInfoBuildUtils);
         this.osRepository = Objects.requireNonNull(osRepository);
 
@@ -649,9 +641,44 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         }
     }
 
+    /**
+     * Numa will use the same compatibilityVersion as cpu pinning since numa may also add cpu pinning configuration and
+     * the two features have almost the same libvirt version support
+     */
     @Override
     public void buildVmNumaProperties() {
-        addNumaSetting();
+        List<VdsNumaNode> totalVdsNumaNodes = vmInfoBuildUtils.getVdsNumaNodes(vdsId);
+        if (totalVdsNumaNodes.isEmpty()) {
+            log.warn("No NUMA nodes found for host {} for vm {} {}", vdsId, vm.getName(), vm.getId());
+            return;
+        }
+
+        List<VmNumaNode> vmNumaNodes = vmInfoBuildUtils.getVmNumaNodes(vm);
+        if (vmNumaNodes.isEmpty()) {
+            return;
+        }
+
+        NumaTuneMode numaTune = vm.getNumaTuneMode();
+        if (numaTune != null) {
+            Map<String, Object> numaTuneSetting =
+                    NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes);
+            if (!numaTuneSetting.isEmpty()) {
+                createInfo.put(VdsProperties.NUMA_TUNE, numaTuneSetting);
+            }
+        }
+
+        List<Map<String, Object>> createVmNumaNodes = NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodes);
+        if (!createVmNumaNodes.isEmpty()) {
+            createInfo.put(VdsProperties.VM_NUMA_NODES, createVmNumaNodes);
+        }
+
+        if (StringUtils.isEmpty(vm.getCpuPinning())) {
+            Map<String, Object> cpuPinDict =
+                    NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, totalVdsNumaNodes);
+            if (!cpuPinDict.isEmpty()) {
+                createInfo.put(VdsProperties.cpuPinning, cpuPinDict);
+            }
+        }
     }
 
     @Override
@@ -1058,56 +1085,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         specParams.put(VdsProperties.Model, VdsProperties.Virtio);
         vmInfoBuildUtils.addAddress(vmDevice, struct);
         addDevice(struct, vmDevice, null);
-    }
-
-    /**
-     * Numa will use the same compatibilityVersion as cpu pinning since numa may also add cpu pinning configuration and
-     * the two features have almost the same libvirt version support
-     */
-    private void addNumaSetting() {
-        List<VdsNumaNode> totalVdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
-        if (totalVdsNumaNodes.isEmpty()) {
-            log.warn("No NUMA nodes found for host {} for vm {} {}", vdsId, vm.getName(), vm.getId());
-            return;
-        }
-
-        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
-        // if user didn't set specific NUMA conf
-        // create a default one with one guest numa node
-        if (vmNumaNodes.isEmpty()) {
-            if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
-                VmNumaNode vmNode = new VmNumaNode();
-                vmNode.setIndex(0);
-                vmNode.setMemTotal(vm.getMemSizeMb());
-                for (int i = 0; i < vm.getNumOfCpus(); i++) {
-                    vmNode.getCpuIds().add(i);
-                }
-                vmNumaNodes.add(vmNode);
-            } else {
-                // no need to send numa if memory hotplug not supported
-                return;
-            }
-        }
-        NumaTuneMode numaTune = vm.getNumaTuneMode();
-
-        if (numaTune != null) {
-            Map<String, Object> numaTuneSetting =
-                    NumaSettingFactory.buildVmNumatuneSetting(numaTune, vmNumaNodes);
-            if (!numaTuneSetting.isEmpty()) {
-                createInfo.put(VdsProperties.NUMA_TUNE, numaTuneSetting);
-            }
-        }
-        List<Map<String, Object>> createVmNumaNodes = NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodes);
-        if (!createVmNumaNodes.isEmpty()) {
-            createInfo.put(VdsProperties.VM_NUMA_NODES, createVmNumaNodes);
-        }
-        if (StringUtils.isEmpty(vm.getCpuPinning())) {
-            Map<String, Object> cpuPinDict =
-                    NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, totalVdsNumaNodes);
-            if (!cpuPinDict.isEmpty()) {
-                createInfo.put(VdsProperties.cpuPinning, cpuPinDict);
-            }
-        }
     }
 
     private Integer calcMaxVCpu() {

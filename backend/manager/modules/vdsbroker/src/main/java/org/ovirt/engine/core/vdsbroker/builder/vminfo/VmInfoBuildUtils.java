@@ -81,6 +81,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -126,6 +127,7 @@ public class VmInfoBuildUtils {
     private final OsRepository osRepository;
     private final StorageDomainStaticDao storageDomainStaticDao;
     private final StorageServerConnectionDao storageServerConnectionDao;
+    private final VdsNumaNodeDao vdsNumaNodeDao;
 
     private static final String BLOCK_DOMAIN_DISK_PATH = "/rhev/data-center/mnt/blockSD/%s/images/%s/%s";
     private static final String FILE_DOMAIN_DISK_PATH = "/rhev/data-center/%s/%s/images/%s/%s";
@@ -149,7 +151,8 @@ public class VmInfoBuildUtils {
             VmNumaNodeDao vmNumaNodeDao,
             OsRepository osRepository,
             StorageDomainStaticDao storageDomainStaticDao,
-            StorageServerConnectionDao storageServerConnectionDao) {
+            StorageServerConnectionDao storageServerConnectionDao,
+            VdsNumaNodeDao vdsNumaNodeDao) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -164,6 +167,7 @@ public class VmInfoBuildUtils {
         this.osRepository = Objects.requireNonNull(osRepository);
         this.storageDomainStaticDao = Objects.requireNonNull(storageDomainStaticDao);
         this.storageServerConnectionDao = Objects.requireNonNull(storageServerConnectionDao);
+        this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
     }
 
     @SuppressWarnings("unchecked")
@@ -1086,6 +1090,32 @@ public class VmInfoBuildUtils {
 
     public boolean isBlockDomainPath(String path) {
         return BLOCK_DOMAIN_MATCHER.matcher(path).matches();
+    }
+
+    public List<VdsNumaNode> getVdsNumaNodes(Guid vdsId) {
+        return vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
+    }
+
+    public List<VmNumaNode> getVmNumaNodes(VM vm) {
+        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
+        if (!vmNumaNodes.isEmpty()) {
+            return vmNumaNodes;
+        }
+
+        // if user didn't set specific NUMA conf
+        // create a default one with one guest numa node
+        if (FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())) {
+            VmNumaNode vmNode = new VmNumaNode();
+            vmNode.setIndex(0);
+            vmNode.setMemTotal(vm.getMemSizeMb());
+            for (int i = 0; i < vm.getNumOfCpus(); i++) {
+                vmNode.getCpuIds().add(i);
+            }
+            return Collections.singletonList(vmNode);
+        }
+
+        // no need to send numa if memory hotplug not supported
+        return Collections.emptyList();
     }
 
     public Map<String, Object> parseCpuPinning(String cpuPinning) {
