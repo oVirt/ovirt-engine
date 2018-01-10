@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.slf4j.Logger;
@@ -104,6 +105,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setKernelArgs(rs.getString("kernel_args"));
         entity.setPrettyName(rs.getString("pretty_name"));
         entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
+        entity.setKernelFeatures(JsonHelper.jsonToMapUnchecked(rs.getString("kernel_features")));
         return entity;
     };
 
@@ -275,7 +277,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("kernel_args", vds.getKernelArgs())
                 .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled())
                 .addValue("pretty_name", vds.getPrettyName())
-                .addValue("hosted_engine_configured", vds.isHostedEngineConfigured());
+                .addValue("hosted_engine_configured", vds.isHostedEngineConfigured())
+                .addValue("kernel_features", JsonHelper.mapToJsonUnchecked(vds.getKernelFeatures()));
     }
 
     @Override

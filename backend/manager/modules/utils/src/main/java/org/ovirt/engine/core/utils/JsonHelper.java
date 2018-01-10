@@ -36,6 +36,9 @@ public class JsonHelper {
     }
 
     public static String mapToJsonUnchecked(Map<String, Object> input) {
+        if (input == null) {
+            return null;
+        }
         try {
             return mapToJson(input);
         } catch (IOException e) {
@@ -44,6 +47,9 @@ public class JsonHelper {
     }
 
     public static Map<String, Object> jsonToMapUnchecked(String jsonString) {
+        if (jsonString == null) {
+            return null;
+        }
         try {
             return jsonToMap(jsonString);
         } catch (IOException e) {

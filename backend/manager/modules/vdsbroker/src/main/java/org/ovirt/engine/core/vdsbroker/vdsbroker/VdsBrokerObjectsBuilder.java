@@ -948,6 +948,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setHostedEngineConfigured(assignBoolValue(struct, VdsProperties.hosted_engine_configured));
 
         updateAdditionalFeatures(vds, struct);
+        vds.setKernelFeatures((Map<String, Object>) struct.get(VdsProperties.kernelFeatures));
     }
 
     private static void updateAdditionalFeatures(VDS vds, Map<String, Object> struct) {

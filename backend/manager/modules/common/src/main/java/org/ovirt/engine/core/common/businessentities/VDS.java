@@ -212,6 +212,7 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vds.setKernelCmdlinePciRealloc(isKernelCmdlinePciRealloc());
         vds.setKernelCmdlineUnsafeInterrupts(isKernelCmdlineUnsafeInterrupts());
         vds.setGlusterPeerStatus(getGlusterPeerStatus());
+        vds.setKernelFeatures(getKernelFeatures());
         return vds;
     }
 
@@ -1554,5 +1555,13 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
 
     public void setReinstallRequired(boolean reinstallRequired) {
         vdsStatic.setReinstallRequired(reinstallRequired);
+    }
+
+    public Map<String, Object> getKernelFeatures() {
+        return vdsDynamic.getKernelFeatures();
+    }
+
+    public void setKernelFeatures(Map<String, Object> kernelFeatures) {
+        vdsDynamic.setKernelFeatures(kernelFeatures);
     }
 }

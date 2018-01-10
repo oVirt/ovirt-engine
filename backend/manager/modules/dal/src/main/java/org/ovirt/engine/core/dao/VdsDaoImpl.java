@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -415,6 +416,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setPrettyName(rs.getString("pretty_name"));
         entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
         entity.setReinstallRequired(rs.getBoolean("reinstall_required"));
+        entity.setKernelFeatures(JsonHelper.jsonToMapUnchecked(rs.getString("kernel_features")));
         return entity;
     };
 

@@ -67,6 +67,7 @@ public final class VdsProperties {
     public static final String ha_stats_global_maintenance = "globalMaintenance";
     public static final String ha_stats_local_maintenance = "localMaintenance";
     public static final String SERIAL_NUMBER = "serial";
+    public static final String kernelFeatures = "kernelFeatures";
 
     public static final String INTERFACE = "iface";
     public static final String DISCARD = "discard";
