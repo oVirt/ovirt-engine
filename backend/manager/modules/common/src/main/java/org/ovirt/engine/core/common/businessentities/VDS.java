@@ -220,6 +220,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setKernelCmdlinePciRealloc(isKernelCmdlinePciRealloc());
         vds.setKernelCmdlineUnsafeInterrupts(isKernelCmdlineUnsafeInterrupts());
         vds.setGlusterPeerStatus(getGlusterPeerStatus());
+        vds.setKernelFeatures(getKernelFeatures());
 
         DnsResolverConfiguration originalDnsResolverConfiguration = getReportedDnsResolverConfiguration();
         if (originalDnsResolverConfiguration != null) {
@@ -1600,5 +1601,13 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setReinstallRequired(boolean reinstallRequired) {
         vdsStatic.setReinstallRequired(reinstallRequired);
+    }
+
+    public Map<String, Object> getKernelFeatures() {
+        return vdsDynamic.getKernelFeatures();
+    }
+
+    public void setKernelFeatures(Map<String, Object> kernelFeatures) {
+        vdsDynamic.setKernelFeatures(kernelFeatures);
     }
 }

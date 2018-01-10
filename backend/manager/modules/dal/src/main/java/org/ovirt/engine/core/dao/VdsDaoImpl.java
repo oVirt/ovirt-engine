@@ -23,11 +23,13 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -366,6 +368,8 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
         entity.setInFenceFlow(rs.getBoolean("in_fence_flow"));
         entity.setReinstallRequired(rs.getBoolean("reinstall_required"));
+        entity.setKernelFeatures(ObjectUtils.mapNullable(
+                rs.getString("kernel_features"), JsonHelper::jsonToMapUnchecked));
         return entity;
     };
 }

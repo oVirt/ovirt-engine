@@ -1787,7 +1787,8 @@ SELECT cluster.cluster_id AS cluster_id,
     cluster.fencing_enabled AS fencing_enabled,
     gluster_server.peer_status AS gluster_peer_status,
     vds_dynamic.in_fence_flow AS in_fence_flow,
-    vds_static.reinstall_required AS reinstall_required
+    vds_static.reinstall_required AS reinstall_required,
+    vds_dynamic.kernel_features AS kernel_features
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

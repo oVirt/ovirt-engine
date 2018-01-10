@@ -266,7 +266,8 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_kernel_args TEXT,
     v_hosted_engine_configured BOOLEAN,
     v_dns_resolver_configuration_id UUID,
-    v_in_fence_flow BOOLEAN
+    v_in_fence_flow BOOLEAN,
+    v_kernel_features JSONB
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -333,7 +334,8 @@ BEGIN
             kernel_args,
             hosted_engine_configured,
             dns_resolver_configuration_id,
-            in_fence_flow
+            in_fence_flow,
+            kernel_features
             )
         VALUES (
             v_cpu_cores,
@@ -397,7 +399,8 @@ BEGIN
             v_kernel_args,
             v_hosted_engine_configured,
             v_dns_resolver_configuration_id,
-            v_in_fence_flow
+            v_in_fence_flow,
+            v_kernel_features
             );
     END;
 
@@ -485,7 +488,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_pretty_name VARCHAR(255),
     v_hosted_engine_configured BOOLEAN,
     v_dns_resolver_configuration_id UUID,
-    v_in_fence_flow BOOLEAN
+    v_in_fence_flow BOOLEAN,
+    v_kernel_features JSONB
     )
 RETURNS VOID
     --The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -556,7 +560,8 @@ BEGIN
             pretty_name = v_pretty_name,
             hosted_engine_configured = v_hosted_engine_configured,
             dns_resolver_configuration_id = v_dns_resolver_configuration_id,
-            in_fence_flow = v_in_fence_flow
+            in_fence_flow = v_in_fence_flow,
+            kernel_features = v_kernel_features
         WHERE vds_id = v_vds_id;
     END;
 

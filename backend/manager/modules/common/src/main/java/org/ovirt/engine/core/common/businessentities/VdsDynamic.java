@@ -198,6 +198,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean inFenceFlow;
 
+    private Map<String, Object> kernelFeatures;
+
     @Valid
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
@@ -814,6 +816,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.inFenceFlow = isInFenceFlow;
     }
 
+    public Map<String, Object> getKernelFeatures() {
+        return kernelFeatures;
+    }
+
+    public void setKernelFeatures(Map<String, Object> kernelFeatures) {
+        this.kernelFeatures = kernelFeatures;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -881,7 +891,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 prettyName,
                 hostedEngineConfigured,
                 reportedDnsResolverConfiguration,
-                inFenceFlow
+                inFenceFlow,
+                kernelFeatures
         );
     }
 
@@ -960,6 +971,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(prettyName, other.prettyName)
                 && Objects.equals(hostedEngineConfigured, other.hostedEngineConfigured)
                 && Objects.equals(reportedDnsResolverConfiguration, other.reportedDnsResolverConfiguration)
-                && inFenceFlow == other.inFenceFlow;
+                && inFenceFlow == other.inFenceFlow
+                && Objects.equals(kernelFeatures, other.kernelFeatures);
     }
 }

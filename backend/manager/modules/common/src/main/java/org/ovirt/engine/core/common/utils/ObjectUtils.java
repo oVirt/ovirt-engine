@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.utils;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.function.Function;
 
 public class ObjectUtils {
 
@@ -31,5 +32,12 @@ public class ObjectUtils {
 
     public static boolean isEmpty(Collection<?> c) {
         return c == null || c.isEmpty();
+    }
+
+    public static <T, U> U mapNullable(T value, Function<T, U> mapper) {
+        if (value == null) {
+            return null;
+        }
+        return mapper.apply(value);
     }
 }

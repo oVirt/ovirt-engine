@@ -16,9 +16,11 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.slf4j.Logger;
@@ -114,6 +116,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
         entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
         entity.setInFenceFlow(rs.getBoolean("in_fence_flow"));
+        entity.setKernelFeatures(
+                ObjectUtils.mapNullable(rs.getString("kernel_features"), JsonHelper::jsonToMapUnchecked));
 
         return entity;
     };
@@ -308,7 +312,9 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("pretty_name", vds.getPrettyName())
                 .addValue("hosted_engine_configured", vds.isHostedEngineConfigured())
                 .addValue("dns_resolver_configuration_id", getReportedDnsResolverConfigurationId(vds))
-                .addValue("in_fence_flow", vds.isInFenceFlow());
+                .addValue("in_fence_flow", vds.isInFenceFlow())
+                .addValue("kernel_features",
+                        ObjectUtils.mapNullable(vds.getKernelFeatures(), JsonHelper::mapToJsonUnchecked));
     }
 
     private Guid getReportedDnsResolverConfigurationId(VdsDynamic vds) {
