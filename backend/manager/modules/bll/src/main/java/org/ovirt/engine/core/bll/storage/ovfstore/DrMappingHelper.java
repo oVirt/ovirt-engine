@@ -143,7 +143,7 @@ public class DrMappingHelper {
     public Cluster getMappedCluster(String clusterName, Guid vmId, Map<String, String> clusterMap) {
         Cluster mappedCluster = getRelatedEntity(clusterMap,
                 clusterName,
-                val -> clusterDao.getByName((String) val));
+                val -> clusterDao.getByName(val));
         log.info("Mapping cluster '{}' to '{}' for vm '{}'.", mappedCluster,
                 clusterName,
                 vmId);
