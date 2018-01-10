@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -809,6 +810,21 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    /**
+     * e.g. "PTI: 0, IBPB: 0, IBRS: 0"
+     */
+    private String kernelFeatures;
+
+    public String getKernelFeatures() {
+        return kernelFeatures != null
+                ? kernelFeatures
+                : constants.notAvailableLabel();
+    }
+
+    public void setKernelFeatures(String kernelFeatures) {
+        this.kernelFeatures = kernelFeatures;
+    }
+
     static {
         requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
         requestGOToEventsTabEventDefinition = new EventDefinition("RequestGOToEventsTabEvent", HostGeneralModel.class); //$NON-NLS-1$
@@ -964,6 +980,28 @@ public class HostGeneralModel extends EntityModel<VDS> {
                 .collect(Collectors.joining(", ")); //$NON-NLS-1$
         }
         setOnlineCores(onlineCores);
+
+        setKernelFeatures(formatKernelFeatures(vds.getKernelFeatures()));
+    }
+
+    private String formatKernelFeatures(Map<String, Object> kernelFeatures) {
+        if (kernelFeatures == null) {
+            return null;
+        }
+
+        final int vdsmNotAvailable = -1;
+        final String concatenatedPairs = kernelFeatures.entrySet().stream()
+                // only string and int values are shown, -1 int values are hidden - considered "N/A"
+                .filter(pair ->
+                        pair.getValue() instanceof String
+                                || (pair.getValue() instanceof Integer && !Objects.equals(vdsmNotAvailable,
+                                pair.getValue())))
+                .map(pair -> pair.getKey() + ": " + pair.getValue()) //$NON-NLS-1$
+                .collect(Collectors.joining(", ")); //$NON-NLS-1$
+        if (concatenatedPairs.isEmpty()) {
+            return constants.notAvailableLabel();
+        }
+        return concatenatedPairs;
     }
 
     private void updateAlerts() {
