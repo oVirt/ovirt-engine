@@ -624,14 +624,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
 
         if (migrationNetwork != null) {
-
             final String migrationDestinationIpv4Address =
-                    findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv4Address);
+                    findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv4Address, "v4");
             if (migrationDestinationIpv4Address != null) {
                 return migrationDestinationIpv4Address;
             }
             final String migrationDestinationIpv6Address =
-                    findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv6Address);
+                    findValidMigrationIpAddress(migrationNetwork, VdsNetworkInterface::getIpv6Address, "v6");
             if (migrationDestinationIpv6Address != null) {
                 return formatIpv6AddressForUri(migrationDestinationIpv6Address);
             }
@@ -648,17 +647,19 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private String findValidMigrationIpAddress(Network migrationNetwork,
-            Function<VdsNetworkInterface, String> ipAddressGetter) {
+            Function<VdsNetworkInterface, String> ipAddressGetter, String ipVersion) {
 
         // assure migration network is active on source host
         final String migrationSourceIpAddress = getMigrationNetworkAddress(getVds().getId(),
                 migrationNetwork.getName(),
-                ipAddressGetter);
+                ipAddressGetter,
+                ipVersion);
         if (StringUtils.isNotEmpty(migrationSourceIpAddress)) {
             // find migration IP address on destination host
             final String migrationDestinationIpAddress = getMigrationNetworkAddress(getDestinationVds().getId(),
                     migrationNetwork.getName(),
-                    ipAddressGetter);
+                    ipAddressGetter,
+                    ipVersion);
             if (StringUtils.isNotEmpty(migrationDestinationIpAddress)) {
                 return migrationDestinationIpAddress;
             }
@@ -668,16 +669,36 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     private String getMigrationNetworkAddress(Guid hostId,
             String migrationNetworkName,
-            Function<VdsNetworkInterface, String> ipAddressGetter) {
+            Function<VdsNetworkInterface, String> ipAddressGetter,
+            String ipVersion) {
         final List<VdsNetworkInterface> nics = interfaceDao.getAllInterfacesForVds(hostId);
 
-        for (VdsNetworkInterface nic : nics) {
-            if (migrationNetworkName.equals(nic.getNetworkName()) && migrationInterfaceUp(nic, nics)) {
-                return ipAddressGetter.apply(nic);
-            }
+        String errorMsg = String.format("Couldn't find ip %s migration address", ipVersion);
+        VdsNetworkInterface migrationNic =
+                nics.stream().filter(nic -> migrationNetworkName.equals(nic.getNetworkName())).findFirst().orElse(null);
+        if (migrationNic == null) {
+            log.warn("{} : migration network {} doesn't exist on host {}.", errorMsg, migrationNetworkName, hostId);
+            return null;
         }
 
-        return null;
+        if (migrationInterfaceUp(migrationNic, nics)) {
+            String ip = ipAddressGetter.apply(migrationNic);
+            if (StringUtils.isEmpty(ip)) {
+                log.warn("{} : the IP address of migration network {} (host {}/nic {}) is empty.",
+                        errorMsg,
+                        migrationNetworkName,
+                        hostId,
+                        NetworkCommonUtils.stripVlan(migrationNic));
+            }
+            return ip;
+        } else {
+            log.warn("{} : Nic {} with migration network {} is not up on host {}.",
+                    errorMsg,
+                    NetworkCommonUtils.stripVlan(migrationNic),
+                    migrationNetworkName,
+                    hostId);
+            return null;
+        }
     }
 
     private boolean migrationInterfaceUp(VdsNetworkInterface nic, List<VdsNetworkInterface> nics) {

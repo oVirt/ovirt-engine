@@ -171,6 +171,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("enableGuestEvents", isEnableGuestEvents())
                 .append("maxIncomingMigrations", getMaxIncomingMigrations())
                 .append("maxOutgoingMigrations", getMaxOutgoingMigrations())
-                .append("convergenceSchedule", getConvergenceSchedule());
+                .append("convergenceSchedule", getConvergenceSchedule())
+                .append("dstQemu", getDstQemu());
     }
 }
