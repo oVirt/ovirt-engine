@@ -524,7 +524,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         }
 
         if (!getVm().isRunningAndQualifyForDisksMigration()) {
-            return false;
+            return failValidation(EngineMessage.CANNOT_LIVE_MIGRATE_VM_SHOULD_BE_IN_PAUSED_OR_UP_STATUS);
         }
 
         setStoragePoolId(getVm().getStoragePoolId());
