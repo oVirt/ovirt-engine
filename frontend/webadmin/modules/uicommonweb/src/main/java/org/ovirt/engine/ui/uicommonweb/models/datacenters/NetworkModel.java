@@ -129,7 +129,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
                 .addListener((ev, sender, args) -> onPhysicalNetworkSourceChange(sender));
         getUsePhysicalNetworkFromDatacenter().getEntityChangedEvent()
                 .addListener((ev, sender, args) -> onPhysicalNetworkSourceChange(sender));
-        onPhysicalNetworkSourceChange(getUsePhysicalNetworkFromDatacenter());
         getConnectedToPhysicalNetwork().getEntityChangedEvent()
                 .addListener((ev, sender, args) -> onConnectedToPhysicalNetworkChange());
 
@@ -147,6 +146,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         hasVlanTag.setEntity(false);
         setHasVLanTag(hasVlanTag);
         getHasVLanTag().getEntityChangedEvent().addListener((ev, sender, args) -> updateVlanTagChangeability());
+
+        onPhysicalNetworkSourceChange(getUsePhysicalNetworkFromDatacenter());
 
         ListModel<MtuSelector> mtuSelector = new ListModel<>();
         mtuSelector.setItems(Arrays.asList(MtuSelector.values()));
@@ -539,6 +540,16 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         }
         getUsePhysicalNetworkFromCustom().setEntity(!datacenter, false);
         getUsePhysicalNetworkFromDatacenter().setEntity(datacenter, false);
+        updateVlanChangeabilityAndValue();
+    }
+
+    private void updateVlanChangeabilityAndValue() {
+        boolean changeable = !getExternal().getEntity() || (getConnectedToPhysicalNetwork().getEntity()
+                && getUsePhysicalNetworkFromCustom().getEntity());
+
+        getHasVLanTag().setEntity(changeable && getHasVLanTag().getEntity());
+        getHasVLanTag().setIsChangeable(changeable);
+        getVLanTag().setEntity(changeable ? getVLanTag().getEntity() : null);
     }
 
     private void onConnectedToPhysicalNetworkChange() {
@@ -819,6 +830,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         boolean externalNetwork = getExternal().getEntity();
 
         getNetworkLabel().setIsChangeable(!externalNetwork);
+        getExternalProviders().setIsChangeable(externalNetwork);
         getCustomPhysicalNetwork().setIsChangeable(
                 externalNetwork && !getUsePhysicalNetworkFromDatacenter().getEntity());
         getDatacenterPhysicalNetwork().setIsChangeable(
@@ -829,8 +841,16 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         getConnectedToPhysicalNetwork().setIsChangeable(externalNetwork);
         getUsePhysicalNetworkFromCustom().setIsChangeable(externalNetwork);
         getUsePhysicalNetworkFromDatacenter().setIsChangeable(externalNetwork);
-
+        updateDnsChangeabilityAndValue();
         updateMtuSelectorsChangeability();
+        updateVlanChangeabilityAndValue();
+    }
+
+    protected void updateDnsChangeabilityAndValue() {
+        boolean externalNetwork = getExternal().getEntity();
+        boolean previous = getDnsConfigurationModel().getShouldSetDnsConfiguration().getEntity();
+        getDnsConfigurationModel().getShouldSetDnsConfiguration().setEntity(!externalNetwork && previous);
+        getDnsConfigurationModel().getShouldSetDnsConfiguration().setIsChangeable(!externalNetwork);
     }
 
     private void updateDcLabels() {
@@ -848,13 +868,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     }
 
     private void setMtuSelectorsChangeability(boolean isChangeable, String prohibitionReason) {
-        if (!isChangeable) {
-            getMtuSelector().setChangeProhibitionReason(prohibitionReason);
-            getMtu().setChangeProhibitionReason(prohibitionReason);
-        }
-
-        getMtuSelector().setIsChangeable(isChangeable);
-        getMtu().setIsChangeable(isChangeable && isCustomMtu());
+        getMtuSelector().setIsChangeable(isChangeable, prohibitionReason);
+        getMtu().setIsChangeable(isChangeable && isCustomMtu(), prohibitionReason);
     }
 
     protected void updateMtuSelectorsChangeability() {

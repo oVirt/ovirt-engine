@@ -35,19 +35,13 @@ public class EditNetworkModel extends NetworkModel {
         getDescription().setEntity(getNetwork().getDescription());
         getComment().setEntity(getNetwork().getComment());
         getIsStpEnabled().setEntity(getNetwork().getStp());
-        getHasVLanTag().setEntity(getNetwork().getVlanId() != null);
-        getVLanTag().setEntity(getNetwork().getVlanId());
+        getConnectedToPhysicalNetwork().setEntity(isConnectedToPhysicalNetwork());
         initMtu();
         initIsVm();
         getExternal().setEntity(getNetwork().isExternal());
         getExternal().setIsChangeable(false);
-        getExternalProviders().setIsChangeable(false);
-
-        getConnectedToPhysicalNetwork().setEntity(isConnectedToPhysicalNetwork());
-        getConnectedToPhysicalNetwork().setIsChangeable(false);
-        getUsePhysicalNetworkFromDatacenter().setIsChangeable(false);
-        getUsePhysicalNetworkFromCustom().setIsChangeable(false);
-        getDatacenterPhysicalNetwork().setIsChangeable(false);
+        getHasVLanTag().setEntity(getNetwork().getVlanId() != null);
+        getVLanTag().setEntity(getNetwork().getVlanId());
 
         if (isConnectedToPhysicalNetwork()) {
             if (getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
@@ -109,8 +103,8 @@ public class EditNetworkModel extends NetworkModel {
         if (getExternal().getEntity()) {
             getHasVLanTag().setIsChangeable(false);
             getVLanTag().setIsChangeable(false);
+            getExternalProviders().setIsChangeable(false);
             getIsVmNetwork().setIsChangeable(false);
-            getNetworkLabel().setIsChangeable(false);
             getCustomPhysicalNetwork().setIsChangeable(false);
             getConnectedToPhysicalNetwork().setIsChangeable(false);
             getUsePhysicalNetworkFromDatacenter().setIsChangeable(false);
