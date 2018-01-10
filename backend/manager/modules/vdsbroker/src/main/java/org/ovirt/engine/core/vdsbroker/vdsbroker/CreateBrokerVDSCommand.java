@@ -46,11 +46,15 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
 
     private Map<String, Object> createInfo() {
         if (FeatureSupported.isDomainXMLSupported(vm.getClusterCompatibilityVersion())) {
+            String engineXml = generateDomainXml();
             String hibernationVolHandle = getParameters().getHibernationVolHandle();
             if (StringUtils.isEmpty(hibernationVolHandle)) {
-                return Collections.singletonMap(VdsProperties.engineXml, generateDomainXml());
+                return Collections.singletonMap(VdsProperties.engineXml, engineXml);
             } else {
-                return Collections.singletonMap(VdsProperties.hiberVolHandle, hibernationVolHandle);
+                Map<String, Object> createInfo = new HashMap<>(2);
+                createInfo.put(VdsProperties.engineXml, engineXml);
+                createInfo.put(VdsProperties.hiberVolHandle, hibernationVolHandle);
+                return createInfo;
             }
         } else {
             Map<String, Object> createInfo = new HashMap<>();
