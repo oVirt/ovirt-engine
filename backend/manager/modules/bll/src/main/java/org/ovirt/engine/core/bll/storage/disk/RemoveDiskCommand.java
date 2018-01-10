@@ -158,10 +158,10 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             List<Snapshot> snapshots = snapshotDao.getSnapshotsByMemoryDiskId(disk.getId());
             // If there's more than one snapshot it means the snapshot is in preview
             if (snapshots.size() > 1) {
-                return false;
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_DISK_SNAPSHOT_IN_PREVIEW);
             }
             if (!snapshots.isEmpty() && snapshots.get(0).getType() == Snapshot.SnapshotType.ACTIVE) {
-                return false;
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_HIBERNATION_DISK);
             }
             break;
         }
