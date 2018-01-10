@@ -365,6 +365,12 @@ public class StorageModel extends Model {
     }
 
     private void dataCenter_SelectedItemChanged() {
+        if (getCurrentStorageItem() instanceof SanStorageModelBase) {
+            SanStorageModelBase sanStorageModel = (SanStorageModelBase) getCurrentStorageItem();
+            sanStorageModel.setReduceDeviceSupported((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                    ConfigValues.ReduceDeviceFromStorageDomain,
+                    getDataCenter().getSelectedItem().getCompatibilityVersion().toString()));
+        }
         updateItemsAvailability();
         behavior.updateDataCenterAlert();
     }

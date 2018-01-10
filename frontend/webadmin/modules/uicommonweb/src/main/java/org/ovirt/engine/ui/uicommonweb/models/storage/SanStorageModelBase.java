@@ -245,6 +245,16 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         return requireTableRefresh;
     }
 
+    private boolean reduceDeviceSupported;
+
+    public boolean isReduceDeviceSupported() {
+        return reduceDeviceSupported;
+    }
+
+    public void setReduceDeviceSupported(boolean reduceDeviceSupported) {
+        this.reduceDeviceSupported = reduceDeviceSupported;
+    }
+
     protected SanStorageModelBase() {
         setHelpTag(HelpTag.SanStorageModelBase);
         setHashName("SanStorageModelBase"); //$NON-NLS-1$
@@ -664,6 +674,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         initializeItems(newItems, null);
         proposeDiscover();
+        updateRemovableLuns();
         getContainer().stopProgress();
     }
 
@@ -853,6 +864,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                     currLun.setAdditionalAvailableSize(lun.getAdditionalAvailableSize());
                     currLun.setAdditionalAvailableSizeSelected(lun.isAdditionalAvailableSizeSelected());
                     currLun.setRemoveLunSelected(lun.isRemoveLunSelected());
+                    currLun.setIsLunRemovable(lun.getIsLunRemovable());
                     currLun.setIsAccessible(lun.getIsAccessible());
                     currLun.setStatus(lun.getStatus());
                     currLun.setIsIncluded(lun.getIsIncluded());
@@ -1059,6 +1071,13 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     public int getNumOfLUNsToRemove() {
         List<LunModel> items = (List<LunModel>) getItems();
         return (int) items.stream().filter(LunModel::isRemoveLunSelected).count();
+    }
+
+    private void updateRemovableLuns() {
+        int numOfIncludedLuns = getIncludedLuns().size();
+        List<LunModel> lunModels = getLuns(false, true);
+        lunModels.forEach(lunModel -> lunModel.setIsLunRemovable(
+                numOfIncludedLuns != 1 && !getMetadataDevices().contains(lunModel.getLunId())));
     }
 
     public ArrayList<String> getUsedLunsMessages(List<LUNs> luns) {

@@ -16,23 +16,27 @@ public abstract class AbstractLunTextColumn extends AbstractSafeHtmlColumn<LunMo
     public final SafeHtml getValue(LunModel object) {
         // TODO this should use a cell to render, not return HTML itself
         ScrollableTextCell.CellTemplate template = GWT.create(ScrollableTextCell.CellTemplate.class);
-        String color = ""; //$NON-NLS-1$
+        String style = ""; //$NON-NLS-1$
 
         if (object != null) {
-            if (!object.getIsIncluded() && (!object.getIsSelected() || object.getIsGrayedOut()) ||
-                    object.isRemoveLunSelected()) {
-                color = "gray"; //$NON-NLS-1$
-            } else if (object.getIsSelected()) {
-                color = "midnightblue"; //$NON-NLS-1$
+            boolean isLunExtendable = object.getIsIncluded() && !object.getIsLunRemovable() &&
+                    object.getAdditionalAvailableSize() == 0;
+
+            if (object.isRemoveLunSelected()) {
+                style = "color: black; text-decoration: line-through"; //$NON-NLS-1$
+            } else if ((!object.getIsIncluded() && object.getIsGrayedOut()) || isLunExtendable) {
+                style = "color: gray"; //$NON-NLS-1$
             } else if (!object.getIsAccessible() && !object.getIsGrayedOut()) {
-                color = "orange"; //$NON-NLS-1$
+                style = "color: orange"; //$NON-NLS-1$
+            } else if (object.getIsSelected() || object.isAdditionalAvailableSizeSelected()) {
+                style = "color: black; font-weight: bold"; //$NON-NLS-1$
             } else {
-                color = "black"; //$NON-NLS-1$
+                style = "color: black"; //$NON-NLS-1$
             }
         }
 
         // TODO use a proper ID
-        return template.input(getRawValue(object), "color:" + color, DOM.createUniqueId()); //$NON-NLS-1$
+        return template.input(getRawValue(object), style, DOM.createUniqueId()); //$NON-NLS-1$
     }
 
     public abstract String getRawValue(LunModel object);

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -17,7 +16,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractLunRemoveColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractScrollableTextColumn;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
@@ -261,20 +259,17 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 addAbstractLunActionsColumn(table,
                         model.getContainer().isNewStorage() ? constants.addSanStorage() : constants.actionsSanStorage());
             }
-        } else {
-            boolean reduceDeviceFromStorageDomainSupported =
-                    (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                            ConfigValues.ReduceDeviceFromStorageDomain,
-                            model.getContainer().getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
-            if (reduceDeviceFromStorageDomainSupported) {
-                AbstractLunRemoveColumn removeColumn = new AbstractLunRemoveColumn(model) {
-                    @Override
-                    public LunModel getValue(LunModel object) {
-                        return object;
-                    }
-                };
-                table.addColumn(removeColumn, constants.removeSanStorage(), "95px"); //$NON-NLS-1$
-            }
+        } else if (model.isReduceDeviceSupported()) {
+            AbstractLunRemoveColumn removeColumn = new AbstractLunRemoveColumn(model) {
+                @Override
+                public LunModel getValue(LunModel object) {
+                    return object;
+                }
+            };
+            table.addColumn(removeColumn, constants.removeSanStorage(), "95px"); //$NON-NLS-1$
+            model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
+                table.redraw();
+            });
         }
 
         model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {

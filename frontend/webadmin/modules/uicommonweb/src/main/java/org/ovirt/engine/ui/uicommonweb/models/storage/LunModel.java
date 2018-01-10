@@ -116,6 +116,20 @@ public class LunModel extends EntityModel<LUNs> {
         }
     }
 
+    // In order to indicate if remove button is available
+    private boolean isLunRemovable;
+
+    public boolean getIsLunRemovable() {
+        return isLunRemovable;
+    }
+
+    public void setIsLunRemovable(boolean value) {
+        if (isLunRemovable != value) {
+            isLunRemovable = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsLunRemovable")); //$NON-NLS-1$
+        }
+    }
+
     private int multipathing;
 
     public int getMultipathing() {

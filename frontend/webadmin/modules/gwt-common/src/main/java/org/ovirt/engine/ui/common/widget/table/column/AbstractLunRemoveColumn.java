@@ -28,6 +28,7 @@ public abstract class AbstractLunRemoveColumn extends AbstractColumn<LunModel, L
             @Override
             public void render(Context context, LunModel value, SafeHtmlBuilder sb, String id) {
                 boolean exactlyOneLunLeft = false;
+                value.setIsLunRemovable(true);
                 if (model.getMetadataDevices().size() == 0) {
                     exactlyOneLunLeft = model.getNumOfLUNsToRemove() == model.getItems().size() - 1;
                 }
@@ -40,6 +41,7 @@ public abstract class AbstractLunRemoveColumn extends AbstractColumn<LunModel, L
                         model.getIncludedLuns().size() == 1 ||
                         exactlyOneLunLeft) {
                     input = templates.noButton(uiConstants.notAvailableLabel(), "color:gray", inputId); //$NON-NLS-1$
+                    value.setIsLunRemovable(false);
                 } else if (value.isRemoveLunSelected()) {
                     input = templates.toggledDown(inputId, constants.removeSanStorage());
                 } else {
