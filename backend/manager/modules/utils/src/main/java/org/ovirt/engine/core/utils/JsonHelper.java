@@ -35,6 +35,22 @@ public class JsonHelper {
         return mapToJson(input, true);
     }
 
+    public static String mapToJsonUnchecked(Map<String, Object> input) {
+        try {
+            return mapToJson(input);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Object \"%s\" cannot be serialized to JSON.", input), e);
+        }
+    }
+
+    public static Map<String, Object> jsonToMapUnchecked(String jsonString) {
+        try {
+            return jsonToMap(jsonString);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Json string \"%s\" cannot be parsed to a Map.", jsonString), e);
+        }
+    }
+
     public static Map<String, Object> jsonToMap(String jsonString) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         MapType type = mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class);
