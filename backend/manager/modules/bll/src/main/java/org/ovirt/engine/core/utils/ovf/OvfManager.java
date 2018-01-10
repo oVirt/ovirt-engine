@@ -26,6 +26,8 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,8 @@ public class OvfManager {
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Inject
     private OsRepository osRepository;
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     public String exportVm(VM vm, FullEntityOvfData fullEntityOvfData, Version version) {
         updateBootOrderOnDevices(vm.getStaticData(), false);
@@ -53,7 +57,8 @@ public class OvfManager {
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuId = cpuFlagsManagerHandler.getCpuId(cluster.getCpuName(), cluster.getCompatibilityVersion());
-            vmWriter = new HostedEngineOvfWriter(vm, fullEntityOvfData, version, cluster.getEmulatedMachine(), cpuId, osRepository);
+            String engineXml = generateEngineXml(vm, cpuId, cluster.getEmulatedMachine());
+            vmWriter = new HostedEngineOvfWriter(vm, fullEntityOvfData, version, cluster.getEmulatedMachine(), cpuId, osRepository, engineXml);
         } else {
             vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, osRepository);
         }
@@ -177,5 +182,11 @@ public class OvfManager {
                 devices,
                 interfaces,
                 diskVmElements);
+    }
+
+    private String generateEngineXml(VM vm, String cpuId, String emulatedMachine) {
+        vm.setCpuName(cpuId);
+        vm.setEmulatedMachine(emulatedMachine);
+        return new LibvirtVmXmlBuilder(vm, vmInfoBuildUtils).buildCreateVm();
     }
 }

@@ -17,6 +17,7 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
 
     private final String emulatedMachine;
     private final String cpuId;
+    private final String engineXml;
 
     /**
      * @param vm this VM is expected to be hosted engine vm. See {@link VM#isHostedEngine()}
@@ -31,7 +32,8 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
             @NotNull Version version,
             @NotNull String emulatedMachine,
             @NotNull String cpuId,
-            @NotNull OsRepository osRepository) {
+            @NotNull OsRepository osRepository,
+            @NotNull String engineXml) {
 
         super(vm, fullEntityOvfData, version, osRepository);
         if (!vm.isHostedEngine()) {
@@ -40,6 +42,7 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
         }
         this.emulatedMachine = Objects.requireNonNull(emulatedMachine, "The cluster emulated machine must not be null");
         this.cpuId = Objects.requireNonNull(cpuId, "The cpuId must not be null");
+        this.engineXml = engineXml;
     }
 
     @Override
@@ -50,5 +53,11 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
     @Override
     protected void writeCustomCpuName() {
         _writer.writeElement(CUSTOM_CPU_NAME, cpuId);
+    }
+
+    @Override
+    protected void writeGeneralData() {
+        super.writeGeneralData();
+        _writer.writeElement(ENGINE_XML, engineXml);
     }
 }

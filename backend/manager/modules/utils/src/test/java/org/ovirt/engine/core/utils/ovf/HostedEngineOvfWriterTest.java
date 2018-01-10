@@ -26,6 +26,7 @@ public class HostedEngineOvfWriterTest {
     private String emulatedMachine;
     private Version version = Version.getLast();
     private String cpuId;
+    private String engineXml;
 
     private HostedEngineOvfWriter underTest;
 
@@ -44,13 +45,15 @@ public class HostedEngineOvfWriterTest {
         fullEntityOvfData = new FullEntityOvfData();
         emulatedMachine = "pc";
         cpuId = "SandyBridge";
+        engineXml = "<Envelope></Envelope>";
         underTest = new HostedEngineOvfWriter(
                 vm,
                 fullEntityOvfData,
                 version,
                 emulatedMachine,
                 cpuId,
-                osRepository);
+                osRepository,
+                engineXml);
     }
 
     @Test
@@ -63,7 +66,7 @@ public class HostedEngineOvfWriterTest {
     public void clusterEmulatedMachineIsNull() {
         emulatedMachine = null;
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, fullEntityOvfData, version, emulatedMachine, cpuId, osRepository))
+                () -> new HostedEngineOvfWriter(vm, fullEntityOvfData, version, emulatedMachine, cpuId, osRepository, engineXml))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining("emulated machine");
     }
@@ -78,7 +81,7 @@ public class HostedEngineOvfWriterTest {
     public void cpuIdIsNull() {
         cpuId = null;
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, fullEntityOvfData, version, emulatedMachine, cpuId, osRepository))
+                () -> new HostedEngineOvfWriter(vm, fullEntityOvfData, version, emulatedMachine, cpuId, osRepository, engineXml))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining("cpuId");
     }
@@ -87,7 +90,7 @@ public class HostedEngineOvfWriterTest {
     public void notHostedEngineVM() {
         vm.setOrigin(OriginType.OVIRT);
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, fullEntityOvfData, version, emulatedMachine, cpuId, osRepository))
+                () -> new HostedEngineOvfWriter(vm, fullEntityOvfData, version, emulatedMachine, cpuId, osRepository, engineXml))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessageContaining("Hosted Engine");
 

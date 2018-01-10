@@ -169,6 +169,17 @@ public class LibvirtVmXmlBuilder {
         init(vm, vmInfoBuildUtils, hostId);
     }
 
+    /**
+     * This constructor is meant for building an host-agnostic XML for
+     * hosted-engine VM. Note that the given VM must not be defined
+     * with custom properties (that will result in an NPE at {@link #writeMemoryBacking()}
+     */
+    public LibvirtVmXmlBuilder(
+            VM vm,
+            VmInfoBuildUtils vmInfoBuildUtils) {
+        init(vm, vmInfoBuildUtils, null);
+    }
+
     private void init(VM vm, VmInfoBuildUtils vmInfoBuildUtils, Guid hostId) {
         this.vm = vm;
         this.vmInfoBuildUtils = vmInfoBuildUtils;
@@ -184,9 +195,15 @@ public class LibvirtVmXmlBuilder {
         writer = new XmlTextWriter();
         qosCache = new HashMap<>();
 
-        hostDevicesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getHostDevices(hostId));
-        hostStatisticsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsStatistics(hostId));
-        hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsNumaNodes(hostId));
+        if (hostId != null) {
+            hostDevicesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getHostDevices(hostId));
+            hostStatisticsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsStatistics(hostId));
+            hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsNumaNodes(hostId));
+        } else {
+            hostDevicesSupplier = new MemoizingSupplier<>(() -> Collections.emptyMap());
+            hostStatisticsSupplier = new MemoizingSupplier<>(() -> null);
+            hostNumaNodesSupplier = new MemoizingSupplier<>(() -> Collections.emptyList());
+        }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
     }
 
@@ -206,7 +223,7 @@ public class LibvirtVmXmlBuilder {
         if (numaEnabled) {
             writeNumaTune();
         }
-        writeCpu(numaEnabled);
+        writeCpu(numaEnabled || (vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty()));
         writeCpuTune(numaEnabled);
         writeDevices();
         writePowerManagement();
@@ -291,7 +308,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     @SuppressWarnings("incomplete-switch")
-    private void writeCpu(boolean numaEnabled) {
+    private void writeCpu(boolean addVmNumaNodes) {
         writer.writeStartElement("cpu");
 
         String cpuType = vm.getCpuName();
@@ -334,7 +351,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        if (numaEnabled) {
+        if (addVmNumaNodes) {
             writer.writeStartElement("numa");
             NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodesSupplier.get()).forEach(vmNumaNode -> {
                 writer.writeStartElement("cell");

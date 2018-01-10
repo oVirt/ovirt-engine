@@ -91,6 +91,7 @@ public interface OvfProperties {
     String STOP_TIME = "StopTime";
     String BOOT_TIME = "BootTime";
     String DOWNTIME = "Downtime";
+    String ENGINE_XML = "EngineXml";
 
     // Luns
     String LUN_ID = "lun_id";
