@@ -99,10 +99,12 @@ Locate `postgresql.conf` within your distribution, common locations are:
 - `/var/opt/rh/rh-postgresql95/lib/pgsql/data/postgresql.conf` (el7 with rh-postgresql95)
 
 Within `postgresql.conf` set:
+
   autovacuum_vacuum_scale_factor = 0.01
   autovacuum_analyze_scale_factor = 0.075
   autovacuum_max_workers = 6
   max_connections = 150
+  work_mem = 8192
 
 Restart the PostgreSQL service (`systemctl restart rh-postgresql95-postgresql` for the SCL one).
 
