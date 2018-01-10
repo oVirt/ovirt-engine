@@ -19,9 +19,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -60,7 +57,6 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -70,20 +66,12 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.HostDeviceDao;
-import org.ovirt.engine.core.dao.VdsNumaNodeDao;
-import org.ovirt.engine.core.dao.VdsStatisticsDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
-import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
-import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
@@ -117,26 +105,7 @@ public class LibvirtVmXmlBuilder {
     private static final int DEFAULT_HUGEPAGESIZE_X86_64 = 2048;
     private static final int DEFAULT_HUGEPAGESIZE_PPC64LE = 16384;
 
-    @Inject
-    private VmDeviceDao vmDeviceDao;
-    @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
-    @Inject
-    private VnicProfileDao vnicProfileDao;
-    @Inject
-    private NetworkDao networkDao;
-    @Inject
-    private HostDeviceDao hostDeviceDao;
-    @Inject
-    private VmNicFilterParameterDao vmNicFilterParameterDao;
-    @Inject
-    private VdsStatisticsDao vdsStatisticsDao;
-    @Inject
-    private VdsNumaNodeDao vdsNumaNodeDao;
-    @Inject
-    private OsRepository osRepository;
-    @Inject
-    private VmDevicesMonitoring vmDevicesMonitoring;
 
     private String serialConsolePath;
     private boolean hypervEnabled;
@@ -164,56 +133,61 @@ public class LibvirtVmXmlBuilder {
     private VmNic nic;
     private VmDevice device;
 
+    /**
+     * This constructor is meant for building a complete XML for runnning
+     * a VM on the specified host.
+     */
     public LibvirtVmXmlBuilder(
             VM vm,
             Guid hostId,
             VmDevice payload,
             int vdsCpuThreads,
             boolean volatileRun,
-            Map<Guid, String> passthroughVnicToVfMap) {
-        this.vm = vm;
+            Map<Guid, String> passthroughVnicToVfMap,
+            VmInfoBuildUtils vmInfoBuildUtils) {
         this.payload = payload;
         this.vdsCpuThreads = vdsCpuThreads;
         this.volatileRun = volatileRun;
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
-        initSuppliers(hostId);
+        init(vm, vmInfoBuildUtils, hostId);
     }
 
+    /**
+     * This constructor is meant for building a partial XML for hot-(un)plugging
+     * a network interface.
+     */
     public LibvirtVmXmlBuilder(
             VM vm,
             Guid hostId,
             VmNic nic,
             VmDevice device,
+            VmInfoBuildUtils vmInfoBuildUtils,
             Map<Guid, String> passthroughVnicToVfMap) {
-        this.vm = vm;
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
         this.nic = nic;
         this.device = device;
-        initSuppliers(hostId);
+        init(vm, vmInfoBuildUtils, hostId);
     }
 
-    private void initSuppliers(Guid hostId) {
-        hostDevicesSupplier = new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
-                .stream()
-                .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device)));
-        hostStatisticsSupplier = new MemoizingSupplier<>(() -> vdsStatisticsDao.get(hostId));
-        hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(hostId));
-        vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
-    }
-
-    @PostConstruct
-    private void init() {
+    private void init(VM vm, VmInfoBuildUtils vmInfoBuildUtils, Guid hostId) {
+        this.vm = vm;
+        this.vmInfoBuildUtils = vmInfoBuildUtils;
         payloadIndex = -1;
         cdRomIndex = -1;
         vnicMetadata = new HashMap<>();
         diskMetadata = new HashMap<>();
-        hypervEnabled = osRepository.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion());
-        cdInterface = osRepository.getCdInterface(
+        hypervEnabled = vmInfoBuildUtils.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion());
+        cdInterface = vmInfoBuildUtils.getCdInterface(
                 vm.getOs(),
                 vm.getCompatibilityVersion(),
                 ChipsetType.fromMachineType(vm.getEmulatedMachine()));
         writer = new XmlTextWriter();
         qosCache = new HashMap<>();
+
+        hostDevicesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getHostDevices(hostId));
+        hostStatisticsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsStatistics(hostId));
+        hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsNumaNodes(hostId));
+        vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
     }
 
     public String buildCreateVm() {
@@ -821,7 +795,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeDevices() {
-        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vm.getId());
+        List<VmDevice> devices = vmInfoBuildUtils.getVmDevices(vm.getId());
         // replacement of some devices in run-once mode should eventually be done by the run-command
         devices = overrideDevicesForRunOnce(devices);
         devices = processPayload(devices);
@@ -950,7 +924,7 @@ public class LibvirtVmXmlBuilder {
         }
 
         if (forceRefreshDevices) {
-            vmDevicesMonitoring.refreshVmDevices(vm.getId());
+            vmInfoBuildUtils.refreshVmDevices(vm.getId());
         }
 
         if (!balloonExists) {
@@ -1998,8 +1972,8 @@ public class LibvirtVmXmlBuilder {
         Map<String, String> properties = VmPropertiesUtils.getInstance().getVMProperties(
                 vm.getCompatibilityVersion(),
                 vm.getStaticData());
-        VnicProfile vnicProfile = vnicProfileDao.get(nic.getVnicProfileId());
-        Network network = vnicProfile != null ? networkDao.get(vnicProfile.getNetworkId()) : null;
+        VnicProfile vnicProfile = vmInfoBuildUtils.getVnicProfile(nic.getVnicProfileId());
+        Network network = vnicProfile != null ? vmInfoBuildUtils.getNetwork(vnicProfile.getNetworkId()) : null;
 
         switch (device.getDevice()) {
         case "bridge":
@@ -2076,7 +2050,7 @@ public class LibvirtVmXmlBuilder {
         if (networkFilter != null) {
             writer.writeStartElement("filterref");
             writer.writeAttributeString("filter", networkFilter.getName());
-            vmNicFilterParameterDao.getAllForVmNic(nic.getId()).forEach(parameter -> {
+            vmInfoBuildUtils.getAllNetworkFiltersForVmNic(nic.getId()).forEach(parameter -> {
                 writer.writeStartElement("parameter");
                 writer.writeAttributeString("name", parameter.getName());
                 writer.writeAttributeString("value", parameter.getValue());

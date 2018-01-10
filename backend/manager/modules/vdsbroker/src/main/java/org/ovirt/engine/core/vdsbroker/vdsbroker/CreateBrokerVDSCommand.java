@@ -66,13 +66,14 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     }
 
     private String generateDomainXml() {
-        LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
+        LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
                 vm,
                 getVds().getId(),
                 getPayload(),
                 getVds().getCpuThreads(),
                 getParameters().isVolatileRun(),
-                getParameters().getPassthroughVnicToVfMap()));
+                getParameters().getPassthroughVnicToVfMap(),
+                vmInfoBuildUtils);
         String libvirtXml = builder.buildCreateVm();
         String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
         if (prettyLibvirtXml != null) {

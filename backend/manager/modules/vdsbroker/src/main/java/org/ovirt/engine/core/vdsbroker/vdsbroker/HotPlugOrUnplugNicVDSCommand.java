@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.LibvirtVmXmlBuilder;
@@ -73,14 +72,15 @@ public abstract class HotPlugOrUnplugNicVDSCommand<P  extends VmNicDeviceVDSPara
     private String generateDomainXml() {
         VmNic nic = getParameters().getNic();
         VmDevice vmDevice = getParameters().getVmDevice();
-        LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
+        LibvirtVmXmlBuilder builder = new LibvirtVmXmlBuilder(
                 getParameters().getVm(),
                 getVds().getId(),
                 nic,
                 vmDevice,
+                vmInfoBuildUtils,
                 nic.isPassthrough() ?
                         Collections.singletonMap(nic.getId(), vmDevice.getHostDevice())
-                        : Collections.emptyMap()));
+                        : Collections.emptyMap());
         String libvirtXml = builder.buildHotplugNic();
         String prettyLibvirtXml = XmlUtils.prettify(libvirtXml);
         if (prettyLibvirtXml != null) {

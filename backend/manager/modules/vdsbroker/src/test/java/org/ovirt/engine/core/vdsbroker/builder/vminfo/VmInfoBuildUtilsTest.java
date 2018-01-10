@@ -47,9 +47,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -61,6 +63,7 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -113,7 +116,12 @@ public class VmInfoBuildUtilsTest {
     private StorageServerConnectionDao storageServerConnectionDao;
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;
-
+    @Mock
+    private VdsStatisticsDao vdsStatisticsDao;
+    @Mock
+    private HostDeviceDao hostDeviceDao;
+    @Mock
+    private VmDevicesMonitoring vmDevicesMonitoring;
 
     @InjectMocks
     private VmInfoBuildUtils underTest;

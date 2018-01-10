@@ -36,11 +36,13 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
+import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -74,14 +76,17 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -97,6 +102,7 @@ import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.collections.ComparatorUtils;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -128,6 +134,9 @@ public class VmInfoBuildUtils {
     private final StorageDomainStaticDao storageDomainStaticDao;
     private final StorageServerConnectionDao storageServerConnectionDao;
     private final VdsNumaNodeDao vdsNumaNodeDao;
+    private final VdsStatisticsDao vdsStatisticsDao;
+    private final HostDeviceDao hostDeviceDao;
+    private final VmDevicesMonitoring vmDevicesMonitoring;
 
     private static final String BLOCK_DOMAIN_DISK_PATH = "/rhev/data-center/mnt/blockSD/%s/images/%s/%s";
     private static final String FILE_DOMAIN_DISK_PATH = "/rhev/data-center/%s/%s/images/%s/%s";
@@ -152,7 +161,10 @@ public class VmInfoBuildUtils {
             OsRepository osRepository,
             StorageDomainStaticDao storageDomainStaticDao,
             StorageServerConnectionDao storageServerConnectionDao,
-            VdsNumaNodeDao vdsNumaNodeDao) {
+            VdsNumaNodeDao vdsNumaNodeDao,
+            VdsStatisticsDao vdsStatisticsDao,
+            HostDeviceDao hostDeviceDao,
+            VmDevicesMonitoring vmDevicesMonitoring) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -168,6 +180,9 @@ public class VmInfoBuildUtils {
         this.storageDomainStaticDao = Objects.requireNonNull(storageDomainStaticDao);
         this.storageServerConnectionDao = Objects.requireNonNull(storageServerConnectionDao);
         this.vdsNumaNodeDao = Objects.requireNonNull(vdsNumaNodeDao);
+        this.vdsStatisticsDao = Objects.requireNonNull(vdsStatisticsDao);
+        this.hostDeviceDao = Objects.requireNonNull(hostDeviceDao);
+        this.vmDevicesMonitoring = Objects.requireNonNull(vmDevicesMonitoring);
     }
 
     @SuppressWarnings("unchecked")
@@ -261,8 +276,8 @@ public class VmInfoBuildUtils {
 
         Map<String, Object> specParams = new HashMap<>();
 
-        VnicProfile vnicProfile = vnicProfileDao.get(vmInterface.getVnicProfileId());
-        Network network = networkDao.get(vnicProfile.getNetworkId());
+        VnicProfile vnicProfile = getVnicProfile(vmInterface.getVnicProfileId());
+        Network network = getNetwork(vnicProfile.getNetworkId());
         if (NetworkUtils.isVlan(network)) {
             specParams.put(VdsProperties.VLAN_ID, network.getVlanId());
         }
@@ -284,9 +299,9 @@ public class VmInfoBuildUtils {
         String vdsmName = "";
         List<VnicProfileProperties> unsupportedFeatures = new ArrayList<>();
         if (nic.getVnicProfileId() != null) {
-            vnicProfile = vnicProfileDao.get(nic.getVnicProfileId());
+            vnicProfile = getVnicProfile(nic.getVnicProfileId());
             if (vnicProfile != null) {
-                network = networkDao.get(vnicProfile.getNetworkId());
+                network = getNetwork(vnicProfile.getNetworkId());
                 networkName = network.getName();
                 vdsmName = network.getVdsmName();
                 log.debug("VNIC '{}' is using profile '{}' on network '{}' with vdsmName '{}'",
@@ -374,8 +389,7 @@ public class VmInfoBuildUtils {
         if (networkFilter != null) {
             final String networkFilterName = networkFilter.getName();
             struct.put(VdsProperties.NW_FILTER, networkFilterName);
-            final List<VmNicFilterParameter> vmNicFilterParameters =
-                    vmNicFilterParameterDao.getAllForVmNic(vmNic.getId());
+            final List<VmNicFilterParameter> vmNicFilterParameters = getAllNetworkFiltersForVmNic(vmNic.getId());
             struct.put(VdsProperties.NETWORK_FILTER_PARAMETERS, mapVmNicFilterParameter(vmNicFilterParameters));
         }
     }
@@ -393,7 +407,7 @@ public class VmInfoBuildUtils {
 
     protected NetworkFilter fetchVnicProfileNetworkFilter(VmNic vmNic) {
         if (vmNic.getVnicProfileId() != null) {
-            VnicProfile vnicProfile = vnicProfileDao.get(vmNic.getVnicProfileId());
+            VnicProfile vnicProfile = getVnicProfile(vmNic.getVnicProfileId());
             if (vnicProfile != null) {
                 final Guid networkFilterId = vnicProfile.getNetworkFilterId();
                 return networkFilterId == null ? null : networkFilterDao.getNetworkFilterById(networkFilterId);
@@ -1141,5 +1155,43 @@ public class VmInfoBuildUtils {
         }
 
         return true;
+    }
+
+    public List<VmDevice> getVmDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmId(vmId);
+    }
+
+    public Network getNetwork(Guid networkId) {
+        return networkDao.get(networkId);
+    }
+
+    public boolean isHypervEnabled(int osId, Version version) {
+        return osRepository.isHypervEnabled(osId, version);
+    }
+
+    public String getCdInterface(int osId, Version version, ChipsetType chipset) {
+        return osRepository.getCdInterface(osId, version, chipset);
+    }
+
+    public List<VmNicFilterParameter> getAllNetworkFiltersForVmNic(Guid nicId)  {
+        return vmNicFilterParameterDao.getAllForVmNic(nicId);
+    }
+
+    public VnicProfile getVnicProfile(Guid vnicProfileId) {
+        return vnicProfileDao.get(vnicProfileId);
+    }
+
+    public VdsStatistics getVdsStatistics(Guid hostId) {
+        return vdsStatisticsDao.get(hostId);
+    }
+
+    public Map<String, HostDevice> getHostDevices(Guid hostId) {
+        return hostDeviceDao.getHostDevicesByHostId(hostId)
+                .stream()
+                .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device));
+    }
+
+    public void refreshVmDevices(Guid vmId) {
+        vmDevicesMonitoring.refreshVmDevices(vmId);
     }
 }
