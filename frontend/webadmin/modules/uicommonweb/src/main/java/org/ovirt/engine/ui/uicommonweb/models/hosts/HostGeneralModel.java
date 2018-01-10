@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -34,6 +36,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel<VDS> {
@@ -790,6 +793,21 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    /**
+     * e.g. "PTI: 0, IBPB: 0, IBRS: 0"
+     */
+    private String kernelFeatures;
+
+    public String getKernelFeatures() {
+        return kernelFeatures != null
+                ? kernelFeatures
+                : constants.notAvailableLabel();
+    }
+
+    public void setKernelFeatures(String kernelFeatures) {
+        this.kernelFeatures = kernelFeatures;
+    }
+
     static {
         requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
         requestGOToEventsTabEventDefinition = new EventDefinition("RequestGOToEventsTabEvent", HostGeneralModel.class); //$NON-NLS-1$
@@ -919,7 +937,29 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
 
         setLogicalCores(vds.getCpuThreads());
-        setOnlineCores(vds.getOnlineCpus() == null ? vds.getOnlineCpus() : vds.getOnlineCpus().replaceAll(",", ", ")); //$NON-NLS-1$ //$NON-NLS-2$
+        setKernelFeatures(formatKernelFeatures(vds.getKernelFeatures()));
+    }
+
+    private String formatKernelFeatures(Map<String, Object> kernelFeatures) {
+        if (kernelFeatures == null) {
+            return null;
+        }
+
+        final int vdsmNotAvailable = -1;
+        List<String> features = new ArrayList<>();
+        for (Map.Entry<String, Object> pair : kernelFeatures.entrySet()) {
+            final boolean isValueValid = pair.getValue() instanceof String
+                    || (pair.getValue() instanceof Integer && !Objects.equals(vdsmNotAvailable, pair.getValue()));
+            if (!isValueValid) {
+                continue;
+            }
+            final String stringifiedPair = pair.getKey() + ": " + pair.getValue();//$NON-NLS-1$
+            features.add(stringifiedPair);
+        }
+        if (features.isEmpty()) {
+            return constants.notAvailableLabel();
+        }
+        return StringUtils.join(features, ", "); //$NON-NLS-1$
     }
 
     private void updateAlerts() {

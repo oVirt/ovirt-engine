@@ -1216,6 +1216,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String cephVersionHostGeneral();
 
+    String kernelFeatures();
+
     String isciInitNameHostGeneral();
 
     String activeVmsHostGeneral();
