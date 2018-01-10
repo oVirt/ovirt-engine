@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -16,23 +17,22 @@ import org.ovirt.engine.core.utils.NumaUtils;
 public class NumaSettingFactory {
 
     public static List<Map<String, Object>> buildVmNumaNodeSetting(List<VmNumaNode> vmNumaNodes) {
-        List<Map<String, Object>> createVmNumaNodes = new ArrayList<>();
-        for (VmNumaNode node : vmNumaNodes) {
-            Map<String, Object> createVmNumaNode = new HashMap<>();
-            createVmNumaNode.put(VdsProperties.NUMA_NODE_CPU_LIST, NumaUtils.buildStringFromListForNuma(node.getCpuIds()));
-            createVmNumaNode.put(VdsProperties.VM_NUMA_NODE_MEM, String.valueOf(node.getMemTotal()));
-            createVmNumaNode.put(VdsProperties.NUMA_NODE_INDEX, node.getIndex());
-            createVmNumaNodes.add(createVmNumaNode);
-        }
-        return createVmNumaNodes;
+        return vmNumaNodes.stream()
+                .map(node -> {
+                    Map<String, Object> createVmNumaNode = new HashMap<>(3);
+                    createVmNumaNode.put(VdsProperties.NUMA_NODE_CPU_LIST, NumaUtils.buildStringFromListForNuma(node.getCpuIds()));
+                    createVmNumaNode.put(VdsProperties.VM_NUMA_NODE_MEM, String.valueOf(node.getMemTotal()));
+                    createVmNumaNode.put(VdsProperties.NUMA_NODE_INDEX, node.getIndex());
+                    return createVmNumaNode;
+                })
+                .collect(Collectors.toList());
     }
 
     public static Map<String, Object> buildCpuPinningWithNumaSetting(List<VmNumaNode> vmNodes, List<VdsNumaNode> vdsNodes) {
-        Map<Integer, List<Integer>> vdsNumaNodeCpus = new HashMap<>();
+        Map<Integer, List<Integer>> vdsNumaNodeCpus = vdsNodes.stream()
+                .collect(Collectors.toMap(VdsNumaNode::getIndex, VdsNumaNode::getCpuIds));
+
         Map<String, Object> cpuPinDict = new HashMap<>();
-        for (VdsNumaNode node : vdsNodes) {
-            vdsNumaNodeCpus.put(node.getIndex(), node.getCpuIds());
-        }
         for (VmNumaNode node : vmNodes) {
             List<Integer> pinnedNodeIndexes = node.getVdsNumaNodeList();
             if (!pinnedNodeIndexes.isEmpty()) {
@@ -60,7 +60,7 @@ public class NumaSettingFactory {
                 continue;
             }
 
-            Map<String, String> memNode = new HashMap<>();
+            Map<String, String> memNode = new HashMap<>(2);
             memNode.put(VdsProperties.NUMA_TUNE_VM_NODE_INDEX, String.valueOf(node.getIndex()));
             memNode.put(VdsProperties.NUMA_TUNE_NODESET,
                     NumaUtils.buildStringFromListForNuma(node.getVdsNumaNodeList()));
@@ -73,7 +73,7 @@ public class NumaSettingFactory {
             return Collections.emptyMap();
         }
 
-        Map<String, Object> createNumaTune = new HashMap<>();
+        Map<String, Object> createNumaTune = new HashMap<>(2);
         createNumaTune.put(VdsProperties.NUMA_TUNE_MEMNODES, memNodeList);
         createNumaTune.put(VdsProperties.NUMA_TUNE_MODE, numaTuneMode.getValue());
 
