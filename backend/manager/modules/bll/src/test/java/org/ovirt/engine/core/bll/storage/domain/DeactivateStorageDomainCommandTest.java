@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
+import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -62,6 +63,8 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     private VmStaticDao vmStaticDao;
     @Mock
     private EventQueue eventQueue;
+    @Mock
+    private StoragePoolStatusHandler storagePoolStatusHandler;
 
     private StoragePoolIsoMap map;
     private StorageDomain domain;

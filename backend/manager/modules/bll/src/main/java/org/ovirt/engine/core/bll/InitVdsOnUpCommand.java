@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
 import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
-import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
@@ -221,7 +220,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             if (pool != null && pool.getStatus() == StoragePoolStatus.NotOperational) {
                 pool.setStatus(StoragePoolStatus.NonResponsive);
                 storagePoolDao.updateStatus(pool.getId(), pool.getStatus());
-                StoragePoolStatusHandler.poolStatusChanged(pool.getId(), pool.getStatus());
+                storagePoolStatusHandler.poolStatusChanged(pool.getId(), pool.getStatus());
             }
         }
     }

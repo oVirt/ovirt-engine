@@ -6,11 +6,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -21,44 +24,35 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class StoragePoolStatusHandler {
+@Singleton
+public class StoragePoolStatusHandler implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(StoragePoolStatusHandler.class);
 
-    private static final Map<Guid, StoragePoolStatusHandler> nonOperationalPools = new ConcurrentHashMap<>();
-
-    private final Guid poolId;
-    private ScheduledFuture scheduledTask;
+    private final Map<Guid, ScheduledFuture<?>> nonOperationalPools = new ConcurrentHashMap<>();
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService schedulerService;
 
-    private StoragePoolStatusHandler(Guid poolId) {
-        this.poolId = poolId;
-        this.scheduledTask = null;
-    }
-
-    private StoragePoolStatusHandler scheduleTimeout() {
-        scheduledTask = schedulerService.schedule(this::handleTimeout,
+    private ScheduledFuture<?> scheduleTimeout(Guid poolId) {
+        return schedulerService.schedule(() -> handleTimeout(poolId),
                 Config.<Long>getValue(ConfigValues.StoragePoolNonOperationalResetTimeoutInMin),
                 TimeUnit.MINUTES);
-
-        return this;
     }
 
-    private void deScheduleTimeout() {
-        if (scheduledTask != null) {
+    private void deScheduleTimeout(Guid poolId) {
+        // The key will be removed from the map since the function returns null
+        nonOperationalPools.computeIfPresent(poolId, (key, scheduledTask) -> {
             scheduledTask.cancel(true);
-            scheduledTask = null;
-        }
+            return null;
+        });
     }
 
-    private void handleTimeout() {
+    private void handleTimeout(Guid poolId) {
         if (nonOperationalPools.containsKey(poolId)) {
             try {
                 StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(poolId);
@@ -70,24 +64,15 @@ public final class StoragePoolStatusHandler {
         }
     }
 
-    public static void poolStatusChanged(Guid poolId, StoragePoolStatus status) {
+    public void poolStatusChanged(Guid poolId, StoragePoolStatus status) {
         if (nonOperationalPools.containsKey(poolId) && status != StoragePoolStatus.NotOperational) {
-            StoragePoolStatusHandler handler = nonOperationalPools.get(poolId);
-
-            if (handler != null) {
-                synchronized (handler) {
-                    handler.deScheduleTimeout();
-                }
-            }
-            nonOperationalPools.remove(poolId);
+            deScheduleTimeout(poolId);
         } else if (status == StoragePoolStatus.NotOperational) {
-            final StoragePoolStatusHandler storagePoolStatusHandler =
-                    Injector.injectMembers(new StoragePoolStatusHandler(poolId));
-            nonOperationalPools.put(poolId, storagePoolStatusHandler.scheduleTimeout());
+            nonOperationalPools.put(poolId, scheduleTimeout(poolId));
         }
     }
 
-    private static void nonOperationalPoolTreatment(StoragePool pool) {
+    private void nonOperationalPoolTreatment(StoragePool pool) {
         if (!getAllRunningVdssInPool(pool).isEmpty()) {
             log.info("Moving data center '{}' with Id '{}' to status Problematic from status NotOperational on a one"
                     + " time basis to try to recover",
@@ -105,8 +90,8 @@ public final class StoragePoolStatusHandler {
         return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
     }
 
-
-    public static void init() {
+    @PostConstruct
+    public void init() {
         List<StoragePool> allPools = DbFacade.getInstance().getStoragePoolDao().getAll();
         for (StoragePool pool : allPools) {
             if (pool.getStatus() == StoragePoolStatus.NotOperational) {

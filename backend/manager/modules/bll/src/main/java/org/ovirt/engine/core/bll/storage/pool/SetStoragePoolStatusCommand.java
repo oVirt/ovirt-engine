@@ -39,7 +39,7 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
                     StorageDomainStatus.Unknown,
                     null);
         }
-        StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
+        storagePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
         setSucceeded(true);
     }
 

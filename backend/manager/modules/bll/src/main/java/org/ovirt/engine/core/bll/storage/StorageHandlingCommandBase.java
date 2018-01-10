@@ -139,6 +139,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
     @Inject
     protected StorageHelperDirector storageHelperDirector;
+    @Inject
+    protected StoragePoolStatusHandler storagePoolStatusHandler;
 
     protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -376,7 +378,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 storagePoolDao.update(getStoragePool());
                 return null;
             });
-            StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
+            storagePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
         }
     }
 

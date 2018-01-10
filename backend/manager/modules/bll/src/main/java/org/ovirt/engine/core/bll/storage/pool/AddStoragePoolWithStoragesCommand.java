@@ -95,7 +95,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
                 storagePoolDao.update(getStoragePool());
                 getCompensationContext().stateChanged();
-                StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(),
+                storagePoolStatusHandler.poolStatusChanged(getStoragePool().getId(),
                         getStoragePool().getStatus());
                 return null;
             });

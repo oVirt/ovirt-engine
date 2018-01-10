@@ -76,7 +76,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
             serviceLoader.load(IrsProxyManager.class);
             serviceLoader.load(OvfDataUpdater.class);
-            StoragePoolStatusHandler.init();
+            serviceLoader.load(StoragePoolStatusHandler.class);
             serviceLoader.load(GlusterJobsManager.class);
 
             resourceManager.get().scheduleJobsForHosts();

@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -61,6 +62,8 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
     private VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
     private VDS vds;
+    @Mock
+    private StoragePoolStatusHandler storagePoolStatusHandler;
     private StoragePoolIsoMap map;
 
     @Spy

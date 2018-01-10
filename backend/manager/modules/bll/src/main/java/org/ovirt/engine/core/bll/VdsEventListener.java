@@ -147,6 +147,8 @@ public class VdsEventListener implements IVdsEventListener {
     private IrsProxyManager irsProxyManager;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    private StoragePoolStatusHandler storagePoolStatusHandler;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -432,7 +434,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status) {
-        StoragePoolStatusHandler.poolStatusChanged(storagePoolId, status);
+        storagePoolStatusHandler.poolStatusChanged(storagePoolId, status);
     }
 
     @Override
