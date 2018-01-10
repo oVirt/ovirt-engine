@@ -38,9 +38,7 @@ import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -51,6 +49,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
@@ -64,7 +63,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
@@ -1059,13 +1057,12 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     }
 
     public void addCluster() {
-        ClusterModel model = new ClusterModel();
-        model.init(false);
+        if (getWindow() != null) {
+            return;
+        }
+
+        ClusterModel model = ClusterListModel.createNewClusterModel();
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
-        model.setHelpTag(HelpTag.new_cluster);
-        model.setHashName("new_cluster"); //$NON-NLS-1$
-        model.setIsNew(true);
 
         ArrayList<StoragePool> dataCenters = new ArrayList<>();
         dataCenters.add(getEntity());
@@ -1080,36 +1077,10 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
     public void onAddCluster() {
         ClusterModel model = (ClusterModel) getWindow();
-        Cluster cluster = new Cluster();
+        Cluster cluster = ClusterListModel.buildCluster(model, new Cluster());
 
         if (model.getProgress() != null) {
             return;
-        }
-
-        // Save changes.
-        Version version = model.getVersion().getSelectedItem();
-
-        cluster.setName(model.getName().getEntity());
-        cluster.setDescription(model.getDescription().getEntity());
-        cluster.setComment(model.getComment().getEntity());
-        cluster.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
-        if (model.getCPU().getSelectedItem() != null) {
-            cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
-        }
-        cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
-        cluster.setTransparentHugepages(true);
-        cluster.setCompatibilityVersion(version);
-        cluster.setMigrateOnError(model.getMigrateOnErrorOption());
-        cluster.setVirtService(model.getEnableOvirtService().getEntity());
-        cluster.setGlusterService(model.getEnableGlusterService().getEntity());
-        cluster.setOptionalReasonRequired(model.getEnableOptionalReason().getEntity());
-        cluster.setMaintenanceReasonRequired(model.getEnableHostMaintenanceReason().getEntity());
-        cluster.setFirewallType(model.getFirewallType().getSelectedItem());
-        if (model.getClusterPolicy().getSelectedItem() != null) {
-            ClusterPolicy selectedPolicy = model.getClusterPolicy().getSelectedItem();
-            cluster.setClusterPolicyId(selectedPolicy.getId());
-            cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet()
-                    .serialize()));
         }
 
         model.startProgress();

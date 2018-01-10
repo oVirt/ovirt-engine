@@ -330,16 +330,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             return;
         }
 
-        ClusterModel clusterModel = new ClusterModel();
-        clusterModel.setAddMacPoolCommand(addMacPoolCommand);
-        clusterModel.init(false);
+        ClusterModel clusterModel = createNewClusterModel();
         setWindow(clusterModel);
-        clusterModel.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
-        clusterModel.setHelpTag(HelpTag.new_cluster);
-        clusterModel.setHashName("new_cluster"); //$NON-NLS-1$
-        clusterModel.setIsNew(true);
-        clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
-        clusterModel.getMigrationBandwidthLimitType().setSelectedItem(MigrationBandwidthLimitType.DEFAULT);
+        clusterModel.setAddMacPoolCommand(addMacPoolCommand);
 
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
             ClusterModel cModel = (ClusterModel) getWindow();
@@ -351,6 +344,18 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             cModel.getCommands().add(tempVar2);
         }));
         clusterModel.refreshMigrationPolicies();
+    }
+
+    public static ClusterModel createNewClusterModel() {
+        ClusterModel clusterModel = new ClusterModel();
+        clusterModel.init(false);
+        clusterModel.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
+        clusterModel.setHelpTag(HelpTag.new_cluster);
+        clusterModel.setHashName("new_cluster"); //$NON-NLS-1$
+        clusterModel.setIsNew(true);
+        clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
+        clusterModel.getMigrationBandwidthLimitType().setSelectedItem(MigrationBandwidthLimitType.DEFAULT);
+        return clusterModel;
     }
 
     public void edit() {
@@ -630,7 +635,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         ClusterModel model = (ClusterModel) getWindow();
         cancelConfirmation();
 
-        Cluster cluster = buildCluster(model);
+        Cluster cluster = buildCluster(model, model.getIsNew() ?
+                new Cluster() : (Cluster) Cloner.clone(getSelectedItem()));
         AsyncDataProvider.getInstance().getClusterEditWarnings(new AsyncQuery<>(warnings -> {
             if (!warnings.isEmpty()) {
                 ClusterWarningsModel confirmWindow = new ClusterWarningsModel();
@@ -668,8 +674,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         onSaveInternalWithModel(model);
     }
 
-    private Cluster buildCluster(ClusterModel model) {
-        Cluster cluster = model.getIsNew() ? new Cluster() : (Cluster) Cloner.clone(getSelectedItem());
+    public static Cluster buildCluster(ClusterModel model, Cluster cluster) {
 
         Version version = model.getVersion().getSelectedItem();
 
@@ -760,7 +765,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     }
 
     private void onSaveInternalWithModel(final ClusterModel model) {
-        Cluster cluster = buildCluster(model);
+        Cluster cluster = buildCluster(model, model.getIsNew() ?
+                new Cluster() : (Cluster) Cloner.clone(getSelectedItem()));
 
         model.startProgress();
 
