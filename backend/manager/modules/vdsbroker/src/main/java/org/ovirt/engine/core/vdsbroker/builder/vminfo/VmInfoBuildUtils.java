@@ -1087,4 +1087,13 @@ public class VmInfoBuildUtils {
     public boolean isBlockDomainPath(String path) {
         return BLOCK_DOMAIN_MATCHER.matcher(path).matches();
     }
+
+    public Map<String, Object> parseCpuPinning(String cpuPinning) {
+        if (StringUtils.isEmpty(cpuPinning)) {
+            return Collections.emptyMap();
+        }
+        return Arrays.stream(cpuPinning.split("_"))
+                .map(pin -> pin.split("#"))
+                .collect(Collectors.toMap(split -> split[0], split -> split[1]));
+    }
 }

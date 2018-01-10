@@ -687,7 +687,12 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         calcMaxVCpu().toString());
             }
         }
-        addCpuPinning();
+
+        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(vm.getCpuPinning());
+        if (!cpuPinning.isEmpty()) {
+            createInfo.put(VdsProperties.cpuPinning, cpuPinning);
+        }
+
         if (vm.getEmulatedMachine() != null) {
             createInfo.put(VdsProperties.emulatedMachine, vm.getEmulatedMachine());
         }
@@ -1107,18 +1112,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     private Integer calcMaxVCpu() {
         return VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion());
-    }
-
-    private void addCpuPinning() {
-        final String cpuPinning = vm.getCpuPinning();
-        if (StringUtils.isNotEmpty(cpuPinning)) {
-            final Map<String, Object> pinDict = new HashMap<>();
-            for (String pin : cpuPinning.split("_")) {
-                final String[] split = pin.split("#");
-                pinDict.put(split[0], split[1]);
-            }
-            createInfo.put(VdsProperties.cpuPinning, pinDict);
-        }
     }
 
     private String getTimeZoneForVm(VM vm) {
