@@ -467,7 +467,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         diskToStorageIds = new HashMap<>();
 
         for (Disk disk: templateDisks) {
-            DiskImage diskImage = (DiskImage)disk;
+            DiskImage diskImage = (DiskImage) disk;
             diskToProfileMap.put(disk.getId(), diskImage.getDiskProfileIds());
             diskToStorageIds.put(disk.getId(), diskImage.getStorageIds());
             for (Guid storageId: diskImage.getStorageIds()) {
