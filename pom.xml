@@ -41,7 +41,7 @@
 
     <!-- Versions of the API model and tools: -->
     <metamodel.version>1.1.14</metamodel.version>
-    <model.version>4.1.40</model.version>
+    <model.version>4.1.41</model.version>
 
     <!-- oVirt extentions versions -->
     <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
