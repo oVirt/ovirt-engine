@@ -29,10 +29,6 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     protected boolean validate() {
-        if (!super.validate()) {
-            return false;
-        }
-
         if (getQuota() == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
@@ -43,7 +39,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
             return false;
         }
 
-        return true;
+        return super.validate();
     }
 
     @Override
