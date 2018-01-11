@@ -524,6 +524,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             vmDynamicDao.clearMigratingToVds(getVmId());
             updateVmAfterMigrationToDifferentCluster();
             plugPassthroughNics();
+            initParametersForExternalNetworks(destinationVds, true);
         }
         finally {
             super.runningSucceded();

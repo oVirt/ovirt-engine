@@ -76,7 +76,8 @@ public interface NetworkProviderProxy extends ProviderProxy {
      * @return A map of custom properties to forward for the vNIC device. The correct driver will know how to handle
      *         these properties, and connect the vNIC correctly.
      */
-    Map<String, String> allocate(Network network, VnicProfile vnicProfile, VmNic nic, VDS host);
+    Map<String, String> allocate(Network network, VnicProfile vnicProfile, VmNic nic, VDS host,
+                                 boolean ignoreSecurityGroups);
 
     /**
      * Deallocate the vNIC from the provider. If the vNIC is not on the provider anymore, don't throw an exception.

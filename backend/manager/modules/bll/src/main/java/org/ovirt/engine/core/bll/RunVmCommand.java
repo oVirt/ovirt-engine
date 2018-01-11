@@ -26,7 +26,6 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -49,24 +48,18 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
-import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
@@ -579,7 +572,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setKernelUrl(getIsoPrefixFilePath(getVm().getKernelUrl()));
         }
 
-        initParametersForExternalNetworks();
+        initParametersForExternalNetworks(getVds(), false);
 
         VMStatus vmStatus = (VMStatus) getVdsBroker()
                 .runAsyncVdsCommand(VDSCommandType.Create, buildCreateVmParameters(), this).getReturnValue();
@@ -623,29 +616,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             parameters.setInitializationType(InitializationType.CloudInit);
         }
         return parameters;
-    }
-
-    protected void initParametersForExternalNetworks() {
-        if (getVm().getInterfaces().isEmpty()) {
-            return;
-        }
-
-        Map<VmDeviceId, VmDevice> nicDevices =
-                Entities.businessEntitiesById(vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(),
-                        VmDeviceGeneralType.INTERFACE));
-
-        for (VmNic iface : getVm().getInterfaces()) {
-            VnicProfile vnicProfile = vnicProfileDao.get(iface.getVnicProfileId());
-            Network network = networkHelper.getNetworkByVnicProfile(vnicProfile);
-            VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
-            if (network != null && network.isExternal() && vmDevice.isPlugged()) {
-                Provider<?> provider = providerDao.get(network.getProvidedBy().getProviderId());
-                NetworkProviderProxy providerProxy = providerProxyFactory.create(provider);
-                Map<String, String> deviceProperties = providerProxy.allocate(network, vnicProfile, iface, getVds());
-
-                getVm().getRuntimeDeviceCustomProperties().put(vmDevice.getId(), deviceProperties);
-            }
-        }
     }
 
     protected Map<Guid, String> flushPassthroughVnicToVfMap() {

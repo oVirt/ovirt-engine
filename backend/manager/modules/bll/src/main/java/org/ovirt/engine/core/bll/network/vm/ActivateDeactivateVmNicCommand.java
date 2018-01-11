@@ -374,7 +374,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private void plugToExternalNetwork() {
         Map<String, String> runtimeProperties =
-                getProviderProxy().allocate(getNetwork(), vnicProfile, getParameters().getNic(), getVds());
+                getProviderProxy().allocate(getNetwork(), vnicProfile, getParameters().getNic(), getVds(), false);
 
         if (runtimeProperties != null) {
             getVm().getRuntimeDeviceCustomProperties().put(vmDevice.getId(), runtimeProperties);

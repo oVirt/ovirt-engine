@@ -19,8 +19,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
@@ -30,10 +33,15 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -48,6 +56,8 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
@@ -82,6 +92,14 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Inject
     private StorageHelperDirector storageHelperDirector;
+    @Inject
+    private VnicProfileDao vnicProfileDao;
+    @Inject
+    private NetworkHelper networkHelper;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
@@ -415,5 +433,20 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      */
     protected String getLockMessage() {
         return EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
+    }
+
+    protected void initParametersForExternalNetworks(VDS vds, boolean isMigration) {
+        for (VmNetworkInterface iface : getVm().getInterfaces()) {
+            VnicProfile vnicProfile = vnicProfileDao.get(iface.getVnicProfileId());
+            Network network = networkHelper.getNetworkByVnicProfile(vnicProfile);
+            if (network != null && network.isExternal() && iface.isPlugged()) {
+                Provider<?> provider = providerDao.get(network.getProvidedBy().getProviderId());
+                NetworkProviderProxy providerProxy = providerProxyFactory.create(provider);
+                Map<String, String> deviceProperties = providerProxy.allocate(
+                    network, vnicProfile, iface, vds, isMigration);
+                getVm().getRuntimeDeviceCustomProperties().put(
+                    new VmDeviceId(iface.getId(), getVmId()), deviceProperties);
+            }
+        }
     }
 }
