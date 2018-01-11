@@ -353,6 +353,11 @@ public final class ActionUtils {
         _matrix.put(StorageDomain.class, storageDomainMatrix);
     }
 
+    private static boolean canExecute(BusinessEntityWithStatus<?, ?> entity, Class type, ActionType action) {
+        Set<ActionType> disallowedActions = _matrix.get(type).get(entity.getStatus());
+        return disallowedActions == null || !disallowedActions.contains(action);
+    }
+
     public static boolean canExecute(List<? extends BusinessEntityWithStatus<?, ?>> entities,
             Class type,
             ActionType action) {
@@ -362,9 +367,8 @@ public final class ActionUtils {
         }
 
         if (_matrix.containsKey(type)) {
-            for (BusinessEntityWithStatus<?, ?> a : entities) {
-                if (a.getClass() == type && _matrix.get(type).containsKey(a.getStatus())
-                        && _matrix.get(type).get(a.getStatus()).contains(action)) {
+            for (BusinessEntityWithStatus<?, ?> entity : entities) {
+                if (entity.getClass() == type && !canExecute(entity, type, action)) {
                     return false;
                 }
             }
@@ -380,17 +384,14 @@ public final class ActionUtils {
                                      Class type,
                                      ActionType action) {
         if (_matrix.containsKey(type)) {
-            for (BusinessEntityWithStatus<?, ?> a : entities) {
-                if (a.getClass() == type &&
-                    (!_matrix.get(type).containsKey(a.getStatus())
-                        || !_matrix.get(type).get(a.getStatus()).contains(action))) {
+            for (BusinessEntityWithStatus<?, ?> entity : entities) {
+                if (entity.getClass() == type && canExecute(entity, type, action)) {
                     return true;
                 }
             }
+            return false;
         }
-        else {
-            return true;
-        }
-        return false;
+        return true;
     }
+
 }
