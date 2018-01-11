@@ -52,10 +52,6 @@ Both packages can be installed from ovirt-master-snapshot-static repository:
 
 Please replace `@DIST@` with `fc` for Fedora or `el` for Centos/RHEL.
 
-oVirt Ansible Roles are required for host deploy and they have to be installed
-into development environment prefix (more info in Host deploy via Ansible
-section).
-
 OVN/OVS is an optional dependency. If you want to use it, check the requirements in the
 ovirt-engine.spec.in file for a list of packages. Otherwise, you should reply 'No'
 when asked about it by engine-setup.
