@@ -160,7 +160,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
         executeVmCommand();
 
-        if (shouldUpdateHostedEngineOvf() && getVm().isHostedEngine() && getSucceeded()) {
+        if (shouldUpdateHostedEngineOvf() && getVm() != null && getVm().isHostedEngine() && getSucceeded()) {
             updateHeOvf();
         }
     }
