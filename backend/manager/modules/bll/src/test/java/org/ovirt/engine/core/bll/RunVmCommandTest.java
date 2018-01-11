@@ -325,7 +325,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         vmHandler.init();
 
         mockSuccessfulRunVmValidator();
-        doNothing().when(command).initParametersForExternalNetworks();
+        doNothing().when(command).initParametersForExternalNetworks(null, false);
         doReturn(Collections.emptyMap()).when(command).flushPassthroughVnicToVfMap();
         mockBackend();
     }

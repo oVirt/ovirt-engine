@@ -223,7 +223,8 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     @Override
-    public Map<String, String> allocate(Network network, VnicProfile vnicProfile, VmNic nic, VDS host) {
+    public Map<String, String> allocate(
+        Network network, VnicProfile vnicProfile, VmNic nic, VDS host, boolean ignoreSecurityGroupsOnUpdate) {
         try {
             Port port = locatePort(nic);
 
@@ -237,16 +238,10 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
                     securityGroups, hostId, externalNetwork);
                 port = getClient().ports().create(portForCreate).execute();
             } else {
-                boolean securityGroupsChanged = securityGroupsChanged(port.getSecurityGroups(), securityGroups);
+                boolean securityGroupsChanged = !ignoreSecurityGroupsOnUpdate &&
+                    securityGroupsChanged(port.getSecurityGroups(), securityGroups);
                 boolean hostChanged = hostChanged(port, hostId);
-
-                if (securityGroupsChanged || hostChanged) {
-                    List<String> modifiedSecurityGroups = securityGroupsChanged ?
-                            securityGroups : port.getSecurityGroups();
-                    Port portForUpdate = modifyPortForAllocate(port,
-                            hostId, hostChanged, modifiedSecurityGroups, nic.getMacAddress());
-                    port = getClient().ports().update(portForUpdate).execute();
-                }
+                updatePort(port, securityGroupsChanged, hostChanged, securityGroups, hostId, nic);
             }
             Map<String, String> runtimeProperties = createPortAllocationRuntimeProperties(port);
 
@@ -254,6 +249,20 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         } catch (RuntimeException e) {
             throw new EngineException(EngineError.PROVIDER_FAILURE, e);
         }
+    }
+
+    private Port updatePort(
+        Port port, boolean securityGroupsChanged, boolean hostChanged, List<String> securityGroups, String hostId,
+        VmNic nic) {
+
+        if (securityGroupsChanged || hostChanged) {
+            List<String> modifiedSecurityGroups = securityGroupsChanged ?
+                securityGroups : port.getSecurityGroups();
+            Port portForUpdate = modifyPortForAllocate(
+                port, hostId, hostChanged, securityGroupsChanged, modifiedSecurityGroups, nic.getMacAddress());
+            return getClient().ports().update(portForUpdate).execute();
+        }
+        return port;
     }
 
     private String getHostId(VDS host) {
@@ -264,11 +273,14 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         }
     }
 
-    protected Port modifyPortForAllocate(Port port, String hostId, boolean hostChanged,
+    protected Port modifyPortForAllocate(Port port, String hostId, boolean hostChanged, boolean securityGroupsChanged,
                                          List<String> modifiedSecurityGroups, String macAddress) {
-        Port portForUpdate = new PortForUpdate();
+        Port portForUpdate = securityGroupsChanged ? new PortForUpdate() : new Port();
         portForUpdate.setId(port.getId());
-        portForUpdate.setSecurityGroups(modifiedSecurityGroups);
+
+        if (securityGroupsChanged) {
+            portForUpdate.setSecurityGroups(modifiedSecurityGroups);
+        }
 
         if (hostChanged) {
             portForUpdate.setBinding(new Binding());
