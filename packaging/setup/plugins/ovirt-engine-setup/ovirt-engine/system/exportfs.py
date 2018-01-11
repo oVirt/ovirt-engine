@@ -111,9 +111,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]
         self.command.detect('exportfs')
-        self.environment[
-            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ].append(oenginecons.FileLocations.NFS_EXPORT_FILE)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
@@ -178,6 +175,9 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _misc(self):
+        self.environment[
+            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+        ].append(oenginecons.FileLocations.NFS_EXPORT_FILE)
         new_line = '{path}\t{acl}'.format(
             path=self.environment[
                 oenginecons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
