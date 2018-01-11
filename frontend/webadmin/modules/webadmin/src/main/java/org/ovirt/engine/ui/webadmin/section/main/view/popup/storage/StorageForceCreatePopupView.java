@@ -7,9 +7,12 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractConfirmationPopupView;
 import org.ovirt.engine.ui.common.widget.AlertWithIcon;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -34,6 +37,9 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+
+    @UiField(provided = true)
     @Path(value = "latch.entity")
     @WithElementId
     EntityModelCheckBoxEditor latch;
@@ -49,6 +55,8 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
     @Inject
     public StorageForceCreatePopupView(EventBus eventBus) {
         super(eventBus);
+        latch = new EntityModelCheckBoxEditor(Align.RIGHT);
+        latch.setLabel(constants.approveOperation());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
