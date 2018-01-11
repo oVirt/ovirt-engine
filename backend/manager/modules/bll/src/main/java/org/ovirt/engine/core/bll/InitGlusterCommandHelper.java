@@ -96,6 +96,8 @@ public class InitGlusterCommandHelper {
         //add webhook on cluster if eventing is supported
         if (ret) {
             addGlusterWebhook(vds);
+            //ensure that webhooks from peers are synced.
+            syncGlusterWebhook(vds);
         }
         return ret;
     }
@@ -115,6 +117,29 @@ public class InitGlusterCommandHelper {
                     new VdsActionParameters(vds.getId()));
         } catch (RuntimeException e) {
             log.error("Could not add gluster webhook for gluster host '{}'", vds.getName());
+            log.debug("Exception", e);
+        }
+    }
+
+    private void syncGlusterWebhook(VDS vds) {
+        try {
+            // check if there's a server that's online other than the one being added.
+            VDS newUpServer = getNewUpServer(vds, vds);
+            if (newUpServer == null) {
+                log.debug("No alternate up server to sync webhook for server '{}' ", vds.getHostName());
+                return;
+            }
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.SyncGlusterWebhook,
+                    new VdsIdVDSCommandParametersBase(newUpServer.getId()));
+            if (!returnValue.getSucceeded()) {
+                log.error("Could not sync webhooks to gluster server '{}': {}",
+                        vds.getHostName(),
+                        returnValue.getExceptionString());
+            }
+        } catch (Exception e) {
+            log.error("Could not sync webhooks to gluster server '{}': {}",
+                    vds.getHostName(),
+                    e.getMessage());
             log.debug("Exception", e);
         }
     }

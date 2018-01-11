@@ -46,9 +46,8 @@ public class AddGlusterWebhookInternalCommand<T extends VdsActionParameters> ext
 
     @Override
     protected boolean validate() {
-        if (!super.validate()) {
-            return false;
-        }
+        //not calling super.validate here, as we do not want to fail if no other server's up.
+        // want to add the webhook for first server being added.
 
         if (!supportedInConfig(ConfigValues.GlusterEventingSupported, getCluster().getCompatibilityVersion())) {
             //if eventing is not supported, we do not want to process further
