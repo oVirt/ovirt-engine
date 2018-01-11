@@ -217,8 +217,23 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 new VmInterfaceManager(getMacPool()),
                 isRestoreMemory());
 
+        // custom preview - without leases
+        if (!isRestoreLease()) {
+            vmStaticDao.updateVmLeaseStorageDomainId(getVm().getId(), null);
+            return;
+        }
+
+        Guid dstLeaseStorageDomainId = OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration());
         if (isLeaseDomainIdUpdateNeeded()) {
+            // previewed snapshot and active have leases on different domains, use the active snapshot lease
             vmStaticDao.updateVmLeaseStorageDomainId(getVm().getId(), activeSnapshotLeaseDomainId);
+        } else if (getParameters().getDstLeaseDomainId() != null &&
+                !getParameters().getDstLeaseDomainId().equals(dstLeaseStorageDomainId)) {
+            // custom preview - use the other snapshot lease.
+            // if the given destination lease domain ID is not equals to the previewed snapshot lease domain ID
+            // it means that the preview uses other lease domain ID that should set instead of the previewed snapshot
+            // lease domain ID
+            vmStaticDao.updateVmLeaseStorageDomainId(getVm().getId(), getParameters().getDstLeaseDomainId());
         }
     }
 
@@ -347,12 +362,30 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     private void initializeSnapshotsLeasesParams() {
-        // save the destination lease domain id and the required lease action in order to use again in endSuccessfully
-        if (getDstSnapshot().getVmConfiguration() != null) {
-            getParameters().setDstLeaseDomainId(OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration()));
+        if (isRestoreLease()) {
+            Guid activeSnapshotLeaseDomainId = getVm().getStaticData().getLeaseStorageDomainId();
+            Guid selectedLeaseDomainId = getParameters().getDstLeaseDomainId();
+            LeaseAction leaseAction = null;
+
+            if (selectedLeaseDomainId == null && getDstSnapshot().getVmConfiguration() != null) {
+                // save the destination lease domain id and the required lease action
+                // in order to use again in endSuccessfully
+                Guid dstLeaseDomainId = OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration());
+                if (dstLeaseDomainId != null && activeSnapshotLeaseDomainId != null && !dstLeaseDomainId.equals(
+                        activeSnapshotLeaseDomainId)) {
+                    // in regular preview, in case both snapshots have leases on different domains,
+                    // use the active snapshot lease
+                    getParameters().setDstLeaseDomainId(activeSnapshotLeaseDomainId);
+                    leaseAction = LeaseAction.UPDATE_LEASE_INFO_AND_LEASE_DOMAIN_ID;
+                } else {
+                    getParameters().setDstLeaseDomainId(dstLeaseDomainId);
+                }
+            }
+            if (leaseAction == null) {
+                leaseAction = determineLeaseAction(activeSnapshotLeaseDomainId, getParameters().getDstLeaseDomainId());
+            }
+            getParameters().setLeaseAction(leaseAction);
         }
-        getParameters().setLeaseAction(determineLeaseAction(getVm().getStaticData().getLeaseStorageDomainId(),
-                getParameters().getDstLeaseDomainId()));
     }
 
     private boolean isLeaseDomainIdUpdateNeeded() {
@@ -366,7 +399,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             if (dstLeaseDomainId != null) {
                 return srcLeaseDomainId.equals(dstLeaseDomainId) ?
                         LeaseAction.UPDATE_LEASE_INFO :
-                        LeaseAction.UPDATE_LEASE_INFO_AND_LEASE_DOMAIN_ID;
+                        LeaseAction.CREATE_NEW_LEASE;
             }
         }
         return dstLeaseDomainId != null ? LeaseAction.CREATE_NEW_LEASE : LeaseAction.DO_NOTHING;
@@ -376,6 +409,11 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return getParameters().isRestoreMemory() &&
                 FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                         getVm().getClusterArch(), getVm().getCompatibilityVersion());
+    }
+
+    private boolean isRestoreLease() {
+        return getParameters().isRestoreLease() &&
+                FeatureSupported.isVmLeasesSupported(getVm().getCompatibilityVersion());
     }
 
     private boolean updateClusterCompatibilityVersionToOldCluster(boolean disableLock) {
@@ -509,6 +547,15 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         if (Guid.Empty.equals(getParameters().getDstSnapshotId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
         }
+        // verify that the destination lease domain ID belongs to one of the VM's snapshots
+        if (getParameters().getDstLeaseDomainId() != null) {
+            if (!validate(snapshotsValidator.isLeaseDomainIdBelongsToSnapshot(getVmId(),
+                    getParameters().getDstLeaseDomainId())) &&!getParameters().getDstLeaseDomainId()
+                    .equals(getVm().getLeaseStorageDomainId())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_LEASE_DOMAIN_ID_IS_NOT_VALID);
+            }
+        }
+
         VmValidator vmValidator = new VmValidator(getVm());
         if (!validate(vmValidator.isVmExists())
                 || !validate(vmValidator.vmDown())
@@ -544,7 +591,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
           Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(diskImages);
           // verify lease storage domain status
-          if (getDstSnapshot().getVmConfiguration() != null) {
+          if (getParameters().getDstLeaseDomainId() != null) {
+              storageIds.add(getParameters().getDstLeaseDomainId());
+          } else if (getDstSnapshot().getVmConfiguration() != null) {
               Guid leaseDomainId = OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration());
               if (leaseDomainId != null) {
                   storageIds.add(leaseDomainId);

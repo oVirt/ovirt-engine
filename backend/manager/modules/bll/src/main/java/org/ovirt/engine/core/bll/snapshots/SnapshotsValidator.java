@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.utils.OvfUtils;
 
 /**
  * Validator that is used to test if there are snapshots in progress, etc.
@@ -134,6 +136,20 @@ public class SnapshotsValidator {
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION,
                 String.format("$VmName %1$s", vmName),
                 String.format("$SnapshotName %1$s", snapshot.getDescription()));
+    }
+
+    /**
+     * Checks if that the destination lease domain ID belongs to one of the VM's snapshots.
+     */
+    public ValidationResult isLeaseDomainIdBelongsToSnapshot(Guid vmId, Guid dstLeaseDomainId) {
+        List<Snapshot> allVmSnapshots = snapshotDao.getAllWithConfiguration(vmId);
+
+        boolean leaseStorageDomainValid = allVmSnapshots.stream()
+                .filter(snapshot -> snapshot.getVmConfiguration() != null)
+                .anyMatch(snapshot -> dstLeaseDomainId.equals(OvfUtils.fetchLeaseDomainId(snapshot.getVmConfiguration())));
+
+        return leaseStorageDomainValid ? ValidationResult.VALID
+                : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_LEASE_DOMAIN_ID_IS_NOT_VALID);
     }
 
     /**

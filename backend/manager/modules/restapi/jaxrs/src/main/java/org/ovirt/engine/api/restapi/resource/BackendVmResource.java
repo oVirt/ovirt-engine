@@ -402,6 +402,13 @@ public class BackendVmResource
             }
             tryBackParams.setImageIds(getDisksGuidSet(disks));
         }
+        if (action.isSetLease()) {
+            tryBackParams.setRestoreLease(action.getLease().isSetStorageDomain());
+            if (action.getLease().isSetStorageDomain()) {
+                tryBackParams.setDstLeaseDomainId(asGuid(action.getLease().getStorageDomain().getId()));
+            }
+        }
+
         Response response = doAction(ActionType.TryBackToAllSnapshotsOfVm,
                 tryBackParams,
                 action);

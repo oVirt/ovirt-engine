@@ -11,6 +11,7 @@ public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBas
     private Guid dstSnapshotId;
     private boolean restoreMemory;
     private Set<Guid> imageIds;
+    private boolean restoreLease;
     private Guid dstLeaseDomainId;
     // keep the lease action in order to save calculation on endSuccessfully phase,
     // update vmStatic when the preview finished
@@ -19,17 +20,20 @@ public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBas
     public TryBackToAllSnapshotsOfVmParameters() {
         dstSnapshotId = Guid.Empty;
         restoreMemory = true;
+        restoreLease = true;
     }
 
     public TryBackToAllSnapshotsOfVmParameters(Guid vmId, Guid dstSnapshotId) {
         super(vmId);
         this.dstSnapshotId = dstSnapshotId;
         restoreMemory = true;
+        restoreLease = true;
     }
 
     public TryBackToAllSnapshotsOfVmParameters(Guid vmId, Guid dstSnapshotId, boolean restoreMemory) {
         this(vmId, dstSnapshotId);
         this.restoreMemory = restoreMemory;
+        restoreLease = true;
     }
 
     public TryBackToAllSnapshotsOfVmParameters(Guid vmId, Guid dstSnapshotId, boolean restoreMemory, Set<Guid> imageIds) {
@@ -59,6 +63,14 @@ public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBas
 
     public void setImageIds(Set<Guid> imageIds) {
         this.imageIds = imageIds;
+    }
+
+    public boolean isRestoreLease() {
+        return restoreLease;
+    }
+
+    public void setRestoreLease(boolean restoreLease) {
+        this.restoreLease = restoreLease;
     }
 
     public Guid getDstLeaseDomainId() {
