@@ -43,6 +43,10 @@ Toolbar
     margin-left: -1px;
 }
 
+.dropdown-kebab-pf .dropdown-menu.dropdown-menu-right {
+    z-index: 1030;
+}
+
 .toolbar-pf .toolbar-pf-actions .form-group:last-child .dropdown-kebab-pf {
     margin-right: 15px;
 }
