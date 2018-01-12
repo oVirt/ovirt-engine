@@ -10,9 +10,11 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -25,8 +27,12 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -190,6 +196,26 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
                 }
             }
         }
+    }
+
+    public static boolean checkTemplateInStorageDomain(Guid storagePoolId,
+            Guid storageDomainId,
+            final Guid tmplId,
+            EngineContext engineContext) {
+        GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(storagePoolId,
+                storageDomainId);
+        QueryReturnValue qretVal = Backend.getInstance().runInternalQuery(QueryType.GetTemplatesFromExportDomain,
+                tempVar, engineContext);
+
+        if (qretVal.getSucceeded()) {
+            if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(tmplId)) {
+                Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
+                return templates.keySet().stream().anyMatch(vmTemplate -> vmTemplate.getId().equals(tmplId));
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

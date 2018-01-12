@@ -16,14 +16,12 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -493,26 +491,6 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             }
         }
         return true;
-    }
-
-    public static boolean checkTemplateInStorageDomain(Guid storagePoolId,
-            Guid storageDomainId,
-            final Guid tmplId,
-            EngineContext engineContext) {
-        GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(storagePoolId,
-                storageDomainId);
-        QueryReturnValue qretVal = Backend.getInstance().runInternalQuery(QueryType.GetTemplatesFromExportDomain,
-                tempVar, engineContext);
-
-        if (qretVal.getSucceeded()) {
-            if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(tmplId)) {
-                Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
-                return templates.keySet().stream().anyMatch(vmTemplate -> vmTemplate.getId().equals(tmplId));
-            } else {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
