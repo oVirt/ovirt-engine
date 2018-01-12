@@ -178,7 +178,17 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
         labelColumn.makeSortable(NetworkConditionFieldAutoCompleter.LABEL);
         getTable().addColumn(labelColumn, constants.networkLabelNetworksTab(), "200px"); //$NON-NLS-1$
 
-        providerColumn = new AbstractLinkColumn<NetworkView>() {
+        providerColumn = new AbstractLinkColumn<NetworkView>(new FieldUpdater<NetworkView, String>() {
+            @Override
+            public void update(int index, NetworkView networkView, String value) {
+                if (networkView.getProviderName() != null) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), networkView.getProviderName());
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.providerGeneralSubTabPlace, parameters);
+                }
+            }
+        }) {
             @Override
             public String getValue(NetworkView object) {
                 return object.getProvidedBy() == null ? "" : object.getProviderName(); //$NON-NLS-1$
