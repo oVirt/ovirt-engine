@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.NetworkLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -38,6 +40,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
@@ -66,6 +69,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     private InterfaceDao interfaceDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private NetworkLocking networkLocking;
 
     private Network oldNetwork;
 
@@ -505,5 +510,24 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private static boolean labelRenamed(Network network, Network oldNetwork) {
         return NetworkUtils.isLabeled(oldNetwork) && NetworkUtils.isLabeled(network) && labelChanged(network, oldNetwork);
+    }
+
+    private Guid getProviderId() {
+        return (getNetwork()==null || !getNetwork().isExternal()) ?
+                null : getNetwork().getProvidedBy().getProviderId();
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        if (getNetwork().isExternal() && !isInternalExecution()) {
+            return networkLocking.getNetworkProviderLock(getProviderId());
+        } else {
+            return null;
+        }
     }
 }
