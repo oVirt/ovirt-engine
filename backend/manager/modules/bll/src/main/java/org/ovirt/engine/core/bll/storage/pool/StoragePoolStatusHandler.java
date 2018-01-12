@@ -11,7 +11,7 @@ import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -23,7 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,12 @@ public class StoragePoolStatusHandler implements BackendService {
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService schedulerService;
+    @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private BackendInternal backend;
 
     private ScheduledFuture<?> scheduleTimeout(Guid poolId) {
         return schedulerService.schedule(() -> handleTimeout(poolId),
@@ -55,7 +62,7 @@ public class StoragePoolStatusHandler implements BackendService {
     private void handleTimeout(Guid poolId) {
         if (nonOperationalPools.containsKey(poolId)) {
             try {
-                StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(poolId);
+                StoragePool pool = storagePoolDao.get(poolId);
                 if (pool != null && pool.getStatus() == StoragePoolStatus.NotOperational) {
                     nonOperationalPoolTreatment(pool);
                 }
@@ -78,7 +85,7 @@ public class StoragePoolStatusHandler implements BackendService {
                     + " time basis to try to recover",
                     pool.getName(),
                     pool.getId());
-            Backend.getInstance().runInternalAction(
+            backend.runInternalAction(
                     ActionType.SetStoragePoolStatus,
                     new SetStoragePoolStatusParameters(pool.getId(), StoragePoolStatus.NonResponsive,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_FROM_NON_OPERATIONAL));
@@ -86,13 +93,13 @@ public class StoragePoolStatusHandler implements BackendService {
         }
     }
 
-    private static List<VDS> getAllRunningVdssInPool(StoragePool pool) {
-        return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
+    private List<VDS> getAllRunningVdssInPool(StoragePool pool) {
+        return vdsDao.getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
     }
 
     @PostConstruct
     public void init() {
-        List<StoragePool> allPools = DbFacade.getInstance().getStoragePoolDao().getAll();
+        List<StoragePool> allPools = storagePoolDao.getAll();
         for (StoragePool pool : allPools) {
             if (pool.getStatus() == StoragePoolStatus.NotOperational) {
                 poolStatusChanged(pool.getId(), StoragePoolStatus.NotOperational);
