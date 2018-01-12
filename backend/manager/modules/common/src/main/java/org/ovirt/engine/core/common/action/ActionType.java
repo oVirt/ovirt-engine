@@ -117,6 +117,7 @@ public enum ActionType {
     UpdateNetwork(156, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
     CommitNetworkChanges(157, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     ImportExternalNetwork(158, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    InternalImportExternalNetwork(159, QuotaDependency.NONE),
 
     // VnicProfile Commands
     AddVnicProfile(160, ActionGroup.CREATE_NETWORK_VNIC_PROFILE, false, QuotaDependency.NONE),
