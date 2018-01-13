@@ -182,8 +182,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
         // check if template exists only if asked for
         if (getParameters().getTemplateMustExists()) {
-            if (!checkTemplateInStorageDomain(getVm().getStoragePoolId(), getParameters().getStorageDomainId(),
-                    getVm().getVmtGuid(), getContext().getEngineContext())) {
+            if (!checkTemplateInStorageDomain(getVm().getStoragePoolId(), getVm().getVmtGuid())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN,
                         String.format("$TemplateName %1$s", getVm().getVmtName()));
             }

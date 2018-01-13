@@ -10,11 +10,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -198,14 +196,12 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
         }
     }
 
-    public static boolean checkTemplateInStorageDomain(Guid storagePoolId,
-            Guid storageDomainId,
-            final Guid tmplId,
-            EngineContext engineContext) {
-        GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(storagePoolId,
-                storageDomainId);
-        QueryReturnValue qretVal = Backend.getInstance().runInternalQuery(QueryType.GetTemplatesFromExportDomain,
-                tempVar, engineContext);
+    public boolean checkTemplateInStorageDomain(Guid storagePoolId,
+            final Guid tmplId) {
+        GetAllFromExportDomainQueryParameters tempVar =
+                new GetAllFromExportDomainQueryParameters(storagePoolId, getParameters().getStorageDomainId());
+        QueryReturnValue qretVal = backend.runInternalQuery(QueryType.GetTemplatesFromExportDomain,
+                tempVar, getContext().getEngineContext());
 
         if (qretVal.getSucceeded()) {
             if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(tmplId)) {

@@ -188,8 +188,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
         // check if template (with no override option)
         if (!getParameters().getForceOverride()) {
-            if (checkTemplateInStorageDomain(getVmTemplate().getStoragePoolId(),
-                    getParameters().getStorageDomainId(), getVmTemplateId(), getContext().getEngineContext())) {
+            if (checkTemplateInStorageDomain(getVmTemplate().getStoragePoolId(), getVmTemplateId())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
