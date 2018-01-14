@@ -186,7 +186,7 @@ public enum QueryType implements Serializable {
 
     // VM Snapshot queries
     GetAllVmSnapshotsByVmId(QueryAuthType.User),
-    GetAllVmSnapshotsFromConfigurationByVmId(QueryAuthType.User),
+    GetAllVmSnapshotsWithLeasesFromConfigurationByVmId(QueryAuthType.User),
 
     // Images queries
     GetImageById(QueryAuthType.User),

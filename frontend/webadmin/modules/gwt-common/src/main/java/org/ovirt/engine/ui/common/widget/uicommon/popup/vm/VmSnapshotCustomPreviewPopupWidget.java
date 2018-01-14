@@ -200,6 +200,49 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 templates.iconWithText(imageResourceToSafeHtml(resources.memorySmallIcon()), constants.memorySnapshot()),
                 "100px"); //$NON-NLS-1$
 
+        AbstractCheckboxColumn<SnapshotModel> vmLeaseColumn = new AbstractCheckboxColumn<SnapshotModel>(
+                (index, snapshotModel, value) -> {
+                    snapshotModel.getLeaseExists().setEntity(value);
+                    refreshTable(previewTable);
+                    updateWarnings();
+                }) {
+            @Override
+            public Boolean getValue(SnapshotModel model) {
+                if (model.getLeaseExists() != null) {
+                    return model.getLeaseExists().getEntity();
+                }
+                return false;
+            }
+
+            @Override
+            protected boolean canEdit(SnapshotModel snapshotModel) {
+                // prevent from selecting more then one leases in case many snapshots have leases
+                if (snapshotModel.getLeaseExists() != null) {
+                    SnapshotModel result = previewSnapshotModel.getSnapshots()
+                            .getItems()
+                            .stream()
+                            .filter(model -> model.getEntity().getId() != snapshotModel.getEntity().getId())
+                            .filter(model -> model.getLeaseExists().getEntity() != null)
+                            .filter(model -> model.getLeaseExists().getEntity())
+                            .findFirst().orElse(null);
+                    return result == null;
+                }
+                return false;
+            }
+
+            @Override
+            public void render(Context context, SnapshotModel snapshotModel, SafeHtmlBuilder sb) {
+                if (snapshotModel.getLeaseExists().getEntity() != null) {
+                    super.render(context, snapshotModel, sb);
+                }
+                else {
+                    sb.appendEscaped(constants.notAvailableLabel());
+                }
+            }
+        };
+
+        previewTable.addColumn(vmLeaseColumn, constants.leaseSnapshot(), "80px"); //$NON-NLS-1$
+
         List<DiskImage> disks = previewSnapshotModel.getAllDisks();
         Collections.sort(disks, new DiskByDiskAliasComparator());
 
@@ -272,7 +315,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                     if (clickAt - lastClick < 300) { // double click: 2 clicks detected within 300 ms
                         SnapshotModel selectedSnapshotModel = (SnapshotModel) event.getValue();
                         if (!selectedSnapshotModel.getEntity().isVmConfigurationBroken()) {
-                            previewSnapshotModel.clearSelection();
+                            previewSnapshotModel.clearSelection(selectedSnapshotModel.getEntity().getId());
                             previewSnapshotModel.selectSnapshot(selectedSnapshotModel.getEntity().getId());
                             updateWarnings();
                             refreshTable(previewTable);

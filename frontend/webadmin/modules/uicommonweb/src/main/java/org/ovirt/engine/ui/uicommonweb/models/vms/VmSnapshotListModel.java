@@ -383,7 +383,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
                 addCommands(model, "OnPreview"); //$NON-NLS-1$
             } else {
-                runTryBackToAllSnapshotsOfVm(null, v, snapshot, false, null);
+                runTryBackToAllSnapshotsOfVm(null, v, snapshot, false, null, true, null);
             }
         }), snapshot.getId());
     }
@@ -415,8 +415,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         if (vm == null) {
             return;
         }
-
-        PreviewSnapshotModel model = new PreviewSnapshotModel();
+        PreviewSnapshotModel model = new PreviewSnapshotModel(vm, getSelectedItem().getId());
         model.setVmId(vm.getId());
         model.initialize();
 
@@ -471,7 +470,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             memory = snapshotModel.getMemory().getEntity();
         }
 
-        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, diskImageIds);
+        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, diskImageIds, true, null);
     }
 
     private static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
@@ -485,18 +484,37 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         Snapshot snapshot = previewSnapshotModel.getSnapshotModel().getEntity();
         boolean memory = Boolean.TRUE.equals(previewSnapshotModel.getSnapshotModel().getMemory().getEntity());
         List<DiskImage> disks = previewSnapshotModel.getSelectedDisks();
+        boolean isSnapshotsContainsLeases = previewSnapshotModel.isSnapshotsContainsLeases();
+        Guid selectedSnapshotLeaseDomainId = previewSnapshotModel.getSelectedLease();
         Set<Guid> diskIds = disks.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
 
-        runTryBackToAllSnapshotsOfVm(previewSnapshotModel, vm, snapshot, memory, diskIds);
+        runTryBackToAllSnapshotsOfVm(previewSnapshotModel,
+                vm,
+                snapshot,
+                memory,
+                diskIds,
+                !(isSnapshotsContainsLeases && selectedSnapshotLeaseDomainId == null),
+                selectedSnapshotLeaseDomainId);
     }
 
-    private void runTryBackToAllSnapshotsOfVm(final Model model, VM vm, Snapshot snapshot, boolean memory, Set<Guid> diskIds) {
+    private void runTryBackToAllSnapshotsOfVm(final Model model,
+            VM vm,
+            Snapshot snapshot,
+            boolean memory,
+            Set<Guid> diskIds,
+            boolean isRestoreLease,
+            Guid leaseDomainId) {
         if (model != null) {
             model.startProgress();
         }
+        TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(
+                vm.getId(), snapshot.getId(), memory, diskIds);
 
-        Frontend.getInstance().runAction(ActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(
-            vm.getId(), snapshot.getId(), memory, diskIds),
+        if (leaseDomainId != null) {
+            params.setDstLeaseDomainId(leaseDomainId);
+        }
+        params.setRestoreLease(isRestoreLease);
+        Frontend.getInstance().runAction(ActionType.TryBackToAllSnapshotsOfVm, params,
                 result -> {
                     if (model != null) {
                         model.stopProgress();
