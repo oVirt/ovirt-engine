@@ -124,12 +124,16 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
             StoragePool sp = storagePoolDao.get(storagePoolId);
             QemuImageInfo qemuImageInfo = null;
             if (sp != null && FeatureSupported.qcowCompatSupported(sp.getCompatibilityVersion())) {
-                qemuImageInfo = imagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
-                        storageDomainId,
-                        diskId,
-                        volumeId,
-                        null,
-                        true);
+                try {
+                    qemuImageInfo = imagesHandler.getQemuImageInfoFromVdsm(storagePoolId,
+                            storageDomainId,
+                            diskId,
+                            volumeId,
+                            null,
+                            true);
+                } catch (Exception e) {
+                    // do nothing, an exception string will be returned since qemuImageInfo is null.
+                }
                 if (qemuImageInfo == null) {
                     getQueryReturnValue().setExceptionString("Failed to fetch qemu image info from storage");
                     return false;
