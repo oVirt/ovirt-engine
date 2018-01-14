@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,10 +27,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
- * A test case for {@link GetAllVmSnapshotsFromConfigurationByVmIdQuery}.
+ * A test case for {@link GetAllVmSnapshotsWithLeasesFromConfigurationByVmIdQuery}.
  */
-public class GetAllVmSnapshotsFromConfigurationByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters,
-        GetAllVmSnapshotsFromConfigurationByVmIdQuery<IdQueryParameters>> {
+public class GetAllVmSnapshotsWithLeasesFromConfigurationByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters,
+        GetAllVmSnapshotsWithLeasesFromConfigurationByVmIdQuery<IdQueryParameters>> {
 
     /** The {@link org.ovirt.engine.core.dao.SnapshotDao} mocked for the test */
     @Mock
@@ -80,11 +80,14 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQueryTest extends AbstractU
 
         doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(any(), any(), any());
         getQuery().executeQueryCommand();
-        List<Snapshot> snapshots = getQuery().getQueryReturnValue().getReturnValue();
+        Map<Snapshot, Guid> snapshots = getQuery().getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
-        assertTrue("snapshot should be in the return value", snapshots.contains(snapshot));
-        assertEquals("there should be exactly one snapshot returned", 1, snapshots.size());
-        assertEquals("snapshot should contain a list of 2 diskImages", 2, snapshots.get(0).getDiskImages().size());
+        assertEquals("there should be exactly one snapshot returned", 1, snapshots.keySet().size());
+        assertTrue("snapshot should be in the return value", snapshots.containsKey(snapshot));
+        Snapshot snap = (Snapshot) snapshots.keySet().toArray()[0];
+        assertEquals("snapshot should contain a list of 2 diskImages",
+                2,
+                snap.getDiskImages().size());
     }
 }

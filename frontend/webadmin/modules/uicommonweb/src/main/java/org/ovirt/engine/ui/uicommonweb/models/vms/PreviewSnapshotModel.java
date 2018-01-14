@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -23,26 +24,35 @@ public class PreviewSnapshotModel extends Model {
     private SnapshotModel snapshotModel;
     private ListModel snapshots;
     private Map<Guid, ListModel> diskSnapshotsMap;
+    private Map<Guid, Guid> snapshotLeaseDomainsMap;
     private Guid vmId;
     private Guid activeSnapshotId;
 
     public PreviewSnapshotModel() {
         setSnapshots(new ListModel());
         setDiskSnapshotsMap(new HashMap<Guid, ListModel>());
+        setSnapshotLeaseDomainsMap(new HashMap<Guid, Guid>());
+    }
+
+    public PreviewSnapshotModel(VM vm, Guid userSelectedSnapshotId) {
+        this();
+        setVmId(vm.getId());
     }
 
     @Override
     public void initialize() {
-        Frontend.getInstance().runQuery(QueryType.GetAllVmSnapshotsFromConfigurationByVmId,
+        Frontend.getInstance().runQuery(QueryType.GetAllVmSnapshotsWithLeasesFromConfigurationByVmId,
                 new IdQueryParameters(vmId), new AsyncQuery<QueryReturnValue>(response -> {
                     if (response != null && response.getSucceeded()) {
                         ArrayList<SnapshotModel> snapshotModels = new ArrayList<>();
-                        ArrayList<Snapshot> snapshots = response.getReturnValue();
+                        Map<Snapshot, Guid> snapshotLeaseStorageDomaindIdMap = response.getReturnValue();
+                        List<Snapshot> snapshots = new ArrayList<>(snapshotLeaseStorageDomaindIdMap.keySet());
                         sortSnapshots(snapshots);
 
                         Guid userSelectedSnapshotId = getSnapshotModel().getEntity().getId();
 
                         for (Snapshot snapshot : snapshots) {
+                            Guid leaseStorageDomainId = snapshotLeaseStorageDomaindIdMap.get(snapshot);
                             SnapshotModel snapshotModel = new SnapshotModel();
                             snapshotModel.setEntity(snapshot);
                             snapshotModel.getMemory().setEntity(false);
@@ -51,6 +61,14 @@ public class PreviewSnapshotModel extends Model {
 
                             if (snapshot.getType() == Snapshot.SnapshotType.ACTIVE) {
                                 activeSnapshotId = snapshot.getId();
+                            }
+
+                            if (leaseStorageDomainId != null) {
+                                snapshotModel.getLeaseExists().setEntity(snapshot.getId() != activeSnapshotId);
+                                getSnapshotLeaseDomainsMap().put(snapshot.getId(), leaseStorageDomainId);
+                            } else {
+                                snapshotModel.getLeaseExists().setEntity(null);
+                                getSnapshotLeaseDomainsMap().put(snapshot.getId(), null);
                             }
                         }
 
@@ -72,7 +90,7 @@ public class PreviewSnapshotModel extends Model {
     }
 
     // Sort snapshots by creation date (keep active snapshot on top)
-    private void sortSnapshots(ArrayList<Snapshot> snapshots) {
+    private void sortSnapshots(List<Snapshot> snapshots) {
         Collections.sort(snapshots,
                 Comparator.comparing((Snapshot s) -> s.getType() == Snapshot.SnapshotType.ACTIVE).reversed()
                         .thenComparing(Linq.SnapshotByCreationDateCommparer));
@@ -100,6 +118,14 @@ public class PreviewSnapshotModel extends Model {
 
     public void setDiskSnapshotsMap(Map<Guid, ListModel> diskSnapshotsMap) {
         this.diskSnapshotsMap = diskSnapshotsMap;
+    }
+
+    public Map<Guid, Guid> getSnapshotLeaseDomainsMap() {
+        return snapshotLeaseDomainsMap;
+    }
+
+    public void setSnapshotLeaseDomainsMap(Map<Guid, Guid> snapshotLeaseDomainsMap) {
+        this.snapshotLeaseDomainsMap = snapshotLeaseDomainsMap;
     }
 
     public Guid getVmId() {
@@ -137,7 +163,26 @@ public class PreviewSnapshotModel extends Model {
         return disks;
     }
 
-    private void updateDiskSnapshotsMap() {
+    public boolean isSnapshotsContainsLeases() {
+        return getSnapshots().getItems()
+                .stream()
+                .anyMatch(model -> model.getLeaseExists() != null);
+    }
+
+    public Guid getSelectedLease() {
+        SnapshotModel selectedLeaseSnapshotModel = getSnapshots().getItems()
+                .stream()
+                .filter(model -> model.getLeaseExists().getEntity() != null)
+                .filter(model -> model.getLeaseExists().getEntity())
+                .findFirst()
+                .orElse(null);
+
+        return selectedLeaseSnapshotModel != null ?
+                getSnapshotLeaseDomainsMap().get(selectedLeaseSnapshotModel.getEntity().getId()) :
+                null;
+    }
+
+     private void updateDiskSnapshotsMap() {
         if (snapshots.getItems() == null) {
             return;
         }
@@ -158,9 +203,10 @@ public class PreviewSnapshotModel extends Model {
         }
     }
 
-    public void clearSelection() {
+    public void clearSelection(Guid selectedSnapshotModel) {
         clearDisksSelection();
         clearMemorySelection();
+        clearLeaseSelection(selectedSnapshotModel);
     }
 
     public void clearDisksSelection() {
@@ -172,6 +218,15 @@ public class PreviewSnapshotModel extends Model {
     public void clearMemorySelection() {
         for (SnapshotModel snapshotModel : getSnapshots().getItems()) {
             snapshotModel.getMemory().setEntity(false);
+        }
+    }
+
+    public void clearLeaseSelection(Guid selectedSnapshotModel) {
+        for (SnapshotModel snapshotModel : getSnapshots().getItems()) {
+            if (!selectedSnapshotModel.equals(snapshotModel.getEntity().getId())
+                    && snapshotModel.getLeaseExists().getEntity() != null) {
+                snapshotModel.getLeaseExists().setEntity(false);
+            }
         }
     }
 
@@ -193,6 +248,14 @@ public class PreviewSnapshotModel extends Model {
 
         if (snapshotModel == null) {
             return;
+        }
+
+        for (SnapshotModel model : getSnapshots().getItems()) {
+            if (model.getEntity().getId().equals(id) && model.getLeaseExists().getEntity() != null) {
+                model.getLeaseExists().setEntity(true);
+            } else if (model.getLeaseExists().getEntity() != null) {
+                model.getLeaseExists().setEntity(false);
+            }
         }
 
         getSnapshots().setSelectedItem(snapshotModel);

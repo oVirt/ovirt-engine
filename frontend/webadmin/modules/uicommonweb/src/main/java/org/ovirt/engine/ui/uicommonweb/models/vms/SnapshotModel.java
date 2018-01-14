@@ -124,6 +124,16 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         memory = value;
     }
 
+    private EntityModel<Boolean> lease;
+
+    public EntityModel<Boolean> getLeaseExists() {
+        return lease;
+    }
+
+    public void setLease(EntityModel<Boolean> value) {
+        lease = value;
+    }
+
     private boolean validateByVmSnapshots;
 
     public boolean isValidateByVmSnapshots() {
@@ -189,6 +199,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
     public SnapshotModel() {
         setDescription(new EntityModel<String>());
         setMemory(new EntityModel<>(true));
+        setLease(new EntityModel<>(true));
         setDisks(new ArrayList<DiskImage>());
         setNics(new ArrayList<VmNetworkInterface>());
         setApps(new ArrayList<String>());

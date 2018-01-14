@@ -671,6 +671,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String descriptionSnapshot();
 
+    String leaseSnapshot();
+
     String statusSnapshot();
 
     String memorySnapshot();
