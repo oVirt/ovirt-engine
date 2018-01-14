@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -369,6 +370,11 @@ public class VmDeviceCommonUtils {
         return false;
     }
 
+    public static boolean isVirtIoScsiDiskInterfaceExists(VmBase vmBase) {
+        return vmBase.getImages().stream().anyMatch(i -> i.getDiskVmElementForVm(vmBase.getId())
+                .getDiskInterface() == DiskInterface.VirtIO_SCSI);
+    }
+
     public static boolean isVirtIoScsiDeviceExists(Collection<VmDevice> devices) {
         for (VmDevice device : devices) {
             if (device.getType() == VmDeviceGeneralType.CONTROLLER
@@ -377,6 +383,22 @@ public class VmDeviceCommonUtils {
             }
         }
         return false;
+    }
+
+    public static void addVirtIoScsiDevice(VmBase vmBase) {
+        VmDevice vmDevice = new VmDevice();
+        vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
+        vmDevice.setType(VmDeviceGeneralType.CONTROLLER);
+        vmDevice.setDevice(VmDeviceType.VIRTIOSCSI.getName());
+        vmDevice.setManaged(true);
+        vmDevice.setPlugged(true);
+        vmDevice.setReadOnly(false);
+        vmDevice.setAddress("");
+        vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
+    }
+
+    public static void setDiskInterfaceForVm(VmBase vmBase, DiskInterface diskInterface) {
+        vmBase.getImages().forEach(d -> d.getDiskVmElementForVm(vmBase.getId()).setDiskInterface(diskInterface));
     }
 
     public static void addVideoDevice(VmBase vmBase) {

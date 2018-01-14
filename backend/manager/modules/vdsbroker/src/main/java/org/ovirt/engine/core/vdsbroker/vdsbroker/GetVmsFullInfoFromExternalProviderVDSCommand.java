@@ -9,7 +9,10 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
@@ -37,6 +40,16 @@ public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromEx
             VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(map);
             if (vm != null) {
                 vm.setOrigin(getParameters().getOriginType());
+                if (vm.getOrigin() == OriginType.KVM) {
+                    if (VmDeviceCommonUtils.isVirtIoScsiDiskInterfaceExists(vm.getStaticData())) {
+                        VmDeviceCommonUtils.addVirtIoScsiDevice(vm.getStaticData());
+                    }
+                } else {
+                    // set default value in case of non KVM provider type
+                    // since VirtIO interface doesn't require having an appropriate controller
+                    // so validation will pass. This will anyway be overridden later by virt-v2v OVF.
+                    VmDeviceCommonUtils.setDiskInterfaceForVm(vm.getStaticData(), DiskInterface.VirtIO);
+                }
                 vms.add(vm);
                 // identify vms not in Down status
                 if (!vm.isDown()) {

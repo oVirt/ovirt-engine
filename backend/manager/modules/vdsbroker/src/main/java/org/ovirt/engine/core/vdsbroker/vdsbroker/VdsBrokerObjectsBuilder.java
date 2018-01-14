@@ -306,7 +306,7 @@ public class VdsBrokerObjectsBuilder {
             for (Object disk : (Object[]) struct.get(VdsProperties.vm_disks)) {
                 Map<String, Object> diskMap = (Map<String, Object>) disk;
                 if (VdsProperties.Disk.equals(diskMap.get(VdsProperties.type))) {
-                    DiskImage image = buildDiskImageFromExternalProvider(diskMap);
+                    DiskImage image = buildDiskImageFromExternalProvider(diskMap, vmStatic.getId());
                     vmStatic.getImages().add(image);
                 }
             }
@@ -355,7 +355,7 @@ public class VdsBrokerObjectsBuilder {
         VmDeviceCommonUtils.addVideoDevice(vmStatic);
     }
 
-    private static DiskImage buildDiskImageFromExternalProvider(Map<String, Object> map) {
+    private static DiskImage buildDiskImageFromExternalProvider(Map<String, Object> map, Guid vmId) {
         DiskImage image = new DiskImage();
         image.setDiskAlias((String) map.get(VdsProperties.Alias));
         image.setSize(Long.parseLong((String) map.get(VdsProperties.DISK_VIRTUAL_SIZE)));
@@ -365,7 +365,36 @@ public class VdsBrokerObjectsBuilder {
             image.setVolumeFormat(VolumeFormat.valueOf(((String) map.get(VdsProperties.Format)).toUpperCase()));
         }
 
+        DiskVmElement dve = buildDiskVmElementWithDiskInterfaceFromExternalProvider(map, image, vmId);
+        image.setDiskVmElements(Collections.singletonList(dve));
+
         return image;
+    }
+
+    /**
+     * TODO: NOTE that currently there is a limitation of VDSM sending only the
+     * disk target dev name per each disk, therefore it will send "sdx" for 3 different
+     * disk interfaces: SCSI,USB and SATA.
+     * As a result, all those 3 mentioned disk interfaces will be mapped to SCSI
+     * interface in target VM.
+     * We need to receive the target bus name for each disk in order to differentiate.
+     */
+    private static DiskVmElement buildDiskVmElementWithDiskInterfaceFromExternalProvider(Map<String, Object> map, DiskImage image, Guid vmId) {
+        DiskVmElement dve = new DiskVmElement(image.getId(), vmId);
+        String diskDevName = (String) map.get(VdsProperties.DISK_TARGET_DEV_NAME);
+        diskDevName = (diskDevName == null || diskDevName.length() < 3) ? "" : diskDevName.substring(0, 2);
+        switch (diskDevName) {
+        case "sd":
+            dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
+            break;
+        case "hd":
+            dve.setDiskInterface(DiskInterface.IDE);
+            break;
+        case "vd":
+        default:
+            dve.setDiskInterface(DiskInterface.VirtIO);
+        }
+        return dve;
     }
 
     private static VmNetworkInterface buildNetworkInterfaceFromExternalProvider(Map<String, Object> map) {

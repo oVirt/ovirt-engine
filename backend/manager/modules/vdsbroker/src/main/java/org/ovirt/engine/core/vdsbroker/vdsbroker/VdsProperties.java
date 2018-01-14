@@ -283,6 +283,7 @@ public final class VdsProperties {
     public static final String DISK_ALLOCATION = "allocation";
     public static final String DISK_VIRTUAL_SIZE = "capacity";
     public static final String VIRTIO_ISO_PATH = "virtio_iso_path";
+    public static final String DISK_TARGET_DEV_NAME = "dev";
 
     // reported by guest-agent
     public static final String GUEST_CPU_COUNT = "guestCPUCount";

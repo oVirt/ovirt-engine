@@ -47,7 +47,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -321,8 +320,7 @@ implements QuotaStorageDependent {
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         diskParameters.setStorageDomainId(getParameters().getDestDomainId());
 
-        DiskVmElement dve = new DiskVmElement(image.getId(), getVmId());
-        dve.setDiskInterface(DiskInterface.VirtIO);
+        DiskVmElement dve = image.getDiskVmElementForVm(getVmId());
         dve.setBoot(isBoot);
         diskParameters.setDiskVmElement(dve);
 

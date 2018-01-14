@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -119,6 +120,9 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
     @Override
     protected AddDiskParameters buildAddDiskParameters(DiskImage image, boolean isBoot) {
         if (getParameters().getVm().getOrigin() != OriginType.OVIRT) {
+            // set default value since VirtIO interface doesn't require having an appropriate controller
+            // so validation will pass. This will anyway be overridden later by OVF.
+            image.getDiskVmElementForVm(getVm().getId()).setDiskInterface(DiskInterface.VirtIO);
             return super.buildAddDiskParameters(image, isBoot);
         }
 
