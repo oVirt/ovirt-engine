@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -82,7 +81,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
     protected void executeCommand() {
         super.executeCommand();
         if (getSucceeded()) {
-            ActionReturnValue returnValue = Backend.getInstance()
+            ActionReturnValue returnValue = backend
                     .runInternalAction(
                             ActionType.AttachStorageDomainToPool,
                             new AttachStorageDomainToPoolParameters(getStorageDomain().getId(), getStoragePool().getId()));

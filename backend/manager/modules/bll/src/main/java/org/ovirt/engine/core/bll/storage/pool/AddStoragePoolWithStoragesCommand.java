@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -237,8 +236,8 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     getStoragePool().getId());
             activateParameters.setSessionId(getParameters().getSessionId());
             activateParameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            returnValue = Backend.getInstance()
-                    .runInternalAction(ActionType.ActivateStorageDomain, activateParameters).getSucceeded();
+            returnValue =
+                    backend.runInternalAction(ActionType.ActivateStorageDomain, activateParameters).getSucceeded();
 
             // if activate domain failed then set domain status to inactive
             if (!returnValue) {

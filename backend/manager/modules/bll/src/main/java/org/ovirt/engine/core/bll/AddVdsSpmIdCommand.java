@@ -88,9 +88,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     private void buildFaultResult() {
         EngineFault fault = new EngineFault();
         fault.setError(EngineError.ReachedMaxNumberOfHostsInDC);
-        fault.setMessage(Backend.getInstance()
-                .getVdsErrorsTranslator()
-                .translateErrorTextSingle(fault.getError().toString()));
+        fault.setMessage(backend.getVdsErrorsTranslator().translateErrorTextSingle(fault.getError().toString()));
         getReturnValue().setFault(fault);
     }
 

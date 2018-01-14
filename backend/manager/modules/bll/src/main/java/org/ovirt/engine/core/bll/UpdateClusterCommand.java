@@ -337,7 +337,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 params.add("$action Update");
                 params.add("$type VM");
                 params.add(parseErrorMessage(result.getValidationMessages()));
-                List<String> messages = Backend.getInstance().getErrorsTranslator().translateErrorText(params);
+                List<String> messages = backend.getErrorsTranslator().translateErrorText(params);
 
                 failedUpgradeEntities.put(vm.getName(), getFailedMessage(messages));
             }
@@ -396,7 +396,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 params.add("$action Update");
                 params.add("$type Template");
                 params.add(parseErrorMessage(result.getValidationMessages()));
-                List<String> messages = Backend.getInstance().getErrorsTranslator().translateErrorText(params);
+                List<String> messages = backend.getErrorsTranslator().translateErrorText(params);
 
                 failedUpgradeEntities.put(template.getName(), getFailedMessage(messages));
             }

@@ -994,9 +994,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void logValidationFailed() {
         addCustomValue("DueToError",
-                " due to a failed validation: " + Backend.getInstance()
-                .getErrorsTranslator()
-                .translateErrorText(getReturnValue().getValidationMessages()));
+                " due to a failed validation: " +
+                        backend.getErrorsTranslator().translateErrorText(getReturnValue().getValidationMessages()));
         auditLogDirector.log(this, AuditLogType.USER_FAILED_RUN_VM);
     }
 

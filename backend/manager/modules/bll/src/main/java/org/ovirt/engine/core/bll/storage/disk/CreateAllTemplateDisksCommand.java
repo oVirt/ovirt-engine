@@ -12,7 +12,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -133,7 +132,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
     private void addVmTemplateImage(DiskImage diskImage, Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
         // The return value of this action is the 'copyImage' task GUID:
         Guid targetDiskId = getParameters().getTargetDiskIds()[targetDiskIdIndex++];
-        ActionReturnValue returnValue = Backend.getInstance().runInternalAction(
+        ActionReturnValue returnValue = backend.runInternalAction(
                 ActionType.CreateImageTemplate,
                 buildCreateImageTemplateCommandParameters(diskImage, targetDiskId),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
@@ -170,9 +169,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
     @Override
     protected void endSuccessfully() {
         for (ActionParametersBase params : getParameters().getImagesParameters()) {
-            Backend.getInstance().endAction(params.getCommandType(),
-                    params,
-                    cloneContextAndDetachFromParent());
+            backend.endAction(params.getCommandType(), params, cloneContextAndDetachFromParent());
         }
         setSucceeded(true);
     }
@@ -181,9 +178,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
     protected void endWithFailure() {
         for (ActionParametersBase params : getParameters().getImagesParameters()) {
             params.setTaskGroupSuccess(false);
-            Backend.getInstance().endAction(params.getCommandType(),
-                    params,
-                    cloneContextAndDetachFromParent());
+            backend.endAction(params.getCommandType(), params, cloneContextAndDetachFromParent());
         }
         setSucceeded(false);
     }

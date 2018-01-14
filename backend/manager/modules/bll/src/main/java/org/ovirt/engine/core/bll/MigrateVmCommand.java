@@ -146,9 +146,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @SuppressWarnings("unused") // used by AuditLogger via reflection
     public String getDueToMigrationError() {
         if (migrationErrorCode != null) {
-            return " due to an Error: " + Backend.getInstance()
-            .getVdsErrorsTranslator()
-            .translateErrorTextSingle(migrationErrorCode.name(), true);
+            return " due to an Error: " +
+                    backend.getVdsErrorsTranslator().translateErrorTextSingle(migrationErrorCode.name(), true);
         }
         return " ";
     }
@@ -844,9 +843,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     @Override
     protected void logValidationFailed() {
         addCustomValue("DueToMigrationError",
-                " due to a failed validation: " + Backend.getInstance()
-                .getErrorsTranslator()
-                .translateErrorText(getReturnValue().getValidationMessages()));
+                " due to a failed validation: " +
+                        backend.getErrorsTranslator().translateErrorText(getReturnValue().getValidationMessages()));
         auditLogDirector.log(this, AuditLogType.VM_MIGRATION_FAILED);
     }
 

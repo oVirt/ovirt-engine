@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -214,10 +213,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         log.error("Installation/upgrade of Host '{}', '{}' failed: {}",
                                 getVdsId(),
                                 getVdsName(),
-                                StringUtils.join(Backend.getInstance()
-                                        .getErrorsTranslator()
-                                        .translateErrorText(validationMessages),
-                                        ","));
+                                StringUtils.join
+                                        (backend.getErrorsTranslator().translateErrorText(validationMessages), ","));
                     }
                     // set can do action to false so can do action messages are
                     // returned back to client

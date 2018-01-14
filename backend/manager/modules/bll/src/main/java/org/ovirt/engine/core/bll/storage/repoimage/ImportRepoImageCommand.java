@@ -9,7 +9,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
@@ -109,7 +108,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     protected void executeCommand() {
         setupParameters();
         persistCommand(getParameters().getParentCommand(), true);
-        Backend.getInstance().runInternalAction(ActionType.AddDisk,
+        backend.runInternalAction(ActionType.AddDisk,
                 createAddDiskParameters(),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
         getParameters().setNextPhase(ImportRepoImageParameters.Phase.DOWNLOAD);
@@ -179,7 +178,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         if (getParameters().getNextPhase() == ImportRepoImageParameters.Phase.DOWNLOAD) {
             getParameters().setNextPhase(ImportRepoImageParameters.Phase.END);
             persistCommand(getParameters().getParentCommand(), true);
-            Backend.getInstance().runInternalAction(ActionType.DownloadImage,
+            backend.runInternalAction(ActionType.DownloadImage,
                     createDownloadImageParameters(),
                     ExecutionHandler.createDefaultContextForTasks(getContext()));
             return true;
@@ -195,8 +194,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     }
 
     public void removeDisk() {
-        Backend.getInstance().runInternalAction(ActionType.RemoveDisk,
-                new RemoveDiskParameters(getParameters().getImageGroupID()));
+        backend.runInternalAction(ActionType.RemoveDisk, new RemoveDiskParameters(getParameters().getImageGroupID()));
     }
 
     protected OpenStackImageProviderProxy getProviderProxy() {
@@ -267,7 +265,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         parameters.setBalloonEnabled(true);
 
         ActionReturnValue addVmTemplateReturnValue =
-                Backend.getInstance().runInternalAction(ActionType.AddVmTemplate,
+                backend.runInternalAction(ActionType.AddVmTemplate,
                         parameters,
                         ExecutionHandler.createDefaultContextForTasks(getContext()));
 

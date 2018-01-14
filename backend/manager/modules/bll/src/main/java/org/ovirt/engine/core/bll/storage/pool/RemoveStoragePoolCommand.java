@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -229,7 +228,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             tempVar.setDestroyingPool(true);
             // Compensation context is not passed, as we do not want to compensate in case of failure
             // in detach of one of storage domains
-            if (!Backend.getInstance()
+            if (!backend
                     .runInternalAction(ActionType.DetachStorageDomainFromPool,
                             tempVar,
                             cloneContext().withoutCompensationContext().withoutExecutionContext())

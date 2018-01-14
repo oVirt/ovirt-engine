@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -70,10 +69,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         EngineFault fault = new EngineFault();
         fault.setError(result.getSecond());
         if (fault.getError() != null) {
-            fault.setMessage(
-                    Backend.getInstance()
-                            .getVdsErrorsTranslator()
-                            .translateErrorTextSingle(fault.getError().toString()));
+            fault.setMessage(backend.getVdsErrorsTranslator().translateErrorTextSingle(fault.getError().toString()));
         }
         getReturnValue().setFault(fault);
     }
