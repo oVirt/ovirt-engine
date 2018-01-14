@@ -9,6 +9,6 @@ import com.google.gwt.event.shared.EventBus;
 public class BaseVmDiskAttachPopupView extends AbstractModelBoundWidgetPopupView<AttachDiskModel> {
 
     public BaseVmDiskAttachPopupView(EventBus eventBus, boolean allowMultipleSelection) {
-        super(eventBus, new VmDiskAttachPopupWidget(true, allowMultipleSelection), "815px", "630px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, new VmDiskAttachPopupWidget(true, allowMultipleSelection), "865px", "630px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }
