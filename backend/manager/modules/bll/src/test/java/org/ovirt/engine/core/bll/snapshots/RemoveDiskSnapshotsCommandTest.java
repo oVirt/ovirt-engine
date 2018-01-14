@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
 /** A test case for the {@link RemoveDiskSnapshotsCommand} class. */
@@ -47,6 +48,9 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
 
     @Mock
     private StorageDomainValidator storageDomainValidator;
+
+    @Mock
+    private SnapshotDao snapshotDao;
 
     private VmValidator vmValidator;
 

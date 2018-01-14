@@ -208,6 +208,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 !validateVmNotDuringSnapshot() ||
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
+                !validateSnapshotType() ||
                 !validateStorageDomainActive()) {
             return false;
         }
@@ -548,6 +549,11 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     protected boolean isDiskPlugged() {
         List<VmDevice> devices = vmDeviceDao.getVmDevicesByDeviceId(getImageGroupId(), getVmId());
         return !devices.isEmpty() && devices.get(0).isPlugged();
+    }
+
+    private boolean validateSnapshotType() {
+        Snapshot snapshot = snapshotDao.get(getSnapshotId());
+        return validate(snapshotsValidator.isRegularSnapshot(snapshot));
     }
 
     @Override
