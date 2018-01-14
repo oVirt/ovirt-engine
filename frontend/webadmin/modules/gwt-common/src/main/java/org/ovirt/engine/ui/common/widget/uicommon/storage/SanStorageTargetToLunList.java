@@ -197,7 +197,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 return object;
             }
         };
-        table.setCustomSelectionColumn(lunSelectionColumn, "20px"); //$NON-NLS-1$
+        table.setCustomSelectionColumn(lunSelectionColumn, "25px"); //$NON-NLS-1$
 
         AbstractLunTextColumn lunIdColumn = new AbstractLunTextColumn() {
             @Override
