@@ -334,6 +334,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 memoryImageBuilder.getVolumeStringRepresentation(),
                 null,
                 getDisksList(),
+                null,
                 getCompensationContext());
     }
 

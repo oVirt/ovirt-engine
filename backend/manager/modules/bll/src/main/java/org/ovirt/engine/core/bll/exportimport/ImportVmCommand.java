@@ -1158,6 +1158,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return getSnapshotsManager().addActiveSnapshot(
                 snapshotId,
                 getVm(),
+                SnapshotStatus.OK,
                 memoryVolume,
                 getCompensationContext());
     }

@@ -147,8 +147,11 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         snapshotDao.remove(previouslyActiveSnapshot.getId());
         snapshotDao.remove(snapshotDao.getId(getVmId(), SnapshotType.ACTIVE));
 
-        getSnapshotsManager().addActiveSnapshot(previouslyActiveSnapshot.getId(), getVm(),
-                previouslyActiveSnapshot.getMemoryVolume(), getCompensationContext());
+        getSnapshotsManager().addActiveSnapshot(previouslyActiveSnapshot.getId(),
+                getVm(),
+                SnapshotStatus.OK,
+                previouslyActiveSnapshot.getMemoryVolume(),
+                getCompensationContext());
 
         super.endWithFailure();
     }
@@ -238,12 +241,18 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             snapshotDao.remove(previousActiveSnapshotId);
             getSnapshotsManager().addSnapshot(previousActiveSnapshotId,
                     "Active VM before the preview",
+                    SnapshotStatus.LOCKED,
                     SnapshotType.PREVIEW,
                     getVm(),
+                    true,
                     previousActiveSnapshot.getMemoryVolume(),
+                    null,
+                    null,
+                    null,
                     getCompensationContext());
             getSnapshotsManager().addActiveSnapshot(newActiveSnapshotId,
                     getVm(),
+                    SnapshotStatus.OK,
                     restoreMemory ? snapshotToBePreviewed.getMemoryVolume() : StringUtils.EMPTY,
                     snapshotToBePreviewed.getCreationDate(),
                     images,

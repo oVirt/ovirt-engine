@@ -75,6 +75,7 @@ import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permission;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -1616,7 +1617,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     private void addActiveSnapshot() {
         _vmSnapshotId = Guid.newGuid();
-        getSnapshotsManager().addActiveSnapshot(_vmSnapshotId, getVm(), getCompensationContext());
+        getSnapshotsManager().addActiveSnapshot(_vmSnapshotId,
+                getVm(),
+                Snapshot.SnapshotStatus.OK,
+                StringUtils.EMPTY,
+                getCompensationContext());
     }
 
     @Override

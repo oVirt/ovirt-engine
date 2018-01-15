@@ -141,120 +141,6 @@ public class SnapshotsManager {
 
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
-     * The snapshot is created in status {@link SnapshotStatus#OK} by default.
-     *
-     * @param snapshotId
-     *            The ID for the snapshot.
-     * @param vm
-     *            The VM to save the snapshot for.
-     * @param compensationContext
-     *            Context for saving compensation details.
-     * @return the newly created snapshot
-     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
-     */
-    public Snapshot addActiveSnapshot(Guid snapshotId,
-            VM vm,
-            final CompensationContext compensationContext) {
-        return addActiveSnapshot(snapshotId,
-                vm,
-                SnapshotStatus.OK,
-                "",
-                null,
-                null,
-                compensationContext);
-    }
-
-    /**
-     * Save an active snapshot for the VM, without saving the configuration.<br>
-     * The snapshot is created in status {@link SnapshotStatus#OK} by default.
-     *
-     * @param snapshotId
-     *            The ID for the snapshot.
-     * @param vm
-     *            The VM to save the snapshot for.
-     * @param snapshotStatus
-     *            The initial status of the created snapshot
-     * @param compensationContext
-     *            Context for saving compensation details.
-     * @return the newly created snapshot
-     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
-     */
-    public Snapshot addActiveSnapshot(Guid snapshotId,
-            VM vm,
-            SnapshotStatus snapshotStatus,
-            final CompensationContext compensationContext) {
-        return addActiveSnapshot(snapshotId,
-                vm,
-                snapshotStatus,
-                "",
-                null,
-                null,
-                compensationContext);
-    }
-
-    /**
-     * Save an active snapshot for the VM, without saving the configuration.<br>
-     * The snapshot is created in status {@link SnapshotStatus#OK} by default.
-     *
-     * @param snapshotId
-     *            The ID for the snapshot.
-     * @param vm
-     *            The VM to save the snapshot for.
-     * @param memoryVolume
-     *            The memory state for the created snapshot
-     * @param compensationContext
-     *            Context for saving compensation details.
-     * @return the newly created snapshot
-     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
-     */
-    public Snapshot addActiveSnapshot(Guid snapshotId,
-            VM vm,
-            String memoryVolume,
-            final CompensationContext compensationContext) {
-        return addActiveSnapshot(snapshotId,
-                vm,
-                SnapshotStatus.OK,
-                memoryVolume,
-                null,
-                null,
-                compensationContext);
-    }
-
-    /**
-     * Save an active snapshot for the VM, without saving the configuration.<br>
-     * The snapshot is created in status {@link SnapshotStatus#OK} by default.
-     *
-     * @param snapshotId
-     *            The ID for the snapshot.
-     * @param vm
-     *            The VM to save the snapshot for.
-     * @param memoryVolume
-     *            The memory state for the created snapshot
-     * @param creationDate
-     *            predefined creation date for the snapshot, null indicates 'now'
-     * @param disks
-     *            The disks contained in the snapshot
-     * @param compensationContext
-     *            Context for saving compensation details.
-     * @return the newly created snapshot
-     */
-    public Snapshot addActiveSnapshot(Guid snapshotId,
-                                      VM vm,
-                                      String memoryVolume,
-                                      Date creationDate,
-                                      List<DiskImage> disks,
-                                      final CompensationContext compensationContext) {
-        return addActiveSnapshot(snapshotId,
-                vm,
-                SnapshotStatus.OK,
-                memoryVolume,
-                creationDate,
-                disks,
-                compensationContext);
-    }
-
-    /**
-     * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created with the given status {@link SnapshotStatus}.
      *
      * @param snapshotId
@@ -313,36 +199,8 @@ public class SnapshotsManager {
                 memoryVolume,
                 creationDate,
                 disks,
+                null,
                 compensationContext);
-    }
-
-    /**
-     * Add a new snapshot, saving it to the DB (with compensation). The VM's current configuration (including Disks &
-     * NICs) will be saved in the snapshot.<br>
-     * The snapshot is created in status {@link SnapshotStatus#LOCKED} by default.
-     *
-     * @param snapshotId
-     *            The ID for the snapshot.
-     * @param description
-     *            The snapshot description.
-     * @param snapshotType
-     *            The snapshot type.
-     * @param vm
-     *            The VM to save in configuration.
-     * @param memoryVolume
-     *            the volume in which the snapshot's memory is stored
-     * @param compensationContext
-     *            Context for saving compensation details.
-     * @return the added snapshot
-     */
-    public Snapshot addSnapshot(Guid snapshotId,
-            String description,
-            SnapshotType snapshotType,
-            VM vm,
-            String memoryVolume,
-            final CompensationContext compensationContext) {
-        return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED,
-                snapshotType, vm, true, memoryVolume, null, null, compensationContext);
     }
 
     /**addSnapshot
@@ -360,35 +218,18 @@ public class SnapshotsManager {
      *            The VM to link to & save configuration for (if necessary).
      * @param saveVmConfiguration
      *            Should VM configuration be generated and saved?
+     * @param memoryVolume
+     *            the volume in which the snapshot's memory is stored
      * @param creationDate
      *            predefined creation date for the snapshot, null indicates 'now'
+     * @param disks
+     *            The disks contained in the snapshot
+     * @param vmDevices
+     *            The devices contained in the snapshot
      * @param compensationContext
      *            In case compensation is needed.
      * @return the saved snapshot
      */
-    public Snapshot addSnapshot(Guid snapshotId,
-            String description,
-            SnapshotStatus snapshotStatus,
-            SnapshotType snapshotType,
-            VM vm,
-            boolean saveVmConfiguration,
-            String memoryVolume,
-            Date creationDate,
-            List<DiskImage> disks,
-            final CompensationContext compensationContext) {
-        return addSnapshot(snapshotId,
-                description,
-                snapshotStatus,
-                snapshotType,
-                vm,
-                saveVmConfiguration,
-                memoryVolume,
-                creationDate,
-                disks,
-                null,
-                compensationContext);
-    }
-
     public Snapshot addSnapshot(Guid snapshotId,
                                 String description,
                                 SnapshotStatus snapshotStatus,

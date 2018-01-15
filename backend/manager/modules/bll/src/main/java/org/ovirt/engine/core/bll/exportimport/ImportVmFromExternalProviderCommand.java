@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -282,7 +284,7 @@ implements QuotaStorageDependent {
     protected void addVmStatic() {
         super.addVmStatic();
         getSnapshotsManager().addActiveSnapshot(
-                Guid.newGuid(), getVm(), "", getCompensationContext());
+                Guid.newGuid(), getVm(), SnapshotStatus.OK, StringUtils.EMPTY, getCompensationContext());
     }
 
     @Override
