@@ -9,13 +9,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParameters> extends IrsCreateCommand<P> {
-
-    private static final Logger log = LoggerFactory.getLogger(CreateSnapshotVDSCommand.class);
-
     @Inject
     private StorageDomainHelper storageDomainHelper;
 
@@ -28,7 +23,6 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
         storageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
         setReturnValue(Guid.Empty);
 
-        log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");
         // NOTE: The 'uuidReturn' variable will contain the taskID and not
         // the created image id!
         String imageInitSize = null;
