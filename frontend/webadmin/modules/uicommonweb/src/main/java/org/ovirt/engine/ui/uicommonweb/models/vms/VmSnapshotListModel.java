@@ -586,7 +586,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         else {
             String name = model.getName().getEntity();
 
-            // Check name unicitate.
+            // Check name uniqueness.
             AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery<>(
                             isNameUnique -> {
                                 if (!isNameUnique) {
