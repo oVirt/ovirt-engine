@@ -55,7 +55,6 @@ public enum VDSCommandType {
     PrepareImage("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetVolumeLegality("org.ovirt.engine.core.vdsbroker.irsbroker"),
     TeardownImage("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    CreateVolumeContainer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CopyVolumeData("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     UpdateVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ColdMerge("org.ovirt.engine.core.vdsbroker.vdsbroker"),
