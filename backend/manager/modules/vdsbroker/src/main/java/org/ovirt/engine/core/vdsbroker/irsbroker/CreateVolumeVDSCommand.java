@@ -6,15 +6,15 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
-import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
 
-public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParameters> extends IrsCreateCommand<P> {
+public class CreateVolumeVDSCommand<P extends CreateVolumeVDSCommandParameters> extends IrsCreateCommand<P> {
     @Inject
     private StorageDomainHelper storageDomainHelper;
 
-    public CreateSnapshotVDSCommand(P parameters) {
+    public CreateVolumeVDSCommand(P parameters) {
         super(parameters);
     }
 

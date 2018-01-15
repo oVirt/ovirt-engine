@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,8 +49,8 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
     }
 
     private CreateImageVDSCommandParameters getCreateVDSCommandParameters() {
-        CreateSnapshotVDSCommandParameters parameters =
-                new CreateSnapshotVDSCommandParameters(getParameters().getStoragePoolId(),
+        CreateVolumeVDSCommandParameters parameters =
+                new CreateVolumeVDSCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(), getParameters().getImageGroupID(), getParameters()
                         .getSrcImageId(), getParameters().getSize(),
                         getType(), getParameters().getVolumeFormat(), getParameters().getSrcImageGroupId(),
@@ -76,7 +76,7 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
     @Override
     protected void executeCommand() {
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateSnapshot,
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateVolume,
                 getCreateVDSCommandParameters());
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setVdsmTaskIds(new ArrayList<>());
