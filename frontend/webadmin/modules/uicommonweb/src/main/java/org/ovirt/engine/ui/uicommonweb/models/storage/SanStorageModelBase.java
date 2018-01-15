@@ -921,8 +921,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                     }
                 }
                 lunSelectionChangedEvent.raise(this, new ValueEventArgs<>(selectedLunModel));
-                getRequireTableRefresh().setEntity(false);
-                getRequireTableRefresh().setEntity(true);
             }
         }
     };
@@ -1076,7 +1074,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private void updateRemovableLuns() {
         int numOfIncludedLuns = getIncludedLuns().size();
         List<LunModel> lunModels = getLuns(false, true);
-        lunModels.forEach(lunModel -> lunModel.setIsLunRemovable(
+        lunModels.forEach(lunModel -> lunModel.setIsLunRemovable(isReduceDeviceSupported() &&
                 numOfIncludedLuns != 1 && !getMetadataDevices().contains(lunModel.getLunId())));
     }
 

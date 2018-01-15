@@ -19,12 +19,13 @@ public abstract class AbstractLunTextColumn extends AbstractSafeHtmlColumn<LunMo
         String style = ""; //$NON-NLS-1$
 
         if (object != null) {
-            boolean isLunExtendable = object.getIsIncluded() && !object.getIsLunRemovable() &&
-                    object.getAdditionalAvailableSize() == 0;
+            boolean isLunUnExtendable = object.getIsIncluded() && object.getAdditionalAvailableSize() == 0;
 
             if (object.isRemoveLunSelected()) {
                 style = "color: black; text-decoration: line-through"; //$NON-NLS-1$
-            } else if ((!object.getIsIncluded() && object.getIsGrayedOut()) || isLunExtendable) {
+            } else if (object.getIsLunRemovable()) {
+                style = "color: black"; //$NON-NLS-1$
+            } else if ((!object.getIsIncluded() && object.getIsGrayedOut()) || isLunUnExtendable) {
                 style = "color: gray"; //$NON-NLS-1$
             } else if (!object.getIsAccessible() && !object.getIsGrayedOut()) {
                 style = "color: orange"; //$NON-NLS-1$
