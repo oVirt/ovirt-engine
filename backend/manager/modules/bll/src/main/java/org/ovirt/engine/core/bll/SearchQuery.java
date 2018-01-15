@@ -232,6 +232,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             break;
         case Job:
             returnValue = searchJobs();
+            break;
         default:
             log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
             break;
