@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
@@ -61,6 +60,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private ArrayList<DiskImage> imagesList;
     private List<String> missingUsers = new ArrayList<>();
     private List<String> missingRoles = new ArrayList<>();
+    private List<String> missingVnicMappings = new ArrayList<>();
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -77,8 +77,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private DrMappingHelper drMappingHelper;
-    @Inject
-    private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
     @Inject
     private RoleDao roleDao;
 
@@ -109,11 +107,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         if (!super.validate()) {
             return false;
         }
-        if (!validateExternalVnicProfileMapping()) {
-            return false;
-        }
-        drMappingHelper.mapVnicProfiles(vmTemplateFromConfiguration.getInterfaces(),
-                getParameters().getExternalVnicProfileMappings());
         ArrayList<DiskImage> disks = new ArrayList(getVmTemplate().getDiskTemplateMap().values());
         setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
         getVmTemplate().setImages(disks);
@@ -124,16 +117,12 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
         removeInvalidUsers(getImportValidator());
         removeInavlidRoles(getImportValidator());
-
         return super.validate();
     }
 
-    private boolean validateExternalVnicProfileMapping() {
-        final ValidationResult validationResult =
-                externalVnicProfileMappingValidator.validateExternalVnicProfileMapping(
-                        getParameters().getExternalVnicProfileMappings(),
-                        getParameters().getClusterId());
-        return validate(validationResult);
+    private void updateVnicsFromMapping() {
+        missingVnicMappings = drMappingHelper.updateVnicsFromMappings(getParameters().getClusterId(), getParameters().getVmTemplate().getName(),
+                vmTemplateFromConfiguration.getInterfaces(), getParameters().getExternalVnicProfileMappings());
     }
 
     private boolean validateUnregisteredEntity(VmTemplate entityFromConfiguration, OvfEntityData ovfEntityData) {
@@ -283,6 +272,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     public void executeCommand() {
+        updateVnicsFromMapping();
         super.executeCommand();
         addAuditLogForPartialVMs();
         if (getParameters().isImagesExistOnTargetStorageDomain()) {
@@ -312,6 +302,10 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         if (!missingRoles.isEmpty()) {
             missingEntities.append("Roles: ");
             missingEntities.append(StringUtils.join(missingRoles, ", ") + " ");
+        }
+        if (!missingVnicMappings.isEmpty()) {
+            missingEntities.append("Vnic Mappings: ");
+            missingEntities.append(StringUtils.join(missingVnicMappings, ", ") + " ");
         }
 
         if (missingEntities.length() > 0) {

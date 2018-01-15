@@ -27,20 +27,20 @@ public class VnicProfileMappingEntity {
     }
 
     public void setVnicProfileId(Guid vnicProfileId) {
-        externalVnicProfileMapping.setVnicProfileId(vnicProfileId);
+        externalVnicProfileMapping.setTargetProfileId(vnicProfileId);
         setChanged();
     }
 
     public String getExternalNetworkName() {
-        return externalVnicProfileMapping.getExternalNetworkName();
+        return externalVnicProfileMapping.getSourceNetworkName();
     }
 
     public String getExternalNetworkProfileName() {
-        return externalVnicProfileMapping.getExternalNetworkProfileName();
+        return externalVnicProfileMapping.getSourceProfileName();
     }
 
     public Guid getVnicProfileId() {
-        return externalVnicProfileMapping.getVnicProfileId();
+        return externalVnicProfileMapping.getTargetProfileId();
     }
 
     public boolean isChanged() {
@@ -52,6 +52,20 @@ public class VnicProfileMappingEntity {
     }
 
     public ExternalVnicProfileMapping getExternalVnicProfileMapping() {
+        return externalVnicProfileMapping;
+    }
+
+    /**
+     * Extracts the mapping from the entity in order to relay it to the server.
+     * To signify to the server that a 'no profile' should be applied with this
+     * mapping, it is not sufficient to have a null target id, but also the
+     * target names should be assigned the empty string.
+     */
+    public ExternalVnicProfileMapping convertExternalVnicProfileMapping() {
+        if (externalVnicProfileMapping.getTargetProfileId() == null) {
+            externalVnicProfileMapping.setTargetNetworkName("");
+            externalVnicProfileMapping.setTargetProfileName("");
+        }
         return externalVnicProfileMapping;
     }
 

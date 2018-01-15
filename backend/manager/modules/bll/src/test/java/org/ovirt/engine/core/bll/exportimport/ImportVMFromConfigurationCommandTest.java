@@ -81,9 +81,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     private ExternalVmMacsFinder externalVmMacsFinder;
 
     @Mock
-    private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
-
-    @Mock
     private DrMappingHelper drMappingHelper;
 
     @Spy

@@ -15,8 +15,10 @@ import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.ovirt.engine.core.bll.exportimport.ImportedNetworkInfoUpdater;
+import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicsContext;
+import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicsFlow;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
@@ -55,9 +57,9 @@ public class DrMappingHelper {
     @Inject
     private AffinityGroupDao affinityGroupDao;
     @Inject
-    private ImportedNetworkInfoUpdater importedNetworkInfoUpdater;
-    @Inject
     private PermissionDao permissionDao;
+    @Inject
+    private MapVnicsFlow mapVnicsFlow;
 
     protected static final Logger log = LoggerFactory.getLogger(DrMappingHelper.class);
 
@@ -310,7 +312,13 @@ public class DrMappingHelper {
         }));
     }
 
-    public void mapVnicProfiles(List<VmNetworkInterface> vnics, Collection<ExternalVnicProfileMapping> externalVnicProfileMappings) {
-        vnics.forEach(vnic -> importedNetworkInfoUpdater.updateNetworkInfo(vnic, externalVnicProfileMappings));
+    public List<String> updateVnicsFromMappings(Guid clusterId, String vmName, List<VmNetworkInterface> vnics, Collection<ExternalVnicProfileMapping> mappings) {
+        MapVnicsContext ctx = new MapVnicsContext("updateVnicsFromMappings")
+            .setClusterId(clusterId)
+            .setVmName(vmName)
+            .setOvfVnics(vnics)
+            .setUserMappings(mappings);
+        mapVnicsFlow.getHead().process(ctx);
+        return !CollectionUtils.isEmpty(ctx.getNonAssociableVnics()) ? ctx.getNonAssociableVnics() : Collections.emptyList();
     }
 }
