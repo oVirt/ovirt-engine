@@ -306,12 +306,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     }
 
     private String getUnpluggedDisksNames() {
-        ArrayList<Disk> unpluggedDisks = new ArrayList<>();
-        for (Disk disk : getVmDisks()) {
-            if (!disk.getPlugged()) {
-                unpluggedDisks.add(disk);
-            }
-        }
+        List<Disk> unpluggedDisks = getVmDisks().stream()
+                .filter(disk -> !disk.getPlugged())
+                .collect(Collectors.toList());
         return VmModelHelper.getDiskLabelList(unpluggedDisks);
     }
 
@@ -398,28 +395,18 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         }
 
         AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery<>(disks -> {
-            getVmDisks().clear();
-            for (Disk disk : disks) {
-                if (disk.getDiskStorageType() == DiskStorageType.LUN) {
-                    continue;
-                }
-
-                DiskImage diskImage = (DiskImage) disk;
-                getVmDisks().add(diskImage);
-            }
+            setVmDisks(disks
+                    .stream()
+                    .filter(d -> d.getDiskStorageType() != DiskStorageType.LUN)
+                    .map(DiskImage.class::cast)
+                    .collect(Collectors.toList()));
         }), vm.getId());
     }
 
     private void updatePreviewedDiskSnapshots(final List<Snapshot> snapshots) {
-        for (DiskImage diskImage : getVmDisks()) {
-            if (diskImage.getSnapshots().size() <= 1) {
-                continue;
-            }
-
-            Guid snapshotId = diskImage.getSnapshots().get(1).getVmSnapshotId();
-            getSnapshotsMap().get(snapshotId).getEntity().getDiskImages().add(diskImage);
-        }
-
+        getVmDisks().stream().filter(d -> d.getSnapshots().size() > 1)
+                .forEach(d -> getSnapshotsMap().get(d.getSnapshots().get(1).getVmSnapshotId())
+                        .getEntity().getDiskImages().add(d));
         updateItems(snapshots);
     }
 
