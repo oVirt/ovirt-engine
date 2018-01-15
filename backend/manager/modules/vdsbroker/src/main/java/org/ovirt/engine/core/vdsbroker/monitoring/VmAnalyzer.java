@@ -429,15 +429,14 @@ public class VmAnalyzer {
         saveDynamic(dbVm);
         resetVmStatistics();
         resetVmInterfaceStatistics();
-        auditVmMigrationAbort();
-
-        resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
+        auditVmMigrationAbort(exitMessage);
+        resourceManager.removeAsyncRunningVm(dbVm.getId());
         movedToDown = true;
     }
 
-    private void auditVmMigrationAbort() {
+    private void auditVmMigrationAbort(String exitMessage) {
         AuditLogableBase logable =Injector.injectMembers( new AuditLogableBase(vdsManager.getVdsId(), dbVm.getId()));
-        logable.addCustomValue("MigrationError", vdsmVm.getVmDynamic().getExitMessage());
+        logable.addCustomValue("MigrationError", exitMessage);
         auditLog(logable, AuditLogType.VM_MIGRATION_ABORT);
     }
 
