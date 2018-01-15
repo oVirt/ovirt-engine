@@ -269,8 +269,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     }
 
     private void updateDiskVmElements(VM vm) {
-        vm.getStaticData().getImages().stream().
-                forEach(disk -> diskVmElementDao.update(disk.getDiskVmElementForVm(vm.getId())));
+        vm.getImages().stream().map(disk -> disk.getDiskVmElementForVm(vm.getId())).forEach(diskVmElementDao::update);
     }
 
     private void addImportedDevices(VM vm) {
