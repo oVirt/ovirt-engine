@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -220,7 +219,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         try {
             if (getParameters().getOriginType() != OriginType.KVM) {
                 VM vm = readVmFromOvf(getOvfOfConvertedVm());
-                updateBootDiskFlag(vm);
+                updateDiskVmElements(vm);
                 addImportedDevices(vm);
             }
             setSucceeded(true);
@@ -269,9 +268,9 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
     }
 
-    private void updateBootDiskFlag(VM vm) {
-        vm.getStaticData().getImages().stream().filter(disk -> disk.getDiskVmElementForVm(vm.getId()).isBoot())
-                .forEach(disk -> diskVmElementDao.update(disk.getDiskVmElementForVm(vm.getId())));
+    private void updateDiskVmElements(VM vm) {
+        vm.getStaticData().getImages().stream().
+                forEach(disk -> diskVmElementDao.update(disk.getDiskVmElementForVm(vm.getId())));
     }
 
     private void addImportedDevices(VM vm) {
@@ -281,13 +280,6 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         vmStatic.setInterfaces(new ArrayList<>());
         importUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
         getVmDeviceUtils().addImportedDevices(vmStatic, false, false);
-        saveDiskVmElements(vm);
-    }
-
-    private void saveDiskVmElements(VM vm) {
-        for (DiskImage disk : vm.getStaticData().getImages()) {
-            diskVmElementDao.save(disk.getDiskVmElementForVm(vm.getId()));
-        }
     }
 
     private void removeVm() {
