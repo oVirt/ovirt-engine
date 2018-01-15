@@ -80,9 +80,8 @@ public class BackendStorageDomainVmResource
             validateAffinityGroupMappings(action);
             validateAffinityLabelMappings(action);
             validateLunMappings(action);
-            BackendVnicProfileHelper.validateRegistrationVnicMappings(this, action);
         }
-        if (BackendVnicProfileHelper.foundDeprecatedVnicProfileMapping(action)) {
+        if (BackendVnicProfileHelper.foundOnlyDeprecatedVnicProfileMapping(action)) {
             // This code block is for backward compatibility with {@link VnicProfileMapping}s that are specified
             // outside the registration_configuration code. This specification is deprecated since 4.2.1 .
             // When these mappings are removed from the ovirt-engine-api-model, this whole code block can be removed

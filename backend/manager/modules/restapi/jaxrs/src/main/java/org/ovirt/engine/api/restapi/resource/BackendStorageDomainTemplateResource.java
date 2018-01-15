@@ -59,10 +59,7 @@ public class BackendStorageDomainTemplateResource
     @Override
     public Response register(Action action) {
         ImportVmTemplateFromConfParameters params = new ImportVmTemplateFromConfParameters();
-        if (action.isSetRegistrationConfiguration()) {
-            BackendVnicProfileHelper.validateRegistrationVnicMappings(this, action);
-        }
-        if (BackendVnicProfileHelper.foundDeprecatedVnicProfileMapping(action)) {
+        if (BackendVnicProfileHelper.foundOnlyDeprecatedVnicProfileMapping(action)) {
             // This code block is for backward compatibility with {@link VnicProfileMapping}s that are specified
             // outside the registration_configuration code, which is deprecated since 4.2.1 . When these mappings
             // are removed from the ovirt-engine-api-model, this whole code block can be removed as well.
