@@ -48,8 +48,6 @@ public interface IVdsServer {
 
     StatusOnlyReturn updateVolume(String jobId, Map<?, ?> volumeInfo, Map<?, ?> volumeAttributes);
 
-    StatusOnlyReturn allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size);
-
     StatusOnlyReturn moveDomainDevice(String jobId, Map<String, Object> moveParams);
 
     StatusOnlyReturn reduceDomain(String jobId, Map<String, Object> reduceParams);

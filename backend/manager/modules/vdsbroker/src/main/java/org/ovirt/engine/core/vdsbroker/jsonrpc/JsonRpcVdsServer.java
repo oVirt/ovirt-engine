@@ -141,20 +141,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn allocateVolume(String spUUID, String sdUUID, String imgGUID, String volUUID, String size) {
-        JsonRpcRequest request =
-                new RequestBuilder("Volume.allocate").withParameter("volumeID", volUUID)
-                        .withParameter("storagepoolID", spUUID)
-                        .withParameter("storagedomainID", sdUUID)
-                        .withParameter("imageID", imgGUID)
-                        .withParameter("size", size)
-                        .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("uuid");
-        return new StatusOnlyReturn(response);
-    }
-
-    @Override
     @SuppressWarnings("rawtypes")
     public StatusOnlyReturn copyData(String jobId, Map src, Map dst) {
         JsonRpcRequest request =

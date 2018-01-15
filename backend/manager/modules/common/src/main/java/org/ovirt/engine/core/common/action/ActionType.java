@@ -329,7 +329,6 @@ public enum ActionType {
     TransferDiskImage(1024, ActionGroup.EDIT_DISK_PROPERTIES, false, QuotaDependency.STORAGE),
     TransferImageStatus(1025, ActionGroup.EDIT_DISK_PROPERTIES, false, QuotaDependency.NONE),
     ScanStorageForUnregisteredDisks(1026, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
-    AllocateImageGroupVolume(1027, QuotaDependency.STORAGE),
     CreateImagePlaceholder(1028, QuotaDependency.NONE),
     SyncImageGroupData(1029, QuotaDependency.NONE),
     CreateVolumeContainer(1030, QuotaDependency.STORAGE),
