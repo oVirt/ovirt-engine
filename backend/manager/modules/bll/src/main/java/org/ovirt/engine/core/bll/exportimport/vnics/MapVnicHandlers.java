@@ -157,7 +157,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            VnicProfile vnicProfile = vnicProfileDao.get(ctx.getProfileMapping().getVnicProfileId());
+            VnicProfile vnicProfile = vnicProfileDao.get(ctx.getProfileMapping().getTargetProfileId());
             if (vnicProfile != null) {
                 ctx.setVnicProfileFoundByDao(vnicProfile);
                 ctx.trace(SUCCESS, TargetIdExistsOnEngine.class);
@@ -172,7 +172,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            if(ctx.getProfileMapping().getVnicProfileId() != null) {
+            if(ctx.getProfileMapping().hasTargetId()) {
                 ctx.trace(SUCCESS, TargetIdSpecified.class);
                 return SUCCESS;
             }
@@ -215,7 +215,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            if(ctx.getProfileMapping().hasTarget() && ctx.getProfileMapping().targetNamesAreEmptyString()) {
+            if(ctx.getProfileMapping().targetNamesAreEmptyString()) {
                 ctx.trace(SUCCESS, TargetNamesAreEmptyString.class);
                 return SUCCESS;
             }
@@ -228,7 +228,7 @@ public class MapVnicHandlers {
 
         @Override
         public HandlerOutcome handle(MapVnicContext ctx) {
-            if(ctx.getProfileMapping().hasTarget() && ctx.getProfileMapping().hasTargetNames()) {
+            if(ctx.getProfileMapping().hasTargetNames()) {
                 ctx.trace(SUCCESS, TargetNamesSpecified.class);
                 return SUCCESS;
             }

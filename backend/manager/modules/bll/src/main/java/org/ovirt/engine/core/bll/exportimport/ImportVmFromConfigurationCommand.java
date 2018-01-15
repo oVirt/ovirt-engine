@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -62,6 +61,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private List<String> missingAffinityLabels = new ArrayList<>();
     private List<String> missingUsers = new ArrayList<>();
     private List<String> missingRoles = new ArrayList<>();
+    private List<String> missingVnicMappings = new ArrayList<>();
 
     private List<AffinityGroup> cachedAffinityGroups = new ArrayList<>();
     private List<Label> cachedAffinityLabels = new ArrayList<>();
@@ -74,9 +74,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
     @Inject
     private DrMappingHelper drMappingHelper;
-
-    @Inject
-    private ExternalVnicProfileMappingValidator externalVnicProfileMappingValidator;
 
     @Inject
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
@@ -118,13 +115,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         }
         return true;
     }
-
     private boolean validateEntityPropertiesWhenImagesOnTarget() {
         ImportValidator importValidator = getImportValidator();
         if (isImagesAlreadyOnTarget()) {
-            if (!validateExternalVnicProfileMapping()) {
-                return false;
-            }
             if (!validate(importValidator.validateUnregisteredEntity(ovfEntityData))) {
                 return false;
             }
@@ -163,12 +156,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         return true;
     }
 
-    private boolean validateExternalVnicProfileMapping() {
-        final ValidationResult validationResult =
-                externalVnicProfileMappingValidator.validateExternalVnicProfileMapping(
-                        getParameters().getExternalVnicProfileMappings(),
-                        getParameters().getClusterId());
-        return validate(validationResult);
+    private void updateVnicsFromMapping() {
+        if (isImagesAlreadyOnTarget()) {
+            // mapping exists only in non-OVA import
+            missingVnicMappings = drMappingHelper.updateVnicsFromMappings(getParameters().getClusterId(), getParameters().getVm().getName(),
+                    getParameters().getVm().getInterfaces(), getParameters().getExternalVnicProfileMappings());
+        }
     }
 
     @Override
@@ -314,12 +307,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
     @Override
     public void executeVmCommand() {
+        updateVnicsFromMapping();
         addAuditLogForPartialVMs();
-        if (isImagesAlreadyOnTarget()) {
-            // vnic profile mapping should be done only after all validation (including validating the requested
-            // vnic profile id against the DAO) passes and after the vmFromConfiguration object has been initialized
-            drMappingHelper.mapVnicProfiles(getVm().getInterfaces(), getParameters().getExternalVnicProfileMappings());
-        }
         super.executeVmCommand();
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
@@ -357,6 +346,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         if (!missingRoles.isEmpty()) {
             missingEntities.append("Roles: ");
             missingEntities.append(StringUtils.join(missingRoles, ", ") + " ");
+        }
+        if (!missingVnicMappings.isEmpty()) {
+            missingEntities.append("Vnic Mappings: ");
+            missingEntities.append(StringUtils.join(missingVnicMappings, ", ") + " ");
         }
 
         if (missingEntities.length() > 0) {

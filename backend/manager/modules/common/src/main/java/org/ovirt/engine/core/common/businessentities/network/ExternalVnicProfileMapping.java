@@ -5,63 +5,129 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
+/**
+ * An object representing the mapping between the current profile on a vnic of an OVF of a VM
+ * (source) and the one desired by the user (target).
+ * Used to relay the user mappings from the REST-API and the web-admin layers to the backend
+ * for processing.
+ */
 public class ExternalVnicProfileMapping implements Serializable {
 
-    private String externalNetworkName;
-    private String externalNetworkProfileName;
-    private Guid vnicProfileId;
+    private String sourceProfileName;
+    private String sourceNetworkName;
+    private String targetProfileName;
+    private String targetNetworkName;
+    private Guid targetProfileId;
 
-    private ExternalVnicProfileMapping() {}
-
-    public ExternalVnicProfileMapping(String externalNetworkName,
-            String externalNetworkProfileName,
-            Guid vnicProfileId) {
-        /**
-         * In the body of a REST request (e.g. register vm\template requests) an '<Empty>' target vNic profile
-         * has "" for network and profile name while in {@link VmNetworkInterface} these fields are denoted with null.
-         * So map the empty string to null so that comparisons of the two will succeed.
-         * @see ExternalVnicProfileMappingFinder#findMappingEntry
-         */
-        this.externalNetworkName = "".equals(externalNetworkName) ? null : externalNetworkName;
-        this.externalNetworkProfileName = "".equals(externalNetworkProfileName) ? null : externalNetworkProfileName;
-        this.vnicProfileId = vnicProfileId;
+    private ExternalVnicProfileMapping() {
     }
 
-    public ExternalVnicProfileMapping(ExternalVnicProfileMapping that) {
-        this(that.getExternalNetworkName(), that.getExternalNetworkProfileName(), that.getVnicProfileId());
+    public ExternalVnicProfileMapping(String sourceNetworkName, String sourceProfileName) {
+        setSourceNetworkName(sourceNetworkName);
+        setSourceProfileName(sourceProfileName);
     }
 
-    public String getExternalNetworkName() {
-        return externalNetworkName;
+    public ExternalVnicProfileMapping(String sourceNetworkName,
+            String sourceNetworkProfileName,
+            Guid targetVnicProfileId) {
+        setSourceNetworkName(sourceNetworkName);
+        setSourceProfileName(sourceNetworkProfileName);
+        setTargetProfileId(targetVnicProfileId);
     }
 
-    public String getExternalNetworkProfileName() {
-        return externalNetworkProfileName;
+    public ExternalVnicProfileMapping(String sourceNetworkName,
+            String sourceProfileName, String targetNetworkName, String targetProfileName) {
+        setSourceNetworkName(sourceNetworkName);
+        setSourceProfileName(sourceProfileName);
+        setTargetProfileName(targetProfileName);
+        setTargetNetworkName(targetNetworkName);
     }
 
-    public Guid getVnicProfileId() {
-        return vnicProfileId;
+    public void setSourceNetworkName(String name) {
+        sourceNetworkName = name;
     }
 
-    public void setVnicProfileId(Guid vnicProfileId) {
-        this.vnicProfileId = vnicProfileId;
+    public void setTargetNetworkName(String name) {
+        targetNetworkName = name;
     }
 
-    public boolean isSameSourceProfile(ExternalVnicProfileMapping other) {
-        return Objects.equals(externalNetworkName, other.externalNetworkName) &&
-                Objects.equals(externalNetworkProfileName, other.externalNetworkProfileName);
+    public String getSourceNetworkName() {
+        return sourceNetworkName;
     }
 
-    public boolean isSameSourceProfile(VmNetworkInterface vnic) {
-        return Objects.equals(externalNetworkName, vnic.getNetworkName()) &&
-                Objects.equals(externalNetworkProfileName, vnic.getVnicProfileName());
+    public String getTargetNetworkName() {
+        return targetNetworkName;
+    }
+
+    public String getSourceProfileName() {
+        return sourceProfileName;
+    }
+
+    public String getTargetProfileName() {
+        return targetProfileName;
+    }
+
+    public void setSourceProfileName(String name) {
+        sourceProfileName = name;
+    }
+
+    public void setTargetProfileName(String name) {
+        targetProfileName = name;
+    }
+
+    public Guid getTargetProfileId() {
+        return targetProfileId;
+    }
+
+    public void setTargetProfileId(Guid id) {
+        targetProfileId = id;
+    }
+
+    public boolean hasTarget() {
+        return hasTargetId() || hasTargetNames();
+    }
+
+    public boolean hasTargetId() {
+        return getTargetProfileId() != null;
+    }
+
+    public boolean hasTargetNames() {
+        return getTargetProfileName() != null && getTargetNetworkName() != null;
+    }
+
+    public boolean targetNamesAreEmptyString() {
+        return "".equals(getTargetProfileName()) && "".equals(getTargetNetworkName());
     }
 
     /**
-     * warning: this equals only compares the source profile
+     * Comparison used by the webadmin ui code to compare mappings based on similar source
+     * network name and profile name.
+     * @return true if this has same source network name and profile name as other
+     */
+    public boolean isSameSourceProfile(ExternalVnicProfileMapping other) {
+        return Objects.equals(getSourceNetworkName(), other.getSourceNetworkName()) &&
+                Objects.equals(getSourceProfileName(), other.getSourceProfileName());
+    }
+
+    /**
+     * Comparison used by the backend to compare mappings.
+     * External mapping supplied by the user may include empty string to denote 'no profile',
+     * whereas in {@link VmNetworkInterface} 'no profile' is denoted with {@code null}s.
+     * So apart from a standard equals(), compare the empty string mapping to null on the vnic.
+     */
+    public boolean isSameSourceProfile(VmNetworkInterface vnic) {
+        return (Objects.equals(getSourceNetworkName(), vnic.getNetworkName()) ||
+                ("".equals(getSourceNetworkName()) && vnic.getNetworkName() == null)) &&
+                (Objects.equals(getSourceProfileName(), vnic.getVnicProfileName()) ||
+                        ("".equals(getSourceProfileName()) && vnic.getVnicProfileName() == null));
+    }
+
+     /**
+     * warning: this equals only compares the source profile. it is used implicitly
+      * in the UI when adding and removing from a set.
      * @return true if the source profile of o is the same as that of this
      */
-    @Override
+   @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -73,33 +139,27 @@ public class ExternalVnicProfileMapping implements Serializable {
         return isSameSourceProfile(that);
     }
 
+    public boolean equalsEntire(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ExternalVnicProfileMapping)) {
+            return false;
+        }
+        ExternalVnicProfileMapping that = (ExternalVnicProfileMapping) o;
+        return Objects.equals(getSourceProfileName(), that.getSourceProfileName()) &&
+                Objects.equals(getSourceNetworkName(), that.getSourceNetworkName()) &&
+                Objects.equals(getTargetProfileName(), that.getTargetProfileName()) &&
+                Objects.equals(getTargetNetworkName(), that.getTargetNetworkName()) &&
+                Objects.equals(getTargetProfileId(), that.getTargetProfileId());
+    }
+
+    public int hashCodeEntire() {
+        return Objects.hash(getSourceProfileName(), getSourceNetworkName(), getTargetProfileName(), getTargetNetworkName(), getTargetProfileId());
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(externalNetworkName, externalNetworkProfileName);
-    }
-
-    public boolean hasTarget() {
-        //temporary stub, not in use
-        return false;
-    }
-
-    public boolean targetNamesAreEmptyString() {
-        //temporary stub, not in use
-        return false;
-    }
-
-    public boolean hasTargetNames() {
-        //temporary stub, not in use
-        return false;
-    }
-
-    public String getTargetProfileName() {
-        //temporary stub, not in use
-        return "";
-    }
-
-    public String getTargetNetworkName() {
-        //temporary stub, not in use
-        return "";
+        return Objects.hash(getSourceNetworkName(), getSourceProfileName());
     }
 }

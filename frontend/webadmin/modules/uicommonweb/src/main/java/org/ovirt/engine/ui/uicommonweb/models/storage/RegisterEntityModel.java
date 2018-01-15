@@ -82,7 +82,7 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
             return Collections.emptyList();
         }
         return externalVnicProfilesPerTargetCluster.get(cluster).stream()
-                .map(VnicProfileMappingEntity::getExternalVnicProfileMapping)
+                .map(VnicProfileMappingEntity::convertExternalVnicProfileMapping)
                 .collect(Collectors.toList());
     }
 
