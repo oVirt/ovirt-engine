@@ -385,6 +385,14 @@ public class VmDeviceCommonUtils {
         return false;
     }
 
+    public static boolean isCdDeviceExists(Collection<VmDevice> devices) {
+        return devices.stream().anyMatch(VmDeviceCommonUtils::isCD);
+    }
+
+    public static boolean hasCdDevice(VmBase vmBase) {
+        return isCdDeviceExists(vmBase.getManagedDeviceMap().values());
+    }
+
     public static void addVirtIoScsiDevice(VmBase vmBase) {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
@@ -420,6 +428,18 @@ public class VmDeviceCommonUtils {
         GraphicsDevice graphicsDevice = new GraphicsDevice(vmDeviceType);
         graphicsDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
         vmBase.getManagedDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);
+    }
+
+    public static void addCdDevice(VmBase vmBase) {
+        VmDevice vmDevice = new VmDevice();
+        vmDevice.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
+        vmDevice.setType(VmDeviceGeneralType.DISK);
+        vmDevice.setDevice(VmDeviceType.CDROM.getName());
+        vmDevice.setManaged(true);
+        vmDevice.setPlugged(true);
+        vmDevice.setReadOnly(true);
+        vmDevice.setAddress("");
+        vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
     }
 
     /**

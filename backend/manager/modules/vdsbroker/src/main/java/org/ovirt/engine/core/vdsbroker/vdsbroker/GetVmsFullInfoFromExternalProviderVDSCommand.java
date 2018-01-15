@@ -44,6 +44,9 @@ public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromEx
                     if (VmDeviceCommonUtils.isVirtIoScsiDiskInterfaceExists(vm.getStaticData())) {
                         VmDeviceCommonUtils.addVirtIoScsiDevice(vm.getStaticData());
                     }
+                    if (!VmDeviceCommonUtils.hasCdDevice(vm.getStaticData())) {
+                        VmDeviceCommonUtils.addCdDevice(vm.getStaticData());
+                    }
                 } else {
                     // set default value in case of non KVM provider type
                     // since VirtIO interface doesn't require having an appropriate controller
