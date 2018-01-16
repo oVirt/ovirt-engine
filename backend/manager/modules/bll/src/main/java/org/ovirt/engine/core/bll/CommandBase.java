@@ -146,9 +146,6 @@ public abstract class CommandBase<T extends ActionParametersBase>
     private VDSBrokerFrontend vdsBroker;
 
     @Inject
-    private ObjectCompensation objectCompensation;
-
-    @Inject
     protected ExecutionHandler executionHandler;
 
     @Inject
