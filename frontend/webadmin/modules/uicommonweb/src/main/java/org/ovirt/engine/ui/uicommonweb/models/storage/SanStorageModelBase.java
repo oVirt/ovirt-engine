@@ -510,6 +510,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected,
                         isInMaintenance, metadata);
                 model.setGetLUNsFailure(""); //$NON-NLS-1$
+                model.stopProgress();
             }
             else {
                 model.setGetLUNsFailure(
@@ -519,6 +520,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         Frontend.getInstance().runQuery(QueryType.GetDeviceList,
                 new GetDeviceListQueryParameters(host.getId(), getType(), false, null, false),
                 asyncQuery);
+        getContainer().startProgress();
     }
 
     protected void updateLoginAvailability() {
