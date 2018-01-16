@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -101,13 +102,7 @@ public class VmModelHelper {
         if (disks.isEmpty()) {
             return null;
         }
-
-        final List<String> labels = new ArrayList<>();
-        for (Disk disk : disks) {
-            labels.add(disk.getDiskAlias());
-        }
-
-        return String.join(", ", labels); //$NON-NLS-1$
+        return disks.stream().map(Disk::getDiskAlias).collect(Collectors.joining(", ")); //$NON-NLS-1$
     }
 
 }
