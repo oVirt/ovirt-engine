@@ -271,11 +271,14 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             DiskImage imageInfoFromVdsm = imagesHandler.getVolumeInfoFromVdsm(
                     image.getStoragePoolId(), domainId, image.getId(), image.getImageId());
             return imageInfoFromVdsm.getApparentSizeInBytes();
-        } else {
-            // Upload
-            return getParameters().getTransferSize() != 0 ?
-                    getParameters().getTransferSize() : getDiskImage().getActualSizeInBytes();
         }
+        // Upload
+        if (getParameters().getTransferSize() != 0) {
+            // TransferSize is only set by the webadmin
+            return getParameters().getTransferSize();
+        }
+        boolean isBlockDomain = getDiskImage().getStorageTypes().get(0).isBlockDomain();
+        return isBlockDomain ? getDiskImage().getActualSizeInBytes() : getDiskImage().getSize();
     }
 
     private void handleResuming(final StateContext context) {

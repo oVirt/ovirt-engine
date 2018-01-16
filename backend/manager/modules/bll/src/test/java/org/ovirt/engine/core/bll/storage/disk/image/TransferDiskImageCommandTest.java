@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -63,6 +64,7 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
         diskImage.setActive(true);
         diskImage.setImageId(transferImageCommand.getParameters().getImageId());
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
+        diskImage.setStorageTypes(new ArrayList<>(Collections.singletonList(StorageType.NFS)));
         doReturn(diskImage).when(diskImageDao).get(any());
 
         doReturn(diskValidator).when(getCommand()).getDiskValidator(any());

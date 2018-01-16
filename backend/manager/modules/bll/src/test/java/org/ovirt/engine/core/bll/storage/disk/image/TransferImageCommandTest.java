@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -82,6 +84,7 @@ public class TransferImageCommandTest extends BaseCommandTest{
         DiskImage readyImage = new DiskImage();
         readyImage.setImageId(imageId);
         readyImage.setStorageIds(sdList);
+        readyImage.setStorageTypes(new ArrayList<>(Collections.singletonList(StorageType.NFS)));
         readyImage.setSize(1024L);
 
         doReturn(readyImage).when(transferImageCommand).getDiskImage();
@@ -162,7 +165,7 @@ public class TransferImageCommandTest extends BaseCommandTest{
         transferImageCommand.handleImageIsReadyForTransfer();
 
         assertTrue(transferImageCommand.getParameters().getStorageDomainId().equals(readyImage.getStorageIds().get(0)));
-        assertTrue(transferImageCommand.getParameters().getTransferSize() == readyImage.getActualSizeInBytes());
+        assertTrue(transferImageCommand.getParameters().getTransferSize() == readyImage.getSize());
     }
 
     @Test
