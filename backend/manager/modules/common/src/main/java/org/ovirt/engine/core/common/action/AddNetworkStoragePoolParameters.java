@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
@@ -14,6 +17,8 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
     private Network network;
 
     private boolean vnicProfileRequired;
+
+    private List<NetworkCluster> networkClusterList;
 
     public AddNetworkStoragePoolParameters() {
         vnicProfileRequired = true;
@@ -35,5 +40,13 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     public void setVnicProfileRequired(boolean vnicProfileRequired) {
         this.vnicProfileRequired = vnicProfileRequired;
+    }
+
+    public void setNetworkClusterList(List<NetworkCluster> networkClusterList) {
+        this.networkClusterList = networkClusterList;
+    }
+
+    public List<NetworkCluster> getNetworkClusterList() {
+        return networkClusterList;
     }
 }

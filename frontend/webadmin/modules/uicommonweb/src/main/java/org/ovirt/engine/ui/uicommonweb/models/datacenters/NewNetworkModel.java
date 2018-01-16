@@ -7,7 +7,6 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkWithSubnetParameters;
-import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -139,7 +138,7 @@ public class NewNetworkModel extends NetworkModel {
             new AddNetworkWithSubnetParameters(getSelectedDc().getId(), getNetwork());
         parameters.setVnicProfileRequired(false);
 
-
+        parameters.setNetworkClusterList(createNetworkAttachments());
         // New network
         if (getExternal().getEntity()) {
             Provider<?> externalProvider = getExternalProviders().getSelectedItem();
@@ -188,27 +187,18 @@ public class NewNetworkModel extends NetworkModel {
 
     private void postSaveAction(Guid id) {
         super.postSaveAction(id, true);
-        attachNetworkToClusters(id);
     }
 
-    private void attachNetworkToClusters(Guid networkGuid) {
-        final Guid networkId = getNetwork().getId() == null ? networkGuid : getNetwork().getId();
-        final List<NetworkCluster> networkAttachments = new ArrayList<>();
-
-        for (NetworkClusterModel networkClusterModel : getClustersToAttach()) {
-            // Init default NetworkCluster values (required, display, status)
+    private List<NetworkCluster> createNetworkAttachments() {
+        List<NetworkCluster> networkAttachments = new ArrayList<>();
+        getClustersToAttach().forEach(networkClusterModel -> {
             NetworkCluster networkCluster = new NetworkCluster();
-            networkCluster.setNetworkId(networkId);
+            // Network id is added in the backend
             networkCluster.setClusterId(networkClusterModel.getEntity().getId());
             networkCluster.setRequired(networkClusterModel.isRequired());
             networkAttachments.add(networkCluster);
-        }
-
-        if (!networkAttachments.isEmpty()) {
-            Frontend.getInstance().runAction(
-                    ActionType.ManageNetworkClusters,
-                    new ManageNetworkClustersParameters(networkAttachments));
-        }
+        });
+        return networkAttachments;
     }
 
     @Override
