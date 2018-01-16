@@ -50,10 +50,11 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
     private VnicProfileMappingModel vnicProfileMappingModel;
     private UICommand vnicProfileMappingCommand;
     private Map<Cluster, Set<VnicProfileMappingEntity>> externalVnicProfilesPerTargetCluster;
+    private boolean isVnicMappingChangeConfirmed;
 
     public RegisterVmModel() {
         super();
-
+        this.isVnicMappingChangeConfirmed = false;
         this.externalVnicProfilesPerTargetCluster = new HashMap<>();
     }
 
@@ -306,7 +307,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
 
     private Set<VnicProfileMappingEntity> getClusterVnicProfileMappingEntities(Cluster cluster) {
         final Set<VnicProfileMappingEntity> result = externalVnicProfilesPerTargetCluster.get(cluster);
-        if (result == null) {
+        if (!isVnicMappingChangeConfirmed) {
             return new HashSet<>();
         } else {
             return result;
@@ -322,5 +323,9 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
         public boolean match(RegisterVmData registerVmData) {
             return registerVmData.getReassignMacs().getEntity();
         }
+    }
+
+    public void setVnicMappingChangeConfirmed(boolean isConfirmed) {
+        isVnicMappingChangeConfirmed = isConfirmed;
     }
 }
