@@ -30,7 +30,7 @@ if git show --pretty="format:" --name-only | egrep -q "\.(xml|java)$"; then
 fi
 
 if git show --pretty="format:" --name-only | egrep -q \
-    "\.(frontend|webadmin|${common_modules_search_string})$"; then
+    "^(frontend/webadmin|${common_modules_search_string})"; then
     BUILD_GWT=1
 fi
 
