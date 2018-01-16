@@ -2189,6 +2189,19 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmNamesWithSpecificIsoAttached(v_iso_disk_id UUID)
+RETURNS SETOF varchar(255) STABLE
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vm.vm_name
+    FROM vm_static vm
+    WHERE vm.iso_path = v_iso_disk_id::VARCHAR;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 Create or replace FUNCTION GetVmsStaticRunningOnVds(v_vds_id UUID)
 RETURNS SETOF vm_static STABLE
    AS $procedure$

@@ -36,6 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 
 /** A test case for {@link RemoveDiskCommandTest} */
 public class RemoveDiskCommandTest extends BaseCommandTest {
@@ -47,6 +48,9 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private DiskImageDao diskImageDao;
+
+    @Mock
+    private VmStaticDao vmStaticDao;
 
     private Guid diskId = Guid.newGuid();
     private Disk disk;
@@ -165,5 +169,16 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateFailure(
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK);
+    }
+
+    @Test
+    public void testRemoveIsoDiskAttachedToVmFails() {
+        Disk disk = new DiskImage();
+        disk.setId(Guid.newGuid());
+        disk.setContentType(DiskContentType.ISO);
+        doReturn(disk).when(cmd).getDisk();
+        doReturn(true).when(cmd).canRemoveDiskBasedOnImageStorageCheck();
+        doReturn(Collections.singletonList("NiceVm")).when(vmStaticDao).getAllNamesWithSpecificIsoAttached(disk.getId());
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_REMOVE_ISO_DISK_ATTACHED_TO_VMS);
     }
 }

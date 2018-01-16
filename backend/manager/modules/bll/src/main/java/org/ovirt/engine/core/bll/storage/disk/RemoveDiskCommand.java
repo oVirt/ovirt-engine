@@ -164,6 +164,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_HIBERNATION_DISK);
             }
             break;
+        case ISO:
+            List<String> vmNames = vmStaticDao.getAllNamesWithSpecificIsoAttached(disk.getId());
+            if (!vmNames.isEmpty()) {
+                return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_ISO_DISK_ATTACHED_TO_VMS,
+                    String.format("$VmNames %1$s", String.join(",", vmNames)));
+            }
         }
 
         return true;
@@ -212,7 +218,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return true;
     }
 
-    private boolean canRemoveDiskBasedOnImageStorageCheck() {
+    protected boolean canRemoveDiskBasedOnImageStorageCheck() {
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
 

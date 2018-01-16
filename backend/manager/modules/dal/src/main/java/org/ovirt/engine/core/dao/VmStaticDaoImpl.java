@@ -190,6 +190,14 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
     }
 
     @Override
+    public List<String> getAllNamesWithSpecificIsoAttached(Guid isoDiskId) {
+        return getCallsHandler().executeReadList("GetVmNamesWithSpecificIsoAttached",
+                SingleColumnRowMapper.newInstance(String.class),
+                getCustomMapSqlParameterSource().addValue("iso_disk_id", isoDiskId));
+    }
+
+
+    @Override
     public List<VmStatic> getAllWithLeaseOnStorageDomain(Guid storageDomainId) {
         return getCallsHandler().executeReadList("GetVmsWithLeaseOnStorageDomain",
                 getRowMapper(),
