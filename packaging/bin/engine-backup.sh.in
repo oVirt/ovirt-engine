@@ -1359,6 +1359,7 @@ restoreDB() {
 
 	log "restoreDB: backupfile ${backupfile} user ${user} host ${host} port ${port} database ${database} orig_user ${orig_user} compressor ${compressor} format ${format} jobsnum ${jobsnum}"
 	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
+	local non_ignored_errors="${TEMP_FOLDER}/non-ignored-errors"
 	local failed_msg=
 
 	if [ "${format}" = "plain" ]; then
@@ -1410,8 +1411,13 @@ function public.uuid_ns_url\(\) does not exist
 function public.uuid_ns_x500\(\) does not exist
 __EOF
 )
-	local numerrors=$(grep 'ERROR: ' "${pgrestorelog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)
-	[ ${numerrors} -ne 0 ] && logdie "Errors while restoring database ${database}"
+	grep 'ERROR: ' "${pgrestorelog}" | grep -Ev "${IGNORED_ERRORS}" > "${non_ignored_errors}" 2>&1
+	local numerrors=$(cat "${non_ignored_errors}" | wc -l)
+	if [ ${numerrors} -ne 0 ]; then
+		log "Non-ignored-errors in pg_restore log:"
+		cat "${non_ignored_errors}" >> "${LOG}"
+		logdie "Errors while restoring database ${database}"
+	fi
 }
 
 verifyEngineDb() {
