@@ -398,7 +398,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             setVmDisks(disks
                     .stream()
                     .filter(d -> d.getDiskStorageType() != DiskStorageType.LUN)
-                    .map(DiskImage.class::cast)
+                    .map(d -> (DiskImage) d)
                     .collect(Collectors.toList()));
         }), vm.getId());
     }
