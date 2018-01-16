@@ -81,10 +81,17 @@ public class AnsibleCommandBuilder {
         cluster = "unspecified";
         enableLogging = true;
         envVars = new HashMap<>();
-        verboseLevel = AnsibleVerbosity.LEVEL1;
         config = EngineLocalConfig.getInstance();
         playbookDir = Paths.get(config.getUsrDir().getPath(),  "playbooks");
         privateKey = Paths.get(config.getPKIDir().getPath(), "keys", "engine_id_rsa");
+
+        try {
+            verboseLevel = AnsibleVerbosity.valueOf(
+                "LEVEL" + EngineLocalConfig.getInstance().getProperty("ANSIBLE_PLAYBOOK_VERBOSITY_LEVEL")
+            );
+        } catch (IllegalArgumentException | NullPointerException e) {
+            verboseLevel = AnsibleVerbosity.LEVEL1;
+        }
     }
 
     public AnsibleCommandBuilder checkMode(boolean checkMode) {

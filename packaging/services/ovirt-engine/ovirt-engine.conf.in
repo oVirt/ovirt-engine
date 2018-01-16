@@ -564,3 +564,16 @@ THREAD_POOL_MONITORING_INTERVAL_IN_SECONDS=600
 # AnsibleExecutor class. To change the value permanentaly create a conf file 99-ansible-playbook-timeout.conf in
 # /etc/ovirt-engine/engine.conf.d/
 ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT=30
+
+# Specify the ansible-playbook command verbose level. It's used for any task, which executes AnsibleExecutor class.
+# To change the value permanentaly create a conf file 99-ansible-playbook-verbose-level.conf in
+# /etc/ovirt-engine/engine.conf.d/
+#
+# Following values are supported:
+#
+# 0 - standard output, no verbosity
+# 1 - more verbose, corresponds to -v
+# 2 - even more verbose, corresponds to -vv
+# 3 - even more verbose with basic debugging, corresponds to -vvv
+# 4 - super verbose mode with connection debugging, corresponds to -vvvv
+ANSIBLE_PLAYBOOK_VERBOSITY_LEVEL=1
