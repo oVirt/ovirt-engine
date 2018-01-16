@@ -19,10 +19,13 @@ import org.ovirt.engine.core.bll.validator.HasStoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -35,6 +38,7 @@ import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -76,6 +80,8 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             networkHelper.addPermissionsOnNetwork(getUserId(), getNetwork().getId());
             return null;
         });
+
+        runClusterAttachment();
 
         getReturnValue().setActionReturnValue(getNetwork().getId());
         setSucceeded(true);
@@ -149,6 +155,21 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         }
 
         return locks;
+    }
+
+    //Run cluster attachment in separated thread
+    private void runClusterAttachment() {
+        List<NetworkCluster> networkAttachments = getParameters().getNetworkClusterList();
+        if (networkAttachments != null) {
+            ThreadPoolUtil.execute(() -> attachToClusters(networkAttachments, getNetwork().getId()));
+        }
+    }
+
+    private void attachToClusters(List<NetworkCluster> networkAttachments, Guid networkId) {
+        networkAttachments.forEach(networkCluster -> networkCluster.setNetworkId(networkId));
+        runInternalAction(ActionType.ManageNetworkClusters,
+                new ManageNetworkClustersParameters(networkAttachments),
+                getContext().clone().withoutLock());
     }
 
     protected static class AddNetworkValidator extends NetworkValidator {
