@@ -47,7 +47,7 @@ public class GetSignedWebsocketProxyTicketQuery<P extends GetSignedWebsocketProx
         final Map<String, Object> ticketModel = createTicket(graphicsInfo);
         final String jsonTicket = new ObjectMapper().writeValueAsString(ticketModel);
         final String encodedTicket = URLEncoder.encode(jsonTicket, StandardCharsets.UTF_8.name());
-        final String signedTicket = Backend.getInstance()
+        final String signedTicket = backend
                 .runInternalQuery(QueryType.SignString, new SignStringParameters(encodedTicket))
                 .getReturnValue();
         setReturnValue(signedTicket);

@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.DisableInMaintenanceMode;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
@@ -270,8 +269,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         try {
             ThreadPoolUtil.execute(() -> {
                 try {
-                    ActionReturnValue ret =
-                            Backend.getInstance().runInternalAction(ActionType.ApproveVds, params);
+                    ActionReturnValue ret = backend.runInternalAction(ActionType.ApproveVds, params);
                     if (ret == null || !ret.getSucceeded()) {
                         log.error("Approval of oVirt '{}' failed. ", params.getVdsId());
                     } else if (ret.getSucceeded()) {
@@ -319,7 +317,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             p.setFenceAgents(vds.getFenceAgents());
         }
         p.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-        ActionReturnValue rc = Backend.getInstance().runInternalAction(ActionType.UpdateVds, p);
+        ActionReturnValue rc = backend.runInternalAction(ActionType.UpdateVds, p);
 
         if (!rc.getSucceeded()) {
             error = AuditLogType.VDS_REGISTER_EXISTING_VDS_UPDATE_FAILED;
@@ -367,7 +365,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             AddVdsActionParameters p = new AddVdsActionParameters(vds, "");
             p.setPending(pending);
 
-            ActionReturnValue ret = Backend.getInstance().runInternalAction(ActionType.AddVds, p);
+            ActionReturnValue ret = backend.runInternalAction(ActionType.AddVds, p);
 
             if (!ret.getSucceeded()) {
                 log.error(
@@ -439,7 +437,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                             });
                         }
 
-                        ActionReturnValue ret = Backend.getInstance().runInternalAction(ActionType.UpdateVds, parameters);
+                        ActionReturnValue ret = backend.runInternalAction(ActionType.UpdateVds, parameters);
 
                         if (!ret.getSucceeded()) {
                             error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST;
@@ -512,7 +510,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     if (hostToRegister.isFenceAgentsExist()) {
                         parameters.setFenceAgents(hostToRegister.getFenceAgents());
                     }
-                    ActionReturnValue ret = Backend.getInstance().runInternalAction(ActionType.UpdateVds, parameters);
+                    ActionReturnValue ret = backend.runInternalAction(ActionType.UpdateVds, parameters);
                     if (!ret.getSucceeded()) {
                         error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;
                         logable.addCustomValue("VdsName2", newName);
