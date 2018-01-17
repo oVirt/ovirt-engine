@@ -81,7 +81,6 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
             return;
         }
         addImportedDevices();
-        unlockVm();
         setSucceeded(true);
     }
 
