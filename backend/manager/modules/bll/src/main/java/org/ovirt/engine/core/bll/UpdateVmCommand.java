@@ -102,6 +102,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -135,6 +136,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmNumaNodeDao vmNumaNodeDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
     @Inject
     private VmDeviceDao vmDeviceDao;
     @Inject
@@ -239,7 +242,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         vmStaticDao.incrementDbGeneration(getVm().getId());
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
         newVmStatic.setQuotaId(getQuotaId());
-        newVmStatic.setLeaseInfo(oldVm.getStaticData().getLeaseInfo());
 
         // save user selected value for hotplug before overriding with db values (when updating running vm)
         VM userVm = new VM();
@@ -306,7 +308,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return true;
         }
 
-        getVm().getStaticData().setLeaseInfo(null);
         if (getVm().isNotRunning()) {
             if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId(), false)) {
                 return false;
@@ -332,9 +333,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         // In case of remove lease only, VM lease info should set to null
         if (oldVm.getLeaseStorageDomainId() != null && newVmStatic.getLeaseStorageDomainId() == null) {
-            newVmStatic.setLeaseInfo(null);
-
+            vmDynamicDao.updateVmLeaseInfo(getVmId(), null);
         }
+
         // best effort to remove the lease from the previous storage domain
         removeVmLease(oldVm.getLeaseStorageDomainId(), oldVm.getId());
         return true;

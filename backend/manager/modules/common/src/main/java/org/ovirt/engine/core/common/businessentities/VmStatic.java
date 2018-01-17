@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.Size;
@@ -41,9 +40,6 @@ public class VmStatic extends VmBase {
 
     @EditableVmField(onHostedEngine = true)
     private Guid providerId;
-
-    @EditableVmField
-    private Map<String, String> leaseInfo;
 
     public VmStatic() {
         setNumOfMonitors(1);
@@ -216,11 +212,4 @@ public class VmStatic extends VmBase {
         this.providerId = providerId;
     }
 
-    public Map<String, String> getLeaseInfo() {
-        return leaseInfo;
-    }
-
-    public void setLeaseInfo(Map<String, String> leaseInfo) {
-        this.leaseInfo = leaseInfo;
-    }
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -112,4 +113,12 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      *            The Host id
      */
     List<VmDynamic> getAllMigratingToHost(Guid vdsId);
+
+    /**
+     * Update the dynamic properties of VM lease.
+     *
+     * @param vmId the vm id
+     * @param leaseInfo dynamic properties of the lease
+     */
+    void updateVmLeaseInfo(Guid vmId, Map<String, String> leaseInfo);
 }

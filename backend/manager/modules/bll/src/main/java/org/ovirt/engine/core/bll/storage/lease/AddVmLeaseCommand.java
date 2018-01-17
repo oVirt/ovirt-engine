@@ -15,14 +15,14 @@ import org.ovirt.engine.core.common.vdscommands.LeaseVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
-import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class AddVmLeaseCommand<T extends VmLeaseParameters> extends VmLeaseCommandBase<T> {
 
     @Inject
-    private VmStaticDao vmStaticDao;
+    private VmDynamicDao vmDynamicDao;
 
     public AddVmLeaseCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -63,9 +63,7 @@ public class AddVmLeaseCommand<T extends VmLeaseParameters> extends VmLeaseComma
             return;
         }
 
-        vmStaticDao.updateVmLeaseInfo(
-                getParameters().getVmId(),
-                (Map<String, String>) retVal.getReturnValue());
+        vmDynamicDao.updateVmLeaseInfo(getParameters().getVmId(), (Map<String, String>) retVal.getReturnValue());
 
         if (getParameters().isHotPlugLease()) {
             boolean hotPlugSucceeded = false;

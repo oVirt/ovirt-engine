@@ -713,8 +713,7 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_resume_behavior VARCHAR(64),
     v_custom_compatibility_version VARCHAR(40),
     v_migration_policy_id UUID,
-    v_lease_sd_id UUID,
-    v_lease_info VARCHAR(1000))
+    v_lease_sd_id UUID)
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -796,8 +795,7 @@ INSERT INTO vm_static(description,
                       resume_behavior,
                       custom_compatibility_version,
                       migration_policy_id,
-                      lease_sd_id,
-                      lease_info)
+                      lease_sd_id)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -871,8 +869,7 @@ INSERT INTO vm_static(description,
            v_resume_behavior,
            v_custom_compatibility_version,
            v_migration_policy_id,
-           v_lease_sd_id,
-           v_lease_info);
+           v_lease_sd_id);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1072,8 +1069,7 @@ v_console_disconnect_action VARCHAR(64),
 v_resume_behavior VARCHAR(64),
 v_custom_compatibility_version VARCHAR(40),
 v_migration_policy_id UUID,
-v_lease_sd_id UUID,
-v_lease_info VARCHAR(1000))
+v_lease_sd_id UUID)
 
 RETURNS VOID
 
@@ -1154,8 +1150,7 @@ BEGIN
      resume_behavior = v_resume_behavior,
      custom_compatibility_version=v_custom_compatibility_version,
      migration_policy_id = v_migration_policy_id,
-     lease_sd_id = v_lease_sd_id,
-     lease_info = v_lease_info
+     lease_sd_id = v_lease_sd_id
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 
@@ -1251,7 +1246,7 @@ v_lease_info VARCHAR(1000))
 RETURNS VOID
    AS $procedure$
 BEGIN
-      UPDATE vm_static
+      UPDATE vm_dynamic
       SET lease_info = v_lease_info
       WHERE vm_guid = v_vm_guid;
 END; $procedure$

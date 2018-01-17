@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -140,10 +142,22 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
+    public void updateVmLeaseInfo(Guid vmId, Map<String, String> leaseInfo) {
+        getCallsHandler().executeModification("UpdateVmLeaseInfo",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", vmId)
+                        .addValue("lease_info", SerializationFactory.getSerializer().serialize(leaseInfo)));
+    }
+
+    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("vm_guid", id);
     }
 
+    /**
+     * Note: we intentionally don't update lease_info here because it
+     * should only be updated using {@link #updateVmLeaseInfo(Guid, Map)}
+     */
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VmDynamic vm) {
         GraphicsInfo spice = vm.getGraphicsInfos().get(GraphicsType.SPICE);
@@ -277,6 +291,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setGuestOsType(OsType.valueOf(rs.getString("guestos_type")));
         entity.setGuestOsVersion(rs.getString("guestos_version"));
         entity.setGuestContainers(fromContainersString(rs.getString("guest_containers")));
+        entity.setLeaseInfo(SerializationFactory.getDeserializer().deserialize(rs.getString("lease_info"), HashMap.class));
         return entity;
     };
 

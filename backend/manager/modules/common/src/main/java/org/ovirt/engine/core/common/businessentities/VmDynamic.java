@@ -82,6 +82,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String guestOsTimezoneName;
     private int guestOsTimezoneOffset;
     private List<GuestContainer> guestContainers;
+    @UnchangeableByVdsm
+    private Map<String, String> leaseInfo;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
 
@@ -133,7 +135,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 guestOsKernelVersion,
                 guestOsVersion,
                 guestOsType,
-                guestContainers
+                guestContainers,
+                leaseInfo
         );
     }
 
@@ -191,7 +194,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(guestOsKernelVersion, other.guestOsKernelVersion)
                 && Objects.equals(guestOsArch, other.guestOsArch)
                 && Objects.equals(guestOsType, other.guestOsType)
-                && Objects.equals(guestContainers, other.guestContainers);
+                && Objects.equals(guestContainers, other.guestContainers)
+                && Objects.equals(leaseInfo, other.leaseInfo);
     }
 
     public Date getBootTime() {
@@ -305,6 +309,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestOsTimezoneOffset = template.getGuestOsTimezoneOffset();
         guestContainers = template.getGuestContainers();
         volatileRun = template.isVolatileRun();
+        leaseInfo = template.leaseInfo;
     }
 
     public String getAppList() {
@@ -670,6 +675,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setGuestContainers(List<GuestContainer> guestContainers) {
         this.guestContainers = guestContainers;
+    }
+
+    public Map<String, String> getLeaseInfo() {
+        return leaseInfo;
+    }
+
+    public void setLeaseInfo(Map<String, String> leaseInfo) {
+        this.leaseInfo = leaseInfo;
     }
 
     /**

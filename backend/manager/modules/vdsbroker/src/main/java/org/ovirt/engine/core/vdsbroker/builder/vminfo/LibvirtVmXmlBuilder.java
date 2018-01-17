@@ -1051,7 +1051,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeElement("lockspace", vm.getLeaseStorageDomainId().toString());
 
         writer.writeStartElement("target");
-        Map<String, String> leaseInfo = vm.getStaticData().getLeaseInfo();
+        Map<String, String> leaseInfo = vm.getLeaseInfo();
         writer.writeAttributeString("offset", leaseInfo.get(VdsProperties.VmLeaseOffset));
         writer.writeAttributeString("path", leaseInfo.get(VdsProperties.VmLeasePath));
         writer.writeEndElement();

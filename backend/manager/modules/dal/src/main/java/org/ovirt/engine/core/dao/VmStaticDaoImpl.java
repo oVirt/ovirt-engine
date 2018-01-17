@@ -2,9 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Named;
@@ -12,7 +10,6 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -45,7 +42,6 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
                 .addValue("image_type_id", vm.getImageTypeId())
                 .addValue("original_template_name", vm.getOriginalTemplateName())
                 .addValue("original_template_id", vm.getOriginalTemplateGuid())
-                .addValue("lease_info", SerializationFactory.getSerializer().serialize(vm.getLeaseInfo()))
                 .addValue("template_version_number", vm.isUseLatestVersion() ?
                         USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR)
                 .addValue("provider_id", vm.getProviderId());
@@ -211,14 +207,6 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
                 getCustomMapSqlParameterSource().addValue("vds_id", id));
     }
 
-    @Override
-    public void updateVmLeaseInfo(Guid vmId, Map<String, String> leaseInfo) {
-        getCallsHandler().executeModification("UpdateVmLeaseInfo",
-                getCustomMapSqlParameterSource()
-                        .addValue("vm_guid", vmId)
-                        .addValue("lease_info", SerializationFactory.getSerializer().serialize(leaseInfo)));
-    }
-
     /**
      * JDBC row mapper for VM static
      */
@@ -242,8 +230,6 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
             entity.setImageTypeId(Guid.createGuidFromString(rs.getString("image_type_id")));
             entity.setOriginalTemplateName(rs.getString("original_template_name"));
             entity.setOriginalTemplateGuid(getGuid(rs, "original_template_id"));
-            entity.setLeaseInfo(SerializationFactory.getDeserializer().deserialize(
-                    rs.getString("lease_info"), HashMap.class));
             // if template_version_number is null it means use latest version
             entity.setUseLatestVersion(rs.getObject("template_version_number") == USE_LATEST_VERSION_NUMBER_INDICATOR);
             entity.setProviderId(getGuid(rs, "provider_id"));

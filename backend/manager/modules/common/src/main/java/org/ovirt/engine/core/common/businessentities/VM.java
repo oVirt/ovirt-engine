@@ -1731,6 +1731,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmStatic.setLeaseStorageDomainId(leaseStorageDomainId);
     }
 
+    public Map<String, String> getLeaseInfo() {
+        return vmDynamic.getLeaseInfo();
+    }
+
+    public void setLeaseInfo(Map<String, String> leaseInfo) {
+        vmDynamic.setLeaseInfo(leaseInfo);
+    }
+
     public String getUserDefinedProperties() {
         return vmStatic.getUserDefinedProperties();
     }

@@ -211,7 +211,7 @@ public class RunVmValidator {
             return ValidationResult.VALID;
         }
 
-        if (vm.getStaticData().getLeaseInfo() == null) {
+        if (vm.getLeaseInfo() == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_LEASE);
         }
 
