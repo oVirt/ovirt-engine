@@ -7,4 +7,8 @@ public class StringEntityModelPasswordBoxEditor extends EntityModelPasswordBoxEd
     public StringEntityModelPasswordBoxEditor() {
         super(new ToStringEntityModelRenderer<String>(), new ToStringEntityModelParser());
     }
+
+    public void setAutocomplete(String value) {
+        getContentWidget().getElement().setAttribute("autocomplete", value); //$NON-NLS-1$
+    }
 }
