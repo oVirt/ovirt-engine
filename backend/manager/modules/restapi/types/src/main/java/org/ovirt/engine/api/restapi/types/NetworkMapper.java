@@ -167,7 +167,7 @@ public class NetworkMapper {
 
         if (entity.isExternal()) {
             OpenStackNetworkProvider externalProvider = new OpenStackNetworkProvider();
-            externalProvider.setId(entity.getProvidedBy().getExternalId());
+            externalProvider.setId(entity.getProvidedBy().getProviderId().toString());
             model.setExternalProvider(externalProvider);
             if (entity.getProvidedBy().isSetPhysicalNetworkId()) {
                 Network providerPhysicalNetwork = new Network();
