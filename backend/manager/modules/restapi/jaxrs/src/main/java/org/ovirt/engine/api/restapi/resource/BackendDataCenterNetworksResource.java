@@ -37,7 +37,7 @@ public class BackendDataCenterNetworksResource
         network.setDataCenter(dataCenter);
         org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
         AddNetworkStoragePoolParameters params = getAddParameters(network, entity);
-        return performCreate(addAction,
+        return performCreate(network.isSetExternalProvider() ? ActionType.AddNetworkOnProvider : addAction,
                                params,
                                new DataCenterNetworkIdResolver(network.getName(), params.getStoragePoolId().toString()));
     }
