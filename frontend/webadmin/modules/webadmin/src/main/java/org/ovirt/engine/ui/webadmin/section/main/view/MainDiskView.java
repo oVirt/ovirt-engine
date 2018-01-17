@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -7,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
@@ -21,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -227,7 +232,11 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
 
         aliasColumn = DisksViewColumns.getAliasColumn((index, disk, value) -> {
             //The link was clicked, now fire an event to switch to details.
-            transitionHandler.handlePlaceTransition(true);
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put(FragmentParams.NAME.getName(), disk.getName());
+            //The link was clicked, now fire an event to switch to details.
+            getPlaceTransitionHandler().handlePlaceTransition(
+                    WebAdminApplicationPlaces.diskGeneralSubTabPlace, parameters);
         }, DiskConditionFieldAutoCompleter.ALIAS);
 
         idColumn = DisksViewColumns.getIdColumn(DiskConditionFieldAutoCompleter.ID);

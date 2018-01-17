@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.common.place;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent.MainModelSelectionChangeHandler;
@@ -13,6 +15,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.History;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
@@ -87,6 +90,34 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
     @Override
     public void onUserLoginChange(UserLoginChangeEvent event) {
         revealCurrentPlace();
+    }
+
+    /**
+     * Update the fragment parameters of the current visible place. This will cause a NEW item to be added to the
+     * browser history so the back button will take you back to the previous fragment parameters on the same place.
+     * @param params key value pairs containing the key and the value of the parameters. Valid keys are defined in
+     * {@link FragmentParams}
+     */
+    public void setFragmentParameters(Map<String, String> params) {
+        setFragmentParameters(params, true);
+    }
+
+    /**
+     * Update the fragment parameters of the current visible place. This will cause a NEW item to be added to the
+     * browser history so the back button will take you back to the previous fragment parameters on the same place.
+     * @param params key value pairs containing the key and the value of the parameters. Valid keys are defined in
+     * {@link FragmentParams}
+     * @param newItem true to insert new item into History, false to simply replace current URL without adding
+     * to history
+     */
+    public void setFragmentParameters(Map<String, String> params, boolean newItem) {
+        PlaceRequest request = new PlaceRequest.Builder().nameToken(
+                getCurrentPlaceRequest().getNameToken()).with(params).build();
+        if (newItem) {
+            History.newItem(buildHistoryToken(request), false);
+        } else {
+            History.replaceItem(buildHistoryToken(request), false);
+        }
     }
 
     @Override

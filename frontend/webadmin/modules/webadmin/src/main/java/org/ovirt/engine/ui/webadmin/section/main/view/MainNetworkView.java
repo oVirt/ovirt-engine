@@ -67,8 +67,12 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
 
             @Override
             public void update(int index, NetworkView network, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), network.getName());
+                parameters.put(FragmentParams.DATACENTER.getName(), network.getDataCenterName());
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
             }
 
         }) {

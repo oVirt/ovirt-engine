@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
@@ -63,7 +66,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetActionPanel = new Type<>();
 
-    private final PlaceManager placeManager;
+    private final ApplicationPlaceManager placeManager;
     private final DetailModelProvider<M, D> modelProvider;
     private final AbstractMainSelectedItems<T> selectedMainItems;
     private boolean resizing = false;
@@ -81,7 +84,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             ActionPanelPresenterWidget<?, M> actionPanelPresenterWidget,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, actionPanelPresenterWidget, slot);
-        this.placeManager = placeManager;
+        this.placeManager = (ApplicationPlaceManager) placeManager;
         this.modelProvider = modelProvider;
         this.selectedMainItems = selectedMainItems;
     }
@@ -131,12 +134,21 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     public void itemChanged(T item) {
         boolean widgetVisible = getView().asWidget().isVisible();
         if (item != null && widgetVisible) {
+            placeManager.setFragmentParameters(getFragmentParamsFromEntity(item));
             getView().setMainSelectedItem(item);
         } else if (item == null && widgetVisible && (getMainModel().getItems() == null
                 || getMainModel().getItems().isEmpty())) {
             // No selection so we can't positively show anything, switch to grid.
             placeManager.revealPlace(getMainContentRequest());
         }
+    }
+
+    protected Map<String, String> getFragmentParamsFromEntity(T item) {
+        Map<String, String> result = new HashMap<>();
+        if (item != null) {
+            result.put(FragmentParams.NAME.getName(), ((Nameable) item).getName());
+        }
+        return result;
     }
 
     /**
@@ -166,13 +178,14 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         // Notify model provider that the tab has been revealed
         modelProvider.onSubTabSelected();
 
-        Object entity = modelProvider.getModel().getEntity();
+        T entity = (T) modelProvider.getModel().getEntity();
         if (entity != null) {
             onDetailModelEntityChange(entity);
         }
         if (hasActionPanelPresenterWidget() && getTable() != null) {
             getTable().setActionMenus(getActionPanelPresenterWidget().getActionButtons());
         }
+        placeManager.setFragmentParameters(getFragmentParamsFromEntity(entity), false);
     }
 
     @Override
@@ -199,6 +212,10 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
         Set<FragmentParams> params = FragmentParams.getParams(request);
 
+        if (params.isEmpty()) {
+            // Try to obtain previous parameters if possible.
+            params = FragmentParams.getParams(placeManager.getCurrentPlaceRequest());
+        }
         final String fragmentNameValue = request.getParameter(FragmentParams.NAME.getName(), "");
         final List<T> itemToSwitchTo;
         if (params.contains(FragmentParams.NAME)) {

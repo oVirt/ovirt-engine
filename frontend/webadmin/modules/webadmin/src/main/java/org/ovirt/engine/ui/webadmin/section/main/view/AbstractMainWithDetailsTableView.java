@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainWithDetailsPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHandler;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,7 +46,6 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
 
     private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
-    protected DetailsTransitionHandler<T> transitionHandler;
     protected PlaceTransitionHandler placeTransitionHandler;
 
     private Column breadCrumbsColumn;
@@ -84,11 +82,6 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
             table.setMaxGridHeight(Window.getClientHeight() - tableTop);
             table.updateGridSize();
         }
-    }
-
-    @Override
-    public void setDetailPlaceTransitionHandler(DetailsTransitionHandler<T> handler) {
-        this.transitionHandler = handler;
     }
 
     @Override

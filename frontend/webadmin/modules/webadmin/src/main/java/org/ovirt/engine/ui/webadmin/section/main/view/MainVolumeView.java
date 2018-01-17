@@ -2,13 +2,16 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
@@ -16,6 +19,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainVolumePresenter;
@@ -66,8 +70,11 @@ public class MainVolumeView extends AbstractMainWithDetailsTableView<GlusterVolu
 
             @Override
             public void update(int index, GlusterVolumeEntity volume, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), volume.getName());
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.volumeGeneralSubTabPlace, parameters);
             }
 
         }) {

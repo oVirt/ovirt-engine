@@ -4,12 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
 import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.HasColumns;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
@@ -18,9 +22,9 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.AbstractErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ErrataFilterValue;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHandler;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -145,7 +149,7 @@ public class ErrataTableView extends ResizeComposite {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void initErrataGrid(HasColumns grid, boolean isEngineErrataView,
-            final DetailsTransitionHandler<Erratum> transitionHandler) {
+            final PlaceTransitionHandler transitionHandler) {
         grid.enableColumnResizing();
         AbstractIconTypeColumn<Erratum> errataTypeColumn = new AbstractIconTypeColumn<Erratum>() {
             @Override
@@ -228,8 +232,11 @@ public class ErrataTableView extends ResizeComposite {
 
                 @Override
                 public void update(int index, Erratum erratum, String value) {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), erratum.getName());
                     //The link was clicked, now fire an event to switch to details.
-                    transitionHandler.handlePlaceTransition(true);
+                    transitionHandler.handlePlaceTransition(
+                            WebAdminApplicationPlaces.errataDetailsSubTabPlace, parameters);
                 }
 
             }) {

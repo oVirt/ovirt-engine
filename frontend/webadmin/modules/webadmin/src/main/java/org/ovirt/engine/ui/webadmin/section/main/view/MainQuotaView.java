@@ -1,16 +1,21 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.searchbackend.QuotaConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -55,8 +60,12 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
 
             @Override
             public void update(int index, Quota quota, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), quota.getName());
+                parameters.put(FragmentParams.DATACENTER.getName(), quota.getStoragePoolName());
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.quotaClusterSubTabPlace, parameters);
             }
 
         }) {

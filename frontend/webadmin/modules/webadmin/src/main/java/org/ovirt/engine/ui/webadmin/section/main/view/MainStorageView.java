@@ -1,17 +1,22 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.searchbackend.StorageDomainFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractStorageSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -57,8 +62,11 @@ public class MainStorageView extends AbstractMainWithDetailsTableView<StorageDom
 
             @Override
             public void update(int index, StorageDomain storageDomain, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), storageDomain.getName());
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.storageGeneralSubTabPlace, parameters);
             }
 
         }) {

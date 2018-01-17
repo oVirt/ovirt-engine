@@ -1,15 +1,20 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.users.UserTypeChangeHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.users.UsersTypeRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainUserPresenter;
@@ -73,8 +78,11 @@ public class MainUserView extends AbstractMainWithDetailsTableView<DbUser, UserL
         groupNameColumn = new AbstractLinkColumn<DbUser>(new FieldUpdater<DbUser, String>() {
             @Override
             public void update(int index, DbUser user, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), user.getName());
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.userGeneralSubTabPlace, parameters);
             }
         }) {
             @Override
@@ -97,8 +105,11 @@ public class MainUserView extends AbstractMainWithDetailsTableView<DbUser, UserL
         userNameColumn = new AbstractLinkColumn<DbUser>(new FieldUpdater<DbUser, String>() {
             @Override
             public void update(int index, DbUser user, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), user.getName());
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.userGeneralSubTabPlace, parameters);
             }
         }) {
             @Override

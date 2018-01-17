@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.PlaceTransitionHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainEngineErrataPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.ErrataTableView;
 import org.ovirt.engine.ui.webadmin.widget.errata.ErrataFilterPanel;
@@ -89,9 +89,9 @@ public class MainEngineErrataView extends AbstractMainWithDetailsTableView<Errat
     }
 
     @Override
-    public void setDetailPlaceTransitionHandler(DetailsTransitionHandler<Erratum> handler) {
-        super.setDetailPlaceTransitionHandler(handler);
+    public void setPlaceTransitionHandler(PlaceTransitionHandler handler) {
+        super.setPlaceTransitionHandler(handler);
         // configure the table columns -- share config with ErrataTableView
-        ErrataTableView.initErrataGrid(getTable(), true, transitionHandler);
+        ErrataTableView.initErrataGrid(getTable(), true, handler);
     }
 }

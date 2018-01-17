@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -26,7 +27,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 public abstract class AbstractMainPresenter<T, M extends SearchableListModel, V extends View,
     P extends ProxyPlace<?>> extends Presenter<V, P> {
 
-    protected final PlaceManager placeManager;
+    protected final ApplicationPlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;
     private final ActionPanelPresenterWidget<?, ?> actionPanel;
 
@@ -35,7 +36,7 @@ public abstract class AbstractMainPresenter<T, M extends SearchableListModel, V 
             ActionPanelPresenterWidget<T, M> actionPanel) {
         super(eventBus, view, proxy, MainContentPresenter.TYPE_SetContent);
         this.actionPanel = actionPanel;
-        this.placeManager = placeManager;
+        this.placeManager = (ApplicationPlaceManager) placeManager;
         this.modelProvider = modelProvider;
     }
 

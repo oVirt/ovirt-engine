@@ -28,7 +28,10 @@ public enum FragmentParams {
     }
 
     public static Set<FragmentParams> getParams(PlaceRequest currentPlace) {
-        Set<String> parameterNames = currentPlace.getParameterNames();
+        return getParams(currentPlace.getParameterNames());
+    }
+
+    public static Set<FragmentParams> getParams(Set<String> parameterNames) {
         Set<FragmentParams> result = new HashSet<>();
         for (int i = 0; i < FragmentParams.values().length; i++) {
             if (parameterNames.contains(FragmentParams.values()[i].getName())) {

@@ -97,7 +97,11 @@ public class MainHostView extends AbstractMainWithDetailsTableView<VDS, HostList
 
                 @Override
                 public void update(int index, VDS host, String value) {
-                    transitionHandler.handlePlaceTransition(true);
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(FragmentParams.NAME.getName(), host.getName());
+                    //The link was clicked, now fire an event to switch to details.
+                    getPlaceTransitionHandler().handlePlaceTransition(
+                            WebAdminApplicationPlaces.hostGeneralSubTabPlace, parameters);
                 }
 
             }) {

@@ -54,10 +54,4 @@ public class MainEventPresenter extends AbstractMainWithDetailsPresenter<AuditLo
     protected void fireTableSelectionChangeEvent() {
         EventSelectionChangeEvent.fire(this, getSelectedItems());
     }
-
-    @Override
-    public void handlePlaceTransition(boolean linkClicked) {
-        // No-op, Event main tab has no sub tabs
-    }
-
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,11 +54,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest.Builder;
  */
 public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDetailsModel,
     V extends AbstractMainWithDetailsPresenter.ViewDef<T>, P extends ProxyPlace<?>>
-        extends AbstractMainPresenter<T, M, V, P> implements PlaceTransitionHandler, DetailsTransitionHandler<T> {
+        extends AbstractMainPresenter<T, M, V, P> implements PlaceTransitionHandler {
 
     public interface ViewDef<T> extends View, HasActionTable<T> {
-        void setDetailPlaceTransitionHandler(DetailsTransitionHandler<T> handler);
-
         void resizeToFullHeight();
 
         HandlerRegistration addWindowResizeHandler(ResizeHandler handler);
@@ -99,7 +98,6 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         return getView().getTable();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void onBind() {
         super.onBind();
@@ -116,7 +114,12 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         registerHandler(getEventBus().addHandler(ApplySearchStringEvent.getType(), event -> {
             applySearchString(event.getSearchString());
         }));
-        getView().setDetailPlaceTransitionHandler(this);
+        modelProvider.getModel().getPropertyChangedEvent().addListener((event, sender, args) -> {
+            // Update search string when 'SearchString' property changes
+            if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
+                placeManager.setFragmentParameters(getFragmentParameters(modelProvider.getModel().getSearchString()));
+            }
+        });
         registerHandler(getView().addWindowResizeHandler(e -> {
             if (!resizing) {
                 Scheduler.get().scheduleDeferred(() -> {
@@ -157,6 +160,7 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
             SearchableListModel<?, ? extends EntityModel<?>> listModel = modelProvider.getModel();
             if (StringHelper.isNotNullOrEmpty(searchString)
                     && searchString.startsWith(listModel.getDefaultSearchString())) {
+                placeManager.setFragmentParameters(getFragmentParameters(searchString), false);
                 // search string for this model found.
                 listModel.setSearchString(searchString);
                 listModel.getSearchCommand().execute();
@@ -164,15 +168,13 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         }
     }
 
-    @Override
-    public void handlePlaceTransition(boolean linkClicked) {
-        if (hasSelection() && hasSelectionDetails() && linkClicked) {
-            // Sub tab panel is shown upon revealing the sub tab, in order to avoid
-            // the 'flicker' effect due to the panel still showing previous content
-            placeManager.revealPlace(getSubTabRequest());
-        } else {
-            placeManager.revealPlace(getMainViewRequest());
+    private Map<String, String> getFragmentParameters(String searchString) {
+        Map<String, String> result = new HashMap<>();
+        if (searchString.startsWith(modelProvider.getModel().getDefaultSearchString())) {
+            searchString = searchString.substring(modelProvider.getModel().getDefaultSearchString().length());
         }
+        result.put(FragmentParams.SEARCH.getName(), searchString);
+        return result;
     }
 
     protected boolean hasSelectionDetails() {
@@ -207,6 +209,14 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
                 break;
             }
         });
+    }
+
+    @Override
+    protected void onReset() {
+        super.onReset();
+        if (!getModel().getDefaultSearchString().trim().equals(getModel().getSearchString().trim())) {
+            Scheduler.get().scheduleDeferred(() -> applySearchString(getModel().getSearchString()));
+        }
     }
 
     @Override

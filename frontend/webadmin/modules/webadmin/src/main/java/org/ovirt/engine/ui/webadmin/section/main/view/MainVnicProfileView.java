@@ -45,8 +45,13 @@ public class MainVnicProfileView extends AbstractMainWithDetailsTableView<VnicPr
 
             @Override
             public void update(int index, VnicProfileView vnicProfile, String value) {
-                //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), vnicProfile.getName());
+                parameters.put(FragmentParams.NETWORK.getName(), vnicProfile.getNetworkName());
+                parameters.put(FragmentParams.DATACENTER.getName(),
+                        vnicProfile.getDataCenterName());
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.vnicProfileVmSubTabPlace, parameters);
             }
 
         }) {

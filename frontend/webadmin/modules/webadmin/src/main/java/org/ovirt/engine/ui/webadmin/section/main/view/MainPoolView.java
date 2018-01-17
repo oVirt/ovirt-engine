@@ -47,8 +47,11 @@ public class MainPoolView extends AbstractMainWithDetailsTableView<VmPool, PoolL
 
             @Override
             public void update(int index, VmPool pool, String value) {
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put(FragmentParams.NAME.getName(), pool.getName());
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition(true);
+                getPlaceTransitionHandler().handlePlaceTransition(
+                        WebAdminApplicationPlaces.poolGeneralSubTabPlace, parameters);
             }
 
         }) {

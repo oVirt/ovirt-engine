@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,5 +51,13 @@ public abstract class AbstractSubTabVnicProfilePresenter<D extends HasEntity<?>,
         } else {
             return namedItems;
         }
+    }
+
+    @Override
+    protected Map<String, String> getFragmentParamsFromEntity(VnicProfileView item) {
+        Map<String, String> result = super.getFragmentParamsFromEntity(item);
+        result.put(FragmentParams.DATACENTER.getName(), item.getDataCenterName());
+        result.put(FragmentParams.NETWORK.getName(), item.getNetworkName());
+        return result;
     }
 }

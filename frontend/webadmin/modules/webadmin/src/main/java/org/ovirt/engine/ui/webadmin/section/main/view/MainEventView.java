@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainEventPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -37,8 +36,6 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
 
     @UiField
     FlowPanel tablePanel;
-
-    protected DetailsTransitionHandler<AuditLog> detailsTransitionHandler;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -133,11 +130,6 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
         };
         messageColumn.makeSortable(AuditLogConditionFieldAutoCompleter.MESSAGE);
         getTable().addColumn(messageColumn, constants.messageEvent(), BASIC_VIEW_MSG_COLUMN_WIDTH);
-    }
-
-    @Override
-    public void setDetailPlaceTransitionHandler(DetailsTransitionHandler<AuditLog> handler) {
-        this.detailsTransitionHandler = handler;
     }
 
 }
