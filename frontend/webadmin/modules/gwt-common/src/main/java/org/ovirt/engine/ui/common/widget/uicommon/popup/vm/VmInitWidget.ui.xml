@@ -62,40 +62,40 @@
     <g:FlowPanel ui:field="mainPanel">
       <g:FlowPanel ui:field="syspreptOptionsContent">
         <b:Row>
-          <w:EntityModelWidgetWithInfo ui:field="windowsHostnameEditorWithInfo" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+          <w:EntityModelWidgetWithInfo ui:field="windowsHostnameEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-          <ge:ListModelSuggestBoxEditor ui:field="sysprepDomainEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+          <ge:ListModelSuggestBoxEditor ui:field="sysprepDomainEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-          <ge:StringEntityModelTextBoxEditor ui:field="sysprepOrgNameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+          <ge:StringEntityModelTextBoxEditor ui:field="sysprepOrgNameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-          <ge:StringEntityModelTextBoxEditor ui:field="activeDirectoryOUEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+          <ge:StringEntityModelTextBoxEditor ui:field="activeDirectoryOUEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-          <b:Column size="LG_12">
+          <b:Column size="SM_12">
             <ge:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" usePatternFly="true" removeFormGroup="true" />
           </b:Column>
         </b:Row>
         <b:Row>
-            <e:ListModelListBoxEditor ui:field="windowsSysprepTimeZoneEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:ListModelListBoxEditor ui:field="windowsSysprepTimeZoneEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-          <b:Column size="LG_12">
+          <b:Column size="SM_12">
             <g:FlowPanel>
               <d:AdvancedParametersExpander ui:field="sysprepPasswordExpander" addStyleNames="{style.verticalPanel}"/>
               <g:FlowPanel ui:field="sysprepPasswordExpanderContent" >
                 <b:Row>
-                  <b:Column size="LG_12">
+                  <b:Column size="SM_12">
                     <ge:EntityModelCheckBoxEditor ui:field="sysprepPasswordSetEditor" label="{constants.vmInitPasswordSetLabel}" removeFormGroup="true" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
-                  <ge:StringEntityModelPasswordBoxEditor ui:field="sysprepAdminPasswordEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <ge:StringEntityModelPasswordBoxEditor ui:field="sysprepAdminPasswordEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <ge:StringEntityModelPasswordBoxEditor ui:field="sysprepAdminPasswordVerificationEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                  <ge:StringEntityModelPasswordBoxEditor ui:field="sysprepAdminPasswordVerificationEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
               </g:FlowPanel>
             </g:FlowPanel>
@@ -104,22 +104,22 @@
             <d:AdvancedParametersExpander ui:field="sysprepInputsExpander" addStyleNames="{style.verticalPanel}"/>
                 <g:FlowPanel ui:field="sysprepInputsExpanderContent" >
                   <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="inputLocaleEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="inputLocaleEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="uiLanguageEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="uiLanguageEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="systemLocaleEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="systemLocaleEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <ge:StringEntityModelTextBoxEditor ui:field="userLocaleEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                    <ge:StringEntityModelTextBoxEditor ui:field="userLocaleEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                 </g:FlowPanel>
             <d:AdvancedParametersExpander ui:field="sysprepScriptExpander" addStyleNames="{style.verticalPanel}" />
             <g:FlowPanel ui:field="sysprepScriptExpanderContent" >
               <b:Row>
-                <b:Column size="LG_12">
+                <b:Column size="SM_12">
                   <ge:StringEntityModelTextAreaEditor ui:field="sysprepScriptEditor" usePatternFly="true" />
                 </b:Column>
               </b:Row>
@@ -129,15 +129,15 @@
         <g:FlowPanel ui:field="cloudInitOptionsContent">
             <g:FlowPanel>
               <b:Row>
-                <ge:StringEntityModelTextBoxEditor ui:field="hostnameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="hostnameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                <b:Column size="LG_12">
+                <b:Column size="SM_12">
                   <ge:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" label="{constants.cloudInitConfigureTimeZoneLabel}" removeFormGroup="true" usePatternFly="true" />
                 </b:Column>
               </b:Row>
               <b:Row>
-                <e:ListModelListBoxEditor ui:field="timeZoneEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <e:ListModelListBoxEditor ui:field="timeZoneEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
             </g:FlowPanel>
 
@@ -145,24 +145,24 @@
 
             <g:FlowPanel ui:field="authenticationExpanderContent">
               <b:Row>
-                <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                <b:Column size="LG_12">
+                <b:Column size="SM_12">
                   <ge:EntityModelCheckBoxEditor ui:field="cloudInitPasswordSetEditor" label="{constants.vmInitPasswordSetLabel}" removeFormGroup="true" usePatternFly="true" />
                 </b:Column>
               </b:Row>
               <b:Row>
-                <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordVerificationEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordVerificationEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                <ge:StringEntityModelTextAreaEditor ui:field="authorizedKeysEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextAreaEditor ui:field="authorizedKeysEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                <b:Column size="LG_12">
+                <b:Column size="SM_12">
                   <ge:EntityModelCheckBoxEditor ui:field="regenerateKeysEnabledEditor" label="{constants.cloudInitRegenerateKeysLabel}" removeFormGroup="true" usePatternFly="true" />
                 </b:Column>
               </b:Row>
@@ -171,21 +171,21 @@
             <d:AdvancedParametersExpander ui:field="networkExpander"/>
             <g:FlowPanel ui:field="networkExpanderContent" >
               <b:Row>
-                <ge:StringEntityModelTextBoxEditor ui:field="dnsServers" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="dnsServers" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                <ge:StringEntityModelTextBoxEditor ui:field="dnsSearchDomains" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="dnsSearchDomains" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                <b:Column size="LG_6">
+                <b:Column size="SM_6">
                   <ge:EntityModelCheckBoxEditor ui:field="networkEnabledEditor" label="{constants.cloudInitNetworkLabel}"  usePatternFly="true" />
                 </b:Column>
-                <b:Column size="LG_6">
+                <b:Column size="SM_6">
                   <w:ComboBox ui:field="networkComboBox" />
                 </b:Column>
               </b:Row>
               <b:Row>
-                <b:Column offset="LG_6" size="LG_6">
+                <b:Column offset="SM_6" size="SM_6">
                   <b:Button ui:field="networkAddButton" addStyleNames="{style.buttonStyle} {style.floatLeft}" />
                   <g:Label ui:field="networkAddLabel" addStyleNames="{style.labelHeight} {style.floatLeft}"/>
                   <g:Label ui:field="networkLabelSepAddRemove" addStyleNames="{style.labelHeight} {style.labelSep} {style.floatLeft}" />
@@ -194,15 +194,15 @@
                 </b:Column>
               </b:Row>
               <b:Row ui:field="networkOptions">
-                <e:ListModelListBoxEditor ui:field="ipv4BootProtocolEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4AddressEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4NetmaskEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4GatewayEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <e:ListModelListBoxEditor ui:field="ipv6BootProtocolEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv6AddressEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:IntegerEntityModelTextBoxEditor ui:field="networkIpv6PrefixEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv6GatewayEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                <b:Column size="LG_12">
+                <e:ListModelListBoxEditor ui:field="ipv4BootProtocolEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4AddressEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4NetmaskEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv4GatewayEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <e:ListModelListBoxEditor ui:field="ipv6BootProtocolEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv6AddressEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <ge:IntegerEntityModelTextBoxEditor ui:field="networkIpv6PrefixEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <ge:StringEntityModelTextBoxEditor ui:field="networkIpv6GatewayEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <b:Column size="SM_12">
                   <ge:EntityModelCheckBoxEditor ui:field="networkStartOnBootEditor" label="{constants.cloudInitNetworkStartOnBootLabel}" removeFormGroup="true" usePatternFly="true" />
                 </b:Column>
               </b:Row>
@@ -211,7 +211,7 @@
             <d:AdvancedParametersExpander ui:field="customScriptExpander" addStyleNames="{style.verticalPanel}"/>
             <g:FlowPanel ui:field="customScriptExpanderContent" >
               <b:Row>
-                <b:Column size="LG_12">
+                <b:Column size="SM_12">
                   <d:InfoIcon ui:field="customScriptInfoIcon" addStyleNames="{style.customScriptInfoIconStyle}" />
                   <ge:StringEntityModelTextAreaEditor ui:field="customScriptEditor" usePatternFly="true" />
                 </b:Column>
