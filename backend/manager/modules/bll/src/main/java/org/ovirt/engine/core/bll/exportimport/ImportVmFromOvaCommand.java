@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
@@ -15,14 +14,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 @DisableInPrepareMode
-@NonTransactiveCommandAttribute(forceCompensation = true)
+@NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
 public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends ImportVmFromExternalProviderCommand<T> {
-
-    @Inject
-    private CommandCoordinatorUtil commandCoordinatorUtil;
 
     public ImportVmFromOvaCommand(Guid cmdId) {
         super(cmdId);
@@ -33,18 +30,21 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
     }
 
     @Override
+    protected boolean validate() {
+        if (getParameters().getProxyHostId() == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROXY_HOST_MUST_BE_SPECIFIED);
+        }
+
+        return super.validate();
+    }
+
+    @Override
     protected void convert() {
         boolean useVirtV2V = getParameters().getVm().getOrigin() != OriginType.OVIRT;
         if (useVirtV2V) {
-            commandCoordinatorUtil.executeAsyncCommand(
-                    ActionType.ConvertOva,
-                    buildConvertOvaParameters(),
-                    cloneContextAndDetachFromParent());
+            runInternalActionWithTasksContext(ActionType.ConvertOva, buildConvertOvaParameters());
         } else {
-            commandCoordinatorUtil.executeAsyncCommand(
-                    ActionType.ExtractOva,
-                    buildExtractOvaParameters(),
-                    cloneContextAndDetachFromParent());
+            runInternalActionWithTasksContext(ActionType.ExtractOva, buildExtractOvaParameters());
         }
     }
 
@@ -59,6 +59,9 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
         parameters.setNetworkInterfaces(getParameters().getVm().getInterfaces());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
 
@@ -71,6 +74,9 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setClusterId(getClusterId());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
 

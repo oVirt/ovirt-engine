@@ -271,6 +271,7 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
         return true;
     }
 
+    @SuppressWarnings("incomplete-switch")
     private void executeNextOperation() {
         switch (getParameters().getPhase()) {
             case CREATE_OVA:

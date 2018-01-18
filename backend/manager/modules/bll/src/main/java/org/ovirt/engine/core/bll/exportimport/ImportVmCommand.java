@@ -1415,21 +1415,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     @Override
-    public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.IMPORTEXPORT_STARTING_IMPORT_VM
-                    : AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
-
-        case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.IMPORTEXPORT_IMPORT_VM : AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
-        case END_FAILURE:
-            return AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
-        }
-        return super.getAuditLogTypeValue();
-    }
-
-    @Override
     protected List<Class<?>> getValidationGroups() {
         if (getParameters().isImportAsNewEntity()) {
             return addValidationGroup(ImportClonedEntity.class);

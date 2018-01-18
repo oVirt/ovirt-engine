@@ -1,38 +1,20 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
-import org.ovirt.engine.core.bll.LockMessage;
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
-import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConvertVmVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -40,10 +22,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
-import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
@@ -58,15 +37,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     @Inject
     private ResourceManager resourceManager;
     @Inject
-    private OvfHelper ovfHelper;
-    @Inject
-    private VdsDao vdsDao;
-    @Inject
-    private DiskVmElementDao diskVmElementDao;
-    @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
-    @Inject
-    private ImportUtils importUtils;
 
     private ConvertVmCallback cachedCallback;
 
@@ -106,63 +77,20 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         getVmManager().setConvertProxyHostId(getVdsId());
     }
 
-    @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Command);
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(
-                        LockingGroup.VM,
-                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED)
-                                .with("VmName", getVmName())));
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded()?
-                    AuditLogType.IMPORTEXPORT_STARTING_CONVERT_VM
-                    : AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
-        case END_SUCCESS:
-            return getSucceeded()?
-                    AuditLogType.IMPORTEXPORT_IMPORT_VM
-                    : AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
-        case END_FAILURE:
-            return AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
-        }
-        return super.getAuditLogTypeValue();
-    }
-
     ///////////////////
     //// Sync Part ////
     ///////////////////
 
     @Override
     protected boolean validate() {
-        if (getVds() != null && getVds().getStatus() != VDSStatus.Up) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
-        }
-
-        if (getVds() == null && !selectProxyHost()) {
+        if (getVds() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         }
 
-        return true;
-    }
-
-    private boolean selectProxyHost() {
-        List<VDS> activeHosts = vdsDao.getAllForStoragePoolAndStatus(getStoragePoolId(), VDSStatus.Up);
-        if (activeHosts.isEmpty()) {
-            return false;
+        if (getVds().getStatus() != VDSStatus.Up) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
-        VDS activeHost = activeHosts.get(0);
-        setVds(activeHost);
-        // update the parameters for the end-action phase
-        getParameters().setProxyHostId(activeHost.getId());
+
         return true;
     }
 
@@ -214,78 +142,25 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     ////////////////////
 
     @Override
-    protected void endSuccessfully() {
-        getReturnValue().setEndActionTryAgain(false);
+    protected void endWithFailure() {
         try {
-            if (getParameters().getOriginType() != OriginType.KVM) {
-                VM vm = readVmFromOvf(getOvfOfConvertedVm());
-                vm.setClusterId(getParameters().getClusterId());
-                vm.setInterfaces(getParameters().getNetworkInterfaces());
-                updateDiskVmElements(vm);
-                addImportedDevices(vm);
-            }
+            getVdsManager().removeV2VJobInfoForVm(getVmId());
+            getVmManager().setConvertProxyHostId(null);
             setSucceeded(true);
-        } catch (EngineException e) {
-            log.info("failed to add devices to converted vm");
-            removeVm();
         } finally {
             deleteV2VJob();
         }
     }
 
-    @Override
-    protected void endWithFailure() {
-        auditLog(this, AuditLogType.IMPORTEXPORT_CONVERT_FAILED);
-        removeVm();
-        deleteV2VJob();
+    protected void endSuccessfully() {
+        getVdsManager().removeV2VJobInfoForVm(getVmId());
+        getVmManager().setConvertProxyHostId(null);
         setSucceeded(true);
     }
 
-    private VM readVmFromOvf(String ovf) {
-        try {
-            return ovfHelper.readVmFromOvf(ovf).getVm();
-        } catch (OvfReaderException e) {
-            log.debug("failed to parse a given ovf configuration: \n " + ovf, e);
-            auditLog(this, AuditLogType.IMPORTEXPORT_INVALID_OVF);
-            throw new EngineException();
-        }
-    }
-
-    private String getOvfOfConvertedVm() {
-        VDSReturnValue retValue = runVdsCommand(
-                VDSCommandType.GetConvertedOvf,
-                new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
-        if (!retValue.getSucceeded()) {
-            auditLog(this, AuditLogType.IMPORTEXPORT_CANNOT_GET_OVF);
-            throw new EngineException();
-        }
-        return (String) retValue.getReturnValue();
-    }
-
     private void deleteV2VJob() {
-        getVdsManager().removeV2VJobInfoForVm(getVmId());
-        getVmManager().setConvertProxyHostId(null);
-        runVdsCommand(
-                VDSCommandType.DeleteV2VJob,
+        runVdsCommand(VDSCommandType.DeleteV2VJob,
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
-    }
-
-    private void updateDiskVmElements(VM vm) {
-        vm.getImages().stream().map(disk -> disk.getDiskVmElementForVm(vm.getId())).forEach(diskVmElementDao::update);
-    }
-
-    private void addImportedDevices(VM vm) {
-        VmStatic vmStatic = vm.getStaticData();
-        // Disk devices were already added
-        vmStatic.setImages(new ArrayList<>());
-        importUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
-        getVmDeviceUtils().addImportedDevices(vmStatic, false, false);
-    }
-
-    private void removeVm() {
-        runInternalAction(
-                ActionType.RemoveVm,
-                new RemoveVmParameters(getVmId(), true));
     }
 
     /////////////////////////
@@ -293,15 +168,11 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     /////////////////////////
 
     protected VmManager getVmManager() {
-        return getResourceManager().getVmManager(getVmId());
+        return resourceManager.getVmManager(getVmId());
     }
 
     protected VdsManager getVdsManager() {
-        return getResourceManager().getVdsManager(getVdsId());
-    }
-
-    protected ResourceManager getResourceManager() {
-        return resourceManager;
+        return resourceManager.getVdsManager(getVdsId());
     }
 
     private CommandExecutionStatus getCommandExecutionStatus() {
