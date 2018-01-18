@@ -22,27 +22,27 @@
             </b:Column>
         </b:Row>
         <b:Row>
-            <w:EntityModelWidgetWithInfo ui:field="mappings" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <w:EntityModelWidgetWithInfo ui:field="mappings" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <b:Column size="LG_12">
+            <b:Column size="SM_12">
                 <g:Label text="{constants.messagingConfiguration}" addStyleNames="{style.messagingServerHeader}"/>
             </b:Column>
         </b:Row>
         <b:Row>
-            <e:ListModelListBoxEditor ui:field="brokerTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:ListModelListBoxEditor ui:field="brokerTypeEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="messagingServer" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="messagingServer" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="messagingServerPort" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="messagingServerPort" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="messagingServerUsername" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="messagingServerUsername" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelPasswordBoxEditor ui:field="messagingServerPassword" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelPasswordBoxEditor ui:field="messagingServerPassword" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
     </g:FlowPanel>
 

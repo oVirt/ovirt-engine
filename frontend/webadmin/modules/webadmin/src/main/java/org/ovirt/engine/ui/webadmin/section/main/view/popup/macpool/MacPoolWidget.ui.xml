@@ -16,15 +16,15 @@
 
   <g:FlowPanel>
     <b:Row>
-        <ge:EntityModelCheckBoxEditor ui:field="allowDuplicates" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6"/>
+        <ge:EntityModelCheckBoxEditor ui:field="allowDuplicates" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
     </b:Row>
     <b:Row>
-        <b:Column size="LG_12">
+        <b:Column size="SM_12">
             <g:Label text="{constants.macPoolWidgetRangesLabel}" addStyleNames="{style.macRangesLabel}" />
         </b:Column>
     </b:Row>
     <b:Row>
-        <b:Column size="LG_12">
+        <b:Column size="SM_12">
             <m:MacRangeWidget ui:field="macRanges" />
         </b:Column>
     </b:Row>

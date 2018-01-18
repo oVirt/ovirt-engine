@@ -76,44 +76,44 @@
                         <t:content>
                             <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_4">
+                                    <b:Column size="SM_4">
                                         <g:RadioButton ui:field="rbPassword" addStyleNames="{style.floatLeft}" />
                                         <g:Label ui:field="rbPasswordLabel" text="{constants.hostPasswordLabel}" addStyleNames="{style.radioLabel}" />
                                     </b:Column>
-                                    <b:Column size="LG_8">
+                                    <b:Column size="SM_8">
                                         <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_4">
+                                    <b:Column size="SM_4">
                                         <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.floatLeft}"/>
                                         <g:Label ui:field="rbPublicKeyLabel" text="{constants.hostPublicKeyLable}" addStyleNames="{style.radioLabel}" />
                                     </b:Column>
-                                    <b:Column size="LG_8">
+                                    <b:Column size="SM_8">
                                         <ge:StringEntityModelTextAreaLabelEditor ui:field="publicKeyEditor" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" usePatternFly="true"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelLabelEditor ui:field="hostVersionEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
+                                    <ge:StringEntityModelLabelEditor ui:field="hostVersionEditor" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="isoEditor" usePatternFly="true" labelColSize="LG_4" widgetColSize="LG_8"/>
+                                    <e:ListModelListBoxEditor ui:field="isoEditor" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <ge:EntityModelCheckBoxEditor ui:field="activateHostAfterInstallEditor" usePatternFly="true"/>
                                     </b:Column>
                                 </b:Row>
@@ -133,7 +133,7 @@
                         <t:content>
                             <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">
-                                    <b:Column size="LG_12">
+                                    <b:Column size="SM_12">
                                         <g:Label ui:field="hostedEngineWarningLabel"
                                                  addStyleNames="{style.warningLabel}"
                                                  text="{constants.hostedEngineDeploymentCompatibilityWarning}"/>

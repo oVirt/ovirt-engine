@@ -44,13 +44,13 @@
         <d:content>
             <b:Container fluid="true">
                 <b:Row addStyleNames="{style.verticalSpacing}">
-                    <b:Column size="LG_12">
+                    <b:Column size="SM_12">
                         <g:Label ui:field="publicKeyLabel" text="{constants.consolePublicKeyLabel}" addStyleNames="{style.inlineBlock}" />
                         <d:InfoIcon ui:field="consolePublicKeyInfoIcon" addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
                     </b:Column>
                 </b:Row>
                 <b:Row addStyleNames="{style.verticalSpacing}">
-                    <b:Column size="LG_12" addStyleNames="{style.indentation}">
+                    <b:Column size="SM_12" addStyleNames="{style.indentation}">
                         <ge:StringEntityModelTextArea ui:field="publicKeyEditor" addStyleNames="{style.publicKeyEditor}" />
                     </b:Column>
                 </b:Row>

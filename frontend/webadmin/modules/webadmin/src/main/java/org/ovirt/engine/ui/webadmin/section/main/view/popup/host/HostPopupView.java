@@ -874,7 +874,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             rb.addValueChangeHandler(e -> object.getSpmPriority().setSelectedItem(model));
 
             Row row = new Row();
-            Column column = new Column(ColumnSize.LG_12, rb);
+            Column column = new Column(ColumnSize.SM_12, rb);
             row.add(column);
             spmContainer.add(row);
         }

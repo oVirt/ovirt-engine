@@ -115,7 +115,7 @@ public class EntityModelDetachableWidgetWithLabel extends BaseEntityModelDetacha
             contentWidgetContainer.removeStyleName(style.contentWidgetWithDetachable());
             contentWidgetContainer.removeStyleName(style.contentWidgetWithoutDetachable());
             label.getElement().replaceClassName(style.labelDisabled(), style.labelEnabled());
-            imageContainer.addStyleName(ColumnSize.LG_1.getCssName());
+            imageContainer.addStyleName(ColumnSize.SM_1.getCssName());
         }
     }
 

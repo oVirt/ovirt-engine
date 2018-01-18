@@ -9,22 +9,22 @@
 
     <g:FlowPanel>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="vmwareClusterEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:EntityModelCheckBoxEditor ui:field="verifySSLEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:EntityModelCheckBoxEditor ui:field="verifySSLEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <e:ListModelListBoxEditor ui:field="proxyHostEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:ListModelListBoxEditor ui:field="proxyHostEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
     </g:FlowPanel>
 </ui:UiBinder>

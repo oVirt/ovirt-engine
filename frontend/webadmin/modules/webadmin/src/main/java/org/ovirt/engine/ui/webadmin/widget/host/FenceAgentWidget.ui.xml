@@ -57,31 +57,31 @@
 
     <b:Container addStyleNames="{style.container}">
       <b:Row ui:field="topRow" addStyleNames="{style.rowPadding}">
-        <b:Column size="LG_1">
+        <b:Column size="SM_1">
           <b:Row>
-            <b:Column size="LG_6" addStyleNames="{style.editColumn}">
+            <b:Column size="SM_6" addStyleNames="{style.editColumn}">
               <ge:IntegerEntityModelLabel ui:field="orderLabel" addStyleNames="{style.bold}"/>
             </b:Column>
-            <b:Column size="LG_6" addStyleNames="{style.editColumn}">
+            <b:Column size="SM_6" addStyleNames="{style.editColumn}">
               <g:PushButton ui:field="editFenceAgent" addStyleNames="{style.button}">
                 <g:upFace image="{resources.editHover}"/>
               </g:PushButton>
             </b:Column>
           </b:Row>
         </b:Column>
-        <b:Column size="LG_6" ui:field="labelColumn">
+        <b:Column size="SM_6" ui:field="labelColumn">
           <g:Label ui:field="agentLabel" addStyleNames="{style.fakeAnchor}" />
           <g:Label ui:field="concurrentGroupLabel" />
         </b:Column>
-        <b:Column size="LG_4" ui:field="concurrentListColumn">
+        <b:Column size="SM_4" ui:field="concurrentListColumn">
           <e:ListModelListBoxEditor ui:field="concurrentList" />
         </b:Column>
-        <b:Column size="LG_1" addStyleNames="{style.editColumn}">
+        <b:Column size="SM_1" addStyleNames="{style.editColumn}">
           <b:Row addStyleNames="{style.noMargin}">
-            <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
+            <b:Column size="SM_6" addStyleNames="{style.noMargin} {style.upDownPadding}">
               <b:Button ui:field="up" />
             </b:Column>
-            <b:Column size="LG_6" addStyleNames="{style.noMargin} {style.upDownPadding} {style.downArrow}">
+            <b:Column size="SM_6" addStyleNames="{style.noMargin} {style.upDownPadding} {style.downArrow}">
               <b:Button ui:field="down" />
             </b:Column>
           </b:Row>

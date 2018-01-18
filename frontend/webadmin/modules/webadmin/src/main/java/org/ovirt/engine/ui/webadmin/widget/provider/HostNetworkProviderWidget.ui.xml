@@ -31,13 +31,13 @@
             </b:Column>
         </b:Row>
         <b:Row>
-            <w:EntityModelWidgetWithInfo ui:field="networkProvider" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <w:EntityModelWidgetWithInfo ui:field="networkProvider" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <e:ListModelListBoxEditor ui:field="networkProviderTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:ListModelListBoxEditor ui:field="networkProviderTypeEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:ListModelSuggestBoxEditor ui:field="providerPluginTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:ListModelSuggestBoxEditor ui:field="providerPluginTypeEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <g:FlowPanel ui:field="neutronAgentPanel">
             <p:NeutronAgentWidget ui:field="neutronAgentWidget" />

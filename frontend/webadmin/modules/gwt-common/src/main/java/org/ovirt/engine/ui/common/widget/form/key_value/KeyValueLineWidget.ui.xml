@@ -13,10 +13,10 @@
     </ui:style>
 
     <b:Row ui:field="panel" addStyleNames="{style.fullWidth}">
-        <b:Column size="LG_6">
+        <b:Column size="SM_6">
             <e:ListModelListBoxEditor ui:field="keyField" usePatternFly="true" />
         </b:Column>
-        <b:Column size="LG_6">
+        <b:Column size="SM_6">
             <ge:StringEntityModelTextBoxEditor ui:field="valueField" usePatternFly="true" />
             <e:ListModelListBoxEditor ui:field="valuesField" usePatternFly="true" />
         </b:Column>

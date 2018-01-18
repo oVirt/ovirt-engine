@@ -8,6 +8,7 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -20,9 +21,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class NetworkOutOfSyncPanel extends FlowPanel {
 
-    private static final String MAIN_COLUMN_SIZE = "LG_13";//$NON-NLS-1$
-    private static final String PROPERTY_COLUMN_SIZE = "LG_6";//$NON-NLS-1$
-    private static final String COLUMN_SIZE = "LG_3";//$NON-NLS-1$
+    private static final ColumnSize MAIN_COLUMN_SIZE = ColumnSize.SM_12;
+    private static final ColumnSize PROPERTY_COLUMN_SIZE = ColumnSize.SM_6;
+    private static final ColumnSize COLUMN_SIZE = ColumnSize.SM_3;
     private static final String BACKGROUND_COLOR = "rgb(67, 67, 67)";//$NON-NLS-1$
     private static final String WHITE_TEXT_COLOR = "white";//$NON-NLS-1$
     private static final String TEXT_COLOR = "#c4c4c4";//$NON-NLS-1$

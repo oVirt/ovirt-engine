@@ -28,7 +28,7 @@ public class EntityModelDetachableWidgetWithInfo extends EntityModelWidgetWithIn
     public void setUsePatternFly(boolean use) {
         super.setUsePatternFly(use);
         if (use) {
-            contentWidget.addStyleName(ColumnSize.LG_1.getCssName());
+            contentWidget.addStyleName(ColumnSize.SM_1.getCssName());
         }
     }
 

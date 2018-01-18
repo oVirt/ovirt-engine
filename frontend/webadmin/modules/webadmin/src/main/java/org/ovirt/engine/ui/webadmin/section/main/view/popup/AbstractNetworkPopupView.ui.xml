@@ -118,13 +118,13 @@
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                  <b:Column size="LG_12">
+                                  <b:Column size="SM_12">
                                     <ge:EntityModelCheckBoxEditor ui:field="shouldSetDnsConfigurationEditor"
                                                                   usePatternFly="true"/>
                                   </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                  <b:Column size="LG_12">
+                                  <b:Column size="SM_12">
                                     <p:DnsServersWidget ui:field="dnsServersWidget" />
                                   </b:Column>
                                 </b:Row>

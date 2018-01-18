@@ -182,9 +182,9 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
         concurrentListColumn.setVisible(model.getConcurrentSelectList().getIsAvailable()
                 && !model.isInConcurrentGroup());
         if (concurrentListColumn.isVisible()) {
-            labelColumn.setSize(ColumnSize.LG_5);
+            labelColumn.setSize(ColumnSize.SM_5);
         } else {
-            labelColumn.setSize(ColumnSize.LG_9);
+            labelColumn.setSize(ColumnSize.SM_9);
         }
     }
 

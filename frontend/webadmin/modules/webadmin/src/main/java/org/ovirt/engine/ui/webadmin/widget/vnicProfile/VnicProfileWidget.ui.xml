@@ -31,17 +31,17 @@
 
     <g:FlowPanel>
         <b:Row>
-            <b:Column size="LG_4">
+            <b:Column size="SM_4">
                 <ge:StringEntityModelTextBoxOnlyEditor ui:field="nameEditor" />
             </b:Column>
-            <b:Column size="LG_3" addStyleNames="{style.publicLabel}">
+            <b:Column size="SM_3" addStyleNames="{style.publicLabel}">
                 <ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" addStyleNames="{style.floatLeft}" label="{constants.profilePublicUseInstanceTypeLabel}" />
                 <d:InfoIcon ui:field="publicInfo" addStyleNames="{style.infoIcon}"/>
             </b:Column>
-            <b:Column size="LG_1">
+            <b:Column size="SM_1">
                 <g:Label text="{constants.profileQoSInstanceTypeLabel}" />
             </b:Column>
-            <b:Column size="LG_4">
+            <b:Column size="SM_4">
                 <e:ListModelListBoxEditor ui:field="networkQoSEditor" />
             </b:Column>
         </b:Row>

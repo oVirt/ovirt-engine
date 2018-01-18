@@ -138,11 +138,11 @@
                         <b:Container addStyleNames="{style.containerMargin}" fluid="true">
                           <b:Row>
                             <ge:EntityModelCheckBoxEditor ui:field="shouldSetDnsConfigurationEditor" usePatternFly="true"
-                                                          labelColSize="LG_6" widgetColSize="LG_6"
+                                                          labelColSize="SM_6" widgetColSize="SM_6"
                                                           label="{constants.shouldSetDnsConfigurationLabel}"/>
                           </b:Row>
                           <b:Row>
-                            <b:Column size="LG_12">
+                            <b:Column size="SM_12">
                               <p:DnsServersWidget ui:field="dnsServersWidget"
                                                    addStyleNames="{style.nameServersHeight}" usePatternFly="true"/>
                             </b:Column>

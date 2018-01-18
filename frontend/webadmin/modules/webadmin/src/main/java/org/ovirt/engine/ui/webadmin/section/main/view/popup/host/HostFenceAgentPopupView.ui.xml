@@ -27,39 +27,39 @@
       <d:content>
         <g:HTMLPanel styleName="container {style.container}">
           <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="pmAddressEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="pmAddressEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
           </b:Row>
           <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="pmUserNameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="pmUserNameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
           </b:Row>
           <b:Row>
-            <ge:StringEntityModelPasswordBoxEditor ui:field="pmPasswordEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelPasswordBoxEditor ui:field="pmPasswordEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
           </b:Row>
           <b:Row>
-            <e:ListModelListBoxEditor ui:field="pmTypeEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:ListModelListBoxEditor ui:field="pmTypeEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
           </b:Row>
           <b:Row>
-            <ge:IntegerEntityModelTextBoxEditor ui:field="pmPortEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:IntegerEntityModelTextBoxEditor ui:field="pmPortEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
           </b:Row>
           <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="pmSlotEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="pmSlotEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
           </b:Row>
           <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="pmOptionsEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="pmOptionsEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
           </b:Row>
           <b:Row>
-            <b:Column size="LG_12">
+            <b:Column size="SM_12">
               <g:Label ui:field="pmOptionsExplanationLabel" />
               <ge:EntityModelCheckBoxEditor ui:field="pmEncryptOptionsEditor" usePatternFly="true" removeFormGroup="true" />
             </b:Column>
           </b:Row>
           <b:Row>
-            <b:Column size="LG_12">
+            <b:Column size="SM_12">
               <ge:EntityModelCheckBoxEditor ui:field="pmSecureEditor" usePatternFly="true" removeFormGroup="true" />
             </b:Column>
           </b:Row>
           <b:Row>
-            <b:Column size="LG_12">
+            <b:Column size="SM_12">
               <w:UiCommandButton ui:field="testButton" />
               <g:Label ui:field="testMessage" />
             </b:Column>

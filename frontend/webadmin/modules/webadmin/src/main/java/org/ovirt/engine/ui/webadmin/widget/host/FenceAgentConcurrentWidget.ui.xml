@@ -48,15 +48,15 @@
     </ui:style>
 
     <b:Row addStyleNames="{style.separator}">
-      <b:Column size="LG_1" addStyleNames="{style.indentButton}">
+      <b:Column size="SM_1" addStyleNames="{style.indentButton}">
         <g:PushButton ui:field="editFenceAgent" addStyleNames="{style.button}">
             <g:upFace image="{resources.editHover}"/>
         </g:PushButton>
       </b:Column>
-      <b:Column size="LG_9">
+      <b:Column size="SM_9">
         <g:Label ui:field="agentLabel" addStyleNames="{style.agentLabel} {style.fakeAnchor}" />
       </b:Column>
-      <b:Column size="LG_1" addStyleNames="{style.detachColumn}">
+      <b:Column size="SM_1" addStyleNames="{style.detachColumn}">
         <b:Button ui:field="removeConcurrentGroup" addStyleNames="{style.detachButton}" />
       </b:Column>
     </b:Row>

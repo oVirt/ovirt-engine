@@ -9,16 +9,16 @@
 
     <g:FlowPanel>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="cidrEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="cidrEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <e:ListModelListBoxEditor ui:field="ipVersionEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <e:ListModelListBoxEditor ui:field="ipVersionEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <b:Row>
-            <ge:StringEntityModelTextBoxEditor ui:field="gatewayEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+            <ge:StringEntityModelTextBoxEditor ui:field="gatewayEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
         </b:Row>
         <p:DnsServersWidget ui:field="dnsServersEditor" usePatternFly="true" dnsServerWidth="300" />
     </g:FlowPanel>
