@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
@@ -33,6 +33,9 @@ public class GlusterGeoRepUtil {
 
     @Inject
     private GlusterGeoRepDao glusterGeoRepDao;
+
+    @Inject
+    protected BackendInternal backend;
 
     public Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> getEligibilityPredicates(final GlusterVolumeEntity masterVolume) {
         Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicates = new HashMap<>();
@@ -89,7 +92,7 @@ public class GlusterGeoRepUtil {
 
     public boolean checkEmptyGlusterVolume(Guid slaveUpserverId, String slaveVolumeName) {
         VDSReturnValue returnValue =
-                Backend.getInstance()
+                backend
                         .getResourceManager()
                         .runVdsCommand(VDSCommandType.CheckEmptyGlusterVolume,
                                 new GlusterVolumeVDSParameters(slaveUpserverId, slaveVolumeName));
