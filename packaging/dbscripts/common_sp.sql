@@ -1294,4 +1294,44 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION fn_db_varchar_to_jsonb(v_text VARCHAR, v_default_value JSONB)
+RETURNS JSONB IMMUTABLE AS $PROCEDURE$
+BEGIN
+    RETURN v_text::jsonb;
+    EXCEPTION
+        WHEN SQLSTATE '22P02' THEN -- '22P02' stands for 'invalid_text_representation', 'invalid input syntax for type json' in this case
+            RETURN v_default_value;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
 
+-- If value in v_table.v_column is jsonb compatible it's left untouched, otherwise it's replaced by v_default_value
+-- Helper function for VARCHAR -> JSONB column type migration
+CREATE OR REPLACE FUNCTION fn_db_update_column_to_jsonb_compatible_values(
+    v_table VARCHAR,
+    v_column VARCHAR,
+    v_default_value JSONB
+    )
+RETURNS VOID AS $PROCEDURE$
+DECLARE
+    default_value_string VARCHAR;
+BEGIN
+    IF (
+        EXISTS (
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_schema = 'public'
+                AND table_name = v_table
+                AND column_name = v_column
+                AND data_type = 'character varying'
+        )
+    ) THEN
+        BEGIN
+            default_value_string := CASE
+                WHEN v_default_value IS NULL THEN 'NULL'
+                ELSE '''' || v_default_value::VARCHAR || ''''
+            END;
+            EXECUTE 'UPDATE ' || v_table || ' SET ' || v_column || ' = (SELECT fn_db_varchar_to_jsonb(' || v_column || ', ' || default_value_string || '))';
+        END;
+    END IF;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
