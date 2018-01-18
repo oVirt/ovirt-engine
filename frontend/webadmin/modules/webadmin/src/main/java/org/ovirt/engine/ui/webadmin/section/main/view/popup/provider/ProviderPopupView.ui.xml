@@ -77,7 +77,7 @@
                                     <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                                    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" autocomplete="new-password" />
                                 </b:Row>
                                 <b:Row>
                                     <ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
