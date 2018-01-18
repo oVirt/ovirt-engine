@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,11 +12,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -23,9 +30,9 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -33,7 +40,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
-import org.ovirt.engine.core.common.action.RemoveVmParameters;
+import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters.Phase;
+import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -53,14 +61,14 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
-@NonTransactiveCommandAttribute(forceCompensation = true)
+@NonTransactiveCommandAttribute(forceCompensation = true, compensationPhase = CommandCompensationPhase.END_COMMAND)
 public class ImportVmFromExternalProviderCommand<T extends ImportVmFromExternalProviderParameters> extends ImportVmCommandBase<T>
-implements QuotaStorageDependent {
+implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     private static final Pattern VMWARE_DISK_NAME_PATTERN = Pattern.compile("\\[.*?\\] .*/(.*).vmdk");
     private static final Pattern DISK_NAME_PATTERN = Pattern.compile(".*/([^.]+).*");
@@ -78,9 +86,14 @@ implements QuotaStorageDependent {
     @Inject
     private StorageDomainDao storageDomainDao;
     @Inject
+    private DiskDao diskDao;
+    @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     private ImportUtils importUtils;
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     public ImportVmFromExternalProviderCommand(Guid cmdId) {
         super(cmdId);
@@ -310,6 +323,7 @@ implements QuotaStorageDependent {
         diskParameters.setParentParameters(getParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         diskParameters.setStorageDomainId(getParameters().getDestDomainId());
+        diskParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return diskParameters;
     }
 
@@ -347,19 +361,6 @@ implements QuotaStorageDependent {
     }
 
     @Override
-    protected void endSuccessfully() {
-        endActionOnDisks();
-
-        // Lock will be acquired by the convert command.
-        // Note that the VM is not locked for a short period of time. This should be fixed
-        // when locks that are passed by caller could be released by command's callback.
-        freeLock();
-        convert();
-
-        setSucceeded(true);
-    }
-
-    @Override
     protected void addVmToDb() {
         super.addVmToDb();
         if (getVm().getOrigin() == OriginType.KVM || getVm().getOrigin() == OriginType.OVIRT) {
@@ -375,11 +376,12 @@ implements QuotaStorageDependent {
         getVm().setImages(images);
     }
 
+    protected void updateVm() {
+        runInternalAction(ActionType.UpdateConvertedVm, buildConvertVmParameters());
+    }
+
     protected void convert() {
-        commandCoordinatorUtil.executeAsyncCommand(
-                ActionType.ConvertVm,
-                buildConvertVmParameters(),
-                cloneContextAndDetachFromParent());
+        runInternalAction(ActionType.ConvertVm, buildConvertVmParameters());
     }
 
     private ConvertVmParameters buildConvertVmParameters() {
@@ -397,6 +399,8 @@ implements QuotaStorageDependent {
         parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
         parameters.setNetworkInterfaces(getParameters().getVm().getInterfaces());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }
@@ -410,28 +414,6 @@ implements QuotaStorageDependent {
         return null;
     }
 
-    @Override
-    protected void endWithFailure() {
-        // Since AddDisk is called internally, its audit log on end-action will not be logged
-        auditLog(this, AuditLogType.ADD_DISK_INTERNAL_FAILURE);
-        // This command uses compensation so if we won't execute the following block in a new
-        // transaction then the images might be updated within this transaction scope and block
-        // RemoveVm that also tries to update the images later on
-        TransactionSupport.executeInNewTransaction(() -> {
-            endActionOnDisks();
-            return null;
-        });
-        removeVm();
-        setSucceeded(true);
-    }
-
-    protected void removeVm() {
-        runInternalActionWithTasksContext(
-                ActionType.RemoveVm,
-                new RemoveVmParameters(getVmId(), true),
-                getLock());
-    }
-
     protected List<DiskImage> getDisks() {
         return getParameters().getDisks().stream()
                 .map(this::getDisk)
@@ -443,21 +425,6 @@ implements QuotaStorageDependent {
                 QueryType.GetDiskByDiskId,
                 new IdQueryParameters(diskId))
                 .getReturnValue();
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ?
-                    AuditLogType.IMPORTEXPORT_STARTING_IMPORT_VM
-                    : AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
-        case END_FAILURE:
-            return AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED;
-        case END_SUCCESS:
-        default:
-            return super.getAuditLogTypeValue();
-        }
     }
 
     @Override
@@ -481,4 +448,73 @@ implements QuotaStorageDependent {
         }
     }
 
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
+    }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+        switch(getParameters().getPhase()) {
+        case CREATE_DISKS:
+            getParameters().setPhase(Phase.CONVERT);
+            if (getParameters().getProxyHostId() == null) {
+                getParameters().setProxyHostId(selectProxyHost());
+            }
+            break;
+
+        case CONVERT:
+            if (EnumSet.of(OriginType.KVM, OriginType.OVIRT).contains(getVm().getOrigin())) {
+                return false;
+            }
+
+            getParameters().setPhase(Phase.POST_CONVERT);
+            break;
+
+        case POST_CONVERT:
+            return false;
+
+        default:
+        }
+
+        persistCommandIfNeeded();
+        executeNextOperation();
+        return true;
+    }
+
+    @SuppressWarnings("incomplete-switch")
+    private void executeNextOperation() {
+        switch (getParameters().getPhase()) {
+            case CONVERT:
+                convert();
+                break;
+
+            case POST_CONVERT:
+                updateVm();
+                break;
+        }
+    }
+
+    private Guid selectProxyHost() {
+        Iterator<VDS> activeHostsIterator = vdsDao.getAllForStoragePoolAndStatus(getStoragePoolId(), VDSStatus.Up).iterator();
+        return activeHostsIterator.hasNext() ? activeHostsIterator.next().getId() : null;
+    }
+
+    @Override
+    protected void endWithFailure() {
+        removeVmImages();
+        setSucceeded(true);
+    }
+
+    protected void removeVmImages() {
+        runInternalAction(ActionType.RemoveAllVmImages,
+                buildRemoveAllVmImagesParameters(),
+                cloneContextAndDetachFromParent());
+    }
+
+    private RemoveAllVmImagesParameters buildRemoveAllVmImagesParameters() {
+        return new RemoveAllVmImagesParameters(
+                getVmId(),
+                diskDao.getAllForVm(getVmId()).stream().map(DiskImage.class::cast).collect(Collectors.toList()));
+    }
 }

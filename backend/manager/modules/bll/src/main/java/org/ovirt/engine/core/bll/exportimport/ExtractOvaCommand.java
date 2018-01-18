@@ -1,28 +1,22 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.LockMessage;
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
-import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
@@ -30,6 +24,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @NonTransactiveCommandAttribute
@@ -41,6 +36,9 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     private AnsibleExecutor ansibleExecutor;
     @Inject
     private VmHandler vmHandler;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public ExtractOvaCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -65,13 +63,13 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
             teardownImages();
             if (!succeeded) {
                 log.error("Failed to extract OVA file");
-                removeVm();
+                setCommandStatus(CommandStatus.FAILED);
+            } else {
+                setSucceeded(true);
             }
-            setSucceeded(succeeded);
         } catch(EngineException e) {
-            log.error("Failed to extract OVA file");
-            removeVm();
-            throw e;
+            log.error("Failed to extract OVA file", e);
+            setCommandStatus(CommandStatus.FAILED);
         }
     }
 
@@ -139,24 +137,10 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 getParameters().getProxyHostId());
     }
 
-    protected void removeVm() {
-        runInternalActionWithTasksContext(
-                ActionType.RemoveVm,
-                new RemoveVmParameters(getVmId(), true),
-                getLock());
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 
-    @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Command);
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(
-                        LockingGroup.VM,
-                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED)
-                                .with("VmName", getVmName())));
-    }
 }
+

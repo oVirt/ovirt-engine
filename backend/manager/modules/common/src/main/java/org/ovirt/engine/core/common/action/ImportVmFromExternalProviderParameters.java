@@ -8,6 +8,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
     private static final long serialVersionUID = 3891077822520360466L;
 
+    public enum Phase {
+        CREATE_DISKS,
+        CONVERT,
+        POST_CONVERT
+    }
+
     private String url;
     private String username;
     private String password;
@@ -15,6 +21,7 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
     private ArrayList<Guid> disks;
     private String virtioIsoName;
     private String externalName;
+    private Phase phase = Phase.CREATE_DISKS;
 
     public ImportVmFromExternalProviderParameters() {
     }
@@ -77,5 +84,13 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
 
     public void setExternalName(String externalName) {
         this.externalName = externalName;
+    }
+
+    public Phase getPhase() {
+        return phase;
+    }
+
+    public void setPhase(Phase phase) {
+        this.phase = phase;
     }
 }

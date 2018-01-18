@@ -75,7 +75,8 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                         );
 
                 if (actionReturnValueValue.getSucceeded()) {
-                    getReturnValue().getInternalVdsmTaskIdList().addAll(actionReturnValueValue.getInternalVdsmTaskIdList());
+                    (isExecutedAsChildCommand() ? getReturnValue().getInternalVdsmTaskIdList() : getTaskIdList())
+                            .addAll(actionReturnValueValue.getInternalVdsmTaskIdList());
                 } else {
                     StorageDomain domain = storageDomainDao.get(image.getStorageIds().get(0));
                     failedRemoving.add(image);
@@ -107,8 +108,9 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
 
     private RemoveImageParameters buildRemoveImageParameters(DiskImage image) {
         RemoveImageParameters result = new RemoveImageParameters(image.getImageId());
-        result.setParentCommand(getParameters().getParentCommand());
-        result.setParentParameters(getParameters().getParentParameters());
+        boolean parentExists = isExecutedAsChildCommand();
+        result.setParentCommand(parentExists ? getParameters().getParentCommand() : getActionType());
+        result.setParentParameters(parentExists ? getParameters().getParentParameters() : getParameters());
         result.setDiskImage(image);
         result.setEntityInfo(getParameters().getEntityInfo());
         result.setForceDelete(getParameters().getForceDelete());
@@ -133,6 +135,11 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
 
     @Override
     protected void endVmCommand() {
-        setSucceeded(true);
+        if (isExecutedAsChildCommand()) {
+            // parent command ends the actions on disks
+            setSucceeded(true);
+        } else {
+            super.endVmCommand();
+        }
     }
 }
