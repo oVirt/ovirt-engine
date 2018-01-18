@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -20,6 +21,7 @@ public class ConvertVmParameters extends VmOperationParameterBase {
     private String virtioIsoName;
     private OriginType originType;
     private String compatVersion;
+    private List<VmNetworkInterface> networkInterfaces;
 
     public ConvertVmParameters() {
     }
@@ -122,5 +124,13 @@ public class ConvertVmParameters extends VmOperationParameterBase {
 
     public void setCompatVersion(String compatVersion) {
         this.compatVersion = compatVersion;
+    }
+
+    public List<VmNetworkInterface> getNetworkInterfaces() {
+        return networkInterfaces;
+    }
+
+    public void setNetworkInterfaces(List<VmNetworkInterface> networkInterfaces) {
+        this.networkInterfaces = networkInterfaces;
     }
 }

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
@@ -9,7 +7,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
@@ -28,8 +25,6 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
 
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
-    @Inject
-    private VmDeviceUtils vmDeviceUtils;
 
     public ImportVmFromOvaCommand(Guid cmdId) {
         super(cmdId);
@@ -57,6 +52,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
+        parameters.setNetworkInterfaces(getParameters().getVm().getInterfaces());
         return parameters;
     }
 
@@ -80,21 +76,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
             getReturnValue().setEndActionTryAgain(false);
             return;
         }
-        addImportedDevices();
         setSucceeded(true);
-    }
-
-    private void addImportedDevices() {
-        // Disks devices were already added
-        getVm().setImages(new ArrayList<>());
-        vmDeviceUtils.addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity(), false);
-    }
-
-    @Override
-    protected void addNetworkInterfaceDevices() {
-        if (getParameters().getVm().getOrigin() != OriginType.OVIRT) {
-            super.addNetworkInterfaceDevices();
-        }
     }
 
     private boolean extractOva() {

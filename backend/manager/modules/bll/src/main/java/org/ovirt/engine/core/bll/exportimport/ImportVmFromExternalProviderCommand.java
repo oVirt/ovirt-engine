@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -58,7 +56,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -81,8 +78,6 @@ implements QuotaStorageDependent {
     private VdsDao vdsDao;
     @Inject
     private StorageDomainDao storageDomainDao;
-    @Inject
-    private VmDeviceDao vmDeviceDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -287,19 +282,7 @@ implements QuotaStorageDependent {
                 Guid.newGuid(), getVm(), SnapshotStatus.OK, StringUtils.EMPTY, getCompensationContext());
     }
 
-    @Override
-    protected void addVmInterfaces() {
-        super.addVmInterfaces();
-        addNetworkInterfaceDevices();
-    }
-
-    protected void addNetworkInterfaceDevices() {
-        getVm().getInterfaces().forEach(iface
-                -> getVmDeviceUtils().addInterface(getVmId(), iface.getId(), iface.isPlugged(), false));
-    }
-
     protected Guid createDisk(DiskImage image, boolean isBoot) {
-
         ActionReturnValue actionReturnValue =
                 runInternalActionWithTasksContext(ActionType.AddDisk, buildAddDiskParameters(image, isBoot));
 
@@ -378,14 +361,17 @@ implements QuotaStorageDependent {
     @Override
     protected void addVmToDb() {
         super.addVmToDb();
-        if (getVm().getOrigin() == OriginType.KVM) {
-            importUtils.updateGraphicsDevices(getVm().getStaticData(), getStoragePool().getCompatibilityVersion());
-            Collection<VmDevice> devices = getVm().getStaticData().getManagedDeviceMap().values();
-            if (getParameters().isImportAsNewEntity()) {
-                devices.forEach(dev -> dev.getId().setVmId(getVmId()));
-            }
-            vmDeviceDao.saveAll(devices);
+        if (getVm().getOrigin() == OriginType.KVM || getVm().getOrigin() == OriginType.OVIRT) {
+            addImportedDevicesExceptDisks();
         }
+    }
+
+    private void addImportedDevicesExceptDisks() {
+        importUtils.updateGraphicsDevices(getVm().getStaticData(), getStoragePool().getCompatibilityVersion());
+        ArrayList<DiskImage> images = getVm().getImages();
+        getVm().setImages(new ArrayList<>());
+        getVmDeviceUtils().addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity(), false);
+        getVm().setImages(images);
     }
 
     protected void convert() {
@@ -409,6 +395,7 @@ implements QuotaStorageDependent {
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setClusterId(getClusterId());
         parameters.setVirtioIsoName(getParameters().getVirtioIsoName());
+        parameters.setNetworkInterfaces(getParameters().getVm().getInterfaces());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return parameters;
     }

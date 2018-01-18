@@ -219,6 +219,8 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         try {
             if (getParameters().getOriginType() != OriginType.KVM) {
                 VM vm = readVmFromOvf(getOvfOfConvertedVm());
+                vm.setClusterId(getParameters().getClusterId());
+                vm.setInterfaces(getParameters().getNetworkInterfaces());
                 updateDiskVmElements(vm);
                 addImportedDevices(vm);
             }
@@ -274,9 +276,8 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     private void addImportedDevices(VM vm) {
         VmStatic vmStatic = vm.getStaticData();
-        // Disk and network interface devices were already added
+        // Disk devices were already added
         vmStatic.setImages(new ArrayList<>());
-        vmStatic.setInterfaces(new ArrayList<>());
         importUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
         getVmDeviceUtils().addImportedDevices(vmStatic, false, false);
     }
