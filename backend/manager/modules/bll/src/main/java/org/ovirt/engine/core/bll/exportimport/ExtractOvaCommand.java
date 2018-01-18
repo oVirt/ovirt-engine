@@ -1,17 +1,28 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.LockMessage;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
@@ -47,11 +58,21 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
 
     @Override
     protected void executeVmCommand() {
-        vmHandler.updateDisksFromDb(getVm());
-        List<String> diskPaths = prepareImages();
-        boolean succeeded = runAnsibleImportOvaPlaybook(diskPaths);
-        teardownImages();
-        setSucceeded(succeeded);
+        try {
+            vmHandler.updateDisksFromDb(getVm());
+            List<String> diskPaths = prepareImages();
+            boolean succeeded = runAnsibleImportOvaPlaybook(diskPaths);
+            teardownImages();
+            if (!succeeded) {
+                log.error("Failed to extract OVA file");
+                removeVm();
+            }
+            setSucceeded(succeeded);
+        } catch(EngineException e) {
+            log.error("Failed to extract OVA file");
+            removeVm();
+            throw e;
+        }
     }
 
     private boolean runAnsibleImportOvaPlaybook(List<String> diskPaths) {
@@ -116,5 +137,26 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 image.getId(),
                 image.getImageId(),
                 getParameters().getProxyHostId());
+    }
+
+    protected void removeVm() {
+        runInternalActionWithTasksContext(
+                ActionType.RemoveVm,
+                new RemoveVmParameters(getVmId(), true),
+                getLock());
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Command);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(
+                        LockingGroup.VM,
+                        new LockMessage(EngineMessage.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED)
+                                .with("VmName", getVmName())));
     }
 }
