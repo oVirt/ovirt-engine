@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
@@ -46,6 +47,10 @@ public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromEx
                     }
                     if (!VmDeviceCommonUtils.hasCdDevice(vm.getStaticData())) {
                         VmDeviceCommonUtils.addCdDevice(vm.getStaticData());
+                    }
+                    for (DiskImage image : vm.getImages()) {
+                        image.getDiskVmElementForVm(vm.getId()).setBoot(true);
+                        break;
                     }
                 } else {
                     // set default value in case of non KVM provider type

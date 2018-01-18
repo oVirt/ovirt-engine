@@ -47,7 +47,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -256,15 +255,10 @@ implements QuotaStorageDependent {
 
     @Override
     protected void processImages() {
-        ArrayList<Guid> diskIds = new ArrayList<>();
-        boolean isFirstDisk = true;
-        for (DiskImage image : getVm().getImages()) {
-            Guid diskId = createDisk(image, getVm().getOrigin() == OriginType.KVM && isFirstDisk);
-            diskIds.add(diskId);
-            isFirstDisk = false;
-        }
+        ArrayList<Guid> diskIds = getVm().getImages().stream()
+                .map(this::createDisk)
+                .collect(Collectors.toCollection(ArrayList::new));
         getParameters().setDisks(diskIds);
-
         setSucceeded(true);
     }
 
@@ -282,9 +276,9 @@ implements QuotaStorageDependent {
                 Guid.newGuid(), getVm(), SnapshotStatus.OK, StringUtils.EMPTY, getCompensationContext());
     }
 
-    protected Guid createDisk(DiskImage image, boolean isBoot) {
+    protected Guid createDisk(DiskImage image) {
         ActionReturnValue actionReturnValue =
-                runInternalActionWithTasksContext(ActionType.AddDisk, buildAddDiskParameters(image, isBoot));
+                runInternalActionWithTasksContext(ActionType.AddDisk, buildAddDiskParameters(image));
 
         if (!actionReturnValue.getSucceeded()) {
             throw new EngineException(actionReturnValue.getFault().getError(),
@@ -295,20 +289,15 @@ implements QuotaStorageDependent {
         return actionReturnValue.getActionReturnValue();
     }
 
-    protected AddDiskParameters buildAddDiskParameters(DiskImage image, boolean isBoot) {
+    protected AddDiskParameters buildAddDiskParameters(DiskImage image) {
         image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
 
-        AddDiskParameters diskParameters = new AddDiskParameters(new DiskVmElement(null, getVmId()), image);
+        AddDiskParameters diskParameters = new AddDiskParameters(image.getDiskVmElementForVm(getVmId()), image);
         diskParameters.setStorageDomainId(getStorageDomainId());
         diskParameters.setParentCommand(getActionType());
         diskParameters.setParentParameters(getParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         diskParameters.setStorageDomainId(getParameters().getDestDomainId());
-
-        DiskVmElement dve = image.getDiskVmElementForVm(getVmId());
-        dve.setBoot(isBoot);
-        diskParameters.setDiskVmElement(dve);
-
         return diskParameters;
     }
 

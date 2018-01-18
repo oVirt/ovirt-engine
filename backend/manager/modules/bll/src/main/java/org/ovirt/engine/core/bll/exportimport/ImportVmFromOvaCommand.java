@@ -99,18 +99,18 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
     }
 
     @Override
-    protected AddDiskParameters buildAddDiskParameters(DiskImage image, boolean isBoot) {
+    protected AddDiskParameters buildAddDiskParameters(DiskImage image) {
         if (getParameters().getVm().getOrigin() != OriginType.OVIRT) {
             // set default value since VirtIO interface doesn't require having an appropriate controller
             // so validation will pass. This will anyway be overridden later by OVF.
             image.getDiskVmElementForVm(getVm().getId()).setDiskInterface(DiskInterface.VirtIO);
-            return super.buildAddDiskParameters(image, isBoot);
+            return super.buildAddDiskParameters(image);
         }
 
         // The volume format and type is fixed for disks within oVirt's OVA files:
         image.setVolumeFormat(VolumeFormat.COW);
         image.setVolumeType(VolumeType.Sparse);
-        AddDiskParameters parameters = super.buildAddDiskParameters(image, isBoot);
+        AddDiskParameters parameters = super.buildAddDiskParameters(image);
         parameters.setUsePassedDiskId(true);
         parameters.setUsePassedImageId(true);
         return parameters;
