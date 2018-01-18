@@ -46,6 +46,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        after=(
+            oengcommcons.Stages.DB_SCHEMA,
+        ),
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _misc(self):
