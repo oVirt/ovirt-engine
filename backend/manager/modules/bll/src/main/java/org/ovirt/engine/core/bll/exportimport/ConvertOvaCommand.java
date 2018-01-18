@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.vdscommands.ConvertOvaVDSParameters;
@@ -7,6 +8,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
+@NonTransactiveCommandAttribute
 public class ConvertOvaCommand<T extends ConvertOvaParameters> extends ConvertVmCommand<T> {
 
     public ConvertOvaCommand(Guid commandId) {
