@@ -195,6 +195,7 @@ public class LocaleFilter implements Filter {
         Locale locale = (Locale) request.getAttribute(LOCALE);
         if (locale == null) {
             log.error("no locale in request -- code problem -- check LocaleFilter configuration. Defaulting to US");
+            locale = DEFAULT_LOCALE;
         }
         return locale;
     }
