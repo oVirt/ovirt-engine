@@ -1666,6 +1666,13 @@ public class LibvirtVmXmlBuilder {
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
+
+            // Hosted engine disk images have to have empty storage pool ID,
+            // so they can be mounted even if storage pool is not connected
+            if (vm.isHostedEngine()) {
+                diskImage.setStoragePoolId(Guid.Empty);
+            }
+
             String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage);
 
             switch (diskType) {
