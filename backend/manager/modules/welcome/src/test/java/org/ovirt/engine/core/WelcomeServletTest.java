@@ -123,6 +123,7 @@ public class WelcomeServletTest {
 
     private List<String> createLocaleKeys() {
         List<String> keys = new ArrayList<>();
+        keys.add("cs_CZ");
         keys.add("de_DE");
         keys.add("en_US");
         keys.add("es_ES");

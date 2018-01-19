@@ -192,7 +192,7 @@
     <profile>
       <id>all-langs</id>
       <properties>
-        <gwt.locale>en_US,es_ES,fr_FR,ja_JP,pt_BR,zh_CN,de_DE,ko_KR,it_IT</gwt.locale>
+        <gwt.locale>en_US,es_ES,fr_FR,ja_JP,pt_BR,zh_CN,de_DE,ko_KR,it_IT,cs_CZ</gwt.locale>
       </properties>
     </profile>
     <profile>
