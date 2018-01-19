@@ -64,7 +64,6 @@ public class GlusterGeoRepUtil {
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_VOLUME_SHOULD_NOT_BE_SLAVE_OF_ANOTHER_GEO_REP_SESSION, slaveVolume -> !existingSessionSlavesIds.contains(slaveVolume.getId()));
 
         eligibilityPredicates.put(GlusterGeoRepNonEligibilityReason.SLAVE_CLUSTER_AND_MASTER_CLUSTER_COMPATIBILITY_VERSIONS_DO_NOT_MATCH, slaveVolume -> {
-            ClusterDao clusterDao = getClusterDao();
             Version slaveCompatibilityVersion = clusterDao.get(slaveVolume.getClusterId()).getCompatibilityVersion();
             Version masterCompatibilityVersion = clusterDao.get(masterVolume.getClusterId()).getCompatibilityVersion();
             return masterCompatibilityVersion.equals(slaveCompatibilityVersion);
@@ -86,7 +85,7 @@ public class GlusterGeoRepUtil {
     }
 
     private List<Guid> getSessionSlaveVolumeIds() {
-        List<GlusterGeoRepSession> existingSessions = getGeoRepDao().getAllSessions();
+        List<GlusterGeoRepSession> existingSessions = glusterGeoRepDao.getAllSessions();
         return existingSessions.stream().map(GlusterGeoRepSession::getSlaveVolumeId).collect(Collectors.toList());
     }
 
@@ -102,13 +101,5 @@ public class GlusterGeoRepUtil {
     public Guid getUpServerId(Guid clusterId) {
         VDS randomUpServer = glusterUtil.getRandomUpServer(clusterId);
         return randomUpServer == null ? null : randomUpServer.getId();
-    }
-
-    public ClusterDao getClusterDao() {
-        return clusterDao;
-    }
-
-    public GlusterGeoRepDao getGeoRepDao() {
-        return glusterGeoRepDao;
     }
 }
