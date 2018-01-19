@@ -508,8 +508,8 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writePowerManagement() {
-        if (vm.getClusterArch() == ArchitectureType.s390x) {
-            // s390x doesn't like the pm elements
+        if (vm.getClusterArch().getFamily() != ArchitectureType.x86) {
+            // ACPI PM features relevant only on x86
             return;
         }
 
