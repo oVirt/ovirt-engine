@@ -72,7 +72,7 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
                 parameters.put(FragmentParams.DATACENTER.getName(), network.getDataCenterName());
                 //The link was clicked, now fire an event to switch to details.
                 getPlaceTransitionHandler().handlePlaceTransition(
-                        WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
+                        WebAdminApplicationPlaces.networkGeneralSubTabPlace, parameters);
             }
 
         }) {
