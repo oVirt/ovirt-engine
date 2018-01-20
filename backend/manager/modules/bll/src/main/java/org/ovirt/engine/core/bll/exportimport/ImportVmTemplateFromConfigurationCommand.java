@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.RoleDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -66,8 +65,6 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     @Inject
     private AuditLogDirector auditLogDirector;
 
-    @Inject
-    private ClusterDao clusterDao;
     @Inject
     private OvfHelper ovfHelper;
     @Inject
