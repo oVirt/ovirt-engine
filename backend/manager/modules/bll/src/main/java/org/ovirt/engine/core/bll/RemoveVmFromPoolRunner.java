@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
@@ -17,6 +18,8 @@ public class RemoveVmFromPoolRunner extends PrevalidatingMultipleActionsRunner {
 
     @Inject
     private VmPoolDao vmPoolDao;
+    @Inject
+    protected BackendInternal backend;
 
     public RemoveVmFromPoolRunner(ActionType actionType, List<ActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
@@ -52,7 +55,7 @@ public class RemoveVmFromPoolRunner extends PrevalidatingMultipleActionsRunner {
         VmPoolParametersBase removePoolParam = new VmPoolParametersBase(poolId);
         removePoolParam.setSessionId(getSessionId());
 
-        Backend.getInstance().runInternalAction(ActionType.RemoveVmPool, removePoolParam, commandContext);
+        backend.runInternalAction(ActionType.RemoveVmPool, removePoolParam, commandContext);
     }
 
     private boolean isPoolRemovalEnabled() {
