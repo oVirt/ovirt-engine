@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 
 @DisableInPrepareMode
@@ -42,9 +43,13 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
     protected void convert() {
         boolean useVirtV2V = getParameters().getVm().getOrigin() != OriginType.OVIRT;
         if (useVirtV2V) {
-            runInternalActionWithTasksContext(ActionType.ConvertOva, buildConvertOvaParameters());
+            runInternalAction(ActionType.ConvertOva,
+                    buildConvertOvaParameters(),
+                    createConversionStepContext(StepEnum.CONVERTING_OVA));
         } else {
-            runInternalActionWithTasksContext(ActionType.ExtractOva, buildExtractOvaParameters());
+            runInternalAction(ActionType.ExtractOva,
+                    buildExtractOvaParameters(),
+                    createConversionStepContext(StepEnum.EXTRACTING_OVA));
         }
     }
 

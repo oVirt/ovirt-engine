@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -57,9 +59,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -381,7 +386,9 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
     }
 
     protected void convert() {
-        runInternalAction(ActionType.ConvertVm, buildConvertVmParameters());
+        runInternalAction(ActionType.ConvertVm,
+                buildConvertVmParameters(),
+                createConversionStepContext(StepEnum.CONVERTING_VM));
     }
 
     private ConvertVmParameters buildConvertVmParameters() {
@@ -516,5 +523,30 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         return new RemoveAllVmImagesParameters(
                 getVmId(),
                 diskDao.getAllForVm(getVmId()).stream().map(DiskImage.class::cast).collect(Collectors.toList()));
+    }
+
+    protected CommandContext createConversionStepContext(StepEnum step) {
+        CommandContext commandCtx = null;
+
+        try {
+            Map<String, String> values = Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName());
+
+            Step conversionStep = executionHandler.addSubStep(getExecutionContext(),
+                    getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                    step,
+                    ExecutionMessageDirector.resolveStepMessage(step, values));
+
+            ExecutionContext ctx = new ExecutionContext();
+            ctx.setStep(conversionStep);
+            ctx.setMonitored(true);
+
+            commandCtx = cloneContext().withoutCompensationContext().withExecutionContext(ctx).withoutLock();
+
+        } catch (RuntimeException e) {
+            log.error("Failed to create command context of converting VM '{}': {}", getVmName(), e.getMessage());
+            log.debug("Exception", e);
+        }
+
+        return commandCtx;
     }
 }
