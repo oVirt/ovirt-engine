@@ -38,3 +38,10 @@
 	nocreate
 	rotate 1
 }
+"@ENGINE_LOG@/db-manual"/*.log {
+	monthly
+	missingok
+	compress
+	nocreate
+	rotate 1
+}
