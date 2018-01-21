@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -247,6 +248,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         } else {
             getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
         }
+        if (getParameters().getRoleMap() != null) {
+            getParameters().setUserToRoles(drMappingHelper.mapRoles(getParameters().getRoleMap(),
+                    getParameters().getUserToRoles()));
+        } else {
+            getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
+        }
     }
 
     protected void addPermissionsToDB() {
@@ -468,14 +475,16 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     }
 
     private void removeInavlidRoles(ImportValidator importValidator) {
-        if (getParameters().getUserToRoles() == null || getParameters().getUserToRoles().isEmpty()) {
+        if (MapUtils.isEmpty(getParameters().getUserToRoles())) {
             return;
         }
 
-        Set<String> roles = new HashSet<>(getParameters().getRoleMap().values());
-        roles.addAll(getParameters().getRoleMap().keySet());
         log.info("Checking for missing roles");
-        missingRoles = importValidator.findMissingEntities(roles, val -> roleDao.getByName(val));
+        Set<String> candidateRoles = getParameters().getUserToRoles().entrySet()
+                .stream()
+                .flatMap(userToRoles -> userToRoles.getValue().stream())
+                .collect(Collectors.toSet());
+        missingRoles = importValidator.findMissingEntities(candidateRoles, val -> roleDao.getByName(val));
         getParameters().getUserToRoles().forEach((k, v) -> v.removeAll(missingRoles));
     }
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.ovfstore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.collections.MapUtils;
 import org.ovirt.engine.core.bll.exportimport.ImportedNetworkInfoUpdater;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -262,6 +264,32 @@ public class DrMappingHelper {
         });
 
         return dbUsersToAdd;
+    }
+
+    public Map<String, Set<String>> mapRoles(Map<String, String> roleMap, Map<String, Set<String>> userToRoles) {
+        if (MapUtils.isEmpty(userToRoles)) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, Set<String>> candidateUserToRoles = new HashMap<>();
+        userToRoles.forEach((user, roles) -> {
+            Set<String> rolesToAdd = new HashSet<>();
+            roles.forEach(roleName -> {
+                String destRoleName = roleMap.get(roleName);
+                log.info("Attempting to map role '{}' to '{}'", roleName, destRoleName);
+                if (destRoleName == null) {
+                    log.info("Mapping for role '{}' was not found, will try to use OVF role");
+                    rolesToAdd.add(destRoleName);
+                } else {
+                    Role destRole = roleDao.getByName(destRoleName);
+                    String roleToAdd = Optional.ofNullable(destRole).map(Role::getName).orElse(roleName);
+                    log.info("Will try to add role '{}' for user '{}'", roleToAdd);
+                    rolesToAdd.add(roleToAdd);
+                }
+            });
+            candidateUserToRoles.put(user, rolesToAdd);
+        });
+        return candidateUserToRoles;
     }
 
     public void addPermissions(Set<DbUser> dbUsers,

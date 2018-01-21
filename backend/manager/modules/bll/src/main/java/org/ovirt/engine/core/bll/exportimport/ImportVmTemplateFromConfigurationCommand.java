@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.exportimport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -125,18 +125,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
             return false;
         }
 
-        log.info("Checking for missing users");
-        List<DbUser> dbMissingUsers = getImportValidator().findMissingUsers(getParameters().getDbUsers());
-        getParameters().getDbUsers().removeAll(dbMissingUsers);
-        missingUsers = dbMissingUsers
-                .stream()
-                .map(dbUser -> String.format("%s@%s", dbUser.getLoginName(), dbUser.getDomain()))
-                .collect(Collectors.toList());
-        Set<String> roles = new HashSet<>(getParameters().getRoleMap().values());
-        roles.addAll(getParameters().getRoleMap().keySet());
-        log.info("Checking for missing roles");
-        missingRoles = getImportValidator().findMissingEntities(roles, val -> roleDao.getByName(val));
-        getParameters().getUserToRoles().forEach((k, v) -> v.removeAll(missingRoles));
+        removeInvalidUsers(getImportValidator());
+        removeInavlidRoles(getImportValidator());
 
         return super.validate();
     }
@@ -246,6 +236,12 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                             getParameters().getDomainMap()));
                 } else {
                     getParameters().setDbUsers(fullEntityOvfData.getDbUsers());
+                }
+                if (getParameters().getRoleMap() != null) {
+                    getParameters().setUserToRoles(drMappingHelper.mapRoles(getParameters().getRoleMap(),
+                            getParameters().getUserToRoles()));
+                } else {
+                    getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());
                 }
             } catch (OvfReaderException e) {
                 log.error("Failed to parse a given ovf configuration: {}:\n{}",
@@ -390,6 +386,34 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 return null;
             });
         }
+    }
+
+    private void removeInvalidUsers(ImportValidator importValidator) {
+        if (getParameters().getDbUsers() == null || getParameters().getDbUsers().isEmpty()) {
+            return;
+        }
+
+        log.info("Checking for missing users");
+        List<DbUser> dbMissingUsers = importValidator.findMissingUsers(getParameters().getDbUsers());
+        getParameters().getDbUsers().removeAll(dbMissingUsers);
+        missingUsers = dbMissingUsers
+                .stream()
+                .map(dbUser -> String.format("%s@%s", dbUser.getLoginName(), dbUser.getDomain()))
+                .collect(Collectors.toList());
+    }
+
+    private void removeInavlidRoles(ImportValidator importValidator) {
+        if (MapUtils.isEmpty(getParameters().getUserToRoles())) {
+            return;
+        }
+
+        log.info("Checking for missing roles");
+        Set<String> candidateRoles = getParameters().getUserToRoles().entrySet()
+                .stream()
+                .flatMap(userToRoles -> userToRoles.getValue().stream())
+                .collect(Collectors.toSet());
+        missingRoles = importValidator.findMissingEntities(candidateRoles, val -> roleDao.getByName(val));
+        getParameters().getUserToRoles().forEach((k, v) -> v.removeAll(missingRoles));
     }
 
     @Override
