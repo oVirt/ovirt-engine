@@ -39,11 +39,12 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
 
     @Override
     protected void executeQueryCommand() {
-        String ovf = runAnsibleQueryOvaInfoPlaybook();
-
-        boolean originOvirt = ovf.contains("xmlns:ovirt");
+        boolean originOvirt = false;
         VM vm = null;
+        String ovf = null;
         try {
+            ovf = runAnsibleQueryOvaInfoPlaybook();
+            originOvirt = ovf.contains("xmlns:ovirt");
             vm = readVmFromOva(ovf);
         } catch (Exception e) {
             if (originOvirt) {
