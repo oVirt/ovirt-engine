@@ -92,10 +92,10 @@ public class BackendStorageDomainVmResource
             Collection<ExternalVnicProfileMapping> vnicProfileMappings = ExternalVnicProfileMappingMapper.mapFromModel(
                     action.getVnicProfileMappings());
             params.setExternalVnicProfileMappings(vnicProfileMappings);
-            params.setReassignBadMacs(getReassignBadMacs(action));
         }
 
         ExternalRegistrationConfigurationMapper.mapFromModel(action.getRegistrationConfiguration(), params);
+        params.setReassignBadMacs(getReassignBadMacs(action));
         params.setContainerId(guid);
         params.setStorageDomainId(parent.getStorageDomainId());
         if (action.isSetCluster()) {
