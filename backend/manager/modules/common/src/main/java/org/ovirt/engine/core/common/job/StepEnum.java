@@ -20,6 +20,9 @@ public enum StepEnum {
     RUN_STATELESS_VM,
     TAKING_VM_FROM_POOL,
     REMOVING_VM,
+    CONVERTING_VM,
+    CONVERTING_OVA,
+    EXTRACTING_OVA,
     ADD_VM,
 
     // Gluster
