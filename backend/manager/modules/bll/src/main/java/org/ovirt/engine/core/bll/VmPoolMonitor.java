@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
@@ -60,6 +61,8 @@ public class VmPoolMonitor implements BackendService {
     private VmDao vmDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    protected BackendInternal backend;
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService schedulerService;
@@ -226,7 +229,7 @@ public class VmPoolMonitor implements BackendService {
         RunVmParams runVmParams = new RunVmParams(vmToRun.getId());
         runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRun.getId()));
         runVmParams.setRunAsStateless(runAsStateless);
-        ActionReturnValue actionReturnValueurnValue = Backend.getInstance().runInternalAction(ActionType.RunVm,
+        ActionReturnValue actionReturnValueurnValue = backend.runInternalAction(ActionType.RunVm,
                 runVmParams,
                 ExecutionHandler.createInternalJobContext().withLock(vmPoolHandler.createLock(vmToRun.getId())));
         boolean prestartingVmSucceeded = actionReturnValueurnValue.getSucceeded();
