@@ -294,7 +294,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 vmDao,
                 networkExclusivenessValidatorResolver,
                 networkAttachmentIpConfigurationValidator,
-                unmanagedNetworkValidator);
+                unmanagedNetworkValidator,
+                backend);
 
         return validator.validate();
     }

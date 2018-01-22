@@ -44,6 +44,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.FindActiveVmsUsingNetwork;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
@@ -112,6 +113,8 @@ public class HostSetupNetworksValidatorTest {
     private NetworkExclusivenessValidator mockNetworkExclusivenessValidator;
     @Mock
     private NetworkAttachmentIpConfigurationValidator mockNetworkAttachmentIpConfigurationValidator;
+    @Mock
+    private BackendInternal backendInternal;
 
     @Captor
     private ArgumentCaptor<Collection<String>> collectionArgumentCaptor;
@@ -1803,7 +1806,8 @@ public class HostSetupNetworksValidatorTest {
                 vmDao,
                 mockNetworkExclusivenessValidatorResolver,
                 mockNetworkAttachmentIpConfigurationValidator,
-                new UnmanagedNetworkValidator());
+                new UnmanagedNetworkValidator(),
+                backendInternal);
         }
     }
 }

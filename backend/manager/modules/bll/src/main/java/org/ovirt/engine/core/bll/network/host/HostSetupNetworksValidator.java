@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.FindActiveVmsUsingNetwork;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
@@ -93,6 +93,7 @@ public class HostSetupNetworksValidator {
     private List<VdsNetworkInterface> existingInterfaces;
     private NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator;
     private UnmanagedNetworkValidator unmanagedNetworkValidator;
+    private BackendInternal backendInternal;
 
     public HostSetupNetworksValidator(VDS host,
             HostSetupNetworksParameters params,
@@ -107,7 +108,8 @@ public class HostSetupNetworksValidator {
             VmDao vmDao,
             NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver,
             NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator,
-            UnmanagedNetworkValidator unmanagedNetworkValidator) {
+            UnmanagedNetworkValidator unmanagedNetworkValidator,
+            BackendInternal backendInternal) {
 
         this.host = host;
         this.params = params;
@@ -140,10 +142,12 @@ public class HostSetupNetworksValidator {
         this.networkAttachmentIpConfigurationValidator = networkAttachmentIpConfigurationValidator;
 
         this.unmanagedNetworkValidator = unmanagedNetworkValidator;
+
+        this.backendInternal = backendInternal;
     }
 
     List<String> translateErrorMessages(List<String> messages) {
-        return Backend.getInstance().getErrorsTranslator().translateErrorText(messages);
+        return backendInternal.getErrorsTranslator().translateErrorText(messages);
     }
 
     public ValidationResult validate() {
