@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.pm.FenceProxyLocator;
 import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
@@ -80,6 +81,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private boolean vdsProxyFound;
     private List<StorageDomainStatic> problematicDomains;
     private boolean connectPoolSucceeded;
+    private boolean haMaintenanceFailed;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -103,6 +105,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private StorageDomainDao storageDomainDao;
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -147,6 +151,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         vdsDynamicDao.updateVdsDynamicPowerManagementPolicyFlag(
                 getVds().getId(),
                 getVds().isPowerManagementControlledByPolicy());
+
+        if (getVds().getHighlyAvailableIsConfigured()) {
+            haMaintenanceFailed = !hostedEngineHelper.updateHaLocalMaintenanceMode(getVds(), false);
+        }
 
         if (cluster.supportsTrustedService()) {
             initSucceeded = initTrustedService();
@@ -382,6 +390,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 type = AuditLogType.VDS_FENCE_STATUS;
             } else if (getVds().isPmEnabled() && !fenceSucceeded) {
                 type = AuditLogType.VDS_FENCE_STATUS_FAILED;
+            } else if (haMaintenanceFailed) {
+                type = AuditLogType.VDS_ACTIVATE_MANUAL_HA;
             }
 
             // PM alerts
