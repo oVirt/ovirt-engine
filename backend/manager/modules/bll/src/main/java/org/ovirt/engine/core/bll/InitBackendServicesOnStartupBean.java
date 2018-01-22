@@ -51,6 +51,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @Inject
     private ServiceLoader serviceLoader;
 
+    @Inject
+    private Instance<ResourceManager> resourceManager;
+
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean life cycle.
@@ -65,11 +68,14 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             serviceLoader.load(EngineBackupAwarenessManager.class);
             serviceLoader.load(DataCenterCompatibilityChecker.class);
             serviceLoader.load(ResourceManager.class);
+            serviceLoader.load(HostDeviceManager.class);
+
             serviceLoader.load(IrsProxyManager.class);
             serviceLoader.load(OvfDataUpdater.class);
             StoragePoolStatusHandler.init();
             serviceLoader.load(GlusterJobsManager.class);
 
+            resourceManager.get().scheduleJobsForHosts();
             try {
                 log.info("Init VM custom properties utilities");
                 VmPropertiesUtils.getInstance().init();
@@ -84,7 +90,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
                 log.error("Initialization of device custom properties failed.", e);
             }
 
-            serviceLoader.load(HostDeviceManager.class);
             serviceLoader.load(SchedulingManager.class);
 
             sessionDataContainer.cleanupEngineSessionsOnStartup();

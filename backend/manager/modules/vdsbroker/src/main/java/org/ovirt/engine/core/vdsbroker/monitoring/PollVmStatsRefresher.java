@@ -62,7 +62,7 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
         vmsMonitoringJob =
                 schedulerService.scheduleWithFixedDelay(
                         this::poll,
-                        0,
+                        VMS_REFRESH_RATE * NUMBER_VMS_REFRESHES_BEFORE_SAVE,
                         VMS_REFRESH_RATE * NUMBER_VMS_REFRESHES_BEFORE_SAVE,
                         TimeUnit.MILLISECONDS);
     }

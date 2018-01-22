@@ -20,6 +20,6 @@ public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsI
         VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
         log.info("AddVds - VDS '{}' was added, will try to add it to the resource manager",
                 getVdsId());
-        resourceManager.addVds(vds, false);
+        resourceManager.addVds(vds, false, true);
     }
 }

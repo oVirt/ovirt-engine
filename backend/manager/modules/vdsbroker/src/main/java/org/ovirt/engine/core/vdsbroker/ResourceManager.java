@@ -104,7 +104,7 @@ public class ResourceManager implements BackendService {
         // Populate the VDS dictionary
         final List<VDS> allVdsList = hostDao.getAll();
         for (VDS curVds : allVdsList) {
-            addVds(curVds, true);
+            addVds(curVds, true, false);
         }
 
         log.info("Finished initializing {}", getClass().getSimpleName());
@@ -167,7 +167,7 @@ public class ResourceManager implements BackendService {
         return eventListener.get();
     }
 
-    public void addVds(VDS vds, boolean isInternal) {
+    public void addVds(VDS vds, boolean isInternal, boolean scheduleJobs) {
         VdsManager vdsManager = vdsManagerFactory.create(vds, this);
         if (isInternal) {
             VDSStatus status = vds.getStatus();
@@ -191,10 +191,18 @@ public class ResourceManager implements BackendService {
             vds.setPendingVcpusCount(0);
             vdsManager.updateDynamicData(vds.getDynamicData());
         }
-        vdsManager.scheduleJobs();
+
+        if (scheduleJobs) {
+            vdsManager.scheduleJobs();
+        }
+
         vdsManagersDict.put(vds.getId(), vdsManager);
         log.info("VDS '{}' was added to the Resource Manager", vds.getId());
 
+    }
+
+    public void scheduleJobsForHosts() {
+        vdsManagersDict.values().forEach(VdsManager::scheduleJobs);
     }
 
     public void removeVds(Guid vdsId) {
