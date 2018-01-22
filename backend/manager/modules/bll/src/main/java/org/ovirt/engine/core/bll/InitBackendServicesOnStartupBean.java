@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
 import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.CommandsRepository;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -53,6 +54,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     @Inject
     private Instance<ResourceManager> resourceManager;
+
+    @Inject
+    private Instance<CommandsRepository> commandsRepository;
 
     /**
      * This method is called upon the bean creation as part
@@ -96,6 +100,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
             serviceLoader.load(DwhHeartBeat.class);
 
+            commandsRepository.get().handleUnmanagedCommands();
             serviceLoader.load(AsyncTaskManager.class);
             serviceLoader.load(CommandCoordinatorUtil.class);
             serviceLoader.load(CommandCallbacksPoller.class);

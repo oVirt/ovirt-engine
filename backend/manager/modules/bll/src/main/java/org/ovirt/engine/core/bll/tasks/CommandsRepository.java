@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -82,8 +81,7 @@ public class CommandsRepository {
      * This method is responsible to update the statuses of all the commands that ACTIVE and persisted
      * but aren't managed to status that'll reflect that their execution was ended with failure.
      */
-    @PostConstruct
-    private void handleUnmanagedCommands() {
+    public void handleUnmanagedCommands() {
         List<AsyncTask> asyncTasks = asyncTaskDao.getAll();
         Set<Guid> asyncTaskManagerManagedCommands = asyncTasks.stream().filter(x -> x.getVdsmTaskId() != null)
                 .map(x -> x.getRootCommandId()).collect(Collectors.toSet());
