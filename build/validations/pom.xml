@@ -4,7 +4,7 @@
     <name>build-validations</name>
     <artifactId>build-validations</artifactId>
     <groupId>org.ovirt.engine.build</groupId>
-    <version>3.6.12.4-SNAPSHOT</version>
+    <version>3.6.13</version>
 
     <dependencies>
         <dependency>
