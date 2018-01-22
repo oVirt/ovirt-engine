@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -33,15 +32,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     @Inject
-    private HostedEngineHelper hostedEngineHelper;
-
-    @Inject
     private NetworkClusterHelper networkClusterHelper;
 
     @Inject
     private NetworkDao networkDao;
-
-    private boolean haMaintenanceFailed;
 
     public ActivateVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -53,7 +47,6 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
      */
     protected ActivateVdsCommand(Guid commandId) {
         super(commandId);
-        haMaintenanceFailed = false;
     }
 
     @Override
@@ -76,10 +69,6 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                     networkClusterHelper.setStatus(vds.getClusterId(), networks);
                     return null;
                 });
-
-                if (vds.getHighlyAvailableIsConfigured()) {
-                    haMaintenanceFailed = !hostedEngineHelper.updateHaLocalMaintenanceMode(getVds(), false);
-                }
 
                 // Start glusterd service on the node, which would haven been stopped due to maintenance
                 if (vds.getClusterSupportsGlusterService()) {
@@ -113,17 +102,9 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getParameters().isRunSilent()) {
-            return getSucceeded()
-                    ? haMaintenanceFailed
-                            ? AuditLogType.VDS_ACTIVATE_MANUAL_HA_ASYNC
-                            : AuditLogType.VDS_ACTIVATE_ASYNC
-                    : AuditLogType.VDS_ACTIVATE_FAILED_ASYNC;
+            return getSucceeded() ? AuditLogType.VDS_ACTIVATE_ASYNC : AuditLogType.VDS_ACTIVATE_FAILED_ASYNC;
         } else {
-            return getSucceeded()
-                    ? haMaintenanceFailed
-                            ? AuditLogType.VDS_ACTIVATE_MANUAL_HA
-                            : AuditLogType.VDS_ACTIVATE
-                    : AuditLogType.VDS_ACTIVATE_FAILED;
+            return getSucceeded() ? AuditLogType.VDS_ACTIVATE : AuditLogType.VDS_ACTIVATE_FAILED;
         }
     }
 }

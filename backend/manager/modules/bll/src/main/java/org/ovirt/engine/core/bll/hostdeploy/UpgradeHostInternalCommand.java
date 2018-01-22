@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.HostConnectivityChecker;
 import org.ovirt.engine.core.bll.host.Updateable;
-import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -33,13 +32,9 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends VdsCommand<T> {
 
     @Inject
-    private HostedEngineHelper hostedEngineHelper;
-    @Inject
     private VdsDynamicDao vdsDynamicDao;
     @Inject
     private Updateable upgradeManager;
-
-    private boolean haMaintenanceFailed;
 
     /**
      * C'tor for compensation purposes
@@ -130,13 +125,10 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
         dynamicHostData.setUpdateAvailable(false);
         vdsDynamicDao.update(dynamicHostData);
 
-        if (getVds().getVdsType() == VDSType.VDS) {
+        if (getVds().getVdsType() == VDSType.VDS && !getParameters().isReboot()) {
             if (getParameters().getInitialStatus() == VDSStatus.Maintenance) {
                 setVdsStatus(VDSStatus.Maintenance);
             } else {
-                if (getVds().getHighlyAvailableIsConfigured()) {
-                    haMaintenanceFailed = !hostedEngineHelper.updateHaLocalMaintenanceMode(getVds(), false);
-                }
                 setVdsStatus(VDSStatus.Initializing);
             }
         }
@@ -156,11 +148,6 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if(getSucceeded()){
-            return haMaintenanceFailed
-                    ? AuditLogType.HOST_UPGRADE_FINISHED_MANUAL_HA
-                    : AuditLogType.HOST_UPGRADE_FINISHED;
-        }
-        return AuditLogType.HOST_UPGRADE_FAILED;
+        return getSucceeded() ? AuditLogType.HOST_UPGRADE_FINISHED : AuditLogType.HOST_UPGRADE_FAILED;
     }
 }
