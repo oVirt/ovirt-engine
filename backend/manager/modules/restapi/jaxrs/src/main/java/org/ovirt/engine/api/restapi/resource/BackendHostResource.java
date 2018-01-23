@@ -215,6 +215,13 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
+    public Response syncAllNetworks(Action action) {
+        return doAction(ActionType.SyncAllHostNetworks,
+                new VdsActionParameters(guid),
+                action);
+    }
+
+    @Override
     public Response setupNetworks(Action action) {
         //verify if host exists to handle 404 status code.
         getVdsByVdsId();
