@@ -874,7 +874,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                             getStorageDomain().getSelectedItem().getStorageType().isBlockDomain() &&
                             getPassDiscard().getIsChangable() &&
                             getPassDiscard().getEntity()),
-                    constants.theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled());
+                    constants.theUnderlyingStorageDoesNotSupportWipeAfterDeleteWhenDiscardIsEnabled());
         } else {
             getIsWipeAfterDelete().setIsChangeable(false);
         }
