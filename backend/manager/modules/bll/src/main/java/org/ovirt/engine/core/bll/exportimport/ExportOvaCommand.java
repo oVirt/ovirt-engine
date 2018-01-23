@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -53,6 +54,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
@@ -60,6 +63,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -287,7 +291,7 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
     private void createOva() {
         ActionReturnValue returnValue = runInternalAction(ActionType.CreateOva,
                 buildCreateOvaParameters(),
-                ExecutionHandler.createDefaultContextForTasks(getContext()));
+                createOvaCreationStepContext());
 
         if (!returnValue.getSucceeded()) {
             log.error("Failed to create OVA file");
@@ -374,5 +378,28 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__EXPORT);
         addValidationMessage(EngineMessage.VAR__TYPE__VM);
+    }
+
+    protected CommandContext createOvaCreationStepContext() {
+        CommandContext commandCtx = null;
+        StepEnum step = StepEnum.CREATING_OVA;
+        try {
+            Step ovaCreationStep = executionHandler.addSubStep(getExecutionContext(),
+                    getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                    step,
+                    ExecutionMessageDirector.resolveStepMessage(step, Collections.emptyMap()));
+
+            ExecutionContext ctx = new ExecutionContext();
+            ctx.setStep(ovaCreationStep);
+            ctx.setMonitored(true);
+
+            commandCtx = cloneContext().withoutCompensationContext().withExecutionContext(ctx).withoutLock();
+
+        } catch (RuntimeException e) {
+            log.error("Failed to create command context of creating OVA '{}': {}", getVmName(), e.getMessage());
+            log.debug("Exception", e);
+        }
+
+        return commandCtx;
     }
 }

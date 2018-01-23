@@ -23,6 +23,7 @@ public enum StepEnum {
     CONVERTING_VM,
     CONVERTING_OVA,
     EXTRACTING_OVA,
+    CREATING_OVA,
     ADD_VM,
 
     // Gluster
