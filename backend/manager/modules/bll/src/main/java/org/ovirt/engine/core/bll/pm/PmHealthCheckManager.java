@@ -11,11 +11,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.pm.PowerManagementHelper.AgentsIterator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -60,6 +61,8 @@ public class PmHealthCheckManager implements BackendService {
     private FenceAgentDao fenceAgentDao;
     @Inject
     private AlertDirector alertDirector;
+    @Inject
+    private Instance<BackendInternal> backend;
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService executor;
@@ -265,7 +268,7 @@ public class PmHealthCheckManager implements BackendService {
                             FenceVdsActionParameters(host.getId()), null);
             if (new HostFenceActionExecutor(host).isHostPoweredOff()) {
                 ActionReturnValue
-                        retValue = Backend.getInstance().runInternalAction(ActionType.RestartVds, restartVdsCommand.getParameters());
+                        retValue = backend.get().runInternalAction(ActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {
                     log.info("Host '{}' was started successfully by PM Health Check Manager",
                             host.getName());
@@ -292,9 +295,7 @@ public class PmHealthCheckManager implements BackendService {
                 VdsNotRespondingTreatmentCommand<FenceVdsActionParameters> nonResponingVdsCommand =
                         new VdsNotRespondingTreatmentCommand<>(new
                                 FenceVdsActionParameters(host.getId()), null);
-                Backend.getInstance()
-                        .runInternalAction(ActionType.VdsNotRespondingTreatment,
-                                nonResponingVdsCommand.getParameters());
+                backend.get().runInternalAction(ActionType.VdsNotRespondingTreatment, nonResponingVdsCommand.getParameters());
             }
         }
     }
@@ -313,7 +314,7 @@ public class PmHealthCheckManager implements BackendService {
 
     private void executeNotRespondingTreatment(List<VDS> hosts) {
         for (VDS host : hosts) {
-            ThreadPoolUtil.execute(() -> Backend.getInstance().runInternalAction(
+            ThreadPoolUtil.execute(() -> backend.get().runInternalAction(
                     ActionType.VdsNotRespondingTreatment,
                     new FenceVdsActionParameters(host.getId()),
                     ExecutionHandler.createInternalJobContext()
