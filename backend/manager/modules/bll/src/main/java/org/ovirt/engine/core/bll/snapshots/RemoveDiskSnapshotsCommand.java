@@ -322,7 +322,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         ImagesContainterParametersBase parameters = buildRemoveSnapshotSingleDiskParameters(nextImageId);
 
-        commandCoordinatorUtil.executeAsyncCommand(ActionType.ColdMergeSnapshotSingleDisk,
+        commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshotSingleDisk,
                 parameters,
                 cloneContextAndDetachFromParent());
 
@@ -366,7 +366,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     private ImagesContainterParametersBase buildRemoveSnapshotSingleDiskParameters(Guid imageId) {
-        RemoveSnapshotSingleDiskParameters parameters = new RemoveSnapshotSingleDiskParameters(
+        ImagesContainterParametersBase parameters = new ImagesContainterParametersBase(
                 imageId, getVmId());
         DiskImage dest = diskImageDao.getAllSnapshotsForParent(imageId).get(0);
         parameters.setDestinationImageId(dest.getImageId());
