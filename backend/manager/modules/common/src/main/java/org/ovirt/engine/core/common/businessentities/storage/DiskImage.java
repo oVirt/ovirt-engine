@@ -433,7 +433,9 @@ public class DiskImage extends DiskImageBase {
         di.setImageTemplateId(diskImage.getImageTemplateId());
         di.setParentId(diskImage.getParentId());
         di.setImageStatus(diskImage.getImageStatus());
-        di.setLastModified(new Date(diskImage.getLastModified().getTime()));
+        if (diskImage.getLastModified() != null) {
+            di.setLastModified(new Date(diskImage.getLastModified().getTime()));
+        }
         di.storageIds = new ArrayList<>(diskImage.storageIds);
         di.setVmSnapshotId(diskImage.getVmSnapshotId());
         di.setId(diskImage.getId());
