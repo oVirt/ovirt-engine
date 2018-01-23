@@ -76,7 +76,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String nameId(String name, String id);
 
-    String percentWithValueInGB(int percent, int value);
+    String percentWithValueInGiB(int percent, int value);
 
     String stripSizeInfoForGlusterBricks(int stripeSize, String raidType);
 

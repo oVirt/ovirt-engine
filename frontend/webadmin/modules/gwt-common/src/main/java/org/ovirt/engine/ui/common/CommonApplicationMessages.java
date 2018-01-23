@@ -179,7 +179,7 @@ public interface CommonApplicationMessages extends Messages {
 
     String megabytes(String num);
 
-    String gigabytes(String num);
+    String gibibytes(String num);
 
     String memoryHotUnplugNotSupportedForCompatibilityVersionAndArchitecture(Version compatibilityVersion,
             ArchitectureType clusterArch);

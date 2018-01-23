@@ -179,7 +179,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
             usedSize.setValue(entity.getUsedDiskSize());
             allocatedSize.setValue(entity.getCommittedDiskSize());
             overAllocationRatio.setValue(entity.getStorageDomainOverCommitPercent());
-            warningLowSpaceIndicator.setValue(messages.percentWithValueInGB(
+            warningLowSpaceIndicator.setValue(messages.percentWithValueInGiB(
                     entity.getWarningLowSpaceIndicator(), entity.getWarningLowSpaceSize()));
             criticalSpaceActionBlocker.setValue(entity.getCriticalSpaceActionBlocker());
         }

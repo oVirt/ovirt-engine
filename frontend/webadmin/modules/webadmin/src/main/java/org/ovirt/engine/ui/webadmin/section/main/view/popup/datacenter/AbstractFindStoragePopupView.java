@@ -59,9 +59,9 @@ public abstract class AbstractFindStoragePopupView extends AbstractModelBoundPop
             @Override
             public String getText(StorageDomain storage) {
                 if (storage.getAvailableDiskSize() == null || storage.getAvailableDiskSize() < 1) {
-                    return messages.gigabytes("< 1"); //$NON-NLS-1$
+                    return messages.gibibytes("< 1"); //$NON-NLS-1$
                 }
-                return messages.gigabytes(String.valueOf(storage.getAvailableDiskSize()));
+                return messages.gibibytes(String.valueOf(storage.getAvailableDiskSize()));
             }
         }, constants.freeSpaceStorage());
 

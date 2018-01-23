@@ -211,7 +211,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         AbstractLunTextColumn devSizeColumn = new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
-                return messages.gigabytes(String.valueOf(model.getSize()));
+                return messages.gibibytes(String.valueOf(model.getSize()));
             }
         };
         devSizeColumn.makeSortable();

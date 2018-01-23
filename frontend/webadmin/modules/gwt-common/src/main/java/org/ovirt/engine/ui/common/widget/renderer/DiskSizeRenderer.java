@@ -46,7 +46,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
         switch (format) {
             case GIGABYTE:
-                return renderGigabyteSize(size.longValue());
+                return renderGibibyteSize(size.longValue());
 
             case HUMAN_READABLE:
                 return renderHumanReadableSize(size.longValue());
@@ -56,16 +56,16 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
         }
     }
 
-    private String renderGigabyteSize(long size) {
-        long sizeInGB = (unit == SizeUnit.GiB) ?
+    private String renderGibibyteSize(long size) {
+        long sizeInGiB = (unit == SizeUnit.GiB) ?
                 size : SizeConverter.convert(size, unit, SizeUnit.GiB).longValue();
-        return messages.gigabytes(sizeInGB >= 1 ? String.valueOf(sizeInGB) : "< 1"); //$NON-NLS-1$
+        return messages.gibibytes(sizeInGiB >= 1 ? String.valueOf(sizeInGiB) : "< 1"); //$NON-NLS-1$
     }
 
     private String renderHumanReadableSize(long size) {
         long sizeInBytes = SizeConverter.convert(size, unit, SizeUnit.BYTES).longValue();
         if(sizeInBytes >= SizeConverter.BYTES_IN_GB) {
-            return messages.gigabytes(String.valueOf(
+            return messages.gibibytes(String.valueOf(
                     SizeConverter.convert(sizeInBytes, SizeUnit.BYTES, SizeUnit.GiB).longValue()));
         } else if(sizeInBytes >= SizeConverter.BYTES_IN_MB) {
             return messages.megabytes(String.valueOf(

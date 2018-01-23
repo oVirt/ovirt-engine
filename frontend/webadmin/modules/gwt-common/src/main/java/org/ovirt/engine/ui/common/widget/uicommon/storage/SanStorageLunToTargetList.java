@@ -193,7 +193,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
-                return messages.gigabytes(String.valueOf(model.getSize()));
+                return messages.gibibytes(String.valueOf(model.getSize()));
             }
         }, templates.textWithToolTip(constants.devSizeSanStorage()), "60px"); //$NON-NLS-1$
 

@@ -153,7 +153,7 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 } else if (value <= 5*1024) {
                     returnVal = messages.megabytes(String.valueOf(value));
                 } else {
-                    returnVal = messages.gigabytes(decimalFormat.format((double)value/1024));
+                    returnVal = messages.gibibytes(decimalFormat.format((double)value/1024));
                 }
                 return returnVal;
             }
@@ -281,7 +281,7 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 if (allocated < 0) {
                     returnVal = constants.unlimited();
                 } else if (value <= 0) {
-                    returnVal = messages.gigabytes("0"); //$NON-NLS-1$
+                    returnVal = messages.gibibytes("0"); //$NON-NLS-1$
                 } else {
                     returnVal = diskSizeRenderer.render(value);
                 }
