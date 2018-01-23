@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -256,6 +257,7 @@ implements QuotaStorageDependent {
     @Override
     protected void processImages() {
         ArrayList<Guid> diskIds = getVm().getImages().stream()
+                .map(this::adjustDisk)
                 .map(this::createDisk)
                 .collect(Collectors.toCollection(ArrayList::new));
         getParameters().setDisks(diskIds);
@@ -276,9 +278,22 @@ implements QuotaStorageDependent {
                 Guid.newGuid(), getVm(), SnapshotStatus.OK, StringUtils.EMPTY, getCompensationContext());
     }
 
+    protected DiskImage adjustDisk(DiskImage image) {
+        image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
+        image.setDiskVmElements(image.getDiskVmElements().stream()
+                .map(dve -> {
+                    DiskVmElement copy = DiskVmElement.copyOf(dve, image.getId(), getVmId());
+                    updatePassDiscardForDiskVmElement(copy);
+                    return copy;
+                })
+                .collect(Collectors.toList()));
+        return image;
+    }
+
     protected Guid createDisk(DiskImage image) {
-        ActionReturnValue actionReturnValue =
-                runInternalActionWithTasksContext(ActionType.AddDisk, buildAddDiskParameters(image));
+        ActionReturnValue actionReturnValue = runInternalActionWithTasksContext(
+                ActionType.AddDisk,
+                buildAddDiskParameters(image));
 
         if (!actionReturnValue.getSucceeded()) {
             throw new EngineException(actionReturnValue.getFault().getError(),
@@ -290,8 +305,6 @@ implements QuotaStorageDependent {
     }
 
     protected AddDiskParameters buildAddDiskParameters(DiskImage image) {
-        image.setDiskAlias(renameDiskAlias(getVm().getOrigin(), image.getDiskAlias()));
-
         AddDiskParameters diskParameters = new AddDiskParameters(image.getDiskVmElementForVm(getVmId()), image);
         diskParameters.setStorageDomainId(getStorageDomainId());
         diskParameters.setParentCommand(getActionType());

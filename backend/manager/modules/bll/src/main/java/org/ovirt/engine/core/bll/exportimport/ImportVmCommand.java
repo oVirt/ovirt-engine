@@ -1506,10 +1506,4 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return super.getMacPool();
     }
 
-    private void updatePassDiscardForDiskVmElement(DiskVmElement diskVmElement) {
-        if (diskVmElement.isPassDiscard() &&
-                !FeatureSupported.passDiscardSupported(getStoragePool().getCompatibilityVersion())) {
-            diskVmElement.setPassDiscard(false);
-        }
-    }
 }
