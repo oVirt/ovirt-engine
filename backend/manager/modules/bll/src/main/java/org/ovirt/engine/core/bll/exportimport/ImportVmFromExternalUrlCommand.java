@@ -82,6 +82,17 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
     }
 
     @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
+                    (getVmName() == null) ? "" : getVmName());
+            jobProperties.put(VdcObjectType.Cluster.name().toLowerCase(), getClusterName());
+        }
+        return jobProperties;
+    }
+
+    @Override
     public String getVmName() {
         return getParameters().getNewVmName() != null
                 ? getParameters().getNewVmName()
