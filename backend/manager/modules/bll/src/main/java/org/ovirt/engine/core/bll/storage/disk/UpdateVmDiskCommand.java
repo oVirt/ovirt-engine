@@ -62,6 +62,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -398,6 +400,15 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
             if (oldDiskImage.getSize() > newDiskImage.getSize()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
+            }
+
+            StorageDomain storageDomain = storageDomainDao.get(newDiskImage.getStorageIds().get(0));
+            if (storageDomain.getStorageType().isBlockDomain()) {
+                Integer maxBlockDiskSize = Config.<Integer> getValue(ConfigValues.MaxBlockDiskSize);
+                if (newDiskImage.getSize() / BYTES_IN_GB > maxBlockDiskSize) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED,
+                            String.format("$max_disk_size %1$s", maxBlockDiskSize));
+                }
             }
 
             for (VM vm : getVmsDiskPluggedTo()) {

@@ -13,10 +13,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonNegativeLongNumberValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -134,9 +136,18 @@ public class EditDiskModel extends AbstractDiskModel {
 
     @Override
     public boolean validate() {
+        StorageType storageType = getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
+                : getStorageDomain().getSelectedItem().getStorageType();
+        IntegerValidation sizeValidation = new IntegerValidation();
+        if (storageType.isBlockDomain()) {
+            Integer maxBlockDiskSize =
+                    (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxBlockDiskSize);
+            sizeValidation.setMaximum(maxBlockDiskSize - getSize().getEntity());
+        }
         getSizeExtend().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
-                new NonNegativeLongNumberValidation()
+                new NonNegativeLongNumberValidation(),
+                sizeValidation
         });
         return super.validate() && getSizeExtend().getIsValid();
     }

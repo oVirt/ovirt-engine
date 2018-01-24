@@ -133,7 +133,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false));
+            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false),
+            mockConfig(ConfigValues.MaxBlockDiskSize, 8));
 
     /**
      * The command under test.
@@ -587,6 +588,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         StorageDomain sd = new StorageDomain();
         sd.setAvailableDiskSize(Integer.MAX_VALUE);
         sd.setStatus(StorageDomainStatus.Active);
+        when(storageDomainDao.get(any())).thenReturn(sd);
         when(storageDomainDao.getForStoragePool(any(), any())).thenReturn(sd);
         StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
         doReturn(sdValidator).when(command).getStorageDomainValidator(any());
@@ -746,6 +748,29 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand();
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
+    }
+
+    @Test
+    public void testInvalidDiskExtend() {
+        DiskImage oldDiskImage = createDiskImage();
+        oldDiskImage.setSize(SizeConverter.convert(8L, SizeConverter.SizeUnit.GiB,
+                SizeConverter.SizeUnit.BYTES).longValue());
+
+        DiskImage newDiskImage = createDiskImage();
+        newDiskImage.setSize(SizeConverter.convert(10L, SizeConverter.SizeUnit.GiB,
+                SizeConverter.SizeUnit.BYTES).longValue());
+
+        command.getParameters().setDiskVmElement(new DiskVmElement(newDiskImage.getId(), vmId));
+        command.getParameters().setDiskInfo(newDiskImage);
+
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
+        initializeCommand();
+        StorageDomain sd = new StorageDomain();
+        sd.setId(Guid.newGuid());
+        sd.setStorageType(StorageType.ISCSI);
+        when(storageDomainDao.get(any())).thenReturn(sd);
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_MAX_SIZE_EXCEEDED);
     }
 
     private void mockNullVm() {
