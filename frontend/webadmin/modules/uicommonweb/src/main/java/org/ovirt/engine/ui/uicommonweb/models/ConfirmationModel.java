@@ -80,6 +80,7 @@ public class ConfirmationModel extends ListModel {
     }
 
     public ConfirmationModel() {
+        setTitle(ConstantsManager.getInstance().getConstants().confirmTitle());
         setLatch(new EntityModel<Boolean>());
         getLatch().setEntity(false);
         getLatch().setIsAvailable(false);
