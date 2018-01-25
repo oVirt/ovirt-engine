@@ -56,7 +56,7 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     }
 
     private String getItemTextFormatted(String itemText) {
-        return "- " + itemText + "<br/>"; //$NON-NLS-1$ //$NON-NLS-2$
+        return "- " + itemText; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
