@@ -11,15 +11,16 @@ public class BackendVnicProfileHelper {
 
     // TODO these validations should be moved to the ovirt-engine-api-model and verified with @InputDetail
     @Deprecated
-    public static void validateVnicMappings(BackendResource bs, Action action) {
+    public static void validateVnicMappings(BackendResource br, Action action) {
         if (action.isSetVnicProfileMappings()) {
-            bs.validateParameters(action.getVnicProfileMappings(), "vnicProfileMappings");
+            br.validateParameters(action.getVnicProfileMappings(), "vnicProfileMappings");
             for (VnicProfileMapping mapping: action.getVnicProfileMappings().getVnicProfileMappings()) {
-                bs.validateParameters(mapping, "sourceNetworkName");
-                bs.validateParameters(mapping, "sourceNetworkProfileName");
-                bs.validateParameters(mapping, "targetVnicProfile");
-                bs.validateParameters(mapping, "targetVnicProfile.id");
-                bs.asGuid(mapping.getTargetVnicProfile().getId());
+                br.validateParameters(mapping, "sourceNetworkName");
+                br.validateParameters(mapping, "sourceNetworkProfileName");
+                // target is optional
+                if (mapping.isSetTargetVnicProfile() && mapping.getTargetVnicProfile().isSetId()) {
+                    br.asGuid(mapping.getTargetVnicProfile().getId());
+                }
             }
         }
     }
