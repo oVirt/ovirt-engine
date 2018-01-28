@@ -932,6 +932,10 @@ public class SyntaxChecker implements ISyntaxChecker {
             if (syntax.getSearchFrom() > 0) {
                 inQuery = StringFormat.format("%1$s and  %2$s >  %3$s", inQuery, primeryKey, syntax.getSearchFrom());
             }
+            // Prevent duplicate records when cross reference is used.
+            if (inQuery.contains("LEFT OUTER JOIN") && ! inQuery.contains("distinct")) {
+                inQuery = inQuery.replaceFirst("SELECT ", "SELECT  distinct ");
+            }
             retval =
                     StringFormat.format(Config.getValue(ConfigValues.DBSearchTemplate),
                             sortExpr.toString(),
