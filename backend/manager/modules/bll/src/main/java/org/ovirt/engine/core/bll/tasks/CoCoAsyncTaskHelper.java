@@ -8,7 +8,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -50,6 +49,8 @@ public class CoCoAsyncTaskHelper {
     private Instance<CommandsRepository> commandsRepositoryInstance;
     @Inject
     private Instance<AsyncTaskManager> asyncTaskManager;
+    @Inject
+    private Instance<BackendInternal> backend;
 
     /**
      * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use
@@ -123,7 +124,7 @@ public class CoCoAsyncTaskHelper {
                         taskIdAsList);
                 // call revert task only if ended successfully
                 if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {
-                    getBackend().getResourceManager().runVdsCommand(
+                    backend.get().getResourceManager().runVdsCommand(
                             VDSCommandType.SPMRevertTask,
                             new SPMTaskGuidBaseVDSCommandParameters(
                                     command.getStoragePool().getId(), taskId));
@@ -369,9 +370,5 @@ public class CoCoAsyncTaskHelper {
      */
     private AsyncTaskType internalGetTaskType(CommandBase<?> command) {
         return command.getAsyncTaskType();
-    }
-
-    private BackendInternal getBackend() {
-        return Backend.getInstance();
     }
 }
