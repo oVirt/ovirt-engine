@@ -1,16 +1,21 @@
 ---
-- name: Create cgroups CPU configuration file
+- name: Create systemd overrides directory for glusterd
+  file:
+    path: /etc/systemd/system/glusterd.service.d/
+    state: directory
+
+- name: Create glusterd cgroups CPU configuration file
   copy:
     src: 99-cpu.conf
     dest: /etc/systemd/system/glusterd.service.d/99-cpu.conf
   notify:
-    - restart glusterd
+    - Restart glusterd
 
 - name: Set CPU quota
   template:
     src: glusterfs.slice.j2
     dest: /etc/systemd/system/glusterfs.slice
   vars:
-    gluster_cgroup_cpu_quota : "{{ (ansible_processor_vcpus/3)|int|abs * 100 }}"
+    gluster_cgroup_cpu_quota : "{{ [(ansible_processor_vcpus/3)|int|abs,1]|max * 100 }}"
   notify:
-    - restart glusterd
+    - Restart glusterd
