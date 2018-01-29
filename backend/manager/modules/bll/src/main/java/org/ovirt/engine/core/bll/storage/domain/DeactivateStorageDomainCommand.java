@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -156,13 +157,16 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
         if (getStoragePool().getSpmVdsId() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
+            List<AsyncTask> asyncTasks = null;
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
-                    asyncTaskDao.getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId()).size() > 0) {
+                    (asyncTasks = asyncTaskDao.getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId())).size() > 0) {
+                logRunningAsyncTasks(asyncTasks);
                 return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
             } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO &&
                     !getParameters().getIsInternal()
-                    && (asyncTaskDao.getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0 ||
+                    && ((asyncTasks = asyncTaskDao.getTasksByEntity(getParameters().getStorageDomainId())).size() > 0 ||
                     commandEntityDao.getCommandIdsByEntity(getParameters().getStorageDomainId()).size() > 0)) {
+                logRunningAsyncTasks(asyncTasks);
                 return failValidation(EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
             }
         }
@@ -485,5 +489,13 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
+    }
+
+    private void logRunningAsyncTasks(List<AsyncTask> asyncTasks) {
+        String runningTasks = asyncTasks
+                .stream()
+                .map(AsyncTask::toString)
+                .collect(Collectors.joining("\n"));
+        log.warn("There are running tasks: '{}'", runningTasks);
     }
 }
