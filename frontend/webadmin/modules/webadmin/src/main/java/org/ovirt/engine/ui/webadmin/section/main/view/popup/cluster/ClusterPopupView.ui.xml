@@ -106,6 +106,10 @@
             float: left
         }
 
+        .inline {
+            display: inline
+        }
+
         .topElement {
             padding-top: 15px;
         }
@@ -430,11 +434,11 @@
                         <t:content>
                           <b:Container fluid="true">
                             <b:Row addStyleNames="{style.topElement}">
-                              <b:Column size="SM_6">
-                                <ge:EntityModelCheckBoxEditor ui:field="spiceProxyOverrideEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.overriddenSpiceProxyAddress}" />
-                                <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}"/>
+                              <b:Column size="SM_7">
+                                  <ge:EntityModelCheckBoxEditor ui:field="spiceProxyOverrideEnabled" addStyleNames="{style.floatLeft} {style.inline}" usePatternFly="true" removeFormGroup="true" label="{constants.overriddenSpiceProxyAddress}" />
+                                  <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.floatLeft} {style.inline}"/>
                               </b:Column>
-                              <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" usePatternFly="true" widgetColSize="SM_6" />
+                              <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" usePatternFly="true" widgetColSize="SM_5" />
                             </b:Row>
                           </b:Container>
                         </t:content>
