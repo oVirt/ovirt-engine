@@ -25,7 +25,6 @@ public class TemplateSubTabPanelView extends AbstractSubTabPanelView implements 
             TemplateActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
-        actionPanel.removeButton(actionPanel.getNewButtonDefinition());
     }
 
     @Override

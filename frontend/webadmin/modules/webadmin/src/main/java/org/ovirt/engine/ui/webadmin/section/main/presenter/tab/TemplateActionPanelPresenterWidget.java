@@ -17,8 +17,6 @@ public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidg
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    private WebAdminButtonDefinition<VmTemplate> newButtonDefinition;
-
     @Inject
     public TemplateActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<VmTemplate> view,
@@ -28,13 +26,12 @@ public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidg
 
     @Override
     protected void initializeButtons() {
-        newButtonDefinition = new WebAdminButtonDefinition<VmTemplate>(constants.editTemplate()) {
+        addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.editTemplate()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
-        };
-        addActionButton(newButtonDefinition);
+        });
         addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.removeTemplate()) {
             @Override
             protected UICommand resolveCommand() {
@@ -53,9 +50,5 @@ public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidg
                 return getModel().getCreateVmFromTemplateCommand();
             }
         });
-    }
-
-    public WebAdminButtonDefinition<VmTemplate> getNewButtonDefinition() {
-        return newButtonDefinition;
     }
 }
