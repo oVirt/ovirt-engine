@@ -282,7 +282,7 @@ class Plugin(plugin.PluginBase):
             )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_EARLY_MISC,
+        stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: (
             (
                 self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] or
