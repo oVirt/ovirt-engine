@@ -141,6 +141,7 @@ class ConfigEnv(object):
         answerfile=True,
         summary=True,
         description=_('Configure VMConsole Proxy'),
+        reconfigurable=True,
         postinstallfile=True,
     )
     def VMCONSOLE_PROXY_CONFIG(self):
