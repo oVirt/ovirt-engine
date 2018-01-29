@@ -16,6 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.core.common.utils.ansible;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -89,6 +90,13 @@ public class AnsibleExecutor {
             ProcessBuilder ansibleProcessBuilder = new ProcessBuilder()
                 .command(ansibleCommand)
                 .directory(command.playbookDir().toFile());
+
+            // Ignore stdout/stderr, if don't care about output from stdout callback plugin to avoid process stuck:
+            if (command.stdoutCallback() == null) {
+                ansibleProcessBuilder
+                    .redirectErrorStream(true)
+                    .redirectOutput(new File("/dev/null"));
+            }
 
             // Set environment variables:
             ansibleProcessBuilder.environment()
