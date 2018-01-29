@@ -47,6 +47,8 @@ public class EventsListPopover extends OvirtPopover {
 
     private List<NotificationListWidget> notificationWidgetList = new ArrayList<>();
 
+    private int footerHeight = 0;
+
     public EventsListPopover(String title, HasCssName iconType) {
         eventListButton.addStyleName(PatternflyConstants.PF_DRAWER_TRIGGER);
         eventListButton.addStyleName(Styles.DROPDOWN);
@@ -92,7 +94,11 @@ public class EventsListPopover extends OvirtPopover {
         int calculatedHeight = contentPanel.getOffsetHeight();
         // We assume all the title and footer heights will be the same.
         if (!notificationWidgetList.isEmpty()) {
-            calculatedHeight -= notificationWidgetList.get(0).getFooterHeight();
+            int widgetFooterHeight = notificationWidgetList.get(0).getFooterHeight();
+            if (widgetFooterHeight > 0) {
+                footerHeight = widgetFooterHeight;
+            }
+            calculatedHeight -= footerHeight;
             calculatedHeight -= notificationWidgetList.get(0).getHeaderTitleHeight() * notificationWidgetList.size();
             for (NotificationListWidget widget: this.notificationWidgetList) {
                 widget.setContainerHeight(calculatedHeight);
