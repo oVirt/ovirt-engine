@@ -229,3 +229,11 @@ bug-report https://github.com/necolas/normalize.css/issues/349
 input:disabled {
     color: GrayText;
 }
+
+/*
+Fix for https://github.com/redhat-rcue/rcue/issues/85
+*/
+.drawer-pf-title {
+    width: 100% !important;
+}
+
