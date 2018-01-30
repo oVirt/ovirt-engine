@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -218,43 +217,38 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected boolean isLunsAlreadyInUse(Set<String> lunIds) {
         // Get LUNs from DB
         List<LUNs> lunsFromDb = lunDao.getAll();
-        Set<LUNs> lunsUsedBySDs = new HashSet<>();
-        Set<LUNs> lunsUsedByDisks = new HashSet<>();
+        StringBuilder lunsUsedBySDs = new StringBuilder();
+        StringBuilder lunsUsedByDisks = new StringBuilder();
 
-        for (LUNs lun : lunsFromDb) {
-            if (lunIds.contains(lun.getLUNId())) {
-                if (lun.getStorageDomainId() != null) {
-                    // LUN is already part of a storage domain
-                    lunsUsedBySDs.add(lun);
-                }
-                if (lun.getDiskId() != null) {
-                    // LUN is already used by a disk
-                    lunsUsedByDisks.add(lun);
-                }
+        lunsFromDb.stream().filter(lun -> lunIds.contains(lun.getLUNId())).forEach(lun -> {
+            // LUN is already part of a storage domain
+            if (lun.getStorageDomainId() != null) {
+                addFormattedLunId(lunsUsedBySDs, lun.getLUNId(), lun.getStorageDomainName());
             }
-        }
+            // LUN is already used by a disk
+            if (lun.getDiskId() != null) {
+                addFormattedLunId(lunsUsedByDisks, lun.getLUNId(), lun.getDiskAlias());
+            }
+        });
 
-        if (!lunsUsedBySDs.isEmpty()) {
+        if (lunsUsedBySDs.length() != 0) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_PART_OF_STORAGE_DOMAINS);
-            Set<String> formattedIds = lunsUsedBySDs.stream()
-                    .map(lun -> getFormattedLunId(lun, lun.getStorageDomainName()))
-                    .collect(toSet());
-            addValidationMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
+            addValidationMessageVariable("lunIds", lunsUsedBySDs.toString());
         }
 
-        if (!lunsUsedByDisks.isEmpty()) {
+        if (lunsUsedByDisks.length() != 0) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_LUNS_ALREADY_USED_BY_DISKS);
-            Set<String> formattedIds = lunsUsedByDisks.stream()
-                    .map(lun -> getFormattedLunId(lun, lun.getDiskAlias()))
-                    .collect(toSet());
-            addValidationMessageVariable("lunIds", StringUtils.join(formattedIds, ", "));
+            addValidationMessageVariable("lunIds", lunsUsedByDisks.toString());
         }
 
-       return !lunsUsedBySDs.isEmpty() || !lunsUsedByDisks.isEmpty();
+       return lunsUsedBySDs.length() != 0 || lunsUsedByDisks.length() != 0;
     }
 
-    protected String getFormattedLunId(LUNs lun, String usedByEntityName) {
-        return String.format("%1$s (%2$s)", lun.getLUNId(), usedByEntityName);
+    protected void addFormattedLunId(StringBuilder sb, String lunId, String entityName) {
+        if (sb.length() != 0) {
+            sb.append(", ");
+        }
+        sb.append(String.format("%1$s (%2$s)", lunId, entityName));
     }
 
     protected List<Pair<Guid, Boolean>> connectHostsInUpToDomainStorageServer() {
