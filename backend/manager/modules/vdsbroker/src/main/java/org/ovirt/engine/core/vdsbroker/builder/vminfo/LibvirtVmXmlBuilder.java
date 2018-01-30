@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -660,14 +661,15 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeMemoryBacking() {
-        if (!HugePageUtils.isBackedByHugepages(vm.getStaticData())) {
+        Optional<Integer> hugepageSizeOpt = HugePageUtils.getHugePageSize(vm.getStaticData());
+        if (!hugepageSizeOpt.isPresent()) {
             return;
         }
 
         writer.writeStartElement("memoryBacking");
         writer.writeStartElement("hugepages");
         writer.writeStartElement("page");
-        int hugepageSize = Integer.parseInt(HugePageUtils.getHugePageSize(vm.getStaticData()));
+        int hugepageSize = hugepageSizeOpt.get();
         List<Integer> hugepageSizes = hostStatisticsSupplier.get().getHugePages().stream()
                 .map(HugePage::getSizeKB)
                 .collect(Collectors.toList());
