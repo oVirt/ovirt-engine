@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transaction;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -157,24 +159,41 @@ public class VmInterfaceManager {
      *         <code>false</code> otherwise.
      */
     public boolean tooManyPluggedInterfaceWithSameMac(VmNic iface, ReadMacPool readMacPool) {
-        return !readMacPool.isDuplicateMacAddressesAllowed() && existsPluggedInterfaceWithSameMac(iface);
+        return !readMacPool.isDuplicateMacAddressesAllowed() && findPluggedInterfaceWithSameMac(iface) != null;
     }
 
     /***
-     * Returns whether or not there is a plugged network interface with the same MAC address as the given interface
+     * Returns an {@link Optional}&lt;{@link VM}&gt;  when duplicate MAC addresses are not allowed
+     *
+     * @param iface
+     *              Interface to check for duplicate MAC address
+     * @param readMacPool
+     *              The pool to check if MAC address duplication is allowed
+     * @return  {@link Optional}&lt;{@link VM}&gt; if duplicate MACs are not allowed, empty {@link Optional} otherwise.
+     */
+    public Optional<VM> getVmWithSameMacIfDuplicateIsNotAllowed(VmNic iface, ReadMacPool readMacPool) {
+        if (!readMacPool.isDuplicateMacAddressesAllowed()) {
+            return Optional.ofNullable(findPluggedInterfaceWithSameMac(iface))
+                    .map(vmInterface -> getVmDao().get(vmInterface.getVmId()));
+        }
+        return Optional.empty();
+    }
+
+    /***
+     * Returns {@link VmNic} or null of interface with same the MAC address as the given interface
      *
      * @param interfaceToPlug
      *            the network interface that needs to be plugged
-     * @return <code>true</code> if the MAC is used by another plugged network interface, <code>false</code> otherwise.
+     * @return {@link VmNic} of interface that is using the same MAC , <code>null</code> otherwise.
      */
-    private boolean existsPluggedInterfaceWithSameMac(VmNic interfaceToPlug) {
+    private VmNic findPluggedInterfaceWithSameMac(VmNic interfaceToPlug) {
         List<VmNic> vmNetworkIntrefaces = getVmNicDao().getPluggedForMac(interfaceToPlug.getMacAddress());
         for (VmNic vmNetworkInterface : vmNetworkIntrefaces) {
             if (!interfaceToPlug.getId().equals(vmNetworkInterface.getId())) {
-                return true;
+                return vmNetworkInterface;
             }
         }
-        return false;
+        return null;
     }
 
     /**
