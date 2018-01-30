@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,10 +23,12 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 
 @Singleton
@@ -142,6 +145,20 @@ public class NumaValidator {
         return ValidationResult.VALID;
     }
 
+    private ValidationResult checkHugepagesFitNumaNodes(final VmBase vmBase, final List<VmNumaNode> vmNumaNodes) {
+        Optional<Integer> hugePageSizeKB = HugePageUtils.getHugePageSize(vmBase);
+        if (!hugePageSizeKB.isPresent()) {
+            return ValidationResult.VALID;
+        }
+
+        // Numa node size must be a multiple of hugepage size
+        if (vmNumaNodes.stream().allMatch(node -> (node.getMemTotal() * 1024) % hugePageSizeKB.get() == 0)) {
+            return ValidationResult.VALID;
+        }
+
+        return new ValidationResult(EngineMessage.VM_NUMA_NODE_NOT_MULTIPLE_OF_HUGEPAGE);
+    }
+
     /**
      * Check if the provided numa nodes do not containe the same numa node index more than once
      *
@@ -222,6 +239,11 @@ public class NumaValidator {
         }
 
         validationResult = checkVmNumaTotalMemory(vm.getVmMemSizeMb(), vmNumaNodes);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = checkHugepagesFitNumaNodes(vm.getStaticData(), vmNumaNodes);
         if (!validationResult.isValid()) {
             return validationResult;
         }

@@ -242,6 +242,19 @@ public class NumaValidatorTest {
                 EngineMessage.VM_NUMA_NODE_MEMORY_ERROR);
     }
 
+    @Test
+    public void shouldDetectHugepagesNotFitNodeMemory() {
+        vm.setCustomProperties("hugepages=1048576");
+        assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
+                EngineMessage.VM_NUMA_NODE_NOT_MULTIPLE_OF_HUGEPAGE);
+    }
+
+    @Test
+    public void shouldSucceedIfHugepagesFit() {
+        vm.setCustomProperties("hugepages=512000");
+        assertTrue(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()).isValid());
+    }
+
     private void assertValidationFailure(ValidationResult validationResult, EngineMessage engineMessage) {
         assertThat(validationResult, failsWith(engineMessage));
     }
