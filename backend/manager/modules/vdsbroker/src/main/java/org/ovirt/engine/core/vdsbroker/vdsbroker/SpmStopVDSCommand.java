@@ -92,7 +92,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                                 .entrySet()
                                 .stream()
                                 .map(entry -> String.format("Task '%s', status '%s'", entry.getKey(), entry.getValue().getStatus()))
-                                .collect(Collectors.joining(", "));
+                                .collect(Collectors.joining("\n"));
                         log.error("SpmStopVDSCommand::Not stopping SPM on vds '{}', pool id '{}' as there are uncleared tasks '{}'",
                                 getVds().getName(),
                                 getParameters().getStoragePoolId(),

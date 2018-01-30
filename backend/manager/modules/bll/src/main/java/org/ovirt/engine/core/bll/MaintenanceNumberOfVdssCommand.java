@@ -301,7 +301,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             String runningTasks = asyncTasks
                                     .stream()
                                     .map(AsyncTask::toString)
-                                    .collect(Collectors.joining(", "));
+                                    .collect(Collectors.joining("\n"));
                             log.warn("There are running tasks on the SPM: '{}'", runningTasks);
                             result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
                         } else if (!validateNoRunningJobs(vds)) {
