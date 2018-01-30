@@ -27,8 +27,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasData;
@@ -197,12 +195,12 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
 
     private void setInternalRowData(int start, List<? extends T> values) {
         final int oldCount = menu.getWidgetCount();
-        menu.clear();
+        clearMenu();
         emptyMenuHandlers();
         for (T model: values) {
             if(model instanceof Nameable) {
                 final String text = getName(model).asString();
-                final AnchorListItem item = new SearchBoxAnchorListItem();
+                final AnchorListItem item = new SearchBoxAnchorListItem(this);
                 item.setText(text);
                 Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                     @Override
@@ -229,6 +227,13 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         }
     }
 
+    private void clearMenu() {
+        for (int i = 0; i < menu.getWidgetCount(); i++) {
+            SearchBoxAnchorListItem menuItem = (SearchBoxAnchorListItem) menu.getWidget(i);
+            menuItem.cleanup();
+        }
+        menu.clear();
+    }
     public void addModelSelectedCallback(ListModelSelectedCallback<T> callback) {
         this.callbacks.add(callback);
     }
@@ -263,28 +268,6 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
             searchBox.setFocus(true);
         } else {
             ((AnchorListItem)menu.getWidget(currentFocusIndex)).setFocus(true);
-        }
-    }
-
-    private class SearchBoxAnchorListItem extends AnchorListItem {
-
-        SearchBoxAnchorListItem() {
-            sinkEvents(Event.ONKEYUP);
-            sinkEvents(Event.ONKEYDOWN);
-            sinkEvents(Event.ONKEYPRESS);
-        }
-
-        @Override
-        public void onBrowserEvent(Event event) {
-            super.onBrowserEvent(event);
-            if (Event.ONKEYDOWN == DOM.eventGetType(event) || Event.ONKEYPRESS == DOM.eventGetType(event)) {
-                event.preventDefault();
-                event.stopPropagation();
-            } else if (Event.ONKEYUP == DOM.eventGetType(event)) {
-                onKeyUp(event.getKeyCode(), event.getShiftKey());
-                event.preventDefault();
-                event.stopPropagation();
-            }
         }
     }
 }
