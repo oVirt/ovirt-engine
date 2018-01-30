@@ -10,4 +10,5 @@ UPDATE cluster SET cpu_name = CASE
     WHEN cpu_name = 'Intel Broadwell-IBRS Family' THEN 'Intel Broadwell IBRS Family'
     WHEN cpu_name = 'Intel Skylake Family' THEN 'Intel Skylake Client Family' -- rename Skylake
     WHEN cpu_name = 'Intel Skylake-IBRS Family' THEN 'Intel Skylake Client IBRS Family'
+    ELSE cpu_name
 END;
