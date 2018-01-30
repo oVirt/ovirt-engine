@@ -267,9 +267,6 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 }
             };
             table.addColumn(removeColumn, constants.removeSanStorage(), "95px"); //$NON-NLS-1$
-            model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
-                table.redraw();
-            });
         }
 
         model.getRequireTableRefresh().getEntityChangedEvent().addListener((ev, sender, args) -> {
@@ -278,6 +275,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                     updateLunSelectionModel(table, items);
                 }
             }
+            table.redraw();
         });
 
         table.setRowData(items);

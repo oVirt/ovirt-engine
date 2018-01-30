@@ -923,6 +923,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                     }
                 }
                 lunSelectionChangedEvent.raise(this, new ValueEventArgs<>(selectedLunModel));
+                getRequireTableRefresh().setEntity(false);
+                getRequireTableRefresh().setEntity(true);
             }
         }
     };
