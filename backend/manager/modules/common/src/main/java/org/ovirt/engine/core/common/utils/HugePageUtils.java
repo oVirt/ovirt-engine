@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
@@ -13,21 +14,7 @@ public class HugePageUtils {
      * Returns true iff there is a defined "hugepages" custom property with an integer value
      */
     public static boolean isBackedByHugepages(VmBase vm) {
-        if (vm.getCustomProperties() == null || vm.getCustomProperties().isEmpty()) {
-            return false;
-        }
-
-        String hugePage = getHugePageSize(vm);
-
-        if (hugePage == null) {
-            return false;
-        }
-
-        try {
-            return Integer.parseInt(hugePage) > 0;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return getHugePageSize(vm).orElse(0) > 0;
     }
 
     /**
@@ -35,21 +22,33 @@ public class HugePageUtils {
      * huge page size -> required amount of such huge pages
      */
     public static Map<Integer, Integer> getHugePages(VmBase vm) {
-        if (!isBackedByHugepages(vm)) {
+        Optional<Integer> hugePageSize = getHugePageSize(vm);
+        if (!hugePageSize.isPresent()) {
             return Collections.emptyMap();
         }
 
-        int hugePageSize = Integer.parseInt(getHugePageSize(vm));
-
         // Make sure we do not overflow when big memory VM is used
-        int fullPages = (int)((KIB_IN_MIB * vm.getMemSizeMb() + hugePageSize - 1) / hugePageSize);
-        return Collections.singletonMap(hugePageSize, fullPages);
+        int fullPages = (int)((KIB_IN_MIB * vm.getMemSizeMb() + hugePageSize.get() - 1) / hugePageSize.get());
+        return Collections.singletonMap(hugePageSize.get(), fullPages);
     }
 
-    public static String getHugePageSize(VmBase vm) {
+    /**
+     * Get size of the hugepages in KiB.
+     */
+    public static Optional<Integer> getHugePageSize(VmBase vm) {
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
         Map<String, String> customProperties = util.convertProperties(vm.getCustomProperties());
-        return customProperties.get("hugepages");
+        String hugePageStr = customProperties.get("hugepages");
+
+        if (hugePageStr == null) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(Integer.parseInt(hugePageStr));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 
     /**
