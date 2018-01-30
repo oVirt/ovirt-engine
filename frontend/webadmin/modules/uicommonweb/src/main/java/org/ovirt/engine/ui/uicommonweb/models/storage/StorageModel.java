@@ -372,6 +372,7 @@ public class StorageModel extends Model {
                     (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                     ConfigValues.ReduceDeviceFromStorageDomain,
                     getDataCenter().getSelectedItem().getCompatibilityVersion().toString()));
+            sanStorageModel.updateRemovableLuns();
         }
         updateItemsAvailability();
         behavior.updateDataCenterAlert();

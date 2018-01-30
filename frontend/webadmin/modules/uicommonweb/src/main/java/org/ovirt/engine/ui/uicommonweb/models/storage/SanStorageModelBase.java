@@ -1075,7 +1075,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         return (int) items.stream().filter(LunModel::isRemoveLunSelected).count();
     }
 
-    private void updateRemovableLuns() {
+    public void updateRemovableLuns() {
         int numOfIncludedLuns = getIncludedLuns().size();
         List<LunModel> lunModels = getLuns(false, true);
         lunModels.forEach(lunModel -> lunModel.setIsLunRemovable(isReduceDeviceSupported() &&
