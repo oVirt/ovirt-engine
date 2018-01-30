@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.macpool.MacsUsedAcrossWholeSystem;
 import org.ovirt.engine.core.bll.validator.MacAddressValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -35,6 +36,9 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     private VmStaticDao vmStaticDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
+
+    @Inject
+    private MacsUsedAcrossWholeSystem macsUsedAcrossWholeSystem;
 
     protected AbstractVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -77,7 +81,9 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     protected ValidationResult macAvailable() {
-        return new MacAddressValidator(getMacPool(), getMacAddress()).isMacAssignableValidator();
+        return new MacAddressValidator(getMacPool(),
+                getMacAddress(),
+                macsUsedAcrossWholeSystem).isMacAssignableValidator();
     }
 
     protected boolean uniqueInterfaceName(List<VmNic> interfaces) {

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -19,8 +20,10 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
+import org.ovirt.engine.core.bll.network.macpool.MacsUsedAcrossWholeSystem;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
+import org.ovirt.engine.core.bll.validator.MacAddressValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -29,6 +32,7 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -106,6 +110,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Inject
     private NetworkHelper networkHelper;
+
+    @Inject
+    private MacsUsedAcrossWholeSystem macsUsedAcrossWholeSystem;
 
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -457,10 +464,14 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected ValidationResult macAvailable() {
         VmNic nic = getParameters().getNic();
 
-        EngineMessage failMessage = EngineMessage.NETWORK_MAC_ADDRESS_IN_USE;
-        return ValidationResult
-                .failWith(failMessage, ReplacementUtils.getVariableAssignmentString(failMessage, nic.getMacAddress()))
-                .when(new VmInterfaceManager().tooManyPluggedInterfaceWithSameMac(nic, getMacPool()));
+        Optional<VM> optionalVm = new VmInterfaceManager().getVmWithSameMacIfDuplicateIsNotAllowed(nic, getMacPool());
+        if (optionalVm.isPresent()) {
+            return new ValidationResult(EngineMessage.NETWORK_MAC_ADDRESS_IN_USE,
+                    ReplacementUtils.createSetVariableString(MacAddressValidator.VAR_MAC_ADDRESS, nic.getMacAddress()),
+                    ReplacementUtils.createSetVariableString(MacAddressValidator.VAR_VM_NAME,
+                            optionalVm.get().getName()));
+        }
+        return ValidationResult.VALID;
     }
 
     protected boolean checkSriovHotPlugSupported() {

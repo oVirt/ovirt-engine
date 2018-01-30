@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,14 +51,10 @@ public class MacsUsedAcrossWholeSystem {
     public List<String> getMacsForMacPool(Guid macPoolId) {
         List<Guid> idsOfAllClustersHavingMacPool = getIdsOfAllClustersHavingMacPool(macPoolId);
 
-        Map<Guid, VM> vmsById = idsOfAllClustersHavingMacPool.stream()
-                .flatMap(clusterId -> vmDao.getAllForCluster(clusterId).stream())
+        Map<Guid, VM> vmsById = getAllVmsInClusters(idsOfAllClustersHavingMacPool)
                 .collect(Collectors.toMap(VM::getId, Function.identity()));
 
-        Stream<Guid> idsOfRunningStatelessVMs = vmsById.values()
-                .stream()
-                .filter(VM::isRunning)
-                .filter(VM::isStateless)
+        Stream<Guid> idsOfRunningStatelessVMs = getAllStatelessVms(vmsById.values())
                 .map(VM::getId);
 
         Stream<VM> statelessSnapshotsOfRunningVMs =
@@ -74,6 +72,52 @@ public class MacsUsedAcrossWholeSystem {
                 .collect(Collectors.toList());
 
         return macsToBeAllocated;
+    }
+
+    private Stream<VM> getAllVmsInClusters(List<Guid> clusterIds) {
+        return clusterIds.stream()
+                .flatMap(clusterId -> vmDao.getAllForCluster(clusterId).stream());
+    }
+
+    private Stream<VM> getAllStatelessVms(Collection<VM> allVms) {
+        return allVms.stream()
+                .filter(VM::isRunning)
+                .filter(VM::isStateless);
+    }
+
+    public Optional<VM> getVmUsingMac(Guid macPoolId, String mac) {
+        Map<Guid, VM> vmsById =
+                getAllVmsInClusters(getIdsOfAllClustersHavingMacPool(macPoolId))
+                        .collect(Collectors.toMap(VM::getId, Function.identity()));
+
+        Optional<Guid> vmUsingMacId =
+                getVmIdUsingMac(vmsById.keySet()
+                        .stream()
+                        .flatMap(vmId -> getVmInterfaces(vmId).stream()), mac);
+
+        return vmUsingMacId.map(vmsById::get);
+    }
+
+    public Optional<VM> getSnapshotUsingMac(Guid macPoolId, String mac) {
+        List<VM> allVms = getAllVmsInClusters(getIdsOfAllClustersHavingMacPool(macPoolId))
+                .collect(Collectors.toList());
+
+        Map<Guid, VM> snapshotsById = getAllStatelessVms(allVms).map(VM::getId)
+                .map(snapshotsManager::getVmConfigurationInStatelessSnapshotOfVm)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toMap(VM::getId, Function.identity()));
+
+        Optional<Guid> snapshotUsingMacId =
+                getVmIdUsingMac(snapshotsById.values().stream().flatMap(vm -> vm.getInterfaces().stream()), mac);
+
+        return snapshotUsingMacId.map(snapshotsById::get);
+    }
+
+    private Optional<Guid> getVmIdUsingMac(Stream<VmNic> interfaceStream, String mac) {
+        return interfaceStream.filter(vmInterface -> Objects.equals(vmInterface.getMacAddress(), mac))
+                .map(VmNic::getVmId)
+                .findAny();
     }
 
     private List<VmNic> getVmInterfaces(Guid vmId) {
