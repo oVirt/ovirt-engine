@@ -289,7 +289,7 @@ public enum ActionType {
     AddSANStorageDomain(910, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     ExtendSANStorageDomain(911, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION, QuotaDependency.NONE),
     ReconstructMasterDomain(913, QuotaDependency.NONE),
-    DeactivateStorageDomainWithOvfUpdate(914, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    DeactivateStorageDomainWithOvfUpdate(914, ActionGroup.MANIPULATE_STORAGE_DOMAIN, false, QuotaDependency.NONE),
     ProcessOvfUpdateForStorageDomain(1902, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     CreateOvfVolumeForStorageDomain(1903, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     RecoveryStoragePool(915, ActionGroup.CREATE_STORAGE_POOL, QuotaDependency.NONE),

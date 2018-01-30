@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensationPhase;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -111,7 +112,8 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
         params.setSkipChecks(true);
         params.setSkipLock(true);
         params.setShouldBeLogged(true);
-        runInternalActionWithTasksContext(ActionType.DeactivateStorageDomain, params);
+        runInternalAction(ActionType.DeactivateStorageDomain, params,
+                ExecutionHandler.createInternalJobContext(getContext()));
     }
 
     @Override
