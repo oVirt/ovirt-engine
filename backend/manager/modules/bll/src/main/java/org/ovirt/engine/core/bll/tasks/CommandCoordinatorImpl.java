@@ -11,7 +11,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -61,6 +60,8 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
     private Instance<CommandsRepository> commandsRepositoryInstance;
     @Inject
     private Instance<CommandExecutor> commandExecutorInstance;
+    @Inject
+    private Instance<BackendInternal> backend;
 
     public <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
         return CommandsFactory.createCommand(action, parameters);
@@ -322,7 +323,7 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
-        return Backend.getInstance().getResourceManager().runVdsCommand(commandType, parameters);
+        return backend.get().getResourceManager().runVdsCommand(commandType, parameters);
     }
 
     @Override
@@ -350,10 +351,6 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
     @Override
     public CommandContext retrieveCommandContext(Guid cmdId) {
         return commandsRepositoryInstance.get().retrieveCommandContext(cmdId);
-    }
-
-    protected BackendInternal getBackend() {
-        return Backend.getInstance();
     }
 
     @Override
