@@ -21,7 +21,7 @@ import javax.ws.rs.Produces;
 
 import org.ovirt.engine.api.model.Creation;
 
-@Produces(ApiMediaType.APPLICATION_XML)
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON })
 public interface CreationResource {
 
     @GET
