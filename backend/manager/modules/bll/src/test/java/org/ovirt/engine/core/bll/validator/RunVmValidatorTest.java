@@ -79,6 +79,8 @@ public class RunVmValidatorTest {
     private DiskDao diskDao;
     @Mock
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Mock
+    private VmNicDao vmNicDao;
 
     @Before
     public void setup() throws InitializationException {
@@ -194,8 +196,6 @@ public class RunVmValidatorTest {
 
     @Test
     public void testBootFromNetworkNoNetwork() {
-        VmNicDao dao = mock(VmNicDao.class);
-        doReturn(dao).when(runVmValidator).getVmNicDao();
         VM vm = new VM();
         vm.setBootSequence(BootSequence.N);
         validateResult(runVmValidator.validateBootSequence(vm, new ArrayList<>()),
