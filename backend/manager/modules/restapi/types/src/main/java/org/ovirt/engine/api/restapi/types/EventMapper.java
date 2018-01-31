@@ -88,7 +88,7 @@ public class EventMapper {
             model.setHost(host);
         }
 
-        idValid = entity.getVmTemplateId()!=null && !entity.getVmTemplateId().equals(Guid.Empty);
+        idValid = entity.getVmTemplateId() != null;
         nameValid = !StringUtils.isEmpty(entity.getVmTemplateName());
 
         if (idValid || nameValid) {
