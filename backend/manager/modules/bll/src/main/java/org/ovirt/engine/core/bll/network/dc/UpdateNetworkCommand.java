@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -348,7 +349,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
             // sync network on nics if the label wasn't changed
             if (!labelChanged(network, oldNetwork)) {
-                createSyncNetworkParameters(network, parameters, nics);
+                createSyncNetworkParameters(network, oldNetwork, parameters, nics);
                 return parameters;
             }
 
@@ -380,7 +381,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 }
 
                 parameters.addAll(createAddNetworkParameters(network, nicsForAdd));
-                createSyncNetworkParameters(network, parameters, nicsForSync);
+                createSyncNetworkParameters(network, oldNetwork, parameters, nicsForSync);
                 return parameters;
             }
 
@@ -409,7 +410,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 }
 
                 parameters.addAll(createRemoveNetworkParameters(network, nicsForRemove));
-                createSyncNetworkParameters(network, parameters, nicsForSync);
+                createSyncNetworkParameters(network, oldNetwork, parameters, nicsForSync);
                 return parameters;
             }
 
@@ -442,7 +443,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return labeledNics;
         }
 
-        private void createSyncNetworkParameters(Network network, ArrayList<ActionParametersBase> parameters,
+        private void createSyncNetworkParameters(Network network, Network oldNetwork, ArrayList<ActionParametersBase> parameters,
                 Collection<VdsNetworkInterface> nics) {
 
             Set<Guid> hostIdsToSync = new HashSet<>();
@@ -450,7 +451,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 NetworkImplementationDetails networkImplementationDetails =
                         networkImplementationDetailsUtils.calculateNetworkImplementationDetails(nic, network);
                 boolean networkShouldBeSynced =
-                        networkImplementationDetails != null && !networkImplementationDetails.isInSync();
+                        networkImplementationDetails != null && !networkImplementationDetails.isInSync()
+                                || shouldDnsNameServerBeUpdatedOnHost(network, oldNetwork, nic);
 
                 if (networkShouldBeSynced) {
                     hostIdsToSync.add(nic.getVdsId());
@@ -468,6 +470,25 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         }
 
+        private boolean shouldDnsNameServerBeUpdatedOnHost(Network network,
+                Network oldNetwork,
+                VdsNetworkInterface nic) {
+            return nic.isIpv4DefaultRoute() && wasDnsNameServerRemoved(network, oldNetwork);
+        }
+
+        private boolean wasDnsNameServerRemoved(Network network, Network oldNetwork) {
+            DnsResolverConfiguration dnsResolverConfiguration = network.getDnsResolverConfiguration();
+            DnsResolverConfiguration oldDnsResolverConfiguration = oldNetwork.getDnsResolverConfiguration();
+            boolean dnsEmpty = isDnsEmpty(dnsResolverConfiguration);
+            boolean oldDnsEmpty = isDnsEmpty(oldDnsResolverConfiguration);
+            return (dnsEmpty && !oldDnsEmpty) || (!dnsEmpty && !oldDnsEmpty
+                    && !dnsResolverConfiguration.getNameServers()
+                            .containsAll(oldDnsResolverConfiguration.getNameServers()));
+        }
+
+        private boolean isDnsEmpty(DnsResolverConfiguration dnsResolverConfiguration) {
+            return dnsResolverConfiguration == null || dnsResolverConfiguration.getNameServers() == null || dnsResolverConfiguration.getNameServers().isEmpty();
+        }
     }
 
     private static boolean labelChanged(Network network, Network oldNetwork) {
