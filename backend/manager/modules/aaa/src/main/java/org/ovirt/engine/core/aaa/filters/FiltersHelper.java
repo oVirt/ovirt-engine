@@ -3,7 +3,6 @@ package org.ovirt.engine.core.aaa.filters;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Enumeration;
 import java.util.Map;
@@ -28,7 +27,7 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 public class FiltersHelper {
 
-    private static SecureRandom secureRandom;
+    private static SecureRandom secureRandom = new SecureRandom();
     public static class Constants {
         public static final String REQUEST_AUTH_RECORD_KEY = "ovirt_aaa_auth_record";
         public static final String REQUEST_SCHEMES_KEY = "ovirt_aaa_schemes";
@@ -95,11 +94,7 @@ public class FiltersHelper {
         }
     }
 
-    public static String generateState() throws NoSuchAlgorithmException {
-        if (secureRandom == null) {
-            secureRandom = SecureRandom.getInstance("SHA1PRNG");
-        }
-
+    public static String generateState() {
         byte[] s = new byte[8];
         secureRandom.nextBytes(s);
         return new Base64(0, new byte[0], true).encodeToString(s);

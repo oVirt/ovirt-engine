@@ -59,7 +59,7 @@ public class EnvelopePBE {
         final Map<String, String> map = new HashMap<>();
 
         byte[] salt = new byte[keySize/8];
-        SecureRandom.getInstance(randomProvider == null ? "SHA1PRNG" : randomProvider).nextBytes(salt);
+        SecureRandom.getInstance(randomProvider == null ? "NativePRNG" : randomProvider).nextBytes(salt);
 
         map.put(ARTIFACT_KEY, ARTIFACT);
         map.put(VERSION_KEY, VERSION);

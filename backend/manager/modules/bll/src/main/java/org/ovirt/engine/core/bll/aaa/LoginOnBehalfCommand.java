@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collection;
@@ -136,13 +135,9 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
         DbUser dbUser = directoryUtils.mapPrincipalRecordToDbUser(authzName, principalRecord);
         dbUser.setId(mappedUser.getId());
         String engineSessionId;
-        try {
-            byte[] s = new byte[64];
-            SecureRandom.getInstance("SHA1PRNG").nextBytes(s);
-            engineSessionId = new Base64(0).encodeToString(s);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        byte[] s = new byte[64];
+        new SecureRandom().nextBytes(s);
+        engineSessionId = new Base64(0).encodeToString(s);
         sessionDataContainer.setUser(engineSessionId, dbUser);
         sessionDataContainer.refresh(engineSessionId);
         return engineSessionId;

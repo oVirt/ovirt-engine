@@ -53,15 +53,7 @@ import org.slf4j.LoggerFactory;
 public class SsoUtils {
     private static Logger log = LoggerFactory.getLogger(SsoUtils.class);
 
-    private static SecureRandom secureRandom;
-
-    static {
-        try {
-            secureRandom = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static SecureRandom secureRandom = new SecureRandom();
 
     // We need to create an HTTP client for each SSO client, as they may have different SSL configuration
     // parameters. They will be stored in this map, indexed by client id.
@@ -167,15 +159,9 @@ public class SsoUtils {
     }
 
     public static String generateAuthorizationToken() {
-        String ssoTokenId;
-        try {
-            byte[] s = new byte[64];
-            SecureRandom.getInstance("SHA1PRNG").nextBytes(s);
-            ssoTokenId = new Base64(0, new byte[0], true).encodeToString(s);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        return ssoTokenId;
+        byte[] s = new byte[64];
+        secureRandom.nextBytes(s);
+        return new Base64(0, new byte[0], true).encodeToString(s);
     }
 
     public static String getJson(Object obj) throws IOException {
