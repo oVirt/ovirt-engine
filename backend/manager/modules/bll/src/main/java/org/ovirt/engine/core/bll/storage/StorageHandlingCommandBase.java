@@ -406,7 +406,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                     registerDiskResult ? "succeeded" : "failed");
 
             if (registerDiskResult) {
-                addOvfStoreDiskToDomain(ovfStoreDiskImage);
+                addOvfStoreDiskToDomain(ovfStoreDiskImage, storageDomainId);
             }
         }
     }
@@ -414,10 +414,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     /**
      * Register all the OVF_STORE disks as floating disks in the engine.
      */
-    private void addOvfStoreDiskToDomain(DiskImage ovfDisk) {
+    private void addOvfStoreDiskToDomain(DiskImage ovfDisk, Guid storageDomainId) {
         // Setting OVF_STORE disk to be outdated so it will be updated.
         StorageDomainOvfInfo storageDomainOvfInfo =
-                new StorageDomainOvfInfo(getStorageDomainId(),
+                new StorageDomainOvfInfo(storageDomainId,
                         null,
                         ovfDisk.getId(),
                         StorageDomainOvfInfoStatus.OUTDATED,
