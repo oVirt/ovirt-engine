@@ -23,6 +23,9 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
     @Inject
     protected CommandCoordinatorUtil commandCoordinatorUtil;
 
+    @Inject
+    private ExecutionHandler executionHandler;
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
@@ -139,7 +142,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
                 commandCoordinatorUtil.removeAllCommandsInHierarchy(commandBase.getCommandId());
             }
 
-            ExecutionHandler.getInstance().endJob(commandBase.getExecutionContext(), succeeded);
+            executionHandler.endJob(commandBase.getExecutionContext(), succeeded);
         }
     }
 
