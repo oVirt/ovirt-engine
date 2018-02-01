@@ -12,7 +12,7 @@ Being a contrib doesn't mean the code should be dodgy or messy. Use all the best
 out there. The best tools have the best chance to go mainline.
 
 == Tools
-=== `log-control.sh`
+=== log-control.sh
 log-control is a script to change logging level of various
 log categories (java packages) in real time.
 
@@ -21,6 +21,32 @@ For example to log all db queries into the log:
 ```bash
     log-control.sh org.ovirt.engine.core.dal DEBUG
 ```
+=== HTTP dumper
+A jboss cli script to dump all call passed the filter chain of http inside wildfly.
+To activate it run this jboss cli and then inspect the server.log
+```bash
+${JBOSS_HOME}/bin/jboss-cli.sh --controller=remote+http://127.0.0.1:8706 --connect --user=admin@internal --file=httpdumper.jbosscli
+
+```
+
+From `server.log`
+```log
+2018-02-01 11:46:42,560+02 INFO  [io.undertow.request.dump] (default task-20)
+----------------------------REQUEST---------------------------
+               URI=/ovirt-engine/sso/oauth/token-info
+ characterEncoding=null
+     contentLength=92
+       contentType=[application/x-www-form-urlencoded; charset=UTF-8]
+            cookie=locale=en_US
+            header=Accept=application/json
+            header=Accept-Encoding=gzip,deflate
+            header=User-Agent=Apache-HttpClient/4.5.2 (Java/1.8.0_151)
+            header=Connection=Keep-Alive
+            header=Authorization=Basic b3ZpcnQtZW5naW5lLWNvcmU6Rnl6SkZ1TlhFbER6YldpeThNQ0VFWlFxSGFiUTJQZUk=
+            header=Content-Length=92
+            header=Content-Type=application/x-www-form-urlencoded; charset=UTF-8
+```
+See `contrib/httpdumper.jbosscli` for more details.
 
 = TODO
 - should we create an rpm for contrib - ovirt-engine-contrib?

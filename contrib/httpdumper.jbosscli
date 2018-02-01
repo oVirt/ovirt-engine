@@ -1,0 +1,2 @@
+/subsystem=undertow/configuration=filter/custom-filter=request-dumper:add(class-name="io.undertow.server.handlers.RequestDumpingHandler",  module="io.undertow.core")
+/subsystem=undertow/server=default-server/host=default-host/filter-ref=request-dumper:add
