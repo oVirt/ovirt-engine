@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
@@ -90,13 +89,9 @@ public class SessionDataContainer {
 
     public String generateEngineSessionId() {
         String engineSessionId;
-        try {
-            byte[] s = new byte[64];
-            SecureRandom.getInstance("SHA1PRNG").nextBytes(s);
-            engineSessionId = new Base64(0).encodeToString(s);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        byte[] s = new byte[64];
+        new SecureRandom().nextBytes(s);
+        engineSessionId = new Base64(0).encodeToString(s);
         return engineSessionId;
     }
 

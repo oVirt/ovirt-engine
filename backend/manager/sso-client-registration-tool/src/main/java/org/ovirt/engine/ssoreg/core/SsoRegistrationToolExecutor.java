@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,15 +35,7 @@ public class SsoRegistrationToolExecutor {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(SsoRegistrationToolExecutor.class);
     private static final Logger OVIRT_LOGGER = Logger.getLogger("org.ovirt");
 
-    private static SecureRandom secureRandom;
-
-    static {
-        try {
-            secureRandom = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static SecureRandom secureRandom = new SecureRandom();
 
     public static void main(String... args) {
         int exitStatus = 1;

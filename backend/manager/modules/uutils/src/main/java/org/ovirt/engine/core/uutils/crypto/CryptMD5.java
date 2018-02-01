@@ -116,17 +116,13 @@ public class CryptMD5 {
     }
 
     public static String crypt(String password) {
-        try {
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-            byte[] r = new byte[SALT_MAX_LENGTH];
-            char[] salt = new char[r.length];
-            random.nextBytes(r);
-            for (int i=0;i<r.length;i++) {
-                salt[i] = b64t[(r[i]&0xff) % b64t.length];
-            }
-            return crypt(password, new String(salt));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        SecureRandom random = new SecureRandom();
+        byte[] r = new byte[SALT_MAX_LENGTH];
+        char[] salt = new char[r.length];
+        random.nextBytes(r);
+        for (int i=0;i<r.length;i++) {
+            salt[i] = b64t[(r[i]&0xff) % b64t.length];
         }
+        return crypt(password, new String(salt));
     }
 }

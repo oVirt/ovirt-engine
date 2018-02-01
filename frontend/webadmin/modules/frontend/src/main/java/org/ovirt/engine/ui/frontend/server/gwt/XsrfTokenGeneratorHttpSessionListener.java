@@ -1,18 +1,13 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @WebListener
 public class XsrfTokenGeneratorHttpSessionListener implements HttpSessionListener {
-    private static final Logger log = LoggerFactory.getLogger(XsrfTokenGeneratorHttpSessionListener.class);
 
     /**
      * The number of bytes in the token.
@@ -23,17 +18,7 @@ public class XsrfTokenGeneratorHttpSessionListener implements HttpSessionListene
     /**
      * The random source.
      */
-    private SecureRandom random;
-
-    public XsrfTokenGeneratorHttpSessionListener() {
-        try {
-            random = SecureRandom.getInstance("SHA1PRNG"); //$NON-NLS-1$
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Unable to initialize XSRF token random generator", e); //$NON-NLS-1$
-            //Stop the startup.
-            throw new RuntimeException(e);
-        }
-    }
+    private SecureRandom random = new SecureRandom();
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {

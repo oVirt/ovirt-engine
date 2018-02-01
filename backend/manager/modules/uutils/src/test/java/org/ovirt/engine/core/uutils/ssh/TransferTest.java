@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import org.junit.After;
@@ -44,12 +43,7 @@ public class TransferTest extends TestCommon {
     public static void init() throws IOException {
         local1 = File.createTempFile("ssh-test-", ".tmp");
 
-        SecureRandom random;
-        try {
-            random = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        SecureRandom random = new SecureRandom();
         try (OutputStream os = new FileOutputStream(local1)) {
             byte[] buffer = new byte[1000];
             for (long i = 0; i < TestCommon.largeTestFileSize / buffer.length; i++) {

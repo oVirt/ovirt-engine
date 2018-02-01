@@ -43,7 +43,7 @@ public class TicketEncoder {
         Map<String, String> map = new HashMap<>();
 
         byte[] random = new byte[8];
-        SecureRandom.getInstance("SHA1PRNG").nextBytes(random);
+        new SecureRandom().nextBytes(random);
         map.put("salt", base64.encodeToString(random));
         map.put("digest", "sha1");
 
