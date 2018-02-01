@@ -105,6 +105,8 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T
         permissionList.add(new PermissionSubject(getParameters().getImageGroupID(),
                 VdcObjectType.Disk,
                 ActionGroup.CONFIGURE_DISK_STORAGE));
+        permissionList.add(new PermissionSubject(getParameters().getStorageDomainId(),
+                VdcObjectType.Storage, ActionGroup.CREATE_DISK));
 
         return permissionList;
     }
