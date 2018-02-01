@@ -674,9 +674,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     replicateDiskFinish(getParameters().getSourceStorageDomainId(),
                             getParameters().getSourceStorageDomainId());
                 } catch (Exception e) {
-                    log.error("Replication end of disk '{}' in vm '{}' back to the source failed, skipping deletion of " +
-                            "the target disk", getParameters().getImageGroupID(), getParameters().getVmId());
-                    return;
+                    if (e instanceof EngineException &&
+                            EngineError.ReplicationNotInProgress.equals(((EngineException) e).getErrorCode())) {
+                        log.warn("Replication is not in progress, proceeding with removing the target disk");
+                    } else {
+                        log.error("Replication end of disk '{}' in vm '{}' back to the source failed, skipping deletion of " +
+                                "the target disk", getParameters().getImageGroupID(), getParameters().getVmId());
+                        return;
+                    }
                 }
             }
 
