@@ -64,6 +64,7 @@ public enum EngineError {
     UnsupportedOperationErr(75),
     freezeErr(76),
     thawErr(77),
+    ReplicationNotInProgress(88),
     recovery(99),
     GeneralException(100),
     StorageException(200),
