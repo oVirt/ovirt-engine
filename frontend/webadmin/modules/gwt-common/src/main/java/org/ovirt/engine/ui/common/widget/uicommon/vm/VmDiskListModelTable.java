@@ -12,9 +12,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
 
     public VmDiskListModelTable(
             SearchableTableModelProvider<Disk, VmDiskListModel> modelProvider,
-            EventBus eventBus, VmDiskActionPanelPresenterWidget actionPanel, ClientStorage clientStorage,
-            boolean showMoveButton) {
+            EventBus eventBus, VmDiskActionPanelPresenterWidget actionPanel, ClientStorage clientStorage) {
         super(modelProvider, eventBus, actionPanel, clientStorage);
-        actionPanel.setShowMoveButton(showMoveButton);
     }
 }

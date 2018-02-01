@@ -24,8 +24,6 @@ public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenter
     private ImageUiCommandButtonDefinition<Disk> plugButtonDefinition;
     private ImageUiCommandButtonDefinition<Disk> unPlugButtonDefinition;
 
-    private boolean showMoveButton = false;
-
     @Inject
     public VmDiskActionPanelPresenterWidget(EventBus eventBus,
             DetailActionPanelPresenterWidget.ViewDef<Disk> view,
@@ -108,14 +106,12 @@ public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenter
 
         attachActivationListenersForModel();
 
-        if (showMoveButton) {
-            addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.moveDisk()) {
-                @Override
-                protected UICommand resolveCommand() {
-                    return getDetailModel().getMoveCommand();
-                }
-            });
-        }
+        addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.moveDisk()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getMoveCommand();
+            }
+        });
 
         addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.getDiskAlignment(),
                 CommandLocation.OnlyFromContext) {
@@ -145,9 +141,5 @@ public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenter
             InitializeEvent.fire(plugButtonDefinition);
             InitializeEvent.fire(unPlugButtonDefinition);
         });
-    }
-
-    public void setShowMoveButton(boolean value) {
-        this.showMoveButton = value;
     }
 }
