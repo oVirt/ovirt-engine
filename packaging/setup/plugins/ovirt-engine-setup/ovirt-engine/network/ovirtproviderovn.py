@@ -850,7 +850,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         before=(
-            oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART
+            oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART,
         ),
         after=(
             oenginecons.Stages.CA_AVAILABLE,
