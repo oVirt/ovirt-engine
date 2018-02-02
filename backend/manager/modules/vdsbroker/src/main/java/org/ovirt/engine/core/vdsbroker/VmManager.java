@@ -63,7 +63,7 @@ public class VmManager {
      *
      * The value is computed (and persisted for future use)
      */
-    private Integer vmMemoryWithOverheadInMB;
+    private int vmMemoryWithOverheadInMB;
 
     @Inject
     private VmDeviceDao vmDeviceDao;
@@ -85,6 +85,7 @@ public class VmManager {
         lock = new ReentrantLock();
         convertOperationProgress = -1;
         statistics = new VmStatistics(vmId);
+        vmMemoryWithOverheadInMB = 0;
     }
 
     @PostConstruct
@@ -162,7 +163,7 @@ public class VmManager {
      * @return the amount of RAM needed for VM including QEMU overhead
      *         (devices, buffers, caches, ..)
      */
-    public Integer getVmMemoryWithOverheadInMB() {
+    public int getVmMemoryWithOverheadInMB() {
         return vmMemoryWithOverheadInMB;
     }
 
