@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.network.NetworkIcon;
 
 import com.google.gwt.dom.client.DListElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -83,10 +84,10 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
             DListElement dl = Document.get().createDLElement();
             dl.addClassName(DL_HORIZONTAL);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.nameNetworkFilterParameter()),
-                    parameter.getName(),
+                    SafeHtmlUtils.fromString(parameter.getName()),
                     dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.valueNetworkFilterParameter()),
-                    parameter.getValue(),
+                    SafeHtmlUtils.fromString(parameter.getValue()),
                     dl);
             column.getElement().appendChild(dl);
         });
@@ -104,46 +105,47 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.plugged()),
                 renderPlugged(networkInterface.isPlugged()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.networkNameInterface()),
-                networkInterface.getNetworkName(), dl);
+                SafeHtmlUtils.fromString(networkInterface.getNetworkName()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.profileNameInterface()),
-                networkInterface.getVnicProfileName(), dl);
+                SafeHtmlUtils.fromString(networkInterface.getVnicProfileName()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.vmNetworkQosName()),
-                StringHelper.isNullOrEmpty(networkInterface.getQosName())
-                    ? constants.notAvailableLabel() : networkInterface.getQosName(), dl);
+                SafeHtmlUtils.fromString(StringHelper.isNullOrEmpty(networkInterface.getQosName())
+                    ? constants.notAvailableLabel() : networkInterface.getQosName()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.linkStateNetworkInterface()),
                 renderLinkState(networkInterface.isLinked()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.typeInterface()),
-                VmInterfaceType.forValue(networkInterface.getType()).getDescription(), dl);
-        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()), networkInterface.getMacAddress(), dl);
+                SafeHtmlUtils.fromString(VmInterfaceType.forValue(networkInterface.getType()).getDescription()), dl);
+        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()),
+                SafeHtmlUtils.fromString(networkInterface.getMacAddress()), dl);
         addDetailItem(templates.sub(constants.speedInterface(), constants.mbps()),
-                String.valueOf(networkInterface.getSpeed()), dl);
+                SafeHtmlUtils.fromString(String.valueOf(networkInterface.getSpeed())), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.portMirroring()),
                 renderPortMirroring(networkInterface.isPortMirroring()), dl);
         column.getElement().appendChild(dl);
         return createItemContainerPanel(content);
     }
 
-    private String renderPortMirroring(boolean portMirroring) {
+    private SafeHtml renderPortMirroring(boolean portMirroring) {
         if (portMirroring) {
-            return constants.portMirroringEnabled();
+            return SafeHtmlUtils.fromString(constants.portMirroringEnabled());
         } else {
-            return constants.portMirroringDisabled();
+            return SafeHtmlUtils.fromString(constants.portMirroringDisabled());
         }
     }
 
-    private String renderLinkState(boolean linkState) {
+    private SafeHtml renderLinkState(boolean linkState) {
         if (linkState) {
-            return constants.up();
+            return SafeHtmlUtils.fromString(constants.up());
         } else {
-            return constants.down();
+            return SafeHtmlUtils.fromString(constants.down());
         }
     }
 
-    private String renderPlugged(boolean pluggedStatus) {
+    private SafeHtml renderPlugged(boolean pluggedStatus) {
         if (pluggedStatus) {
-            return constants.plugged();
+            return SafeHtmlUtils.fromString(constants.plugged());
         } else {
-            return constants.unplugged();
+            return SafeHtmlUtils.fromString(constants.unplugged());
         }
     }
 
@@ -157,19 +159,19 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         DListElement dl = Document.get().createDLElement();
         dl.addClassName(DL_HORIZONTAL);
         addDetailItem(templates.sub(constants.rxRate(), constants.mbps()),
-                rateRenderer.render(new Double[] { networkInterface.getStatistics().getReceiveRate(),
-                        networkInterface.hasSpeed() ? networkInterface.getSpeed().doubleValue() : 0}), dl);
+                SafeHtmlUtils.fromString(rateRenderer.render(new Double[] { networkInterface.getStatistics().getReceiveRate(),
+                        networkInterface.hasSpeed() ? networkInterface.getSpeed().doubleValue() : 0})), dl);
 
         addDetailItem(templates.sub(constants.txRate(), constants.mbps()),
-                rateRenderer.render(new Double[] { networkInterface.getStatistics().getTransmitRate(),
-                        networkInterface.hasSpeed() ? networkInterface.getSpeed().doubleValue() : 0}), dl);
+                SafeHtmlUtils.fromString(rateRenderer.render(new Double[] { networkInterface.getStatistics().getTransmitRate(),
+                        networkInterface.hasSpeed() ? networkInterface.getSpeed().doubleValue() : 0})), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.rxTotal()),
-                totalRenderer.render(networkInterface.getStatistics().getReceivedBytes()), dl);
+                SafeHtmlUtils.fromString(totalRenderer.render(networkInterface.getStatistics().getReceivedBytes())), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.txTotal()),
-                totalRenderer.render(networkInterface.getStatistics().getTransmittedBytes()), dl);
+                SafeHtmlUtils.fromString(totalRenderer.render(networkInterface.getStatistics().getTransmittedBytes())), dl);
         addDetailItem(templates.sub(constants.dropsInterface(), constants.pkts()),
-                String.valueOf(networkInterface.getStatistics().getReceiveDropRate()
-                        + networkInterface.getStatistics().getTransmitDropRate()), dl);
+                SafeHtmlUtils.fromString(String.valueOf(networkInterface.getStatistics().getReceiveDropRate()
+                        + networkInterface.getStatistics().getTransmitDropRate())), dl);
         column.getElement().appendChild(dl);
         return createItemContainerPanel(content);
     }
@@ -185,17 +187,17 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
                 DListElement dl = Document.get().createDLElement();
                 dl.addClassName(DL_HORIZONTAL);
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.nameVmGuestAgent()),
-                        guestAgentInterface.getInterfaceName(), dl);
+                        SafeHtmlUtils.fromString(guestAgentInterface.getInterfaceName()), dl);
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv4VmGuestAgent()),
-                        guestAgentInterface.getIpv4Addresses() != null ?
+                        SafeHtmlUtils.fromString(guestAgentInterface.getIpv4Addresses() != null ?
                         String.join(COMMA_DELIMITER, guestAgentInterface.getIpv4Addresses())
-                        : constants.notAvailableLabel(), dl);
+                        : constants.notAvailableLabel()), dl);
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv6VmGuestAgent()),
-                        guestAgentInterface.getIpv6Addresses() != null ?
+                        SafeHtmlUtils.fromString(guestAgentInterface.getIpv6Addresses() != null ?
                         String.join(COMMA_DELIMITER, guestAgentInterface.getIpv6Addresses())
-                        : constants.notAvailableLabel(), dl);
+                        : constants.notAvailableLabel()), dl);
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macVmGuestAgent()),
-                        guestAgentInterface.getMacAddress(), dl);
+                        SafeHtmlUtils.fromString(guestAgentInterface.getMacAddress()), dl);
                 column.getElement().appendChild(dl);
             }
         }
@@ -217,7 +219,8 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private IsWidget createNetworkFilterParameterAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        networkFilterParameterExpand = new ExpandableListViewItem(constants.networkFilterParametersLabel());
+        networkFilterParameterExpand = new ExpandableListViewItem(
+                SafeHtmlUtils.fromString(constants.networkFilterParametersLabel()));
         getClickHandlerRegistrations().add(networkFilterParameterExpand.addClickHandler(this));
         panel.add(networkFilterParameterExpand);
         return panel;
@@ -226,7 +229,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private IsWidget createGeneralAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        generalExpand = new ExpandableListViewItem(constants.generalLabel());
+        generalExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(constants.generalLabel()));
         getClickHandlerRegistrations().add(generalExpand.addClickHandler(this));
         panel.add(generalExpand);
         return panel;
@@ -235,7 +238,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private IsWidget createStatisticsAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        statisticsExpand = new ExpandableListViewItem(constants.statistics());
+        statisticsExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(constants.statistics()));
         getClickHandlerRegistrations().add(statisticsExpand.addClickHandler(this));
         panel.add(statisticsExpand);
         return panel;
@@ -244,7 +247,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private IsWidget createGuestAgentAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        guestAgentExpand = new ExpandableListViewItem(constants.guestAgentData());
+        guestAgentExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(constants.guestAgentData()));
         getClickHandlerRegistrations().add(guestAgentExpand.addClickHandler(this));
         panel.add(guestAgentExpand);
         return panel;
@@ -259,10 +262,10 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     }
 
     @Override
-    protected IsWidget createBodyPanel(String header, VmNetworkInterface networkInterface) {
+    protected IsWidget createBodyPanel(SafeHtml header, VmNetworkInterface networkInterface) {
         checkBoxPanel.add(createLinkStatusPanel(isInterfaceUp(networkInterface)));
         checkBoxPanel.add(createCardPluggedStatusPanel(isCardPlugged(networkInterface)));
-        descriptionHeaderPanel.getElement().setInnerText(header);
+        descriptionHeaderPanel.getElement().setInnerSafeHtml(header);
         createAdditionalInfoPanel();
         return bodyPanel;
     }
@@ -298,12 +301,14 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
             ipv6Address = constants.notAvailableLabel();
         }
         addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.networkNameInterface()),
-            networkInterface.getNetworkName() != null ? networkInterface.getNetworkName()
-                    : constants.unAvailablePropertyLabel(), dl);
-        addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv4VmGuestAgent()), ipv4Address, dl);
-        addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv6VmGuestAgent()), ipv6Address, dl);
+                SafeHtmlUtils.fromString(networkInterface.getNetworkName() != null ? networkInterface.getNetworkName()
+                    : constants.unAvailablePropertyLabel()), dl);
+        addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv4VmGuestAgent()),
+                SafeHtmlUtils.fromString(ipv4Address), dl);
+        addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv6VmGuestAgent()),
+                SafeHtmlUtils.fromString(ipv6Address), dl);
         addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macVmGuestAgent()),
-                networkInterface.getMacAddress(), dl);
+                SafeHtmlUtils.fromString(networkInterface.getMacAddress()), dl);
         infoPanel.getElement().appendChild(dl);
         targetPanel.add(infoPanel);
     }

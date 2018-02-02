@@ -123,9 +123,9 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     }
 
     @Override
-    protected IsWidget createBodyPanel(String header, HostInterfaceLineModel entity) {
+    protected IsWidget createBodyPanel(SafeHtml header, HostInterfaceLineModel entity) {
         checkBoxPanel.add(createInterfaceStatusPanel(isInterfaceUp()));
-        descriptionHeaderPanel.getElement().setInnerHTML(header);
+        descriptionHeaderPanel.getElement().setInnerSafeHtml(header);
         interfaceIconSpan = new Span();
         descriptionHeaderPanel.add(interfaceIconSpan);
         VdsNetworkInterface networkInterface = getNetworkInterface();
@@ -160,8 +160,8 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         Column macCol = new Column(ColumnSize.SM_2);
         DListElement dl = Document.get().createDLElement();
         addReverseDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()),
-                hostInterface.getMacAddress() != null ? hostInterface.getMacAddress()
-                        : constants.unAvailablePropertyLabel(), dl);
+                SafeHtmlUtils.fromString(hostInterface.getMacAddress() != null ? hostInterface.getMacAddress()
+                        : constants.unAvailablePropertyLabel()), dl);
         macCol.getElement().appendChild(dl);
         return macCol;
     }
@@ -170,8 +170,8 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         Column rxCol = new Column(ColumnSize.SM_3);
         DListElement dl = Document.get().createDLElement();
         addReverseDetailItem(templates.sub(constants.rxRate(), constants.mbps()),
-                rateRenderer.render(new Double[] { hostInterface.getRxRate(),
-                        hostInterface.getSpeed().doubleValue() }), dl);
+                SafeHtmlUtils.fromString(rateRenderer.render(new Double[] { hostInterface.getRxRate(),
+                        hostInterface.getSpeed().doubleValue() })), dl);
         dl.addClassName(Styles.PULL_LEFT);
         rxCol.getElement().appendChild(dl);
         FlowPanel divider = new FlowPanel();
@@ -179,7 +179,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         rxCol.add(divider);
         dl = Document.get().createDLElement();
         addReverseDetailItem(templates.sub(constants.rxTotal(), constants.bytes()),
-                totalRenderer.render(hostInterface.getRxTotal()), dl);
+                SafeHtmlUtils.fromString(totalRenderer.render(hostInterface.getRxTotal())), dl);
         dl.addClassName(Styles.PULL_LEFT);
         rxCol.getElement().appendChild(dl);
         return rxCol;
@@ -189,8 +189,8 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         Column txCol = new Column(ColumnSize.SM_3);
         DListElement dl = Document.get().createDLElement();
         addReverseDetailItem(templates.sub(constants.txRate(), constants.mbps()),
-                rateRenderer.render(new Double[] { hostInterface.getTxRate(),
-                        hostInterface.getSpeed().doubleValue() }), dl);
+                SafeHtmlUtils.fromString(rateRenderer.render(new Double[] { hostInterface.getTxRate(),
+                        hostInterface.getSpeed().doubleValue() })), dl);
         dl.addClassName(Styles.PULL_LEFT);
         txCol.getElement().appendChild(dl);
         FlowPanel divider = new FlowPanel();
@@ -198,7 +198,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         txCol.add(divider);
         dl = Document.get().createDLElement();
         addReverseDetailItem(templates.sub(constants.txTotal(), constants.bytes()),
-                totalRenderer.render(hostInterface.getTxTotal()), dl);
+                SafeHtmlUtils.fromString(totalRenderer.render(hostInterface.getTxTotal())), dl);
         dl.addClassName(Styles.PULL_LEFT);
         txCol.getElement().appendChild(dl);
         return txCol;
@@ -210,7 +210,8 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         speedCol.add(createSpeedIcon());
         Span valueSpan = new Span();
         if (hostInterface.hasSpeed()) {
-            valueSpan.getElement().setInnerText(templates.nicSpeed(hostInterface.getSpeed()).asString());
+            valueSpan.getElement().setInnerSafeHtml(
+                    SafeHtmlUtils.fromString(templates.nicSpeed(hostInterface.getSpeed()).asString()));
         } else {
             valueSpan.setText(constants.unAvailablePropertyLabel());
         }
@@ -223,8 +224,8 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         dropRateCol.addStyleName(NIC_SPEED_DROP);
         dropRateCol.add(createDropRateIcon());
         Span valueSpan = new Span();
-        valueSpan.getElement().setInnerText(templates.dropRate(hostInterface.getRxDrop()
-                + hostInterface.getTxDrop()).asString());
+        valueSpan.getElement().setInnerSafeHtml(templates.dropRate(hostInterface.getRxDrop()
+                + hostInterface.getTxDrop()));
         dropRateCol.add(valueSpan);
         return dropRateCol;
     }
@@ -241,7 +242,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         }
         String logicalNetworksText = logicalNetworks.size() == 1 ? constants.logicalNetwork() :
             messages.logicalNetworks(logicalNetworks.size());
-        logicalNetworkExpand = new ExpandableListViewItem(logicalNetworksText, icons);
+        logicalNetworkExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(logicalNetworksText), icons);
         getClickHandlerRegistrations().add(logicalNetworkExpand.addClickHandler(this));
         panel.add(logicalNetworkExpand);
         return panel;

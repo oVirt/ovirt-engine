@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 
 import com.google.gwt.dom.client.DListElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -101,23 +102,26 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             content.add(column);
             DListElement dl = Document.get().createDLElement();
             dl.addClassName(DL_HORIZONTAL);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.nameInterface()), nic.getName(), dl);
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.nameInterface()),
+                    SafeHtmlUtils.fromString(nic.getName()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.networkNameInterface()),
-                    nic.getNetworkName(), dl);
+                    SafeHtmlUtils.fromString(nic.getNetworkName()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.profileNameInterface()),
-                    nic.getVnicProfileName(), dl);
+                    SafeHtmlUtils.fromString(nic.getVnicProfileName()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.typeInterface()),
-                    VmInterfaceType.forValue(nic.getType()).getDescription(), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()), nic.getMacAddress(), dl);
+                    SafeHtmlUtils.fromString(VmInterfaceType.forValue(nic.getType()).getDescription()), dl);
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()),
+                    SafeHtmlUtils.fromString(nic.getMacAddress()), dl);
             addDetailItem(templates.sub(constants.rxRate(), constants.mbps()),
-                    rateRenderer.render(new Double[] { nic.getStatistics().getReceiveRate(),
-                            nic.hasSpeed() ? nic.getSpeed().doubleValue() : 0}), dl);
+                    SafeHtmlUtils.fromString(rateRenderer.render(new Double[] { nic.getStatistics().getReceiveRate(),
+                            nic.hasSpeed() ? nic.getSpeed().doubleValue() : 0})), dl);
             addDetailItem(templates.sub(constants.txRate(), constants.mbps()),
-                    rateRenderer.render(new Double[] { nic.getStatistics().getTransmitRate(),
-                            nic.hasSpeed() ? nic.getSpeed().doubleValue() : 0}), dl);
+                    SafeHtmlUtils.fromString(rateRenderer.render(new Double[] { nic.getStatistics().getTransmitRate(),
+                            nic.hasSpeed() ? nic.getSpeed().doubleValue() : 0})), dl);
             addDetailItem(templates.sub(constants.dropsInterface(), constants.pkts()),
-                    String.valueOf(nic.getStatistics().getReceiveDropRate() != null ? nic.getStatistics().getReceiveDropRate() : ""
-                            + nic.getStatistics().getTransmitDropRate()), dl);
+                    SafeHtmlUtils.fromString(String.valueOf(nic.getStatistics().getReceiveDropRate() != null ?
+                            nic.getStatistics().getReceiveDropRate() : ""
+                            + nic.getStatistics().getTransmitDropRate())), dl);
             column.getElement().appendChild(dl);
             i++;
         }
@@ -138,25 +142,26 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             DListElement dl = Document.get().createDLElement();
             dl.addClassName(DL_HORIZONTAL);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.statusDisk()),
-                    getImageStatus(image.getImageStatus()), dl);
+                    SafeHtmlUtils.fromString(getImageStatus(image.getImageStatus())), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.aliasDisk()),
-                    image.getDiskAlias(), dl);
+                    SafeHtmlUtils.fromString(image.getDiskAlias()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.provisionedSizeDisk()),
-                    String.valueOf(sizeRenderer.render(image.getSize())), dl);
+                    SafeHtmlUtils.fromString(String.valueOf(sizeRenderer.render(image.getSize()))), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.sizeDisk()),
-                    String.valueOf(sizeRenderer.render(image.getActualSizeInBytes())), dl);
+                    SafeHtmlUtils.fromString(String.valueOf(sizeRenderer.render(image.getActualSizeInBytes()))), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.allocationDisk()),
-                    String.valueOf(VolumeType.forValue(image.getVolumeType().getValue())), dl);
-            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.interfaceDisk()), getInterface(image), dl);
+                    SafeHtmlUtils.fromString(String.valueOf(VolumeType.forValue(image.getVolumeType().getValue()))), dl);
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.interfaceDisk()),
+                    SafeHtmlUtils.fromString(getInterface(image)), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.creationDateDisk()),
-                    dateRenderer.render(image.getCreationDate()), dl);
+                    SafeHtmlUtils.fromString(dateRenderer.render(image.getCreationDate())), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.diskSnapshotIDDisk()),
-                    String.valueOf(image.getImageId()), dl);
+                    SafeHtmlUtils.fromString(String.valueOf(image.getImageId())), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.typeDisk()),
-                    String.valueOf(image.getDiskStorageType()), dl);
+                    SafeHtmlUtils.fromString(String.valueOf(image.getDiskStorageType())), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.descriptionDisk()),
-                    StringHelper.isNotNullOrEmpty(image.getDiskDescription()) ? image.getDiskDescription()
-                            : constants.notAvailableLabel(), dl);
+                    SafeHtmlUtils.fromString(StringHelper.isNotNullOrEmpty(image.getDiskDescription()) ? image.getDiskDescription()
+                            : constants.notAvailableLabel()), dl);
             column.getElement().appendChild(dl);
         }
         if (diskImages.isEmpty()) {
@@ -192,22 +197,24 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
 
         DListElement dl = Document.get().createDLElement();
         dl.addClassName(DL_HORIZONTAL);
-        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.dateSnapshot()), getCreateDateString(snapshot), dl);
-        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.statusSnapshot()), snapshot.getStatus().name(), dl);
+        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.dateSnapshot()),
+                SafeHtmlUtils.fromString(getCreateDateString(snapshot)), dl);
+        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.statusSnapshot()),
+                SafeHtmlUtils.fromString(snapshot.getStatus().name()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.memorySnapshot()),
-                String.valueOf(snapshot.containsMemory()), dl);
+                SafeHtmlUtils.fromString(String.valueOf(snapshot.containsMemory())), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.descriptionSnapshot()),
-                getDescription(snapshot), dl);
+                SafeHtmlUtils.fromTrustedString(getDescription(snapshot)), dl);
         VM entity = listModel.getEntity();
         if (entity != null) {
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.definedMemoryVm()),
-                    entity.getVmMemSizeMb() + constants.mb(), dl);
+                    SafeHtmlUtils.fromString(entity.getVmMemSizeMb() + constants.mb()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.physMemGauranteedVm()),
-                    entity.getMinAllocatedMem() + constants.mb(), dl);
+                    SafeHtmlUtils.fromString(entity.getMinAllocatedMem() + constants.mb()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.numOfCpuCoresVm()),
-                    messages.cpuInfoLabel(entity.getNumOfCpus(),
+                    SafeHtmlUtils.fromString(messages.cpuInfoLabel(entity.getNumOfCpus(),
                             entity.getNumOfSockets(), entity.getCpuPerSocket(),
-                            entity.getThreadsPerCpu()), dl);
+                            entity.getThreadsPerCpu())), dl);
         }
         column.getElement().appendChild(dl);
         return createItemContainerPanel(content);
@@ -275,8 +282,8 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     }
 
     @Override
-    protected IsWidget createBodyPanel(String header, Snapshot entity) {
-        descriptionHeaderPanel.getElement().setInnerHTML(header);
+    protected IsWidget createBodyPanel(SafeHtml header, Snapshot entity) {
+        descriptionHeaderPanel.getElement().setInnerSafeHtml(header);
         createAdditionalInfoPanel();
         return bodyPanel;
     }
@@ -291,7 +298,8 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     private IsWidget createGeneralAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        generalExpand = new ExpandableListViewItem(constants.generalLabel(), IconType.EYE.getCssName());
+        generalExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(constants.generalLabel()),
+                IconType.EYE.getCssName());
         getClickHandlerRegistrations().add(generalExpand.addClickHandler(this));
         panel.add(generalExpand);
         return panel;
@@ -300,7 +308,8 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     private IsWidget createDisksAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        disksExpand = new ExpandableListViewItem(constants.disksLabel(), IconType.DATABASE.getCssName());
+        disksExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(constants.disksLabel()),
+                IconType.DATABASE.getCssName());
         getClickHandlerRegistrations().add(disksExpand.addClickHandler(this));
         panel.add(disksExpand);
         return panel;
@@ -309,7 +318,8 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     private IsWidget createNicsAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        nicsExpand = new ExpandableListViewItem(constants.nicsLabel(), PatternflyIconType.PF_NETWORK.getCssName());
+        nicsExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(constants.nicsLabel()),
+                PatternflyIconType.PF_NETWORK.getCssName());
         getClickHandlerRegistrations().add(nicsExpand.addClickHandler(this));
         panel.add(nicsExpand);
         return panel;
@@ -318,7 +328,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     private IsWidget createAppsAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        installedAppsExpand = new ExpandableListViewItem(constants.applicationsLabel(),
+        installedAppsExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(constants.applicationsLabel()),
                 IconType.NEWSPAPER_O.getCssName());
         getClickHandlerRegistrations().add(installedAppsExpand.addClickHandler(this));
         panel.add(installedAppsExpand);

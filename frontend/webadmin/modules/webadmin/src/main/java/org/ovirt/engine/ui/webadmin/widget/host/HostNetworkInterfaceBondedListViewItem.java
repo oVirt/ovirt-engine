@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -81,7 +82,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
     private IsWidget createSlavesAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         List<HostInterface> slaves = getEntity().getInterfaces();
-        slavesExpand = new ExpandableListViewItem(messages.slaves(slaves.size()));
+        slavesExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(messages.slaves(slaves.size())));
         getClickHandlerRegistrations().add(slavesExpand.addClickHandler(this));
         panel.add(slavesExpand);
         return panel;
