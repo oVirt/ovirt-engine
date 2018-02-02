@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.Kebab;
 import org.ovirt.engine.ui.common.widget.action.ActionButton;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class DrawerNotification extends Div {
 
@@ -29,7 +30,7 @@ public class DrawerNotification extends Div {
         add(icon);
         Span message = new Span();
         message.addStyleName(PatternflyConstants.PF_DRAWER_NOTIFICATION_MESSAGE);
-        message.setHTML(model.getMessage());
+        message.setHTML(SafeHtmlUtils.htmlEscape(model.getMessage()));
         add(message);
         add(createDateInfo(model));
     }

@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -23,7 +24,7 @@ public class ExpandableListViewItem extends FlowPanel implements HasClickHandler
 
     Container details;
 
-    public ExpandableListViewItem(String label, List<IsWidget> icons) {
+    public ExpandableListViewItem(SafeHtml label, List<IsWidget> icons) {
         this(label);
         if (icons != null) {
             for (IsWidget iconCss : icons) {
@@ -32,7 +33,7 @@ public class ExpandableListViewItem extends FlowPanel implements HasClickHandler
         }
     }
 
-    public ExpandableListViewItem(String label) {
+    public ExpandableListViewItem(SafeHtml label) {
         addStyleName(PatternflyConstants.PF_LIST_VIEW_EXPAND);
         caretIcon = new Span();
         caretIcon.addStyleName(Styles.FONT_AWESOME_BASE);
@@ -41,7 +42,7 @@ public class ExpandableListViewItem extends FlowPanel implements HasClickHandler
         addLabel(label);
     }
 
-    public ExpandableListViewItem(String label, String iconCssString) {
+    public ExpandableListViewItem(SafeHtml label, String iconCssString) {
         this(label);
         if (iconCssString != null) {
             addIcon(iconCssString);
@@ -65,9 +66,9 @@ public class ExpandableListViewItem extends FlowPanel implements HasClickHandler
         return addDomHandler(handler, ClickEvent.getType());
     }
 
-    private void addLabel(String label) {
+    private void addLabel(SafeHtml label) {
         Span labelSpan = new Span();
-        labelSpan.getElement().setInnerText(label);
+        labelSpan.getElement().setInnerSafeHtml(label);
         add(labelSpan);
     }
 

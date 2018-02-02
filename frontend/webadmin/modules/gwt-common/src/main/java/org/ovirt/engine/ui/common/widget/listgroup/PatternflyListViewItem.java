@@ -23,6 +23,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -77,7 +78,7 @@ public abstract class PatternflyListViewItem<T> extends Composite implements Cli
         this.entity = entity;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         createIcon();
-        createBodyPanel(name, entity);
+        createBodyPanel(SafeHtmlUtils.fromString(name), entity);
     }
 
     protected FlowPanel getCheckBoxPanel() {
@@ -111,9 +112,9 @@ public abstract class PatternflyListViewItem<T> extends Composite implements Cli
         return listGroupItem;
     }
 
-    protected void addReverseDetailItem(SafeHtml label, String value, DListElement parent) {
+    protected void addReverseDetailItem(SafeHtml label, SafeHtml value, DListElement parent) {
         Element dt = Document.get().createElement("dt"); // $NON-NLS-1$
-        dt.setInnerText(value); // $NON-NLS-1$
+        dt.setInnerSafeHtml(value); // $NON-NLS-1$
         parent.appendChild(dt);
 
         Element dd = Document.get().createElement("dd"); // $NON-NLS-1$
@@ -121,17 +122,17 @@ public abstract class PatternflyListViewItem<T> extends Composite implements Cli
         parent.appendChild(dd);
     }
 
-    protected void addDetailItem(SafeHtml label, String value, DListElement parent) {
+    protected void addDetailItem(SafeHtml label, SafeHtml value, DListElement parent) {
         Element dt = Document.get().createElement("dt"); // $NON-NLS-1$
         dt.setInnerSafeHtml(label); // $NON-NLS-1$
         parent.appendChild(dt);
 
         Element dd = Document.get().createElement("dd"); // $NON-NLS-1$
-        dd.setInnerText(value);
+        dd.setInnerSafeHtml(value);
         parent.appendChild(dd);
     }
 
-    protected void addStackedDetailItem(SafeHtml label, String value, DListElement parent) {
+    protected void addStackedDetailItem(SafeHtml label, SafeHtml value, DListElement parent) {
         Element dt = Document.get().createElement("dt"); // $NON-NLS-1$
         dt.setInnerSafeHtml(label); // $NON-NLS-1$
         parent.appendChild(dt);
@@ -140,7 +141,7 @@ public abstract class PatternflyListViewItem<T> extends Composite implements Cli
         dt.getStyle().setPaddingRight(5, Unit.PX);
 
         Element dd = Document.get().createElement("dd"); // $NON-NLS-1$
-        dd.setInnerText(value);
+        dd.setInnerSafeHtml(value);
         parent.appendChild(dd);
     }
 
@@ -200,7 +201,7 @@ public abstract class PatternflyListViewItem<T> extends Composite implements Cli
     public abstract void restoreStateFromViewItem(PatternflyListViewItem<T> originalViewItem);
 
     protected abstract IsWidget createIcon();
-    protected abstract IsWidget createBodyPanel(String header, T entity);
+    protected abstract IsWidget createBodyPanel(SafeHtml header, T entity);
     protected abstract void hideAllDetails();
     protected abstract void toggleExpanded();
     protected abstract void toggleExpanded(boolean expand);
