@@ -13,7 +13,7 @@ import org.ovirt.engine.core.dao.VmDao;
  */
 public final class ActiveVmAttachedToClusterPredicate implements Predicate<Guid> {
 
-    private static final Predicate<VM> RUNNING_VM_PREDICATE = new RunningVmPredicate();
+    private static final Predicate<VM> RUNNING_VM_PREDICATE = VM::isRunning;
 
     private final VmDao vmDao;
 
