@@ -11,7 +11,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.common.predicates.NicIsPluggedPredicate;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,7 +36,7 @@ public class FindActiveVmsUsingNetwork {
         for (VM vm : runningVms) {
             List<VmNetworkInterface> vmInterfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
             for (VmNetworkInterface vmNic : vmInterfaces) {
-                boolean vmHasNetworkAttachedToPluggedNic = NicIsPluggedPredicate.getInstance().test(vmNic)
+                boolean vmHasNetworkAttachedToPluggedNic = vmNic.isPlugged()
                         && vmNic.getNetworkName() != null
                         && networks.contains(vmNic.getNetworkName());
 
