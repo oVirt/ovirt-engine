@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.HostJobCommandParameters;
@@ -21,7 +24,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.slf4j.Logger;
@@ -29,6 +31,13 @@ import org.slf4j.LoggerFactory;
 
 public abstract class HostJobCallback extends ChildCommandsCallbackBase {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    @Inject
+    private BackendInternal backend;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private StepDao stepDao;
 
     @Override
     protected void childCommandsExecutionEnded(CommandBase<?> command,
@@ -42,7 +51,7 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
         Guid job = ((HostJobCommandParameters) cmdParams).getHostJobId();
         HostJobStatus jobStatus = null;
         Guid vdsId = cmdParams.getVdsRunningOn();
-        VDS vds = getVdsDao().get(vdsId);
+        VDS vds = vdsDao.get(vdsId);
         if (vds != null) {
             boolean jobsReportedByHost = false;
 
@@ -123,8 +132,7 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
 
         GetHostJobsVDSCommandParameters p = new GetHostJobsVDSCommandParameters(vdsId, Collections
                 .singletonList(jobId), getHostJobType());
-        VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(VDSCommandType
-                .GetHostJobs, p);
+        VDSReturnValue returnValue = backend.getResourceManager().runVdsCommand(VDSCommandType.GetHostJobs, p);
         return ((Map<Guid, HostJobInfo>) returnValue.getReturnValue()).get(jobId);
     }
 
@@ -217,7 +225,7 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
 
     private void updateStepProgress(Guid stepId, Integer progress) {
         if (stepId != null) {
-            getStepDao().updateStepProgress(stepId, progress);
+            stepDao.updateStepProgress(stepId, progress);
         }
     }
 
@@ -242,13 +250,5 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
     private void endAction(CommandBase<?> commandBase) {
         commandBase.getReturnValue().setSucceeded(false);
         commandBase.endAction();
-    }
-
-    private VdsDao getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
-    }
-
-    private StepDao getStepDao() {
-        return DbFacade.getInstance().getStepDao();
     }
 }
