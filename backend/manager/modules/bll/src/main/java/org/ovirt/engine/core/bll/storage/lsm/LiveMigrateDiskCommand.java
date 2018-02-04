@@ -517,7 +517,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     protected boolean validate() {
-        boolean validate = super.validate();
+        if (!super.validate()) {
+            return false;
+        }
 
         if (!getVm().isRunningAndQualifyForDisksMigration()) {
             return failValidation(EngineMessage.CANNOT_LIVE_MIGRATE_VM_SHOULD_BE_IN_PAUSED_OR_UP_STATUS);
@@ -540,7 +542,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             return false;
         }
 
-        return validateCreateAllSnapshotsFromVmCommand() && validate;
+        return validateCreateAllSnapshotsFromVmCommand();
     }
 
     protected boolean validateCreateAllSnapshotsFromVmCommand() {

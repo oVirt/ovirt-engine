@@ -134,6 +134,9 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateVmShareableDisk() {
+        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
+        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+
         DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
         diskImage.setShareable(true);
 
@@ -197,6 +200,9 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
+        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
+        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
