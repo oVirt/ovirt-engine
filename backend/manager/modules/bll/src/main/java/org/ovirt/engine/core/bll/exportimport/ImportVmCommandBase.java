@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -715,14 +714,12 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        Set<PermissionSubject> permissionSet = new HashSet<>();
-        // Destination domains
-        for (Guid storageId : imageToDestinationDomainMap.values()) {
-            permissionSet.add(new PermissionSubject(storageId,
-                    VdcObjectType.Storage,
-                    getActionType().getActionGroup()));
-        }
-        return new ArrayList<>(permissionSet);
+        List<PermissionSubject> permissionList = new ArrayList<>();
+        // Destination cluster
+        permissionList.add(new PermissionSubject(getClusterId(),
+                VdcObjectType.Cluster,
+                ActionGroup.CREATE_VM));
+        return permissionList;
     }
 
     @Override

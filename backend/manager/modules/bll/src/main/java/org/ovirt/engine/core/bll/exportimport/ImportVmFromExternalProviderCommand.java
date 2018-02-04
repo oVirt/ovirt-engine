@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -437,12 +435,12 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        Set<PermissionSubject> permissionSet = new HashSet<>();
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
         // Destination domain
-        permissionSet.add(new PermissionSubject(getStorageDomainId(),
+        permissionList.add(new PermissionSubject(getStorageDomainId(),
                 VdcObjectType.Storage,
                 getActionType().getActionGroup()));
-        return new ArrayList<>(permissionSet);
+        return permissionList;
     }
 
     protected Guid getActiveIsoDomainId() {

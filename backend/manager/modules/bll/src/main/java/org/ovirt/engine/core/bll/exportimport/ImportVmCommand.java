@@ -1425,6 +1425,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+        permissionList.addAll(getStoragePermissionCheckSubjects());
         // Source domain
         permissionList.add(new PermissionSubject(getParameters().getSourceDomainId(),
                 VdcObjectType.Storage,
@@ -1436,6 +1437,17 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                     ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
         }
         return permissionList;
+    }
+
+    private Collection<PermissionSubject> getStoragePermissionCheckSubjects() {
+        Set<PermissionSubject> permissionSet = new HashSet<>();
+        // Destination domains
+        for (Guid storageId : imageToDestinationDomainMap.values()) {
+            permissionSet.add(new PermissionSubject(storageId,
+                    VdcObjectType.Storage,
+                    getActionType().getActionGroup()));
+        }
+        return permissionSet;
     }
 
     protected boolean setAndValidateDiskProfiles() {
