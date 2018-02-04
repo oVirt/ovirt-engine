@@ -42,8 +42,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 
-public class
-LiveMigrateDiskCommandTest extends BaseCommandTest {
+public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     private final Guid diskImageId = Guid.newGuid();
     private final Guid diskImageGroupId = Guid.newGuid();
