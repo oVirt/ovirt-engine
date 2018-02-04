@@ -51,8 +51,6 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid diskProfileId = Guid.newGuid();
 
-    private StoragePool storagePool;
-
     @Mock
     private DiskImageDao diskImageDao;
 
@@ -229,7 +227,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
     }
 
     private void initStoragePool() {
-        storagePool = new StoragePool();
+        StoragePool storagePool = new StoragePool();
 
         command.setStoragePoolId(storagePoolId);
         when(storagePoolDao.get(any())).thenReturn(storagePool);
