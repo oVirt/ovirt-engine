@@ -54,7 +54,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     public MockConfigRule mcr = new MockConfigRule(
         mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
         mockConfig(ConfigValues.MaxVmNameLength, 64),
-        mockConfig(ConfigValues.ResumeBehaviorSupported, Version.v4_2, true),
+        mockConfig(ConfigValues.ResumeBehaviorSupported, Version.v4_3, true),
         mockConfig(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
         mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
         mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"))
