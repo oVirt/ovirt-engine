@@ -12,6 +12,8 @@ NUL = b"\0"
 BUF_SIZE = 8 * 1024**2
 TAR_BLOCK_SIZE = 512
 
+python2 = sys.version_info < (3, 0)
+
 
 def extract_disk(ova_file, disk_size, image_path):
     fd = os.open(image_path, os.O_RDWR | os.O_DIRECT)
@@ -36,9 +38,9 @@ def extract_disk(ova_file, disk_size, image_path):
 def nts(s, encoding, errors):
     """
     Convert a null-terminated bytes object to a string.
-    Taken from tarfile.py.
+    Taken from tarfile.py (python 3).
     """
-    p = s.find(b"\0")
+    p = s.find(NUL)
     if p != -1:
         s = s[:p]
     return s.decode(encoding, errors)
@@ -47,22 +49,24 @@ def nts(s, encoding, errors):
 def nti(s):
     """
     Convert a number field to a python number.
-    Taken from tarfile.py.
+    Inspired by tarfile.py.
+    It is customized to support both python 2 and python 3
+    and the prefix 0o377 is ignored because we use this
+    function to parse only non-negative values.
     """
-    if s[0] in (0o200, 0o377):
-        n = 0
-        for i in range(len(s) - 1):
-            n <<= 8
-            n += s[i + 1]
-        if s[0] == 0o377:
-            n = -(256 ** (len(s) - 1) - n)
-    else:
+    if s[0] != (chr(0o200) if python2 else 0o200):
         try:
             s = nts(s, "ascii", "strict")
             n = int(s.strip() or "0", 8)
         except ValueError:
-            print 'invalid header'
+            print ('invalid header')
             raise
+    else:
+        n = 0
+        r = xrange(len(s) - 1) if python2 else range(len(s) - 1)
+        for i in r:
+            n <<= 8
+            n += ord(s[i + 1]) if python2 else s[i + 1]
     return n
 
 
