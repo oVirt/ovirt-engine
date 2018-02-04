@@ -29,10 +29,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -158,38 +156,6 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-    }
-
-    @Test
-    public void validateFileToBlockSupported() {
-        storagePool.setCompatibilityVersion(Version.v3_6);
-        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.NFS, StorageType.ISCSI);
-    }
-
-    @Test
-    public void validateBlockToFileSupported() {
-        storagePool.setCompatibilityVersion(Version.v3_6);
-        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.NFS);
-    }
-
-    @Test
-    public void validateBlockToBlock() {
-        validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType.ISCSI, StorageType.ISCSI);
-    }
-
-    private void validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType sourceType, StorageType destType) {
-        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
-        srcStorageDomain.setStatus(StorageDomainStatus.Active);
-        srcStorageDomain.setStorageType(sourceType);
-
-        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
-        dstStorageDomain.setStatus(StorageDomainStatus.Active);
-        dstStorageDomain.setStorageType(destType);
-
-        initDiskImage(diskImageGroupId, diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
-
-        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
