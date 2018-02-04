@@ -519,10 +519,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     protected boolean validate() {
         boolean validate = super.validate();
 
-        if (!validate) {
-            auditLogDirector.log(this, AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE);
-        }
-
         if (!getVm().isRunningAndQualifyForDisksMigration()) {
             return failValidation(EngineMessage.CANNOT_LIVE_MIGRATE_VM_SHOULD_BE_IN_PAUSED_OR_UP_STATUS);
         }
