@@ -206,6 +206,12 @@ BuildRequires:	python3-devel
 BuildRequires:	systemd
 BuildRequires:	unzip
 
+# TODO Replace add_maven_depmap and then remove. See also:
+# https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/R3KZ7VI5DPCMCELFIVJQ4AXB2WQED35C/
+%if 0%{?fedora} >= 27
+BuildRequires:	javapackages-local
+%endif
+
 Requires(pre):	shadow-utils
 
 Requires:	%{jboss} >= 11.0.1
