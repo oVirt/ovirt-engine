@@ -31,7 +31,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
-import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -40,12 +40,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 /** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
-public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
+public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
-    private CreateAllSnapshotsFromVmCommand<CreateAllSnapshotsFromVmParameters> cmd =
-            new CreateAllSnapshotsFromVmCommand<>
-                    (new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "", false), null);
+    private CreateSnapshotForVmCommand<CreateSnapshotForVmParameters> cmd =
+            new CreateSnapshotForVmCommand<>
+                    (new CreateSnapshotForVmParameters(Guid.newGuid(), "", false), null);
 
     @Mock
     private VmValidator vmValidator;

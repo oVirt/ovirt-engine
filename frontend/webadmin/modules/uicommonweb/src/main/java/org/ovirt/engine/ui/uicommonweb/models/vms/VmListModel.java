@@ -2031,7 +2031,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ExportVm));
         getCreateSnapshotCommand().setIsExecutionAllowed(singleVmSelected
                 && !getSelectedItem().isStateless() && !getSelectedItem().isPreviewSnapshot()
-                && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.CreateAllSnapshotsFromVm));
+                && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.CreateSnapshotForVm));
         getRetrieveIsoImagesCommand().setIsExecutionAllowed(singleVmSelected
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ChangeDisk));
         getChangeCdCommand().setIsExecutionAllowed(singleVmSelected

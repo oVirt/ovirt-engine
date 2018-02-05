@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase implements Serializable {
+public class CreateSnapshotForVmParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = 847791941815264795L;
 
     @NotEmpty(groups = { CreateEntity.class },
@@ -42,14 +42,20 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     private Map<Guid, Guid> diskToImageIds;
 
-    public CreateAllSnapshotsFromVmParameters() {
+    private boolean liveSnapshotRequired;
+
+    private boolean liveSnapshotSucceeded;
+
+    private CreateSnapshotStage createSnapshotStage = CreateSnapshotStage.CREATE_VOLUME;
+
+    public CreateSnapshotForVmParameters() {
         needsLocking = true;
         saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
         diskToImageIds = Collections.emptyMap();
     }
 
-    public CreateAllSnapshotsFromVmParameters(Guid vmId, String description) {
+    public CreateSnapshotForVmParameters(Guid vmId, String description) {
         super(vmId);
         this.description = description;
         needsLocking = true;
@@ -58,12 +64,12 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
         diskToImageIds = Collections.emptyMap();
     }
 
-    public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory) {
+    public CreateSnapshotForVmParameters(Guid vmId, String description, boolean saveMemory) {
         this(vmId, description);
         this.saveMemory = saveMemory;
     }
 
-    public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory, Set<Guid> diskIds) {
+    public CreateSnapshotForVmParameters(Guid vmId, String description, boolean saveMemory, Set<Guid> diskIds) {
         this(vmId, description, saveMemory);
         this.disks = diskIds;
     }
@@ -129,5 +135,34 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     public void setDiskToImageIds(Map<Guid, Guid> diskToImageIds) {
         this.diskToImageIds = diskToImageIds;
+    }
+
+    public CreateSnapshotStage getCreateSnapshotStage() {
+        return createSnapshotStage;
+    }
+
+    public void setCreateSnapshotStage(CreateSnapshotStage createSnapshotStage) {
+        this.createSnapshotStage = createSnapshotStage;
+    }
+
+    public boolean isLiveSnapshotRequired() {
+        return liveSnapshotRequired;
+    }
+
+    public void setLiveSnapshotRequired(boolean liveSnapshotRequired) {
+        this.liveSnapshotRequired = liveSnapshotRequired;
+    }
+
+    public boolean isLiveSnapshotSucceeded() {
+        return liveSnapshotSucceeded;
+    }
+
+    public void setLiveSnapshotSucceeded(boolean liveSnapshotSucceeded) {
+        this.liveSnapshotSucceeded = liveSnapshotSucceeded;
+    }
+
+    public enum CreateSnapshotStage {
+        CREATE_VOLUME,
+        CREATE_SNAPSHOT_COMPLETED,
     }
 }

@@ -158,7 +158,7 @@ public enum ActionType {
     // ImagesCommands
     TryBackToSnapshot(204, QuotaDependency.NONE),
     RestoreFromSnapshot(205, QuotaDependency.STORAGE),
-    CreateAllSnapshotsFromVm(206, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.STORAGE),
+    CreateSnapshotForVm(206, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.STORAGE),
     CreateSnapshot(207, QuotaDependency.STORAGE),
     CreateSnapshotFromTemplate(208, QuotaDependency.STORAGE),
     CreateImageTemplate(209, QuotaDependency.STORAGE),
@@ -196,6 +196,7 @@ public enum ActionType {
     UpdateVolume(253, QuotaDependency.NONE),
     UpdateAllTemplateDisks(254, QuotaDependency.NONE),
     CreateAllOvaDisks(255, QuotaDependency.NONE),
+    CreateSnapshotDisk(256, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
 
     // VmPoolCommands
     AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),

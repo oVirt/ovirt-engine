@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.action.GlusterStorageSyncCommandParameters;
 import org.ovirt.engine.core.common.action.GlusterStorageSyncCommandParameters.DRStep;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -98,7 +98,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
         for (VM vm : vms) {
             try {
                 Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
-                        ActionType.CreateAllSnapshotsFromVm,
+                        ActionType.CreateSnapshotForVm,
                         getCreateSnapshotParameters(vm),
                         cloneContextAndDetachFromParent());
                 vmIdSnapshotIdMap.put(vm.getId(), future.get().getActionReturnValue());
@@ -158,13 +158,13 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
         }
     }
 
-    protected CreateAllSnapshotsFromVmParameters getCreateSnapshotParameters(VM vm) {
+    protected CreateSnapshotForVmParameters getCreateSnapshotParameters(VM vm) {
         Set<Guid> diskIds =
                 vm.getDiskList().stream()
                     .map(BaseDisk::getId)
                     .collect(Collectors.toSet());
 
-        CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(vm.getId(),
+        CreateSnapshotForVmParameters params = new CreateSnapshotForVmParameters(vm.getId(),
                 vm.getName() + getStorageDomain().getName() + DR_SNAPSHOT_NAME_SUFFIX,
                 false);
 

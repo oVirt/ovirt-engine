@@ -41,7 +41,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
@@ -480,9 +480,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         log.info("Creating stateless snapshot for VM '{}' ({})",
                 getVm().getName(), getVm().getId());
-        CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
+        CreateSnapshotForVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
 
-        ActionReturnValue actionReturnValue = runInternalAction(ActionType.CreateAllSnapshotsFromVm,
+        ActionReturnValue actionReturnValue = runInternalAction(ActionType.CreateSnapshotForVm,
                 createAllSnapshotsFromVmParameters,
                 createContextForStatelessSnapshotCreation());
 
@@ -514,9 +514,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return getContext().clone().withoutCompensationContext();
     }
 
-    private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParameters() {
-        CreateAllSnapshotsFromVmParameters parameters =
-                new CreateAllSnapshotsFromVmParameters(getVm().getId(), STATELESS_SNAPSHOT_DESCRIPTION, false);
+    private CreateSnapshotForVmParameters buildCreateSnapshotParameters() {
+        CreateSnapshotForVmParameters parameters =
+                new CreateSnapshotForVmParameters(getVm().getId(), STATELESS_SNAPSHOT_DESCRIPTION, false);
         parameters.setShouldBeLogged(false);
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
@@ -1141,7 +1141,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endSuccessfully() {
         if (shouldEndSnapshotCreation()) {
-            backend.endAction(ActionType.CreateAllSnapshotsFromVm,
+            backend.endAction(ActionType.CreateSnapshotForVm,
                     getParameters().getImagesParameters().get(0),
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
@@ -1202,7 +1202,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endWithFailure() {
         if (shouldEndSnapshotCreation()) {
-            ActionReturnValue actionReturnValue = backend.endAction(ActionType.CreateAllSnapshotsFromVm,
+            ActionReturnValue actionReturnValue = backend.endAction(ActionType.CreateSnapshotForVm,
                     getParameters().getImagesParameters().get(0), cloneContext().withoutExecutionContext()
                             .withoutLock());
 

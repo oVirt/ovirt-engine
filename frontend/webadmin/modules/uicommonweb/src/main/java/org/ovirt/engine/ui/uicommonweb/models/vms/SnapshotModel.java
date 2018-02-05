@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -387,15 +387,15 @@ public class SnapshotModel extends EntityModel<Snapshot> {
                         .collect(Collectors.toSet());
         }
 
-        CreateAllSnapshotsFromVmParameters param =
-                new CreateAllSnapshotsFromVmParameters(vm.getId(),
+        CreateSnapshotForVmParameters param =
+                new CreateSnapshotForVmParameters(vm.getId(),
                         getDescription().getEntity(),
                         getMemory().getEntity(),
                         snapshotDisksIds);
         param.setQuotaId(vm.getQuotaId());
         params.add(param);
 
-        Frontend.getInstance().runMultipleAction(ActionType.CreateAllSnapshotsFromVm, params,
+        Frontend.getInstance().runMultipleAction(ActionType.CreateSnapshotForVm, params,
                 result -> {
                     SnapshotModel localModel = (SnapshotModel) result.getState();
                     localModel.stopProgress();
