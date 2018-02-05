@@ -3156,10 +3156,6 @@ public class AsyncDataProvider {
         return new ArrayList<>(Arrays.asList(LibvirtSecretUsageType.values()));
     }
 
-    public int getTransferImageClientInactivityTimeoutInSeconds() {
-        return (Integer) getConfigValuePreConverted(ConfigValues.TransferImageClientInactivityTimeoutInSeconds);
-    }
-
     public int getUploadImageChunkSizeKB() {
         return (Integer) getConfigValuePreConverted(ConfigValues.UploadImageChunkSizeKB);
     }

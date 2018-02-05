@@ -411,7 +411,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         TransferDiskImageParameters parameters = new TransferDiskImageParameters(
                 diskParameters.getStorageDomainId(),
-                AsyncDataProvider.getInstance().getTransferImageClientInactivityTimeoutInSeconds(),
                 diskParameters);
         parameters.setTransferSize(getImageSize());
         parameters.setVdsId(getDiskModel().getHost().getSelectedItem().getId());
