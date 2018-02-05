@@ -226,6 +226,7 @@ public class PmHealthCheckManager implements BackendService {
     public void recover(List<VDS> hosts) {
         startHostsWithPMInReboot(hosts);
         recoverKdumpingHosts(hosts);
+        recoverNonRespondingHosts(hosts);
     }
 
     private void startHostsWithPMInReboot(List<VDS> hosts) {
@@ -237,6 +238,16 @@ public class PmHealthCheckManager implements BackendService {
             ThreadPoolUtil.execute(() -> {
                 waitUntilFencingAllowed();
                 startHosts(hostsWithPMInReboot);
+            });
+        }
+    }
+
+    private void recoverNonRespondingHosts(List<VDS> hosts) {
+        // Loop on all hosts, PM enabled flag and status are checked after quite period
+        if (hosts.size() > 0) {
+            ThreadPoolUtil.execute(() -> {
+                waitUntilFencingAllowed();
+                fenceHosts(hosts);
             });
         }
     }
@@ -262,6 +273,28 @@ public class PmHealthCheckManager implements BackendService {
                 else {
                     log.info("PM Health Check Manager failed to start Host '{}'", host.getName());
                 }
+            }
+        }
+    }
+
+    /**
+     * This method calls the non-responding treatment command
+     * if host that was non-responding in the quite-time in which
+     * fencing is skipped is still non-responding after the quite-time
+     * period passed.
+     */
+    public void fenceHosts(List<VDS> hosts) {
+        for (VDS host : hosts) {
+            // retrieve the current status from DB
+            host = vdsDao.get(host.getId());
+            // Check if host exists, has power management and is still in non-responsive status after quite time.
+            if (host != null && host.isPmEnabled() && host.getStatus() == VDSStatus.NonResponsive) {
+                VdsNotRespondingTreatmentCommand<FenceVdsActionParameters> nonResponingVdsCommand =
+                        new VdsNotRespondingTreatmentCommand<>(new
+                                FenceVdsActionParameters(host.getId()), null);
+                Backend.getInstance()
+                        .runInternalAction(ActionType.VdsNotRespondingTreatment,
+                                nonResponingVdsCommand.getParameters());
             }
         }
     }
