@@ -62,6 +62,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private Set<String> metadataDevices;
     private boolean isInMaintenance;
     private Set<String> metadata;
+    private LunModel selectedLun;
 
     private UICommand updateCommand;
 
@@ -509,6 +510,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
                 model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected,
                         isInMaintenance, metadata);
+                model.initLunSelection();
                 model.setGetLUNsFailure(""); //$NON-NLS-1$
                 model.stopProgress();
             }
@@ -922,6 +924,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                         }
                     }
                 }
+                if (!multiSelection) {
+                    selectedLun = getSelectedLuns().isEmpty() ? null : getSelectedLuns().get(0);
+                }
                 lunSelectionChangedEvent.raise(this, new ValueEventArgs<>(selectedLunModel));
                 getRequireTableRefresh().setEntity(false);
                 getRequireTableRefresh().setEntity(true);
@@ -1168,4 +1173,18 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             metadata = model.getMetadataDevices();
         }
     }
+
+    private void initLunSelection() {
+        if (multiSelection || selectedLun == null || getItems() == null) {
+            return;
+        }
+
+        List<SanTargetModel> items = (List<SanTargetModel>) getItems();
+        items.forEach(sanTargetModel -> sanTargetModel.getLuns().forEach(lunModel -> {
+            if (lunModel.getLunId().equals(selectedLun.getLunId())) {
+                lunModel.setIsSelected(true);
+            }
+        }));
+    }
+
 }
