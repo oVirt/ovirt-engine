@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.bll.tasks;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
@@ -103,13 +101,12 @@ public class CommandExecutor {
         }
 
         @Override
-        public ActionReturnValue get() throws InterruptedException, ExecutionException {
+        public ActionReturnValue get() {
             return retValue;
         }
 
         @Override
-        public ActionReturnValue get(long timeout, TimeUnit unit)
-                throws InterruptedException, ExecutionException, TimeoutException {
+        public ActionReturnValue get(long timeout, TimeUnit unit) {
             return retValue;
         }
     }
