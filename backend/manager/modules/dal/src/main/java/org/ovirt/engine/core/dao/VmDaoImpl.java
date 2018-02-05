@@ -103,6 +103,16 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
+    public List<VM> getAllSortedAndFiltered(Guid userID, int offset, int limit) {
+        return getCallsHandler().executeReadList("GetAllFromVmsFilteredAndSorted",
+                vmRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", userID)
+                        .addValue("offset", offset)
+                        .addValue("limit", limit));
+    }
+
+    @Override
     public List<VM> getAllForUserWithGroupsAndUserRoles(Guid id) {
         return getCallsHandler().executeReadList("GetVmsByUserIdWithGroupsAndUserRoles", vmRowMapper,
                 getCustomMapSqlParameterSource()
