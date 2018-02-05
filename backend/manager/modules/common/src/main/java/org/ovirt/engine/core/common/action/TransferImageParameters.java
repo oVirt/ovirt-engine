@@ -7,7 +7,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class TransferImageParameters extends ImagesActionsParametersBase {
     private static final long serialVersionUID = -3924328349293932142L;
 
-    private int keepaliveInterval;
     private long transferSize;
     private TransferType transferType = TransferType.Upload;
 
@@ -21,17 +20,8 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
     public TransferImageParameters() {
     }
 
-    public TransferImageParameters(Guid storageDomainId, int keepaliveInterval) {
+    public TransferImageParameters(Guid storageDomainId) {
         setStorageDomainId(storageDomainId);
-        setKeepaliveInterval(keepaliveInterval);
-    }
-
-    public int getKeepaliveInterval() {
-        return keepaliveInterval;
-    }
-
-    public void setKeepaliveInterval(int keepaliveInterval) {
-        this.keepaliveInterval = keepaliveInterval;
     }
 
     public long getTransferSize() {

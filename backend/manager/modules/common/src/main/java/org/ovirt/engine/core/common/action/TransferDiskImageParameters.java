@@ -8,8 +8,8 @@ public class TransferDiskImageParameters extends TransferImageParameters {
 
     public TransferDiskImageParameters() {}
 
-    public TransferDiskImageParameters(Guid storageDomainId, int keepaliveInterval, AddDiskParameters addDiskParameters) {
-        super(storageDomainId, keepaliveInterval);
+    public TransferDiskImageParameters(Guid storageDomainId, AddDiskParameters addDiskParameters) {
+        super(storageDomainId);
         this.addDiskParameters = addDiskParameters;
     }
 

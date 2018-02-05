@@ -146,7 +146,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
         // Check conditions for pausing the transfer (ie UI is MIA)
         long ts = System.currentTimeMillis() / 1000;
-        if (pauseTransferIfNecessary(entity, ts)) {
+        if (stopTransferIfNecessary(entity, ts)) {
             return;
         }
 
@@ -486,21 +486,24 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     }
 
     /**
-     * Verify conditions for continuing the transfer, pausing it if necessary.
+     * Verify conditions for continuing the transfer, stopping it if necessary.
+     * @return true if transfer was stopped.
      */
-    private boolean pauseTransferIfNecessary(ImageTransfer entity, long ts) {
-        // If a keepalive interval was set by the client, then it needs to respond
-        // within that interval during INITIALIZING and TRANSFERRING states.
-        if (getParameters().getKeepaliveInterval() > 0
+    private boolean stopTransferIfNecessary(ImageTransfer entity, long ts) {
+        if (getTransferImageClientInactivityTimeoutInSeconds() > 0
                 && (entity.getPhase() == ImageTransferPhase.INITIALIZING ||
                     entity.getPhase() == ImageTransferPhase.TRANSFERRING)
                 && (entity.getLastUpdated().getTime() / 1000) +
-                    getParameters().getKeepaliveInterval() < ts) {
-            log.warn("Transfer paused due to no updates in {} seconds. {}",
-                    ts - (entity.getLastUpdated().getTime() / 1000),
-                    getTransferDescription());
-            updateEntityPhaseToPausedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
+                getTransferImageClientInactivityTimeoutInSeconds() < ts) {
+            if (getParameters().getTransferType() == TransferType.Download) {
+                // In download flows, we can cancel the transfer if there was no activity
+                // for a while, as the download is handled by the client.
+                auditLog(this, AuditLogType.DOWNLOAD_IMAGE_CANCELED_TIMEOUT);
+                updateEntityPhase(ImageTransferPhase.CANCELLED);
+            } else {
+                updateEntityPhaseToPausedBySystem(
+                        AuditLogType.UPLOAD_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
+            }
             return true;
         }
         return false;
@@ -852,6 +855,10 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
     private int getPauseLogInterval() {
         return Config.<Integer>getValue(ConfigValues.ImageTransferPausedLogIntervalInSeconds);
+    }
+
+    private int getTransferImageClientInactivityTimeoutInSeconds() {
+        return Config.<Integer>getValue(ConfigValues.TransferImageClientInactivityTimeoutInSeconds);
     }
 
     private String getProxyUri() {
