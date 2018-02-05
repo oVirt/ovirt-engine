@@ -1391,6 +1391,23 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllFromVmsFilteredAndSorted(v_user_id UUID, v_offset int, v_limit int) RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vms.*
+      FROM vms INNER JOIN user_vm_permissions_view ON vms.vm_guid = user_vm_permissions_view.entity_id
+      WHERE user_id = v_user_id
+      ORDER BY vms.vm_name ASC
+      LIMIT v_limit OFFSET v_offset;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
 Create or replace FUNCTION GetAllFromVmsForUserAndActionGroup(v_user_id UUID, v_action_group_id INTEGER) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN

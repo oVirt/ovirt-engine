@@ -59,6 +59,7 @@ import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
@@ -80,6 +81,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.GetFilteredAndSortedParameters;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -110,10 +112,52 @@ public class BackendVmsResource extends
     @Override
     public Vms list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(QueryType.GetAllVms, new QueryParametersBase(), SearchType.VM), true);
+            if (isSortedAndMaxResults()) { //Specific use-case of User-Portal
+                return getVmsFilteredAndSorted();
+            } else {
+                return mapCollection(getBackendCollection(QueryType.GetAllVms, new QueryParametersBase(), SearchType.VM));
+            }
         } else {
-            return mapCollection(getBackendCollection(SearchType.VM), false);
+            return mapCollection(getBackendCollection(SearchType.VM));
         }
+    }
+
+
+    /**
+     * Check for a combination of sorting ("sortby name asc) and specification of
+     * max results ('max' URL parameter). This is a use-case of the User-Portal
+     * that requires specific handling.
+     */
+    private boolean isSortedAndMaxResults() {
+        String searchConstraint = QueryHelper.getConstraint(httpHeaders, uriInfo, "", modelType);
+        int max = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, "max", -1, -1);
+        return searchConstraint != null
+                && !searchConstraint.isEmpty()
+                && searchConstraint.toLowerCase().contains("sortby name asc")
+                && max != -1;
+    }
+
+    /**
+     * Specific use-case in the User-Portal - Get vms:
+     *
+     *   1) filtered by user
+     *   2) sorted (ascending order)
+     *   3) with max # of results specified.
+     *   4) potentially with page number (paging)
+     *
+     * The engine does not support search + filtering simultaneously.
+     * The API supports this using an intersection of two queries, but
+     * can not consider max results as well. This is why a designated
+     * query is needed.
+     *
+     * (https://bugzilla.redhat.com/1534607)
+     */
+    private Vms getVmsFilteredAndSorted() {
+        int max = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, "max", -1, -1);
+        String searchConstraint = QueryHelper.getConstraint(httpHeaders, uriInfo, "", modelType);
+        Integer pageNum = QueryHelper.parsePageNum(searchConstraint);
+        GetFilteredAndSortedParameters params = new GetFilteredAndSortedParameters(max, pageNum == null ? 1 : pageNum);
+        return mapCollection(getBackendCollection(QueryType.GetAllVmsFilteredAndSorted, params));
     }
 
     @Override
@@ -593,7 +637,7 @@ public class BackendVmsResource extends
         vm.setDiskAttachments(diskAttachments);
     }
 
-    protected Vms mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {
+    protected Vms mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         boolean includeData = details.contains(DetailHelper.MAIN);
         boolean includeSize = details.contains("size");

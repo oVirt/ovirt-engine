@@ -141,4 +141,34 @@ public class QueryHelper {
         }
         return null;
     }
+
+    /**
+     * Parses the page number out of the provided search string and returns it.
+     * Page indication appears in the search string in this format: "page 15"
+     * If page indication does not exist, null is returned. For example:
+     *
+     *   GET .../api/vms?search=page%203     will return 3.
+     *   GET .../api/vms?search=name%3Dvm_1  will return null
+     */
+
+    public static Integer parsePageNum(String searchStr) {
+        if (searchStr.toLowerCase().indexOf("page ") == -1) {
+            return null;
+        }
+        else {
+            int pos = searchStr.toLowerCase().indexOf("page ") + 5;
+            StringBuilder pageNumberStr = new StringBuilder();
+            char c = searchStr.charAt(pos);
+            while (Character.isDigit(c) && pos < searchStr.length()) {
+                pageNumberStr.append(c);
+                pos += 1;
+                if (pos<searchStr.length()) {
+                    c = searchStr.charAt(pos);
+                }
+            }
+            //if page number is empty ("page "), return 1 (the first page) by default
+            int pageNum = pageNumberStr.length()==0 ? 1 : Integer.parseInt(pageNumberStr.toString());
+            return pageNum;
+        }
+    }
 }
