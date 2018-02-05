@@ -19,7 +19,7 @@ import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.SnapshotMapper;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -55,8 +55,8 @@ public class BackendSnapshotsResource
 
     protected Response doAdd(Snapshot snapshot, boolean block) {
         validateParameters(snapshot, "description");
-        CreateAllSnapshotsFromVmParameters snapshotParams =
-            new CreateAllSnapshotsFromVmParameters(parentId, snapshot.getDescription());
+        CreateSnapshotForVmParameters snapshotParams =
+            new CreateSnapshotForVmParameters(parentId, snapshot.getDescription());
         if (snapshot.isSetPersistMemorystate()) {
             snapshotParams.setSaveMemory(snapshot.isPersistMemorystate());
         }
@@ -65,7 +65,7 @@ public class BackendSnapshotsResource
             snapshotParams.setDiskIds(diskToImageIds.keySet());
             snapshotParams.setDiskToImageIds(diskToImageIds);
         }
-        return performCreate(ActionType.CreateAllSnapshotsFromVm,
+        return performCreate(ActionType.CreateSnapshotForVm,
                                snapshotParams,
                                new SnapshotIdResolver(),
                                block);

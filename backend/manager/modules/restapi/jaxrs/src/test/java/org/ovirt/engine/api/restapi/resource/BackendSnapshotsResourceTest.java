@@ -17,7 +17,7 @@ import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
+import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -157,8 +157,8 @@ public class BackendSnapshotsResourceTest
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_IDS[0]},
                 resultSnapshot0);
-        setUpCreationExpectations(ActionType.CreateAllSnapshotsFromVm,
-                CreateAllSnapshotsFromVmParameters.class,
+        setUpCreationExpectations(ActionType.CreateSnapshotForVm,
+                CreateSnapshotForVmParameters.class,
                 new String[] { "Description", "VmId" },
                 new Object[] { DESCRIPTIONS[0], VM_ID },
                 true,
