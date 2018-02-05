@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSnapshotResource
@@ -56,7 +59,8 @@ public class BackendSnapshotResource
             tryBackParams.setRestoreMemory(action.isRestoreMemory());
         }
         if (action.isSetDisks()) {
-            tryBackParams.setDisks(collection.mapDisks(action.getDisks()));
+            List<DiskImage> disks = collection.mapDisks(action.getDisks());
+            tryBackParams.setImageIds(getDisksGuidSet(disks));
         }
         tryBackParams.setCorrelationId(RESTORE_SNAPSHOT_CORRELATION_ID); //TODO: if user supplied, override with user value
         Response response = doAction(ActionType.TryBackToAllSnapshotsOfVm,

@@ -3,7 +3,10 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.getStoragePools;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -24,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -258,6 +262,11 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     public Guid getDataCenterId(Guid storageDomainId) {
         List<StoragePool> storagepools = getStoragePools(storageDomainId, this);
         return storagepools.size() > 0 ? storagepools.get(0).getId() : null;
+    }
+
+    protected Set<Guid> getDisksGuidSet (List<DiskImage> disks) {
+        return disks != null ? disks.stream().map(DiskImage::getImageId).collect(Collectors.toSet())
+                : Collections.emptySet();
     }
 
     /**

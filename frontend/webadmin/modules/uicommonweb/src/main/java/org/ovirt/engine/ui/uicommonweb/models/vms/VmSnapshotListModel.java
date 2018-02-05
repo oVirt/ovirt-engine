@@ -445,7 +445,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         VM vm = getEntity();
         SnapshotModel snapshotModel = (SnapshotModel) getWindow();
         boolean memory = false;
-        List<DiskImage> disks = null;
+        List<DiskImage> disks;
+        Set<Guid> diskImageIds = null;
 
         if (snapshotModel.isShowPartialSnapshotWarning()) {
             switch (snapshotModel.getPartialPreviewSnapshotOptions().getSelectedItem()) {
@@ -454,6 +455,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     disks = snapshotModel.getDisks();
                     // add active disks missed from snapshot
                     disks.addAll(imagesSubtract(getVmDisks(), disks));
+                    diskImageIds = disks.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
                     break;
                 case excludeActiveDisks:
                     // nothing to do - default behaviour
@@ -469,7 +471,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             memory = snapshotModel.getMemory().getEntity();
         }
 
-        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, disks);
+        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, diskImageIds);
     }
 
     private static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
@@ -483,17 +485,18 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         Snapshot snapshot = previewSnapshotModel.getSnapshotModel().getEntity();
         boolean memory = Boolean.TRUE.equals(previewSnapshotModel.getSnapshotModel().getMemory().getEntity());
         List<DiskImage> disks = previewSnapshotModel.getSelectedDisks();
+        Set<Guid> diskIds = disks.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
 
-        runTryBackToAllSnapshotsOfVm(previewSnapshotModel, vm, snapshot, memory, disks);
+        runTryBackToAllSnapshotsOfVm(previewSnapshotModel, vm, snapshot, memory, diskIds);
     }
 
-    private void runTryBackToAllSnapshotsOfVm(final Model model, VM vm, Snapshot snapshot, boolean memory, List<DiskImage> disks) {
+    private void runTryBackToAllSnapshotsOfVm(final Model model, VM vm, Snapshot snapshot, boolean memory, Set<Guid> diskIds) {
         if (model != null) {
             model.startProgress();
         }
 
         Frontend.getInstance().runAction(ActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(
-            vm.getId(), snapshot.getId(), memory, disks),
+            vm.getId(), snapshot.getId(), memory, diskIds),
                 result -> {
                     if (model != null) {
                         model.stopProgress();
