@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
@@ -16,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -142,10 +142,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED);
     }
 
     @Test
@@ -160,10 +157,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
     }
 
     @Test
@@ -195,7 +189,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        assertTrue(command.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -209,10 +203,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN)).when(diskValidator)
                 .isDiskPluggedToAnyNonDownVm(anyBoolean());
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
 
     /** Initialize Entities */
