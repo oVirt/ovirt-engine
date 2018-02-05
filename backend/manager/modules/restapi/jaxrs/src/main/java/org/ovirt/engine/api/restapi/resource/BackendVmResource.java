@@ -90,6 +90,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -384,7 +385,8 @@ public class BackendVmResource
             tryBackParams.setRestoreMemory(action.isRestoreMemory());
         }
         if (action.isSetDisks()) {
-            tryBackParams.setDisks(getParent().mapDisks(action.getDisks()));
+            List<DiskImage> disks = getParent().mapDisks(action.getDisks());
+            tryBackParams.setImageIds(getDisksGuidSet(disks));
         }
         Response response = doAction(ActionType.TryBackToAllSnapshotsOfVm,
                 tryBackParams,
