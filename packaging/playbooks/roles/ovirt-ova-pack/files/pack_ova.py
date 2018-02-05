@@ -49,7 +49,11 @@ def write_disk(ova_path, disk_path, disk_size):
         ova_file.write(tar_info.tobuf())
         os.fsync(ova_file.fileno())
 
-    fd = os.open(ova_path, os.O_RDWR | os.O_DIRECT | os.O_APPEND)
+    try:
+        fd = os.open(ova_path, os.O_RDWR | os.O_DIRECT | os.O_APPEND)
+    except:
+        fd = os.open(ova_path, os.O_RDWR | os.O_APPEND)
+
     with io.FileIO(fd, "a+", closefd=True) as ova_file:
         # write the disk content
         buf = mmap.mmap(-1, BUF_SIZE)
