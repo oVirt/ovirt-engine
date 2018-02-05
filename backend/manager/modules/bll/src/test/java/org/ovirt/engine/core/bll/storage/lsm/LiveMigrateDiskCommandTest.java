@@ -139,6 +139,15 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void validateLiveMigrateDownVmFails() {
+        initStorageDomain(srcStorageId);
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Down, Guid.newGuid(), diskImageGroupId);
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.CANNOT_LIVE_MIGRATE_VM_SHOULD_BE_IN_PAUSED_OR_UP_STATUS);
+    }
+
+    @Test
     public void validateInvalidDestinationDomain() {
         initStorageDomain(srcStorageId);
 
