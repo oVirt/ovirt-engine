@@ -1,9 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +28,6 @@ import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.model.GuestOperatingSystem;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Ip;
@@ -50,8 +47,6 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VcpuPin;
 import org.ovirt.engine.api.model.VcpuPins;
 import org.ovirt.engine.api.model.Vm;
-import org.ovirt.engine.api.model.VmAffinity;
-import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
@@ -61,7 +56,6 @@ import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -192,30 +186,6 @@ public class VmMapper extends VmBaseMapper {
             }
         }
 
-        if (vm.isSetPlacementPolicy()) {
-            if (vm.getPlacementPolicy().isSetAffinity()) {
-                // read migration policy
-                staticVm.setMigrationSupport(map(vm.getPlacementPolicy().getAffinity(), null));
-            }
-           // reset previous dedicated host or hosts
-            Set<Guid> hostGuidsSet = new HashSet<>();
-
-            // read multiple hosts if there are few
-            if (vm.getPlacementPolicy().isSetHosts()
-                    && vm.getPlacementPolicy().getHosts().getHosts().size() > 0) {
-                for (Host currHost : vm.getPlacementPolicy().getHosts().getHosts()) {
-                    Guid hostGuid;
-                    if (currHost.isSetId()) {
-                        hostGuid = Guid.createGuidFromString(currHost.getId());
-                    } else {
-                        continue;
-                    }
-                    hostGuidsSet.add(hostGuid);
-                }
-            }
-            staticVm.setDedicatedVmForVdsList(new LinkedList<>(hostGuidsSet));
-        }
-
         if (vm.isSetInitialization()) {
             staticVm.setVmInit(InitializationMapper.map(vm.getInitialization(), staticVm.getVmInit()));
         }
@@ -251,40 +221,6 @@ public class VmMapper extends VmBaseMapper {
             type = OsType.OTHER.name();
         }
         return SimpleDependencyInjector.getInstance().get(OsRepository.class).getOsIdByUniqueName(type);
-    }
-
-    @Mapping(from = VmAffinity.class, to = MigrationSupport.class)
-    public static MigrationSupport map(VmAffinity vmAffinity, MigrationSupport template) {
-        if(vmAffinity!=null){
-            switch (vmAffinity) {
-            case MIGRATABLE:
-                return MigrationSupport.MIGRATABLE;
-            case USER_MIGRATABLE:
-                return MigrationSupport.IMPLICITLY_NON_MIGRATABLE;
-            case PINNED:
-                return MigrationSupport.PINNED_TO_HOST;
-            default:
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @Mapping(from = MigrationSupport.class, to = VmAffinity.class)
-    public static VmAffinity map(MigrationSupport migrationSupport, VmAffinity template) {
-        if(migrationSupport!=null){
-            switch (migrationSupport) {
-            case MIGRATABLE:
-                return VmAffinity.MIGRATABLE;
-            case IMPLICITLY_NON_MIGRATABLE:
-                return VmAffinity.USER_MIGRATABLE;
-            case PINNED_TO_HOST:
-                return VmAffinity.PINNED;
-            default:
-                return null;
-            }
-        }
-        return null;
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.VM.class, to = Vm.class)
@@ -462,22 +398,6 @@ public class VmMapper extends VmBaseMapper {
         model.getHighAvailability().setPriority(entity.getPriority());
         if (entity.getOrigin() != null) {
             model.setOrigin(map(entity.getOrigin(), null));
-        }
-        if (model.getPlacementPolicy() == null) {
-            model.setPlacementPolicy(new VmPlacementPolicy());
-        }
-        VmAffinity vmAffinity = map(entity.getMigrationSupport(), null);
-        if (vmAffinity != null) {
-            model.getPlacementPolicy().setAffinity(vmAffinity);
-        }
-        if (!entity.getDedicatedVmForVdsList().isEmpty()) {
-            Hosts hostsList = new Hosts();
-            for (Guid hostGuid : entity.getDedicatedVmForVdsList()) {
-                Host newHost = new Host();
-                newHost.setId(hostGuid.toString());
-                hostsList.getHosts().add(newHost);
-            }
-            model.getPlacementPolicy().setHosts(hostsList);
         }
 
         if (entity.getVmInit() != null) {
