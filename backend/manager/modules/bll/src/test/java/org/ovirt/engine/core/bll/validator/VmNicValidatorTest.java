@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -64,10 +66,13 @@ public class VmNicValidatorTest {
 
     private VM vm;
 
+    private Cluster cluster;
+
     @Before
     public void setup() {
         validator = spy(new VmNicValidator(nic, version));
         vm = new VM();
+        cluster = new Cluster();
     }
 
     @Test
@@ -239,5 +244,48 @@ public class VmNicValidatorTest {
     public void allowEmptyProfileForNonHostedEngineVm(){
         vm.setOrigin(OriginType.RHEV);
         assertThat(validator.validateProfileNotEmptyForHostedEngineVm(vm), isValid());
+    }
+
+    @Test
+    public void networkSupportedByClusterSwitchLegacyTypeSuccess() {
+        ovsSwitchTypeValidationTest(isValid(),
+                false,
+                true,
+                false);
+    }
+
+    @Test
+    public void networkSupportedByClusterSwitchTypeNonExternalNetworkFail() {
+        ovsSwitchTypeValidationTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_ONLY_EXTERNAL_NETWORK_IS_SUPPORTED_IN_OVS_SWITCH_TYPE),
+                true,
+                false,
+                false);
+    }
+
+    @Test
+    public void networkSupportedByClusterSwitchTypeSuccess() {
+        ovsSwitchTypeValidationTest(isValid(),
+                true,
+                true,
+                false);
+    }
+
+    @Test
+    public void networkSupportedByClusterSwitchTypeEmptyNetworkSuccess() {
+        ovsSwitchTypeValidationTest(isValid(),
+                true,
+                false,
+                true);
+    }
+
+    private void ovsSwitchTypeValidationTest(Matcher<ValidationResult> matcher,
+            boolean clusterSwitchOvs,
+            boolean networkIsExternal,
+            boolean nullNetwork) {
+        cluster.setRequiredSwitchTypeForCluster(clusterSwitchOvs ? SwitchType.OVS : SwitchType.LEGACY);
+        when(network.isExternal()).thenReturn(networkIsExternal);
+        doReturn(nullNetwork ? null : network).when(validator).getNetwork();
+
+        assertThat(validator.isNetworkSupportedByClusterSwitchType(cluster), matcher);
     }
 }
