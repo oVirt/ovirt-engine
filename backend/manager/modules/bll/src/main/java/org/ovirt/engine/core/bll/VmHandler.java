@@ -1256,7 +1256,7 @@ public class VmHandler implements BackendService {
      * @see ColdRebootAutoStartVmsRunner
      */
     public void setVmDestroyOnReboot(VM vm) {
-        if (FeatureSupported.isDestroyOnRebootSupported(vm.getCompatibilityVersion())) {
+        if (FeatureSupported.isDestroyOnRebootSupported(vm.getCompatibilityVersion()) && vm.isRunning()) {
             vdsBrokerFrontend.runVdsCommand(VDSCommandType.SetDestroyOnReboot,
                     new VdsAndVmIDVDSParametersBase(vm.getRunOnVds(), vm.getId()));
         }
