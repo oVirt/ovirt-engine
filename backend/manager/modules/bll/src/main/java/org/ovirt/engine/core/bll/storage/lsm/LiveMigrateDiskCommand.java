@@ -117,7 +117,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     private EngineLock liveStorageMigrationEngineLock;
 
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
-    private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
+
+    private StorageDomain dstStorageDomain;
 
     public LiveMigrateDiskCommand(Guid commandId) {
         super(commandId);
@@ -454,7 +455,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     "VM " + getParameters().getVmId() + " is not running on any VDS");
         }
 
-        StorageType targetType = this.getStorageDomainById(getParameters().getTargetStorageDomainId(), getParameters().getStoragePoolId()).getStorageStaticData().getStorageType();
+        StorageType targetType = getDstStorageDomain().getStorageStaticData().getStorageType();
         Optional<String> diskType = vmInfoBuildUtils.getNetworkDiskType(getVm(), targetType);
 
         // Start disk migration
@@ -555,31 +556,24 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         return true;
     }
 
-    private StorageDomain getStorageDomainById(Guid storageDomainId, Guid storagePoolId) {
-        if (storageDomainsMap.containsKey(storageDomainId)) {
-            return storageDomainsMap.get(storageDomainId);
+    private StorageDomain getDstStorageDomain() {
+        if (dstStorageDomain == null) {
+            dstStorageDomain = storageDomainDao.getForStoragePool(getParameters().getTargetStorageDomainId(),
+                    getStoragePoolId());
         }
-
-        StorageDomain storageDomain = storageDomainDao.getForStoragePool(storageDomainId, storagePoolId);
-        storageDomainsMap.put(storageDomainId, storageDomain);
-
-        return storageDomain;
+        return dstStorageDomain;
     }
 
     protected boolean validateDestDomainsSpaceRequirements() {
-        Guid destDomainId = getParameters().getTargetStorageDomainId();
-        DiskImage diskImage = getDiskImageByImageId(getParameters().getImageId());
-        Guid storagePoolId = diskImage.getStoragePoolId();
-        StorageDomain destDomain = getStorageDomainById(destDomainId, storagePoolId);
-
-        if (!isStorageDomainWithinThresholds(destDomain)) {
+        if (!isStorageDomainWithinThresholds(getDstStorageDomain())) {
             return false;
         }
 
+        DiskImage diskImage = getDiskImageByImageId(getParameters().getImageId());
         List<DiskImage> allImageSnapshots = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
         diskImage.getSnapshots().addAll(allImageSnapshots);
 
-        StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destDomain);
+        StorageDomainValidator storageDomainValidator = createStorageDomainValidator(getDstStorageDomain());
         if (!validate(storageDomainValidator.hasSpaceForClonedDisks(Collections.singleton(diskImage)))) {
             return false;
         }
