@@ -528,7 +528,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
         setStoragePoolId(getVm().getStoragePoolId());
 
-        if (!validateDestDomainsSpaceRequirements()) {
+        if (!validate(new StorageDomainValidator(getDstStorageDomain()).isNotBackupDomain())
+                || !validateDestDomainsSpaceRequirements()) {
             return false;
         }
 

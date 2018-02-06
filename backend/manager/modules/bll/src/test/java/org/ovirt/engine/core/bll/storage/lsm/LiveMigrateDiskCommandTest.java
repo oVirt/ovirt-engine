@@ -134,6 +134,8 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
     public void validateVmShareableDisk() {
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
         srcStorageDomain.setStatus(StorageDomainStatus.Active);
+        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
+        dstStorageDomain.setStatus(StorageDomainStatus.Active);
 
         DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
         diskImage.setShareable(true);
@@ -170,6 +172,20 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
                 .isDiskPluggedToAnyNonDownVm(anyBoolean());
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+    @Test
+    public void validateCantLiveMigrateToBackupDomain() {
+        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
+        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
+        dstStorageDomain.setStatus(StorageDomainStatus.Active);
+        dstStorageDomain.setBackup(true);
+
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE);
     }
 
     /** Initialize Entities */
