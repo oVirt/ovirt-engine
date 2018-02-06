@@ -3,6 +3,10 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
 import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapNullToMinusOne;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.Boot;
@@ -15,6 +19,8 @@ import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
+import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Io;
 import org.ovirt.engine.api.model.MemoryPolicy;
@@ -22,14 +28,18 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
+import org.ovirt.engine.api.model.VmAffinity;
 import org.ovirt.engine.api.model.VmBase;
+import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmStorageErrorResumeBehaviour;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class VmBaseMapper {
@@ -117,6 +127,30 @@ public class VmBaseMapper {
         }
         if (model.isSetLease()) {
             entity.setLeaseStorageDomainId(StorageDomainLeaseMapper.map(model.getLease()));
+        }
+
+        if (model.isSetPlacementPolicy()) {
+            if (model.getPlacementPolicy().isSetAffinity()) {
+                // read migration policy
+                entity.setMigrationSupport(map(model.getPlacementPolicy().getAffinity(), null));
+            }
+            // reset previous dedicated host or hosts
+            Set<Guid> hostGuidsSet = new HashSet<>();
+
+            // read multiple hosts if there are few
+            if (model.getPlacementPolicy().isSetHosts()
+                    && model.getPlacementPolicy().getHosts().getHosts().size() > 0) {
+                for (Host currHost : model.getPlacementPolicy().getHosts().getHosts()) {
+                    Guid hostGuid;
+                    if (currHost.isSetId()) {
+                        hostGuid = Guid.createGuidFromString(currHost.getId());
+                    } else {
+                        continue;
+                    }
+                    hostGuidsSet.add(hostGuid);
+                }
+            }
+            entity.setDedicatedVmForVdsList(new LinkedList<>(hostGuidsSet));
         }
     }
 
@@ -303,6 +337,23 @@ public class VmBaseMapper {
         }
 
         model.setLease(StorageDomainLeaseMapper.map(entity.getLeaseStorageDomainId()));
+
+        if (model.getPlacementPolicy() == null) {
+            model.setPlacementPolicy(new VmPlacementPolicy());
+        }
+        VmAffinity vmAffinity = map(entity.getMigrationSupport(), null);
+        if (vmAffinity != null) {
+            model.getPlacementPolicy().setAffinity(vmAffinity);
+        }
+        if (!entity.getDedicatedVmForVdsList().isEmpty()) {
+            Hosts hostsList = new Hosts();
+            for (Guid hostGuid : entity.getDedicatedVmForVdsList()) {
+                Host newHost = new Host();
+                newHost.setId(hostGuid.toString());
+                hostsList.getHosts().add(newHost);
+            }
+            model.getPlacementPolicy().setHosts(hostsList);
+        }
     }
 
     /**
@@ -502,5 +553,39 @@ public class VmBaseMapper {
         default:
             throw new IllegalArgumentException("Unknown virtual machine type \"" + type + "\"");
         }
+    }
+
+    @Mapping(from = VmAffinity.class, to = MigrationSupport.class)
+    public static MigrationSupport map(VmAffinity vmAffinity, MigrationSupport template) {
+        if(vmAffinity!=null){
+            switch (vmAffinity) {
+            case MIGRATABLE:
+                return MigrationSupport.MIGRATABLE;
+            case USER_MIGRATABLE:
+                return MigrationSupport.IMPLICITLY_NON_MIGRATABLE;
+            case PINNED:
+                return MigrationSupport.PINNED_TO_HOST;
+            default:
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Mapping(from = MigrationSupport.class, to = VmAffinity.class)
+    public static VmAffinity map(MigrationSupport migrationSupport, VmAffinity template) {
+        if(migrationSupport!=null){
+            switch (migrationSupport) {
+            case MIGRATABLE:
+                return VmAffinity.MIGRATABLE;
+            case IMPLICITLY_NON_MIGRATABLE:
+                return VmAffinity.USER_MIGRATABLE;
+            case PINNED_TO_HOST:
+                return VmAffinity.PINNED;
+            default:
+                return null;
+            }
+        }
+        return null;
     }
 }
