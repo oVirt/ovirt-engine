@@ -27,6 +27,7 @@ import tempfile
 
 import psycopg2
 
+from otopi import constants as otopicons
 from otopi import base
 from otopi import util
 
@@ -1280,6 +1281,12 @@ class OvirtUtils(base.Base):
                     tests=tests,
                     **kwargs
                 )
+                if kwargs.get('hidden'):
+                    self.environment[
+                        otopicons.CoreEnv.LOG_FILTER
+                    ].append(
+                        dbenv[self._dbenvkeys[what]]
+                    )
 
             query_dbenv(
                 what=DEK.HOST,
