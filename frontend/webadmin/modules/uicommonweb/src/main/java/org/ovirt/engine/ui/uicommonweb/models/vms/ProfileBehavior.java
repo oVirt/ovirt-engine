@@ -7,8 +7,12 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -22,7 +26,8 @@ public abstract class ProfileBehavior {
             final Guid dcId,
             final AsyncQuery<List<VnicProfileView>> profilesQuery) {
 
-        AsyncQuery<List<Network>> networksQuery = new AsyncQuery<>(clusterNetworks -> {
+        AsyncQuery<QueryReturnValue> networksQuery = new AsyncQuery<>(response -> {
+            clusterNetworks = response.getReturnValue();
             managementNetworkName = clusterNetworks.stream()
                     .filter(n -> n.getCluster().isManagement())
                     .map(Network::getName)
@@ -30,8 +35,6 @@ public abstract class ProfileBehavior {
                     .orElse(null);
 
             profilesQuery.converterCallback = returnValue -> {
-                ProfileBehavior.this.clusterNetworks = clusterNetworks;
-
                 List<VnicProfileView> vnicProfiles = new ArrayList<>();
                 vnicProfiles.add(VnicProfileView.EMPTY);
 
@@ -41,7 +44,7 @@ public abstract class ProfileBehavior {
 
                 for (VnicProfileView vnicProfile : (List<VnicProfileView>) returnValue) {
                     Network network = findNetworkById(vnicProfile.getNetworkId());
-                    if (network != null && network.isVmNetwork()) {
+                    if (network != null) {
                         vnicProfiles.add(vnicProfile);
                     }
 
@@ -53,10 +56,14 @@ public abstract class ProfileBehavior {
             };
             AsyncDataProvider.getInstance().getVnicProfilesByDcId(profilesQuery, dcId);
         });
-        AsyncDataProvider.getInstance().getClusterNetworkList(networksQuery, clusterId);
+        Frontend.getInstance()
+                .runQuery(QueryType.GetAllVmNetworksByClusterId,
+                        new IdQueryParameters(clusterId),
+                        networksQuery);
     }
 
-    public abstract void initSelectedProfile(ListModel profileLists, VmNetworkInterface networkInterface);
+    public abstract void initSelectedProfile(ListModel<VnicProfileView> profileLists,
+            VmNetworkInterface networkInterface);
 
     public Network findNetworkById(Guid networkId) {
         for (Network network : clusterNetworks) {
