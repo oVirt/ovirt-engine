@@ -1171,7 +1171,8 @@ public abstract class CommandBase<T extends ActionParametersBase>
                         commandStatus == CommandStatus.ACTIVE) {
                     setCommandStatus(CommandStatus.ENDED_SUCCESSFULLY);
                 }
-                if (getCommandCompensationPhase() == CommandCompensationPhase.EXECUTION) {
+                if (getCompensationContext() != null
+                        && getCommandCompensationPhase() == CommandCompensationPhase.EXECUTION) {
                     getCompensationContext().cleanupCompensationDataAfterSuccessfulCommand();
                 }
             }
