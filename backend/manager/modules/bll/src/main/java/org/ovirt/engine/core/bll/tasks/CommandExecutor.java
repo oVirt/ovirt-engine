@@ -8,10 +8,10 @@ import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -31,6 +31,8 @@ public class CommandExecutor {
 
     @Inject
     private BackendCommandObjectsHandler actionRunner;
+    @Inject
+    private BackendInternal backend;
 
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
     private final CommandsRepository commandsRepository;
@@ -49,7 +51,7 @@ public class CommandExecutor {
             command.setCommandStatus(CommandStatus.FAILED);
             log.error("Failed to submit command to executor service, command '{}' status has been set to FAILED",
                     command.getCommandId());
-            retVal = new RejectedExecutionFuture();
+            retVal = new RejectedExecutionFuture(createRejectedReturnValue());
         }
         return retVal;
     }
@@ -70,19 +72,22 @@ public class CommandExecutor {
         commandsRepository.persistCommand(cmdEntity);
     }
 
+    private ActionReturnValue createRejectedReturnValue() {
+        ActionReturnValue retValue = new ActionReturnValue();
+        retValue.setSucceeded(false);
+        EngineFault fault = new EngineFault();
+        fault.setError(EngineError.ResourceException);
+        fault.setMessage(backend.getVdsErrorsTranslator().translateErrorTextSingle(fault.getError().toString()));
+        retValue.setFault(fault);
+        return retValue;
+    }
+
     static class RejectedExecutionFuture implements Future<ActionReturnValue> {
 
         ActionReturnValue retValue;
 
-        RejectedExecutionFuture() {
-            retValue = new ActionReturnValue();
-            retValue.setSucceeded(false);
-            EngineFault fault = new EngineFault();
-            fault.setError(EngineError.ResourceException);
-            fault.setMessage(Backend.getInstance()
-                    .getVdsErrorsTranslator()
-                    .translateErrorTextSingle(fault.getError().toString()));
-            retValue.setFault(fault);
+        RejectedExecutionFuture(ActionReturnValue retValue) {
+            this.retValue = retValue;
         }
 
         @Override
