@@ -115,11 +115,8 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateFailsWhenCreateAllSnapshotFromVmValidationFails() {
-        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
-        srcStorageDomain.setStatus(StorageDomainStatus.Active);
-
-        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
-        dstStorageDomain.setStatus(StorageDomainStatus.Active);
+        initStorageDomain(srcStorageId);
+        initStorageDomain(dstStorageId);
 
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
@@ -130,10 +127,8 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateVmShareableDisk() {
-        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
-        srcStorageDomain.setStatus(StorageDomainStatus.Active);
-        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
-        dstStorageDomain.setStatus(StorageDomainStatus.Active);
+        initStorageDomain(srcStorageId);
+        initStorageDomain(dstStorageId);
 
         DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
         diskImage.setShareable(true);
@@ -145,11 +140,9 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateInvalidDestinationDomain() {
-        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
-        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+        initStorageDomain(srcStorageId);
 
         StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
-        dstStorageDomain.setStatus(StorageDomainStatus.Active);
         dstStorageDomain.setStorageDomainType(StorageDomainType.ISO);
 
         initDiskImage(diskImageGroupId, diskImageId);
@@ -160,8 +153,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
-        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
-        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+        initStorageDomain(srcStorageId);
 
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
@@ -174,10 +166,8 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateCantLiveMigrateToBackupDomain() {
-        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
-        srcStorageDomain.setStatus(StorageDomainStatus.Active);
+        initStorageDomain(srcStorageId);
         StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
-        dstStorageDomain.setStatus(StorageDomainStatus.Active);
         dstStorageDomain.setBackup(true);
 
         initDiskImage(diskImageGroupId, diskImageId);
@@ -217,6 +207,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(storageDomainId);
         storageDomain.setStoragePoolId(storagePoolId);
+        storageDomain.setStatus(StorageDomainStatus.Active);
 
         command.setStorageDomain(storageDomain);
         when(storageDomainDao.get(any())).thenReturn(storageDomain);
