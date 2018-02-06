@@ -147,7 +147,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         setHasVLanTag(hasVlanTag);
         getHasVLanTag().getEntityChangedEvent().addListener((ev, sender, args) -> updateVlanTagChangeability());
 
-        onPhysicalNetworkSourceChange(getUsePhysicalNetworkFromDatacenter());
+        getUsePhysicalNetworkFromDatacenter().setEntity(true);
 
         ListModel<MtuSelector> mtuSelector = new ListModel<>();
         mtuSelector.setItems(Arrays.asList(MtuSelector.values()));
