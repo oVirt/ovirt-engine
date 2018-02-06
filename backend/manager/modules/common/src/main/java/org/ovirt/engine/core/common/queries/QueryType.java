@@ -91,6 +91,7 @@ public enum QueryType implements Serializable {
     GetVdsFreeBondsByVdsId,
     GetAllNetworks(QueryAuthType.User),
     GetAllNetworksByClusterId(QueryAuthType.User),
+    GetAllVmNetworksByClusterId(QueryAuthType.User),
     GetAllUnmanagedNetworksByHostId,
     GetUnmanagedNetworkByHostIdAndName,
     GetNetworksByDataCenterId(QueryAuthType.User),
