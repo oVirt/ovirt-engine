@@ -47,7 +47,7 @@ public class NewNetworkModel extends NetworkModel {
         setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
         setHelpTag(HelpTag.new_logical_network);
         setHashName("new_logical_network"); //$NON-NLS-1$
-        getConnectedToPhysicalNetwork().setEntity(true);
+        getConnectedToPhysicalNetwork().setEntity(false);
 
         initMtu();
     }
