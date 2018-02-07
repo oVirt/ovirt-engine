@@ -276,7 +276,7 @@ public enum ConfigValues {
     // the order is- {level}:{name}:{flags}:{vdsm};
     // {level}:{name}:{flags}:{vdsm};1:cpu_name:cpu_flags,..,:vdsm_exec,+..,-..;..
     @TypeConverterAttribute(String.class)
-    ServerCPUList,
+    ServerCPUList(ClientAccessLevel.Admin),
     @Reloadable
     @TypeConverterAttribute(List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
@@ -1057,7 +1057,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    ClusterEmulatedMachines,
+    ClusterEmulatedMachines(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     MaxAverageNetworkQoSValue(ClientAccessLevel.Admin),
