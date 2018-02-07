@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+
+    <d:SimpleDialogPanel width="350px" height="200px" noScroll="true">
+        <d:content>
+            <b:Container fluid="true">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <g:FlowPanel ui:field="roleSelectionPanel">
+                            <e:ListModelMultipleSelectListBoxEditor ui:field="roleSelection" label="{constants.roleToAssignPermissionsPopup}" usePatternFly="true" />
+                        </g:FlowPanel>
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

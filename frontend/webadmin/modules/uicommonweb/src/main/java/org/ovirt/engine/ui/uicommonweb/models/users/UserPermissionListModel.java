@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -8,6 +9,8 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.Permission;
+import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -25,13 +28,17 @@ import com.google.inject.Provider;
 
 public class UserPermissionListModel extends PermissionListModel<DbUser> {
 
+    private UICommand addRoleToUserCommand;
+
     @Inject
     public UserPermissionListModel(Provider<AdElementListModel> adElementListModelProvider) {
         super(adElementListModelProvider);
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
         setHelpTag(HelpTag.permissions);
-        setHashName("permissions"); // $//$NON-NLS-1$
+        setHashName("permissions"); //$NON-NLS-1$
 
+        setAddRoleToUserCommand(new UICommand("AddRoleToUser", this)); // $NON-NLS-1$
+        getCommands().add(getAddRoleToUserCommand());
         updateActionAvailability();
     }
 
@@ -69,6 +76,14 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
 
         setIsQueryFirstTime(false);
 
+    }
+
+    public UICommand getAddRoleToUserCommand() {
+        return addRoleToUserCommand;
+    }
+
+    private void setAddRoleToUserCommand(UICommand value) {
+        addRoleToUserCommand = value;
     }
 
     public void remove() {
@@ -157,13 +172,77 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
 
         if (command == getRemoveCommand()) {
             remove();
-        }
-        if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if (command == getAddRoleToUserCommand()) {
+            addRoleToUser();
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
+        } else if ("OnAddRoleToUser".equals(command.getName())) { //$NON-NLS-1$
+            onAddRoleToUser();
         }
+    }
+
+    private void onAddRoleToUser() {
+        AdElementListModel model = (AdElementListModel) getWindow();
+
+        if (model.getProgress() != null) {
+            return;
+        }
+
+        List<Role> roles = model.getRole().getSelectedItems();
+        // adGroup/user
+
+        DbUser user = getEntity();
+        List<ActionParametersBase> permissionParamsList = new ArrayList<>();
+        roles.forEach(role -> {
+            PermissionsOperationsParameters permissionParams = new PermissionsOperationsParameters();
+            Permission perm = new Permission(user.getId(), role.getId(), null, null);
+            if (user.isGroup()) {
+                DbGroup group = new DbGroup();
+                group.setId(user.getId());
+                group.setExternalId(user.getExternalId());
+                group.setName(user.getFirstName());
+                group.setDomain(user.getDomain());
+                group.setNamespace(user.getNamespace());
+                permissionParams.setPermission(perm);
+                permissionParams.setGroup(group);
+            }
+            else {
+                permissionParams.setPermission(perm);
+                permissionParams.setUser(user);
+            }
+            permissionParamsList.add(permissionParams);
+        });
+
+        model.startProgress();
+
+        Frontend.getInstance().runMultipleAction(ActionType.AddSystemPermission, permissionParamsList,
+                result -> {
+
+                    AdElementListModel localModel = (AdElementListModel) result.getState();
+                    localModel.stopProgress();
+                    cancel();
+
+                }, model);
+    }
+
+    private void addRoleToUser() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        AdElementListModel model = getAdElementListModelProvider().get();
+        model.setSelectDefaultRole(false);
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().addSystemPermissionToUserTitle());
+        model.setHelpTag(HelpTag.add_system_permission_to_user);
+        model.setHashName("add_system_permission_to_user"); //$NON-NLS-1$
+
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddRoleToUser", this); //$NON-NLS-1$
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        model.getCommands().add(tempVar2);
     }
 
     @Override
