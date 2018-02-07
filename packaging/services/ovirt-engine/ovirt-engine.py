@@ -126,6 +126,14 @@ class Daemon(service.Daemon):
         self.check(
             name=os.path.join(
                 self._config.get("ENGINE_LOG"),
+                'ova',
+            ),
+            directory=True,
+            writable=True,
+        )
+        self.check(
+            name=os.path.join(
+                self._config.get("ENGINE_LOG"),
                 'host-deploy',
             ),
             directory=True,

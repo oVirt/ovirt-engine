@@ -970,6 +970,7 @@ fi
 %license backend/manager/modules/services/src/main/webapp/lgpl-3.0.txt
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ansible
+%attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ova
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
