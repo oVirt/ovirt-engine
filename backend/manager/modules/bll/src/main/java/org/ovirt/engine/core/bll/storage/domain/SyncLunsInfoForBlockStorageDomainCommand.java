@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.validator.HostValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
@@ -124,6 +125,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
         // However, in some user environments in case of disaster the block sd may be restored manually in a way that
         // will change its metadata devices - therefore when syncing the luns info we refresh the metadata devices
         // information as well.
+
+        // We might be running on a compatibility level that does not support reduce, in that case the hosts
+        // will not return the metadata device so there is no need to parse it
+        if (!FeatureSupported.reduceDeviceFromStorageDomain(getStoragePool().getCompatibilityVersion())) {
+            return;
+        }
 
         String oldVgMetadataDevice = getStorageDomain().getVgMetadataDevice();
         String oldFirstMetadataDevice = getStorageDomain().getFirstMetadataDevice();
