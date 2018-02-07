@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.UserRolesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserMainSelectedItems;
 
 import com.google.gwt.event.shared.EventBus;
@@ -112,13 +113,25 @@ public class UserModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> getPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<PermissionsPopupPresenterWidget> popupProvider,
+            final Provider<UserRolesPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<UserListModel> mainModelProvider,
             final Provider<UserPermissionListModel> modelProvider) {
         SearchableDetailTabModelProvider<Permission, UserListModel, UserPermissionListModel> result =
                 new SearchableDetailTabModelProvider<Permission, UserListModel, UserPermissionListModel>(
                         eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserPermissionListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        UserPermissionListModel model = getModel();
+
+                        if (lastExecutedCommand == model.getAddRoleToUserCommand()) {
+                            return popupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UserPermissionListModel source,
                             UICommand lastExecutedCommand) {

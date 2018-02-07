@@ -269,6 +269,12 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     }
 
+    private boolean selectDefaultRole = true;
+
+    public void setSelectDefaultRole(boolean value) {
+        selectDefaultRole = value;
+    }
+
     protected void populateRoles(List<Role> roles){
         Role selectedRole = null;
         List<Role> rolesToPopulate = new ArrayList<>();
@@ -290,11 +296,15 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         rolesToPopulate.sort(new NameableComparator());
 
         getRole().setItems(rolesToPopulate);
-        if (selectedRole != null) {
-            getRole().setSelectedItem(selectedRole);
-        } else if (rolesToPopulate.size() > 0){
-            //if engine user does not exist, pick the first on the list
-            getRole().setSelectedItem(rolesToPopulate.get(0));
+        if (selectDefaultRole) {
+            if (selectedRole != null) {
+                getRole().setSelectedItem(selectedRole);
+            } else if (rolesToPopulate.size() > 0){
+                //if engine user does not exist, pick the first on the list
+                getRole().setSelectedItem(rolesToPopulate.get(0));
+            }
+        } else {
+            getRole().setSelectedItem(null);
         }
     }
 
@@ -451,14 +461,14 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         users = value;
     }
 
-    private ArrayList<EntityModel<DbUser>> roups;
+    private ArrayList<EntityModel<DbUser>> groups;
 
     public ArrayList<EntityModel<DbUser>> getgroups() {
-        return roups;
+        return groups;
     }
 
     public void setgroups(ArrayList<EntityModel<DbUser>> value) {
-        roups = value;
+        groups = value;
     }
 
     @Override

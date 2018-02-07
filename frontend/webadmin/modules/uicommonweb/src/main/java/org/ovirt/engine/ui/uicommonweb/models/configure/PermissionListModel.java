@@ -81,6 +81,10 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         updateActionAvailability();
     }
 
+    protected Provider<AdElementListModel> getAdElementListModelProvider() {
+        return adElementListModelProvider;
+    }
+
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();

@@ -587,6 +587,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String objectPermission();
 
+    String addSystemPermission();
+
     String newInterface();
 
     String editInterface();
