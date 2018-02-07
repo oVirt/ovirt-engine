@@ -819,6 +819,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String highlyAvailTemplateGeneral();
 
+    String allowPartialVmImportWarning();
+
     String priorityTemplateGeneral();
 
     String usbPolicyTemplateGeneral();

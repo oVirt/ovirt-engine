@@ -162,6 +162,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
             params.setStorageDomainId(getStorageDomainId());
             params.setImagesExistOnTargetStorageDomain(true);
             params.setClusterId(cluster != null ? cluster.getId() : null);
+            params.setAllowPartialImport(registerVmData.getAllowPartialImport().getEntity());
 
             if (isQuotaEnabled()) {
                 Quota quota = registerVmData.getClusterQuota().getSelectedItem();

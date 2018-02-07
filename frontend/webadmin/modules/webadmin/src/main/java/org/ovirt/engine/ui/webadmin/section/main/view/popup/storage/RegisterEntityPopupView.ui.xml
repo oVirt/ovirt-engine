@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.panel">
 
     <ui:style>
         .containerPanel {
@@ -26,22 +27,25 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="930px" height="650px">
+    <d:SimpleDialogPanel width="1050px" height="650px">
         <d:content>
             <g:SplitLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.splitLayout}">
-                <g:center>
+                <g:north size="200">
                     <g:SimplePanel addStyleNames="{style.containerPanel}">
                         <g:FlowPanel addStyleNames="{style.containerPanelInner}">
                             <e:EntityModelCellTable ui:field="entityTable"/>
                         </g:FlowPanel>
                     </g:SimplePanel>
-                </g:center>
-                <g:south size="265">
+                </g:north>
+                <g:center>
                     <g:ResizeLayoutPanel addStyleNames="{style.containerPanel}">
                         <g:ResizeLayoutPanel addStyleNames="{style.containerPanelInner}">
                             <g:ResizeLayoutPanel ui:field="entityInfoContainer" />
                         </g:ResizeLayoutPanel>
                     </g:ResizeLayoutPanel>
+                </g:center>
+                <g:south size="60">
+                    <p:AlertPanel ui:field="warningPanel" visible="false"/>
                 </g:south>
             </g:SplitLayoutPanel>
         </d:content>
