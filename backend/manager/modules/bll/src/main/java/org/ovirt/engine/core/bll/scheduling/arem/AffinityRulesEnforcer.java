@@ -86,7 +86,7 @@ public class AffinityRulesEnforcer {
         if (allVmToHostsAffinityGroups.isEmpty()) {
             return Optional.empty();
         }
-        Map<Guid, VM> vmsMap = getVMsMap(allVmToHostsAffinityGroups);
+        Map<Guid, VM> vmsMap = getRunningVMsMap(allVmToHostsAffinityGroups);
 
         List<Guid> candidateVMs =
                 getVmToHostsAffinityGroupCandidates(allVmToHostsAffinityGroups, vmsMap, true);
@@ -146,7 +146,7 @@ public class AffinityRulesEnforcer {
 
     /**
      * Create a VM id to VM object map from the affinity groups list input.
-     * Each VM will appear only once in the map.
+     * The map will contain only running VMs and each VM will appear only once.
      * <p>
      * Example: Given affinity group 1 containing VM ids {1,2,3} and affinity group 2 containing VM ids {3,4}
      * the resultant map would be {(1,Vm1),(2,Vm2),(3,Vm3),(4,Vm4)}.
@@ -154,16 +154,16 @@ public class AffinityRulesEnforcer {
      * @param allVMtoHostsAffinityGroups All VM to hosts affinity groups for the current cluster
      * @return VMs map with key: id, value: associated vm object
      */
-    private Map<Guid, VM> getVMsMap(List<AffinityGroup> allVMtoHostsAffinityGroups) {
-        Map<Guid, VM> vmsMap = vmDao.getVmsByIds(allVMtoHostsAffinityGroups.stream()
+    private Map<Guid, VM> getRunningVMsMap(List<AffinityGroup> allVMtoHostsAffinityGroups) {
+        List<Guid> vmIds = allVMtoHostsAffinityGroups.stream()
                 .map(AffinityGroup::getVmIds)
                 .flatMap(List::stream)
                 .distinct()
-                .collect(Collectors.toList()))
-                .stream()
-                .collect(Collectors.toMap(VM::getId, vm -> vm));
+                .collect(Collectors.toList());
 
-        return vmsMap;
+        return vmDao.getVmsByIds(vmIds).stream()
+                .filter(VM::isRunning)
+                .collect(Collectors.toMap(VM::getId, vm -> vm));
     }
 
     /**
