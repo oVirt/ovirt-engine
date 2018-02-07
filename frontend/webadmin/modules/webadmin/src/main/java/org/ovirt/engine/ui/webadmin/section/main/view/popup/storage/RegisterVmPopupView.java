@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
@@ -29,6 +30,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmData, RegisterVmModel>
@@ -140,6 +142,8 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
 
         entityTable.addColumn(creatReassignMacsColumn(), new ReassignBadMacsHeader(), "150px"); //$NON-NLS-1$
 
+        entityTable.addColumn(createAllowPartialColumn(), constants.allowPartial(), "95px"); //$NON-NLS-1$
+
         entityTable.addColumn(getClusterColumn(), constants.clusterVm(), "150px"); //$NON-NLS-1$
 
         if (model.isQuotaEnabled()) {
@@ -169,6 +173,43 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
 
         reassignMacsColumn.setFieldUpdater((index, object, value) -> object.getReassignMacs().setEntity(value));
         return reassignMacsColumn;
+    }
+
+    private AbstractCheckboxColumn<RegisterVmData> createAllowPartialColumn() {
+        final AbstractCheckboxColumn<RegisterVmData> allowPartialColumn =
+                new AbstractCheckboxColumn<RegisterVmData>() {
+                    @Override
+                    public Boolean getValue(RegisterVmData registerVmData) {
+                        return registerVmData.getAllowPartialImport().getEntity();
+                    }
+
+                    @Override
+                    protected boolean canEdit(RegisterVmData registerVmData) {
+                        return true;
+                    }
+
+                    @Override
+                    public void render(Context context, RegisterVmData object, SafeHtmlBuilder sb) {
+                        super.render(context, object, sb);
+                    }
+                };
+
+        allowPartialColumn.setFieldUpdater((index, object, value) -> {
+            object.getAllowPartialImport().setEntity(value);
+            updateWarnings(value);
+        });
+        return allowPartialColumn;
+    }
+
+    private void updateWarnings(boolean isAllowPartial) {
+        warningPanel.clearMessages();
+        if (isAllowPartial) {
+            warningPanel.setType(AlertPanel.Type.WARNING);
+            warningPanel.addMessage(SafeHtmlUtils.fromSafeConstant(constants.allowPartialVmImportWarning()));
+            warningPanel.setVisible(true);
+        } else {
+            warningPanel.setVisible(false);
+        }
     }
 
     @Override

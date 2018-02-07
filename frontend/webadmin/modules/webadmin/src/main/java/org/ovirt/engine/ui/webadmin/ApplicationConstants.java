@@ -1438,6 +1438,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterVm();
 
+    String allowPartial();
+
     String dcVm();
 
     String hostVm();

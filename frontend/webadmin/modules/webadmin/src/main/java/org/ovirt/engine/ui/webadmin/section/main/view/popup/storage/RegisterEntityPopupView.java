@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
@@ -55,6 +56,9 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
     @UiField(provided = true)
     @Ignore
     EntityModelCellTable<ListModel<D>> entityTable;
+
+    @UiField
+    AlertPanel warningPanel;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
