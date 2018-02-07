@@ -1599,11 +1599,24 @@ public enum ConfigValues {
     }
 
     /**
+     * Defines which clients the configuration values is exposed to.
+     *
      * @see org.ovirt.engine.core.bll.GetSystemOptionQuery#shouldReturnValue
      */
     public enum ClientAccessLevel {
+        /**
+         * Configuration value is internal, it's no exposed outside engine
+         */
         Internal,
+
+        /**
+         * Configuration value is exposed to users with administrator role using {@code /ovirt-engine/api/options}
+         */
         Admin,
+
+        /**
+         * Configuration values is exposed to all users using {@code /ovirt-engine/api/options}
+         */
         User
     }
 }
