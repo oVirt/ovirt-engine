@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.memory;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -15,6 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * This builder creates the memory images for live snapshots with memory operation
@@ -65,7 +65,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     private Guid addDisk(DiskImage disk) {
-        ActionReturnValue returnValue = getBackend().runInternalAction(
+        ActionReturnValue returnValue = Injector.get(BackendInternal.class).runInternalAction(
                 ActionType.AddDisk,
                 buildAddDiskParameters(disk),
                 enclosingCommand.getContext().clone());
@@ -93,10 +93,6 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         parameters.setParentParameters(enclosingCommand.getParameters());
         parameters.setShouldBeLogged(false);
         return parameters;
-    }
-
-    private BackendInternal getBackend() {
-        return Backend.getInstance();
     }
 
     private StorageType getStorageType() {

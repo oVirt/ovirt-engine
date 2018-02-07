@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -59,7 +60,7 @@ public class RestartVdsVmsOperation {
         if (vm.getStatus() == VMStatus.MigratingFrom) {
             try {
                 if (vm.getMigratingToVds() != null) {
-                    Backend.getInstance().getResourceManager().runVdsCommand(
+                    Injector.get(BackendInternal.class).getResourceManager().runVdsCommand(
                             VDSCommandType.DestroyVm,
                             new DestroyVmVDSCommandParameters(
                                     new Guid(vm.getMigratingToVds().toString()),
@@ -97,7 +98,7 @@ public class RestartVdsVmsOperation {
         // restart all running vms of a failed vds.
         for (VM vm : vms) {
             destroyVmOnDestination(vm);
-            VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
+            VDSReturnValue returnValue = Injector.get(BackendInternal.class).getResourceManager().runVdsCommand(
                     VDSCommandType.SetVmStatus,
                     new SetVmStatusVDSCommandParameters(
                             vm.getId(),
@@ -117,7 +118,7 @@ public class RestartVdsVmsOperation {
                         AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE
                 );
             }
-            Backend.getInstance().runInternalAction(
+            Injector.get(BackendInternal.class).runInternalAction(
                     ActionType.ProcessDownVm,
                     new ProcessDownVmParameters(vm.getId(), true),
                     ExecutionHandler.createDefaultContextForTasks(commandContext)

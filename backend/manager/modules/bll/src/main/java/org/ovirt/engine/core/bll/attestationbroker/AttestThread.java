@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
 
@@ -68,7 +69,7 @@ public class AttestThread extends Thread {
     private void setNonOperational(NonOperationalReason reason, VDS vds, Map<String, String> customLogValues) {
         SetNonOperationalVdsParameters tempVar =
                 new SetNonOperationalVdsParameters(vds.getId(), reason, customLogValues);
-        Backend.getInstance().runInternalAction(ActionType.SetNonOperationalVds, tempVar,
+        Injector.get(BackendInternal.class).runInternalAction(ActionType.SetNonOperationalVds, tempVar,
                 ExecutionHandler.createInternalJobContext());
     }
 

@@ -80,7 +80,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.dao.dwh.OsInfoDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
@@ -161,10 +160,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Inject
     private CommandCompensator compensator;
-
-    public static BackendInternal getInstance() {
-        return Injector.get(BackendInternal.class);
-    }
 
     private void initHandlers() {
         BaseConditionFieldAutoCompleter.tagsHandler = tagsDirector;

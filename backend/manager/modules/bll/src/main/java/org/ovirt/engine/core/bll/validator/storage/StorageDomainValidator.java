@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -514,7 +513,7 @@ public class StorageDomainValidator {
     }
 
     private BackendInternal getBackend() {
-        return Backend.getInstance();
+        return Injector.get(BackendInternal.class);
     }
 
     protected VmDao getVmDao() {

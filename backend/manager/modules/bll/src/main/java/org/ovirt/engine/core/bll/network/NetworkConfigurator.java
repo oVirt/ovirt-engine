@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.host.HostConnectivityChecker;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -244,7 +243,7 @@ public class NetworkConfigurator {
     }
 
     BackendInternal getBackend() {
-        return Backend.getInstance();
+        return Injector.get(BackendInternal.class);
     }
 
     private CommandContext cloneContextAndDetachFromParent() {
