@@ -695,7 +695,7 @@ public enum ConfigValues {
     ImageTransferPausedLogIntervalInSeconds,
 
     @TypeConverterAttribute(Integer.class)
-    UploadImageUiInactivityTimeoutInSeconds(ClientAccessLevel.User),
+    TransferImageClientInactivityTimeoutInSeconds(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     UploadImageChunkSizeKB(ClientAccessLevel.Admin),
