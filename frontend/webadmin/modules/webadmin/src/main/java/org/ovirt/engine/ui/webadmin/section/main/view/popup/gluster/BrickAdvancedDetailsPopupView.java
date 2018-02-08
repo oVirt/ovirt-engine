@@ -34,6 +34,8 @@ import com.google.inject.Inject;
 
 public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<BrickAdvancedDetailsModel> implements BrickAdvancedDetailsPopupPresenterWidget.ViewDef {
 
+    private static final String DEFAULT_WIDTH = "120px"; //$NON-NLS-1$
+
     interface Driver extends UiCommonEditorDriver<BrickAdvancedDetailsModel, BrickAdvancedDetailsPopupView> {
     }
 
@@ -198,7 +200,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         statusEditor = new EntityModelLabelEditor<>(new EnumRenderer<GlusterStatus>());
         clientsTable = new EntityModelCellTable<>(false, true);
         memoryPoolsTable = new EntityModelCellTable<>(false, true);
-        memoryPoolsTable.setWidth("1000px"); //$NON-NLS-1$
+        memoryPoolsTable.setWidth("1200px"); //$NON-NLS-1$
     }
 
     private void initTableColumns() {
@@ -207,84 +209,84 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
             public String getText(GlusterClientInfo entity) {
                 return entity.getHostname();
             }
-        }, constants.clientBrickAdvancedLabel());
+        }, constants.clientBrickAdvancedLabel(), DEFAULT_WIDTH);
 
         clientsTable.addColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
                 return String.valueOf(entity.getClientPort());
             }
-        }, constants.clientPortBrickAdvancedLabel());
+        }, constants.clientPortBrickAdvancedLabel(), DEFAULT_WIDTH);
 
         clientsTable.addColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
                 return String.valueOf(entity.getBytesRead());
             }
-        }, constants.bytesReadBrickAdvancedLabel());
+        }, constants.bytesReadBrickAdvancedLabel(), "160px"); //$NON-NLS-1$
 
         clientsTable.addColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
                 return String.valueOf(entity.getBytesWritten());
             }
-        }, constants.bytesWrittenBrickAdvancedLabel());
+        }, constants.bytesWrittenBrickAdvancedLabel(), "160px"); //$NON-NLS-1$
 
         memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return entity.getName();
             }
-        }, constants.nameBrickAdvancedLabel());
+        }, constants.nameBrickAdvancedLabel(), DEFAULT_WIDTH);
 
         memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getHotCount());
             }
-        }, constants.hotCountBrickAdvancedLabel());
+        }, constants.hotCountBrickAdvancedLabel(), DEFAULT_WIDTH);
 
         memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getColdCount());
             }
-        }, constants.coldCountBrickAdvancedLabel());
+        }, constants.coldCountBrickAdvancedLabel(), DEFAULT_WIDTH);
 
         memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getPadddedSize());
             }
-        }, constants.paddedSizeBrickAdvancedLabel());
+        }, constants.paddedSizeBrickAdvancedLabel(), DEFAULT_WIDTH);
 
         memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getAllocCount());
             }
-        }, constants.allocatedCountBrickAdvancedLabel());
+        }, constants.allocatedCountBrickAdvancedLabel(), DEFAULT_WIDTH);
 
         memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getMaxAlloc());
             }
-        }, constants.maxAllocatedBrickAdvancedLabel());
+        }, constants.maxAllocatedBrickAdvancedLabel(), "180px"); //$NON-NLS-1$
 
         memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getPoolMisses());
             }
-        }, constants.poolMissesBrickAdvancedLabel());
+        }, constants.poolMissesBrickAdvancedLabel(), DEFAULT_WIDTH);
 
         memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getMaxStdAlloc());
             }
-        }, constants.maxStdAllocatedBrickAdvancedLabel());
+        }, constants.maxStdAllocatedBrickAdvancedLabel(), "200px"); //$NON-NLS-1$
     }
 
     @Override
