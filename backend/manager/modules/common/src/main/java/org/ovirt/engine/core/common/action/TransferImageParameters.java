@@ -22,10 +22,6 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
     }
 
     public TransferImageParameters(Guid storageDomainId, int keepaliveInterval) {
-        this(storageDomainId, keepaliveInterval, Guid.Empty);
-    }
-
-    public TransferImageParameters(Guid storageDomainId, int keepaliveInterval, Guid suppliedImageGuid) {
         setStorageDomainId(storageDomainId);
         setKeepaliveInterval(keepaliveInterval);
     }
