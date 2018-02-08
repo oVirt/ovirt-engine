@@ -52,6 +52,11 @@ public class ExternalVnicProfileMapping implements Serializable {
                 Objects.equals(externalNetworkProfileName, other.externalNetworkProfileName);
     }
 
+    public boolean isSameSourceProfile(VmNetworkInterface vnic) {
+        return Objects.equals(externalNetworkName, vnic.getNetworkName()) &&
+                Objects.equals(externalNetworkProfileName, vnic.getVnicProfileName());
+    }
+
     /**
      * warning: this equals only compares the source profile
      * @return true if the source profile of o is the same as that of this
@@ -71,5 +76,30 @@ public class ExternalVnicProfileMapping implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(externalNetworkName, externalNetworkProfileName);
+    }
+
+    public boolean hasTarget() {
+        //temporary stub, not in use
+        return false;
+    }
+
+    public boolean targetNamesAreEmptyString() {
+        //temporary stub, not in use
+        return false;
+    }
+
+    public boolean hasTargetNames() {
+        //temporary stub, not in use
+        return false;
+    }
+
+    public String getTargetProfileName() {
+        //temporary stub, not in use
+        return "";
+    }
+
+    public String getTargetNetworkName() {
+        //temporary stub, not in use
+        return "";
     }
 }
