@@ -16,9 +16,8 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent.Type;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
@@ -29,7 +28,7 @@ public abstract class AbstractSubTabNetworkPresenter<D extends HasEntity<?>,
     public AbstractSubTabNetworkPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<NetworkListModel, D> modelProvider, NetworkMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, NetworkListModel, ?> actionPanel,
-            Type<RevealContentHandler<?>> slot) {
+            NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 

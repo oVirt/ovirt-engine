@@ -20,13 +20,12 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ContentSlot;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
+import com.gwtplatform.mvp.client.presenter.slots.Slot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest.Builder;
@@ -63,8 +62,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     private static final Logger logger = Logger.getLogger(AbstractSubTabPresenter.class.getName());
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetActionPanel = new Type<>();
+    public static final Slot<ActionPanelPresenterWidget<?, ?>> TYPE_SetActionPanel = new Slot<>();
 
     private final ApplicationPlaceManager placeManager;
     private final DetailModelProvider<M, D> modelProvider;
@@ -82,7 +80,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             PlaceManager placeManager, DetailModelProvider<M, D> modelProvider,
             AbstractMainSelectedItems<T> selectedMainItems,
             ActionPanelPresenterWidget<?, M> actionPanelPresenterWidget,
-            Type<RevealContentHandler<?>> slot) {
+            NestedSlot slot) {
         super(eventBus, view, proxy, actionPanelPresenterWidget, slot);
         this.placeManager = (ApplicationPlaceManager) placeManager;
         this.modelProvider = modelProvider;

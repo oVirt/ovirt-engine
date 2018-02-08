@@ -10,9 +10,8 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent.Type;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
@@ -23,7 +22,7 @@ public abstract class AbstractSubTabUserPresenter<D extends HasEntity<?>,
     public AbstractSubTabUserPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<UserListModel, D> modelProvider, UserMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, UserListModel, D> actionPanel,
-            Type<RevealContentHandler<?>> slot) {
+            NestedSlot slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 

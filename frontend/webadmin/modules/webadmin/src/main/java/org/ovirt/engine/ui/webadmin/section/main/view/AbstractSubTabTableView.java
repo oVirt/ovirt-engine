@@ -49,6 +49,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         this.table = createActionTable();
         container.add(table);
         container.addStyleName(OBRAND_DETAIL_TAB);
+        bindSlot(MainContentPresenter.TYPE_SetContent, container);
         generateIds();
     }
 
@@ -79,9 +80,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
 
     @Override
     public void setInSlot(Object slot, IsWidget content) {
-        if (slot == MainContentPresenter.TYPE_SetContent) {
-            container.insert(content, 0);
-        } else if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
+        if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
             if (content != null) {
                 container.insert(content, 0);
                 this.actionPanel = content;

@@ -30,13 +30,11 @@ import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ContentSlot;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest.Builder;
 
@@ -64,14 +62,11 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         void setPlaceTransitionHandler(PlaceTransitionHandler handler);
     }
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetSearchPanel = new Type<>();
+    public static final NestedSlot TYPE_SetSearchPanel = new NestedSlot();
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetBreadCrumbs = new Type<>();
+    public static final NestedSlot TYPE_SetBreadCrumbs = new NestedSlot();
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetActionPanel = new Type<>();
+    public static final NestedSlot TYPE_SetActionPanel = new NestedSlot();
 
     private final SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget;
 

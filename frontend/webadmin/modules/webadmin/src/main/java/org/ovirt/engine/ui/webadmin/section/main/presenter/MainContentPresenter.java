@@ -3,16 +3,14 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import java.util.Set;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.presenter.slots.LegacySlotConvertor;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef, MainContentPresenter.ProxyDef>
     implements RevealOverlayContentEvent.RevealOverlayContentHandler {
@@ -24,11 +22,9 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     public interface ViewDef extends View {
     }
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetContent = new Type<>();
+    public static final NestedSlot TYPE_SetContent = new NestedSlot();
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetOverlay = new Type<>();
+    public static final NestedSlot TYPE_SetOverlay = new NestedSlot();
 
     @Inject
     public MainContentPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy) {

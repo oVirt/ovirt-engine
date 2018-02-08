@@ -17,11 +17,10 @@ import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.ChangeTab;
-import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.RequestTabs;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class DiskSubTabPanelPresenter extends
     AbstractSubTabPanelPresenter<DiskSubTabPanelPresenter.ViewDef, DiskSubTabPanelPresenter.ProxyDef> {
@@ -39,8 +38,7 @@ public class DiskSubTabPanelPresenter extends
     @ChangeTab
     public static final Type<ChangeTabHandler> TYPE_ChangeTab = new Type<>();
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<>();
+    public static final NestedSlot TYPE_SetTabContent = new NestedSlot();
 
     @Inject
     private MainModelProvider<Disk, DiskListModel> modelProvider;

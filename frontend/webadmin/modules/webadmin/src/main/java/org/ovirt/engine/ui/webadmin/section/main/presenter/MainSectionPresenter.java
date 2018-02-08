@@ -2,14 +2,13 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
+import com.gwtplatform.mvp.client.presenter.slots.PermanentSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef, MainSectionPresenter.ProxyDef> {
 
@@ -20,14 +19,11 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     public interface ViewDef extends View {
     }
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetHeader = new Type<>();
+    public static final PermanentSlot<HeaderPresenterWidget> TYPE_SetHeader = new PermanentSlot<>();
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetMenu = new Type<>();
+    public static final PermanentSlot<MenuPresenterWidget> TYPE_SetMenu = new PermanentSlot<>();
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<>();
+    public static final NestedSlot TYPE_SetMainContent = new NestedSlot();
 
     private final HeaderPresenterWidget header;
     private final MenuPresenterWidget menu;

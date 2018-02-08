@@ -7,11 +7,10 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
@@ -28,7 +27,7 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
     private final ActionPanelPresenterWidget<?, ?> actionPanel;
 
     public AbstractTabPresenter(EventBus eventBus, V view, P proxy, ActionPanelPresenterWidget<?, ?> actionPanel,
-            Type<RevealContentHandler<?>> slot) {
+            NestedSlot slot) {
         super(eventBus, view, proxy, slot);
         this.actionPanel = actionPanel;
     }

@@ -12,13 +12,11 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ContentSlot;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 
 public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<NumaSupportModel, NumaSupportPopupPresenterWidget.ViewDef> {
 
@@ -39,8 +37,7 @@ public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPres
         void clear();
     }
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> TYPE_SetUnassignedPanel = new Type<>();
+    public static final NestedSlot TYPE_SetUnassignedPanel = new NestedSlot();
 
     private final UnassignedVNumaNodesPanelPresenterWidget unassignedVNumaNodesPanelPresenterWidget;
 
