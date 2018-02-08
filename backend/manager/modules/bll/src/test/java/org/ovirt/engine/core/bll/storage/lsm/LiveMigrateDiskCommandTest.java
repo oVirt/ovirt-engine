@@ -141,6 +141,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateLiveMigrateDownVmFails() {
         initStorageDomain(srcStorageId);
+        initStorageDomain(dstStorageId);
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Down, Guid.newGuid(), diskImageGroupId);
 
@@ -163,6 +164,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
         initStorageDomain(srcStorageId);
+        initStorageDomain(dstStorageId);
 
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
