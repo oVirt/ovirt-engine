@@ -70,7 +70,6 @@ import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.dal.dbbroker.DbConnectionUtil;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dal.utils.CacheManager;
@@ -117,8 +116,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Inject
     private ServiceLoader serviceLoader;
-    @Inject
-    private DbFacade dbFacade;
     @Inject
     @Any
     private Instance<SchedulerUtil> taskSchedulers;
