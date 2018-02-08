@@ -222,6 +222,12 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                     String.format("$%1$s %2$s", "diskAlias", getImage().getDiskAlias()));
         }
 
+        if (isMoveOperation()) {
+            if (getImage().getStorageIds().contains(getStorageDomainId())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DESTINATION_STORAGE_DOMAIN_ALREADY_CONTAINS_THE_DISK);
+            }
+        }
+
         return true;
     }
 
@@ -275,7 +281,12 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (sourceDomainId == null || Guid.Empty.equals(sourceDomainId)) {
             sourceDomainId = getImage().getStorageIds().get(0);
             getParameters().setSourceDomainId(sourceDomainId);
+        } else {
+            if (!getImage().getStorageIds().contains(sourceDomainId)) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_SOURCE_STORAGE_DOMAIN_DOES_CONTAINS_THE_DISK);
+            }
         }
+
         StorageDomainValidator validator =
                 new StorageDomainValidator(storageDomainDao.getForStoragePool(sourceDomainId,
                         getImage().getStoragePoolId()));

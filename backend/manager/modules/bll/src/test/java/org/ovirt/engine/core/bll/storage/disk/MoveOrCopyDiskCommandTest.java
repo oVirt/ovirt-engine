@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     private final Guid diskImageGuid = Guid.newGuid();
     private Guid destStorageId = Guid.newGuid();
-    private final Guid srcStorageId = Guid.newGuid();
+    private final Guid SRC_STORAGE_ID = Guid.newGuid();
     private final VmDevice vmDevice = new VmDevice();
 
     @Mock
@@ -85,7 +86,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @InjectMocks
     protected MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> command =
             new MoveOrCopyDiskCommand<>(new MoveOrCopyImageGroupParameters(diskImageGuid,
-                    srcStorageId,
+                    SRC_STORAGE_ID,
                     destStorageId,
                     ImageOperation.Move),
                     null);
@@ -139,12 +140,37 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateSameSourceAndDest() {
-        destStorageId = srcStorageId;
+        destStorageId = SRC_STORAGE_ID;
         initializeCommand(new DiskImage(), VmEntityType.VM);
         command.getParameters().setStorageDomainId(destStorageId);
         command.setStorageDomainId(destStorageId);
         initSrcStorageDomain();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
+    }
+
+    @Test
+    public void validateSourceDomainValid() {
+        DiskImage disk = new DiskImage();
+        initializeCommand(disk, VmEntityType.VM);
+        initSrcStorageDomain();
+        initDestStorageDomain(StorageType.NFS);
+        disk.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_SOURCE_STORAGE_DOMAIN_DOES_CONTAINS_THE_DISK);
+    }
+
+    @Test
+    public void validateDestinationDomainValid() {
+        DiskImage disk = new DiskImage();
+        initializeCommand(disk, VmEntityType.VM);
+        disk.getStorageIds().add(destStorageId);
+        initSrcStorageDomain();
+        initDestStorageDomain(StorageType.NFS);
+        command.getParameters().setStorageDomainId(destStorageId);
+        command.setStorageDomainId(destStorageId);
+        command.getStorageDomain().setId(destStorageId);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_DESTINATION_STORAGE_DOMAIN_ALREADY_CONTAINS_THE_DISK);
     }
 
     @Test
@@ -340,6 +366,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     protected void initializeCommand(DiskImage disk, VmEntityType vmEntityType) {
         disk.setVmEntityType(vmEntityType);
+        disk.setStorageIds(new ArrayList<>(Collections.singletonList(SRC_STORAGE_ID)));
         when(diskDao.get(any())).thenReturn(disk);
         when(diskImageDao.get(any())).thenReturn(disk);
 
