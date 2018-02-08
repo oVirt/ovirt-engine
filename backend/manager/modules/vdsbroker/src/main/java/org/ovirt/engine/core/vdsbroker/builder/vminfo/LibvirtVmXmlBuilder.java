@@ -111,6 +111,7 @@ public class LibvirtVmXmlBuilder {
     private boolean hypervEnabled;
     private XmlTextWriter writer;
     private Map<Guid, StorageQos> qosCache;
+    private String emulatedMachine;
     private String cdInterface;
     private int payloadIndex;
     private int cdRomIndex;
@@ -188,10 +189,13 @@ public class LibvirtVmXmlBuilder {
         vnicMetadata = new HashMap<>();
         diskMetadata = new HashMap<>();
         hypervEnabled = vmInfoBuildUtils.isHypervEnabled(vm.getVmOsId(), vm.getCompatibilityVersion());
+        emulatedMachine = vm.getEmulatedMachine() != null ?
+                vm.getEmulatedMachine()
+                : vmInfoBuildUtils.getEmulatedMachineByClusterArch(vm.getClusterArch());
         cdInterface = vmInfoBuildUtils.getCdInterface(
                 vm.getOs(),
                 vm.getCompatibilityVersion(),
-                ChipsetType.fromMachineType(vm.getEmulatedMachine()));
+                ChipsetType.fromMachineType(emulatedMachine));
         writer = new XmlTextWriter();
         qosCache = new HashMap<>();
 
@@ -528,9 +532,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("type");
         writer.writeAttributeString("arch", vm.getClusterArch().toString());
-        writer.writeAttributeString("machine", vm.getEmulatedMachine() != null ?
-                vm.getEmulatedMachine()
-                : vmInfoBuildUtils.getEmulatedMachineByClusterArch(vm.getClusterArch()));
+        writer.writeAttributeString("machine", emulatedMachine);
         writer.writeRaw("hvm");
         writer.writeEndElement();
 
