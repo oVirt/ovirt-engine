@@ -150,12 +150,15 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             // we don't want the firstHost repeated in backup-volfile-servers
             addressSet.remove(firstHost);
             connection.setConnection(firstHost + StorageConstants.GLUSTER_VOL_SEPARATOR + glusterVolume.getName());
-            String mountOptions = addressSet.stream().collect(Collectors.joining(":", StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION + KEY_VALUE_SEPARATOR, ""));
-            if (StringUtils.isBlank(connection.getMountOptions())) {
-                connection.setMountOptions(mountOptions);
-            } else if (!connection.getMountOptions().contains(StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION)) {
-                mountOptions = connection.getMountOptions().concat("," + mountOptions);
-                connection.setMountOptions(mountOptions);
+            // Add backup-volfile-servers only in case there are additional hosts
+            if (!addressSet.isEmpty()) {
+                String mountOptions = addressSet.stream().collect(Collectors.joining(":", StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION + KEY_VALUE_SEPARATOR, ""));
+                if (StringUtils.isBlank(connection.getMountOptions())) {
+                    connection.setMountOptions(mountOptions);
+                } else if (!connection.getMountOptions().contains(StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION)) {
+                    mountOptions = connection.getMountOptions().concat("," + mountOptions);
+                    connection.setMountOptions(mountOptions);
+                }
             }
         }
         return ValidationResult.VALID;
