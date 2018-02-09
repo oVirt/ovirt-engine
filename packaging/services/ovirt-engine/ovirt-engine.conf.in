@@ -62,6 +62,7 @@ ENGINE_GROUP=@ENGINE_GROUP@
 #
 ENGINE_HEAP_MIN=2g
 ENGINE_HEAP_MAX=4g
+ENGINE_THREAD_STACK=1M
 
 # If true, above params are enforced. Otherwise the python wrapper might
 # change them if they seem too low or too high for the machine.
