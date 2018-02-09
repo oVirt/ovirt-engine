@@ -320,6 +320,9 @@ class Daemon(service.Daemon):
         heap_min_conf = self._config.get('ENGINE_HEAP_MIN')
         heap_max_conf = self._config.get('ENGINE_HEAP_MAX')
 
+        # Thread Stack size
+        thread_stack_conf = self._config.get('ENGINE_THREAD_STACK')
+
         if not self._config.getboolean('ENFORCE_ENGINE_HEAP_PARAMS'):
             total = mem.get_total_mb()
 
@@ -352,6 +355,7 @@ class Daemon(service.Daemon):
             '-XX:+TieredCompilation',
             '-Xms%s' % heap_min_conf,
             '-Xmx%s' % heap_max_conf,
+            '-Xss%s' % thread_stack_conf,
         ])
 
         # Add extra system properties provided in the configuration:
