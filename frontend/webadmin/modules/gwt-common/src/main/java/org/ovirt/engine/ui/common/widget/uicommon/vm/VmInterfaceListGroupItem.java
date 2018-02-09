@@ -105,9 +105,9 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.plugged()),
                 renderPlugged(networkInterface.isPlugged()), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.networkNameInterface()),
-                SafeHtmlUtils.fromString(networkInterface.getNetworkName()), dl);
+                SafeHtmlUtils.fromString(networkInterface.getNetworkName() != null ? networkInterface.getNetworkName() : ""), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.profileNameInterface()),
-                SafeHtmlUtils.fromString(networkInterface.getVnicProfileName()), dl);
+                SafeHtmlUtils.fromString(networkInterface.getVnicProfileName() != null ? networkInterface.getVnicProfileName() : ""), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.vmNetworkQosName()),
                 SafeHtmlUtils.fromString(StringHelper.isNullOrEmpty(networkInterface.getQosName())
                     ? constants.notAvailableLabel() : networkInterface.getQosName()), dl);
