@@ -13,6 +13,7 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -30,10 +31,10 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<input id=\"{0}\" type=\"checkbox\" tabindex=\"-1\" checked style=\"{1}\"/>")
-        SafeHtml inputChecked(String id, String style);
+        SafeHtml inputChecked(String id, SafeStyles style);
 
         @Template("<input id=\"{0}\" type=\"checkbox\" tabindex=\"-1\" style=\"{1}\"/>")
-        SafeHtml inputUnchecked(String id, String style);
+        SafeHtml inputUnchecked(String id, SafeStyles style);
     }
 
     private static final CellTemplate templates = GWT.create(CellTemplate.class);
@@ -42,7 +43,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
     private String columnId;
 
     private SafeHtml label;
-    private String additionalStyles;
+    private SafeStyles additionalStyles;
 
     private SafeHtml tooltipFallback;
 
@@ -86,9 +87,9 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
         }
 
         if (value != null && ((viewData != null) ? viewData : value)) {
-            sb.append(templates.inputChecked(id, getAdditionalStyles()));
+            sb.append(templates.inputChecked(id, additionalStyles));
         } else {
-            sb.append(templates.inputUnchecked(id, getAdditionalStyles()));
+            sb.append(templates.inputUnchecked(id, additionalStyles));
         }
 
         if (getLabel() != null && StringHelper.isNotNullOrEmpty(getLabel().asString())) {
@@ -124,15 +125,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
         return columnId;
     }
 
-    public String getAdditionalStyles() {
-        String result = additionalStyles;
-        if (result == null) {
-            result = ""; //$NON-NLS-1$
-        }
-        return result;
-    }
-
-    public void setAdditionalStyles(String styles) {
+    public void setAdditionalStyles(SafeStyles styles) {
         additionalStyles = styles;
     }
 

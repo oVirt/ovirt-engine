@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -107,7 +108,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         contents.removeAllRows();
         Network entity = networkModel.getNetwork();
-        addRow(templates.titleSetupNetworkTooltip(networkModel.getName(), BACKGROUND_COLOR));
+        addRow(templates.titleSetupNetworkTooltip(networkModel.getName(),
+                SafeStylesUtils.forTrustedBackgroundColor(BACKGROUND_COLOR)));
 
         // Not managed
         if (!networkModel.isManaged()) {
@@ -151,30 +153,37 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         // Usages
         if (networkModel.isManagement() || isDisplay || entity.isVmNetwork() || isMigration || isGluster || isDefaultRoute) {
 
-            addRow(templates.strongTextWithColor(constants.usageItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
+            addRow(templates.strongTextWithColor(constants.usageItemInfo() + ":", //$NON-NLS-1$
+                    SafeStylesUtils.forTrustedColor(WHITE_TEXT_COLOR)));
 
             if (networkModel.isManagement()) {
-                addRow(templates.imageTextSetupNetworkUsage(mgmtNetworkImage, constants.managementItemInfo(), TEXT_COLOR));
+                addRow(templates.imageTextSetupNetworkUsage(mgmtNetworkImage, constants.managementItemInfo(),
+                        SafeStylesUtils.forTrustedColor(TEXT_COLOR)));
             }
 
             if (isDisplay) {
-                addRow(templates.imageTextSetupNetworkUsage(monitorImage, constants.displayItemInfo(), TEXT_COLOR));
+                addRow(templates.imageTextSetupNetworkUsage(monitorImage, constants.displayItemInfo(),
+                        SafeStylesUtils.forTrustedColor(TEXT_COLOR)));
             }
 
             if (entity.isVmNetwork()) {
-                addRow(templates.imageTextSetupNetworkUsage(vmImage, constants.vmItemInfo(), TEXT_COLOR));
+                addRow(templates.imageTextSetupNetworkUsage(vmImage, constants.vmItemInfo(),
+                        SafeStylesUtils.forTrustedColor(TEXT_COLOR)));
             }
 
             if (isMigration) {
-                addRow(templates.imageTextSetupNetworkUsage(migrationImage, constants.migrationItemInfo(), TEXT_COLOR));
+                addRow(templates.imageTextSetupNetworkUsage(migrationImage, constants.migrationItemInfo(),
+                        SafeStylesUtils.forTrustedColor(TEXT_COLOR)));
             }
 
             if (isGluster) {
-                addRow(templates.imageTextSetupNetworkUsage(glusterNwImage, constants.glusterNwItemInfo(), TEXT_COLOR));
+                addRow(templates.imageTextSetupNetworkUsage(glusterNwImage, constants.glusterNwItemInfo(),
+                        SafeStylesUtils.forTrustedColor(TEXT_COLOR)));
             }
 
             if (isDefaultRoute) {
-                addRow(templates.imageTextSetupNetworkUsage(defaultRouteImage, constants.defaultRouteItemInfo(), TEXT_COLOR));
+                addRow(templates.imageTextSetupNetworkUsage(defaultRouteImage, constants.defaultRouteItemInfo(),
+                        SafeStylesUtils.forTrustedColor(TEXT_COLOR)));
             }
 
             insertHorizontalLine();
@@ -183,7 +192,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         // Mtu
         if (!entity.isExternal()) {
             final String mtuValue = entity.getMtu() == 0 ? messages.defaultMtu(defaultMtu) : String.valueOf(entity.getMtu());
-            final String mtu = templates.strongTextWithColor(constants.mtuItemInfo(), WHITE_TEXT_COLOR).asString() + ": " +templates.coloredText(mtuValue, TEXT_COLOR).asString();//$NON-NLS-1$
+            final String mtu = templates.strongTextWithColor(constants.mtuItemInfo(),
+                    SafeStylesUtils.forTrustedColor(WHITE_TEXT_COLOR)).asString() + ": " + //$NON-NLS-1$
+                    templates.coloredText(mtuValue, SafeStylesUtils.forTrustedColor(TEXT_COLOR)).asString();
             addRow(SafeHtmlUtils.fromTrustedString(mtu));
         }
 
@@ -204,7 +215,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
      * @param networkModel must be managed
      */
     private void addSyncDiff(LogicalNetworkModel networkModel) {
-        addRow(templates.imageTextSetupNetwork(notInSyncImage, templates.coloredText(constants.hostOutOfSync(), TEXT_COLOR)));
+        addRow(templates.imageTextSetupNetwork(notInSyncImage, templates.coloredText(constants.hostOutOfSync(),
+                SafeStylesUtils.forTrustedColor(TEXT_COLOR))));
         SafeHtml safeHtml  = SafeHtmlUtils.fromTrustedString(generatePreviewSentence());
         addRow(safeHtml);
         List<ReportedConfiguration> panelParameters = filterSyncProperties(networkModel);
@@ -214,9 +226,12 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     }
 
     private String generatePreviewSentence() {
-        SafeHtml host = templates.strongTextWithColor(constants.hostForOutOfSyncSentence(), WHITE_TEXT_COLOR);
-        SafeHtml dc = templates.strongTextWithColor(constants.dcForOutOfSyncSentence(), WHITE_TEXT_COLOR);
-        SafeHtml outOfSyncPreviewSentence = templates.coloredText(constants.hostOutOfSyncPreviewSentence(), TEXT_COLOR);
+        SafeHtml host = templates.strongTextWithColor(constants.hostForOutOfSyncSentence(),
+                SafeStylesUtils.forTrustedColor(WHITE_TEXT_COLOR));
+        SafeHtml dc = templates.strongTextWithColor(constants.dcForOutOfSyncSentence(),
+                SafeStylesUtils.forTrustedColor(WHITE_TEXT_COLOR));
+        SafeHtml outOfSyncPreviewSentence = templates.coloredText(constants.hostOutOfSyncPreviewSentence(),
+                SafeStylesUtils.forTrustedColor(TEXT_COLOR));
         return templates.hostOutOfSyncPreviewSentence(host, outOfSyncPreviewSentence, dc).asString();
     }
 
@@ -233,7 +248,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private void showNic(NetworkInterfaceModel nic) {
         contents.removeAllRows();
         VdsNetworkInterface entity = nic.getOriginalIface();
-        addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
+        addRow(templates.titleSetupNetworkTooltip(nic.getName(),
+                SafeStylesUtils.forTrustedBackgroundColor(BACKGROUND_COLOR)));
 
         if (nic.getItems().isEmpty() && !nic.isBonded()) {
             addBootProtoAndIpInfo(new InterfacePropertiesAccessor.FromNic(entity, null));
@@ -259,7 +275,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         String name = nic.getOriginalIface().getName();
         LldpInfo lldpInfo = model.getNetworkLldpByName(name);
         insertHorizontalLine();
-        addRow(templates.strongTextWithColor(constants.linkLayerInfo(), WHITE_TEXT_COLOR));
+        addRow(templates.strongTextWithColor(constants.linkLayerInfo(),
+                SafeStylesUtils.forTrustedColor(WHITE_TEXT_COLOR)));
 
         if (lldpInfo != null) {
             if (lldpInfo.isEnabled()) {
@@ -298,7 +315,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         insertHorizontalLine();
 
         // IPv4
-        addRow(templates.strongTextWithColor(constants.ipv4ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
+        addRow(templates.strongTextWithColor(constants.ipv4ItemInfo() + ":", //$NON-NLS-1$
+                SafeStylesUtils.forTrustedColor(WHITE_TEXT_COLOR)));
         if (accessor.isIpv4Available()) {
             Ipv4BootProtocol ipv4BootProtocol = accessor.getIpv4BootProtocol();
             addRow(constants.bootProtocolItemInfo(), IPV4_RENDERER.render(ipv4BootProtocol));
@@ -310,7 +328,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         }
 
         // IPv6
-        addRow(templates.strongTextWithColor(constants.ipv6ItemInfo() + ":", WHITE_TEXT_COLOR));//$NON-NLS-1$
+        addRow(templates.strongTextWithColor(constants.ipv6ItemInfo() + ":", //$NON-NLS-1$
+                SafeStylesUtils.forTrustedColor(WHITE_TEXT_COLOR)));
         if (accessor.isIpv6Available()) {
             Ipv6BootProtocol ipv6BootProtocol = accessor.getIpv6BootProtocol();
             addRow(constants.bootProtocolItemInfo(), IPV6_RENDERER.render(ipv6BootProtocol));

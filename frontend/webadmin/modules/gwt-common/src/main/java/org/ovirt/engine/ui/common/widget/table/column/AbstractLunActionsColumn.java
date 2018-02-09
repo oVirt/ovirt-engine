@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
+import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
@@ -48,10 +49,10 @@ public abstract class AbstractLunActionsColumn extends AbstractColumn<LunModel, 
                     input = templates.toggledDown(inputId, constants.addSanStorage());
                 }
                 else if (!value.getIsIncluded()) {
-                    input = templates.noButton(uiConstants.notAvailableLabel(), "color:gray", inputId); //$NON-NLS-1$
+                    input = templates.noButton(uiConstants.notAvailableLabel(), SafeStylesUtils.forTrustedColor("gray"), inputId); //$NON-NLS-1$
                 }
                 else if (availableSizeToAdd == 0){
-                    input = templates.noButton(constants.cannotExtendSanStorage(), "color:gray", inputId); //$NON-NLS-1$
+                    input = templates.noButton(constants.cannotExtendSanStorage(), SafeStylesUtils.forTrustedColor("gray"), inputId); //$NON-NLS-1$
                 }
                 else if (value.isAdditionalAvailableSizeSelected()) {
                     input = templates.toggledDown(inputId, availableSizeToAddString);

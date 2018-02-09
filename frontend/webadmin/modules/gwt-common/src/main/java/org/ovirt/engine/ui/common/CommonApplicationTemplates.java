@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common;
 
+import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -45,17 +46,6 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<span style='height:22px; width: 22px; vertical-align: middle; text-align: center;'>{0}</span>")
     SafeHtml inlineImage(SafeHtml image);
 
-    @Template("<table cellspacing='0' cellpadding='0'><tr>" +
-            "<td style='background: url({2});width:2px;'></td>" +
-            "<td style='text-align:center;'>" +
-            "<div class='db_bg_image {5} {6}' style='background: url({3}) repeat-x; height: 20px;'>" +
-            "<span style='vertical-align: middle; line-height: 20px;' class=\"db_image_container\">{0}</span><div class=\"db_text\">{1}</div></div>" +
-            "</td>" +
-            "<td style='background: url({4});width:2px;'></td>" +
-            "</tr></table>")
-    SafeHtml dialogButton(SafeHtml image, String text, String start, String stretch,
-            String end, String contentStyleName, String customContentStyleName);
-
     /**
      * Creates a progress bar template.
      *
@@ -64,10 +54,10 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
      * @param text
      *            Text to show within the progress bar.
      */
-    @Template("<div id=\"{4}\" class='{3}'>" +
-            "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
+    @Template("<div id=\"{3}\" class='{2}'>" +
+            "<div style='{0} height: 100%'></div>" +
             "<div class='engine-progress-text'>{1}</div></div>")
-    SafeHtml progressBar(int progress, String text, String color, String style, String id);
+    SafeHtml progressBar(SafeStyles styles, String text, String cssClass, String id);
 
     @Template("<ul style='margin-top:0'>{0}</ul>")
     SafeHtml unsignedList(SafeHtml list);
@@ -85,7 +75,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     SafeHtml sub(String main, String sub);
 
     @Template("<b><font style='{0}'>{1}</font></b>")
-    SafeHtml snapshotDescription(String style, String description);
+    SafeHtml snapshotDescription(SafeStyles style, String description);
 
     @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
@@ -117,9 +107,6 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
             "</tr></table>")
     SafeHtml typeAheadEmptyContent();
 
-    @Template("<div style='width: {0}; font-style: italic;'>{1}</div>")
-    SafeHtml italicFixedWidth(String pxWidth, String text);
-
     @Template("<span>{0} {1}</span>")
     SafeHtml iconWithText(SafeHtml icon, String text);
 
@@ -132,11 +119,11 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<div class=\"{0}\" id=\"{1}\">{2}</div>")
     SafeHtml divWithStyle(String style, String id, SafeHtml text);
 
-    @Template("<strong style='color: {1};'>{0}</strong>")
-    SafeHtml strongTextWithColor(String text, String color);
+    @Template("<strong style='{1}'>{0}</strong>")
+    SafeHtml strongTextWithColor(String text, SafeStyles color);
 
-    @Template("<font style='color: {1};'>{0}</font>")
-    SafeHtml coloredText(String text, String color);
+    @Template("<font style='{1}'>{0}</font>")
+    SafeHtml coloredText(String text, SafeStyles color);
 
     @Template("<p><hr size=\"2\" width=\"100%\"></p>")
     SafeHtml horizontalLine();

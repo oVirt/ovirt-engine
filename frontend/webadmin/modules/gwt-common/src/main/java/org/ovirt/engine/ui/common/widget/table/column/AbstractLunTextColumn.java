@@ -7,6 +7,9 @@ import org.ovirt.engine.ui.common.widget.table.cell.ScrollableTextCell;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.DOM;
 
@@ -16,28 +19,30 @@ public abstract class AbstractLunTextColumn extends AbstractSafeHtmlColumn<LunMo
     public final SafeHtml getValue(LunModel object) {
         // TODO this should use a cell to render, not return HTML itself
         ScrollableTextCell.CellTemplate template = GWT.create(ScrollableTextCell.CellTemplate.class);
-        String style = ""; //$NON-NLS-1$
+        SafeStylesBuilder builder = new SafeStylesBuilder();
 
         if (object != null) {
             boolean isLunUnExtendable = object.getIsIncluded() && object.getAdditionalAvailableSize() == 0;
 
             if (object.isRemoveLunSelected()) {
-                style = "color: black; text-decoration: line-through"; //$NON-NLS-1$
+                builder.trustedColor("black"); //$NON-NLS-1$
+                builder.textDecoration(TextDecoration.LINE_THROUGH);
             } else if (object.getIsLunRemovable()) {
-                style = "color: black"; //$NON-NLS-1$
+                builder.trustedColor("black"); //$NON-NLS-1$
             } else if ((!object.getIsIncluded() && object.getIsGrayedOut()) || isLunUnExtendable) {
-                style = "color: gray"; //$NON-NLS-1$
+                builder.trustedColor("gray"); //$NON-NLS-1$
             } else if (!object.getIsAccessible() && !object.getIsGrayedOut()) {
-                style = "color: orange"; //$NON-NLS-1$
+                builder.trustedColor("orange"); //$NON-NLS-1$
             } else if (object.getIsSelected() || object.isAdditionalAvailableSizeSelected()) {
-                style = "color: black; font-weight: bold"; //$NON-NLS-1$
+                builder.trustedColor("black"); //$NON-NLS-1$
+                builder.fontWeight(FontWeight.BOLD);
             } else {
-                style = "color: black"; //$NON-NLS-1$
+                builder.trustedColor("black"); //$NON-NLS-1$
             }
         }
 
         // TODO use a proper ID
-        return template.input(getRawValue(object), style, DOM.createUniqueId()); //$NON-NLS-1$
+        return template.input(getRawValue(object), builder.toSafeStyles(), DOM.createUniqueId()); //$NON-NLS-1$
     }
 
     public abstract String getRawValue(LunModel object);

@@ -10,6 +10,9 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.UriUtils;
 
@@ -78,14 +81,20 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
         }
 
         List<Integer> progressValues = getProgressValues(object);
-        String fontWeight = "normal"; //$NON-NLS-1$
+        FontWeight fontWeight = FontWeight.NORMAL;
         String textColor = textColorNormal;
         if (getLastPoint(progressValues) >= 95) {
             textColor = textColorRed;
-            fontWeight = "bold"; //$NON-NLS-1$
+            fontWeight = FontWeight.BOLD;
         }
 
         int chartWidth = getChartWidth();
+
+        SafeStylesBuilder styleBuilder = new SafeStylesBuilder();
+        styleBuilder.width(textWidth, Unit.PX);
+        styleBuilder.trustedColor(textColor);
+        styleBuilder.fontWeight(fontWeight);
+
         if (chartWidth > 0 && progressValues != null && progressValues.size() > 0) {
 
             List<Integer> normalizedPoints = normalizePoints(progressValues, chartWidth);
@@ -100,13 +109,9 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
 
                 String dataUrl = canvas.toDataUrl();
 
-
                 return templates.lineChart(
                         UriUtils.fromTrustedString(dataUrl),
-                        rightMargin,
-                        textWidth,
-                        textColor,
-                        fontWeight,
+                        styleBuilder.toSafeStyles(),
                         getLastPoint(progressValues)
                 );
             }
@@ -114,11 +119,7 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
         }
 
         // if the chart does not fit in, show at least the text
-        return templates.lineChartWithoutImage(
-                textWidth,
-                textColor,
-                fontWeight
-        );
+        return templates.lineChartWithoutImage(styleBuilder.toSafeStyles());
     }
 
     private int getChartWidth() {

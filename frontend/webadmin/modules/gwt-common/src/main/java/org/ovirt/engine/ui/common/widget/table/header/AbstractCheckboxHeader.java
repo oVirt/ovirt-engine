@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.BrowserEvents;
+import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -49,7 +50,7 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
             ((CheckboxCell) getCell()).setLabel(SafeHtmlUtils.fromString(getLabel()));
         }
 
-        ((CheckboxCell) getCell()).setAdditionalStyles(CHECKBOX_HEADER_STYLE);
+        ((CheckboxCell) getCell()).setAdditionalStyles(SafeStylesUtils.fromTrustedString(CHECKBOX_HEADER_STYLE));
     }
 
     /**

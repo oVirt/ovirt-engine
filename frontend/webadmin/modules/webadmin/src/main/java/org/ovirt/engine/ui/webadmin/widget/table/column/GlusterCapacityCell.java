@@ -13,7 +13,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
@@ -89,11 +91,14 @@ public abstract class GlusterCapacityCell<P extends Serializable> extends Abstra
         if(value == null) {
             clearAll();
         }
+        SafeStylesBuilder stylesBuilder = new SafeStylesBuilder();
         int progress = getProgressValue(freeSize, totalSize);
-        String sizeString = getProgressText(freeSize, totalSize);
         String color = progress < 70 ? "#669966" : progress < 95 ? "#FF9900" : "#FF0000"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        stylesBuilder.width(progress, Unit.PCT);
+        stylesBuilder.trustedColor(color);
+        String sizeString = getProgressText(freeSize, totalSize);
         String toolTip = messages.glusterCapacityInfo(getSizeString(freeSize, inUnit), getSizeString(usedSize, inUnit), getSizeString(totalSize, inUnit));
-        SafeHtml safeHtml = templates.glusterCapcityProgressBar(progress, sizeString, color, toolTip, id);
+        SafeHtml safeHtml = templates.glusterCapcityProgressBar(stylesBuilder.toSafeStyles(), sizeString, toolTip, id);
         sb.append(safeHtml);
     }
 }

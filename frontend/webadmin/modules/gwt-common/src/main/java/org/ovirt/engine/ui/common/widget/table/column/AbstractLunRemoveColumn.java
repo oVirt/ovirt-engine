@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
+import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
@@ -40,7 +41,7 @@ public abstract class AbstractLunRemoveColumn extends AbstractColumn<LunModel, L
                 if (model.getMetadataDevices().contains(value.getLunId()) ||
                         model.getIncludedLuns().size() == 1 ||
                         exactlyOneLunLeft) {
-                    input = templates.noButton(uiConstants.notAvailableLabel(), "color:gray", inputId); //$NON-NLS-1$
+                    input = templates.noButton(uiConstants.notAvailableLabel(), SafeStylesUtils.forTrustedColor("gray"), inputId); //$NON-NLS-1$
                     value.setIsLunRemovable(false);
                 } else if (value.isRemoveLunSelected()) {
                     input = templates.toggledDown(inputId, constants.removeSanStorage());

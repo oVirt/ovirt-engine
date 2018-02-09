@@ -5,7 +5,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 
@@ -26,7 +28,11 @@ public class ConnectorPanel extends FlexTable {
         FlexCellFormatter flexCellFormatter = getFlexCellFormatter();
         flexCellFormatter.setRowSpan(0, 0, networkSize);
 
-        HTML leftImageHtml = new HTML(templates.image(resources.arrowLeft().getURL(), resources.arrowLeft().getHeight(), resources.arrowLeft().getWidth()));
+        SafeStylesBuilder builder = new SafeStylesBuilder();
+        builder.backgroundImage(resources.arrowLeft().getSafeUri());
+        builder.height(resources.arrowLeft().getHeight(), Unit.PX);
+        builder.width(resources.arrowLeft().getWidth(), Unit.PX);
+        HTML leftImageHtml = new HTML(templates.image(builder.toSafeStyles()));
         setWidget(0, 0, leftImageHtml);
 
         for (int i = 0; i < networkSize; i++) {
@@ -45,7 +51,11 @@ public class ConnectorPanel extends FlexTable {
                 }
             }
 
-            HTML rightImageHtml = new HTML(templates.image(rightImage.getURL(), rightImage.getHeight(), rightImage.getWidth()));
+            builder = new SafeStylesBuilder();
+            builder.backgroundImage(rightImage.getSafeUri());
+            builder.height(rightImage.getHeight(), Unit.PX);
+            builder.width(rightImage.getWidth(), Unit.PX);
+            HTML rightImageHtml = new HTML(templates.image(builder.toSafeStyles()));
             setWidget(row, column, rightImageHtml);
         }
     }

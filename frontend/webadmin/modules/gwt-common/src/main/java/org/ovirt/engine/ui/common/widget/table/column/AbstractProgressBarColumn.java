@@ -5,6 +5,8 @@ import java.util.Comparator;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.DOM;
 
@@ -44,7 +46,10 @@ public abstract class AbstractProgressBarColumn<T> extends AbstractSafeHtmlColum
         // Choose color by progress
         String color = getColorByProgress(progress);
 
-        return templates.progressBar(progress, text, color, getStyle(), DOM.createUniqueId());
+        SafeStylesBuilder builder = new SafeStylesBuilder();
+        builder.width(progress, Unit.PCT);
+        builder.trustedBackgroundColor(color);
+        return templates.progressBar(builder.toSafeStyles(), text, getStyle(), DOM.createUniqueId());
     }
 
     protected String getStyle() {
