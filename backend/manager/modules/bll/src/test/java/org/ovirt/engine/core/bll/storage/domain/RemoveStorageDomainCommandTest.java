@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -48,6 +49,9 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
 
     @Mock
     private VdsDao vdsDaoMock;
+
+    @Mock
+    private VDSBrokerFrontend vdsBrokerFrontend;
 
     private StorageDomain storageDomain;
 
@@ -171,7 +175,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
     protected void setUpFormatDomain(boolean shouldFail) {
         VDSReturnValue ret = new VDSReturnValue();
         ret.setSucceeded(!shouldFail);
-        doReturn(ret).when(command).runVdsCommand(eq(VDSCommandType.FormatStorageDomain), any());
+        when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.FormatStorageDomain), any())).thenReturn(ret);
     }
 
     private void setVdsStatus(VDSStatus status) {
