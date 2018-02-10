@@ -216,7 +216,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         setVdsId(getVm().getRunOnVds());
         if (getVds() != null) {
             try {
-                VDSReturnValue result = getVdsBroker()
+                VDSReturnValue result = vdsBroker
                         .runAsyncVdsCommand(
                                 VDSCommandType.Resume,
                                 new ResumeVDSCommandParameters(getVdsId(), getVm().getId()),
@@ -549,7 +549,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         initParametersForExternalNetworks(getVds(), false);
 
-        VMStatus vmStatus = (VMStatus) getVdsBroker()
+        VMStatus vmStatus = (VMStatus) vdsBroker
                 .runAsyncVdsCommand(VDSCommandType.Create, buildCreateVmParameters(), this).getReturnValue();
 
         // Don't use the memory from the active snapshot anymore if there's a chance that disks were changed

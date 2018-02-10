@@ -90,7 +90,6 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);
         doReturn(cluster).when(cmd).getCluster();
-        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
 
     private VDS getVds(VDSStatus status) {

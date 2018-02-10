@@ -193,7 +193,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected void runningFailed() {
         try {
             decreasePendingVm();
-            getVdsBroker().removeAsyncRunningCommand(getVmId());
+            vdsBroker.removeAsyncRunningCommand(getVmId());
             setCommandShouldBeLogged(false);
             _isRerun = false;
             setSucceeded(false);

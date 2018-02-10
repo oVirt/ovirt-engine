@@ -439,7 +439,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private FutureVDSCall<VDSReturnValue> invokeSetupNetworksCommand(int timeout) {
         final HostSetupNetworksVdsCommandParameters parameters = createSetupNetworksParameters(timeout);
         FutureVDSCall<VDSReturnValue> setupNetworksTask =
-            getVdsBroker().runFutureVdsCommand(FutureVDSCommandType.HostSetupNetworks, parameters);
+                vdsBroker.runFutureVdsCommand(FutureVDSCommandType.HostSetupNetworks, parameters);
 
         if (parameters.isRollbackOnFailure()) {
             PollTechnique pollTechnique = FeatureSupported.isConfirmConnectivitySupportedByVdsm(

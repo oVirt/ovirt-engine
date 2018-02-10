@@ -83,7 +83,6 @@ public class StopRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
         doReturn(getvolumeWithoutRebalanceTask(volumeWithoutRebalanceTask)).when(volumeDao)
                 .getById(volumeWithoutRebalanceTask);
         doReturn(cluster).when(cmd).getCluster();
-        doReturn(vdsBrokerFrontend).when(cmd).getVdsBroker();
     }
 
     private Object getvolumeWithoutRebalanceTask(Guid volumeId) {
