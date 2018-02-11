@@ -1772,29 +1772,8 @@ public class LibvirtVmXmlBuilder {
 
     private void writeDiskTarget(DiskVmElement dve, String dev) {
         writer.writeStartElement("target");
-        switch (dve.getDiskInterface()) {
-        case IDE:
-            writer.writeAttributeString("dev", dev);
-            writer.writeAttributeString("bus", "ide");
-            break;
-        case VirtIO:
-            writer.writeAttributeString("dev", dev);
-            writer.writeAttributeString("bus", "virtio");
-
-            // TODO: index
-            break;
-        case VirtIO_SCSI:
-            writer.writeAttributeString("dev", dev);
-            writer.writeAttributeString("bus", "scsi");
-
-            // TODO address
-            break;
-        case SPAPR_VSCSI:
-            // TODO address, name
-            break;
-        default:
-            log.error("Unsupported interface type, ISCSI interface type is not supported.");
-        }
+        writer.writeAttributeString("dev", dev);
+        writer.writeAttributeString("bus", dve.getDiskInterface().getName());
         writer.writeEndElement();
     }
 
@@ -1815,21 +1794,14 @@ public class LibvirtVmXmlBuilder {
         }
 
         switch (dve.getDiskInterface()) {
-        case VirtIO:
-        case IDE:
-            writer.writeAttributeString("device", device.getDevice());
-            break;
         case VirtIO_SCSI:
             if (disk.getDiskStorageType() == DiskStorageType.LUN && disk.isScsiPassthrough()) {
                 writer.writeAttributeString("device", VmDeviceType.LUN.getName());
                 writer.writeAttributeString("sgio", disk.getSgio().toString().toLowerCase());
-            } else {
-                writer.writeAttributeString("device", device.getDevice());
+                break;
             }
-            // TODO
-            break;
-        case SPAPR_VSCSI:
-            break;
+        default:
+            writer.writeAttributeString("device", device.getDevice());
         }
     }
 
