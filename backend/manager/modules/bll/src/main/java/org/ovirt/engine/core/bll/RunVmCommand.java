@@ -91,8 +91,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
@@ -150,10 +148,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private VmDynamicDao vmDynamicDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
-    @Inject
-    private StorageDomainStaticDao storageDomainStaticDao;
-    @Inject
-    private StorageDomainDao storageDomainDao;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;

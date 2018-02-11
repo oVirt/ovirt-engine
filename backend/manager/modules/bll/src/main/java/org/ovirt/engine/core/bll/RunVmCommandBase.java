@@ -23,7 +23,6 @@ import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -78,9 +77,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected JobRepository jobRepository;
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;
-
-    @Inject
-    private StorageHelperDirector storageHelperDirector;
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
