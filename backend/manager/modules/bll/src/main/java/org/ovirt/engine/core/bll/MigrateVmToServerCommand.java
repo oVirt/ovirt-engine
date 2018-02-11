@@ -32,7 +32,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
     }
 
     @Override
-    protected boolean validate() {
+    protected boolean validateImpl() {
         if (getDestinationVds() == null) {
             return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
         }
@@ -42,7 +42,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
-        if (!super.validate()) {
+        if (!super.validateImpl()) {
             return false;
         }
 
