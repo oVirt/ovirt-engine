@@ -249,6 +249,7 @@ public class ProviderModel extends Model {
             getRequiresAuthentication().setIsChangeable(!isUnmanaged);
             boolean requiresAuthentication = getRequiresAuthentication().getEntity();
             setAuthFieldsChangeableStatus(requiresAuthentication, isUnmanaged);
+            setReadOnlyEntity();
             getReadOnly().setIsChangeable(!isUnmanaged);
             getUrl().setIsChangeable(!isUnmanaged);
         });
@@ -275,8 +276,7 @@ public class ProviderModel extends Model {
 
             getReadOnly().setIsAvailable(isReadOnlyAware);
             if (isReadOnlyAware){
-                OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-                    getReadOnly().setEntity(properties != null ? properties.getReadOnly() : true);
+                setReadOnlyEntity();
             }
 
             boolean isVmware = isTypeVmware();
@@ -354,6 +354,16 @@ public class ProviderModel extends Model {
                 return null;
             }
         });
+    }
+
+    private void setReadOnlyEntity() {
+        if (getIsUnmanaged().getEntity()) {
+            getReadOnly().setEntity(false);
+        } else {
+            OpenstackNetworkProviderProperties properties =
+                    (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+            getReadOnly().setEntity(properties != null ? properties.getReadOnly() : true);
+        }
     }
 
     private void setAuthFieldsChangeableStatus(boolean requiresAuthentication, boolean isUnmanaged) {
