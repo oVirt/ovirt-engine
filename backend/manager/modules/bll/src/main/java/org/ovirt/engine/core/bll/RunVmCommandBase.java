@@ -51,6 +51,7 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
+import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +90,18 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     public RunVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
+
+    @Override
+    protected final boolean validate() {
+        final boolean result = validateImpl();
+        if (!result && !isInternalExecution() && !getParameters().isRerun()) {
+            logValidationFailed();
+        }
+        return result;
+    }
+
+    protected abstract boolean validateImpl();
+    protected abstract void logValidationFailed();
 
     /**
      * List on all VDSs, vm run on. In the case of problem to run vm will be more than one
@@ -151,6 +164,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected void reexecuteCommand() {
         // restore Validate value to false so Validate checks will run again
         getReturnValue().setValid(false);
+        getParameters().setRerun(true);
         if (getExecutionContext() != null) {
             Job job = getExecutionContext().getJob();
             if (job != null) {

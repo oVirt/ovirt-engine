@@ -677,6 +677,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
                 return AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
             } else {
+                addCustomValue("DueToError", " ");
                 return getSucceeded() ?
                         getActionReturnValue() == VMStatus.Up ?
                                isVmRunningOnNonDefaultVds() ?
@@ -982,7 +983,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
-    protected boolean validate() {
+    protected boolean validateImpl() {
         VM vm = getVm();
 
         if (vm == null) {
@@ -1063,6 +1064,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return true;
+    }
+
+    @Override
+    protected void logValidationFailed() {
+        addCustomValue("DueToError",
+                " due to a failed validation: " + Backend.getInstance()
+                .getErrorsTranslator()
+                .translateErrorText(getReturnValue().getValidationMessages()));
+        auditLogDirector.log(this, AuditLogType.USER_FAILED_RUN_VM);
     }
 
     protected void loadVmInit() {

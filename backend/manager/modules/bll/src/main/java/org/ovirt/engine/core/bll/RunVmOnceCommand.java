@@ -88,8 +88,8 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     }
 
     @Override
-    protected boolean validate() {
-        if (!super.validate()) {
+    protected boolean validateImpl() {
+        if (!super.validateImpl()) {
             return false;
         }
 

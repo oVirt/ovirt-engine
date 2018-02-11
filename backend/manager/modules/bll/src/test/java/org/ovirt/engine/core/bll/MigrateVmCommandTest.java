@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -36,6 +37,7 @@ public class MigrateVmCommandTest {
 
     @Test
     public void testValidationFailsWhenVmHasDisksPluggedWithScsiReservation() {
+        doNothing().when(command).logValidationFailed();
         doReturn(vmValidator).when(command).getVmValidator();
         when(vmValidator.isVmPluggedDiskNotUsingScsiReservation()).
                 thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION));

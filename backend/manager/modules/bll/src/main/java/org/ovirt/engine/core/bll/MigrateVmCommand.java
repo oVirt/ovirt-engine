@@ -145,13 +145,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      */
     @SuppressWarnings("unused") // used by AuditLogger via reflection
     public String getDueToMigrationError() {
-        if (migrationErrorCode == null) {
-            return " ";
+        if (migrationErrorCode != null) {
+            return " due to an Error: " + Backend.getInstance()
+            .getVdsErrorsTranslator()
+            .translateErrorTextSingle(migrationErrorCode.name(), true);
         }
-
-        return " due to Error: " + Backend.getInstance()
-                .getVdsErrorsTranslator()
-                .translateErrorTextSingle(migrationErrorCode.name(), true);
+        return " ";
     }
 
     /**
@@ -761,7 +760,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     @Override
-    protected boolean validate() {
+    protected boolean validateImpl() {
         final VM vm = getVm();
 
         if (vm == null) {
@@ -839,6 +838,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getVdsBlackList(),
                         getVdsWhiteList(),
                         getReturnValue().getValidationMessages()).isEmpty();
+    }
+
+    @Override
+    protected void logValidationFailed() {
+        addCustomValue("DueToMigrationError",
+                " due to a failed validation: " + Backend.getInstance()
+                .getErrorsTranslator()
+                .translateErrorText(getReturnValue().getValidationMessages()));
+        auditLogDirector.log(this, AuditLogType.VM_MIGRATION_FAILED);
     }
 
     @SuppressWarnings("unchecked")
