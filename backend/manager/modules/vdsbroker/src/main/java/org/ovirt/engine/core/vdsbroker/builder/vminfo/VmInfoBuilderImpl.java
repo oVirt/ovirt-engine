@@ -270,7 +270,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     break;
                 case VirtIO:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Virtio);
-                    pinnedDriveIndex = pinToIoThreads(vmDevice, pinnedDriveIndex);
+                    int pinTo = vmInfoBuildUtils.pinToIoThreads(vm, vmDevice, pinnedDriveIndex++);
+                    if (pinTo > 0) {
+                        vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinTo);
+                    }
                     break;
                 case VirtIO_SCSI:
                     setupVirtioScsiDisk(vmDeviceVirtioScsiUnitMap, virtioScsiIndex, disk, struct, vmDevice);
@@ -383,20 +386,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             vmDevice.setAddress(
                     vmInfoBuildUtils.createAddressForScsiDisk(controllerId, unit).toString());
         }
-    }
-
-    private int pinToIoThreads(VmDevice vmDevice, int pinnedDriveIndex) {
-        if (vm.getNumOfIoThreads() != 0) {
-            // simple round robin e.g. for 2 threads and 4 disks it will be pinned like this:
-            // disk 0 -> iothread 1
-            // disk 1 -> iothread 2
-            // disk 2 -> iothread 1
-            // disk 3 -> iothread 2
-            int pinTo = pinnedDriveIndex % vm.getNumOfIoThreads() + 1;
-            pinnedDriveIndex++;
-            vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinTo);
-        }
-        return pinnedDriveIndex;
     }
 
     @Override

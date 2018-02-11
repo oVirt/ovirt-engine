@@ -1194,4 +1194,13 @@ public class VmInfoBuildUtils {
     public void refreshVmDevices(Guid vmId) {
         vmDevicesMonitoring.refreshVmDevices(vmId);
     }
+
+    public int pinToIoThreads(VM vm, VmDevice vmDevice, int pinnedDriveIndex) {
+        // simple round robin e.g. for 2 threads and 4 disks it will be pinned like this:
+        // disk 0 -> iothread 1
+        // disk 1 -> iothread 2
+        // disk 2 -> iothread 1
+        // disk 3 -> iothread 2
+        return vm.getNumOfIoThreads() != 0 ? pinnedDriveIndex % vm.getNumOfIoThreads() + 1 : 0;
+    }
 }

@@ -1078,6 +1078,7 @@ public class LibvirtVmXmlBuilder {
         int scsiIndex = -1;
         int virtioIndex = -1;
         DiskInterface cdDiskInterface = DiskInterface.forValue(cdInterface);
+        int pinnedDriveIndex = 0;
 
         for (Disk disk : vmInfoBuildUtils.getSortedDisks(vm)) {
             VmDevice device = deviceIdToDevice.get(new VmDeviceId(disk.getId(), vm.getId()));
@@ -1088,6 +1089,7 @@ public class LibvirtVmXmlBuilder {
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             DiskInterface diskInterface = dve.getDiskInterface();
             int index = 0;
+            int pinTo = 0;
             switch(diskInterface) {
             case IDE:
                 ideIndex++;
@@ -1099,6 +1101,7 @@ public class LibvirtVmXmlBuilder {
                 index = ideIndex;
                 break;
             case VirtIO:
+                pinTo = vmInfoBuildUtils.pinToIoThreads(vm, device, pinnedDriveIndex++);
                 virtioIndex++;
                 if (cdDiskInterface == diskInterface) {
                     while (virtioIndex == payloadIndex || virtioIndex == cdRomIndex) {
@@ -1121,7 +1124,7 @@ public class LibvirtVmXmlBuilder {
 
             if (device.isManaged()) {
                 String dev = vmInfoBuildUtils.makeDiskName(dve.getDiskInterface().getName(), index);
-                writeManagedDisk(device, disk, dve, dev);
+                writeManagedDisk(device, disk, dve, dev, pinTo);
             }
             // TODO: else
         }
@@ -1542,7 +1545,8 @@ public class LibvirtVmXmlBuilder {
             VmDevice device,
             Disk disk,
             DiskVmElement dve,
-            String dev) {
+            String dev,
+            int pinTo) {
         // <disk type='file' device='disk' snapshot='no'>
         //   <driver name='qemu' type='qcow2' cache='none'/>
         //   <source file='/path/to/image'/>
@@ -1554,7 +1558,7 @@ public class LibvirtVmXmlBuilder {
         writeGeneralDiskAttributes(device, disk, dve);
         writeDiskTarget(dve, dev);
         writeDiskSource(disk, dev);
-        writeDiskDriver(device, disk, dve);
+        writeDiskDriver(device, disk, dve, pinTo);
         writeAddress(device);
         writeBootOrder(device.getBootOrder());
 
@@ -1610,14 +1614,14 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDiskDriver(VmDevice device, Disk disk, DiskVmElement dve) {
+    private void writeDiskDriver(VmDevice device, Disk disk, DiskVmElement dve, int pinTo) {
         writer.writeStartElement("driver");
         writer.writeAttributeString("name", "qemu");
         if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
             writer.writeAttributeString("discard", "unmap");
         }
-        if (device.getSpecParams().containsKey("pinToIoThread")) {
-            writer.writeAttributeString("iothread", device.getSpecParams().get("pinToIoThread").toString());
+        if (pinTo > 0) {
+            writer.writeAttributeString("iothread", String.valueOf(pinTo));
         }
 
         switch (disk.getDiskStorageType()) {
