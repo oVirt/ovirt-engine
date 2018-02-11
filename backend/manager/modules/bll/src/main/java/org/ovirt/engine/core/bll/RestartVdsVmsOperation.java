@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -60,7 +61,7 @@ public class RestartVdsVmsOperation {
         if (vm.getStatus() == VMStatus.MigratingFrom) {
             try {
                 if (vm.getMigratingToVds() != null) {
-                    Injector.get(BackendInternal.class).getResourceManager().runVdsCommand(
+                    Injector.get(VDSBrokerFrontend.class).runVdsCommand(
                             VDSCommandType.DestroyVm,
                             new DestroyVmVDSCommandParameters(
                                     new Guid(vm.getMigratingToVds().toString()),
@@ -98,7 +99,7 @@ public class RestartVdsVmsOperation {
         // restart all running vms of a failed vds.
         for (VM vm : vms) {
             destroyVmOnDestination(vm);
-            VDSReturnValue returnValue = Injector.get(BackendInternal.class).getResourceManager().runVdsCommand(
+            VDSReturnValue returnValue = Injector.get(VDSBrokerFrontend.class).runVdsCommand(
                     VDSCommandType.SetVmStatus,
                     new SetVmStatusVDSCommandParameters(
                             vm.getId(),

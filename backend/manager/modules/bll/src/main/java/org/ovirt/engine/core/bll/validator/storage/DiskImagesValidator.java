@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -23,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -216,7 +216,7 @@ public class DiskImagesValidator {
             List<Guid> imagesOnStorageDomain = domainImages.get(targetStorageDomainId);
 
             if (imagesOnStorageDomain == null) {
-                VDSReturnValue returnValue = Injector.get(BackendInternal.class).getResourceManager().runVdsCommand(
+                VDSReturnValue returnValue = Injector.get(VDSBrokerFrontend.class).runVdsCommand(
                         VDSCommandType.GetImagesList,
                         new GetImagesListVDSCommandParameters(targetStorageDomainId, storagePoolId)
                 );

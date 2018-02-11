@@ -12,8 +12,6 @@ import org.ovirt.engine.core.common.queries.QueryType;
 public interface BackendLocal {
     ActionReturnValue runAction(ActionType actionType, ActionParametersBase parameters);
 
-    VDSBrokerFrontend getResourceManager();
-
     QueryReturnValue runQuery(QueryType actionType, QueryParametersBase parameters);
 
     ErrorTranslator getErrorsTranslator();

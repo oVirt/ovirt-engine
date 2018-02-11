@@ -14,7 +14,6 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
@@ -32,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -61,7 +61,7 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
     @Inject
     private Instance<CommandExecutor> commandExecutorInstance;
     @Inject
-    private Instance<BackendInternal> backend;
+    private VDSBrokerFrontend resourceManager;
 
     public <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
         return CommandsFactory.createCommand(action, parameters);
@@ -323,7 +323,7 @@ public class CommandCoordinatorImpl implements BackendService, CommandCoordinato
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {
-        return backend.get().getResourceManager().runVdsCommand(commandType, parameters);
+        return resourceManager.runVdsCommand(commandType, parameters);
     }
 
     @Override

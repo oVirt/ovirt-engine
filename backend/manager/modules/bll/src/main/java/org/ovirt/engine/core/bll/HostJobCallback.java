@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.HostJobCommandParameters;
@@ -18,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.GetHostJobsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -33,7 +33,7 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Inject
-    private BackendInternal backend;
+    private VDSBrokerFrontend resourceManager;
     @Inject
     private VdsDao vdsDao;
     @Inject
@@ -132,7 +132,7 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
 
         GetHostJobsVDSCommandParameters p = new GetHostJobsVDSCommandParameters(vdsId, Collections
                 .singletonList(jobId), getHostJobType());
-        VDSReturnValue returnValue = backend.getResourceManager().runVdsCommand(VDSCommandType.GetHostJobs, p);
+        VDSReturnValue returnValue = resourceManager.runVdsCommand(VDSCommandType.GetHostJobs, p);
         return ((Map<Guid, HostJobInfo>) returnValue.getReturnValue()).get(jobId);
     }
 

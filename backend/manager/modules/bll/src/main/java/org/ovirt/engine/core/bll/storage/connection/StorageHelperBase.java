@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineFault;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -40,6 +41,8 @@ public abstract class StorageHelperBase implements IStorageHelper {
     protected AuditLogDirector auditLogDirector;
     @Inject
     protected BackendInternal backend;
+    @Inject
+    protected VDSBrokerFrontend resourceManager;
     @Inject
     protected LunDao lunDao;
     @Inject

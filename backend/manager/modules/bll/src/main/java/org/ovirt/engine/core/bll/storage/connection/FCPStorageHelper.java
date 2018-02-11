@@ -80,8 +80,7 @@ public class FCPStorageHelper extends StorageHelperBase {
             LUNs lun,
             Guid storagePoolId) {
 
-        VDSReturnValue returnValue = backend
-                .getResourceManager()
+        VDSReturnValue returnValue = resourceManager
                 .runVdsCommand(
                         VDSCommandType.forValue(type),
                         new StorageServerConnectionManagementVDSParameters(vdsId,

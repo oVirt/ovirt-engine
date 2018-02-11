@@ -167,17 +167,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     /**
-     * TODO remove this after moving all places to use CDI.
-     * kept for backward compatibility.
-     */
-    @Deprecated
-    @Override
-    @ExcludeClassInterceptors
-    public VDSBrokerFrontend getResourceManager() {
-        return resourceManger;
-    }
-
-    /**
      * This method is called upon the bean creation as part of the management Service bean lifecycle.
      */
     @PostConstruct

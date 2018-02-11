@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.EngineCronTrigger;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -53,6 +54,9 @@ public class AutoRecoveryManager implements BackendService {
 
     @Inject
     private BackendInternal backend;
+
+    @Inject
+    private VDSBrokerFrontend resourceManager;
 
     @Inject
     private VdsDao vdsDao;
@@ -101,7 +105,7 @@ public class AutoRecoveryManager implements BackendService {
 
                     for (VDS vds : list) {
                         if (vds.getNonOperationalReason() == NonOperationalReason.NETWORK_INTERFACE_IS_DOWN) {
-                            backend.getResourceManager().runVdsCommand(VDSCommandType.GetStats,
+                            resourceManager.runVdsCommand(VDSCommandType.GetStats,
                                     new VdsIdAndVdsVDSCommandParametersBase(vds));
                             nics = vds.getInterfaces();
                         } else {

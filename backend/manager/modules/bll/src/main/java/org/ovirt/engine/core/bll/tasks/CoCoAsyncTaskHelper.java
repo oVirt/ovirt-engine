@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
@@ -25,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -50,7 +50,7 @@ public class CoCoAsyncTaskHelper {
     @Inject
     private Instance<AsyncTaskManager> asyncTaskManager;
     @Inject
-    private Instance<BackendInternal> backend;
+    private VDSBrokerFrontend resourceManager;
 
     /**
      * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use
@@ -124,7 +124,7 @@ public class CoCoAsyncTaskHelper {
                         taskIdAsList);
                 // call revert task only if ended successfully
                 if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {
-                    backend.get().getResourceManager().runVdsCommand(
+                    resourceManager.runVdsCommand(
                             VDSCommandType.SPMRevertTask,
                             new SPMTaskGuidBaseVDSCommandParameters(
                                     command.getStoragePool().getId(), taskId));

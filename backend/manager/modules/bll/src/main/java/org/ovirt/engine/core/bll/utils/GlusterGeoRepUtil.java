@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
@@ -35,7 +35,7 @@ public class GlusterGeoRepUtil {
     private GlusterGeoRepDao glusterGeoRepDao;
 
     @Inject
-    protected BackendInternal backend;
+    private VDSBrokerFrontend resourceManager;
 
     public Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> getEligibilityPredicates(final GlusterVolumeEntity masterVolume) {
         Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicates = new HashMap<>();
@@ -91,8 +91,7 @@ public class GlusterGeoRepUtil {
 
     public boolean checkEmptyGlusterVolume(Guid slaveUpserverId, String slaveVolumeName) {
         VDSReturnValue returnValue =
-                backend
-                        .getResourceManager()
+                resourceManager
                         .runVdsCommand(VDSCommandType.CheckEmptyGlusterVolume,
                                 new GlusterVolumeVDSParameters(slaveUpserverId, slaveVolumeName));
         return returnValue.getSucceeded() && (boolean) returnValue.getReturnValue();

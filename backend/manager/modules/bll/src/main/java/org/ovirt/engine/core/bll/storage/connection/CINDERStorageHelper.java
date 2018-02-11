@@ -112,7 +112,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         VDSReturnValue returnValue;
         if (!libvirtSecrets.isEmpty()) {
             try {
-                returnValue = backend.getResourceManager().runVdsCommand(
+                returnValue = resourceManager.runVdsCommand(
                         VDSCommandType.RegisterLibvirtSecrets,
                         new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets));
             } catch (RuntimeException e) {
@@ -138,7 +138,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         if (!libvirtSecrets.isEmpty()) {
             VDSReturnValue returnValue;
             try {
-                returnValue = backend.getResourceManager().runVdsCommand(
+                returnValue = resourceManager.runVdsCommand(
                         VDSCommandType.UnregisterLibvirtSecrets,
                         new UnregisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecretsUuids));
             } catch (RuntimeException e) {
@@ -161,7 +161,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     @Override
     public Pair<Boolean, AuditLogType> disconnectHostFromStoragePoolServersCommandCompleted(HostStoragePoolParametersBase parameters) {
         // unregister all libvirt secrets if needed
-        VDSReturnValue returnValue = backend.getResourceManager().runVdsCommand(
+        VDSReturnValue returnValue = resourceManager.runVdsCommand(
                 VDSCommandType.RegisterLibvirtSecrets,
                 new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.emptyList(), true));
         if (!returnValue.getSucceeded()) {
@@ -187,7 +187,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     private boolean registerLibvirtSecretsImpl(VDS vds, List<LibvirtSecret> libvirtSecrets) {
-        VDSReturnValue returnValue = backend.getResourceManager().runVdsCommand(
+        VDSReturnValue returnValue = resourceManager.runVdsCommand(
                 VDSCommandType.RegisterLibvirtSecrets,
                 new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets, false));
         return returnValue.getSucceeded();

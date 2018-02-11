@@ -78,8 +78,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             if (storageDomain != null && storageDomain.getStoragePoolId() != null) {
                 poolId = storageDomain.getStoragePoolId();
             }
-            returnValue = backend
-                    .getResourceManager()
+            returnValue = resourceManager
                     .runVdsCommand(
                             VDSCommandType.forValue(type),
                             new StorageServerConnectionManagementVDSParameters(vdsId,

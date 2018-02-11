@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -130,6 +131,9 @@ public class RunVmValidator {
 
     @Inject
     private BackendInternal backend;
+
+    @Inject
+    private VDSBrokerFrontend resourceManager;
 
     public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution, Guid activeIsoDomainId) {
         this.vm = vm;
@@ -596,8 +600,7 @@ public class RunVmValidator {
     }
 
     protected boolean isVmDuringInitiating(VM vm) {
-        return (Boolean) backend
-                .getResourceManager()
+        return (Boolean) resourceManager
                 .runVdsCommand(VDSCommandType.IsVmDuringInitiating,
                         new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
                 .getReturnValue();

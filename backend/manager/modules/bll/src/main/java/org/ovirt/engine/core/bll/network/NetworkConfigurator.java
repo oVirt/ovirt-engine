@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -126,7 +127,7 @@ public class NetworkConfigurator {
     }
 
     public void refreshNetworkConfiguration() {
-        getBackend().getResourceManager().runVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
+        Injector.get(VDSBrokerFrontend.class).runVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
                 new CollectHostNetworkDataVdsCommandParameters(host));
     }
 
