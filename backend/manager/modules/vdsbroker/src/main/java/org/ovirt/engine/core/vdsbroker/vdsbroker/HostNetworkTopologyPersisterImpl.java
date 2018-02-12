@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -35,6 +36,7 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.DisplayInterfaceEqualityPredicate;
@@ -88,15 +90,16 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     public NonOperationalReason persistAndEnforceNetworkCompliance(VDS host,
                                                                    boolean skipManagementNetwork,
                                                                    UserConfiguredNetworkData userConfiguredData) {
+        return TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
+            List<VdsNetworkInterface> dbIfaces = interfaceDao.getAllInterfacesForVds(host.getId());
+            List<Network> clusterNetworks = networkDao.getAllForCluster(host.getClusterId());
 
-        List<VdsNetworkInterface> dbIfaces = interfaceDao.getAllInterfacesForVds(host.getId());
-        List<Network> clusterNetworks = networkDao.getAllForCluster(host.getClusterId());
-
-        persistTopology(host, dbIfaces, clusterNetworks, userConfiguredData);
-        NonOperationalReason nonOperationalReason =
-                enforceNetworkCompliance(host, skipManagementNetwork, clusterNetworks);
-        auditNetworkCompliance(host, dbIfaces, clusterNetworks);
-        return nonOperationalReason;
+            persistTopology(host, dbIfaces, clusterNetworks, userConfiguredData);
+            NonOperationalReason nonOperationalReason =
+                    enforceNetworkCompliance(host, skipManagementNetwork, clusterNetworks);
+            auditNetworkCompliance(host, dbIfaces, clusterNetworks);
+            return nonOperationalReason;
+        });
     }
 
     private NonOperationalReason enforceNetworkCompliance(VDS host,
