@@ -128,14 +128,16 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         formBuilder.addFormItem(new FormItem(constants.vfsTypeStorageGeneral(), vfsType, 7, 0) {
             @Override
             public boolean getIsAvailable() {
-                return getDetailModel().getIsPosix() && getDetailModel().getVfsType() != null
+                return (getDetailModel().getIsPosix() || getDetailModel().getIsGlusterfs())
+                        && getDetailModel().getVfsType() != null
                         && !getDetailModel().getVfsType().isEmpty();
             }
         }, 2, 10);
         formBuilder.addFormItem(new FormItem(constants.mountOptionsGeneral(), mountOptions, 8, 0) {
             @Override
             public boolean getIsAvailable() {
-                return getDetailModel().getIsPosix() && getDetailModel().getMountOptions() != null
+                return (getDetailModel().getIsPosix() || getDetailModel().getIsGlusterfs())
+                        && getDetailModel().getMountOptions() != null
                         && !getDetailModel().getMountOptions().isEmpty();
             }
         }, 2, 10);

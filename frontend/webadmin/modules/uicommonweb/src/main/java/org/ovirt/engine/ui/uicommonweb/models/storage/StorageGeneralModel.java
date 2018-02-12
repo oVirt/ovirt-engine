@@ -53,6 +53,19 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
         }
     }
 
+    private boolean isGlusterfs;
+
+    public boolean getIsGlusterfs() {
+        return isGlusterfs;
+    }
+
+    public void setIsGlusterfs(boolean value) {
+        if (isGlusterfs != value) {
+            isGlusterfs = value;
+            onPropertyChanged(new PropertyChangedEventArgs("isGlusterfs")); //$NON-NLS-1$
+        }
+    }
+
     private String path;
 
     public String getPath() {
@@ -147,8 +160,9 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
             setIsNfs(storageDomain.getStorageType() == StorageType.NFS);
             setIsLocalS(storageDomain.getStorageType() == StorageType.LOCALFS);
             setIsPosix(storageDomain.getStorageType() == StorageType.POSIXFS);
+            setIsGlusterfs(storageDomain.getStorageType() == StorageType.GLUSTERFS);
 
-            if (getIsNfs() || getIsLocalS() || getIsPosix()) {
+            if (getIsNfs() || getIsLocalS() || getIsPosix() || getIsGlusterfs()) {
                 AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery<>(connection -> {
                     if (connection != null) {
                         setPath(connection.getConnection());
@@ -159,7 +173,7 @@ public class StorageGeneralModel extends EntityModel<StorageDomain> {
                             setTimeout(connection.getNfsTimeo());
                         }
 
-                        if (isPosix) {
+                        if (isPosix || isGlusterfs) {
                             setVfsType(connection.getVfsType());
                             setMountOptions(connection.getMountOptions());
                         }
