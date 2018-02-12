@@ -257,9 +257,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
         // The image will remain locked until the transfer command has completed.
         lockImage();
-        boolean initSessionSuccess = startImageTransferSession();
-        updateEntityPhase(initSessionSuccess ? ImageTransferPhase.TRANSFERRING
-                : ImageTransferPhase.PAUSED_SYSTEM);
+        startImageTransferSession();
         log.info("Returning from proceedCommandExecution after starting transfer session"
                 + " for image transfer command '{}'", getCommandId());
 
@@ -313,7 +311,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                     // for another extend attempt.
                     getParameters().setRetryExtendTicket(false);
                 } else {
-                    updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+                    updateEntityPhaseToPausedBySystem(
+                            AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_TICKET_RENEW_FAILURE);
                     getParameters().setRetryExtendTicket(true);
                 }
             }
@@ -336,7 +335,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                             context.entity.getVdsId(), context.entity.getImagedTicketId())).getReturnValue();
         } catch (EngineException e) {
             log.error("Could not get image ticket '{}' from vdsm", context.entity.getImagedTicketId(), e);
-            updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+            updateEntityPhaseToPausedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_MISSING_TICKET);
             return;
         }
         ImageTransfer upToDateImageTransfer = updateTransferStatusWithTicketInformation(context.entity, ticketInfo);
@@ -487,7 +487,6 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
     /**
      * Verify conditions for continuing the transfer, pausing it if necessary.
-     * @return true if transfer was paused
      */
     private boolean pauseTransferIfNecessary(ImageTransfer entity, long ts) {
         // If a keepalive interval was set by the client, then it needs to respond
@@ -500,7 +499,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             log.warn("Transfer paused due to no updates in {} seconds. {}",
                     ts - (entity.getLastUpdated().getTime() / 1000),
                     getTransferDescription());
-            updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+            updateEntityPhaseToPausedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
             return true;
         }
         return false;
@@ -527,10 +527,11 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
      * Start the ovirt-image-daemon session
      * @return true if session was started
      */
-    protected boolean startImageTransferSession() {
+    protected void startImageTransferSession() {
         if (!initializeVds()) {
             log.error("Could not find a suitable host for image data transfer");
-            return false;
+            updateEntityPhaseToPausedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_MISSING_HOST);
         }
         Guid imagedTicketId = Guid.newGuid();
 
@@ -538,15 +539,21 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         // transfer session.  The converse would require us to close the transfer session on failure.
         String signedTicket = createSignedTicket(getVds(), imagedTicketId);
         if (signedTicket == null) {
-            return false;
+            log.error("Failed to create a signed image ticket");
+            updateEntityPhaseToPausedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
         }
 
         long timeout = getHostTicketLifetime();
         if (!addImageTicketToDaemon(imagedTicketId, timeout)) {
-            return false;
+            log.error("Failed to add image ticket to ovirt-imageio-daemon");
+            updateEntityPhaseToPausedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
         }
         if (!addImageTicketToProxy(imagedTicketId, signedTicket)) {
-            return false;
+            log.error("Failed to add image ticket to ovirt-imageio-proxy");
+            updateEntityPhaseToPausedBySystem(
+                    AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
         }
 
         ImageTransfer updates = new ImageTransfer();
@@ -558,7 +565,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         updateEntity(updates);
 
         setNewSessionExpiration(timeout);
-        return true;
+        updateEntityPhase(ImageTransferPhase.TRANSFERRING);
     }
 
     private boolean addImageTicketToDaemon(Guid imagedTicketId, long timeout) {
@@ -816,6 +823,11 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         ImageTransfer updates = new ImageTransfer(getCommandId());
         updates.setPhase(phase);
         return updateEntity(updates);
+    }
+
+    protected void updateEntityPhaseToPausedBySystem(AuditLogType pausedBySystemReason) {
+        auditLog(this, pausedBySystemReason);
+        updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
     }
 
     protected ImageTransfer updateEntity(ImageTransfer updates) {
