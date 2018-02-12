@@ -65,8 +65,7 @@ public class TransferImageCommandTest extends BaseCommandTest{
         doNothing().when(transferImageCommand).createImage();
         doNothing().when(transferImageCommand).persistCommand(any(), anyBoolean());
         doNothing().when(transferImageCommand).lockImage();
-        doReturn(true).when(transferImageCommand).startImageTransferSession();
-        doReturn(null).when(imageTransferUpdater).updateEntity(any(), any(), anyBoolean());
+        doNothing().when(transferImageCommand).startImageTransferSession();
     }
 
     protected void initSuppliedImage(TransferImageCommand<? extends TransferImageParameters> command) {

@@ -496,6 +496,7 @@ public class UploadImageHandler {
             log.INFO("doUpload: Starting at byte " + startByte);
             if (!fileUploadElement.files.length) {
                 setUploadStateByString(UploadStates.CLIENT_ERROR);
+                setAuditLogMessage(@org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_CLIENT_ERROR);
                 return;
             }
 
@@ -621,7 +622,7 @@ public class UploadImageHandler {
                 log.ERROR('Transfer failed after ' + chunkErrorCount + '/' + maxRetries + ' errors');
                 log.ERROR('Transfer to proxy failed, code: ' + xhr.status + ', text: ' + xhr.responseText + ', response: ' + xhr.response);
                 setUploadStateByString(UploadStates.CLIENT_ERROR);
-                setAuditLogMessageByXhrError();
+                setAuditLogMessage(@org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_NETWORK_ERROR);
                 finalizeUpload();
             }
         }
@@ -629,7 +630,7 @@ public class UploadImageHandler {
         function xhrTimeout(e) {
             log.ERROR('xhrTimeout: ' + xhr.status + ' ' + xhr.statusText);
             setUploadStateByString(UploadStates.CLIENT_ERROR);
-            setAuditLogMessageByXhrError();
+            setAuditLogMessage(@org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_XHR_TIMEOUT_ERROR);
             finalizeUpload();
         }
 
@@ -659,16 +660,6 @@ public class UploadImageHandler {
 
         function setUploadStateByString(state) {
             self.@org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageHandler::setUploadStateByString(Ljava/lang/String;)(state);
-        }
-
-        function setAuditLogMessageByXhrError() {
-            // According to xhr specifications, all network errors set the status to 0.
-            if (xhr.status === 0) {
-                setAuditLogMessage(@org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_NETWORK_ERROR);
-            }
-            else {
-                setAuditLogMessage(@org.ovirt.engine.core.common.AuditLogType::UPLOAD_IMAGE_CLIENT_ERROR);
-            }
         }
 
         function setAuditLogMessage(auditLogType) {
