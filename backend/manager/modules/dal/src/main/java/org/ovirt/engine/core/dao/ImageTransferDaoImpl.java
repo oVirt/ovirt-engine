@@ -28,7 +28,14 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
     public ImageTransfer getByDiskId(Guid diskId) {
         return getCallsHandler().executeRead("GetImageUploadsByDiskId",
                 createEntityRowMapper(),
-                createDiskIdParameterMapper(diskId));
+                createIdParameterMapper(diskId, "disk_id"));
+    }
+
+    @Override
+    public List<ImageTransfer> getByVdsId(Guid vdsId) {
+        return getCallsHandler().executeReadList("GetImageTransfersByVdsId",
+                createEntityRowMapper(),
+                createIdParameterMapper(vdsId, "vds_id"));
     }
 
     @Override
@@ -49,11 +56,11 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
 
     @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
-        return getCustomMapSqlParameterSource().addValue("command_id", id);
+        return createIdParameterMapper(id, "command_id");
     }
 
-    protected MapSqlParameterSource createDiskIdParameterMapper(Guid diskId) {
-        return getCustomMapSqlParameterSource().addValue("disk_id", diskId);
+    protected MapSqlParameterSource createIdParameterMapper(Guid id, String paramName) {
+        return getCustomMapSqlParameterSource().addValue(paramName, id);
     }
 
     @Override

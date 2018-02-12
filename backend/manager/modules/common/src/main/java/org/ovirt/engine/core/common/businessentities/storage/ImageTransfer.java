@@ -213,4 +213,8 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     public Guid getQueryableId() {
         return getId();
     }
+
+    public boolean isPaused() {
+        return phase == ImageTransferPhase.PAUSED_SYSTEM || phase == ImageTransferPhase.PAUSED_USER;
+    }
 }
