@@ -21,8 +21,11 @@
 
 import gettext
 
+from otopi import constants as otopicons
 from otopi import plugin
 from otopi import util
+
+from ovirt_engine import configfile
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
@@ -42,6 +45,21 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
+    def _filter_engine_sensitive_keys(self):
+        config = configfile.ConfigFile([
+            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
+            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
+        ])
+        sensitive_keys = [
+            k.strip()
+            for k in config.get('SENSITIVE_KEYS').split(',')
+            if k.strip()
+        ]
+        for k in sensitive_keys:
+            self.environment[
+                otopicons.CoreEnv.LOG_FILTER
+            ].append(config.get(k))
+
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
@@ -54,6 +72,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ConfigEnv.ENGINE_SERVICE_STOP_NEEDED,
             True
         )
+        self._filter_engine_sensitive_keys()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
