@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitReason;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -93,7 +94,10 @@ public class VmAnalyzerTest {
         initMocks(data, false);
         //when
         assumeTrue(data.dbVm() == null);
-        assumeTrue(data.vdsmVm() != null);
+        assumeTrue(data.vdsmVm() != null
+                && data.vdsmVm().getVmDynamic().getStatus() != VMStatus.Down
+                && (data.vdsmVm().getVmDynamic().getStatus() != VMStatus.Paused ||
+                data.vdsmVm().getVmDynamic().getPauseStatus() != VmPauseStatus.EIO));
         //then
         vmAnalyzer.analyze();
         assertTrue(vmAnalyzer.isUnmanagedVm());

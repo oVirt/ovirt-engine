@@ -192,8 +192,13 @@ public class VmAnalyzer {
     }
 
     private void processUnmanagedVm() {
-        unmanagedVm = true;
         VmDynamic vmDynamic = vdsmVm.getVmDynamic();
+        if (vmDynamic.getStatus() == VMStatus.Down ||
+                (vmDynamic.getStatus() == VMStatus.Paused && vmDynamic.getPauseStatus() == VmPauseStatus.EIO)) {
+            destroyVm();
+            return;
+        }
+        unmanagedVm = true;
         vmDynamic.setRunOnVds(vdsManager.getVdsId());
         saveDynamic(vmDynamic);
     }
@@ -343,10 +348,8 @@ public class VmAnalyzer {
     }
 
     private void destroyVm() {
-        runVdsCommand(
-                VDSCommandType.Destroy,
-                new DestroyVmVDSCommandParameters(vdsManager.getVdsId(),
-                        vdsmVm.getVmDynamic().getId(), null, false, 0, true));
+        runVdsCommand(VDSCommandType.Destroy,
+                new DestroyVmVDSCommandParameters(vdsManager.getVdsId(), getVmId(), null, false, 0, true));
     }
 
     private void saveDynamic(VmDynamic vmDynamic) {

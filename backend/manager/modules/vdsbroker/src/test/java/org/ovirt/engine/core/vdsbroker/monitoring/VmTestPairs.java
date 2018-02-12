@@ -16,7 +16,7 @@ public enum VmTestPairs {
     EXTERNAL_VM("0") {
         @Override
         Pair<VM, VdsmVm> build() {
-            return pairOf(null, createVmInternalData());
+            return pairOf(null, createVmInternalData(VMStatus.Up));
         }
     },
     DB_ONLY_NOT_RUNNING("1") {
@@ -70,7 +70,7 @@ public enum VmTestPairs {
     DST_VM_WITH_STATUS_UP("9") {
         @Override
         Pair<VM, VdsmVm> build() {
-            Pair<VM, VdsmVm> pair = pairOf(createDbVm(), createVmInternalData());
+            Pair<VM, VdsmVm> pair = pairOf(createDbVm(), createVmInternalData(null));
             pair.getSecond().getVmDynamic().setStatus(VMStatus.Up);
             pair.getSecond().getVmDynamic().setRunOnVds(DST_HOST_ID);
             return pair;
@@ -79,7 +79,7 @@ public enum VmTestPairs {
     DST_VM_WITH_STATUS_MIGRATING_TO("A") {
         @Override
         Pair<VM, VdsmVm> build() {
-            Pair<VM, VdsmVm> pair = pairOf(createDbVm(), createVmInternalData());
+            Pair<VM, VdsmVm> pair = pairOf(createDbVm(), createVmInternalData(null));
             pair.getSecond().getVmDynamic().setStatus(VMStatus.MigratingTo);
             pair.getSecond().getVmDynamic().setRunOnVds(DST_HOST_ID);
             return pair;
@@ -89,6 +89,18 @@ public enum VmTestPairs {
         @Override
         Pair<VM, VdsmVm> build() {
             return createHANotRunningAndUknown();
+        }
+    },
+    EXTERNAL_VM2("C") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            return pairOf(null, createVmInternalData(VMStatus.Down));
+        }
+    },
+    EXTERNAL_VM3("D") {
+        @Override
+        Pair<VM, VdsmVm> build() {
+            return pairOf(null, createVmInternalData(VMStatus.Paused));
         }
     };
     public static final Guid DST_HOST_ID = Guid.newGuid();
@@ -181,7 +193,7 @@ public enum VmTestPairs {
     }
 
     Pair<VM, VdsmVm> createPair() {
-        Pair<VM, VdsmVm> pair = pairOf(createDbVm(), createVmInternalData());
+        Pair<VM, VdsmVm> pair = pairOf(createDbVm(), createVmInternalData(null));
         addWatchDogEvents(pair);
         addClientIpChanged(pair);
         return pair;
@@ -205,10 +217,13 @@ public enum VmTestPairs {
         pair.getSecond().getVmDynamic().setStatus(vdsmStatus);
     }
 
-    VdsmVm createVmInternalData() {
+    VdsmVm createVmInternalData(VMStatus status) {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(id);
         vmDynamic.setRunOnVds(SRC_HOST_ID);
+        if (status != null) {
+            vmDynamic.setStatus(status);
+        }
         return new VdsmVm(-1d)
                 .setVmDynamic(vmDynamic)
                 .setVmStatistics(new VmStatistics())
