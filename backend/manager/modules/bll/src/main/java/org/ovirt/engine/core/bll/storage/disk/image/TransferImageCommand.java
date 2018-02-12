@@ -819,10 +819,10 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         return ticket;
     }
 
-    protected ImageTransfer updateEntityPhase(ImageTransferPhase phase) {
+    protected void updateEntityPhase(ImageTransferPhase phase) {
         ImageTransfer updates = new ImageTransfer(getCommandId());
         updates.setPhase(phase);
-        return updateEntity(updates);
+        updateEntity(updates);
     }
 
     protected void updateEntityPhaseToPausedBySystem(AuditLogType pausedBySystemReason) {
@@ -830,12 +830,12 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
     }
 
-    protected ImageTransfer updateEntity(ImageTransfer updates) {
-        return updateEntity(updates, false);
+    protected void updateEntity(ImageTransfer updates) {
+        updateEntity(updates, false);
     }
 
-    protected ImageTransfer updateEntity(ImageTransfer updates, boolean clearResourceId) {
-        return imageTransferUpdater.updateEntity(updates, getCommandId(), clearResourceId);
+    protected void updateEntity(ImageTransfer updates, boolean clearResourceId) {
+        imageTransferUpdater.updateEntity(updates, getCommandId(), clearResourceId);
     }
 
     private int getHostTicketRefreshAllowance() {
