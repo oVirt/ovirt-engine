@@ -14,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -87,9 +88,9 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
         }
 
         if (value != null && ((viewData != null) ? viewData : value)) {
-            sb.append(templates.inputChecked(id, additionalStyles));
+            sb.append(templates.inputChecked(id, additionalStyles != null ? additionalStyles : SafeStylesUtils.fromTrustedString("")));
         } else {
-            sb.append(templates.inputUnchecked(id, additionalStyles));
+            sb.append(templates.inputUnchecked(id, additionalStyles != null ? additionalStyles : SafeStylesUtils.fromTrustedString("")));
         }
 
         if (getLabel() != null && StringHelper.isNotNullOrEmpty(getLabel().asString())) {

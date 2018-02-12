@@ -23,12 +23,15 @@ public class MainContentView extends AbstractView implements MainContentPresente
     @Override
     public void setInSlot(Object slot, IsWidget content) {
         if (slot == MainContentPresenter.TYPE_SetContent) {
+            contentContainer.setVisible(true);
             setPanelContent(contentContainer, content);
+            overlayContainer.setVisible(false);
         } else if (slot == MainContentPresenter.TYPE_SetOverlay) {
             overlayContainer.clear();
             if (content == null) {
                 contentContainer.setVisible(true);
             } else {
+                overlayContainer.setVisible(true);
                 overlayContainer.add(content);
                 contentContainer.setVisible(false);
             }

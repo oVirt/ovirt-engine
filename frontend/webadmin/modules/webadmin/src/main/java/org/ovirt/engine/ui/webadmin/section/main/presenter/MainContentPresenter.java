@@ -48,7 +48,7 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     @Override
     public void onRevealOverlayContent(RevealOverlayContentEvent event) {
         Set<PresenterWidget<?>> children = getChildren(LegacySlotConvertor.convert(TYPE_SetContent));
-        if (event.getContent() != null) {
+        if (event.getContent() != null && !children.isEmpty()) {
             event.getContent().setCurrentPlaceWidget(children.iterator().next());
         }
         setInSlot(TYPE_SetOverlay, event.getContent());
