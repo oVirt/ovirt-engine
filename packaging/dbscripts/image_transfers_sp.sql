@@ -41,6 +41,18 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION GetImageTransfersByVdsId(v_vds_id UUID)
+RETURNS SETOF image_transfers STABLE
+AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+    SELECT image_transfers.*
+    FROM image_transfers
+    WHERE image_transfers.vds_id = v_vds_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_command_id UUID,
     v_command_type INTEGER,
