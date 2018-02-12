@@ -121,7 +121,7 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
 
     protected ArchitectureType getArchitecture() {
         if (StringUtils.isNotEmpty(getCluster().getCpuName())) {
-            return getCpuFlagsManagerHandler().getArchitectureByCpuName(getCluster().getCpuName(),
+            return cpuFlagsManagerHandler.getArchitectureByCpuName(getCluster().getCpuName(),
                     getCluster().getCompatibilityVersion());
         } else if (getCluster().getArchitecture() == null) {
             return ArchitectureType.undefined;

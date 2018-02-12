@@ -31,10 +31,6 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
         setClusterId(parameters.getClusterId());
     }
 
-    protected CpuFlagsManagerHandler getCpuFlagsManagerHandler() {
-        return cpuFlagsManagerHandler;
-    }
-
     @Override
     public Cluster getCluster() {
         if (cluster == null) {

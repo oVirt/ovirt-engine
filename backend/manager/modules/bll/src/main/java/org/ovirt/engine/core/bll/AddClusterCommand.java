@@ -133,7 +133,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     protected boolean validate() {
         HasStoragePoolValidator hspValidator = new HasStoragePoolValidator(getCluster());
         final ClusterValidator validator = new ClusterValidator(
-                dbFacade, getCluster(), getCpuFlagsManagerHandler());
+                dbFacade, getCluster(), cpuFlagsManagerHandler);
 
         return validate(validator.nameNotUsed())
                 && validate(validator.cpuTypeSupportsVirtService())

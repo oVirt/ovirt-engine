@@ -531,7 +531,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
             if (oldCluster.getStoragePoolId() != null) {
                 ClusterValidator validator = new ClusterValidator(
-                        dbFacade, oldCluster, getCpuFlagsManagerHandler());
+                        dbFacade, oldCluster, cpuFlagsManagerHandler);
                 if (!validate(validator.dataCenterVersionMismatch())) {
                     result = false;
                     addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
@@ -804,25 +804,25 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     protected boolean checkIfCpusSameManufacture(Cluster group) {
-        return getCpuFlagsManagerHandler().checkIfCpusSameManufacture(group.getCpuName(),
+        return cpuFlagsManagerHandler.checkIfCpusSameManufacture(group.getCpuName(),
                 getCluster().getCpuName(),
                 getCluster().getCompatibilityVersion());
     }
 
     protected boolean checkIfCpusExist() {
-        return getCpuFlagsManagerHandler().checkIfCpusExist(getCluster().getCpuName(),
+        return cpuFlagsManagerHandler.checkIfCpusExist(getCluster().getCpuName(),
                 getCluster().getCompatibilityVersion());
     }
 
     protected List<String> missingServerCpuFlags(VDS vds) {
-        return getCpuFlagsManagerHandler().missingServerCpuFlags(
+        return cpuFlagsManagerHandler.missingServerCpuFlags(
                 getCluster().getCpuName(),
                 vds.getCpuFlags(),
                 getCluster().getCompatibilityVersion());
     }
 
     protected boolean isCpuUpdatable(Cluster cluster) {
-        return getCpuFlagsManagerHandler().isCpuUpdatable(cluster.getCpuName(), cluster.getCompatibilityVersion());
+        return cpuFlagsManagerHandler.isCpuUpdatable(cluster.getCpuName(), cluster.getCompatibilityVersion());
     }
 
     private boolean areAllVdssInMaintenance(List<VDS> vdss) {
@@ -837,7 +837,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     protected int compareCpuLevels(Cluster otherGroup) {
-        return getCpuFlagsManagerHandler().compareCpuLevels(getCluster().getCpuName(),
+        return cpuFlagsManagerHandler.compareCpuLevels(getCluster().getCpuName(),
                 otherGroup.getCpuName(),
                 otherGroup.getCompatibilityVersion());
     }
