@@ -102,7 +102,9 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
         super.updateProperties(vm.getId());
 
-        getName().setEntity(vm.getName());
+        if (getName().getEntity() == null) {
+            getName().setEntity(vm.getName());
+        }
         getOperatingSystems().setItems(AsyncDataProvider.getInstance().getOsIds(vm.getClusterArch()));
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
