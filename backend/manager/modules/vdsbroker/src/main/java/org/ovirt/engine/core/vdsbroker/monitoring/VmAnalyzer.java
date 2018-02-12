@@ -231,6 +231,13 @@ public class VmAnalyzer {
                 return;
             }
 
+            if (dbVm.getRunOnVds() != null // The VM is supposedly running elsewhere
+                    && dbVm.getStatus() != VMStatus.Unknown
+                    && !isVmMigratingToThisVds()) {
+                destroyVm();
+                return;
+            }
+
             // otherwise continue with default processing
             break;
 
