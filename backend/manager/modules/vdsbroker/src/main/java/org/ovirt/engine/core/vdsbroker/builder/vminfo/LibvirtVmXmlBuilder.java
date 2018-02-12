@@ -820,7 +820,7 @@ public class LibvirtVmXmlBuilder {
         // replacement of some devices in run-once mode should eventually be done by the run-command
         devices = overrideDevicesForRunOnce(devices);
         devices = processPayload(devices);
-        devices.forEach(this::replaceNullSpecParams);
+        devices.stream().filter(d -> d.getSpecParams() == null).forEach(d -> d.setSpecParams(Collections.emptyMap()));
 
         writer.writeStartElement("devices");
 
@@ -895,7 +895,7 @@ public class LibvirtVmXmlBuilder {
                 break;
             case CONSOLE:
                 writeConsole(device);
-                if (device.getSpecParams() != null && "serial".equals(device.getSpecParams().get("consoleType"))) {
+                if ("serial".equals(device.getSpecParams().get("consoleType"))) {
                     serialConsolePath = getSerialConsolePath(device);
                 }
                 break;
@@ -1026,12 +1026,6 @@ public class LibvirtVmXmlBuilder {
         return devices;
     }
 
-    private void replaceNullSpecParams(VmDevice dev) {
-        if (dev.getSpecParams() == null) {
-            dev.setSpecParams(Collections.emptyMap());
-        }
-    }
-
     @SafeVarargs
     private final void updateBootOrder(List<VmDevice> ... bootableDevices) {
         List<VmDevice> managedAndPluggedBootableDevices = Arrays.stream(bootableDevices)
@@ -1082,7 +1076,7 @@ public class LibvirtVmXmlBuilder {
 
         for (Disk disk : vmInfoBuildUtils.getSortedDisks(vm)) {
             VmDevice device = deviceIdToDevice.get(new VmDeviceId(disk.getId(), vm.getId()));
-            if (device == null) {
+            if (device == null || !device.isManaged()) {
                 // This may happen to memory disks that do not have a corresponding device
                 continue;
             }
@@ -1122,11 +1116,8 @@ public class LibvirtVmXmlBuilder {
                 break;
             }
 
-            if (device.isManaged()) {
-                String dev = vmInfoBuildUtils.makeDiskName(dve.getDiskInterface().getName(), index);
-                writeManagedDisk(device, disk, dve, dev, pinTo);
-            }
-            // TODO: else
+            String dev = vmInfoBuildUtils.makeDiskName(dve.getDiskInterface().getName(), index);
+            writeDisk(device, disk, dve, dev, pinTo);
         }
     }
 
@@ -1541,7 +1532,7 @@ public class LibvirtVmXmlBuilder {
      * TODO:
      * add qemu_drive_cache configurable like in VDSM?
      */
-    private void writeManagedDisk(
+    private void writeDisk(
             VmDevice device,
             Disk disk,
             DiskVmElement dve,
@@ -2254,13 +2245,4 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeEndElement();
     }
-
-//    private int getBootableDiskIndex(Disk disk) {
-//        int index = ArchStrategyFactory.getStrategy(vm.getClusterArch())
-//                .run(new GetBootableDiskIndex(numOfReservedScsiIndexes))
-//                .returnValue();
-//        log.info("Bootable disk '{}' set to index '{}'", disk.getId(), index);
-//        return index;
-//    }
-
 }
