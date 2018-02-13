@@ -15,11 +15,9 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.InternalImportExternalNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -54,7 +52,8 @@ public class InternalImportExternalNetworkCommand<P extends InternalImportExtern
 
         network.setId(addNetworkReturnValue.getActionReturnValue());
 
-        ActionReturnValue addVnicReturnValue = addVnicProfile(network, getParameters().isPublicUse());
+        ActionReturnValue addVnicReturnValue =
+                networkHelper.addVnicProfileWithoutFilter(network, getParameters().isPublicUse());
         if (!addVnicReturnValue.getSucceeded()) {
             propagateFailure(addVnicReturnValue);
             return;
@@ -77,14 +76,6 @@ public class InternalImportExternalNetworkCommand<P extends InternalImportExtern
                 new AddNetworkStoragePoolParameters(dataCenterId, network);
         params.setVnicProfileRequired(false);
         return runInternalAction(ActionType.AddNetwork, params);
-    }
-
-    private ActionReturnValue addVnicProfile(Network network, boolean publicUse) {
-        VnicProfile vnicProfile = networkHelper.createVnicProfile(network);
-        vnicProfile.setNetworkFilterId(null);
-        AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile);
-        parameters.setPublicUse(publicUse);
-        return runInternalAction(ActionType.AddVnicProfile, parameters);
     }
 
     private ActionReturnValue attachToAllClusters(Guid dataCenterId, Guid networkId) {

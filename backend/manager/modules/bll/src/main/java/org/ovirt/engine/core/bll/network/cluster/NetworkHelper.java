@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -206,5 +207,13 @@ public class NetworkHelper {
         }
         return backend.runInternalAction(ActionType.ManageNetworkClusters,
                 new ManageNetworkClustersParameters(networkAttachments));
+    }
+
+    public ActionReturnValue addVnicProfileWithoutFilter(Network network, boolean publicUse) {
+        VnicProfile vnicProfile = createVnicProfile(network);
+        vnicProfile.setNetworkFilterId(null);
+        AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile);
+        parameters.setPublicUse(publicUse);
+        return backend.runInternalAction(ActionType.AddVnicProfile, parameters);
     }
 }
