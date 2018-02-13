@@ -286,15 +286,27 @@ public class VmDeviceCommonUtils {
      * is special device - device which is managed, but contains the general properties
      */
     public static boolean isSpecialDevice(String device, VmDeviceGeneralType type) {
-        return (VmDeviceGeneralType.SOUND == type || VmDeviceType.USB.getName().equals(device)
-                || (VmDeviceType.CONSOLE.getName().equals(device) && VmDeviceGeneralType.CONSOLE == type)
-                || (VmDeviceType.SMARTCARD.getName().equals(device) && VmDeviceGeneralType.SMARTCARD == type)
-                || (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceGeneralType.REDIR == type)
-                || (VmDeviceType.MEMBALLOON.getName().equals(device) && VmDeviceGeneralType.BALLOON == type))
-                || (VmDeviceType.WATCHDOG.getName().equals(device) && VmDeviceGeneralType.WATCHDOG == type)
-                || (VmDeviceType.VIRTIO.getName().equals(device) && VmDeviceGeneralType.RNG == type)
-                || (VmDeviceType.VIRTIOSERIAL.getName().equals(device) && VmDeviceGeneralType.CONTROLLER == type)
-                || (VmDeviceType.VIRTIOSCSI.getName().equals(device) && VmDeviceGeneralType.CONTROLLER == type);
+        switch(type) {
+        case SOUND:
+            return true;
+        case CONSOLE:
+            return VmDeviceType.CONSOLE.getName().equals(device);
+        case SMARTCARD:
+            return VmDeviceType.SMARTCARD.getName().equals(device);
+        case REDIR:
+            return VmDeviceType.SPICEVMC.getName().equals(device);
+        case BALLOON:
+            return VmDeviceType.MEMBALLOON.getName().equals(device);
+        case WATCHDOG:
+            return VmDeviceType.WATCHDOG.getName().equals(device);
+        case RNG:
+            return VmDeviceType.VIRTIO.getName().equals(device);
+        case CONTROLLER:
+            return VmDeviceType.VIRTIOSERIAL.getName().equals(device)
+                    || VmDeviceType.VIRTIOSCSI.getName().equals(device);
+        default:
+            return VmDeviceType.USB.getName().equals(device);
+        }
     }
 
     /**

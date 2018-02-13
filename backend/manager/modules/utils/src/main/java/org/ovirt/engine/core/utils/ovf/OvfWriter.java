@@ -402,7 +402,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 _writer.writeStartElement("Item");
                 _writer.writeElement(RASD_URI, "Caption", "Graphical Controller");
                 _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
-                _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.Monitor);
+                _writer.writeElement(RASD_URI, "ResourceType", adjustHardwareResourceType(OvfHardware.Monitor));
                 // we should write number of monitors for each entry for backward compatibility
                 _writer.writeElement(RASD_URI, "VirtualQuantity", String.valueOf(numOfMonitors));
                 _writer.writeElement(RASD_URI, "SinglePciQxl", String.valueOf(vmBase.getSingleQxlPci()));
@@ -422,11 +422,15 @@ public abstract class OvfWriter implements IOvfBuilder {
                 _writer.writeStartElement("Item");
                 _writer.writeElement(RASD_URI, "Caption", "Graphical Framebuffer");
                 _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
-                _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.Graphics);
+                _writer.writeElement(RASD_URI, "ResourceType", adjustHardwareResourceType(OvfHardware.Graphics));
                 writeVmDeviceInfo(vmDevice);
                 _writer.writeEndElement(); // item
             }
         }
+    }
+
+    protected String adjustHardwareResourceType(String resourceType) {
+        return resourceType;
     }
 
     private void writeCd() {
