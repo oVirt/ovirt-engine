@@ -21,6 +21,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class TicketEncoder {
 
     private static final String DATE_FORMAT = "yyyyMMddHHmmss";
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private Certificate cert;
     private PrivateKey key;
@@ -43,7 +44,7 @@ public class TicketEncoder {
         Map<String, String> map = new HashMap<>();
 
         byte[] random = new byte[8];
-        new SecureRandom().nextBytes(random);
+        SECURE_RANDOM.nextBytes(random);
         map.put("salt", base64.encodeToString(random));
         map.put("digest", "sha1");
 
