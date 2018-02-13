@@ -216,4 +216,15 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeEndElement();
     }
 
+    @Override
+    protected String adjustHardwareResourceType(String resourceType) {
+        switch(resourceType) {
+        case OvfHardware.Graphics:
+            return OvfHardware.OVIRT_Graphics;
+        case OvfHardware.Monitor:
+            return OvfHardware.OVIRT_Monitor;
+        default:
+            return super.adjustHardwareResourceType(resourceType);
+        }
+    }
 }

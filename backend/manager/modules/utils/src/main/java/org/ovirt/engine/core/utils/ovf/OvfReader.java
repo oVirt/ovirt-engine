@@ -336,18 +336,20 @@ public abstract class OvfReader implements IOvfBuilder {
         boolean readVirtioSerial = false;
 
         int nicIdx = 0;
-        for (XmlNode node : selectNodes(section, "Item")) {
-            switch (selectSingleNode(node, "rasd:ResourceType", _xmlNS).innerText) {
+        for (XmlNode item : selectNodes(section, "Item")) {
+            String resourceType = selectSingleNode(item, "rasd:ResourceType", _xmlNS).innerText;
+            resourceType = adjustHardwareResourceType(resourceType);
+            switch (resourceType) {
             case OvfHardware.CPU:
-                readCpuItem(node);
+                readCpuItem(item);
                 break;
 
             case OvfHardware.Memory:
-                readMemoryItem(node);
+                readMemoryItem(item);
                 break;
 
             case OvfHardware.DiskImage:
-                readDiskImageItem(node);
+                readDiskImageItem(item);
                 break;
 
             case OvfHardware.Network:
@@ -360,27 +362,27 @@ public abstract class OvfReader implements IOvfBuilder {
                 if (nicIdx == 0) {
                     interfaces.clear();
                 }
-                readNetworkItem(node, ++nicIdx);
+                readNetworkItem(item, ++nicIdx);
                 break;
 
             case OvfHardware.USB:
-                readUsbItem(node);
+                readUsbItem(item);
                 break;
 
             case OvfHardware.Monitor:
-                readMonitorItem(node);
+                readMonitorItem(item);
                 break;
 
             case OvfHardware.Graphics:
-                readManagedVmDevice(node, Guid.newGuid()); // so far graphics doesn't contain anything special
+                readManagedVmDevice(item, Guid.newGuid()); // so far graphics doesn't contain anything special
                 break;
 
             case OvfHardware.CD:
-                readCdItem(node);
+                readCdItem(item);
                 break;
 
             case OvfHardware.OTHER:
-                VmDevice vmDevice = readOtherHardwareItem(node);
+                VmDevice vmDevice = readOtherHardwareItem(item);
                 readVirtioSerial = readVirtioSerial ||
                         VmDeviceType.VIRTIOSERIAL.getName().equals(vmDevice.getDevice());
                 break;
@@ -393,6 +395,10 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     protected abstract void readDiskImageItem(XmlNode node);
+
+    protected String adjustHardwareResourceType(String resourceType) {
+        return resourceType;
+    }
 
     protected void readDiskImageItem(XmlNode node, DiskImage image) {
         XmlNode templateNode = selectSingleNode(node, "rasd:Template", _xmlNS);
@@ -757,7 +763,7 @@ public abstract class OvfReader implements IOvfBuilder {
         XmlNode resourceSubTypeNode = selectSingleNode(node, VMD_SUB_RESOURCE_TYPE, _xmlNS);
         if (resourceSubTypeNode == null) {
             // we need special handling for Monitor to define it as vnc or spice
-            if (OvfHardware.Monitor.equals(resourceType)) {
+            if (OvfHardware.Monitor.equals(adjustHardwareResourceType(resourceType))) {
                 // get number of monitors from VirtualQuantity in OVF
                 if (selectSingleNode(node, VMD_VIRTUAL_QUANTITY, _xmlNS) != null
                         && !StringUtils.isEmpty(selectSingleNode(node,
