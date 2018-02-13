@@ -98,4 +98,12 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
     protected String getListName() {
         return "AlertListModel"; //$NON-NLS-1$
     }
+
+
+    @Override
+    public boolean hasItemsSorted() {
+        // Always return true to bypass the default sorting as we don't want this applied
+        // to alerts.
+        return true;
+    }
 }
