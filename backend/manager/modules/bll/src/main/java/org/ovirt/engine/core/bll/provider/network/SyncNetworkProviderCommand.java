@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.InternalImportExternalNetworkParameters;
@@ -132,15 +133,15 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
                 .collect(Collectors.toSet());
 
         for (Guid dataCenterId : dataCenterIds) {
-            List<Network> providerNetworksInDataCenter = providerNetworksInDb.stream()
+            Map<String, Network> providerNetworksInDataCenter = providerNetworksInDb.stream()
                     .filter(network -> dataCenterId.equals(network.getDataCenterId()))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toMap(
+                            network -> network.getProvidedBy().getExternalId(),
+                            network -> network));
 
-            providerNetworksInDataCenter.stream()
+            providerNetworksInDataCenter.values().stream()
                     .filter(network -> !providedNetworkIds.contains(network.getProvidedBy().getExternalId()))
                     .forEach(network -> removeNetwork(network.getId()));
-
-            Set<String> networksInDataCenterExternalIds = externalIds(providerNetworksInDataCenter);
 
             List<Guid> clusterInDataCenterIds = clusters.stream()
                     .filter(cluster -> dataCenterId.equals(cluster.getStoragePoolId()))
@@ -148,17 +149,31 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
                     .collect(Collectors.toList());
 
             for (Network network : providedNetworks) {
-                if (!networksInDataCenterExternalIds.contains(network.getProvidedBy().getExternalId())) {
+                Network networkInDataCenter = providerNetworksInDataCenter.get(
+                        network.getProvidedBy().getExternalId());
+                if (networkInDataCenter == null) {
                     ActionReturnValue importReturnValue = importNetwork(dataCenterId, network);
                     if (importReturnValue.getSucceeded()) {
                         network.setId(importReturnValue.getActionReturnValue());
                         propagateReturnValue(networkHelper.attachNetworkToClusters(network.getId(),
                                 clusterInDataCenterIds));
                     }
+                } else {
+                    updateNetwork(dataCenterId, network, networkInDataCenter);
                 }
             }
         }
         setSucceeded(!errorOccurred);
+    }
+
+    private void updateNetwork(Guid dataCenterId, Network externalNetwork, Network networkInDataCenter) {
+        if (!networkInDataCenter.getName().equals(externalNetwork.getName())) {
+            networkInDataCenter.setName(externalNetwork.getName());
+            AddNetworkStoragePoolParameters parameters =
+                    new AddNetworkStoragePoolParameters(dataCenterId, networkInDataCenter);
+            propagateReturnValue(runInternalAction(ActionType.UpdateNetwork, parameters,
+                    getInternalCommandContext()));
+        }
     }
 
     private ActionReturnValue importNetwork(Guid dataCenterId, Network network) {
