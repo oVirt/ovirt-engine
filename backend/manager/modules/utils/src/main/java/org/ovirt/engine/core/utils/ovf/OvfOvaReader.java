@@ -200,7 +200,7 @@ public class OvfOvaReader extends OvfReader {
         try {
             image.setImageId(new Guid(fileRef));
         } catch (Exception ex) {
-            log.warn("could not retrieve volume id of {} from ovf, generating new guid", diskId);
+            log.warn("could not retrieve volume id of {} from ovf, generating new guid", fileRef);
             image.setImageId(Guid.newGuid());
         }
         try {
