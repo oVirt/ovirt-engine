@@ -822,8 +822,9 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("devices");
 
-        if (vm.getClusterArch() != ArchitectureType.s390x) {
-            // no mouse or tablet for s390x
+        if (vm.getClusterArch() != ArchitectureType.s390x &&
+            !(vm.getClusterArch().getFamily() == ArchitectureType.ppc && vm.getVmType() == VmType.HighPerformance)) {
+            // no mouse or tablet for s390x and for HP VMS with ppc architecture type
             writeInput();
         }
 

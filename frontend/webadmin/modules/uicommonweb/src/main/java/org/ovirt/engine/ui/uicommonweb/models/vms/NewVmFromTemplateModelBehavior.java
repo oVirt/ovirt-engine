@@ -61,7 +61,7 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
 
         // since host_cpu_flags parameter (i.e. pass-through host cpu) is not part of template properties,
         // then set it in case of new VM from High-performance template
-        if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
+        if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance && !clusterHasPpcArchitecture()) {
             getModel().getHostCpu().setEntity(true);
         }
         updateIsDisksAvailable();

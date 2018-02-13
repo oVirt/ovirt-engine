@@ -845,7 +845,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    private boolean clusterHasPpcArchitecture() {
+    protected boolean clusterHasPpcArchitecture() {
         Cluster cluster = getModel().getSelectedCluster();
 
         return cluster != null
@@ -1314,7 +1314,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             // Host tab
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.PINNED_TO_HOST);
-            getModel().getHostCpu().setEntity(true);
+            if (!clusterHasPpcArchitecture()) {
+                getModel().getHostCpu().setEntity(true);
+            }
 
             // Resouce allocation tab
             getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
