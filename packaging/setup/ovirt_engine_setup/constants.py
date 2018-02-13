@@ -154,6 +154,13 @@ class FileLocations(object):
         'versionlock.list',
     )
 
+    OVIRT_ENGINE_YUM_VERSIONLOCK_CONF = os.path.join(
+        SYSCONFDIR,
+        'yum',
+        'pluginconf.d',
+        'versionlock.conf',
+    )
+
     OVIRT_SETUP_POST_INSTALL_CONFIG = os.path.join(
         '%s.d' % OVIRT_OVIRT_SETUP_CONFIG_FILE,
         '20-setup-ovirt-post.conf'
