@@ -107,7 +107,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         doChangeDefaultHost(template.getDedicatedVmForVdsList());
         updateRngDevice(template.getId());
         getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
-        if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
+        if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance && !clusterHasPpcArchitecture()) {
             getModel().getHostCpu().setEntity(true);
         }
     }
