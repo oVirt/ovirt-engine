@@ -668,7 +668,9 @@ rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
 # /var creation
 #
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
-install -dm 755 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible}
+# see also relevant %dir line to set permissions
+install -dm 700 "%{buildroot}/%{engine_log}"
+install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 
@@ -920,7 +922,8 @@ fi
 
 %files -f .mfiles-base
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
-%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
+# see also relevant install command to set permissions
+%dir %attr(700, %{engine_user}, %{engine_group}) %{engine_log}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/dump
 %dir %{engine_data}
 %dir %{engine_data}/bin
