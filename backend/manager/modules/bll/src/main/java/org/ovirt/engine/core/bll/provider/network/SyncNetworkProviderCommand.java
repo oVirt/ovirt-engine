@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
@@ -67,6 +69,9 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
 
     @Inject
     private NetworkDao networkDao;
+
+    @Inject
+    private NetworkClusterDao networkClusterDao;
 
     @Inject
     private ProviderDao providerDao;
@@ -160,6 +165,7 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
                     }
                 } else {
                     updateNetwork(dataCenterId, network, networkInDataCenter);
+                    updateNetworkClusters(clusterInDataCenterIds, network, networkInDataCenter);
                 }
             }
         }
@@ -173,6 +179,21 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
                     new AddNetworkStoragePoolParameters(dataCenterId, networkInDataCenter);
             propagateReturnValue(runInternalAction(ActionType.UpdateNetwork, parameters,
                     getInternalCommandContext()));
+        }
+    }
+
+    private void updateNetworkClusters(List<Guid> clusterInDataCenterIds, Network externalNetwork,
+            Network networkInDataCenter) {
+        Set<Guid> networkClustersWithNetwork = networkClusterDao.getAllForNetwork(networkInDataCenter.getId()).stream()
+                .map(NetworkCluster::getClusterId)
+                .collect(Collectors.toSet());
+
+        List<Guid> clustersToAttach = clusterInDataCenterIds.stream()
+                .filter(id -> !networkClustersWithNetwork.contains(id))
+                .collect(Collectors.toList());
+
+        if (clustersToAttach.size() > 0) {
+            propagateReturnValue(networkHelper.attachNetworkToClusters(networkInDataCenter.getId(), clustersToAttach));
         }
     }
 
