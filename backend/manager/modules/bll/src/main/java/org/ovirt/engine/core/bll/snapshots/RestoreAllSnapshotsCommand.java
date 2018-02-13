@@ -202,7 +202,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private void initializeSnapshotsLeasesDomainIds() {
         previewedSnapshotLeaseDomainId = getVm().getLeaseStorageDomainId();
         Snapshot activeBeforeSnapshot = snapshotDao.get(getVmId(), SnapshotType.PREVIEW);
-        if (activeBeforeSnapshot.getVmConfiguration() != null) {
+        // activeBeforeSnapshot can be null in case of restore of stateless VM
+        if (activeBeforeSnapshot != null && activeBeforeSnapshot.getVmConfiguration() != null) {
             activeBeforeSnapshotLeaseDomainId = OvfUtils.fetchLeaseDomainId(activeBeforeSnapshot.getVmConfiguration());
         }
     }
