@@ -24,6 +24,7 @@ public class CryptMD5 {
     private static final String SALT_PREFIX = "$1$";
     private static final String SALT_DELIMITER = "$";
     private static final int SALT_MAX_LENGTH = 8;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     protected static String encode(byte b1, byte b2, byte b3, int n) {
         StringBuilder result = new StringBuilder();
@@ -116,10 +117,9 @@ public class CryptMD5 {
     }
 
     public static String crypt(String password) {
-        SecureRandom random = new SecureRandom();
         byte[] r = new byte[SALT_MAX_LENGTH];
         char[] salt = new char[r.length];
-        random.nextBytes(r);
+        SECURE_RANDOM.nextBytes(r);
         for (int i=0;i<r.length;i++) {
             salt[i] = b64t[(r[i]&0xff) % b64t.length];
         }
