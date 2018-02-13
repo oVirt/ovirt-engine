@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.EditorVisitor;
 import com.google.gwt.editor.client.impl.BaseEditorDriver;
 
 /**
@@ -19,8 +18,12 @@ import com.google.gwt.editor.client.impl.BaseEditorDriver;
 public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E extends Editor<T>>
         extends BaseEditorDriver<T, E> implements UiCommonEditorDriver<T, E> {
 
+    private UiCommonListenerMap listenerMap;
+    private UiCommonEventMap eventMap;
+    private Map<String, Model> ownerModels;
+
     private IEventListener<PropertyChangedEventArgs> propertyChangeListener;
-    private EditorVisitor visitor;
+    private final UiCommonEditorVisitor visitor = new UiCommonEditorVisitor();
 
     /**
      * {@inheritDoc} <BR>
@@ -28,34 +31,65 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
      */
     @Override
     public void edit(T object) {
-        doEdit(object);
+        // Cleanup on previously edited object
+        removePropertyChangeListener(getObject());
 
-        if (propertyChangeListener != null) {
+        // Initialize Editor Driver with newly edited object
+        doEdit(object);
+        updateUiCommonMaps();
+        updateUiCommonEditorVisitor();
+        updatePropertyChangeListener(object);
+
+        // Traverse Editor hierarchy to handle UiCommon specifics
+        accept(visitor);
+    }
+
+    private void cleanupUiCommonMaps() {
+        if (listenerMap != null) {
+            listenerMap.clear();
+        }
+        if (eventMap != null) {
+            eventMap.clear();
+        }
+        if (ownerModels != null) {
+            ownerModels.clear();
+        }
+    }
+
+    private void updateUiCommonMaps() {
+        cleanupUiCommonMaps();
+
+        // Map creator methods depend on currently edited object
+        listenerMap = getListenerMap();
+        eventMap = getEventMap();
+        ownerModels = getOwnerModels();
+    }
+
+    private void updateUiCommonEditorVisitor() {
+        visitor.setEventMap(eventMap);
+        visitor.setOwnerModels(ownerModels);
+    }
+
+    private void removePropertyChangeListener(T object) {
+        if (object != null) {
             object.getPropertyChangedEvent().removeListener(propertyChangeListener);
         }
+    }
 
-        UiCommonListenerMap listenerMap = getListenerMap();
+    /**
+     * Register a "PropertyChangedEvent" to get Model changes.
+     */
+    private void updatePropertyChangeListener(T object) {
+        removePropertyChangeListener(object);
 
         propertyChangeListener = (ev, sender, args) -> {
             String propName = args.propertyName;
             listenerMap.callListener(propName, "PropertyChanged"); //$NON-NLS-1$
         };
 
-        // Register a "PropertyChangedEvent" to get Model changes
-        object.getPropertyChangedEvent().addListener(propertyChangeListener);
-
-        accept(getEditorVisitor());
-    }
-
-    /**
-     * Get the {@code EditorVisitor}, creating one if it doesn't exist yet.
-     */
-    protected EditorVisitor getEditorVisitor() {
-        // Visit editors
-        if (visitor == null) {
-            visitor = new UiCommonEditorVisitor<>(getEventMap(), getOwnerModels());
+        if (object != null) {
+            object.getPropertyChangedEvent().addListener(propertyChangeListener);
         }
-        return visitor;
     }
 
     @Override
@@ -89,12 +123,9 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
      * Clean up the Editor Driver itself.
      */
     protected void cleanupEditorDriver() {
-        // At this point, model cleanup is already done
-        propertyChangeListener = null;
-
-        getListenerMap().clear();
-        getEventMap().clear();
-        getOwnerModels().clear();
+        // At this point, the model is already cleaned up
+        cleanupUiCommonMaps();
+        removePropertyChangeListener(getObject());
     }
 
 }

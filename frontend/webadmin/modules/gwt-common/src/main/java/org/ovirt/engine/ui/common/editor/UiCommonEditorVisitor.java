@@ -27,17 +27,17 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
  *
  * @see UiCommonEditor
  */
-public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
+public class UiCommonEditorVisitor extends EditorVisitor {
 
-    private final UiCommonEventMap eventMap;
-    private final Map<String, Model> ownerModels;
+    private UiCommonEventMap eventMap;
+    private Map<String, Model> ownerModels;
     private int tabIndexCounter = 0;
 
-    /**
-     * A Visitor for UICommon Edited Models.
-     */
-    public UiCommonEditorVisitor(UiCommonEventMap eventMap, Map<String, Model> ownerModels) {
+    public void setEventMap(UiCommonEventMap eventMap) {
         this.eventMap = eventMap;
+    }
+
+    public void setOwnerModels(Map<String, Model> ownerModels) {
         this.ownerModels = ownerModels;
     }
 
