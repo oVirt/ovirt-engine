@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Queryable;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
@@ -207,6 +208,25 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 bytesSent,
                 bytesTotal
         );
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("phase", getPhase())
+                .append("type", getType())
+                .append("active", getActive())
+                .append("lastUpdated", getLastUpdated())
+                .append("message", getMessage())
+                .append("vdsId", getVdsId())
+                .append("diskId", getDiskId())
+                .append("imagedTicketId", getImagedTicketId())
+                .append("proxyUri", getProxyUri())
+                .append("signedTicket", getSignedTicket())
+                .append("bytesSent", getBytesSent())
+                .append("bytesTotal", getBytesTotal())
+                .build();
     }
 
     @Override
