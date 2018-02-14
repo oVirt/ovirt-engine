@@ -47,7 +47,7 @@ public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
      * @param maxMemoryOfVdsInCluster maximum available memory for scheduling of a vds from all the available hosts
      * @return weight score for a single host
      */
-    protected int calcHostScore(float maxMemoryOfVdsInCluster, VDS vds) {
+    private int calcHostScore(float maxMemoryOfVdsInCluster, VDS vds) {
         int score = Math.round(((vds.getMaxSchedulingMemory() - 1) * (MaxSchedulerWeight - 1))
                 / (maxMemoryOfVdsInCluster - 1));
         return MaxSchedulerWeight - score;

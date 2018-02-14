@@ -50,16 +50,16 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
     @Test
     public void testScoreForCpuLoad() throws Exception {
         Map<Guid, BusinessEntity<Guid>> cache = newCache();
-        final Map<Guid, VDS> hosts = loadHosts("basic_power_saving_hosts_cpu_load.csv", cache);
-        final Map<Guid, VM> vms = loadVMs("basic_power_saving_vms.csv", cache);
+        final Map<Guid, VDS> hosts = loadHosts("basic_balancing_hosts_cpu_load.csv", cache);
+        final Map<Guid, VM> vms = loadVMs("basic_balancing_vms.csv", cache);
         testScore(evenDistributionCPUWeightPolicyUnit, hosts, vms, DESTINATION_HOST);
     }
 
     @Test
     public void testScoreForMemoryLoad() throws Exception {
         Map<Guid, BusinessEntity<Guid>> cache = newCache();
-        final Map<Guid, VDS> hosts = loadHosts("basic_power_saving_hosts_mem_load.csv", cache);
-        final Map<Guid, VM> vms = loadVMs("basic_power_saving_vms.csv", cache);
+        final Map<Guid, VDS> hosts = loadHosts("basic_balancing_hosts_mem_load.csv", cache);
+        final Map<Guid, VM> vms = loadVMs("basic_balancing_vms.csv", cache);
         testScore(evenDistributionMemoryWeightPolicyUnit, hosts, vms, DESTINATION_HOST);
     }
 
@@ -74,7 +74,7 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
         }
     }
 
-    private <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
+    protected  <T extends PolicyUnitImpl> Guid selectedBestHost(T unit, VM vm, ArrayList<VDS> hosts) {
         List<Pair<Guid, Integer>> scores = unit.score(new Cluster(), hosts, vm, null);
         scores.sort(Comparator.comparing(Pair::getSecond));
         return scores.get(0).getFirst();
