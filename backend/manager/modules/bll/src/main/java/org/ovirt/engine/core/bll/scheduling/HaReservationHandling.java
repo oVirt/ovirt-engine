@@ -27,11 +27,9 @@ public class HaReservationHandling {
     private static final Logger log = LoggerFactory.getLogger(HaReservationHandling.class);
 
     private final PendingResourceManager pendingResourceManager;
-    private final SlaValidator slaValidator;
 
-    public HaReservationHandling(PendingResourceManager pendingResourceManager, SlaValidator slaValidator) {
+    public HaReservationHandling(PendingResourceManager pendingResourceManager) {
         this.pendingResourceManager = pendingResourceManager;
-        this.slaValidator = slaValidator;
     }
 
     /**
@@ -102,7 +100,7 @@ public class HaReservationHandling {
             if (vm.getUsageCpuPercent() != null) {
                 curVmCpuPercent =
                         vm.getUsageCpuPercent() * vm.getNumOfCpus()
-                                / slaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
+                                / SlaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
             }
             log.debug("VM '{}'. CPU usage: {}%, RAM required: {}MB", vm.getName(), curVmCpuPercent, curVmMemSize);
 

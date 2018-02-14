@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -39,9 +38,6 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
 
     @Mock
     private VdsDao vdsDao;
-
-    @Spy
-    SlaValidator slaValidator = new SlaValidator();
 
     @Spy
     @InjectMocks

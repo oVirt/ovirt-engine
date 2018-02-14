@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
@@ -29,9 +27,6 @@ import org.slf4j.LoggerFactory;
 public class CPUPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CPUPolicyUnit.class);
 
-    @Inject
-    private SlaValidator slaValidator;
-
     public CPUPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -42,7 +37,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
         List<VDS> list = new ArrayList<>();
 
         for (VDS vds : hosts) {
-            Integer cores = slaValidator.getEffectiveCpuCores(vds, cluster.getCountThreadsAsCores());
+            Integer cores = SlaValidator.getEffectiveCpuCores(vds, cluster.getCountThreadsAsCores());
             if (cores != null && vm.getNumOfCpus(false) > cores) {
                 messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_CORES.toString());
                 log.debug("Host '{}' has less cores ({}) than vm cores ({})",
@@ -55,10 +50,5 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
             list.add(vds);
         }
         return list;
-    }
-
-    // Test only
-    public void setSlaValidator(SlaValidator slaValidator) {
-        this.slaValidator = slaValidator;
     }
 }

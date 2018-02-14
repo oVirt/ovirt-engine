@@ -109,8 +109,6 @@ public class SchedulingManager implements BackendService {
     @Inject
     private VmOverheadCalculator vmOverheadCalculator;
     @Inject
-    private SlaValidator slaValidator;
-    @Inject
     private ExternalSchedulerBroker externalBroker;
     @Inject
     private VfScheduler vfScheduler;
@@ -848,7 +846,7 @@ public class SchedulingManager implements BackendService {
         vm.setStatisticsData(vmStatisticsDao.get(vm.getId()));
 
         // Subtract cpu load
-        int hostCpus = slaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
+        int hostCpus = SlaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
         float cpuCoef = ((float) vm.getNumOfCpus()) / ((float) hostCpus);
         host.setUsageCpuPercent(host.getUsageCpuPercent() - Math.round(vm.getUsageCpuPercent() * cpuCoef));
 
@@ -930,8 +928,7 @@ public class SchedulingManager implements BackendService {
         log.debug("HA Reservation check timer entered.");
         List<Cluster> clusters = clusterDao.getAll();
         if (clusters != null) {
-            HaReservationHandling haReservationHandling = new HaReservationHandling(getPendingResourceManager(),
-                    slaValidator);
+            HaReservationHandling haReservationHandling = new HaReservationHandling(getPendingResourceManager());
             for (Cluster cluster : clusters) {
                 if (cluster.supportsHaReservation()) {
                     List<VDS> returnedFailedHosts = new ArrayList<>();

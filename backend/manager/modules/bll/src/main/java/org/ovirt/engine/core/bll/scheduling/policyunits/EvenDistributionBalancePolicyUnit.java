@@ -3,11 +3,8 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -32,9 +29,6 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 )
 public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
 
-    @Inject
-    private SlaValidator slaValidator;
-
     private static final String HIGH_UTILIZATION = PolicyUnitParameter.HIGH_UTILIZATION.getDbName();
 
     public EvenDistributionBalancePolicyUnit(PolicyUnit policyUnit,
@@ -53,7 +47,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
         final long overUtilizedMemory = parameters.containsKey(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName()) ?
                 Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) : 0L;
 
-        return new FindVmAndDestinations(cluster, highCpuUtilization, overUtilizedMemory, slaValidator);
+        return new FindVmAndDestinations(cluster, highCpuUtilization, overUtilizedMemory);
     }
 
     @Override
