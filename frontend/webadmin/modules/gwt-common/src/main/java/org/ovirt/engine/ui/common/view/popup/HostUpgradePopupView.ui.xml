@@ -4,9 +4,6 @@
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
     <ui:style>
-        .content {
-        }
-
         .messageLabel {
             padding: 10px;
         }
@@ -14,9 +11,9 @@
 
     <d:SimpleDialogPanel width="450px" height="270px">
         <d:content>
-            <g:FlowPanel addStyleNames="{style.content}">
+            <g:FlowPanel>
                 <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
-                <ge:EntityModelCheckBoxEditor ui:field="reboot" visible="true"/>
+                <ge:EntityModelCheckBoxEditor ui:field="reboot" visible="true" usePatternFly="true"/>
             </g:FlowPanel>
         </d:content>
     </d:SimpleDialogPanel>
