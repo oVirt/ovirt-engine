@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
@@ -62,9 +61,6 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
 
     @Inject
     private VdsDao vdsDao;
-
-    @Inject
-    private SlaValidator slaValidator;
 
     public PowerSavingBalancePolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -296,7 +292,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                         Long.parseLong(parameters.get(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName())) :
                         0L;
 
-        return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory, slaValidator);
+        return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory);
     }
 
     @Override

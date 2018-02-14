@@ -96,7 +96,7 @@ public class SlaValidator {
         return vmMemRequired <= vdsMemLimit;
     }
 
-    public Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {
+    public static Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {
         if (vds.getCpuThreads() != null
                 && countThreadsAsCores) {
             return vds.getCpuThreads();
@@ -114,7 +114,7 @@ public class SlaValidator {
      * @param host to check for online cpus
      * @return online cpus or empty collection if no information is available
      */
-    public Collection<Integer> getOnlineCpus(final VDS host) {
+    public static Collection<Integer> getOnlineCpus(final VDS host) {
         final Collection<Integer> cpus = new ArrayList<>();
         if (StringUtils.isEmpty(host.getOnlineCpus())) {
             return cpus;

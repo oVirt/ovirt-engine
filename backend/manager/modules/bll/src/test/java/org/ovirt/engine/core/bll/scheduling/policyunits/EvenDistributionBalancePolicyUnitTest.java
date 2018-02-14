@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -40,9 +39,6 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
                     MockConfigRule.mockConfig(ConfigValues.VcpuConsumptionPercentage, 20),
                     MockConfigRule.mockConfig(ConfigValues.UtilizationThresholdInPercent, 80)
             );
-
-    @Spy
-    private SlaValidator slaValidator = new SlaValidator();
 
     @Spy
     @InjectMocks
