@@ -1,17 +1,11 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import java.util.List;
-import java.util.Map;
-
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 
 @SchedulingUnit(
         guid = "736999d0-1023-46a4-9a75-1316ed50e15b",
@@ -28,7 +22,8 @@ public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPol
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        return reverseEvenDistributionScore(cluster, hosts, vm, parameters);
+    protected int calcHostScore(VDS vds, VM vm, boolean countThreadsAsCores) {
+        int maxScore = MaxSchedulerWeight - 1;
+        return maxScore - super.calcHostScore(vds, vm, countThreadsAsCores);
     }
 }

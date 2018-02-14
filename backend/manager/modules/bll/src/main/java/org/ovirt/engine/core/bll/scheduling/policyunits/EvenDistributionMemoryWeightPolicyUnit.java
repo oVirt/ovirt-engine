@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -22,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
                 "Gives hosts with higher available memory, lower weight (means that hosts with more available memory are more"
                         + " likely to be selected)"
 )
-public class EvenDistributionMemoryWeightPolicyUnit extends EvenDistributionWeightPolicyUnit {
+public class EvenDistributionMemoryWeightPolicyUnit extends PolicyUnitImpl {
 
     public EvenDistributionMemoryWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -34,19 +35,25 @@ public class EvenDistributionMemoryWeightPolicyUnit extends EvenDistributionWeig
         float maxMemoryOfVdsInCluster = getMaxMemoryOfVdsInCluster(hosts);
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
-            scores.add(new Pair<>(vds.getId(), calcEvenDistributionScore(maxMemoryOfVdsInCluster, vds, vm, false)));
+            scores.add(new Pair<>(vds.getId(), calcHostScore(maxMemoryOfVdsInCluster, vds)));
         }
         return scores;
     }
 
-    @Override
-    protected int calcEvenDistributionScore(float maxMemoryOfVdsInCluster,
-            VDS vds,
-            VM vm,
-            boolean countThreadsAsCores) {
+    /**
+     * Calculate a single host weight score according to various parameters.
+     *
+     * @param vds                     host on which the score is calculated for
+     * @param maxMemoryOfVdsInCluster maximum available memory for scheduling of a vds from all the available hosts
+     * @return weight score for a single host
+     */
+    protected int calcHostScore(float maxMemoryOfVdsInCluster, VDS vds) {
         int score = Math.round(((vds.getMaxSchedulingMemory() - 1) * (MaxSchedulerWeight - 1))
                 / (maxMemoryOfVdsInCluster - 1));
         return MaxSchedulerWeight - score;
     }
 
+    private float getMaxMemoryOfVdsInCluster(List<VDS> hosts) {
+        return hosts.stream().map(VDS::getFreeVirtualMemory).max(Float::compareTo).get();
+    }
 }
