@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,7 +9,6 @@ import static org.mockito.Mockito.doReturn;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,7 +32,9 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolicyUnitTest {
-    static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
+    private static final Guid HOST_A = new Guid("087fc690-de02-11e4-8830-0800200c9a66");
+    private static final Guid HOST_B = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
+    private static final Guid HOST_C = new Guid("087fc692-de02-11e4-8830-0800200c9a66");
 
     @Mock
     private VdsDao vdsDao;
@@ -73,9 +73,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
 
-        List<Guid> validMigrationTargets = validMigrationTargets(result);
-        assertEquals(1, validMigrationTargets.size());
-        assertEquals(DESTINATION_HOST, validMigrationTargets.get(0));
+        assertThat(validMigrationTargets(result)).containsOnly(HOST_B);
     }
 
     @Test
@@ -96,9 +94,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        List<Guid> validMigrationTargets = validMigrationTargets(result);
-        assertEquals(1, validMigrationTargets.size());
-        assertEquals(DESTINATION_HOST, validMigrationTargets.get(0));
+
+        assertThat(validMigrationTargets(result)).containsOnly(HOST_B, HOST_C);
     }
 
     @Test
@@ -108,7 +105,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         final Map<Guid, VM> vms = loadVMs("basic_power_saving_vms.csv", cache);
 
         Map<String, String> parameters = new HashMap<>();
-        parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "600");
+        parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
 
         ArrayList<String> messages = new ArrayList<>();
 
@@ -119,9 +116,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
         assertNotNull(result.get().getVmToMigrate());
-        List<Guid> validMigrationTargets = validMigrationTargets(result);
-        assertEquals(1, validMigrationTargets.size());
-        assertNotEquals(DESTINATION_HOST, validMigrationTargets.get(0));
+
+        assertThat(validMigrationTargets(result)).containsOnly(HOST_A, HOST_B);
     }
 
     @Test
@@ -142,9 +138,8 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertTrue(result.get().isValid());
-        List<Guid> validMigrationTargets = validMigrationTargets(result);
-        assertEquals(1, validMigrationTargets.size());
-        assertEquals(DESTINATION_HOST, validMigrationTargets.get(0));
+
+        assertThat(validMigrationTargets(result)).containsOnly(HOST_B);
     }
 
     @Test
