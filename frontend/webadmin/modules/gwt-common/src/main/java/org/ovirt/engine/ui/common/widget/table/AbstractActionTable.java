@@ -373,7 +373,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                   return;
                 }
                 T value = event.getValue();
-                selectionModel.setSelected(value, true);
+                if(!this.selectionModel.asMultiSelectionModel().isMultiSelectEnabled() &&
+                   !this.selectionModel.asMultiSelectionModel().isMultiRangeSelectEnabled()) {
+                    selectionModel.setSelected(value, true);
+                }
             }
         });
         addContextMenuHandler(tableContainer);
