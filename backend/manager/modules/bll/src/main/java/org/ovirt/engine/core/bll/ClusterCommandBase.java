@@ -6,9 +6,11 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 
 public abstract class ClusterCommandBase<T extends ClusterParametersBase> extends CommandBase<T> {
@@ -19,6 +21,8 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
     protected CpuFlagsManagerHandler cpuFlagsManagerHandler;
     @Inject
     private ClusterDao clusterDao;
+    @Inject
+    private DbFacade dbFacade;
 
     private Cluster cluster;
 
@@ -29,6 +33,10 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
     public ClusterCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setClusterId(parameters.getClusterId());
+    }
+
+    protected ClusterValidator getClusterValidator(Cluster cluster) {
+        return new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
     }
 
     @Override
