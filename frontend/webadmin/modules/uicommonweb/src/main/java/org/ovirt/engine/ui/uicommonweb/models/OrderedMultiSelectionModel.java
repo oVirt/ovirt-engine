@@ -48,11 +48,19 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
         this.multiSelectEnabled = multiSelectEnabled;
     }
 
+    public boolean isMultiSelectEnabled() {
+        return multiSelectEnabled;
+    }
+
     /**
      * Turns multiple 'range' selection feature on or off.
      */
     public void setMultiRangeSelectEnabled(boolean multiRangeSelectEnabled) {
         this.multiRangeSelectEnabled = multiRangeSelectEnabled;
+    }
+
+    public boolean isMultiRangeSelectEnabled() {
+        return multiRangeSelectEnabled;
     }
 
     /**
