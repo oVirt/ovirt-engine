@@ -86,7 +86,7 @@ public abstract class NetworkInterface<T extends NetworkStatistics>
      *            the MAC address
      */
     public void setMacAddress(String macAddress) {
-        this.macAddress = macAddress;
+        this.macAddress = macAddress == null ? null : macAddress.toLowerCase();
     }
 
     /**

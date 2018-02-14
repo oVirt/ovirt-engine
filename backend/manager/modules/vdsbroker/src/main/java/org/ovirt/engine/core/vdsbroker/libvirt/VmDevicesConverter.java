@@ -484,7 +484,7 @@ public class VmDevicesConverter {
             String macAddress = parseMacAddress(node);
             // MAC address is a unique identifier of network interface devices
             VmNetworkInterface dbInterface = dbInterfaces.stream()
-                    .filter(iface -> iface.getMacAddress().equals(macAddress))
+                    .filter(iface -> iface.getMacAddress().equalsIgnoreCase(macAddress))
                     .findFirst()
                     .orElse(null);
 

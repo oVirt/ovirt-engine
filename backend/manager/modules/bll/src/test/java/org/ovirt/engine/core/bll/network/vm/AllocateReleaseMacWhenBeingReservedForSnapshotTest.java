@@ -26,9 +26,9 @@ public abstract class AllocateReleaseMacWhenBeingReservedForSnapshotTest {
     private static final Guid UPDATED_NIC_ID = Guid.newGuid();
     private static final Guid OTHER_NIC_ID = Guid.newGuid();
     protected static final Guid VM_ID = Guid.newGuid();
-    protected static final String OLD_MAC = "oldMac";
-    protected static final String NEW_MAC = "newMac";
-    protected static final String OTHER_MAC = "otherMac";
+    protected static final String OLD_MAC = "oldmac";
+    protected static final String NEW_MAC = "newmac";
+    protected static final String OTHER_MAC = "othermac";
 
     protected VmNetworkInterface nicBeingUpdated = createVnNetworkInterface("nicBeingUpdated", UPDATED_NIC_ID);
     protected VmNetworkInterface updatingNic = createVnNetworkInterface("updatingNic", UPDATED_NIC_ID);

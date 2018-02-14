@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.hamcrest.text.IsEqualIgnoringCase;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
@@ -30,7 +31,7 @@ public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNic, Vd
         assertEquals(model.getIp().getNetmask(), transform.getIp().getNetmask());
         assertEquals(model.getIp().getGateway(), transform.getIp().getGateway());
         assertNotNull(transform.getMac());
-        assertEquals(model.getMac().getAddress(), transform.getMac().getAddress());
+        assertThat(model.getMac().getAddress(), IsEqualIgnoringCase.equalToIgnoringCase(transform.getMac().getAddress()));
         assertNotNull(model.getBonding());
         assertEquals(model.getBonding().getOptions().getOptions().size(), transform.getBonding()
                 .getOptions()
