@@ -16,8 +16,9 @@
             width: 95%;
         }
 
-        .inline {
+        .useClusterProviderCheckbox {
             display: inline-block;
+            width: 90%;
         }
     </ui:style>
 
@@ -27,7 +28,7 @@
                 <ge:EntityModelCheckBoxEditor ui:field="useClusterDefaultNetworkProvider"
                                               label="{constants.useClusterDefaultNetworkProvider}"
                                               usePatternFly="true"
-                                              addStyleNames="{style.inline}"/>
+                                              addStyleNames="{style.useClusterProviderCheckbox}"/>
             </b:Column>
         </b:Row>
         <b:Row>
