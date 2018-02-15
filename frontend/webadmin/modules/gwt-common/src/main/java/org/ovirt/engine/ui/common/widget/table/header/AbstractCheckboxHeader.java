@@ -14,7 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
-    private static final String CHECKBOX_HEADER_STYLE = "position: relative; top: 3px"; //$NON-NLS-1$
+    private static final String CHECKBOX_HEADER_STYLE = "position: relative; top: 3px;"; //$NON-NLS-1$
 
     private static final SafeHtml INPUT_CHECKED_DISABLED = SafeHtmlUtils.fromSafeConstant(
             "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" tabindex=\"-1\" checked style=\"" + CHECKBOX_HEADER_STYLE + "\"/>"); //$NON-NLS-1$ $NON-NLS-2$
