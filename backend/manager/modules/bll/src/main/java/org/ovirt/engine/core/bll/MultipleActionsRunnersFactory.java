@@ -83,6 +83,7 @@ public class MultipleActionsRunnersFactory {
             throw new UnsupportedOperationException("AddNetworkAttachment, UpdateNetworkAttachment, and RemoveNetworkAttachment cannot be run using MultipleActionsRunner");
         case RemoveDiskProfile:
         case RemoveCpuProfile:
+        case RemoveNetwork:
             runner = new SequentialMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
         default:
