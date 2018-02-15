@@ -38,10 +38,10 @@
                 <ge:EntityModelCheckBoxEditor ui:field="publicUseEditor" addStyleNames="{style.floatLeft}" label="{constants.profilePublicUseInstanceTypeLabel}" />
                 <d:InfoIcon ui:field="publicInfo" addStyleNames="{style.infoIcon}"/>
             </b:Column>
-            <b:Column size="SM_1">
+            <b:Column size="SM_2">
                 <g:Label text="{constants.profileQoSInstanceTypeLabel}" />
             </b:Column>
-            <b:Column size="SM_4">
+            <b:Column size="SM_3">
                 <e:ListModelListBoxEditor ui:field="networkQoSEditor" />
             </b:Column>
         </b:Row>
