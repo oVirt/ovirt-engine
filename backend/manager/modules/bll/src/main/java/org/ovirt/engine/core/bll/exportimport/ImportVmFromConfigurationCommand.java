@@ -57,7 +57,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
-    private VM vmFromConfiguration;
 
     private List<String> missingAffinityGroups = new ArrayList<>();
     private List<String> missingAffinityLabels = new ArrayList<>();
@@ -190,7 +189,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                 // We should get only one entity, since we fetched the entity with a specific Storage Domain
                 ovfEntityData = ovfEntityDataList.get(0);
                 FullEntityOvfData fullEntityOvfData = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
-                vmFromConfiguration = fullEntityOvfData.getVm();
+                VM vmFromConfiguration = fullEntityOvfData.getVm();
                 if (Guid.isNullOrEmpty(getParameters().getClusterId())) {
                     Cluster cluster =
                             drMappingHelper.getMappedCluster(fullEntityOvfData.getClusterName(),
@@ -257,11 +256,13 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     }
 
     protected void addPermissionsToDB() {
-        drMappingHelper.addPermissions(getParameters().getDbUsers(),
-                getParameters().getUserToRoles(),
-                getVmId(),
-                VdcObjectType.VM,
-                getParameters().getRoleMap());
+        if (isImagesAlreadyOnTarget()) {
+            drMappingHelper.addPermissions(getParameters().getDbUsers(),
+                    getParameters().getUserToRoles(),
+                    getVmId(),
+                    VdcObjectType.VM,
+                    getParameters().getRoleMap());
+        }
     }
 
     @Override
@@ -290,9 +291,11 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     @Override
     public void executeVmCommand() {
         addAuditLogForPartialVMs();
-        // vnic profile mapping should be done only after all validation (including validating the requested
-        // vnic profile id against the DAO) passes and after the vmFromConfiguration object has been initialized
-        drMappingHelper.mapVnicProfiles(vmFromConfiguration.getInterfaces(), getParameters().getExternalVnicProfileMappings());
+        if (isImagesAlreadyOnTarget()) {
+            // vnic profile mapping should be done only after all validation (including validating the requested
+            // vnic profile id against the DAO) passes and after the vmFromConfiguration object has been initialized
+            drMappingHelper.mapVnicProfiles(getVm().getInterfaces(), getParameters().getExternalVnicProfileMappings());
+        }
         super.executeVmCommand();
         if (getSucceeded()) {
             if (isImagesAlreadyOnTarget()) {
