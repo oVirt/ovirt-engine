@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
@@ -59,7 +60,20 @@ public class BackendSnapshotResource
             tryBackParams.setRestoreMemory(action.isRestoreMemory());
         }
         if (action.isSetDisks()) {
+            // Each disk parameter is being mapped to a DiskImage.
             List<DiskImage> disks = collection.mapDisks(action.getDisks());
+
+            if (disks != null) {
+                // In case a disk hasn't specified its image_id, the imageId value is set to Guid.Empty().
+                String noImageId = disks.stream()
+                        .filter(disk -> disk.getImageId().equals(Guid.Empty))
+                        .map(disk -> disk.getId().toString())
+                        .collect(Collectors.joining(","));
+
+                if (!noImageId.isEmpty()) {
+                    badRequest("Missing image ids for disks: " + noImageId);
+                }
+            }
             tryBackParams.setImageIds(getDisksGuidSet(disks));
         }
         tryBackParams.setCorrelationId(RESTORE_SNAPSHOT_CORRELATION_ID); //TODO: if user supplied, override with user value
