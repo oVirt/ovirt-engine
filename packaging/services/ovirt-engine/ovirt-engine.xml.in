@@ -31,6 +31,9 @@
   </extensions>
 
   <system-properties>
+    <!-- Timeout for application deployment: -->
+    <property name="jboss.as.management.blocking.timeout" value="{{ config.getinteger('ENGINE_JBOSS_BLOCKING_TIMEOUT') }}"/>
+
     <!-- Don't let quartz call home to check for updates: -->
     <property name="org.quartz.scheduler.skipUpdateCheck" value="true"/>
 

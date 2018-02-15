@@ -56,6 +56,10 @@ ENGINE_STOP_INTERVAL=1
 ENGINE_USER=@ENGINE_USER@
 ENGINE_GROUP=@ENGINE_GROUP@
 
+# JBOSS application deployment timeout in seconds. The default value is 900 seconds. To change the value permanently
+# create a conf file 99-engine-jboss-blocking-timeout.conf in /etc/ovirt-engine/engine.conf.d/
+ENGINE_JBOSS_BLOCKING_TIMEOUT=900
+
 #
 # These variables control the amount of memory used by the java
 # virtual machine where the engine runs:
