@@ -142,10 +142,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
     }
 
-    protected boolean isDataOperationsBySpm(StorageDomainStatic targetSd) {
-        return !isDataOperationsByHSM(targetSd);
-    }
-
     protected boolean isDataOperationsByHSM(StorageDomainStatic targetSd) {
         return FeatureSupported.dataOperationsByHSM(getStoragePool().getCompatibilityVersion()) &&
                targetSd.getStorageDomainType().isDataDomain();
@@ -153,10 +149,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected boolean isDataOperationsByHSM() {
         return isDataOperationsByHSM(getStorageDomain().getStorageStaticData());
-    }
-
-    protected boolean isDataOperationsBySpm() {
-        return isDataOperationsBySpm(getStorageDomain().getStorageStaticData());
     }
 
     protected boolean performImageVdsmOperation() {
