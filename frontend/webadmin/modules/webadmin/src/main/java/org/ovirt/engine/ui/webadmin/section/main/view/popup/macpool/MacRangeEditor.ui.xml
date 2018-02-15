@@ -27,12 +27,12 @@
             <b:Column size="SM_6">
                 <ge:StringEntityModelTextBoxEditor ui:field="leftBound" label="{constants.macPoolWidgetLeftBound}"
                                                    usePatternFly="true" removeFormGroup="true"
-                                                   widgetColSize="SM_10" labelColSize="SM_2"/>
+                                                   widgetColSize="SM_8" labelColSize="SM_4"/>
             </b:Column>
             <b:Column size="SM_6">
                 <ge:StringEntityModelTextBoxEditor ui:field="rightBound" label="{constants.macPoolWidgetRightBound}"
                                                    usePatternFly="true" removeFormGroup="true"
-                                                   widgetColSize="SM_10" labelColSize="SM_2"/>
+                                                   widgetColSize="SM_8" labelColSize="SM_4"/>
             </b:Column>
         </b:Row>
         <b:Row addStyleNames="{style.countPadding}">
