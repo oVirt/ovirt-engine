@@ -40,7 +40,7 @@
             </b:Column>
         </b:Row>
         <b:Row>
-            <b:Column size="SM_6" addStyleNames="{style.radioButtonsColumn}">
+            <b:Column size="SM_7" addStyleNames="{style.radioButtonsColumn}">
                 <g:FlowPanel addStyleNames="toolbar-pf {style.radioButtons}">
                     <g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton" text="{constants.allRolesLabel}" value="true" />
                     <g:Image resource="{resources.adminImage}" addStyleNames="{style.imageStyle}" />
@@ -49,7 +49,7 @@
                     <g:RadioButton name="rolesRadioButton" ui:field="userRolesRadioButton" text="{constants.userRolesLabel}" />
                 </g:FlowPanel>
             </b:Column>
-            <b:Column size="SM_6" addStyleNames="{style.actionPanelColumn}" ui:field="actionPanelContainer">
+            <b:Column size="SM_5" addStyleNames="{style.actionPanelColumn}" ui:field="actionPanelContainer">
             </b:Column>
         </b:Row>
         <b:Row>
