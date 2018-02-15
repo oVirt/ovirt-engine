@@ -545,8 +545,12 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
           Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(diskImages);
           // verify lease storage domain status
           if (getDstSnapshot().getVmConfiguration() != null) {
-              storageIds.add(OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration()));
+              Guid leaseDomainId = OvfUtils.fetchLeaseDomainId(getDstSnapshot().getVmConfiguration());
+              if (leaseDomainId != null) {
+                  storageIds.add(leaseDomainId);
+              }
           }
+
           MultipleStorageDomainsValidator storageValidator =
                     new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
             if (!validate(storageValidator.allDomainsExistAndActive())
