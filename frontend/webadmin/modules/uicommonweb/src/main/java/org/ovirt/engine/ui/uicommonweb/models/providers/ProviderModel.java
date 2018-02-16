@@ -271,6 +271,10 @@ public class ProviderModel extends Model {
             boolean isNetworkProvider = isTypeNetwork();
             if (isNetworkProvider) {
                 getNeutronAgentModel().init(provider, getType().getSelectedItem());
+                getPluginType().setIsChangeable(true);
+            } else {
+                getPluginType().setIsChangeable(false);
+                getPluginType().setSelectedItem(null);
             }
             getNeutronAgentModel().setIsAvailable(isNetworkProvider);
 
