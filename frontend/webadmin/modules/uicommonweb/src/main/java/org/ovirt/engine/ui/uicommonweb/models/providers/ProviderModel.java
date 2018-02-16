@@ -275,9 +275,7 @@ public class ProviderModel extends Model {
             getNeutronAgentModel().setIsAvailable(isNetworkProvider);
 
             getReadOnly().setIsAvailable(isReadOnlyAware);
-            if (isReadOnlyAware){
-                setReadOnlyEntity();
-            }
+            setReadOnlyEntity();
 
             boolean isVmware = isTypeVmware();
             boolean isKvm = isTypeKVM();
@@ -357,9 +355,10 @@ public class ProviderModel extends Model {
     }
 
     private void setReadOnlyEntity() {
-        if (getIsUnmanaged().getEntity()) {
+        boolean isReadOnlyAware = getType().getSelectedItem().isReadOnlyAware();
+        if (isReadOnlyAware && getIsUnmanaged().getEntity()) {
             getReadOnly().setEntity(false);
-        } else {
+        } else if (isReadOnlyAware) {
             OpenstackNetworkProviderProperties properties =
                     (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
             getReadOnly().setEntity(properties != null ? properties.getReadOnly() : true);
