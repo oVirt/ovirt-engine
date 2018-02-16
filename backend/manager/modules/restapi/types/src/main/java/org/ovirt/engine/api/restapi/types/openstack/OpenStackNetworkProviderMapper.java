@@ -77,28 +77,35 @@ public class OpenStackNetworkProviderMapper {
             }
             entity.setCustomProperties(map);
         }
-        OpenstackNetworkProviderProperties additionalProperties = new OpenstackNetworkProviderProperties();
+        entity.setAdditionalProperties(map(model, entity.getAdditionalProperties()));
+        return entity;
+    }
+
+    @Mapping(from = OpenStackNetworkProvider.class, to = OpenstackNetworkProviderProperties.class)
+    public static OpenstackNetworkProviderProperties map(OpenStackNetworkProvider model,
+            OpenstackNetworkProviderProperties template) {
+        OpenstackNetworkProviderProperties entity =
+                template != null? template: new OpenstackNetworkProviderProperties();
         if (model.isSetTenantName()) {
-            additionalProperties.setTenantName(model.getTenantName());
+            entity.setTenantName(model.getTenantName());
         }
         // The `plugin_type` attribute has been deprecated in version 4.2 of the engine. This code is preserved
         // for backwards compatibility, and should be removed in version 5 of the API.
         if (model.isSetPluginType() && model.getType() == OpenStackNetworkProviderType.NEUTRON) {
-            additionalProperties.setPluginType(mapPluginType(model.getPluginType()));
+            entity.setPluginType(mapPluginType(model.getPluginType()));
         }
         if (model.isSetExternalPluginType()) {
-            additionalProperties.setPluginType(model.getExternalPluginType());
+            entity.setPluginType(model.getExternalPluginType());
         }
         if (model.isSetAgentConfiguration()) {
-            additionalProperties.setAgentConfiguration(map(model.getAgentConfiguration(), null));
+            entity.setAgentConfiguration(map(model.getAgentConfiguration(), entity.getAgentConfiguration()));
         }
         if (model.isSetReadOnly()) {
-            additionalProperties.setReadOnly(model.isReadOnly());
+            entity.setReadOnly(model.isReadOnly());
         }
         if (model.isSetAutoSync()) {
-            additionalProperties.setAutoSync(model.isAutoSync());
+            entity.setAutoSync(model.isAutoSync());
         }
-        entity.setAdditionalProperties(additionalProperties);
         return entity;
     }
 
