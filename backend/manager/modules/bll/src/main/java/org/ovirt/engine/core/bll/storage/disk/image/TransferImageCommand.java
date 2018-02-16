@@ -525,13 +525,13 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
     /**
      * Start the ovirt-image-daemon session
-     * @return true if session was started
      */
     protected void startImageTransferSession() {
         if (!initializeVds()) {
             log.error("Could not find a suitable host for image data transfer");
             updateEntityPhaseToPausedBySystem(
                     AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_MISSING_HOST);
+            return;
         }
         Guid imagedTicketId = Guid.newGuid();
 
@@ -542,6 +542,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             log.error("Failed to create a signed image ticket");
             updateEntityPhaseToPausedBySystem(
                     AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+            return;
         }
 
         long timeout = getHostTicketLifetime();
@@ -549,11 +550,13 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             log.error("Failed to add image ticket to ovirt-imageio-daemon");
             updateEntityPhaseToPausedBySystem(
                     AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
+            return;
         }
         if (!addImageTicketToProxy(imagedTicketId, signedTicket)) {
             log.error("Failed to add image ticket to ovirt-imageio-proxy");
             updateEntityPhaseToPausedBySystem(
                     AuditLogType.TRANSFER_IMAGE_PAUSED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
+            return;
         }
 
         ImageTransfer updates = new ImageTransfer();
