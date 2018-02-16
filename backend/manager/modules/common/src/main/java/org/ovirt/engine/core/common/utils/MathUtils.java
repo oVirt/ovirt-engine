@@ -4,8 +4,9 @@ public class MathUtils {
 
     public static long greatestCommonDivisor(long a, long b) {
         while (b != 0) {
-            a = b;
+            long c = b;
             b = a % b;
+            a = c;
         }
 
         return a;
