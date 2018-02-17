@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public abstract class ClusterCommandBase<T extends ClusterParametersBase> extends CommandBase<T> {
 
@@ -22,7 +22,7 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
     @Inject
     private ClusterDao clusterDao;
     @Inject
-    private DbFacade dbFacade;
+    private StoragePoolDao storagePoolDao;
 
     private Cluster cluster;
 
@@ -36,7 +36,7 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
     }
 
     protected ClusterValidator getClusterValidator(Cluster cluster) {
-        return new ClusterValidator(dbFacade, cluster, cpuFlagsManagerHandler);
+        return new ClusterValidator(clusterDao, storagePoolDao, cluster, cpuFlagsManagerHandler);
     }
 
     @Override

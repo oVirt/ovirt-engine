@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -34,10 +33,14 @@ public class ClusterValidator {
 
     private final CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
-    public ClusterValidator(DbFacade dbFacade, Cluster cluster, CpuFlagsManagerHandler cpuFlagsManagerHandler) {
+    public ClusterValidator(
+            ClusterDao clusterDao,
+            StoragePoolDao dataCenterDao,
+            Cluster cluster,
+            CpuFlagsManagerHandler cpuFlagsManagerHandler) {
         this.cluster = cluster;
-        this.clusterDao = dbFacade.getClusterDao();
-        this.dataCenterDao = dbFacade.getStoragePoolDao();
+        this.clusterDao = clusterDao;
+        this.dataCenterDao = dataCenterDao;
         this.cpuFlagsManagerHandler = cpuFlagsManagerHandler;
     }
 
