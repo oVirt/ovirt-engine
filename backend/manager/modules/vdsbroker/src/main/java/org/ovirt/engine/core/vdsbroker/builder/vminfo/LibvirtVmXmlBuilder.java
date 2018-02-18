@@ -1156,6 +1156,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("port", "0");
         writer.writeEndElement();
 
+        writeAlias(device);
         writer.writeEndElement();
     }
 
@@ -1295,6 +1296,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
         writer.writeEndElement();
 
+        writeAlias(device);
         writeAddress(device);
         // TODO: boot
         writer.writeEndElement();
@@ -1320,6 +1322,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
         writer.writeEndElement();
 
+        writeAlias(device);
         writeAddress(device);
         // TODO: boot
         writer.writeEndElement();
@@ -1351,6 +1354,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
         writer.writeEndElement();
 
+        writeAlias(device);
         writeAddress(device);
         // TODO: boot
         writer.writeEndElement();
@@ -1363,6 +1367,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("redirdev");
         writer.writeAttributeString("type", "spicevmc");
         writer.writeAttributeString("bus", "usb");
+        writeAlias(device);
         writeAddress(device);
         writer.writeEndElement();
     }
@@ -1400,12 +1405,14 @@ public class LibvirtVmXmlBuilder {
         }
         writer.writeEndElement();
 
+        writeAlias(device);
         writer.writeEndElement();
     }
 
     private void writeSound(VmDevice device) {
         writer.writeStartElement("sound");
         writer.writeAttributeString("model", device.getDevice());
+        writeAlias(device);
         writeAddress(device);
         writer.writeEndElement();
     }
@@ -1526,6 +1533,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("ports", device.getSpecParams().get("ports").toString());
         }
         // TODO: master??
+        writeAlias(device);
         writeAddress(device);
         writer.writeEndElement();
     }
@@ -1552,6 +1560,7 @@ public class LibvirtVmXmlBuilder {
         writeDiskTarget(dve, dev);
         writeDiskSource(disk, dev);
         writeDiskDriver(device, disk, dve, pinTo);
+        writeAlias(device);
         writeAddress(device);
         writeBootOrder(device.getBootOrder());
 
@@ -1831,6 +1840,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeElement("readonly");
 
+        writeAlias(device);
         writeAddress(device);
 
         payloadMetadata = new Pair<>(name, new VmPayload(device));
@@ -1872,6 +1882,7 @@ public class LibvirtVmXmlBuilder {
 
             writer.writeElement("readonly");
 
+            writeAlias(device);
             if ("scsi".equals(cdInterface)) {
                 int index = VmDeviceCommonUtils.getCdPayloadDeviceIndex(cdInterface);
                 writeAddress(vmInfoBuildUtils.createAddressForScsiDisk(0, index));
@@ -1927,6 +1938,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeElement("readonly");
 
             if (nonPayload != null) {
+                writeAlias(nonPayload);
                 writeAddress(nonPayload);
                 writeBootOrder(nonPayload.getBootOrder());
             }
@@ -2036,6 +2048,7 @@ public class LibvirtVmXmlBuilder {
             break;
         }
 
+        writeAlias(device);
         writeAddress(device);
 
         writeBootOrder(device.getBootOrder());
@@ -2146,6 +2159,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("stats");
         writer.writeAttributeString("period", "5");
         writer.writeEndElement();
+        writeAlias(device);
         writeAddress(device);
         writer.writeEndElement();
     }
@@ -2164,6 +2178,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("smartcard");
         writer.writeAttributeString("mode", device.getSpecParams().get("mode").toString());
         writer.writeAttributeString("type", device.getSpecParams().get("type").toString());
+        writeAlias(device);
         writeAddress(device);
         writer.writeEndElement();
     }
@@ -2177,6 +2192,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("model", model != null ? model.toString() : "i6300esb");
         Object action = device.getSpecParams().get(VdsProperties.action);
         writer.writeAttributeString("action", action != null ? action.toString() : "none");
+        writeAlias(device);
         writeAddress(device);
         writer.writeEndElement();
     }
@@ -2197,9 +2213,8 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("vgamem", device.getSpecParams().get(VdsProperties.VIDEO_VGAMEM).toString());
         }
         writer.writeEndElement();
-
+        writeAlias(device);
         writeAddress(device);
-
         writer.writeEndElement();
     }
 
@@ -2213,6 +2228,12 @@ public class LibvirtVmXmlBuilder {
 
     private void writeAddress(VmDevice device) {
         writeAddress(StringMapUtils.string2Map(device.getAddress()));
+    }
+
+    private void writeAlias(VmDevice device) {
+        writer.writeStartElement("alias");
+        writer.writeAttributeString("name", String.format("ua-%s", device.getId().getDeviceId()));
+        writer.writeEndElement();
     }
 
     private void writeAddress(Map<String, String> addressMap) {
