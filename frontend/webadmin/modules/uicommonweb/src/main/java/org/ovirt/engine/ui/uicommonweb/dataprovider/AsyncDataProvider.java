@@ -663,6 +663,13 @@ public class AsyncDataProvider {
         runQueryByIdParameter(QueryType.IsManagementNetwork, aQuery, networkId);
     }
 
+    public void getProviderById(AsyncQuery<Provider> aQuery, Guid providerId) {
+        aQuery.converterCallback = new CastingConverter<>();
+        Frontend.getInstance().runQuery(QueryType.GetProviderById,
+                new IdQueryParameters(providerId),
+                aQuery);
+    }
+
     public void isClusterEmpty(AsyncQuery<Boolean> aQuery, Guid clusterId) {
         runQueryByIdParameter(QueryType.IsClusterEmpty, aQuery, clusterId);
     }

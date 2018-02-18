@@ -172,7 +172,16 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
         NetworkView network = getSelectedItem();
-        externalSubnetListModel.setIsAvailable(network != null && network.isExternal());
+        if (network == null || !network.isExternal()) {
+            externalSubnetListModel.setIsAvailable(false);
+        } else {
+            AsyncDataProvider.getInstance().getProviderById(
+                    new AsyncQuery<>(provider -> {
+                        boolean available = provider != null ? !provider.getIsUnmanaged() : false;
+                        externalSubnetListModel.setIsAvailable(available);
+                    }),
+                    network.getProvidedBy().getProviderId());
+        }
     }
 
     @Override
