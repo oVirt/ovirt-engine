@@ -687,7 +687,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     private void handleDestDisk() {
-        if (getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.IMAGE_PLACEHOLDER_CREATION &&
+        if (getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CREATE_SNAPSHOT &&
+                getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.IMAGE_PLACEHOLDER_CREATION &&
                 getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.SOURCE_IMAGE_DELETION) {
             if (Guid.Empty.equals(getParameters().getVdsId())) {
                 log.error("Failed during live storage migration of disk '{}' of vm '{}', as the vm is not running" +
