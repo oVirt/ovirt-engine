@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -108,8 +109,12 @@ public class BaseImportNetworksModel extends Model {
         startProgress();
         AsyncDataProvider.getInstance().getAllNetworkProviders(new AsyncQuery<>(providers -> {
             stopProgress();
-            providers.add(0, null);
-            getProviders().setItems(providers);
+            List<Provider<?>> managedProviders = providers
+                    .stream()
+                    .filter(provider -> !provider.getIsUnmanaged())
+                    .collect(Collectors.toList());
+            managedProviders.add(0, null);
+            getProviders().setItems(managedProviders);
         }));
     }
 
