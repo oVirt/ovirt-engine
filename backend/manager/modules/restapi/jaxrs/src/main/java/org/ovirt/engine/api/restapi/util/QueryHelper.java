@@ -162,12 +162,14 @@ public class QueryHelper {
             while (Character.isDigit(c) && pos < searchStr.length()) {
                 pageNumberStr.append(c);
                 pos += 1;
-                if (pos<searchStr.length()) {
+                if (pos < searchStr.length()) {
                     c = searchStr.charAt(pos);
                 }
             }
             //if page number is empty ("page "), return 1 (the first page) by default
-            int pageNum = pageNumberStr.length()==0 ? 1 : Integer.parseInt(pageNumberStr.toString());
+            int pageNum = pageNumberStr.length() == 0
+                    ? 1
+                    : Integer.parseInt(pageNumberStr.toString());
             return pageNum;
         }
     }

@@ -127,4 +127,24 @@ public interface VmPoolDao extends Dao, SearchDao<VmPool> {
      *            the VM pool ID
      */
     void boundVmPoolPrestartedVms(Guid vmPoolId);
+
+    /**
+     * Specific use-case in the User-Portal - Get vm-pools:
+     *
+     *   1) filtered by user
+     *   2) sorted in ascending order
+     *   3) with max # of results specified.
+     *   4) potentially with page number (paging)
+     *
+     * (https://bugzilla.redhat.com/1537735)
+     *
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param offset
+     *            the beginning index of the result-set
+     * @param limit
+     *            max number of results to return
+     * @return the list of VM-pools matching this criteria
+     */
+    List<VmPool> getAllVmPoolsFilteredAndSorted(Guid userID, int offset, int limit);
 }
