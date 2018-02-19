@@ -1633,16 +1633,19 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("iothread", String.valueOf(pinTo));
         }
 
+        boolean nativeIO = false;
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
             String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage);
-            writer.writeAttributeString("io", "file".equals(diskType) ? "threads" : "native");
+            nativeIO = !"file".equals(diskType);
+            writer.writeAttributeString("io", nativeIO ? "native" : "threads");
             writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
             writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
             break;
 
         case LUN:
+            nativeIO = true;
             writer.writeAttributeString("io", "native");
             writer.writeAttributeString("type", "raw");
             writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
@@ -1650,9 +1653,9 @@ public class LibvirtVmXmlBuilder {
 
         case CINDER:
             // case RBD
+            writer.writeAttributeString("io", "threads");
             writer.writeAttributeString("type", "raw");
             writer.writeAttributeString("error_policy", "stop");
-            writer.writeAttributeString("io", "threads");
             break;
         }
 
@@ -1669,7 +1672,12 @@ public class LibvirtVmXmlBuilder {
         } else {
             switch (dve.getDiskInterface()) {
             case VirtIO:
-                // TODO: if custom property is set...
+            case VirtIO_SCSI:
+                String viodiskcache = vmCustomProperties.get("viodiskcache");
+                if (viodiskcache != null && !nativeIO) {
+                    writer.writeAttributeString("cache", viodiskcache);
+                    break;
+                }
             default:
                 writer.writeAttributeString("cache", "none");
             }
