@@ -11,6 +11,7 @@ public enum QueryType implements Serializable {
     GetAllVmsForUser(QueryAuthType.User),
     GetAllVmsForUserAndActionGroup(QueryAuthType.User),
     GetAllVmsFilteredAndSorted(QueryAuthType.User),
+    GetAllVmPoolsFilteredAndSorted(QueryAuthType.User),
     GetAllPoolVms,
     GetUnregisteredVms,
     GetUnregisteredVmTemplates,

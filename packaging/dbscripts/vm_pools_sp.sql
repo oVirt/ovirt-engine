@@ -342,6 +342,21 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetAllFromVmPoolsFilteredAndSorted (v_user_id UUID, v_offset int, v_limit int)
+RETURNS SETOF vm_pools_full_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT DISTINCT vm_pools_full_view.*
+    FROM users_and_groups_to_vm_pool_map_view
+    INNER JOIN vm_pools_full_view
+        ON users_and_groups_to_vm_pool_map_view.vm_pool_id = vm_pools_full_view.vm_pool_id
+    WHERE (users_and_groups_to_vm_pool_map_view.user_id = v_user_id)
+    ORDER BY vm_pools_full_view.vm_pool_name ASC
+    LIMIT v_limit OFFSET v_offset;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetVm_poolsByAdGroup_names (v_ad_group_names VARCHAR(4000))
 RETURNS SETOF vm_pools_view STABLE AS $PROCEDURE$
 BEGIN
