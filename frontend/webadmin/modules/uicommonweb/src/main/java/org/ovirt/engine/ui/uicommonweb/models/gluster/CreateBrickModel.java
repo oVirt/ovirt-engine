@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.CacheModeType;
 import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.i18n.client.NumberFormat;
@@ -31,6 +31,9 @@ public class CreateBrickModel extends Model {
     EntityModel<Integer> noOfPhysicalDisksInRaidVolume;
     ListModel<RaidType> raidTypeList;
     private ListModel<StorageDevice> storageDevices;
+    ListModel<StorageDevice> cacheDevicePathTypeList;
+    ListModel<CacheModeType> cacheModeTypeList;
+    EntityModel<Integer> cacheSize;
 
     public CreateBrickModel() {
         setLvName(new EntityModel<String>());
@@ -41,6 +44,9 @@ public class CreateBrickModel extends Model {
         setRaidTypeList(new ListModel<RaidType>());
         setMountPoint(new EntityModel<String>());
         setDefaultMountFolder(new EntityModel<String>());
+        setCacheDevicePathTypeList(new ListModel<StorageDevice>());
+        setCacheModeTypeList(new ListModel<CacheModeType>());
+        setCacheSize(new EntityModel<Integer>());
         List<RaidType> list = Arrays.asList(RaidType.values());
         getRaidTypeList().setItems(list);
         getNoOfPhysicalDisksInRaidVolume().setIsAvailable(false);
@@ -69,6 +75,10 @@ public class CreateBrickModel extends Model {
             onPropertyChanged(new PropertyChangedEventArgs("raidTypeChanged")); //$NON-NLS-1$
         });
 
+        getCacheModeTypeList().setItems(null);
+        getCacheModeTypeList().setItems(Arrays.asList(CacheModeType.values()));
+        getCacheSize().setEntity(10);
+        getCacheSize().setIsAvailable(true);
     }
 
     private void updateBrickSize() {
@@ -127,6 +137,30 @@ public class CreateBrickModel extends Model {
         this.storageDevices = storageDevices;
     }
 
+    public ListModel<StorageDevice> getCacheDevicePathTypeList() {
+        return cacheDevicePathTypeList;
+    }
+
+    public void setCacheDevicePathTypeList(ListModel<StorageDevice> cacheDevicePathTypeList) {
+        this.cacheDevicePathTypeList = cacheDevicePathTypeList;
+    }
+
+    public ListModel<CacheModeType> getCacheModeTypeList() {
+        return cacheModeTypeList;
+    }
+
+    public void setCacheModeTypeList(ListModel<CacheModeType> cacheModeTypeList) {
+        this.cacheModeTypeList = cacheModeTypeList;
+    }
+
+    public EntityModel<Integer> getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(EntityModel<Integer> cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
     public boolean validate() {
 
         getLvName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(50),
@@ -154,11 +188,6 @@ public class CreateBrickModel extends Model {
         getStripeSize().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 stripSizeValidation });
         if (!getStripeSize().getIsValid()) {
-            return false;
-        }
-
-        if (getStorageDevices().getSelectedItems() == null || getStorageDevices().getSelectedItems().isEmpty()) {
-            setMessage(ConstantsManager.getInstance().getConstants().selectStorageDevice());
             return false;
         }
         return true;

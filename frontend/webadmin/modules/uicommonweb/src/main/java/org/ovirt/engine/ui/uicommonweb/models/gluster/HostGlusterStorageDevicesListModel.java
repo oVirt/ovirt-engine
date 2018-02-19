@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS, StorageDevice> {
-
     public HostGlusterStorageDevicesListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().storageDevices());
         setHelpTag(HelpTag.gluster_storage_devices);
@@ -40,6 +39,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
         return super.getEntity();
     }
 
+    @Override
     public void setEntity(VDS value) {
         super.setEntity(value);
         updateActionAvailability();
@@ -132,6 +132,19 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
                 .getConfigFromCache(new GetConfigurationValueParameters(ConfigValues.GlusterDefaultBrickMountPoint,
                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                         asyncQueryForDefaultMountPoint);
+        AsyncDataProvider.getInstance().getStorageDevices(new AsyncQuery<>(
+                returnValue -> {
+                    if (returnValue != null) {
+                        List<StorageDevice> storageDeviceList = new ArrayList<>();
+                        storageDeviceList.add(null); //$NON-NLS-1$
+                        for (StorageDevice storagedevice : returnValue) {
+                            if (storagedevice.getCanCreateBrick() && !selectedDevices.contains(storagedevice)) {
+                                storageDeviceList.add(storagedevice);
+                            }
+                        }
+                        lvModel.getCacheDevicePathTypeList().setItems(storageDeviceList);
+                    }
+                }), host.getId());
 
         UICommand okCommand = UICommand.createDefaultOkUiCommand("onCreateBrick", this); //$NON-NLS-1$
         lvModel.getCommands().add(okCommand);
@@ -217,7 +230,10 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
                         lvModel.getRaidTypeList().getSelectedItem(),
                         lvModel.getNoOfPhysicalDisksInRaidVolume().getEntity(),
                         lvModel.getStripeSize().getEntity(),
-                        selectedDevices);
+                        selectedDevices,
+                        lvModel.getCacheDevicePathTypeList().getSelectedItem(),
+                        lvModel.getCacheModeTypeList().getSelectedItem(),
+                        lvModel.getCacheSize().getEntity());
 
         Frontend.getInstance().runAction(ActionType.CreateBrick, parameters,
                 result -> postCreateBrick(result.getReturnValue()), this);

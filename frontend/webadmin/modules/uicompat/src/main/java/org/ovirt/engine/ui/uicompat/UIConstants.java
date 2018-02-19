@@ -2118,5 +2118,9 @@ public interface UIConstants extends Constants {
     String replaceBrickWarning();
 
     String ignoreOVFUpdateFailure();
+
+    String selectCacheDevicePath();
+
+    String selectCacheMode();
 }
 

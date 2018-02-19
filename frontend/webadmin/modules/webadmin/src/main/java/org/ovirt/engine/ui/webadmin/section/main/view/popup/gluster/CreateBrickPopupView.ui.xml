@@ -74,6 +74,20 @@
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
+                        <g:Label ui:field="cacheHeader" text="{constants.cacheDevice}" addStyleNames="{style.headerLabel}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="cacheDevicePathEditor" label="{constants.cacheDevicePath}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <e:ListModelListBoxEditor ui:field="cacheModeEditor" label="{constants.cacheMode}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <ge:IntegerEntityModelTextBoxEditor ui:field="cacheSizeEditor" label="{constants.cacheSize}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_12">
                         <b:Alert type="INFO" ui:field="message" />
                     </b:Column>
                 </b:Row>

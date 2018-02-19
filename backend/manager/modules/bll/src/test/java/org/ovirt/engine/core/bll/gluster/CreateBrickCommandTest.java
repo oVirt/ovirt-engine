@@ -15,6 +15,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.CreateBrickParameters;
+import org.ovirt.engine.core.common.businessentities.CacheModeType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -49,7 +50,10 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.singletonList(getStorageDevice("sda"))))
+                null, Collections.singletonList(getStorageDevice("sda")),
+                getStorageDevice("sdb"),
+                CacheModeType.writethrough,
+                10))
                 .when(cmd).getParameters();
         prepareMocks(VDSStatus.Up);
         assertTrue(cmd.validate());
@@ -84,7 +88,10 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.emptyList()))
+                null, Collections.emptyList(),
+                getStorageDevice("sdd"),
+                CacheModeType.writethrough,
+                10))
                 .when(cmd).getParameters();
         prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());
@@ -99,7 +106,10 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Collections.singletonList(storageDevice)))
+                null, Collections.singletonList(storageDevice),
+                getStorageDevice("sda"),
+                CacheModeType.writethrough,
+                10))
                 .when(cmd).getParameters();
         prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());
@@ -116,7 +126,10 @@ public class CreateBrickCommandTest extends BaseCommandTest {
                 "/gluster-bricks/brick1",
                 RaidType.RAID0,
                 null,
-                null, Arrays.asList(storageDevice1, storageDevice2)))
+                null, Arrays.asList(storageDevice1, storageDevice2),
+                getStorageDevice("sdb"),
+                CacheModeType.writethrough,
+                10))
                 .when(cmd).getParameters();
         prepareMocks(VDSStatus.Up);
         assertFalse(cmd.validate());

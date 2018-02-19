@@ -472,6 +472,8 @@
         <include name="common/businessentities/gluster/GlusterVolumeSnapshotScheduleRecurrence.java"/>
         <include name="common/businessentities/gluster/PeerStatus.java" />
         <include name="common/businessentities/gluster/StorageSyncSchedule.java"/>
+        <include name="common/businessentities/CacheDevicePathType.java"/>
+        <include name="common/businessentities/CacheModeType.java"/>
 
         <!-- Scheduling -->
         <include name="common/scheduling/*.java"/>
