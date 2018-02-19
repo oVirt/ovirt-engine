@@ -12,6 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterLocalLogicalVolumeListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturn;
@@ -327,6 +328,8 @@ public interface IVdsServer {
             String volumeName,
             String brickName,
             String volumeStatusOption);
+
+    GlusterLocalLogicalVolumeListReturn glusterLogicalVolumeList();
 
     GlusterVolumesListReturn glusterVolumesList(Guid clusterId);
 
