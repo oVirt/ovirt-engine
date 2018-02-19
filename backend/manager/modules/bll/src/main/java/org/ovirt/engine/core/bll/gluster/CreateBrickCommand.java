@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,22 +18,32 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.CreateBrickParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.CreateBrickVDSParameters;
-import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
+import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
+import org.ovirt.engine.core.utils.JsonHelper;
 
 public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
+    public static final String CREATE_BRICK_LOG_DIRECTORY = "brick-setup";
+    private static final long DEFAULT_METADATA_SIZE_MB = 16777;
+    private static final long MIN_VG_SIZE = 1048576;
+    private static final double MIN_METADATA_PERCENT = 0.005;
+
     @Inject
-    private StorageDeviceDao storageDeviceDao;
+    private AnsibleExecutor ansibleExecutor;
 
     public CreateBrickCommand(CreateBrickParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -92,44 +104,13 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
     @Override
     protected void executeCommand() {
-
-        Map<String, Object> raidParams = new HashMap<>();
-        if (!getParameters().getRaidType().equals(RaidType.NONE)
-                && !getParameters().getRaidType().equals(RaidType.RAID0)) {
-            raidParams.put("type", getParameters().getRaidType().getValue()); //$NON-NLS-1$
-            raidParams.put("pdCount", getParameters().getNoOfPhysicalDisksInRaidVolume()); //$NON-NLS-1$
-            raidParams.put("stripeSize", getParameters().getStripeSize()); //$NON-NLS-1$
+        try {
+            runAnsibleCreateBrickPlaybook();
+            setSucceeded(true);
+        } catch (IOException | InterruptedException e) {
+            setSucceeded(false);
+            e.printStackTrace();
         }
-
-        VDSReturnValue returnValue = runVdsCommand(
-                VDSCommandType.CreateBrick,
-                new CreateBrickVDSParameters(getVdsId(),
-                        getParameters().getLvName(),
-                        getParameters().getMountPoint(),
-                        raidParams,
-                        GlusterConstants.FS_TYPE_XFS,
-                        getParameters().getDisks()));
-        setSucceeded(returnValue.getSucceeded());
-        if (getSucceeded()) {
-            StorageDevice storageDevice = (StorageDevice) returnValue.getReturnValue();
-            storageDevice.setMountPoint(getParameters().getMountPoint());
-            storageDevice.setGlusterBrick(true);
-            saveStoageDevice(storageDevice);
-            // Reset the isFree flag on all the devices which are used for brick creation
-            resetIsFreeFlag(getParameters().getDisks());
-        } else {
-            handleVdsError(returnValue);
-        }
-    }
-
-    private void resetIsFreeFlag(List<StorageDevice> devices) {
-        for (StorageDevice device : devices) {
-            storageDeviceDao.updateIsFreeFlag(device.getId(), false);
-        }
-    }
-
-    private void saveStoageDevice(StorageDevice storageDevice) {
-        storageDeviceDao.save(storageDevice);
     }
 
     @Override
@@ -156,5 +137,65 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.CREATE_GLUSTER_BRICK : AuditLogType.CREATE_GLUSTER_BRICK_FAILED;
+    }
+
+    private void runAnsibleCreateBrickPlaybook() throws IOException, InterruptedException {
+
+        List<String> disks = new ArrayList<>();
+        Double totalSize = 0.0;
+        for (StorageDevice device : getParameters().getDisks()) {
+            disks.add(device.getDevPath());
+            totalSize += device.getSize(); //size is returned in MiB
+        }
+        if (totalSize < MIN_VG_SIZE) {
+            totalSize = totalSize - MIN_METADATA_PERCENT * totalSize;
+        } else {
+            totalSize = totalSize - DEFAULT_METADATA_SIZE_MB;
+        }
+        Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(totalSize.longValue(), SizeUnit.MiB);
+        String deviceSize = convertedSize.getSecond() + convertedSize.getFirst().toString();
+        String ssdDevice = "";
+        if (getParameters().getCacheDevice() != null) {
+            ssdDevice = getParameters().getCacheDevice().getDevPath();
+        }
+
+        int diskCount = getParameters().getNoOfPhysicalDisksInRaidVolume() == null ? 1
+                : getParameters().getNoOfPhysicalDisksInRaidVolume();
+
+        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+                .hostnames(getVds().getHostName())
+                .variables(
+                        new Pair<>("ssd", ssdDevice),
+                        new Pair<>("disks", JsonHelper.objectToJson(disks, false)),
+                        new Pair<>("vgname", "RHGS_vg_" + getParameters().getLvName()),
+                        new Pair<>("size", deviceSize),
+                        new Pair<>("diskcount", diskCount),
+                        new Pair<>("stripesize", getParameters().getStripeSize()),
+                        new Pair<>("wipefs", "yes"),
+                        new Pair<>("disktype", getParameters().getRaidType().toString()),
+                        new Pair<>("lvname", getParameters().getLvName() + "_lv"),
+                        new Pair<>("cache_lvname", getParameters().getLvName() + "_cache_lv"),
+                        new Pair<>("cache_lvsize", getParameters().getCacheSize() + "GiB"),
+                        new Pair<>("cachemode", getParameters().getCacheMode()),
+                        new Pair<>("fstype", GlusterConstants.FS_TYPE_XFS),
+                        new Pair<>("mntpath", getParameters().getMountPoint()))
+
+            // /var/log/ovirt-engine/brick-setup/ovirt-gluster-brick-ansible-{hostname}-{correlationid}-{timestamp}.log
+            .logFileDirectory(CreateBrickCommand.CREATE_BRICK_LOG_DIRECTORY)
+            .logFilePrefix("ovirt-gluster-brick-ansible")
+            .logFileName(getVds().getHostName())
+            .logFileSuffix(getCorrelationId())
+            .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK);
+
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(command);
+        if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+            log.error("Failed to execute Ansible create brick role. Please check logs for more details: {}",
+                    command.logFile());
+            throw new EngineException(EngineError.GeneralException,
+                    String.format(
+                            "Failed to execute Ansible create brick role. Please check logs for more details: %1$s",
+                            command.logFile()));
+        }
+
     }
 }

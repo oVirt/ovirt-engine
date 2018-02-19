@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import org.gwtbootstrap3.client.ui.Alert;
+import org.ovirt.engine.core.common.businessentities.CacheModeType;
 import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEd
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.CreateBrickModel;
@@ -116,6 +118,26 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
 
     @UiField
     @Ignore
+    @WithElementId
+    Label cacheHeader;
+
+    @UiField(provided = true)
+    @Path(value = "cacheDevicePathTypeList.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<StorageDevice> cacheDevicePathEditor;
+
+    @UiField(provided = true)
+    @Path(value = "cacheModeTypeList.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<CacheModeType> cacheModeEditor;
+
+    @UiField
+    @Path(value = "cacheSize.entity")
+    @WithElementId
+    IntegerEntityModelTextBoxEditor cacheSizeEditor;
+
+    @UiField
+    @Ignore
     Alert message;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -143,6 +165,8 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
 
     private void initListBoxEditors() {
         raidTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<RaidType>());
+        cacheDevicePathEditor = new ListModelListBoxEditor<>(new NameRenderer<StorageDevice>());
+        cacheModeEditor = new ListModelListBoxEditor<>(new EnumRenderer<CacheModeType>());
     }
 
     protected void initTableColumns() {

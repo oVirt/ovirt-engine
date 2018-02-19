@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
@@ -10,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 /*
  * StorageDevice represents storage devices attached the hosts. It can be a disk or partition or pvs, lvs, etc.
  */
-public class StorageDevice implements Queryable, BusinessEntity<Guid> {
+public class StorageDevice implements Queryable, BusinessEntity<Guid>, Nameable {
 
     private static final long serialVersionUID = -1613957987974435240L;
 
@@ -28,6 +29,7 @@ public class StorageDevice implements Queryable, BusinessEntity<Guid> {
     private boolean canCreateBrick;
     private boolean isGlusterBrick;
 
+    @Override
     public String getName() {
         return name;
     }

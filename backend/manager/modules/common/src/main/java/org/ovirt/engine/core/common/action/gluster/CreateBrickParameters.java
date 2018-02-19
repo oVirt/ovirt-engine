@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.CacheModeType;
 import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,6 +22,9 @@ public class CreateBrickParameters extends VdsActionParameters {
     private RaidType raidType;
     private Integer noOfPhysicalDisksInRaidVolume;
     private Integer stripeSize;
+    private StorageDevice cacheDevice;
+    private CacheModeType cacheMode;
+    private Integer cacheSize;
 
     public CreateBrickParameters() {
 
@@ -32,7 +36,10 @@ public class CreateBrickParameters extends VdsActionParameters {
             RaidType raidType,
             Integer noOfPhysicalDisksInRaidVolume,
             Integer stripeSize,
-            List<StorageDevice> selectedDevices) {
+            List<StorageDevice> selectedDevices,
+            StorageDevice cacheDevicePath,
+            CacheModeType cacheMode,
+            Integer cacheSize) {
         super(hostId);
         this.lvName = lvName;
         this.mountPoint = mountPoint;
@@ -40,6 +47,9 @@ public class CreateBrickParameters extends VdsActionParameters {
         this.raidType = raidType;
         this.noOfPhysicalDisksInRaidVolume = noOfPhysicalDisksInRaidVolume;
         this.stripeSize = stripeSize;
+        this.cacheDevice = cacheDevicePath;
+        this.cacheMode = cacheMode;
+        this.cacheSize = cacheSize;
 
     }
 
@@ -89,6 +99,30 @@ public class CreateBrickParameters extends VdsActionParameters {
 
     public void setMountPoint(String mountPoint) {
         this.mountPoint = mountPoint;
+    }
+
+    public StorageDevice getCacheDevice() {
+        return cacheDevice;
+    }
+
+    public void setCacheDevice(StorageDevice cacheDevicePath) {
+        this.cacheDevice = cacheDevicePath;
+    }
+
+    public CacheModeType getCacheMode() {
+        return cacheMode;
+    }
+
+    public void setCacheMode(CacheModeType cacheMode) {
+        this.cacheMode = cacheMode;
+    }
+
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
     }
 
 }

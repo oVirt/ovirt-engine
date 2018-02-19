@@ -45,3 +45,11 @@
 	nocreate
 	rotate 1
 }
+
+"@ENGINE_LOG@/brick-setup"/*.log {
+	monthly
+	missingok
+	compress
+	nocreate
+	rotate 1
+}

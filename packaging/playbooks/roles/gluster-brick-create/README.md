@@ -15,6 +15,7 @@ Role Variables
 |diskcount        |no       |  1       |  |Number of data disks in RAID configuration. Required only in case of RAID disk type.
 |stripesize        |no       | 256         |  |Stripe size configured at RAID controller. Value should be in KB. Required only in case of RAID disk type.
 |vgname        |yes       |         |  | Name of the volume group that the disk is added to. The Volume Group will be created if not already present
+|size        |yes       |         |  | Size of thinpool to be created on the volume group. Size should contain the units. For example, 100GiB
 |lvname        |yes       |          |  |Name of the Logical volume created using the physical disk(s).
 |ssd        |yes       |          |  |Name of the ssd device.
 |cache_lvname        |yes       |          |  |Name of the Logical Volume to be used for cache.

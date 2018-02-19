@@ -74,4 +74,9 @@ public class AnsibleConstants {
      * This is name of callback plugin which is used to get OVF from an OVA.
      */
     public static final String OVA_QUERY_CALLBACK_PLUGIN = "ovaqueryplugin";
+
+    /**
+     * This is name of file which executes the lvmcache via Ansible.
+     */
+    public static final String CREATE_BRICK_PLAYBOOK = "create-brick.yml";
 }

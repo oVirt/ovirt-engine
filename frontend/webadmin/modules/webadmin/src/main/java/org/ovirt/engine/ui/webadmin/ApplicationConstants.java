@@ -3414,5 +3414,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String hostHasNoDefaultRoute();
 
     String autoDetect();
+
+    String cacheDevice();
+
+    String cacheDevicePath();
+
+    String cacheMode();
+
+    String cacheSize();
 }
 
