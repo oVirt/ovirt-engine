@@ -19,6 +19,7 @@ import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterLocalLogicalVolumeListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturn;
@@ -1501,6 +1502,15 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterVolumeStatusReturn(clusterId, response);
+    }
+
+    @Override
+    public GlusterLocalLogicalVolumeListReturn glusterLogicalVolumeList() {
+        JsonRpcRequest request = new RequestBuilder("GlusterHost.logicalVolumeList").build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new GlusterLocalLogicalVolumeListReturn(response);
+
     }
 
     @Override
