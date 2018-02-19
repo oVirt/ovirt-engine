@@ -118,6 +118,7 @@ public class LibvirtVmXmlBuilder {
     private VmDevice payload;
     private boolean volatileRun;
     private Map<Guid, String> passthroughVnicToVfMap;
+    private Map<String, String> vmCustomProperties;
 
     private VM vm;
     private int vdsCpuThreads;
@@ -198,6 +199,9 @@ public class LibvirtVmXmlBuilder {
                 ChipsetType.fromMachineType(emulatedMachine));
         writer = new XmlTextWriter();
         qosCache = new HashMap<>();
+        vmCustomProperties = VmPropertiesUtils.getInstance().getVMProperties(
+                vm.getCompatibilityVersion(),
+                vm.getStaticData());
 
         if (hostId != null) {
             hostDevicesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getHostDevices(hostId));
@@ -786,9 +790,6 @@ public class LibvirtVmXmlBuilder {
 
     private void writeVmCustomMetadata() {
         writer.writeStartElement(OVIRT_VM_URI, "custom");
-        Map<String, String> vmCustomProperties = VmPropertiesUtils.getInstance().getVMProperties(
-                vm.getCompatibilityVersion(),
-                vm.getStaticData());
         vmCustomProperties.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value));
         writer.writeEndElement();
     }
@@ -1988,9 +1989,6 @@ public class LibvirtVmXmlBuilder {
         //  </interface>
         writer.writeStartElement("interface");
 
-        Map<String, String> properties = VmPropertiesUtils.getInstance().getVMProperties(
-                vm.getCompatibilityVersion(),
-                vm.getStaticData());
         VnicProfile vnicProfile = vmInfoBuildUtils.getVnicProfile(nic.getVnicProfileId());
         Network network = vnicProfile != null ? vmInfoBuildUtils.getNetwork(vnicProfile.getNetworkId()) : null;
 
@@ -2018,7 +2016,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             String queues = vnicProfile != null ? vnicProfile.getCustomProperties().remove("queues") : null;
-            String driverName = getDriverNameForNetwork(network != null ? network.getName() : "", properties);
+            String driverName = getDriverNameForNetwork(network != null ? network.getName() : "");
             if (queues != null || driverName != null) {
                 writer.writeStartElement("driver");
                 if (queues != null) {
@@ -2078,11 +2076,10 @@ public class LibvirtVmXmlBuilder {
             });
             writer.writeEndElement();
         }
-        if (properties.containsKey("sndbuf")) {
+        String sndbuf = vmCustomProperties.get("sndbuf");
+        if (sndbuf != null) {
             writer.writeStartElement("tune");
-            writer.writeStartElement("sndbuf");
-            writer.writeRaw(properties.get("sndbuf"));
-            writer.writeEndElement();
+            writer.writeElement("sndbuf", sndbuf);
             writer.writeEndElement();
         }
 
@@ -2136,8 +2133,8 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private String getDriverNameForNetwork(String network, Map<String, String> properties) {
-        String vhostProp = properties.get("vhost");
+    private String getDriverNameForNetwork(String network) {
+        String vhostProp = vmCustomProperties.get("vhost");
         if (vhostProp == null) {
             return null;
         }
