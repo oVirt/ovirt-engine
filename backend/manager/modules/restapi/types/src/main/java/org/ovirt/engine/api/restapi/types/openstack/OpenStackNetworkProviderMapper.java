@@ -167,6 +167,7 @@ public class OpenStackNetworkProviderMapper {
             if (additionalProperties.getAgentConfiguration() != null) {
                 model.setAgentConfiguration(map(additionalProperties.getAgentConfiguration(), null));
             }
+            model.setReadOnly(additionalProperties.getReadOnly());
             model.setAutoSync(additionalProperties.getAutoSync());
         }
         return model;

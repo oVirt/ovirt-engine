@@ -37,6 +37,9 @@ public class OpenStackNetworkProviderMapperTest
         model.setPluginType(MappingTestHelper.shuffle(NetworkPluginType.class));
         AgentConfiguration agentConfiguration = model.getAgentConfiguration();
         agentConfiguration.setBrokerType(MappingTestHelper.shuffle(MessageBrokerType.class));
+        model.setAutoSync(true);
+        model.setReadOnly(false);
+        model.setUnmanaged(true);
         return model;
     }
 
@@ -55,6 +58,9 @@ public class OpenStackNetworkProviderMapperTest
         assertEquals(model.getExternalPluginType(), transform.getExternalPluginType());
         assertEquals(model.getType(), transform.getType());
         verify(model.getAgentConfiguration(), transform.getAgentConfiguration());
+        assertEquals(model.isAutoSync(), transform.isAutoSync());
+        assertEquals(model.isReadOnly(), transform.isReadOnly());
+        assertEquals(model.isUnmanaged(), transform.isUnmanaged());
     }
 
     private void verify(AgentConfiguration model, AgentConfiguration transform) {
