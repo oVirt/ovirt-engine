@@ -20,6 +20,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterLocalLogicalVolumeListReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterLocalPhysicalVolumeListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturn;
@@ -1510,7 +1511,14 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterLocalLogicalVolumeListReturn(response);
+    }
 
+    @Override
+    public GlusterLocalPhysicalVolumeListReturn glusterPhysicalVolumeList() {
+        JsonRpcRequest request = new RequestBuilder("GlusterHost.physicalVolumeList").build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new GlusterLocalPhysicalVolumeListReturn(response);
     }
 
     @Override
