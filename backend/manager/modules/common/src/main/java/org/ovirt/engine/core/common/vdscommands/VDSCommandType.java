@@ -218,6 +218,7 @@ public enum VDSCommandType {
     ResetGlusterVolumeBrick("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterLocalLogicalVolumeList("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterLocalPhysicalVolumeList("org.ovirt.engine.core.vdsbroker.gluster"),
+    GetGlusterVDOVolumeList("org.ovirt.engine.core.vdsbroker.gluster"),
     SetNumberOfCpus("org.ovirt.engine.core.vdsbroker"),
     SetAmountOfMemory("org.ovirt.engine.core.vdsbroker"),
     HotUnplugMemory("org.ovirt.engine.core.vdsbroker"),
