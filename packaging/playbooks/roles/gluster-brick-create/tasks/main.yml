@@ -1,0 +1,75 @@
+---
+- name: Clean up filesystem signature
+  command: wipefs -a {{ item }}
+  with_items: "{{ disks | default([]) }}"
+  when:  wipefs == 'yes' and item is defined
+  ignore_errors: yes
+
+# Create pv on all the disks
+- name: Create Physical Volume
+  pv:
+    action: create
+    disks: "{{ item }}"
+  with_items: "{{ disks }}"
+  register: result
+  failed_when: "result.rc != 0 and 'Physical Volume Exists' not in result.msg"
+
+- name: Create volume group on the disks
+  vg:
+    action: "create"
+    disks: "{{ item}}"
+    vgname: "{{ vgname }}"
+    diskcount: "{{ diskcount }}"
+    disktype: "{{ disktype }}"
+    stripesize: "{{ stripesize }}"
+  with_items: "{{ disks }}"
+
+- name: Create thinpool
+  lv:
+    action: create
+    lvtype: "thinpool"
+    poolname: "{{ lvname }}_pool"
+    compute: rhs
+    vgname: "{{ vgname }}"
+
+- name: Create LVs with specified size for the VGs
+  lv:
+    action: create
+    lvtype: "thinlv"
+    lvname: "{{ lvname }}"
+    compute: rhs
+    vgname: "{{ vgname }}"
+    poolname: "{{ lvname }}_pool"
+
+- include: lvmcache.yml
+  when: ssd is defined and ssd != ''
+
+- name: Create an xfs filesystem
+  filesystem:
+    fstype: "{{ fstype }}"
+    dev: "/dev/{{ vgname }}/{{ lvname }}"
+    opts: "{{ fsopts }}{{ raidopts }}"
+  vars:
+    fsopts: "-f -K -i size=512 -n size=8192"
+    raidopts: "{% if 'raid' in disktype %} -d sw={{diskcount}},su={{stripesize}}k {% endif %}"
+
+- name: Create the backend directory, skips if present
+  file:
+    path: "{{ mntpath }}"
+    state: directory
+
+- name: Mount the brick
+  mount:
+    name: "{{ mntpath }}"
+    src: "/dev/{{ vgname }}/{{ lvname }}"
+    fstype: "{{ fstype }}"
+    opts: "inode64,noatime,nodiratime"
+    state: mounted
+
+- name: Set SELinux labels on the bricks
+  sefcontext:
+    target: "{{ mntpath }}"
+    setype: glusterd_brick_t
+    state: present
+    reload: yes
+

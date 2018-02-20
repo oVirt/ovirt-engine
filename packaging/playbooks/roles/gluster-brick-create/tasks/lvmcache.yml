@@ -1,0 +1,74 @@
+---
+- name: Setup SSD for caching | Create the physical volume
+  pv:
+    action: create
+    disks: "{{ item }}"
+  with_items: "{{ ssd }}"
+  register: result
+  failed_when: "result.rc != 0 and 'Physical Volume Exists' not in result.msg"
+
+- name: Setup SSD for caching | Extend the Volume Group
+  vg:
+    action: extend
+    disks: "{{ item }}"
+    vgname: "{{ vgname }}"
+  with_items: "{{ ssd }}"
+  register: result
+  failed_when: "result.rc != 0 and ('is already in volume group' not in result.msg  and 'not found' not in result.msg)"
+
+- name: Setup SSD for caching | Change the attributes of the logical volume
+  lv:
+    action: change
+    zero: n
+    vgname: "{{ vgname }}"
+    lvname: "{{ lvname }}_pool"
+  register: res
+  failed_when: res.rc != 0 and 'zero new blocks' not in res.msg
+
+- name: Setup SSD for caching | Create cache meta logical volume
+  lv:
+    action: create
+    lvname: "{{ cache_meta_lv }}"
+    lvtype: "thick"
+    size: "{{ cache_meta_lvsize }}"
+    vgname: "{{ vgname }}"
+    pvname: "{{ ssd }}"
+  when: cache_meta_lv is defined and cache_meta_lv != ' '
+
+- name: Setup SSD for caching | Create cache logical volume
+  lv:
+    action: create
+    lvname: "{{ cache_lvname }}"
+    lvtype: "thick"
+    size: "{{ cache_lvsize }}"
+    vgname: "{{ vgname }}"
+    pvname: "{{ ssd }}"
+
+- name: Setup SSD for caching | Convert an existing logical volume to a cache pool LV
+  lv:
+    action: convert
+    lvtype: cache-pool
+    cachemode: "{{ cachemode }}"
+    poolmetadata: "{{ cache_meta_lv }}"
+    poolmetadataspare: n
+    vgname: "{{ vgname }}"
+    lvname: "{{ cache_lvname }}"
+  when: cache_meta_lv is defined and cache_meta_lv != ' '
+
+- name: Setup SSD for caching | Convert an existing logical volume to a cache pool LV
+  lv:
+    action: convert
+    lvtype: cache-pool
+    cachemode: "{{ cachemode }}"
+    vgname: "{{ vgname }}"
+    lvname: "{{ cache_lvname }}"
+  when: cache_meta_lv is not defined or cache_meta_lv == ' '
+
+- name: Setup SSD for caching | Convert an existing logical volume to a cache LV
+  lv:
+    action: convert
+    lvtype: cache
+    cachepool: "{{ cache_lvname }}"
+    vgname: "{{ vgname }}"
+    lvname: "{{ lvname }}_pool"
+

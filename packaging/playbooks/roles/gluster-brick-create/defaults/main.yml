@@ -1,0 +1,6 @@
+---
+diskcount: 1
+stripesize: 256
+wipefs: 'yes'
+cachemode: writethrough
+fstype: xfs
