@@ -86,11 +86,10 @@ public class ServletUtils {
             boolean cache,
             boolean required) throws IOException {
 
-        // Make sure the file exits and is readable and send a 404 error
-        // response if it doesn't:
+        // Make sure the file exists and is readable, else 404
         if (!canReadFile(file)) {
             if (required) {
-                log.error("Can't read file '{}' for request '{}', will send a 404 error response.",
+                log.info("Can't read file '{}' for request '{}' -- 404",
                         file != null ? file.getAbsolutePath() : "",
                         request.getRequestURI());
             }
@@ -190,7 +189,7 @@ public class ServletUtils {
         // Check that the path is not too long:
         final int length = path.length();
         if (length > PATH_MAX) {
-            log.error("The path '{}' is {} characters long, which is longer than the maximum allowed {}.",
+            log.info("The path '{}' is {} characters long, which is longer than the maximum allowed {}.",
                     path,
                     length,
                     PATH_MAX);
@@ -199,7 +198,7 @@ public class ServletUtils {
 
         // Check that there aren't potentially dangerous directory navigation sequences:
         if (path.contains("..") || path.contains("//") || path.contains("./")) {
-            log.error("The path contains potentially dangerous directory navigation sequences.");
+            log.info("The path contains potentially dangerous directory navigation sequences.");
             return false;
         }
 
@@ -224,7 +223,7 @@ public class ServletUtils {
             file = base;
         }
         else if (!isSane(path)) {
-            log.error("The path '{}' is not sane, will return null.", path);
+            log.info("The path '{}' is not sane, will return null.", path);
         }
         else {
             file = new File(base, path);

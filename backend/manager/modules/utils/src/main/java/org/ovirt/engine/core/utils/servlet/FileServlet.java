@@ -72,8 +72,6 @@ public class FileServlet extends HttpServlet {
     protected File base;
     protected boolean required = true;
 
-    private boolean warned;
-
     @Override
     public void init(ServletConfig config) throws ServletException {
         // Let the parent do its work:
@@ -145,8 +143,7 @@ public class FileServlet extends HttpServlet {
                 file = new File(file, INDEX);
             }
             else {
-                log.error("There is no index page for directory '{}', will send a 404 error response.",
-                        file.getAbsolutePath());
+                log.info("There is no index page for directory '{}' -- 404", file.getAbsolutePath());
                 file = null;
             }
         }
