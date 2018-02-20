@@ -1454,7 +1454,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         ListModel<SwitchType> switchType = getSwitchType();
 
         boolean ovsSupported = isOvsSupported(version);
-        switchType.setIsChangeable(ovsSupported);
+        switchType.setIsChangeable(ovsSupported && !getIsEdit());
         if (!ovsSupported && switchType.getSelectedItem().equals(SwitchType.OVS)) {
             switchType.setSelectedItem(SwitchType.LEGACY);
         }
