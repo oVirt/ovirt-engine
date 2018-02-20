@@ -155,7 +155,7 @@ public class DrMappingHelper {
     public void mapExternalLunDisks(List<LunDisk> luns, Map<String, Object> externalLunMap) {
         luns.forEach(lunDisk -> {
             if (externalLunMap != null) {
-                LunDisk targetLunDisk = (LunDisk) externalLunMap.get(lunDisk.getId().toString());
+                LunDisk targetLunDisk = (LunDisk) externalLunMap.get(lunDisk.getLun().getId());
                 if (targetLunDisk != null) {
                     log.info("Mapping LUN disk '{}' to '{}'", lunDisk.getLun().getLUNId(),
                             targetLunDisk.getLun().getLUNId());
