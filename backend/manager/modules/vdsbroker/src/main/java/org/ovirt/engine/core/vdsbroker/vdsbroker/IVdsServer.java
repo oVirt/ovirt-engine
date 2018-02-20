@@ -18,6 +18,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturn;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVDOVolumeListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepConfigList;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatus;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetail;
@@ -329,6 +330,8 @@ public interface IVdsServer {
     GlusterLocalLogicalVolumeListReturn glusterLogicalVolumeList();
 
     GlusterLocalPhysicalVolumeListReturn glusterPhysicalVolumeList();
+
+    GlusterVDOVolumeListReturn glusterVDOVolumeList();
 
     GlusterVolumesListReturn glusterVolumesList(Guid clusterId);
 
