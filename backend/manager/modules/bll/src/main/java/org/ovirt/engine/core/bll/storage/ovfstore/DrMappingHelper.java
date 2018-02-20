@@ -164,7 +164,7 @@ public class DrMappingHelper {
                             .getLunConnections()
                             .forEach(conn -> conn.setStorageType(lunDisk.getLun().getLunType()));
                 } else {
-                    log.warn("No LUN disk will be mapped, LUN '{}' was not found", targetLunDisk.getLun().getLUNId());
+                    log.warn("No LUN disk will be mapped, LUN id '{}' has no mapping LUN disk", lunDisk.getLun().getId());
                 }
             }
         });
