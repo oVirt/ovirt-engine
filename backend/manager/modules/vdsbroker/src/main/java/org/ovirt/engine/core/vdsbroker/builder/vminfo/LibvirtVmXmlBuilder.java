@@ -98,7 +98,7 @@ public class LibvirtVmXmlBuilder {
     public static final String OVIRT_VM_PREFIX = "ovirt-vm";
 
     /** Timeout for the boot menu, in milliseconds */
-    public static final int BOOT_MENU_TIMEOUT = 10000;
+    public static final int BOOT_MENU_TIMEOUT = 30000;
     private static final int LIBVIRT_PORT_AUTOSELECT = -1;
     private static final Set<String> SPICE_CHANNEL_NAMES = new HashSet<>(Arrays.asList(
             "main", "display", "inputs", "cursor", "playback", "record", "smartcard", "usbredir"));
