@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.RegistrationAffinityGroupMappings;
 import org.ovirt.engine.api.model.RegistrationAffinityLabelMappings;
 import org.ovirt.engine.api.model.RegistrationClusterMappings;
@@ -97,9 +98,18 @@ public class ExternalRegistrationConfigurationMapper {
         return model.getRegistrationLunMappings()
                 .stream()
                 .collect(Collectors.toMap(
-                        registrationMap -> registrationMap.isSetFrom() ? registrationMap.getFrom().getId() : null,
+                        registrationMap -> registrationMap.isSetFrom() ? getLogicalUnitId(registrationMap.getFrom()) : null,
                         registrationMap -> registrationMap.isSetTo() ? DiskMapper.map(registrationMap.getTo(), null)
                                 : null));
+    }
+
+    private static String getLogicalUnitId(Disk disk) {
+        if (disk.getLunStorage() != null && disk.getLunStorage().getLogicalUnits() != null
+                && disk.getLunStorage().getLogicalUnits().getLogicalUnits().size() > 0) {
+            return disk.getLunStorage().getLogicalUnits().getLogicalUnits().get(0).getId();
+        }
+        // In case no LUN id was found we return empty GUID to avoid null key initialization in the map.
+        return Guid.Empty.toString();
     }
 
     private static Map<String, String> mapExternalRoleMapping(RegistrationRoleMappings model) {
