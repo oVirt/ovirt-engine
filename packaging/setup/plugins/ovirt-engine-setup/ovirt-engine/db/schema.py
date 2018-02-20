@@ -354,32 +354,32 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         backupFile = None
 
-        # If we are upgrading to a newer postgresql, do not backup.
+        # If we are upgrading to a newer postgresql, do not backup or rollback.
         # If we upgrade by copying, we can rollback by using the old
         # version. If we upgrade in-place, we do not support rollback,
         # and user should take care of backups elsewhere.
         if not self.environment[
-            oenginecons.EngineDBEnv.NEW_DATABASE
-        ] and not self.environment[
             oenginecons.EngineDBEnv.NEED_DBMSUPGRADE
         ]:
-            dbovirtutils = database.OvirtUtils(
-                plugin=self,
-                dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            if not self.environment[
+                oenginecons.EngineDBEnv.NEW_DATABASE
+            ]:
+                dbovirtutils = database.OvirtUtils(
+                    plugin=self,
+                    dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+                )
+                backupFile = dbovirtutils.backup(
+                    dir=self.environment[
+                        oenginecons.ConfigEnv.OVIRT_ENGINE_DB_BACKUP_DIR
+                    ],
+                    prefix=oenginecons.Const.ENGINE_DB_BACKUP_PREFIX,
+                )
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                self.SchemaTransaction(
+                    parent=self,
+                    backup=backupFile,
+                )
             )
-            backupFile = dbovirtutils.backup(
-                dir=self.environment[
-                    oenginecons.ConfigEnv.OVIRT_ENGINE_DB_BACKUP_DIR
-                ],
-                prefix=oenginecons.Const.ENGINE_DB_BACKUP_PREFIX,
-            )
-
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            self.SchemaTransaction(
-                parent=self,
-                backup=backupFile,
-            )
-        )
 
         self.logger.info(_('Creating/refreshing Engine database schema'))
         args = [
