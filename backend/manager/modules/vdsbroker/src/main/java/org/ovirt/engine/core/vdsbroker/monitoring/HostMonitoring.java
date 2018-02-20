@@ -118,7 +118,7 @@ public class HostMonitoring {
                 if (isVdsUpOrGoingToMaintenance) {
                     // check if its time for statistics refresh
                     if (vdsManager.isTimeToRefreshStatistics() || vds.getStatus() == VDSStatus.PreparingForMaintenance) {
-                        refreshVdsStats();
+                        refreshVdsStats(isVdsUpOrGoingToMaintenance);
                     } else {
                         refreshVdsRunTimeInfo(isVdsUpOrGoingToMaintenance);
                     }
@@ -188,8 +188,12 @@ public class HostMonitoring {
                         vds,
                         oldVds,
                         caps);
-                processRefreshCapabilitiesResponse(refreshReturnStatus, processHardwareNeededAtomic);
-                refreshVdsRunTimeInfo(false);
+                processRefreshCapabilitiesResponse(processHardwareNeededAtomic);
+                if (refreshReturnStatus != VDSStatus.NonOperational) {
+                    refreshVdsStats(false);
+                } else {
+                    refreshVdsRunTimeInfo(false);
+                }
             } catch (Throwable t) {
                 onFailure(t);
             }
@@ -204,12 +208,9 @@ public class HostMonitoring {
     }
 
 
-    private void processRefreshCapabilitiesResponse(VDSStatus refreshReturnStatus, AtomicBoolean processHardwareNeededAtomic) {
+    private void processRefreshCapabilitiesResponse(AtomicBoolean processHardwareNeededAtomic) {
         processHardwareCapsNeeded = processHardwareNeededAtomic.get();
         refreshedCapabilities = true;
-        if (refreshReturnStatus != VDSStatus.NonOperational) {
-            vdsManager.setStatus(VDSStatus.Up, vds);
-        }
         saveVdsDynamic = true;
     }
 
@@ -457,7 +458,7 @@ public class HostMonitoring {
         }
     }
 
-    public void refreshVdsStats() {
+    public void refreshVdsStats(boolean isVdsUpOrGoingToMaintenance) {
         if (Config.<Boolean>getValue(ConfigValues.DebugTimerLogging)) {
             log.debug("vdsManager::refreshVdsStats entered, host='{}'({})",
                     vds.getName(), vds.getId());
@@ -465,15 +466,25 @@ public class HostMonitoring {
         // get statistics data, images checks and vm_count data (dynamic)
         fetchHostInterfaces();
         resourceManager.runVdsCommand(VDSCommandType.GetStatsAsync,
-                new VdsIdAndVdsVDSCommandParametersBase(vds).withCallback(new GetStatsAsyncCallback()));
+                new VdsIdAndVdsVDSCommandParametersBase(vds).withCallback(new GetStatsAsyncCallback(isVdsUpOrGoingToMaintenance)));
     }
 
     class GetStatsAsyncCallback implements BrokerCommandCallback {
+
+        private boolean vdsUpOrGoingToMaintenance;
+
+        GetStatsAsyncCallback(boolean vdsUpOrGoingToMaintenance) {
+            this.vdsUpOrGoingToMaintenance = vdsUpOrGoingToMaintenance;
+        }
+
         @Override
         public void onResponse(Map<String, Object> response) {
             try {
                 processRefreshVdsStatsResponse((VDSReturnValue) response.get("result"));
-                refreshVdsRunTimeInfo(true);
+                if (!vdsUpOrGoingToMaintenance) {
+                    vdsManager.setStatus(VDSStatus.Up, vds);
+                }
+                refreshVdsRunTimeInfo(vdsUpOrGoingToMaintenance);
             } catch(Throwable t) {
                 onFailure(t);
             }

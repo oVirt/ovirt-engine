@@ -81,6 +81,6 @@ public class HostMonitoringTest {
         value.setExceptionObject(new VDSNetworkException("unknown host"));
         when(resourceManager.runVdsCommand(any(), any())).thenReturn(value);
 
-        updater.refreshVdsStats();
+        updater.refreshVdsStats(true);
     }
 }
