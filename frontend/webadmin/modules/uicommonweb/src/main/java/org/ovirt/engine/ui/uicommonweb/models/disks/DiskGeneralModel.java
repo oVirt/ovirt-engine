@@ -13,8 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 public class DiskGeneralModel extends EntityModel<Disk> {
     private String privateAlias;
 
@@ -78,19 +76,6 @@ public class DiskGeneralModel extends EntityModel<Disk> {
         if (!Objects.equals(privateLunId, value)) {
             privateLunId = value;
             onPropertyChanged(new PropertyChangedEventArgs("LUN ID")); //$NON-NLS-1$
-        }
-    }
-
-    private String privateAlignment;
-
-    public String getAlignment() {
-        return privateAlignment;
-    }
-
-    public void setAlignment(String value) {
-        if (!Objects.equals(privateAlignment, value)) {
-            privateAlignment = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Alignment")); //$NON-NLS-1$
         }
     }
 
@@ -194,15 +179,6 @@ public class DiskGeneralModel extends EntityModel<Disk> {
         setAlias(disk.getDiskAlias());
         setDescription(disk.getDiskDescription());
         setDiskId(disk.getId().toString());
-
-        if (disk.getLastAlignmentScan() != null) {
-            String lastScanDate = DateTimeFormat
-                    .getFormat("yyyy-MM-dd, HH:mm").format(disk.getLastAlignmentScan()); //$NON-NLS-1$
-            setAlignment(ConstantsManager.getInstance()
-                    .getMessages().diskAlignment(disk.getAlignment().toString(), lastScanDate));
-        } else {
-            setAlignment(disk.getAlignment().toString());
-        }
 
         setWipeAfterDelete(disk.isWipeAfterDelete());
 

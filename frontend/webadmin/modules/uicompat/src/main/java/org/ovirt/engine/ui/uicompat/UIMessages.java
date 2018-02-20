@@ -125,8 +125,6 @@ public interface UIMessages extends Messages {
 
     String templateVersionNameAndNumber(String versionName, int versionNumber);
 
-    String diskAlignment(String alignment, String lastScanDate);
-
     String errConnectingVmUsingSpiceMsg(Object errCode);
 
     String errConnectingVmUsingRdpMsg(Object errCode);

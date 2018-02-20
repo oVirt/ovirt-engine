@@ -62,13 +62,6 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
             }
         });
 
-        addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.getDiskAlignment()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getScanAlignmentCommand();
-            }
-        });
-
         addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.exportDisk()) {
             @Override
             protected UICommand resolveCommand() {

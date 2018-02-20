@@ -31,8 +31,6 @@ public interface CommonApplicationMessages extends Messages {
 
     String bootable();
 
-    String lastDiskAlignment(String lastScanDate);
-
     String outOfXVMsInPool(String numOfVms);
 
     String prestartedHelp();

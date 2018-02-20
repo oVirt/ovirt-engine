@@ -176,7 +176,6 @@ public enum ActionType {
     CreateCloneOfTemplate(229, QuotaDependency.STORAGE),
     RemoveDisk(230, QuotaDependency.STORAGE),
     MoveImageGroup(231, QuotaDependency.STORAGE),
-    GetDiskAlignment(232, QuotaDependency.NONE),
     AmendVolume(233, ActionGroup.EDIT_DISK_PROPERTIES, QuotaDependency.NONE),
     RemoveMemoryVolumes(234, QuotaDependency.NONE),
     RemoveDiskSnapshots(235, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),

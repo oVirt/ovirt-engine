@@ -272,7 +272,6 @@
         <include name="common/businessentities/storage/DiskVmElement.java" />
         <include name="common/businessentities/storage/UnregisteredDisk.java" />
         <include name="common/businessentities/storage/UnregisteredDiskId.java" />
-        <include name="common/businessentities/storage/DiskAlignment.java" />
         <include name="common/businessentities/storage/DiskContentType.java" />
         <include name="common/businessentities/storage/DiskImage.java" />
         <include name="common/businessentities/storage/DiskImageBase.java" />

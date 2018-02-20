@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
-import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -89,16 +88,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
 
     private void setMoveCommand(UICommand value) {
         privateMoveCommand = value;
-    }
-
-    private UICommand privateScanAlignmentCommand;
-
-    public UICommand getScanAlignmentCommand() {
-        return privateScanAlignmentCommand;
-    }
-
-    private void setScanAlignmentCommand(UICommand value) {
-        privateScanAlignmentCommand = value;
     }
 
     private UICommand exportCommand;
@@ -242,7 +231,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
-        setScanAlignmentCommand(new UICommand("Check Alignment", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
         setUploadCommand(new UICommand("Upload", this)); //$NON-NLS-1$
         setCancelUploadCommand(new UICommand("CancelUpload", this)); //$NON-NLS-1$
@@ -362,19 +350,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         model.setEntity(this);
         model.init(disks);
         model.startProgress();
-    }
-
-    private void scanAlignment() {
-        ArrayList<ActionParametersBase> parameterList = new ArrayList<>();
-
-        for (Disk disk : getSelectedItems()) {
-            parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
-        }
-
-        Frontend.getInstance().runMultipleAction(ActionType.GetDiskAlignment, parameterList,
-                result -> {
-                },
-                this);
     }
 
     private void export() {
@@ -557,8 +532,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         getNewCommand().setIsExecutionAllowed(true);
         getEditCommand().setIsExecutionAllowed(disk != null && disks != null && disks.size() == 1 && shouldAllowEdit);
         getRemoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isRemoveCommandAvailable());
-        getScanAlignmentCommand().setIsExecutionAllowed(
-                disks != null && disks.size() > 0 && isScanAlignmentCommandAvailable());
         getExportCommand().setIsExecutionAllowed(isExportCommandAvailable());
         updateCopyAndMoveCommandAvailability(disks);
 
@@ -659,19 +632,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         return true;
     }
 
-    private boolean isScanAlignmentCommandAvailable() {
-        List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<>();
-
-        for (Disk disk : disks) {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                    ((DiskImage) disk).getImageStatus() != ImageStatus.OK) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private boolean isExportCommandAvailable() {
         List<DiskImage> disks = asImages(getSelectedItems());
 
@@ -719,9 +679,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         }
         else if (command == getCopyCommand()) {
             copy();
-        }
-        else if (command == getScanAlignmentCommand()) {
-            scanAlignment();
         }
         else if (command == getExportCommand()) {
             export();

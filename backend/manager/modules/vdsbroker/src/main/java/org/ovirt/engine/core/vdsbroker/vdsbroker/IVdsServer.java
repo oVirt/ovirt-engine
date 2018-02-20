@@ -254,8 +254,6 @@ public interface IVdsServer {
 
     StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen);
 
-    AlignmentScanReturn getDiskAlignment(String vmId, Map<String, String> driveSpecs);
-
     ImageSizeReturn diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize);
 
     StatusOnlyReturn merge(String vmId, Map<String, String> drive,

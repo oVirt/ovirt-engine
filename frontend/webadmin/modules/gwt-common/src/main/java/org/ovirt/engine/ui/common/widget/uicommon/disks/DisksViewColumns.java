@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
@@ -38,7 +37,6 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -47,7 +45,6 @@ public class DisksViewColumns {
 
     private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public static AbstractTextColumn<Disk> getAliasColumn(String sortBy) {
         return getAliasColumn(null, sortBy);
@@ -229,23 +226,6 @@ public class DisksViewColumns {
         makeSortable(diskContainersColumn, sortBy);
         return diskContainersColumn;
     }
-
-    public static final AbstractTextColumn<Disk> diskAlignmentColumn = new AbstractTextColumn<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return object.getAlignment().toString();
-        }
-
-        @Override
-        public SafeHtml getTooltip(Disk object) {
-            if (object.getLastAlignmentScan() != null) {
-                String lastScanDate = DateTimeFormat
-                        .getFormat("yyyy-MM-dd, HH:mm").format(object.getLastAlignmentScan()); //$NON-NLS-1$
-                return SafeHtmlUtils.fromString(messages.lastDiskAlignment(lastScanDate));
-            }
-            return null;
-        }
-    };
 
     public static final StorageDomainsColumn getStorageDomainsColumn(String sortBy) {
         StorageDomainsColumn storageDomainsColumn = new StorageDomainsColumn();

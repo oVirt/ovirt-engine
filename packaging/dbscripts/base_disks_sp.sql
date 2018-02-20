@@ -11,8 +11,6 @@ CREATE OR REPLACE FUNCTION InsertBaseDisk (
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
     v_sgio INT,
-    v_alignment SMALLINT,
-    v_last_alignment_scan TIMESTAMP WITH TIME ZONE,
     v_disk_storage_type SMALLINT,
     v_cinder_volume_type VARCHAR(255),
     v_disk_content_type SMALLINT
@@ -27,8 +25,6 @@ BEGIN
         disk_description,
         shareable,
         sgio,
-        alignment,
-        last_alignment_scan,
         disk_storage_type,
         cinder_volume_type,
         disk_content_type
@@ -41,8 +37,6 @@ BEGIN
         v_disk_description,
         v_shareable,
         v_sgio,
-        v_alignment,
-        v_last_alignment_scan,
         v_disk_storage_type,
         v_cinder_volume_type,
         v_disk_content_type
@@ -58,8 +52,6 @@ CREATE OR REPLACE FUNCTION UpdateBaseDisk (
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
     v_sgio INT,
-    v_alignment SMALLINT,
-    v_last_alignment_scan TIMESTAMP WITH TIME ZONE,
     v_disk_storage_type SMALLINT,
     v_cinder_volume_type VARCHAR(255),
     v_disk_content_type SMALLINT
@@ -73,8 +65,6 @@ BEGIN
         disk_description = v_disk_description,
         shareable = v_shareable,
         sgio = v_sgio,
-        alignment = v_alignment,
-        last_alignment_scan = v_last_alignment_scan,
         disk_storage_type = v_disk_storage_type,
         cinder_volume_type = v_cinder_volume_type,
         disk_content_type = v_disk_content_type

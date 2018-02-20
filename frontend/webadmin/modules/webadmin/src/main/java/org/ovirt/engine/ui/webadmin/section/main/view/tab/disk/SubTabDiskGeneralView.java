@@ -44,7 +44,6 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
     StringValueLabel lunId = new StringValueLabel();
     StringValueLabel diskProfileName = new StringValueLabel();
     StringValueLabel quotaName = new StringValueLabel();
-    StringValueLabel alignment = new StringValueLabel();
     BooleanLabel wipeAfterDelete = new BooleanLabel(constants.yes(), constants.no());
 
     @UiField(provided = true)
@@ -75,26 +74,25 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0), 2, 10);
         formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0), 2, 10);
         formBuilder.addFormItem(new FormItem(constants.idDisk(), diskId, 2, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.diskAlignment(), alignment, 3, 0), 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.lunIdSanStorage(), lunId, 4, 0) {
+        formBuilder.addFormItem(new FormItem(constants.lunIdSanStorage(), lunId, 3, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().isLun();
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.diskProfile(), diskProfileName, 5, 0) {
+        formBuilder.addFormItem(new FormItem(constants.diskProfile(), diskProfileName, 4, 0) {
             @Override
             public boolean getIsAvailable() {
                 return !getDetailModel().isLun();
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 6, 0) {
+        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 5, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().isQuotaAvailable();
             }
         }, 2, 10);
-        formBuilder.addFormItem(new FormItem(constants.wipeAfterDelete(), wipeAfterDelete, 7, 0) {
+        formBuilder.addFormItem(new FormItem(constants.wipeAfterDelete(), wipeAfterDelete, 6, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().isImage();

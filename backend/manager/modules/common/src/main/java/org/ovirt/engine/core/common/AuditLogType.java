@@ -152,9 +152,12 @@ public enum AuditLogType {
 
     HOST_PROTOCOL_INCOMPATIBLE_WITH_CLUSTER(619, AuditLogSeverity.WARNING),
 
-    // Disk alignment audit logs
+    // Disk alignment audit logs - functionality was removed in 4.3
+    @Deprecated
     DISK_ALIGNMENT_SCAN_START(700),
+    @Deprecated
     DISK_ALIGNMENT_SCAN_FAILURE(701, AuditLogSeverity.WARNING),
+    @Deprecated
     DISK_ALIGNMENT_SCAN_SUCCESS(702),
 
     // -- IRS Log types --

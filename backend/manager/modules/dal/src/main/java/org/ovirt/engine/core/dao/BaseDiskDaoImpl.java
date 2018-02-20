@@ -33,8 +33,6 @@ public class BaseDiskDaoImpl extends DefaultGenericDao<BaseDisk, Guid> implement
                 .addValue("propagate_errors", EnumUtils.nameOrNull(entity.getPropagateErrors()))
                 .addValue("shareable", entity.isShareable())
                 .addValue("sgio", entity.getSgio())
-                .addValue("alignment", entity.getAlignment())
-                .addValue("last_alignment_scan", entity.getLastAlignmentScan())
                 .addValue("disk_storage_type", entity.getDiskStorageType())
                 .addValue("cinder_volume_type", entity.getCinderVolumeType())
                 .addValue("disk_content_type", entity.getContentType().getValue());

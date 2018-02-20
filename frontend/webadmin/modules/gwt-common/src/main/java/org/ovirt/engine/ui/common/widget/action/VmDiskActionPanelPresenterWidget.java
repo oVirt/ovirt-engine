@@ -113,13 +113,6 @@ public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenter
             }
         });
 
-        addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.getDiskAlignment()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getScanAlignmentCommand();
-            }
-        });
-
         addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.assignQuota()) {
             @Override
             protected UICommand resolveCommand() {

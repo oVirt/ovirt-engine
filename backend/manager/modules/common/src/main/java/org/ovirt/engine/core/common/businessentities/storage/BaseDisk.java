@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -40,7 +39,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     /**
      * Needed for java serialization/deserialization mechanism.
      */
-    private static final long serialVersionUID = 5883196978129104663L;
+    private static final long serialVersionUID = 982554837117443062L;
 
     /**
      * The disk ID uniquely identifies a disk in the system.
@@ -104,15 +103,10 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
 
     private ScsiGenericIO sgio;
 
-    private DiskAlignment alignment;
-
-    private Date lastAlignmentScan;
-
     private String cinderVolumeType;
 
     public BaseDisk() {
         propagateErrors = PropagateErrors.Off;
-        alignment = DiskAlignment.Unknown;
         contentType = DiskContentType.DATA;
     }
 
@@ -188,22 +182,6 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
 
     public boolean isScsiPassthrough() {
         return getSgio() != null;
-    }
-
-    public DiskAlignment getAlignment() {
-        return alignment;
-    }
-
-    public void setAlignment(DiskAlignment value) {
-        alignment = value;
-    }
-
-    public Date getLastAlignmentScan() {
-        return (lastAlignmentScan != null) ? (Date) lastAlignmentScan.clone() : null;
-    }
-
-    public void setLastAlignmentScan(Date value) {
-        lastAlignmentScan = (value != null) ? (Date) value.clone() : null;
     }
 
     public String getCinderVolumeType() {

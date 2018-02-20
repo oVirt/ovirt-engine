@@ -148,9 +148,6 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
                 interfaceColumn, constants.interfaceDisk(), all || images || luns || cinder, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.diskAlignmentColumn, constants.diskAlignment(), all || images || luns, "100px"); //$NON-NLS-1$
-
-        getTable().ensureColumnVisible(
                 statusColumn, constants.statusDisk(), images || cinder || all, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(

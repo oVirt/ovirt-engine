@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
-import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -22,8 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -131,16 +128,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         privateMoveCommand = value;
     }
 
-    private UICommand privateScanAlignmentCommand;
-
-    public UICommand getScanAlignmentCommand() {
-        return privateScanAlignmentCommand;
-    }
-
-    private void setScanAlignmentCommand(UICommand value) {
-        privateScanAlignmentCommand = value;
-    }
-
     public boolean isExtendImageSizeEnabled() {
         return (getEntity() != null) ?
                 ActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, ActionType.ExtendImageSize) : false;
@@ -159,7 +146,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         setPlugCommand(new UICommand("Plug", this)); //$NON-NLS-1$
         setUnPlugCommand(new UICommand("Unplug", this)); //$NON-NLS-1$
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
-        setScanAlignmentCommand(new UICommand("Scan Alignment", this)); //$NON-NLS-1$
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         getChangeQuotaCommand().setIsAvailable(false);
 
@@ -408,19 +394,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         model.startProgress();
     }
 
-    private void scanAlignment() {
-        ArrayList<ActionParametersBase> parameterList = new ArrayList<>();
-
-        for (Disk disk : getSelectedItems()) {
-            parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
-        }
-
-        Frontend.getInstance().runMultipleAction(ActionType.GetDiskAlignment, parameterList,
-                result -> {
-                },
-                this);
-    }
-
     private void cancel() {
         setWindow(null);
     }
@@ -462,8 +435,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
         getMoveCommand().setIsExecutionAllowed(atLeastOneDiskSelected()
                 && (isMoveCommandAvailable() || isLiveMoveCommandAvailable()));
-
-        updateScanAlignmentCommandAvailability();
 
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
@@ -593,25 +564,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         return true;
     }
 
-    private void updateScanAlignmentCommandAvailability() {
-        boolean isExecutionAllowed = true;
-        if (isVmDown() && getSelectedItems() != null && getEntity() != null) {
-            List<Disk> disks = getSelectedItems();
-            for (Disk disk : disks) {
-
-                if (!(disk instanceof LunDisk) && !isDiskOnBlockDevice(disk)) {
-                    isExecutionAllowed = false;
-                    break;
-                }
-            }
-        }
-        else {
-            isExecutionAllowed = false;
-        }
-        getScanAlignmentCommand().setIsExecutionAllowed(isExecutionAllowed);
-        //onPropertyChanged(new PropertyChangedEventArgs("IsScanAlignmentEnabled")); //$NON-NLS-1$
-    }
-
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
@@ -633,9 +585,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         }
         else if (command == getMoveCommand()) {
             move();
-        }
-        else if (command == getScanAlignmentCommand()) {
-            scanAlignment();
         }
         else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
@@ -667,20 +616,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
             onChangeQuota();
         }
-    }
-
-    private boolean isDiskOnBlockDevice(Disk disk) {
-        if (disk instanceof DiskImage) {
-
-            List<StorageType> diskStorageTypes = ((DiskImage) disk).getStorageTypes();
-            for (StorageType type : diskStorageTypes) {
-                if (!type.isBlockDomain()) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false; // Should never happen but we might add other Disk types in the future
     }
 
     protected void updateDataCenterVersion() {

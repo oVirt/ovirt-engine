@@ -40,7 +40,6 @@ import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.AlignmentScanReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DomainXmlListReturn;
@@ -1049,17 +1048,6 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
-    }
-
-    @Override
-    public AlignmentScanReturn getDiskAlignment(String vmId, Map<String, String> driveSpecs) {
-        JsonRpcRequest request =
-                new RequestBuilder("VM.getDiskAlignment").withParameter("vmID", vmId)
-                        .withParameter("disk", driveSpecs)
-                        .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("alignment");
-        return new AlignmentScanReturn(response);
     }
 
     @Override

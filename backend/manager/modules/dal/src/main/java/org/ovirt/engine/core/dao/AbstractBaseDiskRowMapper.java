@@ -5,11 +5,9 @@ import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskAlignment;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements RowMapper<T> {
@@ -30,8 +28,6 @@ public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements R
 
         disk.setShareable(rs.getBoolean("shareable"));
         disk.setSgio(ScsiGenericIO.forValue(rs.getInt("sgio")));
-        disk.setAlignment(DiskAlignment.forValue(rs.getInt("alignment")));
-        disk.setLastAlignmentScan(DbFacadeUtils.fromDate(rs.getTimestamp("last_alignment_scan")));
         disk.setContentType(DiskContentType.forValue(rs.getInt("disk_content_type")));
 
         return disk;

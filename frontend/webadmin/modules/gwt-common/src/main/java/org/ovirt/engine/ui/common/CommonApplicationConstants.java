@@ -731,8 +731,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String moveDisk();
 
-    String getDiskAlignment();
-
     String exportDisk();
 
     String dataCenter();
@@ -790,8 +788,6 @@ public interface CommonApplicationConstants extends Constants {
     String quotaDisk();
 
     String destDisk();
-
-    String diskAlignment();
 
     String attachedToDisk();
 
