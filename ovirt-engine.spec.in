@@ -530,6 +530,7 @@ Requires:	java-headless
 Requires:	logrotate
 Requires:	python-dateutil
 Requires:	python-psycopg2
+Requires:	gdeploy
 Requires(pre):		shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
