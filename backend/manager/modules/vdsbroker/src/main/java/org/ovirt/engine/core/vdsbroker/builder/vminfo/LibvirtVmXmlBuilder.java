@@ -132,6 +132,8 @@ public class LibvirtVmXmlBuilder {
     private Map<String, Map<String, String>> diskMetadata;
     private Pair<String, VmPayload> payloadMetadata;
 
+    private List<Pair<Guid, Guid>> volumeLeases = Collections.emptyList();
+
     /** Hot-set fields */
     private VmNic nic;
     private VmDevice device;
@@ -960,8 +962,6 @@ public class LibvirtVmXmlBuilder {
 
         writeSerialConsole(serialConsolePath);
 
-        writeLease();
-
         if (spiceExists) {
             writeSpiceVmcChannel();
         }
@@ -973,6 +973,7 @@ public class LibvirtVmXmlBuilder {
         writeFloppy(floppyDevice);
         // we must write the disk after writing cd-rom and floppy to know reserved indices
         writeDisks(diskDevices);
+        writeLeases();
 
         writer.writeEndElement();
     }
@@ -1051,19 +1052,41 @@ public class LibvirtVmXmlBuilder {
                 VmDeviceCommonUtils.extractDiskVmElements(vm));
     }
 
-    private void writeLease() {
-        if (vm.getLeaseStorageDomainId() == null) {
-            return;
+    private void writeLeases() {
+        // Write volume leases
+        for (Pair<Guid, Guid> pair : volumeLeases) {
+            String leaseId = pair.getFirst().toString();
+            String leaseSdId = pair.getSecond().toString();
+
+            // The templates LEASE-PATH and LEASE-OFFSET are replaced with real values in vdsm
+            // For example:
+            //   LEASE-PATH:<VOLUME_ID>:<DOMAIN_ID> -> /rhev/data-center/mnt/nfs/<DOMAIN_ID>/images/<VOLUME_ID>/abc.lease
+            //   LEASE-OFFSET:<VOLUME_ID>:<DOMAIN_ID> -> 0
+            writeLease(
+                    leaseId,
+                    leaseSdId,
+                    String.format("LEASE-PATH:%s:%s", leaseId, leaseSdId),
+                    String.format("LEASE-OFFSET:%s:%s", leaseId, leaseSdId)
+            );
         }
 
+        // Write VM lease
+        if (vm.getLeaseStorageDomainId() != null) {
+            writeLease(vm.getId().toString(),
+                    vm.getLeaseStorageDomainId().toString(),
+                    vm.getLeaseInfo().get(VdsProperties.VmLeasePath),
+                    vm.getLeaseInfo().get(VdsProperties.VmLeaseOffset));
+        }
+    }
+
+    private void writeLease(String key, String lockspace, String path, String offset) {
         writer.writeStartElement("lease");
-        writer.writeElement("key", vm.getId().toString());
-        writer.writeElement("lockspace", vm.getLeaseStorageDomainId().toString());
+        writer.writeElement("key", key);
+        writer.writeElement("lockspace", lockspace);
 
         writer.writeStartElement("target");
-        Map<String, String> leaseInfo = vm.getLeaseInfo();
-        writer.writeAttributeString("offset", leaseInfo.get(VdsProperties.VmLeaseOffset));
-        writer.writeAttributeString("path", leaseInfo.get(VdsProperties.VmLeasePath));
+        writer.writeAttributeString("offset", offset);
+        writer.writeAttributeString("path", path);
         writer.writeEndElement();
 
         writer.writeEndElement();
@@ -1703,9 +1726,10 @@ public class LibvirtVmXmlBuilder {
                 // Hosted engine disk images have to have empty storage pool ID,
                 // so they can be mounted even if storage pool is not connected.
                 diskImage.setStoragePoolId(Guid.Empty);
-
                 diskImage.setPropagateErrors(PropagateErrors.Off);
-                diskImage.setShareable(false);
+
+                // The disk requires a lease
+                addVolumeLease(diskImage.getImageId(), diskImage.getStorageIds().get(0));
             }
 
             String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage);
@@ -1776,15 +1800,31 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
+    private void addVolumeLease(Guid leaseId, Guid leaseSdId) {
+        // Volume leases are currently used only for the hosted engine VM,
+        // so the list is created only when needed.
+        if (volumeLeases.isEmpty()) {
+            volumeLeases = new ArrayList<>(1);
+        }
+
+        volumeLeases.add(new Pair<>(leaseId, leaseSdId));
+    }
+
     private Map<String, String> createDiskParams(DiskImage diskImage) {
         Map<String, String> diskParams =
                 createDiskUuidsMap(diskImage.getStoragePoolId(),
                         diskImage.getStorageIds().get(0),
                         diskImage.getId(),
                         diskImage.getImageId());
+
         if (!diskImage.getActive()) {
             diskParams.put(VdsProperties.Shareable, VdsProperties.Transient);
+        } else if (diskImage.isShareable()) {
+            diskParams.put(VdsProperties.Shareable, VdsProperties.Shareable);
+        } else if (vm.isHostedEngine()) {
+            diskParams.put(VdsProperties.Shareable, VdsProperties.Exclusive);
         }
+
         return diskParams;
     }
 
