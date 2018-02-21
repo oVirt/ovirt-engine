@@ -483,15 +483,11 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
             parameterList.add(parameters);
         }
 
-        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveDisk, parameterList,
                 result -> {
                     DiskListModel localModel = (DiskListModel) result.getState();
-                    if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
-                        restorePreviousSelectedItem();
-                    }
                     localModel.stopProgress();
                     cancel();
                 },

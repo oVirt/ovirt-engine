@@ -620,7 +620,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             tempVar.setVdsId(host.getId());
             tempVar.setDoFormat(model.getFormat().getEntity());
 
-            selectNextItem();
             Frontend.getInstance().runAction(ActionType.RemoveStorageDomain, tempVar, null, this);
         }
 

@@ -156,7 +156,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
                 pb.add(new RemoveNetworkParameters(network.getId()));
             }
         }
-        sourceListModel.selectNextItem();
+
         Frontend.getInstance().runMultipleAction(ActionType.RemoveNetwork, pb);
 
         sourceListModel.setConfirmWindow(null);

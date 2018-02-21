@@ -57,7 +57,6 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
 
         }
 
-        sourceListModel.selectNextItem();
         startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVnicProfile, list,

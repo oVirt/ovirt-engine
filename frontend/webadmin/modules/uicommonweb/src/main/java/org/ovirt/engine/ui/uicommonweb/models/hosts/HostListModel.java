@@ -1096,15 +1096,11 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             list.add(new RemoveVdsParameters(vds.getId(), force));
         }
 
-        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVds, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                    if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
-                        restorePreviousSelectedItem();
-                    }
                     localModel.stopProgress();
                     cancel();
                 }, model);

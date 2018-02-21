@@ -317,15 +317,11 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
             list.add(new VmPoolParametersBase(pool.getVmPoolId()));
         }
 
-        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVmPool, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                    if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
-                        restorePreviousSelectedItem();
-                    }
                     localModel.stopProgress();
                     cancel();
                 }, model);

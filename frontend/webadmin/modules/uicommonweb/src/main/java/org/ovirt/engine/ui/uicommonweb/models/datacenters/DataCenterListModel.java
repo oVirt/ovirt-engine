@@ -469,15 +469,11 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
 
-        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveStoragePool, parameters,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                    if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
-                        restorePreviousSelectedItem();
-                    }
                     localModel.stopProgress();
                     cancel();
                 }, model);

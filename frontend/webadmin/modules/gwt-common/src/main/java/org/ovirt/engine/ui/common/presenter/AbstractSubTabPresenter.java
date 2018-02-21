@@ -124,6 +124,10 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             if (currentPlace != null) {
                 prepareFromRequest(currentPlace);
             }
+            if (getMainModel().getSelectedItem() == null && isVisible()) {
+                // Item has been removed, switch to main view.
+                placeManager.revealPlace(getMainContentRequest());
+            }
         });
 
         getSelectedMainItems().registerListener(this);
