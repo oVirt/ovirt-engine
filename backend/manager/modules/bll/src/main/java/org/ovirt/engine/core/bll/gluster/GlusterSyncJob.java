@@ -957,23 +957,22 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     public void refreshVolumeDetails(VDS upServer, GlusterVolumeEntity volume) {
-        List<GlusterBrickEntity> bricksToUpdate = new ArrayList<>();
-        List<GlusterBrickEntity> brickPropertiesToUpdate = new ArrayList<>();
-        List<GlusterBrickEntity> brickPropertiesToAdd = new ArrayList<>();
-
         GlusterVolumeAdvancedDetails volumeAdvancedDetails = getVolumeAdvancedDetails(upServer, volume.getClusterId(), volume.getName());
         if (volumeAdvancedDetails == null) {
             log.error("Error while refreshing brick statuses for volume '{}'. Failed to get volume advanced details ",
                     volume.getName());
             return;
         }
-        if (volumeAdvancedDetails.getCapacityInfo() != null) {
-            if (volume.getAdvancedDetails().getCapacityInfo() == null) {
-                volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
-            } else {
-                volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
-            }
-        }
+
+        refreshBrickDetails(volume, volumeAdvancedDetails);
+
+        refreshVolumeCapacity(volume, volumeAdvancedDetails);
+    }
+
+    private void refreshBrickDetails(GlusterVolumeEntity volume, GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
+        List<GlusterBrickEntity> bricksToUpdate = new ArrayList<>();
+        List<GlusterBrickEntity> brickPropertiesToUpdate = new ArrayList<>();
+        List<GlusterBrickEntity> brickPropertiesToAdd = new ArrayList<>();
 
         Map<Guid, BrickProperties> brickPropertiesMap =
                 getBrickPropertiesMap(volumeAdvancedDetails);
@@ -1008,6 +1007,16 @@ public class GlusterSyncJob extends GlusterJob {
 
         if (!bricksToUpdate.isEmpty()) {
             brickDao.updateBrickStatuses(bricksToUpdate);
+        }
+    }
+
+    private void refreshVolumeCapacity(GlusterVolumeEntity volume, GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
+        if (volumeAdvancedDetails.getCapacityInfo() != null) {
+            if (volume.getAdvancedDetails().getCapacityInfo() == null) {
+                volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
+            } else {
+                volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
+            }
         }
     }
 
