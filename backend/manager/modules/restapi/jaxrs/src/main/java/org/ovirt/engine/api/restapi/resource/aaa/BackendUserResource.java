@@ -79,6 +79,6 @@ public class BackendUserResource
 
     @Override
     public DomainUserGroupsResource getGroupsResource() {
-        return null;
+        return inject(new BackendDomainUserGroupsResource(guid));
     }
 }
