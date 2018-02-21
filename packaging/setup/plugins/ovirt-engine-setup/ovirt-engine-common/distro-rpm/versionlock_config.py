@@ -20,6 +20,7 @@
 
 
 import os
+import platform
 
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -44,7 +45,15 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: os.path.exists(YUM_VERSIONLOCK_CONF),
+        condition=lambda self: (
+            os.path.exists(YUM_VERSIONLOCK_CONF) and
+            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] and
+            not self.environment[osetupcons.CoreEnv.OFFLINE_PACKAGER] and
+            platform.linux_distribution(full_distribution_name=0)[0] in (
+                'redhat',
+                'centos'
+            )
+        )
     )
     def _misc(self):
         changed_lines = []
