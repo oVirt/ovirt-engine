@@ -32,9 +32,13 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalLogicalVolume;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalPhysicalVolume;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterLocalVolumeInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVDOVolume;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
@@ -46,6 +50,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -956,7 +961,44 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
+    private Map<Guid, GlusterLocalVolumeInfo> getLocalVolumeInfo(Guid clusterId) {
+        Map<Guid, GlusterLocalVolumeInfo> localVolumeInfoMap = new HashMap<>();
+        for (VDS vds : vdsDao.getAllForCluster(clusterId)) {
+            if (vds.getStatus() != VDSStatus.Up) {
+                continue;
+            }
+            try {
+                log.debug("Getting LVM/VDO information for the host {}", vds.getName());
+                GlusterLocalVolumeInfo localVolumeInfo = new GlusterLocalVolumeInfo();
+                VDSReturnValue
+                        logicalVolumesResult = runVdsCommand(
+                        VDSCommandType.GetGlusterLocalLogicalVolumeList,
+                        new VdsIdVDSCommandParametersBase(vds.getId()));
+                if (logicalVolumesResult.getSucceeded()) {
+                    localVolumeInfo.setLogicalVolumes((List<GlusterLocalLogicalVolume>) logicalVolumesResult.getReturnValue());
+                }
+                VDSReturnValue physicalVolumesResult = runVdsCommand(
+                        VDSCommandType.GetGlusterLocalPhysicalVolumeList,
+                        new VdsIdVDSCommandParametersBase(vds.getId()));
+                if (physicalVolumesResult.getSucceeded()) {
+                    localVolumeInfo.setPhysicalVolumes((List<GlusterLocalPhysicalVolume>) physicalVolumesResult.getReturnValue());
+                }
+                VDSReturnValue vdoVolumesResult = runVdsCommand(
+                        VDSCommandType.GetGlusterVDOVolumeList,
+                        new VdsIdVDSCommandParametersBase(vds.getId()));
+                if (vdoVolumesResult.getSucceeded()) {
+                    localVolumeInfo.setVdoVolumes((List<GlusterVDOVolume>) vdoVolumesResult.getReturnValue());
+                }
+                localVolumeInfoMap.put(vds.getId(), localVolumeInfo);
+            } catch (Exception ex) {
+                log.debug("Getting VDSM/VDO information failed at host {}, old vdsm?", vds.getName());
+            }
+        }
+        return localVolumeInfoMap;
+    }
+
     public void refreshVolumeDetails(VDS upServer, GlusterVolumeEntity volume) {
+        Map<Guid, GlusterLocalVolumeInfo> localVolumeInfo = getLocalVolumeInfo(upServer.getClusterId());
         GlusterVolumeAdvancedDetails volumeAdvancedDetails = getVolumeAdvancedDetails(upServer, volume.getClusterId(), volume.getName());
         if (volumeAdvancedDetails == null) {
             log.error("Error while refreshing brick statuses for volume '{}'. Failed to get volume advanced details ",
@@ -964,12 +1006,12 @@ public class GlusterSyncJob extends GlusterJob {
             return;
         }
 
-        refreshBrickDetails(volume, volumeAdvancedDetails);
+        refreshBrickDetails(volume, volumeAdvancedDetails, localVolumeInfo);
 
         refreshVolumeCapacity(volume, volumeAdvancedDetails);
     }
 
-    private void refreshBrickDetails(GlusterVolumeEntity volume, GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
+    private void refreshBrickDetails(GlusterVolumeEntity volume, GlusterVolumeAdvancedDetails volumeAdvancedDetails, Map<Guid, GlusterLocalVolumeInfo> localVolumeInfo) {
         List<GlusterBrickEntity> bricksToUpdate = new ArrayList<>();
         List<GlusterBrickEntity> brickPropertiesToUpdate = new ArrayList<>();
         List<GlusterBrickEntity> brickPropertiesToAdd = new ArrayList<>();
@@ -979,6 +1021,13 @@ public class GlusterSyncJob extends GlusterJob {
         for (GlusterBrickEntity brick : volume.getBricks()) {
             BrickProperties brickProperties = brickPropertiesMap.get(brick.getId());
             if (brickProperties != null) {
+                if (brickProperties.getDevice() != null) {
+                    brickProperties.setConfirmedFreeSize(
+                            localVolumeInfo.get(brick.getServerId())
+                                    .getAvailableThinSizeForDevice(brickProperties.getDevice())
+                                    .map(Long::doubleValue).map(v -> v / SizeConverter.BYTES_IN_MB).orElseGet(null)
+                    );
+                }
                 if (brickProperties.getStatus() != brick.getStatus()) {
                     logBrickStatusChange(volume, brick, brickProperties.getStatus());
                     brick.setStatus(brickProperties.getStatus());
