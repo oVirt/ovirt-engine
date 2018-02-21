@@ -547,15 +547,11 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             prms.add(new ClusterParametersBase(((Cluster) a).getId()));
         }
 
-        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveCluster, prms,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                    if (result.getReturnValue().stream().anyMatch(rv -> !rv.isValid())) {
-                        restorePreviousSelectedItem();
-                    }
                     localModel.stopProgress();
                     cancel();
                 }, model);

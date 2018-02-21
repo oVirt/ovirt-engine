@@ -68,7 +68,6 @@ public class RemoveProvidersModel extends ConfirmationModel {
             parameterList.add(new ProviderParameters(provider, force));
         }
 
-        sourceListModel.selectNextItem();
         Frontend.getInstance().runMultipleActions(ActionType.RemoveProvider, parameterList,
                 result -> sourceListModel.getSearchCommand().execute());
         cancel();
