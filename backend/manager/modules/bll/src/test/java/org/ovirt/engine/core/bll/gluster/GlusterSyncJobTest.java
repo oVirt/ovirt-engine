@@ -509,8 +509,6 @@ public class GlusterSyncJobTest {
         // Update capacity info
         inOrder.verify(volumeDao, mode)
                 .updateVolumeCapacityInfo(getVolumeAdvancedDetails(existingDistVol).getCapacityInfo());
-        // release lock on the cluster
-        inOrder.verify(glusterManager, mode).releaseLock(CLUSTER_ID);
 
         // acquire lock on the cluster for repl volume
         inOrder.verify(glusterManager, mode).acquireLock(CLUSTER_ID);
@@ -521,14 +519,17 @@ public class GlusterSyncJobTest {
                 existingReplVol.getName());
 
         // Add Capacity Info
-        inOrder.verify(volumeDao, mode)
-                .addVolumeCapacityInfo(getVolumeAdvancedDetails(existingReplVol).getCapacityInfo());
-
-        // Add Capacity Info
         inOrder.verify(brickDao, mode).addBrickProperties(anyList());
 
         // update brick status
         inOrder.verify(brickDao, mode).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
+
+        // Add Capacity Info
+        inOrder.verify(volumeDao, mode)
+                .addVolumeCapacityInfo(getVolumeAdvancedDetails(existingReplVol).getCapacityInfo());
+
+        // release lock on the cluster
+        inOrder.verify(glusterManager, mode).releaseLock(CLUSTER_ID);
 
         // release lock on the cluster
         inOrder.verify(glusterManager, mode).releaseLock(CLUSTER_ID);
