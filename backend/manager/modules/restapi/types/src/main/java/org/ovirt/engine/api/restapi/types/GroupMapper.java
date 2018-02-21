@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 
 public class GroupMapper {
@@ -64,6 +65,21 @@ public class GroupMapper {
             entity.setNamespace(model.getNamespace());
         }
         return entity;
+    }
+
+    @Mapping(from = AuthzGroup.class, to = Group.class)
+    public static Group map(AuthzGroup authzGroup, Group template) {
+        Group model = template != null ? template : new Group();
+        model.setId(DirectoryEntryIdUtils.encode(authzGroup.getId()));
+        model.setName(authzGroup.getName());
+        model.setNamespace(authzGroup.getNamespace());
+        if (!StringUtils.isEmpty(authzGroup.getAuthz())) {
+            Domain dom = new Domain();
+            dom.setName(authzGroup.getAuthz());
+            dom.setId(DirectoryEntryIdUtils.encode(dom.getName()));
+            model.setDomain(dom);
+        }
+        return model;
     }
 
 }
