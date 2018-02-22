@@ -146,8 +146,8 @@ public class DrMappingHelper {
         Cluster mappedCluster = getRelatedEntity(clusterMap,
                 clusterName,
                 val -> clusterDao.getByName(val));
-        log.info("Mapping cluster '{}' to '{}' for vm '{}'.", mappedCluster,
-                clusterName,
+        log.info("Mapping cluster '{}' to '{}' for vm '{}'.", clusterName,
+                mappedCluster,
                 vmId);
         return mappedCluster;
     }
