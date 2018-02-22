@@ -182,10 +182,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
     }
 
     private String createLockDescription(Entry<String, InternalLockView> e) {
-        return new StringBuilder("The object id is : ")
-                .append(e.getKey())
-                .append(' ')
-                .append(e.getValue()).toString();
+        return "The object id is : " + e.getKey() + ' ' + e.getValue();
     }
 
     /**
