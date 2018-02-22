@@ -490,8 +490,8 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void readUsbItem(XmlNode node) {
-        vmBase.setUsbPolicy(
-                UsbPolicy.forStringValue(selectSingleNode(node, "rasd:UsbPolicy", _xmlNS).innerText));
+        XmlNode usbPolicy = selectSingleNode(node, "rasd:UsbPolicy", _xmlNS);
+        vmBase.setUsbPolicy(usbPolicy != null ? UsbPolicy.forStringValue(usbPolicy.innerText) : UsbPolicy.ENABLED_NATIVE);
     }
 
     private VmDevice readOtherHardwareItem(XmlNode node) {
