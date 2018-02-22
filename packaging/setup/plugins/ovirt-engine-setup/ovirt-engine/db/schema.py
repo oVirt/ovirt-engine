@@ -42,7 +42,7 @@ class Plugin(plugin.PluginBase):
     """Schema plugin."""
 
     class SchemaTransaction(transaction.TransactionElement):
-        """yum transaction element."""
+        """DB Schema transaction element."""
 
         def __init__(self, parent, backup=None):
             self._parent = parent

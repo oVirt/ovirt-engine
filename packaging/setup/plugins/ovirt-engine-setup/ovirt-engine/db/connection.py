@@ -40,7 +40,7 @@ class Plugin(plugin.PluginBase):
     """Connection plugin."""
 
     class DBTransaction(transaction.TransactionElement):
-        """yum transaction element."""
+        """DB transaction element."""
 
         def __init__(self, parent):
             self._parent = parent

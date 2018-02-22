@@ -53,7 +53,7 @@ class Plugin(plugin.PluginBase):
     """CA plugin."""
 
     class CATransaction(transaction.TransactionElement):
-        """yum transaction element."""
+        """CA transaction element."""
 
         def __init__(self, parent, uninstall_files):
             self._parent = parent
