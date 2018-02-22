@@ -117,14 +117,12 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         globalLock.lock();
         try {
             if (lock.getSharedLocks() != null) {
-                for (Entry<String, Pair<String, String>> entry : lock.getSharedLocks().entrySet()) {
-                    releaseSharedLock(buildHashMapKey(entry), entry.getValue().getSecond());
-                }
+                lock.getSharedLocks().entrySet().stream().forEach(entry ->
+                    releaseSharedLock(buildHashMapKey(entry), entry.getValue().getSecond()));
             }
             if (lock.getExclusiveLocks() != null) {
-                for (Entry<String, Pair<String, String>> entry : lock.getExclusiveLocks().entrySet()) {
-                    releaseExclusiveLock(buildHashMapKey(entry));
-                }
+                lock.getExclusiveLocks().entrySet().stream().forEach(entry ->
+                    releaseExclusiveLock(buildHashMapKey(entry)));
             }
             releasedLock.signalAll();
         } finally {
