@@ -220,11 +220,11 @@ public class OvfOvaReader extends OvfReader {
             // TODO take ovf:capacityAllocationUnits into account
             image.setSize(convertGigabyteToBytes(Long.parseLong(virtualSize.getValue())));
         }
-        Long actualSize = Long.parseLong(fileIdToFileAttributes.get(fileRef).get("ovf:size").getValue());
         XmlAttribute populatedSize = node.attributes.get("ovf:populatedSize");
         if (populatedSize != null) {
             image.setActualSizeInBytes(Long.parseLong(populatedSize.getValue()));
         } else {
+            Long actualSize = Long.parseLong(fileIdToFileAttributes.get(fileRef).get("ovf:size").getValue());
             image.setActualSizeInBytes(actualSize);
         }
 
