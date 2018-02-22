@@ -128,7 +128,7 @@ public class LibvirtVmXmlBuilder {
     private MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
-    private Map<String, Map<String, Object>> diskMetadata;
+    private Map<String, Map<String, String>> diskMetadata;
     private Pair<String, VmPayload> payloadMetadata;
 
     /** Hot-set fields */
@@ -735,7 +735,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement(OVIRT_VM_URI, "device");
             writer.writeAttributeString("devtype", "disk");
             writer.writeAttributeString("name", dev);
-            data.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value.toString()));
+            data.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value));
             writer.writeEndElement();
         });
     }
@@ -1775,8 +1775,8 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private Map<String, Object> createDiskParams(DiskImage diskImage) {
-        Map<String, Object> diskParams =
+    private Map<String, String> createDiskParams(DiskImage diskImage) {
+        Map<String, String> diskParams =
                 createDiskUuidsMap(diskImage.getStoragePoolId(),
                         diskImage.getStorageIds().get(0),
                         diskImage.getId(),
@@ -1787,12 +1787,12 @@ public class LibvirtVmXmlBuilder {
         return diskParams;
     }
 
-    private Map<String, Object> createDiskUuidsMap(Guid poolId, Guid domainId, Guid imageId, Guid volumeId) {
-        Map<String, Object> diskUuids = new HashMap<>();
-        diskUuids.put("poolID", poolId);
-        diskUuids.put("domainID", domainId);
-        diskUuids.put("imageID", imageId);
-        diskUuids.put("volumeID", volumeId);
+    private Map<String, String> createDiskUuidsMap(Guid poolId, Guid domainId, Guid imageId, Guid volumeId) {
+        Map<String, String> diskUuids = new HashMap<>();
+        diskUuids.put("poolID", poolId.toString());
+        diskUuids.put("domainID", domainId.toString());
+        diskUuids.put("imageID", imageId.toString());
+        diskUuids.put("volumeID", volumeId.toString());
         return diskUuids;
     }
 
