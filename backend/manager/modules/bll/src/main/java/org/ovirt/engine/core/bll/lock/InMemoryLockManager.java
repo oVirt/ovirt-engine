@@ -106,8 +106,8 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     private void validateLockForAcquireAndWait(EngineLock lock) {
         if (lock.getSharedLocks() != null && lock.getExclusiveLocks().size() > 1) {
-            log.error("Trying to acquire or wait on shared or more than one exclussive locks '{}'", lock);
-            throw new IllegalArgumentException("Trying to acquire or wait on shared or more than one exclussive locks");
+            log.error("Trying to acquire or wait on shared or more than one exclusive locks '{}'", lock);
+            throw new IllegalArgumentException("Trying to acquire or wait on shared or more than one exclusive locks");
         }
     }
 
