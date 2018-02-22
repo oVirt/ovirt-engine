@@ -743,23 +743,28 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writePayloadMetadata() {
-        if (payloadMetadata != null) {
-            writer.writeStartElement(OVIRT_VM_URI, "device");
-            writer.writeAttributeString("devtype", "disk");
-            writer.writeAttributeString("name", payloadMetadata.getFirst());
-            writer.writeStartElement(OVIRT_VM_URI, "payload");
-            if (payloadMetadata.getSecond().getVolumeId() != null) {
-                writer.writeElement(OVIRT_VM_URI, "volId", payloadMetadata.getSecond().getVolumeId());
-            }
-            payloadMetadata.getSecond().getFiles().forEach((path, data) -> {
+        if (payloadMetadata == null) {
+            return;
+        }
+        writer.writeStartElement(OVIRT_VM_URI, "device");
+        writer.writeAttributeString("devtype", "disk");
+        writer.writeAttributeString("name", payloadMetadata.getFirst());
+        writer.writeStartElement(OVIRT_VM_URI, "payload");
+        String volumeId = payloadMetadata.getSecond().getVolumeId();
+        if (volumeId != null) {
+            writer.writeElement(OVIRT_VM_URI, "volId", volumeId);
+        }
+        Map<String, String> files = payloadMetadata.getSecond().getFiles();
+        if (files != null) {
+            files.forEach((path, data) -> {
                 writer.writeStartElement(OVIRT_VM_URI, "file");
                 writer.writeAttributeString("path", path);
                 writer.writeRaw(data);
                 writer.writeEndElement();
             });
-            writer.writeEndElement();
-            writer.writeEndElement();
         }
+        writer.writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeQosMetadata() {
@@ -1021,7 +1026,7 @@ public class LibvirtVmXmlBuilder {
 
         // the user may specify floppy path while there is no device in the database
         if (!StringUtils.isEmpty(vm.getFloppyPath()) &&
-                !devices.stream().anyMatch(dev -> !dev.getDevice().equals(VmDeviceType.FLOPPY.getName()))) {
+                !devices.stream().anyMatch(dev -> dev.getDevice().equals(VmDeviceType.FLOPPY.getName()))) {
             devices.add(vmInfoBuildUtils.createFloppyDevice(vm));
         }
 
@@ -1833,10 +1838,9 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("device", "floppy");
         writer.writeAttributeString("snapshot", "no");
 
+        final boolean payload = VmPayload.isPayload(device.getSpecParams());
         writer.writeStartElement("source");
-        writer.writeAttributeString("file", VmPayload.isPayload(device.getSpecParams()) ?
-                "PAYLOAD:"
-                : vm.getFloppyPath());
+        writer.writeAttributeString("file", payload ? "PAYLOAD:" : vm.getFloppyPath());
         writer.writeAttributeString("startupPolicy", "optional");
         writer.writeEndElement();
 
@@ -1851,7 +1855,10 @@ public class LibvirtVmXmlBuilder {
         writeAlias(device);
         writeAddress(device);
 
-        payloadMetadata = new Pair<>(name, new VmPayload(device));
+        if (payload) {
+            payloadMetadata = new Pair<>(name, new VmPayload(device));
+        }
+
         writer.writeEndElement();
     }
 
