@@ -285,7 +285,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         Guid vdsId = vdsCommandsHelper.getHostForExecution(getStoragePoolId());
-        if (!validateLunExistsAndInitDeviceData(lun, storageType, vdsId)) {
+        if (vdsId == null || !validateLunExistsAndInitDeviceData(lun, storageType, vdsId)) {
             return Arrays.asList(EngineMessage.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
         }
 
@@ -313,7 +313,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                             false,
                             Collections.singleton(lun.getLUNId()));
             lunFromStorage = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
-        } catch (EngineException e) {
+        } catch (Exception e) {
             log.debug("Exception while validating LUN disk: '{}'", e);
             return false;
         }
