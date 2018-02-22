@@ -100,18 +100,47 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
     @Override
     protected boolean validate() {
+        // We first must filter out all the invalid disks from imageToDestinationDomainMap in case we import using
+        // allow_partial, so that when a VM will be imported the disks which do not exist on the storage domain will
+        // be ignored.
+        if (!isValidDisks()) {
+            return false;
+        }
+
+        // We call super validate only after the invalid disks has been removed from imageToDestinationDomainMap.
         if (!super.validate()) {
             return false;
         }
+
+        // Validate all the rest of the properties including affinity groups/labels/vnic_profile/users and roles
+        if (!validateEntityPropertiesWhenImagesOnTarget()) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateEntityPropertiesWhenImagesOnTarget() {
+        ImportValidator importValidator = getImportValidator();
         if (isImagesAlreadyOnTarget()) {
             if (!validateExternalVnicProfileMapping()) {
                 return false;
             }
-
-            ImportValidator importValidator = getImportValidator();
             if (!validate(importValidator.validateUnregisteredEntity(ovfEntityData))) {
                 return false;
             }
+            removeInvalidAffinityGroups(importValidator);
+            removeInvalidAffinityLabels(importValidator);
+            removeInavlidUsers(importValidator);
+            removeInavlidRoles(importValidator);
+
+            setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
+        }
+        return true;
+    }
+
+    private boolean isValidDisks() {
+        ImportValidator importValidator = getImportValidator();
+        if (isImagesAlreadyOnTarget()) {
             if (!validate(importValidator.validateDiskNotAlreadyExistOnDB(getImages(),
                     getParameters().isAllowPartialImport(),
                     imageToDestinationDomainMap,
@@ -124,17 +153,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                     failedDisksToImportForAuditLog))) {
                 return false;
             }
-            if (!validate(importValidator.validateStorageExistsForMemoryDisks(getVm().getSnapshots(),
+            if (getVm() != null
+                    && !validate(importValidator.validateStorageExistsForMemoryDisks(getVm().getSnapshots(),
                     getParameters().isAllowPartialImport(),
                     failedDisksToImportForAuditLog))) {
                 return false;
             }
-            removeInvalidAffinityGroups(importValidator);
-            removeInvalidAffinityLabels(importValidator);
-            removeInavlidUsers(importValidator);
-            removeInavlidRoles(importValidator);
-
-            setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
         return true;
     }
