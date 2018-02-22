@@ -19,6 +19,7 @@ import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 /**
  * Base class for sub tab views that use {@link SimpleActionTable} directly.
@@ -38,18 +39,21 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     @WithElementId
     public final SimpleActionTable<T> table;
 
-    private IsWidget actionPanel;
-
     private final FlowPanel container = new FlowPanel();
+    private final SimplePanel actionPanelContainer = new SimplePanel();
+    private final SimplePanel contentContainer = new SimplePanel();
 
     private PlaceTransitionHandler placeTransitionHandler;
 
     public AbstractSubTabTableView(SearchableDetailModelProvider<T, M, D> modelProvider) {
         this.modelProvider = modelProvider;
         this.table = createActionTable();
+        container.add(actionPanelContainer);
+        container.add(contentContainer);
         container.add(table);
         container.addStyleName(OBRAND_DETAIL_TAB);
-        bindSlot(MainContentPresenter.TYPE_SetContent, container);
+        bindSlot(MainContentPresenter.TYPE_SetContent, contentContainer);
+        bindSlot(AbstractSubTabPresenter.TYPE_SetActionPanel, actionPanelContainer);
         generateIds();
     }
 
@@ -76,20 +80,6 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
                 }
             }
         };
-    }
-
-    @Override
-    public void setInSlot(Object slot, IsWidget content) {
-        if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
-            if (content != null) {
-                container.insert(content, 0);
-                this.actionPanel = content;
-            } else if (this.actionPanel != null) {
-                container.remove(this.actionPanel);
-            }
-        } else {
-            super.setInSlot(slot, content);
-        }
     }
 
     /**

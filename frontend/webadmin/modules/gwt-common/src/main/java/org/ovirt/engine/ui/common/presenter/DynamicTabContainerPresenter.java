@@ -14,6 +14,7 @@ import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabContainerPresenter;
 import com.gwtplatform.mvp.client.TabPanel;
 import com.gwtplatform.mvp.client.TabView;
+import com.gwtplatform.mvp.client.presenter.slots.IsSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxy;
@@ -61,12 +62,7 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
     }
 
     @Override
-    // TODO-GWT: override setInSlot to get hold of TabContentProxy in case of Presenter
-    // When moving to new GWTP slot API, make sure to override setInSlot(IsSlot<T>, T) instead.
-    // Also, check all overrides of legacy setInSlot(Object, PresenterWidget<?>) as well as other
-    // deprecated methods and replace them with non-deprecated method overrides.
-    // Related GWTP forum post: https://groups.google.com/forum/#!topic/gwt-platform/eDpwOubUCmE
-    public void setInSlot(Object slot, PresenterWidget<?> content) {
+    public <T extends PresenterWidget<?>> void setInSlot(IsSlot<T> slot, T content) {
         super.setInSlot(slot, content);
 
         // Update the view with regard to current tab's history token

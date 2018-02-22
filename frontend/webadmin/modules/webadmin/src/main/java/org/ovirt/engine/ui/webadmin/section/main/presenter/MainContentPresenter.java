@@ -8,6 +8,7 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.presenter.slots.IsSlot;
 import com.gwtplatform.mvp.client.presenter.slots.LegacySlotConvertor;
 import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
@@ -38,7 +39,7 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     }
 
     @Override
-    public void setInSlot(Object slot, PresenterWidget<?> content) {
+    public <T extends PresenterWidget<?>> void setInSlot(IsSlot<T> slot, T content) {
         super.setInSlot(slot, content);
         if (slot == TYPE_SetContent) {
             onRevealOverlayContent(new RevealOverlayContentEvent(null));
