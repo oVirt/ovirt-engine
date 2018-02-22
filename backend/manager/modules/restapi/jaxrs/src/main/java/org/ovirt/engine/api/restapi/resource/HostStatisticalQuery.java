@@ -59,7 +59,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
                       setDatum(clone(CPU_LOAD),    (s==null || s.getCpuLoad()==null) ? 0 : s.getCpuLoad()/100),
                       setDatum(clone(BOOT_TIME),   (s==null || s.getBootTime()==null) ? 0 : s.getBootTime()));
 
-        if (s != null) {
+        if (s != null && s.getHugePages() != null) {
             s.getHugePages().stream()
                 .filter(page -> page.getAmount() != null)
                 .map(this::createHugePagesFree)
