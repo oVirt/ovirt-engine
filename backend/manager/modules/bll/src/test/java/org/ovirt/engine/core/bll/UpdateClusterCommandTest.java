@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -65,7 +64,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Strict.class)
 public class UpdateClusterCommandTest {
 
     private static final Version VERSION_1_0 = new Version(1, 0);
@@ -85,9 +84,6 @@ public class UpdateClusterCommandTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.SupportedClusterLevels, versions));
-
-    @Mock
-    DbFacade dbFacadeMock;
 
     @Mock
     private VmStaticDao vmStaticDao;
@@ -123,14 +119,8 @@ public class UpdateClusterCommandTest {
     private VmNumaNodeDao vmNumaNodeDao;
 
     @Mock
-    private Network mockManagementNetwork = createManagementNetwork();
+    private Network mockManagementNetwork;
     private Guid managementNetworkId;
-
-    private Network createManagementNetwork() {
-        final Network network = new Network();
-        network.setId(TEST_MANAGEMENT_NETWORK_ID);
-        return network;
-    }
 
     @Spy
     @InjectMocks
@@ -602,8 +592,6 @@ public class UpdateClusterCommandTest {
         cmd.getParameters().setCluster(group);
         cmd.setClusterId(group.getId());
 
-        doReturn(clusterDao).when(dbFacadeMock).getClusterDao();
-        doReturn(storagePoolDao).when(dbFacadeMock).getStoragePoolDao();
         doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any());
 
         // cluster upgrade
