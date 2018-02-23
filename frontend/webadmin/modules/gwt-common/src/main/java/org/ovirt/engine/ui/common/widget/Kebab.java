@@ -29,6 +29,7 @@ public class Kebab extends ButtonGroup {
     public Kebab() {
         addStyleName(PatternflyConstants.PF_KEBAB_DROPDOWN);
         addStyleName(Styles.DROPDOWN);
+        addStyleName(Styles.PULL_RIGHT);
 
         kebabButton = createKebabButton();
         // setDataToggle will call a deferred method to add the 'caret' so we need to add our deferred after
