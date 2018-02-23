@@ -10,7 +10,7 @@
     <b:Container fluid="true">
         <b:PageHeader text="{constants.tagsMainSection}" />
         <b:Row>
-            <b:Column size="SM_1" offset="SM_11">
+            <b:Column size="SM_12">
                 <b:ButtonGroup addStyleNames="pull-right">
                     <b:Button text="{constants.addTag}" ui:field="addTagButton" />
                     <b:Button text="{constants.closeText}" ui:field="closeButton" />
