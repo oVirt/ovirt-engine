@@ -19,3 +19,7 @@
     gluster_cgroup_cpu_quota : "{{ [(ansible_processor_vcpus/3)|int|abs,1]|max * 100 }}"
   notify:
     - Restart glusterd
+
+- name: Disable unrelated gluster hooks
+  script: disable-gluster-hooks.sh
+
