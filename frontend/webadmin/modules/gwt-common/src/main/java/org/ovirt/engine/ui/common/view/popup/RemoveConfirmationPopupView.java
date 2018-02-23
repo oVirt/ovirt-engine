@@ -99,7 +99,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     void setNote(String note) {
         notePanel.setVisible(note != null && !note.isEmpty());
-        notePanel.setText(SafeHtmlUtils.fromString(note != null ? note : "").asString().replace("\n", "<br>")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        notePanel.setText(SafeHtmlUtils.fromString(note != null ? note : "").asString()); //$NON-NLS-1$
     }
 
     protected void addItems(Iterable<?> items) {
