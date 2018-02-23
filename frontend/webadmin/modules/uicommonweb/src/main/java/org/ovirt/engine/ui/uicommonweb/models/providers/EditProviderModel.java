@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -51,6 +52,9 @@ public class EditProviderModel extends ProviderModel {
 
         if (isTypeNetwork()) {
             getNeutronAgentModel().init(provider, getType().getSelectedItem());
+            OpenstackNetworkProviderProperties properties =
+                    (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+            getAutoSync().setEntity(properties.getAutoSync());
         }
 
         if (isTypeVmware()) {

@@ -70,6 +70,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     ListModelListBoxEditor<ProviderType> typeEditor;
 
     @UiField(provided = true)
+    @Path(value = "autoSync.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor autoSyncEditor;
+
+    @UiField(provided = true)
     @Path(value = "isUnmanaged.entity")
     @WithElementId
     EntityModelCheckBoxEditor isUnmanagedEditor;
@@ -167,6 +172,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         super(eventBus);
 
         typeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
+        autoSyncEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isUnmanagedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         datacenterEditor = new ListModelListBoxEditor<>(new AbstractRenderer<StoragePool>() {
             @Override
@@ -270,6 +276,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         typeEditor.setTabIndex(nextTabIndex++);
         datacenterEditor.setTabIndex(nextTabIndex++);
         pluginTypeEditor.setTabIndex(nextTabIndex++);
+        autoSyncEditor.setTabIndex(nextTabIndex++);
         isUnmanagedEditor.setTabIndex(nextTabIndex++);
         urlEditor.setTabIndex(nextTabIndex++);
         readOnlyEditor.setTabIndex(nextTabIndex++);
