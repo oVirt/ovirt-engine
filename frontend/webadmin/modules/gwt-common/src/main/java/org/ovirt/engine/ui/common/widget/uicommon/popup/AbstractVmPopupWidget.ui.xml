@@ -70,6 +70,10 @@
        float: left;
        line-height: 30px;
      }
+
+    .cpuPinningLabel {
+        max-width: 93%;
+    }
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -542,7 +546,7 @@
                   </b:Row>
                   <b:Row ui:field="cpuPinningRow">
                     <b:Column size="SM_6">
-                      <g:Label ui:field="cpuPinningLabel" addStyleNames="{style.floatLeft} labelEnabled" text="{constants.cpuPinningLabel}" />
+                      <g:Label ui:field="cpuPinningLabel" addStyleNames="{style.floatLeft} {style.cpuPinningLabel} labelEnabled" text="{constants.cpuPinningLabel}" />
                       <d:InfoIcon ui:field="cpuPinningInfo" addStyleNames="{style.infoIcon}" />
                     </b:Column>
                     <ge:StringEntityModelTextBoxOnlyEditor ui:field="cpuPinning" usePatternFly="true" widgetColSize="SM_6" />
