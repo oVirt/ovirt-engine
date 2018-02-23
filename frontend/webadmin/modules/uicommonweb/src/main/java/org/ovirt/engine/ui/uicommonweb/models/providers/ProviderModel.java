@@ -60,6 +60,7 @@ public class ProviderModel extends Model {
     private EntityModel<String> name = new EntityModel<>();
     private EntityModel<String> description = new EntityModel<>();
     private EntityModel<String> url = new EntityModel<>();
+    private EntityModel<Boolean> autoSync = new EntityModel<>();
     private EntityModel<Boolean> isUnmanaged = new EntityModel<>();
     private EntityModel<Boolean> requiresAuthentication = new EntityModel<>();
     private EntityModel<String> username = new EntityModel<>();
@@ -101,6 +102,10 @@ public class ProviderModel extends Model {
 
     public EntityModel<String> getUrl() {
         return url;
+    }
+
+    public EntityModel<Boolean> getAutoSync() {
+        return autoSync;
     }
 
     public EntityModel<Boolean> getIsUnmanaged() {
@@ -271,6 +276,9 @@ public class ProviderModel extends Model {
             boolean isNetworkProvider = isTypeNetwork();
             if (isNetworkProvider) {
                 getNeutronAgentModel().init(provider, getType().getSelectedItem());
+                getAutoSync().setIsChangeable(true);
+            } else {
+                getAutoSync().setIsChangeable(false);
             }
             getNeutronAgentModel().setIsAvailable(isNetworkProvider);
 
@@ -472,6 +480,7 @@ public class ProviderModel extends Model {
             getNeutronAgentModel().flush(provider);
             OpenstackNetworkProviderProperties properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
             properties.setReadOnly(readOnly.getEntity());
+            properties.setAutoSync(autoSync.getEntity());
         } else if (isTypeOpenStackImage()) {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
         } else if (isTypeOpenStackVolume()) {

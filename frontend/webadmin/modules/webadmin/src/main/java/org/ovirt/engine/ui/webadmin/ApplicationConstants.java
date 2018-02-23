@@ -2586,6 +2586,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String pluginType();
 
+    String autoSync();
+
     String addProvider();
 
     String editProvider();
