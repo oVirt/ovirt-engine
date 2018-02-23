@@ -258,6 +258,7 @@ public class ProviderModel extends Model {
             getReadOnly().setIsChangeable(!isUnmanaged);
             getUrl().setIsChangeable(!isUnmanaged);
         });
+        setAuthFieldsChangeableStatus(requiresAuthentication.getEntity(), isUnmanaged.getEntity());
 
         getType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
             boolean isUnmanagedAware = getType().getSelectedItem().isUnmanagedAware();
