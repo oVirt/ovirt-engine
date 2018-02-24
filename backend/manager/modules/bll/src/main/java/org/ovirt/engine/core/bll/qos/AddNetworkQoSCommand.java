@@ -8,15 +8,10 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 
-public class AddNetworkQoSCommand extends AddQosCommand<NetworkQoS, NetworkQosValidator> {
+public class AddNetworkQoSCommand extends AddQosCommand<NetworkQoS, NetworkQosValidator, NetworkQoSDao> {
 
     public AddNetworkQoSCommand(QosParametersBase<NetworkQoS> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    @Override
-    protected NetworkQoSDao getQosDao() {
-        return dbFacade.getNetworkQosDao();
     }
 
     @Override

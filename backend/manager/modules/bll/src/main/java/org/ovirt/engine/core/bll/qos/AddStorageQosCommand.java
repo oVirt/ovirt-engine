@@ -5,17 +5,12 @@ import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageQosValidator;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
-import org.ovirt.engine.core.dao.qos.QosDao;
+import org.ovirt.engine.core.dao.qos.StorageQosDao;
 
-public class AddStorageQosCommand extends AddQosCommand<StorageQos, QosValidator<StorageQos>> {
+public class AddStorageQosCommand extends AddQosCommand<StorageQos, QosValidator<StorageQos>, StorageQosDao> {
 
     public AddStorageQosCommand(QosParametersBase<StorageQos> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    @Override
-    protected QosDao<StorageQos> getQosDao() {
-        return dbFacade.getStorageQosDao();
     }
 
     @Override

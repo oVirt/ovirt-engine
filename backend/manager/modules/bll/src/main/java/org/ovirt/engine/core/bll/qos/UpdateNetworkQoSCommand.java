@@ -6,17 +6,12 @@ import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.dao.qos.QosDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 
-public class UpdateNetworkQoSCommand extends UpdateQosCommandBase<NetworkQoS, NetworkQosValidator> {
+public class UpdateNetworkQoSCommand extends UpdateQosCommandBase<NetworkQoS, NetworkQosValidator, NetworkQoSDao> {
 
     public UpdateNetworkQoSCommand(QosParametersBase<NetworkQoS> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    @Override
-    protected QosDao<NetworkQoS> getQosDao() {
-        return dbFacade.getNetworkQosDao();
     }
 
     @Override

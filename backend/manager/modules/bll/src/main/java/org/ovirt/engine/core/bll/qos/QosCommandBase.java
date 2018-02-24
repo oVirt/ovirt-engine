@@ -18,15 +18,14 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.qos.QosDao;
 
 
-public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T>> extends CommandBase<QosParametersBase<T>> {
+public abstract class QosCommandBase
+        <T extends QosBase, M extends QosValidator<T>, D extends QosDao<T>> extends CommandBase<QosParametersBase<T>> {
 
     @Inject
-    protected DbFacade dbFacade;
-
+    private D qosDao;
     private T qos;
     private Guid qosId;
 
@@ -96,7 +95,9 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
                 VdcObjectType.StoragePool, getActionType().getActionGroup()));
     }
 
-    protected abstract QosDao<T> getQosDao();
+    protected QosDao<T> getQosDao() {
+        return qosDao;
+    }
 
     @Override
     protected void setActionMessageParameters() {

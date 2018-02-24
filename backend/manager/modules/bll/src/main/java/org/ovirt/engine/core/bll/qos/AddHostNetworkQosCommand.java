@@ -6,15 +6,10 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 
-public class AddHostNetworkQosCommand extends AddQosCommand<HostNetworkQos, HostNetworkQosValidator> {
+public class AddHostNetworkQosCommand extends AddQosCommand<HostNetworkQos, HostNetworkQosValidator, HostNetworkQosDao> {
 
     public AddHostNetworkQosCommand(QosParametersBase<HostNetworkQos> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    @Override
-    protected HostNetworkQosDao getQosDao() {
-        return dbFacade.getHostNetworkQosDao();
     }
 
     @Override
