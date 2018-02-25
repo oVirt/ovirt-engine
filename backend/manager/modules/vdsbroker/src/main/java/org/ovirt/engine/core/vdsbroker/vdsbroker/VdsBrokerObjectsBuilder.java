@@ -1869,7 +1869,11 @@ public class VdsBrokerObjectsBuilder {
 
                     boolean bridgedNetwork = isBridgedNetwork(networkProperties);
                     SwitchType switchType = getSwitchType(
-                        host.getSupportedClusterVersionsSet().stream().max(Comparator.naturalOrder()).get(),
+                        host.getSupportedClusterVersionsSet()
+                                .stream()
+                                .filter(v -> Version.getLast().compareTo(v) <= 0)
+                                .max(Comparator.naturalOrder())
+                                .get(),
                         networkProperties
                     );
                     HostNetworkQos qos = new HostNetworkQosMapper(networkProperties).deserialize();
