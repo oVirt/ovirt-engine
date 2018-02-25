@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -487,7 +488,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
 
         return validateImagesNotLocked(diskImagesValidator) &&
-                (getVm().isQualifiedForLiveSnapshotMerge() || validate(diskImagesValidator.diskImagesNotIllegal()));
+                (getVm().isQualifiedForLiveSnapshotMerge() || validate(diskImagesValidator.diskImagesNotIllegal())) &&
+                (!getVm().isQualifiedForLiveSnapshotMerge() || validateSnapshotDisksArePlugged());
     }
 
     private boolean validateImagesNotLocked(DiskImagesValidator diskImagesValidator) {
@@ -500,6 +502,30 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks);
         allDisks.addAll(cinderDisks);
         return allDisks;
+    }
+
+    private boolean validateSnapshotDisksArePlugged() {
+        Map<Guid, Disk> vmDisks = diskDao.getAllForVm(getVmId())
+                .stream()
+                .collect(Collectors.toMap(Disk::getId, Function.identity()));
+
+        // If there is an unattached disk, it will not be included in vmDisks, hence it is
+        // retrieved by the diskDao. This is less likely to happen as it is not possible
+        // to unattach disks with snapshots.
+        String unpluggedDisks = getSourceImages()
+                .stream()
+                .map(DiskImage::getId)
+                .map(vmDiskId -> vmDisks.getOrDefault(vmDiskId, diskDao.get(vmDiskId)))
+                .filter(disk -> !disk.getPlugged())
+                .map(Disk::getDiskAlias)
+                .collect(Collectors.joining(System.lineSeparator()));
+
+        if (!unpluggedDisks.isEmpty()) {
+            return validate(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_UNPLUGGED_OR_UNATTACHED_DISKS,
+                    String.format("$diskAliases %s", unpluggedDisks)));
+        }
+
+        return true;
     }
 
     protected boolean validateImageNotInTemplate() {

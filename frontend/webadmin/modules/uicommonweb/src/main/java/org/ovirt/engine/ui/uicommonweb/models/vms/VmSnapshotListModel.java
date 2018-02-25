@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -293,23 +292,11 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     .areYouSureYouWantToDeleteSanpshot( DateTimeFormat.getFormat(DATE_FORMAT).format(snapshot.getCreationDate()),
                             snapshot.getDescription()));
 
-            String unpluggedDisksNames = getUnpluggedDisksNames();
-            if (unpluggedDisksNames != null) {
-                model.setNote(ConstantsManager.getInstance().getMessages().liveMergeUnpluggedDisksNote(unpluggedDisksNames));
-            }
-
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
             model.getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
             model.getCommands().add(tempVar2);
         }
-    }
-
-    private String getUnpluggedDisksNames() {
-        List<Disk> unpluggedDisks = getVmDisks().stream()
-                .filter(disk -> !disk.getPlugged())
-                .collect(Collectors.toList());
-        return VmModelHelper.getDiskLabelList(unpluggedDisks);
     }
 
     private void onRemove() {
