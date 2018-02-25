@@ -368,7 +368,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         StoragePoolValidator spValidator = new StoragePoolValidator(getStoragePool());
-        if (!validate(spValidator.exists())) {
+        if (!validate(spValidator.existsAndUp())) {
             return false;
         }
 

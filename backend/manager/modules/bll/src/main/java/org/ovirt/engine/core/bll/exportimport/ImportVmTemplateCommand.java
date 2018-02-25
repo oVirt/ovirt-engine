@@ -176,7 +176,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         setDescription(getVmTemplateName());
 
         // check that the storage pool is valid
-        if (!validate(createStoragePoolValidator().exists())
+        if (!validate(createStoragePoolValidator().existsAndUp())
                 || !validateTemplateArchitecture()
                 || !isClusterCompatible()) {
             return false;
