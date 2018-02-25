@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -213,6 +214,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     private void mockStoragePool() {
         final StoragePool pool = new StoragePool();
+        pool.setStatus(StoragePoolStatus.Up);
         pool.setId(command.getParameters().getStoragePoolId());
         when(storagePoolDao.get(any())).thenReturn(pool);
     }
