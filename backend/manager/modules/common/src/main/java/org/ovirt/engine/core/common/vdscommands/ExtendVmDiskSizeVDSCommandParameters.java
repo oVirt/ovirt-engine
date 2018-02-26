@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendVmDiskSizeVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
@@ -72,11 +72,10 @@ public class ExtendVmDiskSizeVDSCommandParameters extends VdsAndVmIDVDSParameter
     }
 
     public Map<String, String> getDriveSpecs() {
-        Map<String, String> driveSpecs = new HashMap<>();
-        driveSpecs.put("poolID", getStoragePoolId().toString());
-        driveSpecs.put("domainID", getStorageDomainId().toString());
-        driveSpecs.put("imageID", getImageGroupId().toString());
-        driveSpecs.put("volumeID", getImageId().toString());
-        return driveSpecs;
+        return PDIVMapBuilder.create()
+                .setPoolId(getStoragePoolId())
+                .setDomainId(getStorageDomainId())
+                .setImageGroupId(getImageGroupId())
+                .setVolumeId(getImageId()).build();
     }
 }

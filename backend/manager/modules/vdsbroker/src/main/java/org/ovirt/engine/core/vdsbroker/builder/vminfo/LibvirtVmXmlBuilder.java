@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
@@ -1788,12 +1789,11 @@ public class LibvirtVmXmlBuilder {
     }
 
     private Map<String, String> createDiskUuidsMap(Guid poolId, Guid domainId, Guid imageId, Guid volumeId) {
-        Map<String, String> diskUuids = new HashMap<>();
-        diskUuids.put("poolID", poolId.toString());
-        diskUuids.put("domainID", domainId.toString());
-        diskUuids.put("imageID", imageId.toString());
-        diskUuids.put("volumeID", volumeId.toString());
-        return diskUuids;
+        return PDIVMapBuilder.create()
+                .setPoolId(poolId)
+                .setDomainId(domainId)
+                .setImageGroupId(imageId)
+                .setVolumeId(volumeId).build();
     }
 
     private void writeDiskTarget(DiskVmElement dve, String dev) {
