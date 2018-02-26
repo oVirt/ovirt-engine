@@ -247,7 +247,11 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
         newMenuItem.add(menuAnchor);
         // Insert the new menu item into the map.
         hrefToGroupLabelMap.put(href, newMenuItem);
-        menuListGroup.insert(newMenuItem, index);
+        if (index > menuListGroup.getWidgetCount()) {
+            menuListGroup.add(newMenuItem);
+        } else {
+            menuListGroup.insert(newMenuItem, index);
+        }
     }
 
     private void populateHrefToGroupMap(ApplicationMode applicationMode) {
