@@ -233,7 +233,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         aliasColumn = DisksViewColumns.getAliasColumn((index, disk, value) -> {
             //The link was clicked, now fire an event to switch to details.
             Map<String, String> parameters = new HashMap<>();
-            parameters.put(FragmentParams.NAME.getName(), disk.getName());
+            parameters.put(FragmentParams.ID.getName(), disk.getId().toString());
             //The link was clicked, now fire an event to switch to details.
             getPlaceTransitionHandler().handlePlaceTransition(
                     WebAdminApplicationPlaces.diskGeneralSubTabPlace, parameters);

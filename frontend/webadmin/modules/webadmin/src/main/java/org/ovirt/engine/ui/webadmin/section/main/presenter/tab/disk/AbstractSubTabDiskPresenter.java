@@ -1,9 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.FragmentParams;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
@@ -29,5 +33,14 @@ public abstract class AbstractSubTabDiskPresenter<D extends HasEntity<?>,
     @Override
     protected PlaceRequest getMainContentRequest() {
         return PlaceRequestFactory.get(WebAdminApplicationPlaces.diskMainPlace);
+    }
+
+    @Override
+    protected Map<String, String> getFragmentParamsFromEntity(Disk disk) {
+        Map<String, String> result = new HashMap<>();
+        if (disk != null) {
+            result.put(FragmentParams.ID.getName(), disk.getId().toString());
+        }
+        return result;
     }
 }
