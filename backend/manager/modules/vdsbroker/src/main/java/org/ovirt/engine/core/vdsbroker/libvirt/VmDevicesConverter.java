@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -66,6 +68,7 @@ public class VmDevicesConverter {
     private static final String SIZE = "size";
     private static final String DEVICES_START_ELEMENT = "<devices>";
     private static final String DEVICES_END_ELEMENT = "</devices>";
+    private static final String USER_ALIAS_PREFIX = "ua-";
 
 
     public Map<String, Object> convert(Guid vmId, Guid hostId, String xml) throws Exception {
@@ -155,10 +158,10 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            VmDevice dbDev = dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
+            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
+                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null));
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
@@ -198,12 +201,12 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            VmDevice dbDev = dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
+            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
+                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
                     .filter(d -> d.getSpecParams().isEmpty() || Objects.equals(d.getSpecParams().get(INDEX), index))
                     .filter(d -> d.getSpecParams().isEmpty() || Objects.equals(d.getSpecParams().get(MODEL), model))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null));
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
@@ -244,13 +247,13 @@ public class VmDevicesConverter {
 
             String devNode = target.selectSingleNode(NODE).innerText;
             String devSize = kiloBytesToMegaBytes(target.selectSingleNode(SIZE).innerText);
-            VmDevice dbDev = dbDevices.stream()
+            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
                     .sorted(Comparator.comparing(VmDevice::isManaged).reversed()) // try to match managed devices first
-                    .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
+                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
                     .filter(d -> Objects.equals(d.getSpecParams().get(SPEC_PARAM_NODE).toString(), devNode))
                     .filter(d -> Objects.equals(d.getSpecParams().get(SPEC_PARAM_SIZE).toString(), devSize))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null));
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
@@ -290,18 +293,19 @@ public class VmDevicesConverter {
                 continue;
             }
 
-            String device = parseAttribute(node, TYPE);
-            VmDevice dbDev = dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(device) && Objects.equals(d.getSpecParams(), hostAddress))
-                    .findFirst()
-                    .orElse(null);
-
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
             dev.put(VdsProperties.Address, parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
-            dev.put(VdsProperties.Device, device);
+            String deviceType = parseAttribute(node, TYPE);
+            dev.put(VdsProperties.Device, deviceType);
             dev.put(VdsProperties.SpecParams, hostAddress);
+
+            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
+                    .filter(d -> d.getDevice().equals(deviceType) && Objects.equals(d.getSpecParams(), hostAddress))
+                    .findFirst()
+                    .orElse(null));
+
             dev.put(VdsProperties.DeviceId, dbDev != null ? dbDev.getId().getDeviceId().toString() : Guid.newGuid().toString());
             result.add(dev);
         }
@@ -334,21 +338,23 @@ public class VmDevicesConverter {
                 continue;
             }
 
-            VmDevice dbDev = dbDevices.stream()
+            Map<String, Object> dev = new HashMap<>();
+            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
+            dev.put(VdsProperties.Alias, parseAlias(node));
+            dev.put(VdsProperties.Device, hostDevice.getDeviceName());
+
+            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
                     .filter(d -> d.getDevice().equals(hostDevice.getDeviceName()))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null));
+
             if (dbDev == null) {
                 log.warn("VM host device '{}' does not exist in the database, thus ignored",
                         hostDevice.getDeviceName());
                 continue;
             }
 
-            Map<String, Object> dev = new HashMap<>();
-            dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
-            dev.put(VdsProperties.Address, parseAddress(node));
-            dev.put(VdsProperties.Alias, parseAlias(node));
-            dev.put(VdsProperties.Device, hostDevice.getDeviceName());
             dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
             dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
 
@@ -368,10 +374,10 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            VmDevice dbDev = dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
+            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
+                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null));
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
@@ -403,7 +409,8 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             String path = parseDiskPath(node);
-            VmDevice dbDev = findDiskDeviceInDbByPath(dbDevices, diskType, path, diskToLunSupplier);
+            VmDevice dbDev = correlate(dev, dbDevices,
+                    device -> findDiskDeviceInDbByPath(dbDevices, diskType, path, diskToLunSupplier));
 
             if (dbDev == null) {
                 log.warn("unmanaged disk with path '{}' is ignored", path);
@@ -483,19 +490,21 @@ public class VmDevicesConverter {
 
             String macAddress = parseMacAddress(node);
             // MAC address is a unique identifier of network interface devices
-            VmNetworkInterface dbInterface = dbInterfaces.stream()
-                    .filter(iface -> iface.getMacAddress().equalsIgnoreCase(macAddress))
-                    .findFirst()
-                    .orElse(null);
+            VmDevice dbDev = correlate(dev, dbDevices, device -> {
+                VmNetworkInterface dbInterface = dbInterfaces.stream()
+                        .filter(iface -> iface.getMacAddress().equalsIgnoreCase(macAddress))
+                        .findFirst()
+                        .orElse(null);
+                return dbInterface != null ? devIdToDbDev.get(dbInterface.getId()) : null;
+            });
 
-            if (dbInterface == null) {
+            if (dbDev == null) {
                 log.warn("unmanaged network interface with mac address '{}' is ignored", macAddress);
                 continue;
             }
 
-            Guid deviceId = dbInterface.getId();
-            dev.put(VdsProperties.DeviceId, deviceId.toString());
-            dev.put(VdsProperties.SpecParams, devIdToDbDev.get(deviceId).getSpecParams());
+            dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
+            dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
 
             result.add(dev);
         }
@@ -527,10 +536,10 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             // There is supposed to be one video device of each type (spice/vnc/..)
-            VmDevice dbDev = dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
+            VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
+                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
                     .findFirst()
-                    .orElse(null);
+                    .orElse(null));
 
             if (dbDev == null) {
                 log.warn("unmanaged video device with address '{}' is ignored", dev.get(VdsProperties.Address));
@@ -762,5 +771,36 @@ public class VmDevicesConverter {
 
     private VmDevice filterDevice(List<VmDevice> devices, VmDeviceGeneralType devType) {
         return devices.stream().filter(d -> d.getType() == devType).findFirst().orElse(null);
+    }
+
+    private VmDevice correlate(Map<String, Object> device,
+            List<VmDevice> dbDevices,
+            Function<Map<String, Object>, VmDevice> func) {
+        String alias = (String) device.get(VdsProperties.Alias);
+        // first try by user alias
+        if (alias.startsWith(USER_ALIAS_PREFIX)) {
+            try {
+                Guid deviceId = Guid.createGuidFromString(alias.substring(USER_ALIAS_PREFIX.length()));
+                Optional<VmDevice> result = dbDevices.stream()
+                        .filter(dev -> deviceId.equals(dev.getDeviceId()))
+                        .findFirst();
+                if (result.isPresent()) {
+                    return result.get();
+                }
+            } catch(Exception e) {
+                log.warn("Received unexpected user-alias: {}", alias);
+            }
+        }
+
+        // the following logic that tries using non-user aliases (for VMs that were already started without
+        // using user-aliases) can replace the function's logic only once we require libvirt > 3.9
+        /*Optional<VmDevice> result = dbDevices.stream()
+                .filter(dev -> alias.equals(dev.getAlias()))
+                .findFirst();
+        if (result.isPresent()) {
+            return result.get();
+        }*/
+
+        return func.apply(device);
     }
 }
