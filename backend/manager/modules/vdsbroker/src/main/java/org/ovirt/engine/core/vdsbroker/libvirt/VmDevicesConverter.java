@@ -165,7 +165,7 @@ public class VmDevicesConverter {
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
-                dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
+                dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
                 dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
@@ -210,7 +210,7 @@ public class VmDevicesConverter {
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
-                dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
+                dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
                 dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
@@ -257,7 +257,7 @@ public class VmDevicesConverter {
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
-                dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
+                dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
                 dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
@@ -306,7 +306,7 @@ public class VmDevicesConverter {
                     .findFirst()
                     .orElse(null));
 
-            dev.put(VdsProperties.DeviceId, dbDev != null ? dbDev.getId().getDeviceId().toString() : Guid.newGuid().toString());
+            dev.put(VdsProperties.DeviceId, dbDev != null ? dbDev.getDeviceId().toString() : Guid.newGuid().toString());
             result.add(dev);
         }
         return result;
@@ -355,7 +355,7 @@ public class VmDevicesConverter {
                 continue;
             }
 
-            dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
+            dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
             dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
 
             result.add(dev);
@@ -381,7 +381,7 @@ public class VmDevicesConverter {
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
-                dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
+                dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
                 dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
@@ -420,7 +420,7 @@ public class VmDevicesConverter {
             dbDevices.remove(dbDev);
 
             dev.put(VdsProperties.ImageId, parseImageIdFromPath(path));
-            dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
+            dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
             dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
 
             List<Map<String, Object>> volumeChain = parseVolumeChain(node);
@@ -451,7 +451,7 @@ public class VmDevicesConverter {
                             DiskImage diskImage =  diskImageDao.getDiskSnapshotForVmSnapshot(d.getDeviceId(), d.getSnapshotId());
                             return diskImage != null && path.contains(diskImage.getImageId().toString());
                         }
-                        Guid diskId = d.getId().getDeviceId();
+                        Guid diskId = d.getDeviceId();
                         return path.contains(diskId.toString()) ||
                                 isPathContainsLunIdOfDisk(path, diskId, diskToLunSupplier);
                     }
@@ -470,7 +470,7 @@ public class VmDevicesConverter {
             MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.INTERFACE);
         Map<Guid, VmDevice> devIdToDbDev = dbDevices.stream().collect(Collectors.toMap(
-                device -> device.getId().getDeviceId(),
+                device -> device.getDeviceId(),
                 device -> device));
 
         List<VmNetworkInterface> dbInterfaces = vmNetworkInterfaceDao.getAllForVm(vmId);
@@ -547,7 +547,7 @@ public class VmDevicesConverter {
             }
 
             dbDevices.remove(dbDev);
-            dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
+            dev.put(VdsProperties.DeviceId, dbDev.getDeviceId().toString());
             dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
             result.add(dev);
         }
@@ -571,7 +571,7 @@ public class VmDevicesConverter {
 
         Map<String, Object> result = new HashMap<>();
         result.put(VdsProperties.Device, devType);
-        result.put(VdsProperties.DeviceId, dbDevice.getId().getDeviceId().toString());
+        result.put(VdsProperties.DeviceId, dbDevice.getDeviceId().toString());
         result.put(VdsProperties.Address, parseAddress(node));
         result.put(VdsProperties.Alias, parseAlias(node));
         result.put(VdsProperties.SpecParams, dbDevice.getSpecParams());
@@ -591,7 +591,7 @@ public class VmDevicesConverter {
 
         Map<String, Object> result = new HashMap<>();
         result.put(VdsProperties.Device, "memballoon");
-        result.put(VdsProperties.DeviceId, dbDevice.getId().getDeviceId().toString());
+        result.put(VdsProperties.DeviceId, dbDevice.getDeviceId().toString());
         result.put(VdsProperties.Address, parseAddress(node));
         result.put(VdsProperties.Alias, parseAlias(node));
         result.put(VdsProperties.SpecParams, dbDevice.getSpecParams());
