@@ -15,7 +15,8 @@ public enum FragmentParams {
     SEARCH("search"), //$NON-NLS-1$
     NAME("name"), //$NON-NLS-1$
     DATACENTER("dataCenter"), //$NON-NLS-1$
-    NETWORK("network"); //$NON-NLS-1$
+    NETWORK("network"), //$NON-NLS-1$
+    ID("id"); //$NON-NLS-1$
 
     private final String paramName;
 
