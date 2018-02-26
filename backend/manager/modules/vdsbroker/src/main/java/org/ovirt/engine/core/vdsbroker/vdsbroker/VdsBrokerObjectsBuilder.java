@@ -1871,7 +1871,7 @@ public class VdsBrokerObjectsBuilder {
                     SwitchType switchType = getSwitchType(
                         host.getSupportedClusterVersionsSet()
                                 .stream()
-                                .filter(v -> Version.getLast().compareTo(v) <= 0)
+                                .filter(v -> Version.getLast().compareTo(v) >= 0)
                                 .max(Comparator.naturalOrder())
                                 .get(),
                         networkProperties
