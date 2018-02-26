@@ -1,3 +1,2 @@
-UPDATE vm_static
-SET max_memory_size_mb = mem_size_mb
-WHERE max_memory_size_mb < mem_size_mb;
+-- This file moved to 04_02_0135_fix_max_memory_size_limit.sql,
+-- keeping it because we require consecutive numbers.
