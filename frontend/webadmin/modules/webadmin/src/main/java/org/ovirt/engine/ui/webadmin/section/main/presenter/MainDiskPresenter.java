@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
-import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.DisksBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -50,8 +50,7 @@ public class MainDiskPresenter extends AbstractMainWithDetailsPresenter<Disk, Di
     public MainDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Disk, DiskListModel> modelProvider,
             SearchPanelPresenterWidget<Disk, DiskListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<Disk, DiskListModel> breadCrumbs,
-            DiskActionPanelPresenterWidget actionPanel) {
+            DisksBreadCrumbsPresenterWidget breadCrumbs, DiskActionPanelPresenterWidget actionPanel) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 

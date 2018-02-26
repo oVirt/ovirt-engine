@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.DisksBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ExpandAllButtonPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.NetworkBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
@@ -63,6 +64,7 @@ import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPop
 import org.ovirt.engine.ui.common.presenter.popup.HostUpgradePopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.ActionPanelView;
 import org.ovirt.engine.ui.common.view.DetailActionPanelView;
+import org.ovirt.engine.ui.common.view.DisksBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.ExpandAllButtonView;
 import org.ovirt.engine.ui.common.view.NetworkBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.OvirtBreadCrumbsView;
@@ -1326,10 +1328,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<Disk, DiskListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DiskListModel>>(){},
                 new TypeLiteral<SearchPanelView<DiskListModel>>(){});
-        bindPresenterWidget(
-                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<Disk, DiskListModel>>(){},
-                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<Disk>>(){},
-                new TypeLiteral<OvirtBreadCrumbsView<Disk, DiskListModel>>(){});
+        bindPresenterWidget(DisksBreadCrumbsPresenterWidget.class,
+                DisksBreadCrumbsPresenterWidget.DiskBreadCrumbsViewDef.class,
+                DisksBreadCrumbsView.class);
+
         bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<Disk>>(){},
             new TypeLiteral<ActionPanelView<Disk>>(){});
 
