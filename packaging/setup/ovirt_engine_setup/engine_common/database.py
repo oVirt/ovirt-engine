@@ -1535,6 +1535,32 @@ class OvirtUtils(base.Base):
                 )
             )
 
+        newpath = os.path.dirname(
+            self.environment[
+                oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
+            ]
+        )
+        if os.path.exists(newpath) or os.path.islink(newpath):
+            self.logger.error(
+                _(
+                    'A data directory for the new PostgreSQL instance '
+                    'already exists, although the engine uses an older '
+                    'version.\n'
+                    'Please verify that it is not needed, remove it, and '
+                    'then run Setup again.\n'
+                    'Alternatively, you can upgrade PostgreSQL manually.\n'
+                    'Location of the new data directory is:\n'
+                    '{newpath}\n'
+                ).format(
+                    newpath=newpath,
+                )
+            )
+            raise RuntimeError(
+                _(
+                    'Cannot upgrade PostgreSQL automatically - directory '
+                    'of the new version already exists'
+                )
+            )
         instance_size = self.getInstanceSize()
         pgdata = self.getPGDATA()
         available_space = self.getPGDATAAvailableSpace(pgdata)
