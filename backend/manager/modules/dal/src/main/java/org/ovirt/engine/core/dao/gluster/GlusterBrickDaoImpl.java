@@ -52,6 +52,9 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
         BrickProperties brickProperties = new BrickProperties();
         brickProperties.setTotalSize(rs.getDouble("total_space") / SizeConverter.BYTES_IN_MB);
         brickProperties.setFreeSize(rs.getDouble("free_space") / SizeConverter.BYTES_IN_MB);
+        brickProperties.setConfirmedFreeSize(
+                (rs.getObject("confirmed_free_space") != null) ?
+                        rs.getDouble("confirmed_free_space") / SizeConverter.BYTES_IN_MB : null);
         return brickProperties;
     };
 
@@ -155,7 +158,7 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
                 "GetBrickDetailsByID",
                 brickPropertiesRowMappeer,
                 createBrickIdParams(brickId));
-     }
+    }
 
     private MapSqlParameterSource createBrickParams(GlusterBrickEntity brick) {
         return getCustomMapSqlParameterSource().addValue("id", brick.getId())
@@ -315,12 +318,17 @@ public class GlusterBrickDaoImpl extends MassOperationsGenericDao<GlusterBrickEn
     }
 
     private MapSqlParameterSource createBrickPropertiesParam(BrickProperties brickProperties) {
+        Double confirmedFreeSize = brickProperties.getConfirmedFreeSize();
+        if (confirmedFreeSize != null) {
+            confirmedFreeSize = confirmedFreeSize * SizeConverter.BYTES_IN_MB;
+        }
         return getCustomMapSqlParameterSource()
                 .addValue("brick_id", brickProperties.getBrickId())
                 .addValue("total_space", brickProperties.getTotalSize() * SizeConverter.BYTES_IN_MB)
                 .addValue("used_space",
                         (brickProperties.getTotalSize() - brickProperties.getFreeSize()) * SizeConverter.BYTES_IN_MB)
-                .addValue("free_space", brickProperties.getFreeSize() * SizeConverter.BYTES_IN_MB);
+                .addValue("free_space", brickProperties.getFreeSize() * SizeConverter.BYTES_IN_MB)
+                .addValue("confirmed_free_space", confirmedFreeSize);
     }
 
     private MapSqlParameterSource createBrickIdParams(Guid brickId) {
