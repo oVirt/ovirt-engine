@@ -315,6 +315,8 @@ public final class VdsProperties {
     public static final String niceLevel = "nice";
     public static final String cpuShares = "cpuShares";
     public static final String hiberVolHandle = "hiberVolHandle";
+    public static final String memoryDumpVolumeInfo = "memoryDumpVolumeInfo";
+    public static final String memoryMetadataVolumeInfo = "memoryMetadataVolumeInfo";
     public static final String engineXml = "xml";
     public static final String pauseCode = "pauseCode";
     public static final String KeyboardMap = "keyMap";

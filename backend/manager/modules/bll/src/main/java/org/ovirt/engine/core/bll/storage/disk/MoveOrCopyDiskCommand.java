@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -44,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
@@ -194,6 +196,13 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean checkOperationAllowedOnDiskContentType() {
+        if (getImage().getContentType() == DiskContentType.MEMORY_DUMP_VOLUME ||
+                getImage().getContentType() == DiskContentType.MEMORY_METADATA_VOLUME) {
+            if (!FeatureSupported.isMemoryDisksOnDifferentDomainsSupported(getStoragePool().getCompatibilityVersion())) {
+                return  failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION,
+                        String.format("$diskContentType %s", getImage().getContentType()));
+            }
+        }
         return validate(new DiskOperationsValidator(getImage()).isOperationAllowedOnDisk(getActionType()));
     }
 
