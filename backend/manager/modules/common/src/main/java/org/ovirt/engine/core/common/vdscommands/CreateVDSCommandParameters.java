@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -21,6 +22,8 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Map<Guid, String> passthroughVnicToVfMap;
     private boolean volatileRun;
     private Date downSince;
+    private DiskImage memoryDumpImage;
+    private DiskImage memoryConfImage;
 
     public CreateVDSCommandParameters() {
     }
@@ -73,6 +76,22 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setHibernationVolHandle(String value) {
         this.hibernationVolHandle = value;
+    }
+
+    public DiskImage getMemoryDumpImage() {
+        return memoryDumpImage;
+    }
+
+    public void setMemoryDumpImage(DiskImage memoryDumpImage) {
+        this.memoryDumpImage = memoryDumpImage;
+    }
+
+    public DiskImage getMemoryConfImage() {
+        return memoryConfImage;
+    }
+
+    public void setMemoryConfImage(DiskImage memoryConfImage) {
+        this.memoryConfImage = memoryConfImage;
     }
 
     public Map<Guid, String> getPassthroughVnicToVfMap() {

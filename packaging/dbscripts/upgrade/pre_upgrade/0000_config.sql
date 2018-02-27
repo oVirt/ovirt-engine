@@ -200,6 +200,8 @@ select fn_db_add_config_value_for_versions_up_to('IsoOnDataDomain', 'false', '4.
 select fn_db_add_config_value('IsoOnDataDomain', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ResumeBehaviorSupported', 'false', '4.1');
 select fn_db_add_config_value('ResumeBehaviorSupported', 'true', '4.2');
+select fn_db_add_config_value_for_versions_up_to('MemoryDisksOnDifferentDomainsSupported', 'false', '4.1');
+select fn_db_add_config_value('MemoryDisksOnDifferentDomainsSupported', 'true', '4.2');
 
 -- migration support per architecture
 select fn_db_add_config_value_for_versions_up_to('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','4.2');

@@ -1578,6 +1578,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     ExternalNetworkProviderSynchronizationRate,
 
+    @TypeConverterAttribute(Boolean.class)
+    MemoryDisksOnDifferentDomainsSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

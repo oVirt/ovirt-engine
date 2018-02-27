@@ -291,4 +291,14 @@ public class FeatureSupported {
     public static boolean isConfirmConnectivitySupportedByVdsm(Version version) {
         return supportedInConfig(ConfigValues.ConfirmConnectivitySupportedByVdsm, version);
     }
+
+    /**
+     * Checks if memory disks on different domains supported
+     *
+     * @param version Compatibility version to check for.
+     */
+    public static boolean isMemoryDisksOnDifferentDomainsSupported(Version version) {
+        return supportedInConfig(ConfigValues.MemoryDisksOnDifferentDomainsSupported, version);
+    }
+
 }

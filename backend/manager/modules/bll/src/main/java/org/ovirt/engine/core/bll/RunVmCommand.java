@@ -83,6 +83,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -150,6 +151,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+    @Inject
+    private DiskDao diskDao;
 
     @Inject
     private NetworkHelper networkHelper;
@@ -191,24 +194,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return Collections.emptyList();
     }
 
-    protected String getMemoryFromActiveSnapshot() {
+    protected boolean shouldRestoreMemory() {
         // If the memory from the snapshot could have been restored already, the disks might be
         // non coherent with the memory, thus we don't want to try to restore the memory again
-        if (memoryFromSnapshotUsed) {
-            return StringUtils.EMPTY;
-        }
-
-        if (getFlow() == RunVmFlow.RESUME_HIBERNATE) {
-             return getActiveSnapshot().getMemoryVolume();
-        }
-
-        if (!FeatureSupported.isMemorySnapshotSupportedByArchitecture(
+        return !memoryFromSnapshotUsed &&
+                (getFlow() == RunVmFlow.RESUME_HIBERNATE ||
+                FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                 getVm().getClusterArch(),
-                getVm().getCompatibilityVersion())) {
-            return StringUtils.EMPTY;
-        }
-
-        return getActiveSnapshot().getMemoryVolume();
+                getVm().getCompatibilityVersion())) &&
+                !StringUtils.isEmpty(getActiveSnapshot().getMemoryVolume());
     }
 
     /**
@@ -599,9 +593,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         CreateVDSCommandParameters parameters  = new CreateVDSCommandParameters(getVdsId(), getVm());
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
         parameters.setVmPayload(vmPayload);
-        String memoryFromActiveSnapshot = getMemoryFromActiveSnapshot();
-        if (StringUtils.isNotEmpty(memoryFromActiveSnapshot)) {
-            parameters.setHibernationVolHandle(memoryFromActiveSnapshot);
+        if (shouldRestoreMemory()) {
+            if (FeatureSupported.isMemoryDisksOnDifferentDomainsSupported(getVm().getCompatibilityVersion())
+                    && getActiveSnapshot().getMemoryDiskId() != null) {
+                parameters.setMemoryDumpImage((DiskImage) diskDao.get(getActiveSnapshot().getMemoryDiskId()));
+                parameters.setMemoryConfImage((DiskImage) diskDao.get(getActiveSnapshot().getMetadataDiskId()));
+            }
+            else {
+                parameters.setHibernationVolHandle(getActiveSnapshot().getMemoryVolume());
+            }
+
             parameters.setDownSince(getVm().getStatus() == VMStatus.Suspended ?
                     getVm().getLastStopTime()
                     : getActiveSnapshot().getCreationDate());
