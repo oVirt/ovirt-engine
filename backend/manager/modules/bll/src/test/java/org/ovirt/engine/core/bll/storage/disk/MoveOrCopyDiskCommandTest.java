@@ -11,11 +11,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,6 +35,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -43,13 +46,16 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
@@ -57,6 +63,11 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private Guid destStorageId = Guid.newGuid();
     private final Guid SRC_STORAGE_ID = Guid.newGuid();
     private final VmDevice vmDevice = new VmDevice();
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_1, false),
+            mockConfig(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_2, true));
 
     @Mock
     private DiskDao diskDao;
@@ -210,8 +221,25 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testMoveOrCopyMemoryDiskFails() {
-        testMoveOrCopyForContentTypeFails(DiskContentType.MEMORY_DUMP_VOLUME);
+    public void testMoveMemoryVolumesFailsOnUnsupportedVersion() {
+        initializeCommand(new DiskImage(), VmEntityType.VM);
+        command.getImage().setContentType(DiskContentType.MEMORY_DUMP_VOLUME);
+        StoragePool storagePool = new StoragePool();
+        storagePool.setCompatibilityVersion(Version.v4_1);
+        doReturn(storagePool).when(command).getStoragePool();
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
+    }
+
+    @Test
+    public void testMoveMemoryVolumesSucceeds() {
+        initializeCommand(new DiskImage(), VmEntityType.VM);
+        command.getImage().setContentType(DiskContentType.MEMORY_DUMP_VOLUME);
+        StoragePool storagePool = new StoragePool();
+        storagePool.setCompatibilityVersion(Version.v4_2);
+        doReturn(storagePool).when(command).getStoragePool();
+        initSrcStorageDomain();
+        initDestStorageDomain(StorageType.NFS);
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     private void testMoveOrCopyForContentTypeFails(DiskContentType contentType) {
