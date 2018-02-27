@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1105,7 +1106,10 @@ public class LibvirtVmXmlBuilder {
         DiskInterface cdDiskInterface = DiskInterface.forValue(cdInterface);
         int pinnedDriveIndex = 0;
 
-        for (Disk disk : vmInfoBuildUtils.getSortedDisks(vm)) {
+        Map<Disk, VmDevice> vmDisksToDevices = vm.getDiskMap().values().stream()
+                        .collect(Collectors.toMap(Function.identity(),
+                                d -> deviceIdToDevice.get(new VmDeviceId(d.getId(), vm.getId()))));
+        for (Disk disk : vmInfoBuildUtils.getSortedDisks(vmDisksToDevices, vm.getId())) {
             VmDevice device = deviceIdToDevice.get(new VmDeviceId(disk.getId(), vm.getId()));
             if (device == null || !device.isManaged()) {
                 // This may happen to memory disks that do not have a corresponding device
