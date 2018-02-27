@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
@@ -171,8 +172,16 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         for (DiskImage image : getImages()) {
             StorageDomain sd = storageDomainDao.getForStoragePool(
                     image.getStorageIds().get(0), getStoragePool().getId());
-            if (!validate(new StorageDomainValidator(sd).isDomainExistAndActive())) {
-                return false;
+            ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
+            if (!result.isValid()) {
+                if (!getParameters().isAllowPartialImport()) {
+                    return validate(result);
+                } else {
+                    log.warn("storage domain '{}' does not exists. Ignoring since force flag in on",
+                            image.getStorageIds().get(0));
+                    getImages().remove(image);
+                    failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
+                }
             }
         }
         if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
