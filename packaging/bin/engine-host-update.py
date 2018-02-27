@@ -873,7 +873,7 @@ if __name__ == '__main__':
                         logging.debug(
                             'Using password %s from password file.' % password
                         )
-            except IOError, ValueError:
+            except (IOError, ValueError):
                 pass
 
         # if we haven't received an username to use thus far,

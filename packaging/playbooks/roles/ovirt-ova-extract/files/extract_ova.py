@@ -8,6 +8,8 @@ import sys
 
 from contextlib import closing
 
+import six
+
 NUL = b"\0"
 BUF_SIZE = 8 * 1024**2
 TAR_BLOCK_SIZE = 512
@@ -30,7 +32,7 @@ def extract_disk(ova_file, disk_size, image_path):
                 read = remaining
             written = 0
             while written < read:
-                wbuf = buffer(buf, written, read - written)
+                wbuf = memoryview(buf, written, read - written)
                 written += image.write(wbuf)
             copied += written
 
@@ -63,7 +65,7 @@ def nti(s):
             raise
     else:
         n = 0
-        r = xrange(len(s) - 1) if python2 else range(len(s) - 1)
+        r = six.moves.xrange(len(s) - 1)
         for i in r:
             n <<= 8
             n += ord(s[i + 1]) if python2 else s[i + 1]

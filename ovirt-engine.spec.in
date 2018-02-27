@@ -377,7 +377,6 @@ Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc
 Requires:	ovirt-host-deploy-java >= 1.6.3
 Requires:	python-jinja2
-
 Requires(pre):	shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -530,6 +529,7 @@ Requires:	java-headless
 Requires:	logrotate
 Requires:	python-dateutil
 Requires:	python-psycopg2
+Requires:	python-six
 Requires(pre):		shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd

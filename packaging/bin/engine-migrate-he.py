@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/python
 
 # Copyright 2017 Red Hat, Inc.
 #
@@ -26,6 +26,8 @@ import time
 
 import ovirtsdk4 as sdk
 import ovirtsdk4.types as types
+
+import six
 
 
 def main():
@@ -61,14 +63,16 @@ def get_connection():
     USERNAME_DEFAULT = 'admin@internal'
     CA_DEFAULT = '/etc/pki/ovirt-engine/ca.pem'
 
-    url = raw_input("Engine REST API url[%s]:" % URL_DEFAULT)
+    url = six.moves.input("Engine REST API url[%s]:" % URL_DEFAULT)
     if not url:
         url = URL_DEFAULT
-    username = raw_input("Engine REST API username[%s]:" % USERNAME_DEFAULT)
+    username = six.moves.input(
+        "Engine REST API username[%s]:" % USERNAME_DEFAULT
+    )
     if not username:
         username = USERNAME_DEFAULT
-    password = raw_input("Engine REST API password:")
-    ca_file = raw_input("Engine CA certificate file[%s]:" % CA_DEFAULT)
+    password = six.moves.input("Engine REST API password:")
+    ca_file = six.moves.input("Engine CA certificate file[%s]:" % CA_DEFAULT)
     if not ca_file:
         ca_file = CA_DEFAULT
 
@@ -84,7 +88,7 @@ def select_dc(datacenters):
     while True:
         for i, dc in enumerate(datacenters):
             print("\t %d) %s" % (i, dc.name))
-        dc_answer = raw_input(
+        dc_answer = six.moves.input(
             "Select which Data Center will run Hosted Engine:")
         try:
             return datacenters[int(dc_answer)]

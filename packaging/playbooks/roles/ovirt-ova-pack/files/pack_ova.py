@@ -66,7 +66,7 @@ def write_disk(ova_path, disk_path, disk_size):
                     break  # done
                 written = 0
                 while written < read:
-                    wbuf = buffer(buf, written, read - written)
+                    wbuf = memoryview(buf, written, read - written)
                     written += ova_file.write(wbuf)
         os.fsync(ova_file.fileno())
 
