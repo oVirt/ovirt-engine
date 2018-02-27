@@ -762,15 +762,18 @@ class DBMSUpgradeTransaction(transaction.TransactionElement):
             name=self._upgrade_from,
             state=False,
         )
+        envAppend = {
+            'PGSETUP_INITDB_OPTIONS': '--locale=en_US.UTF-8',
+        }
+        if self._inplace:
+            envAppend['PGSETUP_PGUPGRADE_OPTIONS'] = '--link'
         self._parent.execute(
             (
                 self.command.get('postgresql-setup'),
                 '--upgrade',
                 '--upgrade-from={f}'.format(f=self._upgrade_from)
             ),
-            envAppend={
-                'PGSETUP_PGUPGRADE_OPTIONS': '--link'
-            } if self._inplace else {},
+            envAppend=envAppend,
             raiseOnError=True,
         )
         shutil.copy2(
