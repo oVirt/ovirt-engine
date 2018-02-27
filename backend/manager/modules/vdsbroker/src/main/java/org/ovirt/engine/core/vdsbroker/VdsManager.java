@@ -561,6 +561,12 @@ public class VdsManager {
         refreshCapabilities(vds, new RefreshCapabilitiesCallback(vds));
     }
 
+    public void refreshHostSync(VDS vds) {
+        VDSReturnValue caps = resourceManager.runVdsCommand(VDSCommandType.GetCapabilities,
+                new VdsIdAndVdsVDSCommandParametersBase(vds));
+        handleRefreshCapabilitiesResponse(vds, caps, true);
+    }
+
     class RefreshCapabilitiesCallback implements BrokerCommandCallback {
 
         private VDS vds;
@@ -571,30 +577,41 @@ public class VdsManager {
 
         @Override
         public void onResponse(Map<String, Object> response) {
-            try {
-                VDSReturnValue caps = (VDSReturnValue) response.get("result");
-                invokeGetHardwareInfo(vds, caps);
-                processRefreshCapabilitiesResponse(new AtomicBoolean(), vds, vds.clone(), caps);
-            } catch (Throwable t) {
-                onFailure(t);
-            } finally {
-                if (vds != null) {
-                    updateDynamicData(vds.getDynamicData());
-                    updateNumaData(vds);
-
-                    // Update VDS after testing special hardware capabilities
-                    monitoringStrategy.processHardwareCapabilities(vds);
-
-                    // Always check VdsVersion
-                    resourceManager.getEventListener().handleVdsVersion(vds.getId());
-                }
-            }
+            VDSReturnValue caps = (VDSReturnValue) response.get("result");
+            handleRefreshCapabilitiesResponse(vds, caps, false);
         }
 
         @Override
         public void onFailure(Throwable t) {
-            log.error("Unable to RefreshCapabilities: {}", ExceptionUtils.getRootCauseMessage(t));
-            log.debug("Exception", t);
+            logRefreshCapabilitiesFailure(t);
+        }
+    }
+
+    private void logRefreshCapabilitiesFailure(Throwable t) {
+        log.error("Unable to RefreshCapabilities: {}", ExceptionUtils.getRootCauseMessage(t));
+        log.debug("Exception", t);
+    }
+
+    private void handleRefreshCapabilitiesResponse(VDS vds, VDSReturnValue caps, boolean throwException) {
+        try {
+            invokeGetHardwareInfo(vds, caps);
+            processRefreshCapabilitiesResponse(new AtomicBoolean(), vds, vds.clone(), caps);
+        } catch (Throwable t) {
+            logRefreshCapabilitiesFailure(t);
+            if (throwException) {
+                throw t;
+            }
+        } finally {
+            if (vds != null) {
+                updateDynamicData(vds.getDynamicData());
+                updateNumaData(vds);
+
+                // Update VDS after testing special hardware capabilities
+                monitoringStrategy.processHardwareCapabilities(vds);
+
+                // Always check VdsVersion
+                resourceManager.getEventListener().handleVdsVersion(vds.getId());
+            }
         }
     }
 
