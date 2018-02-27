@@ -709,6 +709,56 @@ class Provisioning(base.Base):
                     transaction=False,
                 )
 
+    def getPostgresLocaleAndEncodingInitEnv(
+        self,
+    ):
+        clivals = []
+        if not self.supported():
+            raise RuntimeError(
+                _(
+                    'Unsupported distribution for automatic '
+                    'upgrading postgresql'
+                )
+            )
+
+        with AlternateUser(
+            user=self.environment[
+                oengcommcons.SystemEnv.USER_POSTGRES
+            ],
+        ):
+            usockenv = {
+                self._dbenvkeys[DEK.HOST]: '',  # usock
+                self._dbenvkeys[DEK.PORT]: '',
+                self._dbenvkeys[DEK.SECURED]: False,
+                self._dbenvkeys[DEK.HOST_VALIDATION]: False,
+                self._dbenvkeys[DEK.USER]: 'postgres',
+                self._dbenvkeys[DEK.PASSWORD]: '',
+                self._dbenvkeys[DEK.DATABASE]: 'postgres',
+            }
+            self._waitForDatabase(
+                environment=usockenv,
+            )
+            dbstatement = database.Statement(
+                dbenvkeys=self._dbenvkeys,
+                environment=usockenv,
+            )
+            entities_and_cli_options = {
+                'server_encoding': '--encoding={val}',
+                'lc_collate': '--lc-collate={val}',
+                'lc_ctype': '--lc-ctype={val}',
+            }
+            for entity, cli_option in entities_and_cli_options.items():
+                val = dbstatement.execute(
+                    statement="SHOW {entity}".format(entity=entity),
+                    ownConnection=True,
+                    transaction=False,
+                )[0][entity]
+                clivals.append(cli_option.format(val=val))
+
+        return {
+            'PGSETUP_INITDB_OPTIONS': ' '.join(clivals),
+        }
+
 
 class DBMSUpgradeTransaction(transaction.TransactionElement):
     """dbms upgrade transaction element."""
@@ -757,20 +807,21 @@ class DBMSUpgradeTransaction(transaction.TransactionElement):
         )
 
         conf_f = provisioning.getConfigFiles()
+        envAppend = provisioning.getPostgresLocaleAndEncodingInitEnv()
         self._old_data_directory = conf_f['data_directory']
         self.services.state(
             name=self._upgrade_from,
             state=False,
         )
+        if self._inplace:
+            envAppend['PGSETUP_PGUPGRADE_OPTIONS'] = '--link'
         self._parent.execute(
             (
                 self.command.get('postgresql-setup'),
                 '--upgrade',
                 '--upgrade-from={f}'.format(f=self._upgrade_from)
             ),
-            envAppend={
-                'PGSETUP_PGUPGRADE_OPTIONS': '--link'
-            } if self._inplace else {},
+            envAppend=envAppend,
             raiseOnError=True,
         )
         shutil.copy2(
