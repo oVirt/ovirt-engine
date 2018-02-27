@@ -6,10 +6,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.XmlUtils;
@@ -47,13 +48,28 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     private Map<String, Object> createInfo() {
         if (FeatureSupported.isDomainXMLSupported(vm.getClusterCompatibilityVersion())) {
             String engineXml = generateDomainXml();
-            String hibernationVolHandle = getParameters().getHibernationVolHandle();
-            if (StringUtils.isEmpty(hibernationVolHandle)) {
+            if (getParameters().getMemoryDumpImage() == null) {
                 return Collections.singletonMap(VdsProperties.engineXml, engineXml);
             } else {
-                Map<String, Object> createInfo = new HashMap<>(2);
+                Map<String, Object> createInfo = new HashMap<>(4);
                 createInfo.put(VdsProperties.engineXml, engineXml);
-                createInfo.put(VdsProperties.hiberVolHandle, hibernationVolHandle);
+
+                DiskImage memoryDump = getParameters().getMemoryDumpImage();
+                Map<String, String> memoryDumpPDIV = PDIVMapBuilder.create()
+                        .setPoolId(memoryDump.getStoragePoolId())
+                        .setDomainId(memoryDump.getStorageIds().get(0))
+                        .setImageGroupId(memoryDump.getId())
+                        .setVolumeId(memoryDump.getImageId()).build();
+
+                DiskImage memoryConf = getParameters().getMemoryConfImage();
+                Map<String, String> memoryConfPDIV = PDIVMapBuilder.create()
+                        .setPoolId(memoryConf.getStoragePoolId())
+                        .setDomainId(memoryConf.getStorageIds().get(0))
+                        .setImageGroupId(memoryConf.getId())
+                        .setVolumeId(memoryConf.getImageId()).build();
+
+                createInfo.put("memoryDumpVolume", memoryDumpPDIV);
+                createInfo.put("memoryConfVolume", memoryConfPDIV);
                 return createInfo;
             }
         } else {
