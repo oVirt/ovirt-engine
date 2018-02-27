@@ -5,14 +5,12 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -138,17 +136,5 @@ public class VmNicValidator {
     public ValidationResult validateProfileNotEmptyForHostedEngineVm(VM vm) {
         return ValidationResult.failWith(EngineMessage.HOSTED_ENGINE_VM_CANNOT_HAVE_NIC_WITH_EMPTY_PROFILE)
                 .when(vm.isHostedEngine() && nic.getVnicProfileId() == null);
-    }
-
-    private boolean isVnicEmptyOrAttachedToExternalNetwork() {
-        final Network network = getNetwork();
-        return network == null || network.isExternal();
-    }
-
-    public ValidationResult isNetworkSupportedByClusterSwitchType(Cluster cluster) {
-        return ValidationResult
-                .failWith(EngineMessage.ACTION_TYPE_FAILED_ONLY_EXTERNAL_NETWORK_IS_SUPPORTED_IN_OVS_SWITCH_TYPE)
-                .when(cluster.getRequiredSwitchTypeForCluster().equals(SwitchType.OVS)
-                        && !isVnicEmptyOrAttachedToExternalNetwork());
     }
 }

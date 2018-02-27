@@ -267,8 +267,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         UpdateVmNicValidator nicValidator =
                 new UpdateVmNicValidator(getInterface(), getVm().getClusterCompatibilityVersion(), getVm().getOs());
-        if (!validate(nicValidator.isNetworkSupportedByClusterSwitchType(getCluster()))
-                || !validate(nicValidator.unplugPlugNotRequired())
+        if (!validate(nicValidator.unplugPlugNotRequired())
                 || !validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.hotUpdatePossible())
                 || !validate(nicValidator.profileValid(getVm().getClusterId()))
