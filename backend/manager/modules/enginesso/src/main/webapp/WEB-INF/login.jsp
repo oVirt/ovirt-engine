@@ -60,11 +60,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-5">
+                <div class="col-sm-7 col-md-6 col-lg-5 login">
                     <form class="form-horizontal" id="loginForm" method="post" action="${pageContext.request.contextPath}/interactive-login">
                         <input type="hidden" class="form-control" id="sessionIdToken" placeholder="sessionIdToken" name="sessionIdToken" value="${ssoSession.sessionIdToken}">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="username">
+                            <label class="col-sm-2 control-label nowrap" for="username">
                                 <fmt:message key="loginpage.username" bundle="${loginpage}" />
                             </label>
                             <div class="col-sm-10">
@@ -72,7 +72,7 @@
                              </div>
                         </div>
                         <div class="form-group">
-                             <label class="col-sm-2 control-label" for="password">
+                             <label class="col-sm-2 control-label nowrap" for="password">
                                  <fmt:message key="loginpage.password" bundle="${loginpage}" />
                              </label>
                              <div class="col-sm-10">
@@ -80,7 +80,7 @@
                              </div>
                          </div>
                          <div class="form-group">
-                             <label class="col-sm-2 control-label" for="profile">
+                             <label class="col-sm-2 control-label nowrap" for="profile">
                                  <fmt:message key="loginpage.profile" bundle="${loginpage}" />
                              </label>
                              <div class="col-sm-10">

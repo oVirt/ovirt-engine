@@ -16,6 +16,10 @@ landing page (welcome), login (sso), docs, 404, etc
     width: 100%;
 }
 
+.login-pf label.nowrap {
+    white-space: nowrap;
+}
+
 .nav-pf-vertical, .nav-pf-secondary-nav, .nav-pf-tertiary-nav {
     /* 60 is the current PatternFly default. That assumes a navbar-pf-vertical height of
        2px, but we use 4px: 60px + (4px - 2px) = 62px
