@@ -2246,9 +2246,11 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeAlias(VmDevice device) {
-        writer.writeStartElement("alias");
-        writer.writeAttributeString("name", String.format("ua-%s", device.getId().getDeviceId()));
-        writer.writeEndElement();
+        if (device.isManaged()) {
+            writer.writeStartElement("alias");
+            writer.writeAttributeString("name", String.format("ua-%s", device.getId().getDeviceId()));
+            writer.writeEndElement();
+        }
     }
 
     private void writeAddress(Map<String, String> addressMap) {
