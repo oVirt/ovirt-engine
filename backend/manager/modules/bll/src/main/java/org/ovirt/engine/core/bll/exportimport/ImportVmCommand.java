@@ -416,27 +416,45 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return true;
     }
 
+    private Guid addVmLeaseToDefaultStorageDomain() {
+        return storageDomainStaticDao.getAllForStoragePool(getStoragePoolId()).stream()
+                .map(StorageDomainStatic::getId)
+                .filter(this::validateLeaseStorageDomain)
+                .filter(domainId -> addVmLease(domainId, getVm().getId(), false))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void handleVmLease() {
+        Guid importedLeaseStorageDomainId = getVm().getLeaseStorageDomainId();
+        if (importedLeaseStorageDomainId == null) {
+            return;
+        }
+        if (!getVm().isAutoStartup() || !shouldAddLease(getVm().getStaticData())) {
+            getVm().setLeaseStorageDomainId(null);
+            return;
+        }
+        if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
+            getVm().setLeaseStorageDomainId(null);
+            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_COMPAT_VERSION);
+            return;
+        }
+        if (validateLeaseStorageDomain(importedLeaseStorageDomainId) &&
+                addVmLease(importedLeaseStorageDomainId, getVm().getId(), false)) {
+            return;
+        }
+        getVm().setLeaseStorageDomainId(addVmLeaseToDefaultStorageDomain());
+        if (getVm().getLeaseStorageDomainId() == null) {
+            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_STORAGE_DOMAIN);
+        } else {
+            log.warn("Creating the lease for the VM '{}' on storage domain '{}', because storage domain '{}' is unavailable",
+                    getVm().getId(), getVm().getLeaseStorageDomainId(), importedLeaseStorageDomainId);
+        }
+    }
+
     @Override
     protected void executeVmCommand() {
-        if (getVm().isAutoStartup() && shouldAddLease(getVm().getStaticData())) {
-            if (FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
-                if (validateLeaseStorageDomain(getVm().getLeaseStorageDomainId())) {
-                    if (!addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId(), false)) {
-                        getVm().setLeaseStorageDomainId(null);
-                    }
-                } else {
-                    getVm().setLeaseStorageDomainId(null);
-                    auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_STORAGE_DOMAIN);
-                }
-            }
-            else {
-                getVm().setLeaseStorageDomainId(null);
-                auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_COMPAT_VERSION);
-            }
-        }
-        else {
-            getVm().setLeaseStorageDomainId(null);
-        }
+        handleVmLease();
         super.executeVmCommand();
     }
 
