@@ -1189,6 +1189,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Wed Feb 28 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2.2
+- Bump version to 4.2.2.2
+
 * Mon Feb 19 2018 Lev Veyde <lveyde@redhat.com> - 4.2.2.1
 - Bump version to 4.2.2.1
 
