@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -21,12 +24,17 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -37,8 +45,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.PermissionDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +69,12 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     private PermissionDao permissionDao;
     @Inject
     private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmPoolDao vmPoolDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private DiskProfileDao diskProfileDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -207,7 +224,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     private AddVmParameters buildAddVmParameters() {
         AddVmParameters addVmParams = new AddVmParameters(getParameters().getVmStaticData());
         addVmParams.setPoolId(getParameters().getVmPoolId());
-        addVmParams.setDiskInfoDestinationMap(new HashMap<>());
+        addVmParams.setDiskInfoDestinationMap(buildDiskInfoDestinationMap());
         addVmParams.setConsoleEnabled(deviceExists(VmDeviceGeneralType.CONSOLE));
         addVmParams.setBalloonEnabled(deviceExists(VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON));
         addVmParams.setSoundDeviceEnabled(deviceExists(VmDeviceGeneralType.SOUND));
@@ -234,6 +251,71 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         addVmParams.getVmStaticData().setInitialized(false);
 
         return addVmParams;
+    }
+
+    private HashMap<Guid, DiskImage> buildDiskInfoDestinationMap() {
+        HashMap<Guid, DiskImage> destinationMap = new HashMap<>();
+
+        if (getParameters().getVmPoolId() == null) {
+            return destinationMap;
+        }
+        VmPool vmPool = vmPoolDao.get(getParameters().getVmPoolId());
+        if (vmPool == null || !vmPool.isAutoStorageSelect()) {
+            return destinationMap;
+        }
+
+        List<Disk> templateDisks = diskDao.getAllForVm(getParameters().getVmStaticData().getVmtGuid());
+        Map<Guid, List<Guid>> diskToProfileMap = templateDisks.stream()
+                .collect(Collectors.toMap(Disk::getId, disk -> ((DiskImage) disk).getDiskProfileIds()));
+        Map<Guid, List<Guid>> diskToStorageIds = templateDisks.stream()
+                .collect(Collectors.toMap(Disk::getId, disk -> ((DiskImage) disk).getStorageIds()));
+        Map<Guid, Long> targetDomainsSize = diskToStorageIds.values().stream()
+                .flatMap(List::stream)
+                .distinct()
+                .map(storageDomainDao::get)
+                .collect(Collectors.toMap(StorageDomain::getId, StorageDomain::getAvailableDiskSizeInBytes));
+
+        for (Disk disk : templateDisks) {
+            DiskImage diskImage = (DiskImage) disk;
+            Guid storageId =
+                    findAvailableStorageDomain(targetDomainsSize, disk.getSize(), diskToStorageIds.get(disk.getId()));
+            diskToProfileMap.get(disk.getId()).stream()
+                    .map(profileId -> diskProfileDao.get(profileId))
+                    .filter(profile -> profile.getStorageDomainId().equals(storageId))
+                    .findFirst()
+                    .ifPresent(profile -> diskImage.setDiskProfileId(profile.getId()));
+            // Set target domain
+            ArrayList<Guid> storageIds = new ArrayList<>();
+            storageIds.add(storageId);
+            diskImage.setStorageIds(storageIds);
+            // Set volume format.
+            // Note that the disks of VMs in a pool are essentially snapshots of the template's disks.
+            // therefore when creating the VM's disks, the image parameters are overridden anyway.
+            // We were required to change only the VolumeFormat here for passing the AddVMCommand's
+            // validation
+            if (diskImage.getDiskStorageType() == DiskStorageType.CINDER) {
+                diskImage.setVolumeFormat(VolumeFormat.RAW);
+            } else {
+                diskImage.setVolumeFormat(VolumeFormat.COW);
+            }
+
+            destinationMap.put(disk.getId(), diskImage);
+        }
+
+        return destinationMap;
+    }
+
+    private Guid findAvailableStorageDomain(
+            Map<Guid, Long> targetDomainsSize,
+            long diskSize,
+            List<Guid> storageIds) {
+
+        Guid dest = storageIds.stream()
+                .min(Comparator.comparingLong(targetDomainsSize::get))
+                .orElse(storageIds.get(0));
+        long destSize = targetDomainsSize.get(dest);
+        targetDomainsSize.put(dest, destSize - diskSize);
+        return dest;
     }
 
     private void loadVmPayload(AddVmParameters addVmParams) {
