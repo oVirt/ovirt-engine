@@ -1448,7 +1448,7 @@ public enum AuditLogType {
     VM_ADD_HOST_DEVICES(10800),
     VM_REMOVE_HOST_DEVICES(10801),
 
-    VDS_BROKER_COMMAND_FAILURE(10802, AuditLogSeverity.ERROR),
+    VDS_BROKER_COMMAND_FAILURE(10802, AuditLogSeverity.ERROR, 30),
     IRS_BROKER_COMMAND_FAILURE(10803, AuditLogSeverity.ERROR),
 
     // Unable to resolve ip of host registered using hostname
