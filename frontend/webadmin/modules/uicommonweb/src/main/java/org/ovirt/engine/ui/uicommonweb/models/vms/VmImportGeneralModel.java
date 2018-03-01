@@ -65,12 +65,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         name = new EntityModel<>();
         operatingSystems = new ListModel<>();
 
-        getOperatingSystems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
-            if (getOperatingSystems().getSelectedItem() != null) {
-                getEntity().getVm().setVmOs(getOperatingSystems().getSelectedItem());
-            }
-        });
-        getOperatingSystems().getItemsChangedEvent().addListener((ev, sender, args) -> getOperatingSystems().setSelectedItem(getEntity().getVm().getOs()));
+        registerNameAndOsListeners();
     }
 
     public void setSource(ImportSource source) {
@@ -102,9 +97,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
         super.updateProperties(vm.getId());
 
-        if (getName().getEntity() == null) {
-            getName().setEntity(vm.getName());
-        }
+        getName().setEntity(vm.getName());
         getOperatingSystems().setItems(AsyncDataProvider.getInstance().getOsIds(vm.getClusterArch()));
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
@@ -264,6 +257,29 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
+    }
+
+    private void registerNameAndOsListeners() {
+        getName().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            if (getName().getEntity() != null) {
+                getEntity().getVm().setName(getName().getEntity());
+            }
+        });
+
+        getOperatingSystems().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            if (getOperatingSystems().getSelectedItem() != null) {
+                getEntity().getVm().setVmOs(getOperatingSystems().getSelectedItem());
+            }
+        });
+        getOperatingSystems().getItemsChangedEvent().addListener((ev, sender, args) -> getOperatingSystems().setSelectedItem(getEntity().getVm().getOs()));
+    }
+
+    public void clearAndRegisterNameAndOsListeners() {
+        getName().getEntityChangedEvent().clearListeners();
+        getOperatingSystems().getSelectedItemChangedEvent().clearListeners();
+        getOperatingSystems().getItemsChangedEvent().clearListeners();
+
+        registerNameAndOsListeners();
     }
 
     public String getDefaultDisplayType() {

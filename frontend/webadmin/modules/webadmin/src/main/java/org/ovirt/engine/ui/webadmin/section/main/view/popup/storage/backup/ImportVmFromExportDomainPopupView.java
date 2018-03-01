@@ -201,6 +201,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                     }
                 };
         generalView = new ImportVmGeneralSubTabView(modelProvider);
+        modelProvider.getModel().clearAndRegisterNameAndOsListeners();
         generalPanel.add(generalView);
         subTabLayoutPanel.add(generalPanel, constants.importVmGeneralSubTabLabel());
     }
