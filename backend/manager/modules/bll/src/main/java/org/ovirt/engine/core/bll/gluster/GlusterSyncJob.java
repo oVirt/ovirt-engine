@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -1060,12 +1062,44 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void refreshVolumeCapacity(GlusterVolumeEntity volume, GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
-        if (volumeAdvancedDetails.getCapacityInfo() != null) {
-            if (volume.getAdvancedDetails().getCapacityInfo() == null) {
-                volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
-            } else {
-                volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
-            }
+        if (volume.getAdvancedDetails().getCapacityInfo() == null) {
+            volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
+        } else {
+            volumeAdvancedDetails.getCapacityInfo().setConfirmedFreeSize(calculateConfirmedVolumeCapacity(volume));
+            volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
+        }
+    }
+
+    private Long calculateConfirmedVolumeCapacity(GlusterVolumeEntity volume) {
+        List<BrickProperties> bricks = volume.getBricks().stream()
+                .map(GlusterBrickEntity::getId)
+                .map(b -> brickDao.getById(b))
+                .filter(Objects::nonNull)
+                .map(GlusterBrickEntity::getBrickProperties)
+                .collect(Collectors.toList());
+
+        if (bricks.stream().map(BrickProperties::getConfirmedFreeSize).filter(b -> b == null).findAny().isPresent()) {
+            //If we have bricks missing confirmed size, we can't calculate it for the volume.
+            log.info("Volume {} have non-thin bricks, skipping confirmed free size calculation", volume.getName());
+            return null;
+        }
+
+        Stream<Double> brickSizes = bricks.stream()
+                .map(BrickProperties::getConfirmedFreeSize)
+                .map(v -> v*1024*1024);
+
+        switch (volume.getVolumeType()) {
+        case REPLICATE:
+            return brickSizes.map(Double::longValue).min(Long::compare).orElseGet(null);
+        case DISTRIBUTE:
+        case DISTRIBUTED_REPLICATE:
+        case STRIPE:
+        case DISTRIBUTED_STRIPE:
+        case STRIPED_REPLICATE:
+        case DISTRIBUTED_STRIPED_REPLICATE:
+        case DISPERSE:
+        default:
+            return brickSizes.collect(Collectors.summingLong(Double::longValue));
         }
     }
 
