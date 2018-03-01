@@ -1106,6 +1106,8 @@ public class LibvirtVmXmlBuilder {
     private void writeDisks(List<VmDevice> devices) {
         Map<VmDeviceId, VmDevice> deviceIdToDevice = devices.stream()
                 .collect(Collectors.toMap(VmDevice::getId, dev -> dev));
+        Map<Integer, Map<VmDevice, Integer>> vmDeviceSpaprVscsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(vm);
+        Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(vm);
         int ideIndex = -1;
         int scsiIndex = -1;
         int virtioIndex = -1;
@@ -1154,6 +1156,8 @@ public class LibvirtVmXmlBuilder {
                     }
                 }
                 index = scsiIndex;
+
+                vmInfoBuildUtils.calculateAddressForScsiDisk(vm, disk, device, vmDeviceSpaprVscsiUnitMap, vmDeviceVirtioScsiUnitMap);
                 break;
             }
 
@@ -1574,6 +1578,13 @@ public class LibvirtVmXmlBuilder {
         if (device.getSpecParams().containsKey("ports")) {
             writer.writeAttributeString("ports", device.getSpecParams().get("ports").toString());
         }
+
+        if (device.getSpecParams().containsKey(VdsProperties.ioThreadId)) {
+            writer.writeStartElement("driver");
+            writer.writeAttributeString("iothread", device.getSpecParams().get(VdsProperties.ioThreadId).toString());
+            writer.writeEndElement();
+        }
+
         // TODO: master??
         writeAlias(device);
         writeAddress(device);

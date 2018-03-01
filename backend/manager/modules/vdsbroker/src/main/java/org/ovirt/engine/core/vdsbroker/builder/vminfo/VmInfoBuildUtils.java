@@ -539,6 +539,8 @@ public class VmInfoBuildUtils {
         // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address\
         IntStream.range(0, vmDeviceList.size()).forEach(index -> {
             VmDevice vmDevice = vmDeviceList.get(index);
+            // TODO: consider changing this so that it will search for the next available and
+            // less used controller instead of always starting from index.
             int controller = getControllerForScsiDisk(vmDevice, vm, index);
 
             if (!vmDeviceUnitMap.containsKey(controller)) {
@@ -1216,5 +1218,51 @@ public class VmInfoBuildUtils {
         // disk 2 -> iothread 1
         // disk 3 -> iothread 2
         return vm.getNumOfIoThreads() != 0 ? pinnedDriveIndex % vm.getNumOfIoThreads() + 1 : 0;
+    }
+
+    public void calculateAddressForScsiDisk(VM vm,
+            Disk disk,
+            VmDevice device,
+            Map<Integer, Map<VmDevice, Integer>> vmDeviceSpaprVscsiUnitMap,
+            Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap) {
+
+        Map<DiskInterface, Integer> controllerIndexMap =
+                ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
+        int defaultSpaprVscsiControllerIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
+        int defaultVirtioScsiControllerIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
+        Integer unitIndex = null;
+
+        switch (disk.getDiskVmElementForVm(vm.getId()).getDiskInterface()) {
+        case SPAPR_VSCSI:
+            if (StringUtils.isEmpty(device.getAddress())) {
+                unitIndex = vmDeviceSpaprVscsiUnitMap.get(defaultSpaprVscsiControllerIndex).get(device);
+                device.setAddress(createAddressForScsiDisk(defaultSpaprVscsiControllerIndex, unitIndex).toString());
+            }
+            break;
+        case VirtIO_SCSI:
+            int controllerIndex = defaultVirtioScsiControllerIndex;
+            VmDevice deviceFromMap = device;
+            for (Map.Entry<Integer, Map<VmDevice, Integer>> controllerToDevices : vmDeviceVirtioScsiUnitMap.entrySet()) {
+                Optional<VmDevice> maybeDeviceFromMap = controllerToDevices.getValue().keySet().stream()
+                        .filter(d -> d.getId().equals(device.getId()))
+                        .findFirst();
+                if (maybeDeviceFromMap.isPresent()) {
+                    deviceFromMap = maybeDeviceFromMap.get();
+                    controllerIndex = controllerToDevices.getKey();
+                    unitIndex = controllerToDevices.getValue().get(deviceFromMap);
+                    break;
+                }
+            }
+
+            if (StringUtils.isEmpty(deviceFromMap.getAddress())) {
+                if (unitIndex == null) {
+                    // should never get here, but for safety having this fallback and generating a new unit id
+                    unitIndex = getAvailableUnitForScsiDisk(vmDeviceVirtioScsiUnitMap.get(controllerIndex), false);
+                    log.debug("The unit was null for disk '{}' on controller '{}', generating a new one '{}'", disk.getId(), controllerIndex, unitIndex);
+                }
+                device.setAddress(createAddressForScsiDisk(controllerIndex, unitIndex).toString());
+            }
+            break;
+        }
     }
 }
