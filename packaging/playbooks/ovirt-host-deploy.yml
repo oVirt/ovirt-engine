@@ -4,7 +4,7 @@
   roles:
     - role: ovirt-host-deploy
     - role: hc-gluster-cgroups
-      when: host_deploy_virt_enabled and host_deploy_gluster_enabled
+      when: host_deploy_virt_enabled|bool and host_deploy_gluster_enabled|bool
 
   tasks:
     - name: Check if post tasks file exists
