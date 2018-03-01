@@ -28,7 +28,8 @@ DECLARE
         r.contype = 'f' AND
         c2.oid = r.conrelid AND
         n.oid = c.relnamespace AND
-        pg_get_constraintdef(r.oid) not ilike '%ON DELETE SET %'
+        pg_get_constraintdef(r.oid) not ilike '%ON DELETE SET %' AND
+        r.conname not in ('fk_vm_interface_vm_static','fk_vm_interface_vm_static_template')
     ORDER BY  table_name;
 
 BEGIN
