@@ -1873,7 +1873,7 @@ public class VdsBrokerObjectsBuilder {
                                 .stream()
                                 .filter(v -> Version.getLast().compareTo(v) >= 0)
                                 .max(Comparator.naturalOrder())
-                                .get(),
+                                .orElse(Version.getLowest()),
                         networkProperties
                     );
                     HostNetworkQos qos = new HostNetworkQosMapper(networkProperties).deserialize();
