@@ -461,11 +461,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                 prm.setImportAsNewEntity(true);
                 prm.setCopyCollapse(true);
             }
-
-            // Set the VM name to the one in the input field
-            VmImportGeneralModel VmImportGeneralModel = (VmImportGeneralModel) getDetailModels().get(0);
-            ((ImportVmData) item).getVm().setName(VmImportGeneralModel.getName().getEntity());
-
             prms.add(prm);
         }
 

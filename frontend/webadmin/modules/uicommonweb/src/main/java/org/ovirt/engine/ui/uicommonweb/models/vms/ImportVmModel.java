@@ -206,7 +206,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     private boolean validateName(final ImportVmData data) {
         final int maxNameLength = getMaxNameLength();
         VmImportGeneralModel model = (VmImportGeneralModel) getDetailModels().get(0);
-        EntityModel<String> vmName = new EntityModel<>(model.getName().getEntity());
+        EntityModel<String> vmName = new EntityModel<>(data.getVm().getName());
         vmName.validateEntity(
                 new IValidation[] {
                         new NotEmptyValidation(),
