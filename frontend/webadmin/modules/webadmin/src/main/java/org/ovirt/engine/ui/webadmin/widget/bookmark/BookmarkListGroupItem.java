@@ -4,6 +4,8 @@ import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ListGroupItem;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 
@@ -27,10 +29,16 @@ public class BookmarkListGroupItem extends ListGroupItem {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<BookmarkListGroupItem> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
+    @WithElementId
     Button editButton;
 
     @UiField
+    @WithElementId
     Button removeButton;
 
     @UiField
@@ -39,11 +47,12 @@ public class BookmarkListGroupItem extends ListGroupItem {
     @UiField
     Anchor bookmarkText;
 
-    public BookmarkListGroupItem(Bookmark bookmark) {
+    public BookmarkListGroupItem(Bookmark bookmark, int index) {
         add(WidgetUiBinder.uiBinder.createAndBindUi(this));
         name.getElement().setInnerSafeHtml(SafeHtmlUtils.fromString(bookmark.getName()));
         bookmarkText.setHref(getHrefFromSearchString(bookmark.getValue()));
         bookmarkText.setText(bookmark.getValue());
+        generateIds(index);
     }
 
     private String getHrefFromSearchString(String searchString) {
@@ -89,5 +98,10 @@ public class BookmarkListGroupItem extends ListGroupItem {
 
     public HandlerRegistration addAnchorClickHandler(ClickHandler handler) {
         return bookmarkText.addClickHandler(handler);
+    }
+
+    protected void generateIds(int index) {
+        ViewIdHandler.idHandler.setIdExtension(String.valueOf(index));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 }
