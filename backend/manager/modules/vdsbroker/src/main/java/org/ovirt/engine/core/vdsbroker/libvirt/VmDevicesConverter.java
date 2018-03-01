@@ -63,6 +63,7 @@ public class VmDevicesConverter {
     private static final String TYPE = "type";
     private static final String MODEL = "model";
     private static final String INDEX = "index";
+    private static final String IO_THREAD_ID = "ioThreadId";
     private static final String DEVICE = "device";
     private static final String NODE = "node";
     private static final String SIZE = "size";
@@ -186,6 +187,7 @@ public class VmDevicesConverter {
             String address = parseAddress(node);
             String index = parseAttribute(node, INDEX);
             String model = parseAttribute(node, MODEL);
+            Integer ioThreadId = parseIoThreadId(node);
             String devType = "virtio-scsi".equals(model) ? model : parseAttribute(node, TYPE);
 
             boolean devWithModelNone = model != null ? model.equals(UsbControllerModel.NONE.libvirtName) : false;
@@ -202,11 +204,22 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             VmDevice dbDev = correlate(dev, dbDevices, device -> dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
-                    .filter(d -> d.getSpecParams().isEmpty() || Objects.equals(d.getSpecParams().get(INDEX), index))
-                    .filter(d -> d.getSpecParams().isEmpty() || Objects.equals(d.getSpecParams().get(MODEL), model))
-                    .findFirst()
-                    .orElse(null));
+                .filter(d -> d.getDevice().equals(device.get(VdsProperties.Device)))
+                .filter(d -> {
+                    if (d.getSpecParams().isEmpty()) {
+                        return true;
+                    }
+                    if (ioThreadId != null && Objects.equals(d.getSpecParams().get(IO_THREAD_ID), ioThreadId)) {
+                        return true;
+                    }
+                    if (Objects.equals(d.getSpecParams().get(INDEX), index) &&
+                            Objects.equals(d.getSpecParams().get(MODEL), model)) {
+                        return true;
+                    }
+                    return false;
+                })
+                .findFirst()
+                .orElse(null));
 
             if (dbDev != null) {
                 dbDevices.remove(dbDev);
@@ -220,6 +233,9 @@ public class VmDevicesConverter {
                 }
                 if (model != null) {
                     specParams.put(MODEL, model);
+                }
+                if (ioThreadId != null) {
+                    specParams.put(IO_THREAD_ID, ioThreadId);
                 }
                 dev.put(VdsProperties.SpecParams, specParams);
             }
@@ -648,6 +664,16 @@ public class VmDevicesConverter {
         }
 
         return result.isEmpty() ? result : String.format("{%s}", result);
+    }
+
+    private Integer parseIoThreadId(XmlNode node) {
+        XmlNode driverNode = node.selectSingleNode("driver");
+        if (driverNode == null) {
+            return null;
+        }
+
+        XmlAttribute val = driverNode.attributes.get("iothread");
+        return val != null ? Integer.valueOf(val.getValue()) : null;
     }
 
     private String parseAttribute(XmlNode node, String attribute) {
