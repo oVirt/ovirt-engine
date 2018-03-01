@@ -14,6 +14,8 @@ public class GlusterVolumeSizeInfo implements Serializable {
 
     private Long freeSize;
 
+    private Long confirmedFreeSize;
+
     private Long usedSize;
 
     public GlusterVolumeSizeInfo() {
@@ -47,6 +49,14 @@ public class GlusterVolumeSizeInfo implements Serializable {
 
     public void setFreeSize(Long freeSize) {
         this.freeSize = freeSize;
+    }
+
+    public Long getConfirmedFreeSize() {
+        return confirmedFreeSize;
+    }
+
+    public void setConfirmedFreeSize(Long confirmedFreeSize) {
+        this.confirmedFreeSize = confirmedFreeSize;
     }
 
     public Long getUsedSize() {

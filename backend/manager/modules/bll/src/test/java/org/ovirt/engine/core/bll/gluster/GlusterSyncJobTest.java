@@ -506,10 +506,6 @@ public class GlusterSyncJobTest {
                 CLUSTER_ID,
                 existingDistVol.getName());
 
-        // Update capacity info
-        inOrder.verify(volumeDao, mode)
-                .updateVolumeCapacityInfo(getVolumeAdvancedDetails(existingDistVol).getCapacityInfo());
-
         // acquire lock on the cluster for repl volume
         inOrder.verify(glusterManager, mode).acquireLock(CLUSTER_ID);
 

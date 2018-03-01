@@ -90,6 +90,9 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
         capacityInfo.setTotalSize(rs.getLong("total_space"));
         capacityInfo.setUsedSize(rs.getLong("used_space"));
         capacityInfo.setFreeSize(rs.getLong("free_space"));
+        capacityInfo.setConfirmedFreeSize(
+                (rs.getObject("confirmed_free_space") != null) ?
+                        rs.getLong("confirmed_Free_space") : null);
         advancedDetails.setUpdatedAt(rs.getTimestamp("_update_date"));
         advancedDetails.setCapacityInfo(capacityInfo);
         return advancedDetails;
@@ -463,7 +466,8 @@ public class GlusterVolumeDaoImpl extends MassOperationsGenericDao<GlusterVolume
                 .addValue("volume_id", volumeCapacityInfo.getVolumeId())
                 .addValue("total_space", volumeCapacityInfo.getTotalSize())
                 .addValue("used_space", volumeCapacityInfo.getUsedSize())
-                .addValue("free_space", volumeCapacityInfo.getFreeSize());
+                .addValue("free_space", volumeCapacityInfo.getFreeSize())
+                .addValue("confirmed_free_space", volumeCapacityInfo.getConfirmedFreeSize());
     }
 
     @Override
