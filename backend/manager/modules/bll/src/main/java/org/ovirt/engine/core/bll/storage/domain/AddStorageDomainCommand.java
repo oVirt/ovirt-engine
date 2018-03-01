@@ -161,9 +161,6 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         if (!super.validate() || !initializeVds() || !checkStorageDomainNameLengthValid()) {
             return false;
         }
-        if (isStorageWithSameNameExists()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
-        }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO
                 && !getStorageDomain().getStorageType().isFileDomain()) {
             addValidationMessageVariable("domainType", StorageConstants.ISO);
@@ -197,7 +194,13 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return false;
         }
 
-        return canAddDomain();
+        if (!canAddDomain()) {
+            return false;
+        }
+        if (isStorageWithSameNameExists()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+        }
+        return true;
     }
 
     private void ensureStorageFormatInitialized() {
