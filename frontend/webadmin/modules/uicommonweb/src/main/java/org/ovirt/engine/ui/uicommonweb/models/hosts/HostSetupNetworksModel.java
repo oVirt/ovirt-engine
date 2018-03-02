@@ -128,6 +128,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private static final EventDefinition OPERATION_CANDIDATE_EVENT_DEFINITION =
             new EventDefinition("OperationCandidate", NetworkOperationFactory.class); //$NON-NLS-1$
 
+    private static final EventDefinition LLDP_CHANGED_EVENT_DEFINITION =
+            new EventDefinition("LldpChanged", HostSetupNetworksModel.class); //$NON-NLS-1$
+
+    private Event<EventArgs> lldpChangedEvent;
+
     private Event<OperationCandidateEventArgs> operationCandidateEvent;
 
     private Event<EventArgs> nicsChangedEvent;
@@ -182,6 +187,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
         setNicsChangedEvent(new Event<>(NICS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event<OperationCandidateEventArgs>(OPERATION_CANDIDATE_EVENT_DEFINITION));
+        setLldpChangedEvent(new Event<>(LLDP_CHANGED_EVENT_DEFINITION));
         setCheckConnectivity(new EntityModel<Boolean>());
         getCheckConnectivity().setEntity(true);
         setConnectivityTimeout(new EntityModel<Integer>());
@@ -1083,9 +1089,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                         new AsyncQuery<QueryReturnValue>(result -> {
                             Map<String, LldpInfo> lldpInfoMap = result.getReturnValue();
                             networkLldpInfoByName = lldpInfoMap == null ? new HashMap<>() : lldpInfoMap;
-                            if (getProgress() == null) {
-                                redraw();
-                            }
+                            getLldpChangedEvent().raise(this, EventArgs.EMPTY);
                         }, true));
     }
 
@@ -1163,6 +1167,14 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private void setOperationCandidateEvent(Event<OperationCandidateEventArgs> event) {
         operationCandidateEvent = event;
+    }
+
+    public Event<EventArgs> getLldpChangedEvent() {
+        return lldpChangedEvent;
+    }
+
+    public void setLldpChangedEvent(Event<EventArgs> lldpChangedEvent) {
+        this.lldpChangedEvent = lldpChangedEvent;
     }
 
     private void validate() {

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +17,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BondPanel extends NicPanel {
+
+    private List<NetworkItemPanel> nicPanels;
 
     private static final ApplicationResources resources = AssetProvider.getResources();
 
@@ -55,6 +58,7 @@ public class BondPanel extends NicPanel {
         List<NetworkInterfaceModel> bonded = ((BondNetworkInterfaceModel) item).getSlaves();
         Collections.sort(bonded);
 
+        nicPanels = new ArrayList<>();
         for (NetworkInterfaceModel networkInterfaceModel : bonded) {
             NicPanel nicPanel = new NicPanel(networkInterfaceModel, style);
             nicPanel.parentPanel = this;
@@ -62,9 +66,16 @@ public class BondPanel extends NicPanel {
                 nicPanel.actionButton.setVisible(false);
             }
             vPanel.add(nicPanel);
+            nicPanels.add(nicPanel);
         }
 
         return vPanel;
+    }
+
+    @Override
+    public void redrawTooltip() {
+        super.redrawTooltip();
+        nicPanels.forEach(NetworkItemPanel::redrawTooltip);
     }
 
     @Override

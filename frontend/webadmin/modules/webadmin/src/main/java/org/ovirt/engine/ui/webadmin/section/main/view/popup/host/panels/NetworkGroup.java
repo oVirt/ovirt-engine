@@ -38,6 +38,8 @@ public class NetworkGroup extends FocusPanel {
     private final NetworkPanelsStyle style;
     private final NetworkInterfaceModel nicModel;
     private final FlexTable table;
+    private NetworkItemPanel panel;
+
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
 
@@ -75,9 +77,11 @@ public class NetworkGroup extends FocusPanel {
 
         // nic
         if (nicModel instanceof BondNetworkInterfaceModel) {
-            table.setWidget(0, 0, new BondPanel((BondNetworkInterfaceModel) nicModel, style));
+            panel = new BondPanel((BondNetworkInterfaceModel) nicModel, style);
+            table.setWidget(0, 0, panel);
         } else {
-            table.setWidget(0, 0, new NicPanel<>(nicModel, style));
+            panel = new NicPanel<>(nicModel, style);
+            table.setWidget(0, 0, panel);
         }
 
         // connector
@@ -164,4 +168,7 @@ public class NetworkGroup extends FocusPanel {
         }
     }
 
+    public void redrawPanelTooltip() {
+        panel.redrawTooltip();
+    }
 }
