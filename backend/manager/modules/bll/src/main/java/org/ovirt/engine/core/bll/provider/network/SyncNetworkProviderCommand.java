@@ -221,7 +221,7 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
     @Override
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("ProviderName", getProviderName());
-        return getSucceeded() ? AuditLogType.PROVIDER_SYNCHRONIZED : AuditLogType.PROVIDER_SYNCHRONIZED_FAILED;
+        return getSucceeded() ? AuditLogType.UNASSIGNED : AuditLogType.PROVIDER_SYNCHRONIZED_FAILED;
     }
 
     @Override
