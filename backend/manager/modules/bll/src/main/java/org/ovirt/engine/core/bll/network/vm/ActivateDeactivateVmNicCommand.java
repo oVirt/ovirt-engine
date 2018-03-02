@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.provider.HostProviderBindingDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
@@ -72,6 +74,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private NetworkProviderProxy providerProxy;
 
+    private Provider<?> provider;
+
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
 
@@ -94,6 +98,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private InterfaceDao interfaceDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
+    @Inject
+    private HostProviderBindingDao hostProviderBindingDao;
 
     @Inject
     private ExternalNetworkManagerFactory externalNetworkManagerFactory;
@@ -373,8 +379,15 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private void plugToExternalNetwork() {
+        Provider provider = getProvider();
+        if (provider == null) {
+            throw new RuntimeException("No provider for network");
+        }
+        String pluginType = ((OpenstackNetworkProviderProperties) provider.getAdditionalProperties()).getPluginType();
+        String hostBindingId = hostProviderBindingDao.get(getVds().getId(), pluginType);
         Map<String, String> runtimeProperties =
-                getProviderProxy().allocate(getNetwork(), vnicProfile, getParameters().getNic(), getVds(), false);
+                getProviderProxy().allocate(getNetwork(), vnicProfile, getParameters().getNic(), getVds(),
+                false, hostBindingId);
 
         if (runtimeProperties != null) {
             getVm().getRuntimeDeviceCustomProperties().put(vmDevice.getId(), runtimeProperties);
@@ -385,9 +398,19 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         externalNetworkManagerFactory.create(getParameters().getNic(), getNetwork()).deallocateIfExternal();
     }
 
+    private Provider<?> getProvider() {
+        if (provider == null ) {
+            Network network = getNetwork();
+            if (network != null && network.isExternal()) {
+                provider = providerDao.get(network.getProvidedBy().getProviderId());
+            }
+        }
+        return provider;
+    }
+
     private NetworkProviderProxy getProviderProxy() {
         if (providerProxy == null) {
-            Provider<?> provider = providerDao.get(getNetwork().getProvidedBy().getProviderId());
+            Provider<?> provider = getProvider();
             providerProxy = providerProxyFactory.create(provider);
         }
 

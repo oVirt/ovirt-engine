@@ -67,7 +67,7 @@ public class UnmanagedNetworkProviderProxy implements NetworkProviderProxy {
 
     @Override
     public Map<String, String> allocate(Network network, VnicProfile vnicProfile, VmNic nic, VDS host,
-                                        boolean ignoreSecurityGroups) {
+                                        boolean ignoreSecurityGroups, String hostBindingId) {
         Map<String, String> runtimeProperties = new HashMap<>();
         runtimeProperties.put("provider_type", "unmanaged");
         runtimeProperties.put("plugin_type", StringUtils.defaultString(

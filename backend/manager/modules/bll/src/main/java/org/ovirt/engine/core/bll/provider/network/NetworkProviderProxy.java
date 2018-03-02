@@ -77,7 +77,7 @@ public interface NetworkProviderProxy extends ProviderProxy {
      *         these properties, and connect the vNIC correctly.
      */
     Map<String, String> allocate(Network network, VnicProfile vnicProfile, VmNic nic, VDS host,
-                                 boolean ignoreSecurityGroups);
+                                 boolean ignoreSecurityGroups, String hostBindingId);
 
     /**
      * Deallocate the vNIC from the provider. If the vNIC is not on the provider anymore, don't throw an exception.
