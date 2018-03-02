@@ -1619,4 +1619,12 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public void setKernelFeatures(Map<String, Object> kernelFeatures) {
         vdsDynamic.setKernelFeatures(kernelFeatures);
     }
+
+    public Map<String, Object> getOpenstackBindingHostIds() {
+        return vdsDynamic.getOpenstackBindingHostIds();
+    }
+
+    public void setOpenstackBindingHostIds(Map<String, Object> openstackBindingHostIds) {
+        vdsDynamic.setOpenstackBindingHostIds(openstackBindingHostIds);
+    }
 }

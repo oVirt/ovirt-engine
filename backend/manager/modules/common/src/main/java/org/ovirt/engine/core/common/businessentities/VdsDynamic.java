@@ -200,6 +200,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private Map<String, Object> kernelFeatures;
 
+    private Map<String, Object> openstackBindingHostIds;
+
     @Valid
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
@@ -824,6 +826,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.kernelFeatures = kernelFeatures;
     }
 
+    public Map<String, Object> getOpenstackBindingHostIds() {
+        return openstackBindingHostIds;
+    }
+
+    public void setOpenstackBindingHostIds(Map<String, Object> openstackBindingHostIds) {
+        this.openstackBindingHostIds = openstackBindingHostIds;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -892,7 +902,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 hostedEngineConfigured,
                 reportedDnsResolverConfiguration,
                 inFenceFlow,
-                kernelFeatures
+                kernelFeatures,
+                openstackBindingHostIds
         );
     }
 
@@ -972,6 +983,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(hostedEngineConfigured, other.hostedEngineConfigured)
                 && Objects.equals(reportedDnsResolverConfiguration, other.reportedDnsResolverConfiguration)
                 && inFenceFlow == other.inFenceFlow
-                && Objects.equals(kernelFeatures, other.kernelFeatures);
+                && Objects.equals(kernelFeatures, other.kernelFeatures)
+                && Objects.equals(openstackBindingHostIds, other.openstackBindingHostIds);
     }
 }

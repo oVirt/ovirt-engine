@@ -525,4 +525,7 @@ public final class VdsProperties {
     public static final String vmJobImageUUID = "imgUUID";
 
     public static final String SWITCH_KEY = "switch";
+
+    // Network provider agent id
+    public static final String OPENSTACK_BINDING_HOST_IDS = "openstack_binding_host_ids";
 }
