@@ -888,6 +888,7 @@ class OvnEnv(object):
     @osetupattrs(
         answerfile=True,
         description=_('oVirt OVN provider password'),
+        is_secret=True,
     )
     def OVIRT_PROVIDER_OVN_PASSWORD(self):
         return 'OVESETUP_OVN/ovirtProviderOvnPassword'
