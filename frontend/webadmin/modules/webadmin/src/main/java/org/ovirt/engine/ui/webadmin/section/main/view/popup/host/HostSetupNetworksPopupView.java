@@ -109,6 +109,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
     private boolean rendered = false;
     private boolean keepStatusText;
+    private List<NetworkGroup> nicGroups;
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -202,6 +203,10 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
             }
         });
 
+        uicommonModel.getLldpChangedEvent().addListener((ev, sender, args) -> {
+            nicGroups.forEach(NetworkGroup::redrawPanelTooltip);
+        });
+
         internalNetworkList.setSetupModel(uicommonModel);
         externalNetworkList.setSetupModel(uicommonModel);
         labelsList.setSetupModel(uicommonModel);
@@ -252,11 +257,11 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private void updateNics(List<NetworkInterfaceModel> nics) {
         nicList.clear();
         Collections.sort(nics);
-        List<NetworkGroup> groups = new ArrayList<>();
+        nicGroups = new ArrayList<>();
         for (NetworkInterfaceModel nic : nics) {
-            groups.add(new NetworkGroup(nic, eventBus, style));
+            nicGroups.add(new NetworkGroup(nic, eventBus, style));
         }
-        nicList.addAll(groups, !rendered);
+        nicList.addAll(nicGroups, !rendered);
     }
 
     private void initStatusPanel() {

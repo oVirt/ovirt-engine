@@ -147,9 +147,23 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
         tooltip = new WidgetTooltip(getContents());
         tooltip.setPlacement(Placement.BOTTOM);
         SafeHtml tooltipContent = infoPopup.getTooltipContent(item);
+        setTooltipContent(tooltipContent);
+    }
+
+    private void setTooltipContent(SafeHtml tooltipContent) {
         if (tooltipContent != null) {
             tooltip.setHtml(tooltipContent);
         }
+    }
+
+    public void redrawTooltip() {
+        if (tooltip == null) {
+            initTooltip();
+            return;
+        }
+        tooltip.hide();
+        SafeHtml tooltipContent = infoPopup.getTooltipContent(item);
+        setTooltipContent(tooltipContent);
     }
 
     /**
