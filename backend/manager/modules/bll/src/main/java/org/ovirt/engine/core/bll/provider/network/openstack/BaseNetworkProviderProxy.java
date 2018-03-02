@@ -197,23 +197,29 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     @Override
     public Map<String, String> allocate(
-        Network network, VnicProfile vnicProfile, VmNic nic, VDS host, boolean ignoreSecurityGroupsOnUpdate) {
+        Network network, VnicProfile vnicProfile, VmNic nic, VDS host,
+        boolean ignoreSecurityGroupsOnUpdate, String hostBindingId) {
+
+        if (hostBindingId==null) {
+            hostBindingId = getHostId(host);
+            log.warn("Host binding id for external network {} on host {} is null, using host id {} to allocate vNIC " +
+                    " {} instead. Please provide an after_get_caps hook for the plugin type {} on host {}",
+                network.getName(), host.getName(), hostBindingId, nic.getName(),
+                getProvider().getAdditionalProperties().getPluginType() , host.getName());
+        }
+
         Port port = locatePort(nic);
-
         List<String> securityGroups = getSecurityGroups(vnicProfile);
-        String hostId = getHostId(host);
-
         if (port == null) {
             com.woorea.openstack.quantum.model.Network externalNetwork =
                     getExternalNetwork(network.getProvidedBy());
             Port portForCreate = createNewPortForAllocate(nic,
-                    securityGroups, hostId, externalNetwork);
+                securityGroups, hostBindingId, externalNetwork);
             port = execute(getClient().ports().create(portForCreate));
         } else {
             boolean securityGroupsChanged = !ignoreSecurityGroupsOnUpdate &&
-                    securityGroupsChanged(port.getSecurityGroups(), securityGroups);
-            boolean hostChanged = hostChanged(port, hostId);
-            updatePort(port, securityGroupsChanged, hostChanged, securityGroups, hostId, nic);
+                securityGroupsChanged(port.getSecurityGroups(), securityGroups);
+            updatePort(port, securityGroupsChanged, securityGroups, hostBindingId, nic);
         }
         Map<String, String> runtimeProperties = createPortAllocationRuntimeProperties(port);
 
@@ -221,14 +227,14 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     private Port updatePort(
-        Port port, boolean securityGroupsChanged, boolean hostChanged, List<String> securityGroups, String hostId,
+        Port port, boolean securityGroupsChanged, List<String> securityGroups, String hostBindingId,
         VmNic nic) {
-
+        boolean hostChanged = hostChanged(port, hostBindingId);
         if (securityGroupsChanged || hostChanged) {
             List<String> modifiedSecurityGroups = securityGroupsChanged ?
                 securityGroups : port.getSecurityGroups();
             Port portForUpdate = modifyPortForAllocate(
-                port, hostId, hostChanged, securityGroupsChanged, modifiedSecurityGroups, nic.getMacAddress());
+                port, hostBindingId, hostChanged, securityGroupsChanged, modifiedSecurityGroups, nic.getMacAddress());
             return execute(getClient().ports().update(portForUpdate));
         }
         return port;
@@ -242,8 +248,9 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         }
     }
 
-    protected Port modifyPortForAllocate(Port port, String hostId, boolean hostChanged, boolean securityGroupsChanged,
-                                         List<String> modifiedSecurityGroups, String macAddress) {
+    protected Port modifyPortForAllocate(Port port, String hostBindingId, boolean hostChanged,
+                                         boolean securityGroupsChanged, List<String> modifiedSecurityGroups,
+                                         String macAddress) {
         Port portForUpdate = securityGroupsChanged ? new PortForUpdate() : new Port();
         portForUpdate.setId(port.getId());
 
@@ -253,14 +260,14 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
         if (hostChanged) {
             portForUpdate.setBinding(new Binding());
-            portForUpdate.getBinding().setHostId(hostId);
+            portForUpdate.getBinding().setHostId(hostBindingId);
             portForUpdate.setMacAddress(macAddress);
         }
         return portForUpdate;
     }
 
     protected Port createNewPortForAllocate(VmNic nic,
-            List<String> securityGroups, String hostId,
+            List<String> securityGroups, String hostBindingId,
             com.woorea.openstack.quantum.model.Network externalNetwork) {
         Port portForCreate = new Port();
         portForCreate.setAdminStateUp(true);
@@ -271,7 +278,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         portForCreate.setDeviceId(nic.getId().toString());
         portForCreate.setSecurityGroups(securityGroups);
         portForCreate.setBinding(new Binding());
-        portForCreate.getBinding().setHostId(hostId);
+        portForCreate.getBinding().setHostId(hostBindingId);
         portForCreate.setTenantId(externalNetwork.getTenantId());
         return portForCreate;
     }
@@ -294,7 +301,8 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     private boolean hostChanged(Port port, String hostId) {
-        return port.getBinding() == null || !StringUtils.equals(port.getBinding().getHostId(), hostId);
+        return port.getBinding() == null || hostId == null ||
+            !StringUtils.equals(port.getBinding().getHostId(), hostId);
     }
 
     private boolean securityGroupsChanged(List<String> existingSecurityGroups, List<String> desiredSecurityGroups) {
