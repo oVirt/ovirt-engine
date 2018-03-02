@@ -43,7 +43,7 @@ public class WindowsJavaTimezoneMapping {
             { "New Zealand Standard Time", "Pacific/Auckland" }, { "Newfoundland Standard Time", "America/St_Johns" },
             { "North Asia East Standard Time", "Asia/Irkutsk" }, { "North Asia Standard Time", "Asia/Krasnoyarsk" },
             { "Pacific SA Standard Time", "America/Santiago" }, { "Pacific Standard Time", "America/Los_Angeles" },
-            { "Pacific Standard Time", "America/Tijuana" }, { "Pakistan Standard Time", "Asia/Karachi" },
+            { "Pakistan Standard Time", "Asia/Karachi" },
             { "Romance Standard Time", "Europe/Paris" }, { "Russian Standard Time", "Europe/Moscow" },
             { "SA Eastern Standard Time", "America/Buenos_Aires" }, { "SA Pacific Standard Time", "America/Bogota" },
             { "SA Western Standard Time", "America/La_Paz" }, { "SE Asia Standard Time", "Asia/Bangkok" },
