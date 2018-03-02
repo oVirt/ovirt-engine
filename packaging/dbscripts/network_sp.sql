@@ -2477,3 +2477,35 @@ BEGIN
     WHERE filter_name like v_filter_name;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetHostProviderBinding (
+    v_vds_id UUID,
+    v_plugin_type character varying(64)
+    )
+RETURNS SETOF character varying(64) STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+    SELECT binding_host_id
+    FROM provider_binding_host_id
+    WHERE vds_id = v_vds_id
+        AND plugin_type = v_plugin_type;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION UpdateHostProviderBinding (
+    v_vds_id UUID,
+    v_plugin_types character varying(64)[],
+    v_provider_binding_host_ids character varying(64)[]
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE FROM provider_binding_host_id WHERE vds_id = v_vds_id;
+    INSERT INTO provider_binding_host_id (
+        vds_id,
+        plugin_type,
+        binding_host_id
+        )
+    SELECT v_vds_id, unnest(v_plugin_types), unnest(v_provider_binding_host_ids);
+END;$PROCEDURE$
+LANGUAGE plpgsql;
