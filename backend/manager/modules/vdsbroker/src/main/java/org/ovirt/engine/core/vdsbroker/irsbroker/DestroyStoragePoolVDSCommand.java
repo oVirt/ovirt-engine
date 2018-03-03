@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class DestroyStoragePoolVDSCommand<P extends IrsBaseVDSCommandParameters> extends IrsBrokerCommand<P> {
+    @Inject
+    private VdsDao vdsDao;
 
     public DestroyStoragePoolVDSCommand(P parameters) {
         super(parameters);
@@ -12,7 +16,7 @@ public class DestroyStoragePoolVDSCommand<P extends IrsBaseVDSCommandParameters>
 
     @Override
     protected void executeIrsBrokerCommand() {
-        VDS vds = DbFacade.getInstance().getVdsDao().get(this.getCurrentIrsProxy().getCurrentVdsId());
+        VDS vds = vdsDao.get(this.getCurrentIrsProxy().getCurrentVdsId());
         status = getIrsProxy().destroyStoragePool(getParameters().getStoragePoolId().toString(),
                 vds.getVdsSpmId(), getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();

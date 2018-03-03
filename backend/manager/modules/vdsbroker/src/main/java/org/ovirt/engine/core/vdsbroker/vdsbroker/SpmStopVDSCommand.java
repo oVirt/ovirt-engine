@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -19,7 +20,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
@@ -27,11 +28,18 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
 
     @Inject
     private LockManager lockManager;
+    @Inject
+    private VdsDao vdsDao;
 
     private EngineLock lock;
 
     public SpmStopVDSCommand(P parameters) {
-        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
+        super(parameters);
+    }
+
+    @PostConstruct
+    public void init() {
+        setVdsAndVdsStatic(vdsDao.get(getParameters().getVdsId()));
     }
 
     private EngineLock retrieveVdsExecutionLock() {

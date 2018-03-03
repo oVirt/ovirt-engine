@@ -1,15 +1,25 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /**
  * Send variables that set Hosted Engine maintenance mode to VDSM
  */
 public class SetHaMaintenanceModeVDSCommand extends VdsBrokerCommand<SetHaMaintenanceModeVDSCommandParameters> {
+    @Inject
+    private VdsDao vdsDao;
 
     public SetHaMaintenanceModeVDSCommand(SetHaMaintenanceModeVDSCommandParameters parameters) {
-        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
+        super(parameters);
+    }
+
+    @PostConstruct
+    public void init() {
+        setVdsAndVdsStatic(vdsDao.get(getParameters().getVdsId()));
     }
 
     @Override

@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.storage.StorageConnectionHelper;
 
@@ -28,6 +28,9 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
 
     @Inject
     private StorageConnectionHelper storageConnectionHelper;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public ConnectStorageServerVDSCommand(P parameters) {
         super(parameters);
@@ -76,8 +79,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         String namesSeparator = ",";
         for (Entry<String, String> result : returnValue.entrySet()) {
             if (!"0".equals(result.getValue())) {
-                List<StorageDomain> domains =
-                        DbFacade.getInstance().getStorageDomainDao().getAllByConnectionId(new Guid(result.getKey()));
+                List<StorageDomain> domains = storageDomainDao.getAllByConnectionId(new Guid(result.getKey()));
                 if (!domains.isEmpty()) {
                     for (StorageDomain domain : domains) {
                         if (failedDomainNames.length() > 0) {

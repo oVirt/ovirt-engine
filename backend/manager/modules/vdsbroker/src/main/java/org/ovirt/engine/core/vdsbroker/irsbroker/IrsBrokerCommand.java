@@ -22,10 +22,10 @@ import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -51,6 +51,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     @Inject
     private IVdsEventListener eventListener;
+
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     @Override
     protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
@@ -185,8 +188,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     private void startReconstruct() {
         StorageDomainStatic masterDomain = null;
-        List<StorageDomainStatic> storageDomainStaticList = DbFacade.getInstance()
-                .getStorageDomainStaticDao().getAllForStoragePool(getParameters().getStoragePoolId());
+        List<StorageDomainStatic> storageDomainStaticList =
+                storageDomainStaticDao.getAllForStoragePool(getParameters().getStoragePoolId());
         for (StorageDomainStatic storageDomainStatic : storageDomainStaticList) {
             if (storageDomainStatic.getStorageDomainType() == StorageDomainType.Master) {
                 masterDomain = storageDomainStatic;

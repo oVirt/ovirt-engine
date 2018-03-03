@@ -1,12 +1,18 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public class AttachStorageDomainVDSCommand<P extends AttachStorageDomainVDSCommandParameters>
         extends IrsBrokerCommand<P> {
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
     public AttachStorageDomainVDSCommand(P parameters) {
         super(parameters);
     }
@@ -20,7 +26,7 @@ public class AttachStorageDomainVDSCommand<P extends AttachStorageDomainVDSComma
 
     @Override
     protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
-        StorageDomain domainFromDb = DbFacade.getInstance().getStorageDomainDao().get(getParameters().getStorageDomainId());
+        StorageDomain domainFromDb = storageDomainDao.get(getParameters().getStorageDomainId());
         if (domainFromDb == null || !domainFromDb.getStorageDomainType().isDataDomain()) {
             return new IrsOperationFailedNoFailoverException(errorMessage);
         }

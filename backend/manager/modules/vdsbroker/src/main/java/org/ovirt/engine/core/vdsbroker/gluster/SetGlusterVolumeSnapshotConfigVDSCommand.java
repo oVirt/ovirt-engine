@@ -1,14 +1,20 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotSetConfigVDSParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
 public class SetGlusterVolumeSnapshotConfigVDSCommand<P extends GlusterVolumeSnapshotSetConfigVDSParameters>
         extends AbstractGlusterBrokerCommand<P> {
+
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
+
     public SetGlusterVolumeSnapshotConfigVDSCommand(P parameters) {
         super(parameters);
     }
@@ -25,7 +31,7 @@ public class SetGlusterVolumeSnapshotConfigVDSCommand<P extends GlusterVolumeSna
 
         String paramValue = StringUtils.removeEnd(cfgParam.getParamValue(), "%");
         if (cfgParam.getVolumeId() != null) {
-            GlusterVolumeEntity volume = DbFacade.getInstance().getGlusterVolumeDao().getById(cfgParam.getVolumeId());
+            GlusterVolumeEntity volume = glusterVolumeDao.getById(cfgParam.getVolumeId());
             status =
                     getBroker().glusterVolumeSnapshotConfigSet(volume.getName(),
                             cfgParam.getParamName(),

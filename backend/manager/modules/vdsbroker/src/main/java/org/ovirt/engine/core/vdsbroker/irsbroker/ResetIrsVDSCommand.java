@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -8,9 +10,12 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends IrsBrokerCommand<P> {
+    @Inject
+    private StoragePoolDao storagePoolDao;
+
     public ResetIrsVDSCommand(P parameters) {
         super(parameters);
     }
@@ -34,7 +39,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
 
             getCurrentIrsProxy().resetIrs();
 
-            StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(parameters.getStoragePoolId());
+            StoragePool pool = storagePoolDao.get(parameters.getStoragePoolId());
             if (pool != null && (pool.getStatus() == StoragePoolStatus.NotOperational)) {
                 resourceManager
                         .getEventListener()

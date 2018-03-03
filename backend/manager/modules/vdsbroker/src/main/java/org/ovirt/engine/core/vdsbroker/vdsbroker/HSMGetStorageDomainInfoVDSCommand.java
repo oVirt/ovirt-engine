@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -14,10 +16,14 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfoVDSCommandParameters>
         extends VdsBrokerCommand<P> {
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
+
     public HSMGetStorageDomainInfoVDSCommand(P parameters) {
         super(parameters);
     }
@@ -33,7 +39,7 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
         setReturnValue(pairSdStatic);
     }
 
-    private static Pair<StorageDomainStatic, Guid> buildStorageStaticFromStruct(Map<String, Object> struct) {
+    private Pair<StorageDomainStatic, Guid> buildStorageStaticFromStruct(Map<String, Object> struct) {
         Pair<StorageDomainStatic, Guid> returnValue = new Pair<>();
         StorageDomainStatic sdStatic = new StorageDomainStatic();
         if (struct.containsKey("name")) {
@@ -58,8 +64,7 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
         if (sdStatic.getStorageType() != StorageType.UNKNOWN) {
             if (sdStatic.getStorageType().isFileDomain() && struct.containsKey("remotePath")) {
                 String path = struct.get("remotePath").toString();
-                List<StorageServerConnections> connections = DbFacade.getInstance()
-                        .getStorageServerConnectionDao().getAllForStorage(path);
+                List<StorageServerConnections> connections = storageServerConnectionDao.getAllForStorage(path);
                 if (connections.isEmpty()) {
                     sdStatic.setConnection(new StorageServerConnections());
                     sdStatic.getConnection().setConnection(path);

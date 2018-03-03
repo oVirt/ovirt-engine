@@ -1,13 +1,16 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBase> extends VDSCommandBase<P> {
+    @Inject
+    protected VdsDao vdsDao;
 
     private final boolean newHost;
 
@@ -37,7 +40,7 @@ public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBas
 
     protected VDS getVds() {
         if (_vds == null) {
-            _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+            _vds = vdsDao.get(getVdsId());
         }
         return _vds;
     }

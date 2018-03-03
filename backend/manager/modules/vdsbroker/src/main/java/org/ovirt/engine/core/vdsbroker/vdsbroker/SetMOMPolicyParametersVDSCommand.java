@@ -3,16 +3,26 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 
 /**
  * Send variables that fine tune MoM policy to VDSM
  */
 public class SetMOMPolicyParametersVDSCommand extends VdsBrokerCommand<MomPolicyVDSParameters> {
+    @Inject
+    private VdsDao vdsDao;
 
     public SetMOMPolicyParametersVDSCommand(MomPolicyVDSParameters parameters) {
-        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
+        super(parameters);
+    }
+
+    @PostConstruct
+    public void init() {
+        setVdsAndVdsStatic(vdsDao.get(getParameters().getVdsId()));
     }
 
     @Override

@@ -3,16 +3,26 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> extends VdsBrokerCommand<P> {
+    @Inject
+    private VdsDao vdsDao;
 
     private String connectionAction = "disconnect";
 
     public SetVmTicketVDSCommand(P parameters) {
-        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
+        super(parameters);
+    }
+
+    @PostConstruct
+    public void init() {
+        setVdsAndVdsStatic(vdsDao.get(getParameters().getVdsId()));
     }
 
     @Override

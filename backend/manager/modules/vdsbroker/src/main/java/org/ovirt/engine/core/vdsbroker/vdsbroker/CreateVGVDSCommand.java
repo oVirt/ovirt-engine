@@ -2,15 +2,26 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.CreateVGVDSCommandParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 
 public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends VdsBrokerCommand<P> {
+    @Inject
+    private VdsDao vdsDao;
+
     private OneUuidReturn result;
 
     public CreateVGVDSCommand(P parameters) {
-        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
+        super(parameters);
+    }
+
+    @PostConstruct
+    public void init() {
+        setVdsAndVdsStatic(vdsDao.get(getParameters().getVdsId()));
     }
 
     @Override
