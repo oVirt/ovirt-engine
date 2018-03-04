@@ -253,6 +253,7 @@ public class ProviderModel extends Model {
             boolean isUnmanaged = getIsUnmanaged().getEntity();
             getRequiresAuthentication().setIsChangeable(!isUnmanaged);
             boolean requiresAuthentication = getRequiresAuthentication().getEntity();
+            getRequiresAuthentication().setEntity(requiresAuthentication && !isUnmanaged);
             setAuthFieldsChangeableStatus(requiresAuthentication, isUnmanaged);
             setReadOnlyEntity();
             getReadOnly().setIsChangeable(!isUnmanaged);
