@@ -311,7 +311,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             List<Guid> storageIds) {
 
         Guid dest = storageIds.stream()
-                .min(Comparator.comparingLong(targetDomainsSize::get))
+                .max(Comparator.comparingLong(targetDomainsSize::get))
                 .orElse(storageIds.get(0));
         long destSize = targetDomainsSize.get(dest);
         targetDomainsSize.put(dest, destSize - diskSize);
