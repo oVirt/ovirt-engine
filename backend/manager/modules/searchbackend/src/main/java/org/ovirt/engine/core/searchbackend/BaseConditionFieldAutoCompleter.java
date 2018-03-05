@@ -364,7 +364,12 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                         tableName,
                         getDbFieldName(fieldName));
             }
-            String formatString = " %1$s.%2$s %3$s %4$s ";
+            String formatString;
+            if (pair.getFirst().trim().equalsIgnoreCase("NOT LIKE") || pair.getFirst().equalsIgnoreCase("NOT ILIKE")) {
+                formatString = " (%1$s.%2$s IS NULL OR %1$s.%2$s %3$s %4$s) ";
+            } else {
+                formatString = " %1$s.%2$s %3$s %4$s ";
+            }
             return StringFormat.format(formatString, tableName, getDbFieldName(fieldName),
                     pair.getFirst(), pair.getSecond());
         }

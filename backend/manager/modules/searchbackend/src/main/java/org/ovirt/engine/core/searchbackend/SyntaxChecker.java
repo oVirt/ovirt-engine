@@ -947,11 +947,6 @@ public class SyntaxChecker implements ISyntaxChecker {
                     throw new SqlInjectionException();
                 }
             }
-            // Force syntax to recognize empty string as NULL
-            retval = retval.replace("NOT ILIKE ''", "<> ''");
-            retval = retval.replace("NOT LIKE ''", "<> ''");
-            retval = retval.replace("ILIKE ''", "= '' IS NOT FALSE");
-            retval = retval.replace("LIKE ''", "= '' IS NOT FALSE");
             log.trace("Search: {}", retval);
         }
         return retval;
