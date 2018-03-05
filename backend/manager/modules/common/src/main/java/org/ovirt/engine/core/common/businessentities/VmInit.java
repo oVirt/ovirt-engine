@@ -190,4 +190,12 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
     public void setOrgName(String orgName) {
         this.orgName = orgName;
     }
+
+    public boolean hasDnsServers() {
+        return getDnsServers() != null && !getDnsServers().isEmpty();
+    }
+
+    public boolean hasDnsSearch() {
+        return getDnsSearch() != null && !getDnsSearch().isEmpty();
+    }
 }
