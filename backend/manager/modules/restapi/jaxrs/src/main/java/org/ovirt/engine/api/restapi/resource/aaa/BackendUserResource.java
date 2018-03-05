@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
+import org.ovirt.engine.api.resource.aaa.DomainUserGroupsResource;
 import org.ovirt.engine.api.resource.aaa.SshPublicKeysResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
@@ -74,5 +75,10 @@ public class BackendUserResource
     public Response remove() {
         get();
         return performAction(ActionType.RemoveUser, new IdParameters(guid));
+    }
+
+    @Override
+    public DomainUserGroupsResource getGroupsResource() {
+        return null;
     }
 }
