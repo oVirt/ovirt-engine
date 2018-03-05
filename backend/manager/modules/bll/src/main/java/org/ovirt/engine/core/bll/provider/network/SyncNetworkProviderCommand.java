@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandBase<P> {
 
     private boolean errorOccurred = false;
+    private boolean internalCommandTriggered = false;
 
     private static Logger log = LoggerFactory.getLogger(SyncNetworkProviderCommand.class);
 
@@ -211,6 +212,7 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
     }
 
     private ActionReturnValue propagateReturnValue(ActionReturnValue internalReturnValue) {
+        setInternalCommandTriggered();
         if (!internalReturnValue.getSucceeded()) {
             propagateFailure(internalReturnValue);
             errorOccurred = true;
@@ -218,10 +220,31 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
         return internalReturnValue;
     }
 
+    private void setInternalCommandTriggered() {
+        this.internalCommandTriggered = true;
+    }
+
+    private boolean isInternalCommandTriggered() {
+        return internalCommandTriggered;
+    }
+
     @Override
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("ProviderName", getProviderName());
-        return getSucceeded() ? AuditLogType.UNASSIGNED : AuditLogType.PROVIDER_SYNCHRONIZED_FAILED;
+
+        if (isInternalCommandTriggered() && getSucceeded()) {
+            return AuditLogType.PROVIDER_SYNCHRONIZED_PERFORMED;
+        }
+
+        if (isInternalCommandTriggered() && !getSucceeded()) {
+            return AuditLogType.PROVIDER_SYNCHRONIZED_PERFORMED_FAILED;
+        }
+
+        if (!isInternalCommandTriggered() && getSucceeded()) {
+            return AuditLogType.UNASSIGNED;
+        }
+
+        return AuditLogType.PROVIDER_SYNCHRONIZED_FAILED;
     }
 
     @Override

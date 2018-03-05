@@ -1168,6 +1168,8 @@ public enum AuditLogType {
     @Deprecated
     PROVIDER_SYNCHRONIZED(215),
     PROVIDER_SYNCHRONIZED_FAILED(216, AuditLogSeverity.ERROR, AuditLogTimeInterval.DAY.getValue()),
+    PROVIDER_SYNCHRONIZED_PERFORMED(217),
+    PROVIDER_SYNCHRONIZED_PERFORMED_FAILED(218, AuditLogSeverity.ERROR, AuditLogTimeInterval.DAY.getValue()),
 
     // General
     ENTITY_RENAMED(1200),
