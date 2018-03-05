@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -255,6 +257,27 @@ public class DiskImagesValidator {
             }
         }
 
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * checks that there are no duplicated ids among a stream of ids
+     * @return validation result indicating if any disk id was supplied more than once by the user
+     */
+    public ValidationResult noDuplicatedIds() {
+        String duplicated = diskImages.stream()
+                .map(DiskImage::getId)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() > 1L)
+                .map(e -> e.getKey().toString())
+                .collect(Collectors.joining(", "));
+
+        if (!duplicated.isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DUPLICATED_DISK_OR_IMAGE_IDS,
+                    String.format("$ids %s", duplicated));
+        }
         return ValidationResult.VALID;
     }
 
