@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.common.utils.ObjectUtils.isEmpty;
 import static org.ovirt.engine.core.compat.StringHelper.isNotNullOrEmpty;
 import static org.ovirt.engine.core.compat.StringHelper.isNullOrEmpty;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,11 +49,13 @@ public class VmInitToOpenStackMetadataAdapter {
                 }
                 boolean addLink = false;
                 Map<String, Object> networkIPv4 = mapIPv4(vmInitNetwork);
+                addDnsData(vmInit, networkIPv4);
                 if (networkIPv4 != null) {
                     networks.add(networkIPv4);
                     addLink = true;
                 }
                 Map<String, Object> networkIPv6 = mapIPv6(vmInitNetwork);
+                addDnsData(vmInit, networkIPv6);
                 if (networkIPv6 != null) {
                     networks.add(networkIPv6);
                     addLink = true;
@@ -139,6 +142,23 @@ public class VmInitToOpenStackMetadataAdapter {
         return networkIPv6;
     }
 
+    /**
+     * DNS nameservers (up to three are supported by cloud-init) and search domains (up to 6)
+     * will be added to the ifcfg file of the network and /etc/resolv.conf if the network is
+     * static (i.e. is configured with static IP). see cloud-init docs\code.
+     */
+    private void addDnsData(VmInit vmInit, Map<String, Object> network) {
+        if (network == null) {
+            return;
+        }
+        if (vmInit.hasDnsServers()) {
+            network.put("dns_nameservers", Arrays.asList(vmInit.getDnsServers().split(" ")));
+        }
+        if (vmInit.hasDnsSearch()) {
+            network.put("dns_search", Arrays.asList(vmInit.getDnsSearch().split(" ")));
+        }
+    }
+
     private Map<String, Object> mapVifLink(VmInitNetwork vmInitNetwork) {
         Map<String, Object> link = new HashMap<>();
         link.put("id", vmInitNetwork.getName());
@@ -147,29 +167,29 @@ public class VmInitToOpenStackMetadataAdapter {
         return link;
     }
 
+    /**
+     * Specify DNS nameservers (up to 3 supported by cloud-init) to be applied
+     * directly to /etc/resolv.conf, in case no networks are specified or all networks
+     * are configured with dhcp.
+     *
+     * If the vm is restarted, existing entries in /etc/resolv.conf are reapplied
+     * first, and newer ones are appended only if there are less than 3.
+     *
+     * If nameservers are specified here (under the 'services' stanza), cloud-init
+     * will drop a file in /etc/NetworkManager/conf.d telling it to not manage dns
+     * so that nameserver configuration from dhcp won't clobber what's been written
+     * to /etc/resolv.conf by cloud-init.
+     *
+     *
+     */
     private List<Map<String, Object>> mapServices(VmInit vmInit) {
         List<Map<String, Object>> services = new LinkedList<>();
-        if (vmInit.getDnsServers() != null) {
-            String[] dnsServers = vmInit.getDnsServers().split(" ");
-            if (dnsServers.length > 0) {
-                for (String dnsServer : dnsServers) {
-                    Map<String, Object> service = new HashMap<>();
-                    service.put("type", "dns-nameserver");
-                    service.put("address", dnsServer);
-                    services.add(service);
-                }
-            }
-        }
-
-        if (vmInit.getDnsSearch() != null) {
-            String[] dnsSearch = vmInit.getDnsSearch().split(" ");
-            if (dnsSearch.length > 0) {
-                for (String dnsServer : dnsSearch) {
-                    Map<String, Object> service = new HashMap<>();
-                    service.put("type", "dns-search");
-                    service.put("address", dnsServer);
-                    services.add(service);
-                }
+        if (vmInit.hasDnsServers()) {
+            for (String dnsServer : vmInit.getDnsServers().split(" ")) {
+                Map<String, Object> service = new HashMap<>();
+                service.put("type", "dns");
+                service.put("address", dnsServer);
+                services.add(service);
             }
         }
         return services;
