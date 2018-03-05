@@ -85,13 +85,9 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     @Override
     public String add(Network network) {
         com.woorea.openstack.quantum.model.Network networkForCreate = createNewNetworkEntity(network);
-        try {
-            com.woorea.openstack.quantum.model.Network createdNetwork =
-                    getClient().networks().create(networkForCreate).execute();
-            return createdNetwork.getId();
-        } catch (RuntimeException e) {
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
-        }
+        com.woorea.openstack.quantum.model.Network createdNetwork =
+                execute(getClient().networks().create(networkForCreate));
+        return createdNetwork.getId();
     }
 
     protected com.woorea.openstack.quantum.model.Network createNewNetworkEntity(Network network) {
@@ -116,27 +112,19 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     @Override
     public void remove(String id) {
-        try {
-            getClient().networks().delete(id).execute();
-        } catch (RuntimeException e) {
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
-        }
+            execute(getClient().networks().delete(id));
     }
 
     @Override
     public List<Network> getAll() {
-        try {
-            Networks networks = getClient().networks().list().execute();
-            return map(networks.getList());
-        } catch (RuntimeException e) {
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
-        }
+        Networks networks = execute(getClient().networks().list());
+        return map(networks.getList());
     }
 
     @Override
     public List<ExternalSubnet> getAllSubnets(ProviderNetwork network) {
         List<ExternalSubnet> result = new ArrayList<>();
-        Subnets subnets = getClient().subnets().list().execute();
+        Subnets subnets = execute(getClient().subnets().list());
         for (Subnet subnet : subnets.getList()) {
             if (network.getExternalId().equals(subnet.getNetworkId())) {
                 result.add(map(subnet, network));
@@ -164,11 +152,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     public void addSubnet(ExternalSubnet subnet) {
         com.woorea.openstack.quantum.model.Network externalNetwork = getExternalNetwork(subnet.getExternalNetwork());
         Subnet subnetForCreate = createNewSubnetEntity(subnet, externalNetwork);
-        try {
-            getClient().subnets().create(subnetForCreate).execute();
-        } catch (RuntimeException e) {
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
-        }
+        execute(getClient().subnets().create(subnetForCreate));
     }
 
     protected Subnet createNewSubnetEntity(ExternalSubnet subnet,
@@ -188,24 +172,12 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     @Override
     public void removeSubnet(String id) {
-        try {
-            getClient().subnets().delete(id).execute();
-        } catch (RuntimeException e) {
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
-        }
+        execute(getClient().subnets().delete(id));
     }
 
     @Override
     public void testConnection() {
-        try {
-            getClient().execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "", null, ApiRootResponse.class));
-        }  catch (OpenStackResponseException e) {
-            log.error("{} (OpenStack response error code: {})", e.getMessage(), e.getStatus());
-            log.debug("Exception", e);
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
-        }catch (RuntimeException e) {
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
-        }
+        execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "", null, ApiRootResponse.class));
     }
 
     private List<Network> map(List<com.woorea.openstack.quantum.model.Network> externalNetworks) {
@@ -225,30 +197,26 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     @Override
     public Map<String, String> allocate(
         Network network, VnicProfile vnicProfile, VmNic nic, VDS host, boolean ignoreSecurityGroupsOnUpdate) {
-        try {
-            Port port = locatePort(nic);
+        Port port = locatePort(nic);
 
-            List<String> securityGroups = getSecurityGroups(vnicProfile);
-            String hostId = getHostId(host);
+        List<String> securityGroups = getSecurityGroups(vnicProfile);
+        String hostId = getHostId(host);
 
-            if (port == null) {
-                com.woorea.openstack.quantum.model.Network externalNetwork =
-                        getExternalNetwork(network.getProvidedBy());
-                Port portForCreate = createNewPortForAllocate(nic,
+        if (port == null) {
+            com.woorea.openstack.quantum.model.Network externalNetwork =
+                    getExternalNetwork(network.getProvidedBy());
+            Port portForCreate = createNewPortForAllocate(nic,
                     securityGroups, hostId, externalNetwork);
-                port = getClient().ports().create(portForCreate).execute();
-            } else {
-                boolean securityGroupsChanged = !ignoreSecurityGroupsOnUpdate &&
+            port = execute(getClient().ports().create(portForCreate));
+        } else {
+            boolean securityGroupsChanged = !ignoreSecurityGroupsOnUpdate &&
                     securityGroupsChanged(port.getSecurityGroups(), securityGroups);
-                boolean hostChanged = hostChanged(port, hostId);
-                updatePort(port, securityGroupsChanged, hostChanged, securityGroups, hostId, nic);
-            }
-            Map<String, String> runtimeProperties = createPortAllocationRuntimeProperties(port);
-
-            return runtimeProperties;
-        } catch (RuntimeException e) {
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
+            boolean hostChanged = hostChanged(port, hostId);
+            updatePort(port, securityGroupsChanged, hostChanged, securityGroups, hostId, nic);
         }
+        Map<String, String> runtimeProperties = createPortAllocationRuntimeProperties(port);
+
+        return runtimeProperties;
     }
 
     private Port updatePort(
@@ -260,7 +228,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
                 securityGroups : port.getSecurityGroups();
             Port portForUpdate = modifyPortForAllocate(
                 port, hostId, hostChanged, securityGroupsChanged, modifiedSecurityGroups, nic.getMacAddress());
-            return getClient().ports().update(portForUpdate).execute();
+            return execute(getClient().ports().update(portForUpdate));
         }
         return port;
     }
@@ -321,7 +289,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     private com.woorea.openstack.quantum.model.Network getExternalNetwork(ProviderNetwork providerNetwork) {
-        return getClient().networks().show(providerNetwork.getExternalId()).execute();
+        return execute(getClient().networks().show(providerNetwork.getExternalId()));
     }
 
     private boolean hostChanged(Port port, String hostId) {
@@ -354,19 +322,15 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     @Override
     public void deallocate(VmNic nic) {
-        try {
-            Port port = locatePort(nic);
+        Port port = locatePort(nic);
 
-            if (port != null) {
-                getClient().ports().delete(port.getId()).execute();
-            }
-        } catch (RuntimeException e) {
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
+        if (port != null) {
+            execute(getClient().ports().delete(port.getId()));
         }
     }
 
     private Port locatePort(VmNic nic) {
-        List<Port> ports = getClient().ports().list().execute().getList();
+        List<Port> ports = execute(getClient().ports().list()).getList();
         for (Port port : ports) {
             if (DEVICE_OWNER.equals(port.getDeviceOwner()) && nic.getId().toString().equals(port.getDeviceId())) {
                 return port;
@@ -384,5 +348,17 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     @Override
     public Provider<P> getProvider() {
         return (Provider<P>)super.getProvider();
+    }
+
+    private <R> R execute(OpenStackRequest<R> request) {
+        try {
+            return request.execute();
+        } catch (OpenStackResponseException e) {
+            log.error("{} (OpenStack response error code: {})", e.getMessage(), e.getStatus());
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
+        } catch (RuntimeException e) {
+            log.error("{}: {}", e.getMessage(), e.getCause() == null ? null : e.getCause().getMessage());
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
+        }
     }
 }
