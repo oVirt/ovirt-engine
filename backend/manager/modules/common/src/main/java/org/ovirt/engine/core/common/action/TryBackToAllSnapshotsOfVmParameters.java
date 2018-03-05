@@ -1,16 +1,17 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBase implements Serializable {
-    private static final long serialVersionUID = -6915708674977777690L;
+    private static final long serialVersionUID = 3617937608131413484L;
 
     private Guid dstSnapshotId;
     private boolean restoreMemory;
-    private Set<Guid> imageIds;
+    private List<DiskImage> disks;
     private boolean restoreLease;
     private Guid dstLeaseDomainId;
     // keep the lease action in order to save calculation on endSuccessfully phase,
@@ -36,9 +37,9 @@ public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBas
         restoreLease = true;
     }
 
-    public TryBackToAllSnapshotsOfVmParameters(Guid vmId, Guid dstSnapshotId, boolean restoreMemory, Set<Guid> imageIds) {
+    public TryBackToAllSnapshotsOfVmParameters(Guid vmId, Guid dstSnapshotId, boolean restoreMemory, List<DiskImage> disks) {
         this(vmId, dstSnapshotId, restoreMemory);
-        this.imageIds = imageIds;
+        this.disks = disks;
     }
 
     public Guid getDstSnapshotId() {
@@ -57,12 +58,12 @@ public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBas
         this.restoreMemory = restoreMemory;
     }
 
-    public Set<Guid> getImageIds() {
-        return imageIds;
+    public List<DiskImage> getDisks() {
+        return disks;
     }
 
-    public void setImageIds(Set<Guid> imageIds) {
-        this.imageIds = imageIds;
+    public void setDisks(List<DiskImage> disks) {
+        this.disks = disks;
     }
 
     public boolean isRestoreLease() {

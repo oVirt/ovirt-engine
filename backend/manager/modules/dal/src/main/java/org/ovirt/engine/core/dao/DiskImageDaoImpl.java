@@ -339,4 +339,21 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
         return getCallsHandler().executeReadList("GetIsoDisksByStoragePool",
                 RepoFileMetaDataDaoImpl.repoImageMapper, parameterSource);
     }
+
+    @Override
+    public DiskImage getDiskImageByDiskAndImageIds(Guid diskId, Guid imageId) {
+        return getDiskImageByDiskAndImageIds(diskId, imageId, null, false);
+    }
+
+    @Override
+    public DiskImage getDiskImageByDiskAndImageIds(Guid diskId, Guid imageId, Guid userId, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("disk_id", diskId)
+                .addValue("image_id", imageId)
+                .addValue("user_id", userId)
+                .addValue("is_filtered", isFiltered);
+
+        return getCallsHandler().executeRead("GetDiskImageByDiskAndImageIds",
+                DiskImageRowMapper.instance, parameterSource);
+    }
 }

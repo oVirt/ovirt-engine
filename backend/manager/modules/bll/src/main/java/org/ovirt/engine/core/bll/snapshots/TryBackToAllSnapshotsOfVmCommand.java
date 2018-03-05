@@ -492,14 +492,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     private List<DiskImage> getImagesToPreview() {
         if (imagesToPreview == null) {
-            if (getParameters().getImageIds() != null) {
-                imagesToPreview = getParameters().getImageIds().stream()
-                        .map(diskImageDao::getSnapshotById)
-                        .collect(Collectors.toList());
-            }
-            else {
-                imagesToPreview = diskImageDao.getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
-            }
+            imagesToPreview = getParameters().getDisks() != null ? getParameters().getDisks() :
+                    diskImageDao.getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
 
             // Filter out shareable/nonsnapable disks
             List<CinderDisk> CinderImagesToPreview = DisksFilter.filterCinderDisks(imagesToPreview);
@@ -609,12 +603,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             }
         }
 
-        List<DiskImage> images = null;
-        if (getParameters().getImageIds() != null) {
-            images = getImagesToPreview();
-        }
-
-        DiskSnapshotsValidator diskSnapshotsValidator = new DiskSnapshotsValidator(images);
+        DiskSnapshotsValidator diskSnapshotsValidator = new DiskSnapshotsValidator(getParameters().getDisks());
         if (!validate(diskSnapshotsValidator.canDiskSnapshotsBePreviewed(getParameters().getDstSnapshotId()))) {
             return false;
         }

@@ -198,4 +198,58 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
         assertEquals(1, childSnapshots.size());
         assertEquals(CHILD_SNAPSHOT_ID, diskImage.getImageId());
     }
+
+    @Test
+    public void testGetDiskImageByDiskAndImageIds() {
+        DiskImage result = dao.getDiskImageByDiskAndImageIds(FixturesTool.IMAGE_GROUP_ID, FixturesTool.IMAGE_ID);
+
+        assertNotNull(result);
+        assertEquals(FixturesTool.IMAGE_GROUP_ID, result.getId());
+        assertEquals(FixturesTool.IMAGE_ID, result.getImageId());
+    }
+
+    @Test
+    public void testGetCinderDiskByDiskAndImageIds() {
+        DiskImage result = dao.getDiskImageByDiskAndImageIds(
+                FixturesTool.FLOATING_CINDER_DISK_ID, FixturesTool.CINDER_IMAGE_ID);
+
+        assertNotNull(result);
+        assertEquals(FixturesTool.FLOATING_CINDER_DISK_ID, result.getId());
+        assertEquals(FixturesTool.CINDER_IMAGE_ID, result.getImageId());
+    }
+
+    @Test
+    public void testTryGetNonExistsDiskImage() {
+        DiskImage result = dao.getDiskImageByDiskAndImageIds(Guid.newGuid(), Guid.newGuid());
+
+        assertNull(null, result);
+    }
+
+    @Test
+    public void testGetDiskImageForPrivilegeUser() {
+        DiskImage result = dao.getDiskImageByDiskAndImageIds(FixturesTool.IMAGE_GROUP_ID, FixturesTool.IMAGE_ID,
+                PRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertEquals(FixturesTool.IMAGE_GROUP_ID, result.getId());
+        assertEquals(FixturesTool.IMAGE_ID, result.getImageId());
+    }
+
+    @Test
+    public void testGetDiskImageForNonPrivilegeUser() {
+        DiskImage result = dao.getDiskImageByDiskAndImageIds(FixturesTool.IMAGE_GROUP_ID, FixturesTool.IMAGE_ID,
+                UNPRIVILEGED_USER_ID, false);
+
+        assertNotNull(result);
+        assertEquals(FixturesTool.IMAGE_GROUP_ID, result.getId());
+        assertEquals(FixturesTool.IMAGE_ID, result.getImageId());
+    }
+
+    @Test
+    public void testTryGetDiskImageForNonPrivilegeUser() {
+        DiskImage result = dao.getDiskImageByDiskAndImageIds(FixturesTool.IMAGE_GROUP_ID, FixturesTool.IMAGE_ID,
+                UNPRIVILEGED_USER_ID, true);
+
+        assertNull(null, result);
+    }
 }
