@@ -1540,7 +1540,10 @@ class OvirtUtils(base.Base):
                 oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
             ]
         )
-        if os.path.exists(newpath) or os.path.islink(newpath):
+        if (
+            os.path.exists(newpath) and
+            os.listdir(newpath)
+        ) or os.path.islink(newpath):
             self.logger.error(
                 _(
                     'A data directory for the new PostgreSQL instance '
