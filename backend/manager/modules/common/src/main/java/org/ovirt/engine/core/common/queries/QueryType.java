@@ -215,6 +215,7 @@ public enum QueryType implements Serializable {
     // Users queries
     GetUserVmsByUserIdAndGroups(QueryAuthType.User),
     GetAllDbUsers(QueryAuthType.User),
+    GetAnyDbUserByUserId(QueryAuthType.User),
     GetDbUserByUserId(QueryAuthType.User),
     GetDbUserByUserNameAndDomain(QueryAuthType.User),
     GetUserBySessionId(QueryAuthType.User),

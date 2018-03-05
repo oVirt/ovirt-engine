@@ -98,7 +98,7 @@ public class BackendEntityAssignedPermissionsResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
-        setUpGetEntityExpectations(QueryType.GetDbUserByUserId,
+        setUpGetEntityExpectations(QueryType.GetAnyDbUserByUserId,
                                     IdQueryParameters.class,
                                     new String[] {"Id"},
                                     new Object[] {GUIDS[1]},

@@ -136,7 +136,7 @@ public class BackendAssignedPermissionsResource
 
     public DbUser getUserById(Guid userId) {
         IdQueryParameters queryParameters = new IdQueryParameters(userId);
-        QueryReturnValue userQueryResponse = runQuery(QueryType.GetDbUserByUserId, queryParameters);
+        QueryReturnValue userQueryResponse = runQuery(QueryType.GetAnyDbUserByUserId, queryParameters);
 
         DbUser returnValue = null;
         if (userQueryResponse != null && userQueryResponse.getSucceeded()) {

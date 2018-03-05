@@ -46,7 +46,7 @@ public class BackendUserAssignedPermissionsResourceTest
     @Test
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setUpGetEntityExpectations(QueryType.GetDbUserByUserId,
+        setUpGetEntityExpectations(QueryType.GetAnyDbUserByUserId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {GUIDS[1]},
@@ -61,7 +61,7 @@ public class BackendUserAssignedPermissionsResourceTest
     public void testListWithEveryonePermissions() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
-        setUpGetEntityExpectations(QueryType.GetDbUserByUserId,
+        setUpGetEntityExpectations(QueryType.GetAnyDbUserByUserId,
                                     IdQueryParameters.class,
                                     new String[] {"Id"},
                                     new Object[] {GUIDS[1]},
