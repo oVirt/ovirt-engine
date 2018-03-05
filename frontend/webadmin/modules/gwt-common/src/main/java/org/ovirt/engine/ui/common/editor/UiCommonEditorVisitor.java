@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.editor.client.EditorContext;
 import com.google.gwt.editor.client.EditorVisitor;
+import com.google.gwt.editor.client.HasEditorDelegate;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -62,6 +63,10 @@ public class UiCommonEditorVisitor extends EditorVisitor {
         final UiCommonEditor<T> functionalEditor = getFunctionalEditor(currentLeafEditor);
 
         if (functionalEditor != null) {
+            // Pass in the EditorDelegate
+            if (editor instanceof HasEditorDelegate) {
+              ((HasEditorDelegate<T>) editor).setDelegate(ctx.getEditorDelegate());
+            }
             // Set tab index, unless it's being set manually (i.e. already been set)
             if (functionalEditor.getTabIndex() <= 0) {
                 functionalEditor.setTabIndex(++tabIndexCounter);
