@@ -576,10 +576,12 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
               return false;
           }
 
-          DiskImagesValidator diskImagesToPreviewValidator = new DiskImagesValidator(getImagesToPreview());
-          if (!validate(diskImagesToPreviewValidator.diskImagesNotIllegal()) ||
-                  !validate(diskImagesToPreviewValidator.diskImagesNotLocked()) ||
-                  !validate(diskImagesToPreviewValidator.diskImagesSnapshotsAttachedToVm(getVmId()))) {
+          List<DiskImage> images = getImagesToPreview();
+          DiskImagesValidator diskImagesToPreviewValidator = new DiskImagesValidator(images);
+          if (!validate(diskImagesToPreviewValidator.noDuplicatedIds()) ||
+                  !validate(diskImagesToPreviewValidator.diskImagesSnapshotsAttachedToVm(getVmId())) ||
+                  !validate(diskImagesToPreviewValidator.diskImagesNotIllegal()) ||
+                  !validate(diskImagesToPreviewValidator.diskImagesNotLocked())) {
               return false;
           }
 
