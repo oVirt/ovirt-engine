@@ -92,6 +92,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.queries.GetDiskImageByDiskAndImageIdsParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -388,19 +389,19 @@ public class BackendVmResource
         if (action.isSetDisks()) {
             // Each disk parameter is being mapped to a DiskImage.
             List<DiskImage> disks = getParent().mapDisks(action.getDisks());
+            List<DiskImage> disksFromDB = null;
 
             if (disks != null) {
                 // In case a disk hasn't specified its image_id, the imageId value is set to Guid.Empty().
-                String noImageId = disks.stream()
-                        .filter(disk -> disk.getImageId().equals(Guid.Empty))
-                        .map(disk -> disk.getId().toString())
-                        .collect(Collectors.joining(","));
-
-                if (!noImageId.isEmpty()) {
-                    badRequest("Missing image ids for disks: " + noImageId);
-                }
+                disksFromDB = disks.stream()
+                        .map(disk -> getEntity(org.ovirt.engine.core.common.businessentities.storage.DiskImage.class,
+                                QueryType.GetDiskImageByDiskAndImageIds,
+                                new GetDiskImageByDiskAndImageIdsParameters(disk.getId(), disk.getImageId()),
+                                String.format("GetDiskImageByDiskAndImageIds: disk id=%s, image_id=%s",
+                                        disk.getId(), disk.getImageId())))
+                        .collect(Collectors.toList());
             }
-            tryBackParams.setImageIds(getDisksGuidSet(disks));
+            tryBackParams.setDisks(disksFromDB);
         }
         if (action.isSetLease()) {
             tryBackParams.setRestoreLease(action.getLease().isSetStorageDomain());

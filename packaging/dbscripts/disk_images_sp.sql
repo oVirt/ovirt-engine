@@ -227,3 +227,20 @@ BEGIN
      WHERE parentid = ANY(v_parent_guids);
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetDiskImageByDiskAndImageIds(v_disk_id UUID, v_image_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF images_storage_domain_view STABLE
+AS $procedure$
+BEGIN
+     RETURN QUERY SELECT *
+     FROM images_storage_domain_view
+     WHERE image_group_id = v_disk_id
+         AND image_guid = v_image_id
+         AND (NOT v_is_filtered OR EXISTS (
+             SELECT 1
+             FROM   user_disk_permissions_view
+             WHERE  user_id = v_user_id
+             AND    entity_id = images_storage_domain_view.image_group_id));
+END; $procedure$
+LANGUAGE plpgsql;

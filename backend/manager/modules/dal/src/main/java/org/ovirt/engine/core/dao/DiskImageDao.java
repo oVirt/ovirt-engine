@@ -156,4 +156,30 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
      * @return List of the ISO disks as RepoImage
      */
     List<RepoImage> getIsoDisksForStoragePoolAsRepoImages(Guid storagePoolId);
+
+    /**
+     * Retrieves the DiskImage with the specified id and image_id.
+     *
+     * @param diskId
+     *          The disk's id
+     * @param imageId
+     *          The image_id
+     * @return The DiskImage
+     */
+    DiskImage getDiskImageByDiskAndImageIds(Guid diskId, Guid imageId);
+
+    /**
+     * Retrieves the DiskImage with the specified id and image_id.
+     *
+     * @param diskId
+     *          The disk's id
+     * @param imageId
+     *          The image_id
+     * @param userId
+     *          The id of the user requesting the information
+     * @param isFiltered
+     *          Whether the results should be filtered according to the user's permissions
+     * @return The DiskImage
+     */
+    DiskImage getDiskImageByDiskAndImageIds(Guid diskId, Guid imageId, Guid userId, boolean isFiltered);
 }

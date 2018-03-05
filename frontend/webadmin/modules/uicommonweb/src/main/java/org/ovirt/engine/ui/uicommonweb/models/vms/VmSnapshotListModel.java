@@ -431,8 +431,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         VM vm = getEntity();
         SnapshotModel snapshotModel = (SnapshotModel) getWindow();
         boolean memory = false;
-        List<DiskImage> disks;
-        Set<Guid> diskImageIds = null;
+        List<DiskImage> disks = null;
 
         if (snapshotModel.isShowPartialSnapshotWarning()) {
             switch (snapshotModel.getPartialPreviewSnapshotOptions().getSelectedItem()) {
@@ -441,7 +440,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                     disks = snapshotModel.getDisks();
                     // add active disks missed from snapshot
                     disks.addAll(imagesSubtract(getVmDisks(), disks));
-                    diskImageIds = disks.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
                     break;
                 case excludeActiveDisks:
                     // nothing to do - default behaviour
@@ -457,7 +455,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             memory = snapshotModel.getMemory().getEntity();
         }
 
-        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, diskImageIds, true, null);
+        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, disks, true, null);
     }
 
     private static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
@@ -473,13 +471,12 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         List<DiskImage> disks = previewSnapshotModel.getSelectedDisks();
         boolean isSnapshotsContainsLeases = previewSnapshotModel.isSnapshotsContainsLeases();
         Guid selectedSnapshotLeaseDomainId = previewSnapshotModel.getSelectedLease();
-        Set<Guid> diskIds = disks.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
 
         runTryBackToAllSnapshotsOfVm(previewSnapshotModel,
                 vm,
                 snapshot,
                 memory,
-                diskIds,
+                disks,
                 !(isSnapshotsContainsLeases && selectedSnapshotLeaseDomainId == null),
                 selectedSnapshotLeaseDomainId);
     }
@@ -488,14 +485,14 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             VM vm,
             Snapshot snapshot,
             boolean memory,
-            Set<Guid> diskIds,
+            List<DiskImage> disks,
             boolean isRestoreLease,
             Guid leaseDomainId) {
         if (model != null) {
             model.startProgress();
         }
         TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(
-                vm.getId(), snapshot.getId(), memory, diskIds);
+                vm.getId(), snapshot.getId(), memory, disks);
 
         if (leaseDomainId != null) {
             params.setDstLeaseDomainId(leaseDomainId);
