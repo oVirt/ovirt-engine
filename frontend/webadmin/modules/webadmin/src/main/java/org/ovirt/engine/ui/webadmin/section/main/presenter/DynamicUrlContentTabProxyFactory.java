@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
-import org.ovirt.engine.ui.common.widget.Align;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
@@ -37,14 +36,14 @@ public class DynamicUrlContentTabProxyFactory implements HasHandlers {
             Type<ChangeTabHandler> changeTabEventType,
             Type<RevealContentHandler<?>> slot,
             String label, float priority, String historyToken,
-            String contentUrl, Align align,
+            String contentUrl,
             String searchPrefix) {
         return new DynamicUrlContentTabProxy(
                 placeManager, eventBus, gatekeeper,
                 requestTabsEventType, changeTabEventType,
                 slot, viewProvider,
                 label, priority, historyToken,
-                contentUrl, align);
+                contentUrl);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.ui.common.widget.MenuDetailsProvider;
@@ -16,18 +19,26 @@ public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.Vie
 
     public interface ViewDef extends View {
         HasClickHandlers getConfigureItem();
-        void addMenuItem(int index, String label, String href);
+        int addMenuItemPlace(int priority, String label, String href, Integer primaryMenuIndex, String iconCssName);
+        int addPrimaryMenuItemContainer(int index, String label, String iconCssName);
         String getLabelFromHref(String href);
         void setMenuActive(String href);
     }
 
     private final Provider<ConfigurePopupPresenterWidget> configurePopupProvider;
 
+    private final List<String> menuContainers = new ArrayList<>();
+
     @Inject
     public MenuPresenterWidget(EventBus eventBus, MenuPresenterWidget.ViewDef view,
             Provider<ConfigurePopupPresenterWidget> configurePopupProvider) {
         super(eventBus, view);
         this.configurePopupProvider = configurePopupProvider;
+        for (PrimaryMenuContainerType type: PrimaryMenuContainerType.values()) {
+            menuContainers.add(type.getId());
+        }
+        // Add null for events which is not a container, but we need to keep the indexes in sync.
+        menuContainers.add(null);
     }
 
     @Override
@@ -37,8 +48,29 @@ public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.Vie
             RevealRootPopupContentEvent.fire(MenuPresenterWidget.this, configurePopupProvider.get())));
     }
 
-    public void addMenuItem(int index, String label, String historyToken) {
-        getView().addMenuItem(index, label, historyToken);
+    public void addMenuItemPlace(int priority, String label, String historyToken, String primaryMenuId,
+            String iconCssName) {
+        if (primaryMenuId != null) {
+            int containerIndex = menuContainers.indexOf(primaryMenuId);
+            if (containerIndex > -1) {
+                getView().addMenuItemPlace(priority, label, historyToken, containerIndex, iconCssName);
+            }
+        } else {
+            int newMainPlaceIndex = getView().addMenuItemPlace(priority, label, historyToken, null, iconCssName);
+            // Add null for non container, we need to keep the indexes in sync.
+            menuContainers.add(newMainPlaceIndex, null);
+        }
+    }
+
+    public void addPrimaryMenuItemContainer(String label, String primaryMenuId, int index, String iconCssName) {
+        if (!menuContainers.contains(primaryMenuId)) {
+            int containerIndex = getView().addPrimaryMenuItemContainer(index, label, iconCssName);
+            if (containerIndex > -1 && containerIndex < menuContainers.size()) {
+                menuContainers.add(containerIndex, primaryMenuId);
+            } else {
+                menuContainers.add(primaryMenuId);
+            }
+        }
     }
 
     @Override

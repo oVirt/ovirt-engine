@@ -164,7 +164,7 @@ public class PluginManager implements HasHandlers {
 
         Plugin plugin = new Plugin(pluginMetaData, iframe);
         addPlugin(plugin);
-        logger.info("Plugin [" + pluginName + "] is defined to be loaded from URL " + pluginHostPageUrl); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("Plugin [" + pluginName + "] is defined to be loaded from URL " + pluginHostPageUrl); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Load the plugin host page
         if (pluginMetaData.isEnabled()) {
@@ -172,7 +172,7 @@ public class PluginManager implements HasHandlers {
 
             if (plugin.shouldPreLoad()) {
                 pluginsToPreLoad.put(pluginName, false);
-                logger.info("Plugin [" + pluginName + "] will be pre-loaded"); //$NON-NLS-1$ //$NON-NLS-2$
+                logger.fine("Plugin [" + pluginName + "] will be pre-loaded"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -182,7 +182,7 @@ public class PluginManager implements HasHandlers {
      */
     void loadPlugin(Plugin plugin) {
         if (plugin.isInState(PluginState.DEFINED)) {
-            logger.info("Loading plugin [" + plugin.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            logger.fine("Loading plugin [" + plugin.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             Document.get().getBody().appendChild(plugin.getIFrameElement());
             plugin.markAsLoading();
         }
@@ -258,7 +258,7 @@ public class PluginManager implements HasHandlers {
      */
     boolean invokePlugin(final Plugin plugin, final String functionName, JsArray<?> functionArgs) {
         final String pluginName = plugin.getName();
-        logger.info("Invoking event handler function [" + functionName + "] for plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        logger.fine("Invoking event handler function [" + functionName + "] for plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         return plugin.getEventHandlerFunction(functionName).invoke(functionArgs, message -> {
             logger.severe("Exception caught while invoking event handler function [" + functionName //$NON-NLS-1$
@@ -305,7 +305,7 @@ public class PluginManager implements HasHandlers {
         // Allow plugin event handler object to be set only once
         if (plugin.getEventHandlerObject() == null) {
             plugin.setEventHandlerObject(eventHandlerObject);
-            logger.info("Plugin [" + pluginName + "] has registered the event handler object"); //$NON-NLS-1$ //$NON-NLS-2$
+            logger.fine("Plugin [" + pluginName + "] has registered the event handler object"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             logger.warning("Plugin [" + pluginName + "] has already registered the event handler object"); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -321,7 +321,7 @@ public class PluginManager implements HasHandlers {
         }
 
         plugin.setApiOptionsObject(apiOptionsObject);
-        logger.info("Plugin [" + pluginName + "] has registered custom API options object"); //$NON-NLS-1$ //$NON-NLS-2$
+        logger.fine("Plugin [" + pluginName + "] has registered custom API options object"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -338,7 +338,7 @@ public class PluginManager implements HasHandlers {
             }
 
             plugin.markAsReady();
-            logger.info("Plugin [" + pluginName + "] reports in as ready"); //$NON-NLS-1$ //$NON-NLS-2$
+            logger.fine("Plugin [" + pluginName + "] reports in as ready"); //$NON-NLS-1$ //$NON-NLS-2$
 
             // Initialize the plugin once it's ready
             initPlugin(plugin);
@@ -382,12 +382,12 @@ public class PluginManager implements HasHandlers {
 
         // Try to invoke UiInit event handler function
         if (plugin.isInState(PluginState.READY)) {
-            logger.info("Initializing plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            logger.fine("Initializing plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             plugin.markAsInitializing();
 
             if (invokePlugin(plugin, "UiInit", null)) { //$NON-NLS-1$
                 plugin.markAsInUse();
-                logger.info("Plugin [" + pluginName + "] is initialized and in use now"); //$NON-NLS-1$ //$NON-NLS-2$
+                logger.fine("Plugin [" + pluginName + "] is initialized and in use now"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
 
@@ -470,36 +470,69 @@ public class PluginManager implements HasHandlers {
             configObject: function() {
                 return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::getConfigObject(Ljava/lang/String;)(this.pluginName);
             },
-
-            addMainTab: function(label, historyToken, contentUrl, options) {
+            addPrimaryMenuPlace: function(label, historyToken, contentUrl, options) {
                 if (validatePluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(label,historyToken,contentUrl,sanitizeObject(options));
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addPrimaryMenuPlace(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(label,historyToken,contentUrl,sanitizeObject(options));
+                }
+            },
+            addPrimaryMenuContainer: function(label, primaryMenuId, options) {
+                if (validatePluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addPrimaryMenuContainer(Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(label,primaryMenuId,sanitizeObject(options));
+                }
+            },
+            addSecondaryMenuPlace: function(primaryMenuId, label, historyToken, contentUrl, options) {
+                if (validatePluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSecondaryMenu(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(primaryMenuId,label,historyToken,contentUrl,sanitizeObject(options));
+                }
+            },
+            addMainTab: function(label, historyToken, contentUrl, options) {
+                console.warn("addMainTab is deprecated, please use addPrimaryMenuPlace instead.");
+                this.addPrimaryMenuPlace(label, historyToken, contentUrl, options);
+            },
+            addDetailPlace: function(entityTypeName, label, historyToken, contentUrl, options) {
+                if (validatePluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addDetailPlace(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(getEntityType(entityTypeName),label,historyToken,contentUrl,sanitizeObject(options));
                 }
             },
             addSubTab: function(entityTypeName, label, historyToken, contentUrl, options) {
+                console.warn("addSubTab is deprecated, please use addDetailPlace instead.");
+                this.addDetailPlace(entityTypeName, label, historyToken, contentUrl, options);
+            },
+            setPlaceContentUrl: function(historyToken, contentUrl) {
                 if (validatePluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSubTab(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(getEntityType(entityTypeName),label,historyToken,contentUrl,sanitizeObject(options));
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setPlaceContentUrl(Ljava/lang/String;Ljava/lang/String;)(historyToken,contentUrl);
                 }
             },
             setTabContentUrl: function(historyToken, contentUrl) {
+                console.warn("setTabContentUrl is deprecated, please use setPlaceContentUrl instead.");
+                this.setPlaceContentUrl(historyToken, contentUrl);
+            },
+            setPlaceAccessible: function(historyToken, tabAccessible) {
                 if (validatePluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setTabContentUrl(Ljava/lang/String;Ljava/lang/String;)(historyToken,contentUrl);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setPlaceAccessible(Ljava/lang/String;Z)(historyToken,tabAccessible);
                 }
             },
             setTabAccessible: function(historyToken, tabAccessible) {
+                console.warn("setTabAccessible is deprecated, please use setPlaceAccessible instead.");
+                this.setPlaceAccessible(historyToken, tabAccessible);
+            },
+            addMenuPlaceActionButton: function(entityTypeName, label, actionButtonInterface) {
                 if (validatePluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setTabAccessible(Ljava/lang/String;Z)(historyToken,tabAccessible);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMenuPlaceActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(entityTypeName),label,sanitizeObject(actionButtonInterface));
                 }
             },
             addMainTabActionButton: function(entityTypeName, label, actionButtonInterface) {
+                console.warn("addMainTabActionButton is deprecated, please use addMenuPlaceActionButton instead.");
+                this.addMenuPlaceActionButton(entityTypeName, label, actionButtonInterface);
+            },
+            addDetailPlaceActionButton: function(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface) {
                 if (validatePluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(entityTypeName),label,sanitizeObject(actionButtonInterface));
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addDetailPlaceActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(mainTabEntityTypeName),getEntityType(subTabEntityTypeName),label,sanitizeObject(actionButtonInterface));
                 }
             },
             addSubTabActionButton: function(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface) {
-                if (validatePluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSubTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(mainTabEntityTypeName),getEntityType(subTabEntityTypeName),label,sanitizeObject(actionButtonInterface));
-                }
+                console.warn("addSubTabActionButton is deprecated, please use addDetailPlaceActionButton instead.");
+                this.addDetailPlaceActionButton(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface);
             },
             showDialog: function(title, dialogToken, contentUrl, width, height, options) {
                 if (validatePluginAction(this.pluginName)) {

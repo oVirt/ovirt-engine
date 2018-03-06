@@ -9,32 +9,32 @@ import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.ListGroup;
 import org.gwtbootstrap3.client.ui.ListGroupItem;
 import org.gwtbootstrap3.client.ui.constants.Attributes;
-import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.PatternflyStyles;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MenuPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.PrimaryMenuContainerType;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDef {
 
+    private static final String JAVASCRIPT = "javascript:;"; //$NON-NLS-1$
     private static final String SECONDARY_POST_FIX = "-secondary"; //$NON-NLS-1$
     private static final String ID = "id"; //$NON-NLS-1$
-    private static final String COMPUTE = "compute"; // $NON-NLS-1$
-    private static final String NETWORK = "network"; // $NON-NLS-1$
-    private static final String STORAGE = "storage"; // $NON-NLS-1$
-    private static final String ADMINISTRATION = "admin"; // $NON-NLS-1$
 
     interface ViewUiBinder extends UiBinder<Widget, MenuView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -164,29 +164,33 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
 
     private void setTargetAndId() {
         computeSecondaryItem.getElement().setAttribute(Attributes.DATA_TARGET,
-                hashifyString(COMPUTE + SECONDARY_POST_FIX));
-        computeSecondaryContainer.getElement().setAttribute(ID, COMPUTE + SECONDARY_POST_FIX);
-        computeSecondaryHeader.getElement().setAttribute(Attributes.DATA_TOGGLE, PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
-        computePrimaryHeader.getElement().setAttribute(ID, "id-" + COMPUTE); // $NON-NLS-1$
+                hashifyString(PrimaryMenuContainerType.COMPUTE.getId() + SECONDARY_POST_FIX));
+        computeSecondaryContainer.getElement().setAttribute(ID, PrimaryMenuContainerType.COMPUTE.getId()
+                + SECONDARY_POST_FIX);
+        computeSecondaryHeader.getElement().setAttribute(Attributes.DATA_TOGGLE,
+                PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
+        computePrimaryHeader.getElement().setAttribute(ID, PrimaryMenuContainerType.COMPUTE.getId());
 
         networkSecondaryItem.getElement().setAttribute(Attributes.DATA_TARGET,
-                hashifyString(NETWORK + SECONDARY_POST_FIX));
-        networkSecondaryContainer.getElement().setAttribute(ID, NETWORK + SECONDARY_POST_FIX);
-        networkSecondaryHeader.getElement().setAttribute(Attributes.DATA_TOGGLE, PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
-        networkPrimaryHeader.getElement().setAttribute(ID, "id-" + NETWORK); // $NON-NLS-1$
+                hashifyString(PrimaryMenuContainerType.NETWORK.getId() + SECONDARY_POST_FIX));
+        networkSecondaryContainer.getElement().setAttribute(ID, PrimaryMenuContainerType.NETWORK.getId()
+                + SECONDARY_POST_FIX);
+        networkSecondaryHeader.getElement().setAttribute(Attributes.DATA_TOGGLE,
+                PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
 
         storageSecondaryItem.getElement().setAttribute(Attributes.DATA_TARGET,
-                hashifyString(STORAGE + SECONDARY_POST_FIX));
-        storageSecondaryContainer.getElement().setAttribute(ID, STORAGE + SECONDARY_POST_FIX);
-        storageSecondaryHeader.getElement().setAttribute(Attributes.DATA_TOGGLE, PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
-        storagePrimaryHeader.getElement().setAttribute(ID, "id-" + STORAGE); // $NON-NLS-1$
+                hashifyString(PrimaryMenuContainerType.STORAGE.getId() + SECONDARY_POST_FIX));
+        storageSecondaryContainer.getElement().setAttribute(ID, PrimaryMenuContainerType.STORAGE.getId()
+                + SECONDARY_POST_FIX);
+        storageSecondaryHeader.getElement().setAttribute(Attributes.DATA_TOGGLE,
+                PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
 
         administrationSecondaryItem.getElement().setAttribute(Attributes.DATA_TARGET,
-                hashifyString(ADMINISTRATION + SECONDARY_POST_FIX));
-        administrationSecondaryContainer.getElement().setAttribute(ID, ADMINISTRATION + SECONDARY_POST_FIX);
-        administrationSecondaryHeader.getElement().setAttribute(Attributes.DATA_TOGGLE, PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
-        administrationPrimaryHeader.getElement().setAttribute(ID, "id-" + ADMINISTRATION); // $NON-NLS-1$
-
+                hashifyString(PrimaryMenuContainerType.ADMINISTRATION.getId() + SECONDARY_POST_FIX));
+        administrationSecondaryContainer.getElement().setAttribute(ID, PrimaryMenuContainerType.ADMINISTRATION.getId()
+                + SECONDARY_POST_FIX);
+        administrationSecondaryHeader.getElement().setAttribute(Attributes.DATA_TOGGLE,
+                PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
     }
 
     private void updateBasedonMode(ApplicationMode applicationMode) {
@@ -228,16 +232,25 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
     }
 
     @Override
-    public void addMenuItem(int index, String label, String href) {
+    public int addMenuItemPlace(int index, String label, String href, Integer primaryMenuIndex, String iconCssName) {
+        if (primaryMenuIndex != null) {
+            return addSecondaryMenuItemPlace(index, label, href, primaryMenuIndex);
+        } else {
+            return addPrimaryMenuItemPlace(index, label, href, iconCssName);
+        }
+    }
+
+    private int addPrimaryMenuItemPlace(int index, String label, String href, String iconCssName) {
         ListGroupItem newMenuItem = new ListGroupItem();
         Anchor menuAnchor = new Anchor(hashifyString(href));
-        Span iconSpan = new Span();
-        // HACK, TODO: implement ability for UI plugins to pass an icon.
         if (index < 0) {
-            iconSpan.addStyleName(Styles.FONT_AWESOME_BASE);
-            iconSpan.addStyleName(IconType.TACHOMETER.getCssName());
-            newMenuItem.addStyleName(Styles.ACTIVE);
             index = 0;
+        }
+        Span iconSpan = new Span();
+        if (iconCssName != null) {
+            iconSpan.addStyleName(determineCssIconBase(iconCssName));
+            iconSpan.addStyleName(iconCssName);
+            newMenuItem.addStyleName(Styles.ACTIVE);
         }
         menuAnchor.add(iconSpan);
         Span labelSpan = new Span();
@@ -245,13 +258,118 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
         labelSpan.addStyleName(PatternflyStyles.LIST_GROUP_ITEM_VALUE);
         menuAnchor.add(labelSpan);
         newMenuItem.add(menuAnchor);
-        // Insert the new menu item into the map.
+        // Insert the new menu item into the href map.
         hrefToGroupLabelMap.put(href, newMenuItem);
         if (index > menuListGroup.getWidgetCount()) {
             menuListGroup.add(newMenuItem);
         } else {
             menuListGroup.insert(newMenuItem, index);
         }
+        return menuListGroup.getWidgetIndex(newMenuItem);
+    }
+
+    private int addSecondaryMenuItemPlace(int index, String label, String href, int primaryMenuIndex) {
+        // Found an existing primary menu, add the secondary menu.
+        int result = -1;
+        ListGroupItem primaryMenuItem = (ListGroupItem) menuListGroup.getWidget(primaryMenuIndex);
+        FlowPanel secondaryMenuFlowPanel = null;
+        IsWidget widget = primaryMenuItem.getWidget(2);
+        if (widget instanceof FlowPanel) {
+            secondaryMenuFlowPanel = (FlowPanel) widget;
+        }
+        if (secondaryMenuFlowPanel != null) {
+            if (index >= 0 && index < secondaryMenuFlowPanel.getWidgetCount()) {
+                secondaryMenuFlowPanel.insert(createSecondaryMenuItem(label, href), index + 1);
+                result = index;
+            } else {
+                secondaryMenuFlowPanel.add(createSecondaryMenuItem(label, href));
+                result = secondaryMenuFlowPanel.getWidgetCount() - 1;
+            }
+        }
+        primaryMenuItem.add(secondaryMenuFlowPanel);
+        return result;
+    }
+
+    public int addPrimaryMenuItemContainer(int index, String label, String iconCssName) {
+        ListGroupItem newMenuItem = new ListGroupItem();
+        Anchor menuAnchor = new Anchor(JAVASCRIPT);
+        if (index < 0) {
+            index = 0;
+        }
+        Span iconSpan = new Span();
+        if (iconCssName != null) {
+            iconSpan.addStyleName(determineCssIconBase(iconCssName));
+            iconSpan.addStyleName(iconCssName);
+            newMenuItem.addStyleName(Styles.ACTIVE);
+        }
+        menuAnchor.add(iconSpan);
+        Span labelSpan = new Span();
+        labelSpan.setText(label);
+        labelSpan.addStyleName(PatternflyStyles.LIST_GROUP_ITEM_VALUE);
+        menuAnchor.add(labelSpan);
+        newMenuItem.add(menuAnchor);
+        createSecondaryMenuHeader(newMenuItem);
+        newMenuItem.addStyleName(PatternflyStyles.SECONDARY_NAV_ITEM);
+        if (index > menuListGroup.getWidgetCount()) {
+            menuListGroup.add(newMenuItem);
+        } else {
+            menuListGroup.insert(newMenuItem, index);
+        }
+        return menuListGroup.getWidgetIndex(newMenuItem);
+    }
+
+    private IsWidget createSecondaryMenuItem(String label, String href) {
+        ListGroup listGroup = new ListGroup();
+        ListGroupItem item = new ListGroupItem();
+        listGroup.add(item);
+
+        Anchor secondaryMenuItemAnchor = new Anchor(hashifyString(href));
+        Span labelSpan = new Span();
+        labelSpan.getElement().setInnerSafeHtml(SafeHtmlUtils.fromString(label));
+        labelSpan.addStyleName(PatternflyStyles.LIST_GROUP_ITEM_VALUE);
+        secondaryMenuItemAnchor.add(labelSpan);
+        item.add(secondaryMenuItemAnchor);
+        return listGroup;
+    }
+
+    private FlowPanel createSecondaryMenuHeader(ListGroupItem primaryMenuItem) {
+        FlowPanel secondaryMenuFlowPanel;
+        // This is a menu item with no secondary menu
+        secondaryMenuFlowPanel = new FlowPanel();
+        secondaryMenuFlowPanel.addStyleName(PatternflyStyles.NAV_SECONDARY_NAV);
+        FlowPanel secondaryMenuHeader = new FlowPanel();
+        secondaryMenuHeader.addStyleName(PatternflyStyles.NAV_ITEM_HEADER);
+        secondaryMenuFlowPanel.add(secondaryMenuHeader);
+
+        Anchor secondaryMenuPin = new Anchor();
+        secondaryMenuPin.setHref(JAVASCRIPT);
+        secondaryMenuPin.addStyleName(PatternflyStyles.SECONDARY_COLLAPSE_TOGGLE);
+        secondaryMenuPin.getElement().setAttribute(Attributes.DATA_TOGGLE, PatternflyStyles.NAV_COLLAPSE_SECONDARY_NAV);
+        secondaryMenuHeader.add(secondaryMenuPin);
+
+        Span secondaryMenuHeaderLabel = new Span();
+        secondaryMenuHeader.add(secondaryMenuHeaderLabel);
+        for (int i = 0; i < primaryMenuItem.getWidgetCount(); i++) {
+            IsWidget widget = primaryMenuItem.getWidget(i);
+            if (widget.asWidget() instanceof Anchor) {
+                // This is the anchor with the href, replace it with javascrip:;
+                Anchor labelAnchor = (Anchor) widget.asWidget();
+                for (int j= 0; j < labelAnchor.getWidgetCount(); j++) {
+                    if (labelAnchor.getWidget(j).getStyleName().contains(PatternflyStyles.LIST_GROUP_ITEM_VALUE)) {
+                        secondaryMenuHeaderLabel.setText(((Span)labelAnchor.getWidget(j)).getText());
+                    }
+                }
+            }
+        }
+        primaryMenuItem.add(secondaryMenuFlowPanel);
+        return secondaryMenuFlowPanel;
+    }
+
+    private String determineCssIconBase(String iconCssName) {
+        if (iconCssName != null && iconCssName.startsWith(PatternflyConstants.PFICON)) {
+            return PatternflyConstants.PFICON;
+        }
+        return Styles.FONT_AWESOME_BASE;
     }
 
     private void populateHrefToGroupMap(ApplicationMode applicationMode) {

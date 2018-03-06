@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.presenter.AddActionButtonEvent;
 import org.ovirt.engine.ui.common.presenter.RedrawDynamicTabContainerEvent;
 import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent;
 import org.ovirt.engine.ui.common.widget.AlertManager;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.action.AbstractButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
@@ -83,21 +82,40 @@ public class PluginUiFunctions implements HasHandlers {
     }
 
     /**
-     * Adds new dynamic main content view that shows contents of the given URL.
+     * Adds new primary menu with a link to the new dynamic main content view. The content view shows the
+     * contents of the given URL.
      */
-    @Deprecated
-    public void addMainTab(String label, String historyToken,
+    public void addPrimaryMenuPlace(String label, String historyToken,
             String contentUrl, TabOptions options) {
-        addMainContentView(label, historyToken, contentUrl, options.getPriority().intValue(),
+        addContentView(label, historyToken, contentUrl, null, options.getIcon(), options.getPriority().intValue(),
                 options.getDefaultPlace().booleanValue());
     }
 
     /**
      * Adds new dynamic main content view that shows contents of the given URL.
      */
-    public void addMainContentView(String label, String historyToken,
-            String contentUrl, int priority, boolean defaultPlace) {
-        menuPresenterWidget.addMenuItem(priority, label, historyToken);
+    public void addPrimaryMenuContainer(String label, String primaryMenuId, TabOptions options) {
+        menuPresenterWidget.addPrimaryMenuItemContainer(label, primaryMenuId, options.getPriority().intValue(),
+                options.getIcon());
+    }
+
+    /**
+     * Adds new dynamic secondary content view that shows contents of the given URL, but is visible as a secondary menu
+     * to an existing primary menu.
+     */
+    public void addSecondaryMenu(String primaryMenuId, String label, String historyToken,
+            String contentUrl, TabOptions options) {
+        addContentView(label, historyToken, contentUrl, primaryMenuId, options.getIcon(),
+                options.getPriority().intValue(),
+                options.getDefaultPlace().booleanValue());
+    }
+
+    /**
+     * Adds new dynamic main content view that shows contents of the given URL.
+     */
+    public void addContentView(String label, String historyToken,
+            String contentUrl, String primaryMenuId, String iconCssName, int priority, boolean defaultPlace) {
+        menuPresenterWidget.addMenuItemPlace(priority, label, historyToken, primaryMenuId, iconCssName);
         // Not interested in the actual proxy, it will register itself.
         dynamicUrlContentProxyFactory.create(historyToken, contentUrl);
         placeManager.setDefaultPlace(historyToken);
@@ -106,7 +124,7 @@ public class PluginUiFunctions implements HasHandlers {
     /**
      * Adds new dynamic sub tab that shows contents of the given URL.
      */
-    public void addSubTab(EntityType entityType, String label,
+    public void addDetailPlace(EntityType entityType, String label,
             String historyToken, String contentUrl, TabOptions options) {
         Type<RequestTabsHandler> requestTabsEventType = entityType.getSubTabPanelRequestTabs();
         Type<ChangeTabHandler> changeTabEventType = entityType.getSubTabPanelChangeTab();
@@ -128,7 +146,6 @@ public class PluginUiFunctions implements HasHandlers {
                 requestTabsEventType, changeTabEventType, slot,
                 label, options.getPriority().floatValue(),
                 historyToken, contentUrl,
-                options.getAlignRight() ? Align.RIGHT : Align.LEFT,
                 options.getSearchPrefix());
 
         // Redraw the corresponding tab container
@@ -138,7 +155,7 @@ public class PluginUiFunctions implements HasHandlers {
     /**
      * Sets the content URL for existing dynamic tab.
      */
-    public void setTabContentUrl(final String historyToken, final String contentUrl) {
+    public void setPlaceContentUrl(final String historyToken, final String contentUrl) {
         Scheduler.get().scheduleDeferred(() -> SetDynamicTabContentUrlEvent.fire(PluginUiFunctions.this,
                 historyToken, contentUrl));
     }
@@ -146,7 +163,7 @@ public class PluginUiFunctions implements HasHandlers {
     /**
      * Updates tab/place accessibility for existing dynamic tab.
      */
-    public void setTabAccessible(final String historyToken, final boolean tabAccessible) {
+    public void setPlaceAccessible(final String historyToken, final boolean tabAccessible) {
         Scheduler.get().scheduleDeferred(() -> SetDynamicTabAccessibleEvent.fire(PluginUiFunctions.this,
                 historyToken, tabAccessible));
     }
@@ -154,7 +171,7 @@ public class PluginUiFunctions implements HasHandlers {
     /**
      * Adds new action button to standard table-based main tab.
      */
-    public void addMainTabActionButton(EntityType entityType, String label,
+    public void addMenuPlaceActionButton(EntityType entityType, String label,
             ActionButtonInterface actionButtonInterface) {
         String historyToken = entityType.getMainHistoryToken();
 
@@ -167,7 +184,7 @@ public class PluginUiFunctions implements HasHandlers {
     /**
      * Adds new action button to standard table-based sub tab.
      */
-    public void addSubTabActionButton(EntityType mainTabEntityType, EntityType subTabEntityType,
+    public void addDetailPlaceActionButton(EntityType mainTabEntityType, EntityType subTabEntityType,
             String label, ActionButtonInterface actionButtonInterface) {
         String historyToken = mainTabEntityType.getSubTabHistoryToken(subTabEntityType);
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.presenter;
 
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.DynamicTabData;
 
 import com.google.gwt.core.client.Scheduler;
@@ -33,9 +32,9 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
                 Provider<T> presenterProvider,
                 Type<RequestTabsHandler> requestTabsEventType,
                 Type<ChangeTabHandler> changeTabEventType,
-                String label, float priority, String historyToken, Align align) {
+                String label, float priority, String historyToken) {
             bind(placeManager, eventBus);
-            this.tabData = new DynamicTabData(label, (int)priority, historyToken, align);
+            this.tabData = new DynamicTabData(label, (int)priority, historyToken);
             this.targetHistoryToken = historyToken;
             this.requestTabsEventType = requestTabsEventType;
             this.changeTabEventType = changeTabEventType;
@@ -51,10 +50,10 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
             Gatekeeper gatekeeper,
             Type<RequestTabsHandler> requestTabsEventType,
             Type<ChangeTabHandler> changeTabEventType,
-            String label, float priority, String historyToken, Align align) {
+            String label, float priority, String historyToken) {
         bind(placeManager, eventBus);
         setProxy(new WrappedProxy<>(placeManager, eventBus, this,
-                requestTabsEventType, changeTabEventType, label, priority, historyToken, align));
+                requestTabsEventType, changeTabEventType, label, priority, historyToken));
         setPlace(new PlaceWithGatekeeper(historyToken, gatekeeper));
 
         // Create and bind presenter eagerly (don't wait for reveal request)
