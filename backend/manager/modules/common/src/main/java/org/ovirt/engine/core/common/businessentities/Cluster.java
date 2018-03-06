@@ -583,6 +583,22 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         this.defaultNetworkProviderId = defaultNetworkProviderId;
     }
 
+    public boolean isSetRequiredSwitchType() {
+        return requiredSwitchTypeForCluster != null;
+    }
+
+    public boolean hasRequiredSwitchType(SwitchType switchType) {
+        return Objects.equals(getRequiredSwitchTypeForCluster(), switchType);
+    }
+
+    public boolean isSetDefaultNetworkProviderId() {
+        return defaultNetworkProviderId != null;
+    }
+
+    public boolean hasDefaultNetworkProviderId(Guid providerId) {
+        return Objects.equals(getDefaultNetworkProviderId(), providerId);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(

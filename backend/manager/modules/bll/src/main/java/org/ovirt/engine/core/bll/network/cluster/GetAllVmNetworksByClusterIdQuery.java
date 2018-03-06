@@ -36,7 +36,7 @@ public class GetAllVmNetworksByClusterIdQuery<P extends IdQueryParameters> exten
                 networkDao.getAllForCluster(cluster.getId(), getUserID(), getParameters().isFiltered())
                         .stream()
                         .filter(Network::isVmNetwork);
-        if (cluster.getRequiredSwitchTypeForCluster().equals(SwitchType.OVS)) {
+        if (cluster.hasRequiredSwitchType(SwitchType.OVS)) {
             networkStream = networkStream.filter(Network::isExternal);
         }
         getQueryReturnValue().setReturnValue(networkStream.collect(Collectors.toList()));

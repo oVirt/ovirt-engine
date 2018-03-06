@@ -1435,7 +1435,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             Cluster cluster = getEntity();
             if (cluster != null) {
                 Provider defaultNetworkProvider = providers.stream()
-                        .filter(provider -> Objects.equals(provider.getId(), cluster.getDefaultNetworkProviderId()))
+                        .filter(provider -> cluster.hasDefaultNetworkProviderId(provider.getId()))
                         .findFirst().orElse(noDefaultNetworkProvider);
                 getDefaultNetworkProvider().setSelectedItem(defaultNetworkProvider);
             }
