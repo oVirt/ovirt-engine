@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static java.util.stream.Collectors.joining;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -38,6 +40,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkValidatorTest {
@@ -45,6 +48,7 @@ public class NetworkValidatorTest {
     private static final String NAMEABLE_NAME = "nameable";
     private static final String DEFAULT_NETWORK_NAME = "mynetwork";
     private static final String OTHER_NETWORK_NAME = "myothernetwork";
+    private static final String EXTERNAL_NETWORK_NAME = "external_network";
     private static final Guid DEFAULT_GUID = Guid.newGuid();
     private static final Guid OTHER_GUID = Guid.newGuid();
 
@@ -387,4 +391,27 @@ public class NetworkValidatorTest {
         assertThat(validator.notManagementNetwork(), isValid());
     }
 
+    @Test
+    public void testNotLinkedToExternalNetworkPositive() {
+        when(network.getId()).thenReturn(DEFAULT_GUID);
+        when(networkDao.getAllExternalNetworksLinkedToPhysicalNetwork(eq(DEFAULT_GUID))).thenReturn(Collections.emptyList());
+        assertThat(validator.notLinkedToExternalNetwork(), isValid());
+    }
+
+    @Test
+    public void testNotLinkedToExternalNetworkNegative() {
+        Network externalNetwork = new Network();
+        externalNetwork.setName(EXTERNAL_NETWORK_NAME);
+        List<Network> externalNetworkList = Collections.singletonList(externalNetwork);
+        String linkedExternalNetworkNames = externalNetworkList.stream()
+                .map(Network::getName)
+                .collect(joining(", "));
+
+        when(network.getId()).thenReturn(DEFAULT_GUID);
+        when(networkDao.getAllExternalNetworksLinkedToPhysicalNetwork(eq(DEFAULT_GUID))).thenReturn(externalNetworkList);
+        assertThat(validator.notLinkedToExternalNetwork(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_PHYSICAL_NETWORK_LINKED_TO_EXTERNAL_NETWORK,
+                        ReplacementUtils.createSetVariableString(NetworkValidator.NETWORK_LIST_REPLACEMENT,
+                                linkedExternalNetworkNames)));
+    }
 }
