@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -154,6 +155,11 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                         break;
                     }
                 }
+
+                Network network = networksByName.get(vmIf.getNetworkName());
+                if (network.isExternal()) {
+                    findPhysicalNetworkNotConnectedAndLinkedTo(network, hostNetworks).ifPresent(missingIfs::add);
+                }
             }
 
             if (!found) {
@@ -185,6 +191,16 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         }
 
         return !network.isExternal();
+    }
+
+    private Optional<String> findPhysicalNetworkNotConnectedAndLinkedTo(Network network, List<String> hostNetworks) {
+        if (!network.getProvidedBy().isSetPhysicalNetworkId()) {
+            return Optional.empty();
+        }
+
+        Network physicalNetwork = networkDao.get(network.getProvidedBy().getPhysicalNetworkId());
+
+        return Optional.ofNullable(hostNetworks.contains(physicalNetwork.getName()) ? null : physicalNetwork.getName());
     }
 
     /**
