@@ -401,4 +401,17 @@ public class NetworkDaoTest extends BaseDaoTestCase {
         assertNull(dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME2, FixturesTool.DATA_CENTER));
         assertNull(dnsResolverConfigurationDao.get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION_TO_REMOVE));
     }
+
+    @Test
+    public void testGetAllExternalNetworksLinkedToPhysicalNetworkNonEmpty() {
+        List<Network> linkedNetworks = dao.getAllExternalNetworksLinkedToPhysicalNetwork(FixturesTool.NETWORK_ENGINE_2);
+        assertFalse(linkedNetworks.isEmpty());
+
+    }
+
+    @Test
+    public void testGetAllExternalNetworksLinkedToPhysicalNetworkEmpty() {
+        List<Network> linkedNetworks = dao.getAllExternalNetworksLinkedToPhysicalNetwork(FixturesTool.NETWORK_ENGINE);
+        assertTrue(linkedNetworks.isEmpty());
+    }
 }

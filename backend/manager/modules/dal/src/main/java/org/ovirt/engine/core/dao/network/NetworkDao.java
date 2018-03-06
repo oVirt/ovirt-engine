@@ -156,4 +156,12 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return the management {@link Network}s
      */
     List<Network> getManagementNetworks(Guid dataCenterId);
+
+    /**
+     * Retrieves the list of external network linked to given physical network
+     *
+     * @param physicalNetworkId the physical network id
+     * @return the external {@link Network}s
+     */
+    List<Network> getAllExternalNetworksLinkedToPhysicalNetwork(Guid physicalNetworkId);
 }
