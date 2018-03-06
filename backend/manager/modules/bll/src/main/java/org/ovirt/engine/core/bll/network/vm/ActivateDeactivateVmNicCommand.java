@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.provider.HostProviderBindingDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
@@ -110,6 +111,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     @Inject
     private NetworkHelper networkHelper;
 
+    @Inject
+    private NetworkDao networkDao;
+
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmId(parameters.getVmId());
@@ -158,6 +162,14 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                     && !isPassthrough()
                     && !networkAttachedToVds(getNetwork().getName(), getVdsId())) {
                 addValidationMessage(EngineMessage.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
+                return false;
+            }
+
+            // External network linked to physical checks if the physical is attached on host
+            if (getNetwork() != null
+                    && getParameters().getAction().equals(PlugAction.PLUG)
+                    && getNetwork().isExternal()
+                    && !validate(validateExternalNetwork())) {
                 return false;
             }
 
@@ -476,5 +488,16 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             return failValidation(EngineMessage.HOT_PLUG_UNPLUG_PASSTHROUGH_VNIC_NOT_SUPPORTED);
         }
         return true;
+    }
+
+    private ValidationResult validateExternalNetwork() {
+        if (!getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
+            return ValidationResult.VALID;
+        }
+
+        Network physicalNetwork = networkDao.get(getNetwork().getProvidedBy().getPhysicalNetworkId());
+
+        return ValidationResult.failWith(EngineMessage.PHYSICAL_NETWORK_LINKED_TO_EXTERNAL_NOT_IN_VDS)
+                .when(!networkAttachedToVds(physicalNetwork.getName(), getVdsId()));
     }
 }

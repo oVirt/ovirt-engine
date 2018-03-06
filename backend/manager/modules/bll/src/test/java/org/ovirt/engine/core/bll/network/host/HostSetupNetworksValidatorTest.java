@@ -655,6 +655,48 @@ public class HostSetupNetworksValidatorTest {
         assertThat(collectionArgumentCaptor.getValue(), contains(nameOfNetworkA));
     }
 
+    @Test
+    public void testValidateNotRemovingPhysicalNetworksLinkedToExternalUsedByVMs() {
+        String nameOfNetworkA = "networkA";
+        Network networkA = createNetworkWithName(nameOfNetworkA);
+
+        String nameOfPhysicalNetwork = "physicalNetwork";
+        Network physicalNetwork = createNetworkWithName(nameOfPhysicalNetwork);
+
+        NetworkAttachment networkAttachmentA = createNetworkAttachment(physicalNetwork);
+        VdsNetworkInterface nicA = createNic("nicA");
+        networkAttachmentA.setNicId(nicA.getId());
+
+        final HostSetupNetworksValidator underTest =
+                new HostSetupNetworksValidatorBuilder()
+                        .setParams(new ParametersBuilder()
+                                .addRemovedNetworkAttachments(networkAttachmentA)
+                                .build())
+                        .addExistingInterfaces(Collections.singletonList(nicA))
+                        .addExistingAttachments(Collections.singletonList(networkAttachmentA))
+                        .addNetworks(Collections.singletonList(physicalNetwork))
+                        .build();
+
+        List<String> vmNames = Arrays.asList("vmName1", "vmName2");
+        when(findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(any(), anyCollection())).thenReturn(vmNames);
+        when(networkDaoMock.getAllExternalNetworksLinkedToPhysicalNetwork(any())).thenReturn(Collections.singletonList(
+                networkA));
+
+        final List<String> removedNetworkNames = Collections.singletonList(nameOfPhysicalNetwork);
+        assertThat(underTest.validateNotRemovingPhysicalNetworksLinkedToExternalUsedByVMs(physicalNetwork.getId(),
+                nameOfPhysicalNetwork),
+                failsWith(EngineMessage.NETWORK_CANNOT_DETACH_PHYSICAL_NETWORK_LINKED_TO_EXTERNAL_USED_BY_VM,
+                        Stream.concat(
+                                ReplacementUtils.replaceWith(VAR_NETWORK_NAME, removedNetworkNames, SEPARATOR).stream(),
+                                ReplacementUtils.replaceWith(VAR_VM_NAMES, vmNames, SEPARATOR).stream()
+                        ).collect(Collectors.toList())));
+
+        verify(findActiveVmsUsingNetwork).findNamesOfActiveVmsUsingNetworks(
+                eq(host.getId()),
+                collectionArgumentCaptor.capture());
+        assertThat(collectionArgumentCaptor.getValue(), contains(nameOfNetworkA));
+    }
+
     public VdsNetworkInterface createNic(String nicName) {
         VdsNetworkInterface existingNic = new VdsNetworkInterface();
         existingNic.setId(Guid.newGuid());
@@ -690,6 +732,16 @@ public class HostSetupNetworksValidatorTest {
             .build());
 
         assertThat(validator.validateNotRemovingUsedNetworkByVms("removedNet"), isValid());
+    }
+
+    @Test
+    public void testValidateNotRemovingPhysicalNetworksLinkedToExternalUsedByVMsWhenNotUsedByVms() {
+        HostSetupNetworksValidator validator = spy(new HostSetupNetworksValidatorBuilder()
+                .build());
+
+        when(networkDaoMock.getAllExternalNetworksLinkedToPhysicalNetwork(any())).thenReturn(Collections.emptyList());
+        assertThat(validator.validateNotRemovingPhysicalNetworksLinkedToExternalUsedByVMs(Guid.newGuid(), "removedNet"),
+                isValid());
     }
 
     @Test

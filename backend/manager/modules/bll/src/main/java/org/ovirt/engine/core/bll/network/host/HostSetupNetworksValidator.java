@@ -809,6 +809,10 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.notRemovingManagementNetwork();
             vr = skipValidation(vr) ? vr : notRemovingLabeledNetworks(attachment);
             vr = skipValidation(vr) ? vr : validateNotRemovingUsedNetworkByVms(attachment.getNetworkName());
+            vr = skipValidation(vr) ?
+                    vr :
+                    validateNotRemovingPhysicalNetworksLinkedToExternalUsedByVMs(attachment.getNetworkId(),
+                            attachment.getNetworkName());
         }
 
         return vr;
@@ -978,4 +982,27 @@ public class HostSetupNetworksValidator {
         return !validationResult.isValid();
     }
 
+    protected ValidationResult validateNotRemovingPhysicalNetworksLinkedToExternalUsedByVMs(Guid physicalNetworkId,
+            String physicalNetworkName) {
+        List<String> physicalNetworks = Collections.singletonList(physicalNetworkName);
+        List<String> externalNetworks = networkDao.getAllExternalNetworksLinkedToPhysicalNetwork(physicalNetworkId)
+                .stream()
+                .map(Network::getName)
+                .collect(Collectors.toList());
+
+        List<String> vmsNames =
+                findActiveVmsUsingNetwork.findNamesOfActiveVmsUsingNetworks(host.getId(), externalNetworks);
+
+        if (vmsNames.isEmpty()) {
+            return ValidationResult.VALID;
+        }
+
+        EngineMessage engineMessage =
+                EngineMessage.NETWORK_CANNOT_DETACH_PHYSICAL_NETWORK_LINKED_TO_EXTERNAL_USED_BY_VM;
+        return new ValidationResult(engineMessage,
+                Stream.concat(
+                        ReplacementUtils.replaceWith(VAR_NETWORK_NAME, physicalNetworks, SEPARATOR).stream(),
+                        ReplacementUtils.replaceWith(VAR_VM_NAMES, vmsNames, SEPARATOR).stream()
+                ).collect(Collectors.toList()));
+    }
 }
