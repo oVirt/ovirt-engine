@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -64,6 +65,10 @@ public class AlertWithIcon extends Composite {
 
     public void setText(String alertText) {
         alertTextLabel.setText(alertText);
+    }
+
+    public void setHtmlText(SafeHtml html) {
+        alertTextLabel.getElement().setInnerSafeHtml(html);
     }
 
     public Alert asAlert() {
