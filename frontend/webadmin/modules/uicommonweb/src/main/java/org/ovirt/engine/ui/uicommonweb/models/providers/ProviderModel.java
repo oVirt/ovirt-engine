@@ -248,6 +248,7 @@ public class ProviderModel extends Model {
                 }
             }
         });
+        getAutoSync().setEntity(false);
         getIsUnmanaged().setEntity(false);
         getIsUnmanaged().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             boolean isUnmanaged = getIsUnmanaged().getEntity();
