@@ -171,7 +171,8 @@
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"
            provider_network_provider_id="1115c1c6-cb15-4832-b2a4-023770607111"
            provider_network_external_id="52d5c1c6-cb15-4832-b2a4-023770607200"
-           dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
+           dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"
+           provider_physical_network_id="58d5c1c6-cb15-4832-b2a4-023770607189"/>
   <network id="58d5c1c6-cb15-4832-b2a4-023770607201" name="external" vdsm_name="external" description="Some external network" stp="0"
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105e" mtu="0" vm_network="true"
            provider_network_provider_id="1115c1c6-cb15-4832-b2a4-023770607111"

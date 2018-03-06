@@ -166,6 +166,13 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     }
 
     @Override
+    public List<Network> getAllExternalNetworksLinkedToPhysicalNetwork(Guid physicalNetworkId) {
+        return getCallsHandler().executeReadList("GetAllNetworksByProviderPhysicalNetworkId",
+                networkRowMapper,
+                getCustomMapSqlParameterSource().addValue("network_id", physicalNetworkId));
+    }
+
+    @Override
     public void save(Network entity) {
         DnsResolverConfiguration dnsResolverConfiguration = entity.getDnsResolverConfiguration();
         if (dnsResolverConfiguration != null) {

@@ -226,6 +226,17 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetAllNetworksByProviderPhysicalNetworkId (v_network_id UUID)
+RETURNS SETOF network STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT network.*
+    FROM network
+    WHERE provider_physical_network_id = v_network_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetManagementNetworkByCluster (v_cluster_id UUID)
 RETURNS SETOF network STABLE AS $PROCEDURE$
 BEGIN
