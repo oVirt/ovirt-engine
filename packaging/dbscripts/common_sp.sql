@@ -1335,3 +1335,41 @@ BEGIN
     END IF;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+-- Turns all given table columns to default to NULL an adjust existing values
+
+CREATE OR REPLACE FUNCTION fn_db_change_table_string_columns_to_empty_string (
+    v_table VARCHAR(128),
+    v_column VARCHAR[]
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE
+    v_sql TEXT;
+    v_num integer := array_length(v_column, 1);
+    v_index integer := 1;
+
+BEGIN
+    WHILE v_index <= v_num
+    LOOP
+        IF (
+            EXISTS (
+                SELECT 1
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                    AND table_name ilike v_table
+                    AND column_name ilike v_column[v_index]
+               )
+            ) THEN
+            BEGIN
+                v_sql := 'UPDATE ' || v_table || ' SET ' || v_column[v_index] || ' = '''' WHERE ' || v_column[v_index] || ' IS NULL' ;
+                EXECUTE v_sql;
+                v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column[v_index] || ' SET DEFAULT ''''';
+                EXECUTE v_sql;
+            END;
+        ELSE
+            RAISE EXCEPTION 'No column named % exists in table %', v_column[v_index] , v_table;
+        END IF;
+    v_index = v_index + 1;
+    END LOOP;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
