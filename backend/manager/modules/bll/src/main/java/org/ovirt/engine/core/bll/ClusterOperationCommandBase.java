@@ -275,7 +275,7 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
 
     protected void setDefaultSwitchTypeIfNeeded() {
         Cluster cluster = getCluster();
-        if (cluster.getRequiredSwitchTypeForCluster() == null) {
+        if (!cluster.isSetRequiredSwitchType()) {
             SwitchType defaultSwitchType = DefaultSwitchType.getDefaultSwitchType(cluster.getCompatibilityVersion());
             cluster.setRequiredSwitchTypeForCluster(defaultSwitchType);
         }
@@ -360,11 +360,10 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
     protected abstract boolean validateInputManagementNetwork(NetworkClusterValidatorBase networkClusterValidator);
 
     boolean validateDefaultNetworkProvider() {
-        Guid defaultNetworkProviderId = getCluster().getDefaultNetworkProviderId();
-        if ( defaultNetworkProviderId == null ) {
+        if (!getCluster().isSetDefaultNetworkProviderId()) {
             return true;
         } else {
-            return validateNetworkProvider(providerDao.get(defaultNetworkProviderId));
+            return validateNetworkProvider(providerDao.get(getCluster().getDefaultNetworkProviderId()));
         }
     }
 

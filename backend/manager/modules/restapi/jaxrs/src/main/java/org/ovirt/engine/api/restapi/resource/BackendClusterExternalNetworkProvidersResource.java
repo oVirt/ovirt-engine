@@ -44,7 +44,7 @@ public class BackendClusterExternalNetworkProvidersResource extends AbstractBack
                 new IdQueryParameters(clusterId), clusterId.toString(), true);
 
         Guid defaultNetworkProviderId = cluster.getDefaultNetworkProviderId();
-        if (defaultNetworkProviderId != null) {
+        if (cluster.isSetDefaultNetworkProviderId()) {
             providers.add(getEntity(Provider.class, QueryType.GetProviderById,
                     new IdQueryParameters(defaultNetworkProviderId), defaultNetworkProviderId.toString()));
         }

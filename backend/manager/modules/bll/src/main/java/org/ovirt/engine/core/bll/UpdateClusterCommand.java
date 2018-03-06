@@ -285,8 +285,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     private void updateDefaultNetworkProvider() {
-        if (Objects.equals(getCluster().getDefaultNetworkProviderId(),
-                getPrevCluster().getDefaultNetworkProviderId())) {
+        if (getCluster().hasDefaultNetworkProviderId(getPrevCluster().getDefaultNetworkProviderId())) {
             return;
         }
 
