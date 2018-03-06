@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import org.ovirt.engine.core.utils.ReplacementUtils;
  * Usage: instantiate on a per-network basis, passing the network to be validated as an argument to the constructor.
  */
 public class NetworkValidator {
+
+    public static final String NETWORK_LIST_REPLACEMENT = "NETWORK_LIST";
 
     private final VmDao vmDao;
     protected final Network network;
@@ -235,6 +238,18 @@ public class NetworkValidator {
     public ValidationResult notExternalNetwork() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK)
                 .when(network.isExternal());
+    }
+
+    public ValidationResult notLinkedToExternalNetwork() {
+        List<Network> linkedExternalNetworks =
+                getNetworkDao().getAllExternalNetworksLinkedToPhysicalNetwork(network.getId());
+        String linkedExternalNetworkNames = linkedExternalNetworks.stream()
+                .map(Network::getName)
+                .collect(joining(", "));
+
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_PHYSICAL_NETWORK_LINKED_TO_EXTERNAL_NETWORK,
+                ReplacementUtils.createSetVariableString(NETWORK_LIST_REPLACEMENT, linkedExternalNetworkNames))
+                .when(!linkedExternalNetworks.isEmpty());
     }
 
     protected List<VM> getVms() {
