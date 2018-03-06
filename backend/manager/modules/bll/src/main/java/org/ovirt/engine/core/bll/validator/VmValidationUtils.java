@@ -77,7 +77,7 @@ public class VmValidationUtils {
      */
     public boolean isGraphicsAndDisplaySupported(int osId, Version version, Collection<GraphicsType> graphics, DisplayType displayType) {
         for (GraphicsType graphicType : graphics) {
-            if (!osRepository.getGraphicsAndDisplays().get(osId).get(version).contains(new Pair<>(graphicType, displayType))) {
+            if (!osRepository.getGraphicsAndDisplays(osId, version).contains(new Pair<>(graphicType, displayType))) {
                 return false;
             }
         }
