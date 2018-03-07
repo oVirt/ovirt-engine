@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NetworkLocking;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
+@NonTransactiveCommandAttribute
 public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParameters> extends CommandBase<P> {
 
     @Inject
@@ -38,7 +40,6 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
 
     @Inject
     private NetworkLocking networkLocking;
-
 
     private Provider<?> provider;
     private Network network;
