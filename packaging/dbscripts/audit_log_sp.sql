@@ -336,7 +336,8 @@ BEGIN
     FROM ( SELECT * FROM audit_log
            WHERE severity != v_severity
                AND NOT deleted
-           FOR UPDATE) AS s;
+           FOR UPDATE) AS s
+    WHERE audit_log.audit_log_id = s.audit_log_id;
 
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -350,7 +351,8 @@ BEGIN
     FROM ( SELECT * FROM audit_log
            WHERE severity != v_severity
                AND deleted
-           FOR UPDATE) AS s;
+           FOR UPDATE) AS s
+    WHERE audit_log.audit_log_id = s.audit_log_id;
 
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -368,7 +370,8 @@ BEGIN
     FROM ( SELECT * FROM audit_log
            WHERE severity = v_severity
                AND deleted != v_value
-           FOR UPDATE) AS s;
+           FOR UPDATE) AS s
+    WHERE audit_log.audit_log_id = s.audit_log_id;
 
 END;$PROCEDURE$
 LANGUAGE plpgsql;
