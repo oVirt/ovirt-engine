@@ -10,6 +10,7 @@
     <ui:style>
         .wrapper {
             padding-bottom: 10px;
+            max-width: 90%;
         }
 
         .wrapper label {
