@@ -215,6 +215,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setCurrentKernelCmdline(getCurrentKernelCmdline());
         vds.setLastStoredKernelCmdline(getLastStoredKernelCmdline());
         vds.setKernelCmdlineParsable(isKernelCmdlineParsable());
+        vds.setKernelCmdlineBlacklistNouveau(isKernelCmdlineBlacklistNouveau());
         vds.setKernelCmdlineIommu(isKernelCmdlineIommu());
         vds.setKernelCmdlineKvmNested(isKernelCmdlineKvmNested());
         vds.setKernelCmdlinePciRealloc(isKernelCmdlinePciRealloc());
@@ -1487,6 +1488,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setKernelCmdlineParsable(boolean kernelCmdlineParsable) {
         vdsStatic.setKernelCmdlineParsable(kernelCmdlineParsable);
+    }
+
+    public boolean isKernelCmdlineBlacklistNouveau() {
+        return vdsStatic.isKernelCmdlineBlacklistNouveau();
+    }
+
+    public void setKernelCmdlineBlacklistNouveau(boolean kernelCmdlineBlacklistNouveau) {
+        vdsStatic.setKernelCmdlineBlacklistNouveau(kernelCmdlineBlacklistNouveau);
     }
 
     public void setKernelCmdlineUnsafeInterrupts(boolean kernelCmdlineUnsafeInterrupts) {

@@ -236,6 +236,7 @@ public final class Cloner {
         obj.setCurrentKernelCmdline(instance.getCurrentKernelCmdline());
         obj.setKernelCmdlineParsable(instance.isKernelCmdlineParsable());
         obj.setLastStoredKernelCmdline(instance.getLastStoredKernelCmdline());
+        obj.setKernelCmdlineBlacklistNouveau(instance.isKernelCmdlineBlacklistNouveau());
         obj.setKernelCmdlineIommu(instance.isKernelCmdlineIommu());
         obj.setKernelCmdlineKvmNested(instance.isKernelCmdlineKvmNested());
         obj.setKernelCmdlinePciRealloc(instance.isKernelCmdlinePciRealloc());

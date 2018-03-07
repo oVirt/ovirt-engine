@@ -141,6 +141,9 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private String lastStoredKernelCmdline;
 
     @EditableVdsField
+    private boolean kernelCmdlineBlacklistNouveau;
+
+    @EditableVdsField
     private boolean kernelCmdlineIommu;
 
     @EditableVdsField
@@ -401,6 +404,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.lastStoredKernelCmdline = lastStoredKernelCmdline;
     }
 
+    public boolean isKernelCmdlineBlacklistNouveau() {
+        return kernelCmdlineBlacklistNouveau;
+    }
+
+    public void setKernelCmdlineBlacklistNouveau(boolean kernelCmdlineBlacklistNouveau) {
+        this.kernelCmdlineBlacklistNouveau = kernelCmdlineBlacklistNouveau;
+    }
+
     public boolean isKernelCmdlineIommu() {
         return kernelCmdlineIommu;
     }
@@ -466,6 +477,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 currentKernelCmdline,
                 kernelCmdlineParsable,
                 lastStoredKernelCmdline,
+                kernelCmdlineBlacklistNouveau,
                 kernelCmdlineIommu,
                 kernelCmdlineKvmNested,
                 kernelCmdlinePciRealloc,
@@ -505,6 +517,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(currentKernelCmdline, other.currentKernelCmdline)
                 && Objects.equals(kernelCmdlineParsable, other.kernelCmdlineParsable)
                 && Objects.equals(lastStoredKernelCmdline, other.lastStoredKernelCmdline)
+                && Objects.equals(kernelCmdlineBlacklistNouveau, other.kernelCmdlineBlacklistNouveau)
                 && Objects.equals(kernelCmdlineIommu, other.kernelCmdlineIommu)
                 && Objects.equals(kernelCmdlineKvmNested, other.kernelCmdlineKvmNested)
                 && Objects.equals(kernelCmdlinePciRealloc, other.kernelCmdlinePciRealloc)

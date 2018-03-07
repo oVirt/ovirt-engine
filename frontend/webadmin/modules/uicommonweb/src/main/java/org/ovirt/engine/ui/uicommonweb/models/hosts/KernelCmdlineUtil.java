@@ -6,16 +6,34 @@ public class KernelCmdlineUtil {
 
     public static String create(
             CpuVendor cpuVendor,
+            boolean blacklistNouveau,
             boolean iommu,
             boolean kvmNested,
             boolean unsafeInterrupts,
             boolean pciRealloc) {
         StringBuilder cmdlineBuilder = new StringBuilder();
+        cmdlineBuilder.append(getBlacklistNouveau(cpuVendor, blacklistNouveau));
         cmdlineBuilder.append(getIommu(cpuVendor, iommu));
         cmdlineBuilder.append(getKvmNested(cpuVendor, kvmNested));
         cmdlineBuilder.append(getUnsafeInterrupts(cpuVendor, unsafeInterrupts));
         cmdlineBuilder.append(getPciRealloc(cpuVendor, pciRealloc));
         return cmdlineBuilder.toString().trim();
+    }
+
+    private static String getBlacklistNouveau(CpuVendor cpuVendor, boolean blacklistNouveau) {
+        if (!blacklistNouveau) {
+            return "";
+        }
+        switch (cpuVendor) {
+            case AMD:
+            case INTEL:
+            case IBM:
+                return "rdblacklist=nouveau "; //$NON-NLS-1$
+            case IBMS390:
+                return "";
+            default:
+                throw new RuntimeException("Unknown CpuType: " + cpuVendor); //$NON-NLS-1$
+        }
     }
 
     private static String getIommu(CpuVendor cpuVendor, boolean iommu) {

@@ -1663,6 +1663,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String reinstallRequiredkernelCmdlineWarning();
 
+    String hostKernelCmdlineBlacklistNouveau();
+
     String hostKernelCmdlineIommu();
 
     String hostKernelCmdlineKvmNested();
@@ -1732,6 +1734,8 @@ public interface CommonApplicationConstants extends Constants {
     String consolePublicKeyMessage();
 
     String kernelCmdlineInfoIcon();
+
+    String kernelCmdlineBlacklistNouveauInfoIcon();
 
     String kernelCmdlineIommuInfoIcon();
 

@@ -376,6 +376,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         this.kernelCmdlineParsable = kernelCmdlineParsable;
     }
 
+    private EntityModel<Boolean> kernelCmdlineBlacklistNouveau;
+
+    public EntityModel<Boolean> getKernelCmdlineBlacklistNouveau() {
+        return kernelCmdlineBlacklistNouveau;
+    }
+
+    public void setKernelCmdlineBlacklistNouveau(EntityModel<Boolean> kernelCmdlineBlacklistNouveau) {
+        this.kernelCmdlineBlacklistNouveau = kernelCmdlineBlacklistNouveau;
+    }
+
     private EntityModel<Boolean> kernelCmdlineIommu;
 
     public EntityModel<Boolean> getKernelCmdlineIommu() {
@@ -767,6 +777,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setNetworkProviderModel(new HostNetworkProviderModel());
         setIsDiscoveredHosts(new EntityModel<Boolean>());
         setKernelCmdline(new EntityModel<String>());
+        setKernelCmdlineBlacklistNouveau(new EntityModel<>(false));
         setKernelCmdlineIommu(new EntityModel<>(false));
         setKernelCmdlineKvmNested(new EntityModel<>(false));
         setKernelCmdlineUnsafeInterrupts(new EntityModel<>(false));
@@ -918,7 +929,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         } else if (sender == getConsoleAddressEnabled()) {
             consoleAddressChanged();
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)
-                && (sender == getKernelCmdlineIommu()
+                && (sender == getKernelCmdlineBlacklistNouveau()
+                || sender == getKernelCmdlineIommu()
                 || sender == getKernelCmdlineKvmNested()
                 || sender == getKernelCmdlineUnsafeInterrupts()
                 || sender == getKernelCmdlinePciRealloc())) {
@@ -1153,6 +1165,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
         getKernelCmdline().setEntity(vds.getCurrentKernelCmdline());
         setKernelCmdlineParsable(vds.isKernelCmdlineParsable());
+        getKernelCmdlineBlacklistNouveau().setEntity(vds.isKernelCmdlineBlacklistNouveau());
         getKernelCmdlineIommu().setEntity(vds.isKernelCmdlineIommu());
         getKernelCmdlineKvmNested().setEntity(vds.isKernelCmdlineKvmNested());
         getKernelCmdlineUnsafeInterrupts().setEntity(vds.isKernelCmdlineUnsafeInterrupts());
@@ -1295,6 +1308,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     private void setKernelCmdlineCheckboxesChangeability(boolean changeable, String reason) {
+        getKernelCmdlineBlacklistNouveau().setIsChangeable(changeable, reason);
         getKernelCmdlineIommu().setIsChangeable(changeable, reason);
         getKernelCmdlineKvmNested().setIsChangeable(changeable, reason);
         getKernelCmdlineUnsafeInterrupts().setIsChangeable(changeable, reason);
@@ -1302,6 +1316,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     private void setKernelCmdlineCheckboxesValue(boolean checked) {
+        getKernelCmdlineBlacklistNouveau().setEntity(checked);
         getKernelCmdlineIommu().setEntity(checked);
         getKernelCmdlineKvmNested().setEntity(checked);
         getKernelCmdlineUnsafeInterrupts().setEntity(checked);
@@ -1326,6 +1341,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     }
 
     private void addKernelCmdlineCheckboxesListeners() {
+        getKernelCmdlineBlacklistNouveau().getEntityChangedEvent().addListener(this);
         getKernelCmdlineIommu().getEntityChangedEvent().addListener(this);
         getKernelCmdlineKvmNested().getEntityChangedEvent().addListener(this);
         getKernelCmdlineUnsafeInterrupts().getEntityChangedEvent().addListener(this);
@@ -1335,6 +1351,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
     private void updateKernelCmdlineAccordingToCheckboxes() {
         final CpuVendor cpuVendor = getCurrentCpuVendor();
         if (cpuVendor == null
+                || getKernelCmdlineBlacklistNouveau().getEntity() == null
                 || getKernelCmdlineIommu().getEntity() == null
                 || getKernelCmdlineKvmNested().getEntity() == null
                 || getKernelCmdlineUnsafeInterrupts().getEntity() == null
@@ -1343,6 +1360,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         }
         final String kernelCmdline = KernelCmdlineUtil.create(
                 cpuVendor,
+                getKernelCmdlineBlacklistNouveau().getEntity(),
                 getKernelCmdlineIommu().getEntity(),
                 getKernelCmdlineKvmNested().getEntity(),
                 getKernelCmdlineUnsafeInterrupts().getEntity(),

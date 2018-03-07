@@ -204,6 +204,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
 
         private String current;
         private boolean parsable;
+        private boolean blacklistNouveau;
         private boolean iommu;
         private boolean kvmNested;
         private boolean unsafeInterrupts;
@@ -231,6 +232,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         public void toVdsStatic(VdsStatic vdsStatic) {
             vdsStatic.setCurrentKernelCmdline(current);
             vdsStatic.setKernelCmdlineParsable(parsable);
+            vdsStatic.setKernelCmdlineBlacklistNouveau(blacklistNouveau);
             vdsStatic.setKernelCmdlineIommu(iommu);
             vdsStatic.setKernelCmdlineKvmNested(kvmNested);
             vdsStatic.setKernelCmdlineUnsafeInterrupts(unsafeInterrupts);
@@ -240,6 +242,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
         public void toVds(VDS vds) {
             vds.setCurrentKernelCmdline(current);
             vds.setKernelCmdlineParsable(parsable);
+            vds.setKernelCmdlineBlacklistNouveau(blacklistNouveau);
             vds.setKernelCmdlineIommu(iommu);
             vds.setKernelCmdlineKvmNested(kvmNested);
             vds.setKernelCmdlineUnsafeInterrupts(unsafeInterrupts);
@@ -250,6 +253,7 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
             final KernelCmdlineColumn kernelCmdlineColumn = new KernelCmdlineColumn();
             kernelCmdlineColumn.current = vdsStatic.getCurrentKernelCmdline();
             kernelCmdlineColumn.parsable = vdsStatic.isKernelCmdlineParsable();
+            kernelCmdlineColumn.blacklistNouveau = vdsStatic.isKernelCmdlineBlacklistNouveau();
             kernelCmdlineColumn.iommu = vdsStatic.isKernelCmdlineIommu();
             kernelCmdlineColumn.kvmNested = vdsStatic.isKernelCmdlineKvmNested();
             kernelCmdlineColumn.unsafeInterrupts = vdsStatic.isKernelCmdlineUnsafeInterrupts();

@@ -896,6 +896,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
 
         host.setCurrentKernelCmdline(model.getKernelCmdline().getEntity());
+        host.setKernelCmdlineBlacklistNouveau(model.getKernelCmdlineBlacklistNouveau().getEntity());
         host.setKernelCmdlineParsable(model.isKernelCmdlineParsable());
         host.setKernelCmdlineIommu(model.getKernelCmdlineIommu().getEntity());
         host.setKernelCmdlineKvmNested(model.getKernelCmdlineKvmNested().getEntity());

@@ -391,6 +391,13 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     Label currentKernelCmdLine;
 
     @UiField(provided = true)
+    @Path("kernelCmdlineBlacklistNouveau.entity")
+    EntityModelCheckBoxEditor kernelCmdlineBlacklistNouveau;
+
+    @UiField
+    InfoIcon kernelCmdlineBlacklistNouveauInfoIcon;
+
+    @UiField(provided = true)
     @Path("kernelCmdlineIommu.entity")
     EntityModelCheckBoxEditor kernelCmdlineIommu;
 
@@ -553,6 +560,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         rbDiscoveredHost = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
         rbProvisionedHost = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
 
+        kernelCmdlineBlacklistNouveau = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineIommu = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineKvmNested = new EntityModelCheckBoxEditor(Align.RIGHT);
         kernelCmdlineUnsafeInterrupts = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -627,6 +635,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         // Info icons
         kernelCmdlineUnsafeInterruptsInfoIcon.setText(
                 SafeHtmlUtils.fromString(constants.kernelCmdlineUnsafeInterruptsInfoIcon()));
+        kernelCmdlineBlacklistNouveauInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineBlacklistNouveauInfoIcon()));
         kernelCmdlineIommuInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineIommuInfoIcon()));
         kernelCmdlineKvmNestedInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineKvmNestedInfoIcon()));
         kernelCmdlinePciReallocInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlinePciReallocInfoIcon()));
@@ -1013,6 +1022,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         // ==Kernel Tab==
         nextTabIndex = kernelTab.setTabIndexes(nextTabIndex);
+        kernelCmdlineBlacklistNouveau.setTabIndex(nextTabIndex++);
         kernelCmdlineIommu.setTabIndex(nextTabIndex++);
         kernelCmdlineKvmNested.setTabIndex(nextTabIndex++);
         kernelCmdlineUnsafeInterrupts.setTabIndex(nextTabIndex++);
