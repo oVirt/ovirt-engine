@@ -44,19 +44,18 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
         return scores;
     }
 
-    /**
-     * Calculate a single host weight score according to various parameters.
-     *
-     * @param hostCores - threads/cores according to cluster
-     */
-    private double calcDistributeMetric(VDS vds, VM vm, int hostCores) {
+    private double calcHostLoadPerCore(VDS vds, VM vm, int hostCores) {
         int vcpu = Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage);
         int spmCpu = (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
                 .<Integer>getValue(ConfigValues.SpmVCpuConsumption);
+
         double hostCpu = vds.getUsageCpuPercent();
         double pendingVcpus = PendingCpuCores.collectForHost(getPendingResourceManager(), vds.getId());
 
-        return (hostCpu / vcpu) + (pendingVcpus + vm.getNumOfCpus() + spmCpu) / hostCores;
+        double hostLoad = hostCpu * hostCores;
+        double addedLoad = vcpu * (pendingVcpus + vm.getNumOfCpus() + spmCpu);
+
+        return (hostLoad + addedLoad) / hostCores;
     }
 
     /**
@@ -68,13 +67,17 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
      * @return weight score for a single host
      */
     protected int calcHostScore(VDS vds, VM vm, boolean countThreadsAsCores) {
-        int score = MaxSchedulerWeight - 1;
         Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
-        if (effectiveCpuCores != null && vds.getUsageCpuPercent() != null) {
-            // round the result and adding one to avoid zero
-            score = Math.min((int) Math.round(
-                    calcDistributeMetric(vds, vm, effectiveCpuCores)) + 1, MaxSchedulerWeight);
+        if (effectiveCpuCores == null || vds.getUsageCpuPercent() == null) {
+            return MaxSchedulerWeight - 1;
         }
-        return score;
+
+        double loadPerCore = calcHostLoadPerCore(vds, vm, effectiveCpuCores);
+
+        // Scale so that 110 %  maps to MaxSchedulerWeight - 2
+        double score = loadPerCore * (MaxSchedulerWeight - 2) / 110.0;
+
+        // rounding the result and adding one to avoid zero
+        return Math.min((int) Math.round(score) + 1, MaxSchedulerWeight - 1);
     }
 }
