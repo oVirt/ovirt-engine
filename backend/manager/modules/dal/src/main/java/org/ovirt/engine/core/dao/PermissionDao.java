@@ -84,7 +84,7 @@ public interface PermissionDao extends GenericDao<Permission, Guid> {
      *            Whether the results should be filtered according to the user's permissions
      * @return the list of permissions
      */
-    List<Permission> getAllForAdElementAndGroups(Guid id, Collection<Guid> groupIds, boolean isFiltered);
+    List<Permission> getAllForAdElementAndGroups(Guid id, Guid currentUserId, Collection<Guid> groupIds, boolean isFiltered);
 
     /**
      * Gets all permissions for the specified AD element only, excluding permissions of groups that it is in.

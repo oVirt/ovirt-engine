@@ -65,6 +65,7 @@ public class GetPermissionsOnBehalfByAdElementIdQuery<P extends IdQueryParameter
         getQueryReturnValue().setReturnValue(
             permissionDao.getAllForAdElementAndGroups(
                 getParameters().getId(),
+                getUserID(),
                 groupsIds,
                 getParameters().isFiltered()
             )
