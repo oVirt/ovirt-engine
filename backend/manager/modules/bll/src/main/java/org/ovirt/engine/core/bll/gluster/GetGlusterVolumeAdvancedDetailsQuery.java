@@ -159,7 +159,17 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
                                 volumeName,
                                 brick == null ? null : brick.getQualifiedName(),
                                 detailRequired));
-        return (GlusterVolumeAdvancedDetails) returnValue.getReturnValue();
+        GlusterVolumeAdvancedDetails advancedDetails = (GlusterVolumeAdvancedDetails) returnValue.getReturnValue();
+
+        if (brick != null) {
+            //We need to update confirmedFreeSize with precalculated value
+            advancedDetails.getBrickDetails().forEach(b -> {
+                b.getBrickProperties().setConfirmedFreeSize(
+                        glusterBrickDao.getById(b.getBrickProperties().getBrickId()).getBrickProperties().getConfirmedFreeSize()
+                );
+            });
+        }
+        return  advancedDetails;
     }
 
     private GlusterVolumeEntity getReplicateVolume(Guid clusterId) {

@@ -50,6 +50,9 @@
                                     <ge:DoubleEntityModelLabelEditor ui:field="freeSizeEditor" label="{constants.freeSizeBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                                 </b:Row>
                                 <b:Row>
+                                    <ge:DoubleEntityModelLabelEditor ui:field="confirmedFreeSizeEditor" label="{constants.confirmedFreeSizeBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
+                                </b:Row>
+                                <b:Row>
                                     <ge:StringEntityModelLabelEditor ui:field="deviceEditor" label="{constants.deviceBrickAdvancedLabel}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                                 </b:Row>
                                 <b:Row>
