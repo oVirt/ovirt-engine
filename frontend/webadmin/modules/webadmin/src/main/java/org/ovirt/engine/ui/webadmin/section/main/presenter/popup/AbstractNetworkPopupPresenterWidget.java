@@ -47,9 +47,9 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasVal
 
         getView().toggleSubnetVisibility(model.getExternal().getEntity());
         model.getExternal().getEntityChangedEvent().addListener((ev, sender, args) ->
-                getView().toggleSubnetVisibility(model.getExternal().getEntity()));
-
-        getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
+                getView().toggleSubnetVisibility(isSubnetVisible(model)));
+        model.getExternalProviders().getSelectedItemChangedEvent().addListener((ev, sender, args) ->
+                getView().toggleSubnetVisibility(isSubnetVisible(model)));
         model.getProfiles().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                 getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
@@ -60,6 +60,10 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasVal
         getView().getQosButton().addClickHandler(event -> getView().getQosButton().getCommand().execute());
 
         getView().addMtuEditor();
+    }
+
+    private boolean isSubnetVisible(final T model) {
+        return model.getExternal().getEntity() && !model.getExternalProviders().getSelectedItem().getIsUnmanaged();
     }
 
     @Override
