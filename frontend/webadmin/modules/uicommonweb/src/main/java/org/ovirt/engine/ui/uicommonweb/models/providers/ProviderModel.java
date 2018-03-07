@@ -259,6 +259,8 @@ public class ProviderModel extends Model {
             setReadOnlyEntity();
             getReadOnly().setIsChangeable(!isUnmanaged);
             getUrl().setIsChangeable(!isUnmanaged);
+            getAutoSync().setEntity(false);
+            getAutoSync().setIsChangeable(!isUnmanaged);
         });
         setAuthFieldsChangeableStatus(requiresAuthentication.getEntity(), isUnmanaged.getEntity());
 
