@@ -1109,6 +1109,7 @@ public class LibvirtVmXmlBuilder {
         int pinnedDriveIndex = 0;
 
         Map<Disk, VmDevice> vmDisksToDevices = vm.getDiskMap().values().stream()
+                        .filter(Disk::getPlugged)
                         .collect(Collectors.toMap(Function.identity(),
                                 d -> deviceIdToDevice.get(new VmDeviceId(d.getId(), vm.getId()))));
         for (Disk disk : vmInfoBuildUtils.getSortedDisks(vmDisksToDevices, vm.getId())) {
