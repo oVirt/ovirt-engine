@@ -12,6 +12,7 @@ public class BrickPropertiesModel extends Model {
     private EntityModel<Integer> pid;
     private EntityModel<Double> totalSize;
     private EntityModel<Double> freeSize;
+    private EntityModel<Double> confirmedFreeSize;
     private EntityModel<String> device;
     private EntityModel<Integer> blockSize;
     private EntityModel<String> mountOptions;
@@ -24,6 +25,7 @@ public class BrickPropertiesModel extends Model {
         setPid(new EntityModel<Integer>());
         setTotalSize(new EntityModel<Double>());
         setFreeSize(new EntityModel<Double>());
+        setConfirmedFreeSize(new EntityModel<>());
         setDevice(new EntityModel<String>());
         setBlockSize(new EntityModel<Integer>());
         setMountOptions(new EntityModel<String>());
@@ -37,11 +39,14 @@ public class BrickPropertiesModel extends Model {
         getPid().setEntity(brickProperties.getPid());
         getTotalSize().setEntity(brickProperties.getTotalSize());
         getFreeSize().setEntity(brickProperties.getFreeSize());
+        getConfirmedFreeSize().setEntity(brickProperties.getConfirmedFreeSize());
         getDevice().setEntity(brickProperties.getDevice());
         getBlockSize().setEntity(brickProperties.getBlockSize());
         getMountOptions().setEntity(brickProperties.getMntOptions());
         getFileSystem().setEntity(brickProperties.getFsName());
         getRdmaPort().setEntity(brickProperties.getRdmaPort());
+
+        getConfirmedFreeSize().setIsAvailable(brickProperties.getConfirmedFreeSize() != null);
     }
 
     public EntityModel<GlusterStatus> getStatus() {
@@ -82,6 +87,14 @@ public class BrickPropertiesModel extends Model {
 
     public void setFreeSize(EntityModel<Double> freeSize) {
         this.freeSize = freeSize;
+    }
+
+    public EntityModel<Double> getConfirmedFreeSize() {
+        return confirmedFreeSize;
+    }
+
+    public void setConfirmedFreeSize(EntityModel<Double> confirmedFreeSize) {
+        this.confirmedFreeSize = confirmedFreeSize;
     }
 
     public EntityModel<String> getDevice() {

@@ -81,9 +81,15 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     }
 
     private GlusterBrickEntity getBrick() {
+        BrickProperties brickProperties = new BrickProperties();
+        brickProperties.setConfirmedFreeSize(1.0);
+        BrickDetails details = new BrickDetails();
+        details.setBrickProperties(brickProperties);
+
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setId(BRICK_ID);
         brick.setServerId(SERVER_ID);
+        brick.setBrickDetails(details);
         return brick;
     }
 
@@ -97,7 +103,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
 
     private BrickProperties getBrickProperties() {
         BrickProperties brickProperties = new BrickProperties();
-        brickProperties.setBrickId(Guid.newGuid());
+        brickProperties.setBrickId(BRICK_ID);
         brickProperties.setPort(24009);
         brickProperties.setStatus(GlusterStatus.UP);
         brickProperties.setPid(1459);
