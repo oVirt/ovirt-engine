@@ -1700,7 +1700,7 @@ public class LibvirtVmXmlBuilder {
 
         writeGeneralDiskAttributes(device, disk, dve);
         writeDiskTarget(dve, dev);
-        writeDiskSource(device, disk, dev);
+        writeDiskSource(device, disk, dev, dve);
         writeDiskDriver(device, disk, dve, pinTo);
         writeAlias(device);
         writeAddress(device);
@@ -1820,7 +1820,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDiskSource(VmDevice device, Disk disk, String dev) {
+    private void writeDiskSource(VmDevice device, Disk disk, String dev, DiskVmElement dve) {
         writer.writeStartElement("source");
         switch (disk.getDiskStorageType()) {
         case IMAGE:
@@ -1881,6 +1881,13 @@ public class LibvirtVmXmlBuilder {
                     String.format("/dev/mapper/%s",
                             lunDisk.getLun().getLUNId()));
             diskMetadata.put(dev, Collections.singletonMap("GUID", lunDisk.getLun().getLUNId()));
+
+            if (dve.isUsingScsiReservation()) {
+                writer.writeStartElement("reservations");
+                writer.writeAttributeString("managed", "yes");
+                writer.writeEndElement();
+            }
+
             break;
 
         case CINDER:
