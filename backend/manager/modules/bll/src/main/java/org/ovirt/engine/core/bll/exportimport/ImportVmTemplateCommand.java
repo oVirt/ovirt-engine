@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -365,7 +366,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
         }
     }
 
-    protected boolean validateNoDuplicateDiskImages(Iterable<DiskImage> images) {
+    protected boolean validateNoDuplicateDiskImages(Collection<DiskImage> images) {
         if (!getParameters().isImportAsNewEntity() && !getParameters().isImagesExistOnTargetStorageDomain()) {
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
             return validate(diskImagesValidator.diskImagesAlreadyExist());

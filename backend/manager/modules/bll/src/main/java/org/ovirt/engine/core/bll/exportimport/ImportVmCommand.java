@@ -775,7 +775,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return disksDummies;
     }
 
-    protected boolean validateNoDuplicateDiskImages(Iterable<DiskImage> images) {
+    protected boolean validateNoDuplicateDiskImages(Collection<DiskImage> images) {
         if (!getParameters().isImportAsNewEntity()) {
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
             return validate(diskImagesValidator.diskImagesAlreadyExist());
