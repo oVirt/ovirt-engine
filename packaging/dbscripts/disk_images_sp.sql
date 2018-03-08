@@ -35,15 +35,16 @@ BEGIN
          SELECT i.image_guid, i.parentid
          FROM images i, ancestor_image ai
          WHERE i.image_guid = ai.parentid
-      )
-      SELECT i.*
-      FROM ancestor_image ai, images_storage_domain_view i
-      WHERE ai.parentid = '00000000-0000-0000-0000-000000000000' AND
-            ai.image_guid = i.image_guid AND
-            (NOT v_is_filtered OR EXISTS (SELECT    1
-                                          FROM      user_disk_permissions_view
-                                          WHERE     user_disk_permissions_view.user_id = v_user_id AND
-                                                    user_disk_permissions_view.entity_id = i.image_group_id));
+     )
+     SELECT i.*
+     FROM ancestor_image ai, images_storage_domain_view i
+     WHERE ai.parentid = '00000000-0000-0000-0000-000000000000'
+         AND ai.image_guid = i.image_guid
+         AND (NOT v_is_filtered OR EXISTS (
+             SELECT 1
+             FROM   user_disk_permissions_view
+             WHERE  user_disk_permissions_view.user_id = v_user_id
+             AND    user_disk_permissions_view.entity_id = i.image_group_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
