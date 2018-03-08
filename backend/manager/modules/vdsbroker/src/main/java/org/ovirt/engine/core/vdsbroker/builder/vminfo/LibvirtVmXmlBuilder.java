@@ -1570,23 +1570,26 @@ public class LibvirtVmXmlBuilder {
     private void writeController(VmDevice device) {
         writer.writeStartElement("controller");
         writer.writeAttributeString("type", device.getDevice());
-        if (device.getSpecParams().containsKey(VdsProperties.Model)) {
-            writer.writeAttributeString("model", device.getSpecParams().get(VdsProperties.Model).toString());
-        }
-        if (device.getSpecParams().containsKey(VdsProperties.Index)) {
-            writer.writeAttributeString("index", device.getSpecParams().get(VdsProperties.Index).toString());
-        }
-        if (device.getSpecParams().containsKey("ports")) {
-            writer.writeAttributeString("ports", device.getSpecParams().get("ports").toString());
-        }
 
-        if (device.getSpecParams().containsKey(VdsProperties.ioThreadId)) {
+        Object model = device.getSpecParams().get(VdsProperties.Model);
+        if (model != null) {
+            writer.writeAttributeString("model", model.toString());
+        }
+        Object index = device.getSpecParams().get(VdsProperties.Index);
+        if (index != null) {
+            writer.writeAttributeString("index", index.toString());
+        }
+        Object ports = device.getSpecParams().get("ports");
+        if (ports != null) {
+            writer.writeAttributeString("ports", ports.toString());
+        }
+        Object ioThreadId = device.getSpecParams().get(VdsProperties.ioThreadId);
+        if (ioThreadId != null) {
             writer.writeStartElement("driver");
-            writer.writeAttributeString("iothread", device.getSpecParams().get(VdsProperties.ioThreadId).toString());
+            writer.writeAttributeString("iothread", ioThreadId.toString());
             writer.writeEndElement();
         }
 
-        // TODO: master??
         writeAlias(device);
         writeAddress(device);
         writer.writeEndElement();
