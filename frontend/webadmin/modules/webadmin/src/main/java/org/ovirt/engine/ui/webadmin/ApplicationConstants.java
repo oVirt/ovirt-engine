@@ -2043,6 +2043,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String saveNetConfigHostPopup();
 
+    String showVfLabel();
+
     String nameHostPopup();
 
     String intefaceHostPopup();

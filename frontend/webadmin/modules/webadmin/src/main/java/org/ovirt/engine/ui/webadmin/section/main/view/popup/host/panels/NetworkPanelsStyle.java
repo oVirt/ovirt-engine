@@ -57,10 +57,6 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String warningLabel();
 
-    String checkCon();
-
-    String commitChanges();
-
     String requiredTitlePanel();
 
     String requiredLabel();

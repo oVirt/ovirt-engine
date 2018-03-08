@@ -207,14 +207,10 @@
             padding-top: 6px;
         }
 
-        .checkCon {
+        .bottomCheckBox {
             width: 100%;
-            padding: 5px;
-        }
-
-        .commitChanges{
-            width: 100%;
-            padding: 5px;
+            padding: 5px 5px 0px 5px;
+            margin-bottom: 0px;
         }
 
         .allNicsPanel{
@@ -235,7 +231,7 @@
 
         .checkBoxesPanel{
             border-top: 1px solid #C5C5C5;
-            width: 100%;
+            width: 95%;
         }
 
         .separator {
@@ -320,14 +316,33 @@
                     </g:Cell>
                 </g:HorizontalPanel>
                 <g:FlowPanel addStyleNames="{style.checkBoxesPanel} hsnpv_checkBoxesPanel_pfly_fix" >
-                    <g:HorizontalPanel>
-                        <ge:EntityModelCheckBoxEditor ui:field="checkConnectivity" />
-                        <d:InfoIcon ui:field="checkConnInfo"/>
-                    </g:HorizontalPanel>
-                    <g:HorizontalPanel>
-                        <ge:EntityModelCheckBoxEditor ui:field="commitChanges" />
-                        <d:InfoIcon ui:field="commitChangesInfo"/>
-                    </g:HorizontalPanel>
+                    <b:Row>
+                        <b:Column size="SM_6">
+                            <ge:EntityModelCheckBoxEditor ui:field="checkConnectivity" styleName="{style.bottomCheckBox}"
+                                                          label="{constants.checkConHostPopup}"
+                                                          usePatternFly="true"/>
+                        </b:Column>
+                        <b:Column size="SM_1">
+                            <d:InfoIcon ui:field="checkConnInfo"/>
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_6">
+                            <ge:EntityModelCheckBoxEditor ui:field="commitChanges" styleName="{style.bottomCheckBox}"
+                                                          label="{constants.saveNetConfigHostPopup}"
+                                                          usePatternFly="true"/>
+                        </b:Column>
+                        <b:Column size="SM_1">
+                            <d:InfoIcon ui:field="commitChangesInfo"/>
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_6">
+                            <ge:EntityModelCheckBoxEditor ui:field="showVf" styleName="{style.bottomCheckBox}"
+                                                          label="{constants.showVfLabel}"
+                                                          usePatternFly="true"/>
+                        </b:Column>
+                    </b:Row>
                 </g:FlowPanel>
             </g:HTMLPanel>
         </d:content>
