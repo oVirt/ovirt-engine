@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -204,7 +205,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
     }
 
-    private boolean checkIfDisksExist(Iterable<DiskImage> disksList) {
+    private boolean checkIfDisksExist(Collection<DiskImage> disksList) {
         return validate(new DiskImagesValidator(disksList).diskImagesOnStorage(imageToDestinationDomainMap, getStoragePoolId()));
     }
 

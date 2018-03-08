@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,9 +39,9 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
  */
 public class DiskImagesValidator {
 
-    private Iterable<DiskImage> diskImages;
+    private Collection<DiskImage> diskImages;
 
-    public DiskImagesValidator(Iterable<DiskImage> disks) {
+    public DiskImagesValidator(Collection<DiskImage> disks) {
         this.diskImages = disks;
     }
 
