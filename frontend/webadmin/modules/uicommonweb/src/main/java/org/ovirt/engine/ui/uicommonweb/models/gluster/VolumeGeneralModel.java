@@ -26,6 +26,7 @@ public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
     private Long volumeTotalCapacity;
     private Long volumeFreeCapacity;
     private Long volumeUsedCapacity;
+    private Long volumeConfirmedFreeCapacity;
 
     public String getName() {
         return name;
@@ -157,10 +158,12 @@ public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
             setVolumeFreeCapacity(entity.getAdvancedDetails().getCapacityInfo().getFreeSize());
             setVolumeTotalCapacity(entity.getAdvancedDetails().getCapacityInfo().getTotalSize());
             setVolumeUsedCapacity(entity.getAdvancedDetails().getCapacityInfo().getUsedSize());
+            setVolumeConfirmedFreeCapacity(entity.getAdvancedDetails().getCapacityInfo().getConfirmedFreeSize());
         } else {
             setVolumeFreeCapacity(null);
             setVolumeTotalCapacity(null);
             setVolumeUsedCapacity(null);
+            setVolumeConfirmedFreeCapacity(null);
         }
     }
 
@@ -194,5 +197,13 @@ public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
 
     public void setVolumeUsedCapacity(Long volumeUsedCapacity) {
         this.volumeUsedCapacity = volumeUsedCapacity;
+    }
+
+    public Long getVolumeConfirmedFreeCapacity() {
+        return volumeConfirmedFreeCapacity;
+    }
+
+    public void setVolumeConfirmedFreeCapacity(Long volumeConfirmedFreeCapacity) {
+        this.volumeConfirmedFreeCapacity = volumeConfirmedFreeCapacity;
     }
 }

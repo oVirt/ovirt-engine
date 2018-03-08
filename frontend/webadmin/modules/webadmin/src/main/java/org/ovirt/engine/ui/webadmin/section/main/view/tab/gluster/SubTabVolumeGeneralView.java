@@ -58,6 +58,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     VolumeCapacityLabel<Long> volumeTotalCapacity;
     VolumeCapacityLabel<Long> volumeUsedCapacity;
     VolumeCapacityLabel<Long> volumeFreeCapacity;
+    VolumeCapacityLabel<Long> volumeConfirmedFreeCapacity;
 
     FormBuilder formBuilder;
 
@@ -67,7 +68,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     FormItem redundancyCountFormItem;
 
     @Ignore
-    DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long> volumeCapacityDetailsLabel = new DetailsTextBoxLabel<>(constants.total(), constants.used(), constants.free());
+    DetailsTextBoxLabel<ArrayList<ValueLabel<Long>>, Long> volumeCapacityDetailsLabel = new DetailsTextBoxLabel<>(constants.total(), constants.used(), constants.free(), constants.confirmedFree());
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -128,6 +129,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         this.volumeTotalCapacity = new VolumeCapacityLabel<>(constants);
         this.volumeFreeCapacity = new VolumeCapacityLabel<>(constants);
         this.volumeUsedCapacity = new VolumeCapacityLabel<>(constants);
+        this.volumeConfirmedFreeCapacity = new VolumeCapacityLabel<>(constants);
     }
 
     @Override
@@ -146,6 +148,9 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
         ArrayList<ValueLabel<Long>> volumeCapacityDetails =
                 new ArrayList<>(Arrays.<ValueLabel<Long>>asList(volumeTotalCapacity, volumeUsedCapacity, volumeFreeCapacity));
+        if (selectedItem.getAdvancedDetails().getCapacityInfo().getConfirmedFreeSize() != null) {
+            volumeCapacityDetails.add(volumeConfirmedFreeCapacity);
+        }
         volumeCapacityDetailsLabel.setValue(volumeCapacityDetails);
 
         formBuilder.update(getDetailModel());

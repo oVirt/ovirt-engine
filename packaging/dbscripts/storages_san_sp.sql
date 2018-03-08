@@ -174,6 +174,21 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION UpdateStorageDomainConfirmedSize (
+    v_confirmed_available_disk_size INT,
+    v_id UUID
+    )
+RETURNS VOID
+    --The [storage_domain_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
+    AS $PROCEDURE$
+BEGIN
+    UPDATE storage_domain_dynamic
+    SET confirmed_available_disk_size = v_confirmed_available_disk_size,
+        _update_date = LOCALTIMESTAMP
+    WHERE id = v_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION UpdateStorageDomainExternalStatus (
     v_storage_id UUID,
     v_external_status INT
