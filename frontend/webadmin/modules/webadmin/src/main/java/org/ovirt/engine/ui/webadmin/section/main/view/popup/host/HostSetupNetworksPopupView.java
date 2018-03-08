@@ -92,6 +92,10 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     EntityModelCheckBoxEditor commitChanges;
 
     @UiField(provided = true)
+    @Path(value = "showVf.entity")
+    EntityModelCheckBoxEditor showVf;
+
+    @UiField(provided = true)
     InfoIcon checkConnInfo;
 
     @UiField(provided = true)
@@ -117,16 +121,14 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
+        showVf = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalNetworksInfo = new InfoIcon(templates.italicText(constants.externalNetworksInfo()));
         checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()));
         commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initStatusPanel();
-        checkConnectivity.setContentWidgetContainerStyleName(style.checkCon());
-        commitChanges.setContentWidgetContainerStyleName(style.commitChanges());
         initUnassignedItemsPanel();
-        localize();
 
         setupNicListAutoScrolling();
         driver.initialize(this);
@@ -144,11 +146,6 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private void onRadioButtonSelection(boolean networksPanelSelected) {
         networksPanel.setVisible(networksPanelSelected);
         labelsPanel.setVisible(!networksPanelSelected);
-    }
-
-    private void localize() {
-        checkConnectivity.setLabel(constants.checkConHostPopup());
-        commitChanges.setLabel(constants.saveNetConfigHostPopup());
     }
 
     // Create an auto-scroll adapter for the nicList's parent ScrollPanel

@@ -112,6 +112,16 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         commitChanges = value;
     }
 
+    private EntityModel<Boolean> showVf;
+
+    public EntityModel<Boolean> getShowVf() {
+        return showVf;
+    }
+
+    public void setShowVf(EntityModel<Boolean> value) {
+        showVf = value;
+    }
+
     private static final EventDefinition NICS_CHANGED_EVENT_DEFINITION = new EventDefinition("NicsChanged", //$NON-NLS-1$
             HostSetupNetworksModel.class);
 
@@ -177,6 +187,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         setConnectivityTimeout(new EntityModel<Integer>());
         setCommitChanges(new EntityModel<Boolean>());
         getCommitChanges().setEntity(true);
+        setShowVf(new EntityModel<>());
+        getShowVf().setEntity(false);
+        getShowVf().getPropertyChangedEvent().addListener((ev, sender, args) -> redraw());
 
         // ok command
         okCommand = UICommand.createDefaultOkUiCommand("OnSetupNetworks", this); //$NON-NLS-1$
@@ -732,6 +745,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             }
 
             final VdsNetworkInterface physicalFunction = findPhysicalFunction(nicsById, nic.getId());
+            if (physicalFunction != null && !getShowVf().getEntity()) {
+                continue;
+            }
+
             String nicName = nic.getName();
             Collection<LogicalNetworkModel> nicNetworks = nicNameToNetworkModels.get(nicName);
             NetworkInterfaceModel nicModel = new NetworkInterfaceModel(nic,
