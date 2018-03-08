@@ -918,4 +918,10 @@ public class FixturesTool {
 
     public static final Guid IMAGE_TRANSFER_ID = new Guid("8f9cd9f6-5f64-4568-8acb-0008659a2d57");
 
+    public static final Guid PROVIDER_BINDING_HOST_ID_HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e8");
+    public static final String PROVIDER_BINDING_HOST_ID_PLUGIN_TYPE = "OVIRT_PROVIDER_OVN";
+    public static final String PROVIDER_BINDING_HOST_PLUGIN_ID = "1ce-c01d-bee2-15-a5-900d-a5-11fe";
+
+    public static final Guid PROVIDER_BINDING_HOST_ID_HOST_ID2 = new Guid("3001751e-549b-4e7a-aff6-12336856ce45");
+
 }
