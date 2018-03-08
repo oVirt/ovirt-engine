@@ -18,6 +18,7 @@ public class StorageDomainDynamicDaoImpl extends BaseDao implements StorageDomai
     private static final RowMapper<StorageDomainDynamic> storageDomainDynamicRowMapper = (rs, rowNum) -> {
         StorageDomainDynamic entity = new StorageDomainDynamic();
         entity.setAvailableDiskSize((Integer) rs.getObject("available_disk_size"));
+        entity.setConfirmedAvailableDiskSize((Integer) rs.getObject("confirmed_available_disk_size"));
         entity.setId(getGuidDefaultEmpty(rs, "id"));
         entity.setUsedDiskSize((Integer) rs.getObject("used_disk_size"));
         entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
@@ -55,6 +56,16 @@ public class StorageDomainDynamicDaoImpl extends BaseDao implements StorageDomai
                 .addValue("used_disk_size", domain.getUsedDiskSize());
 
         getCallsHandler().executeModification("Updatestorage_domain_dynamic", parameterSource);
+    }
+
+    @Override
+    public void updateConfirmedSize(StorageDomainDynamic domain) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("confirmed_available_disk_size",
+                        domain.getConfirmedAvailableDiskSize())
+                .addValue("id", domain.getId());
+
+        getCallsHandler().executeModification("UpdateStorageDomainConfirmedSize", parameterSource);
     }
 
     @Override

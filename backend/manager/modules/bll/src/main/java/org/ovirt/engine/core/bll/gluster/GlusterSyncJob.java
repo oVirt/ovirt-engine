@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
@@ -67,6 +68,8 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -91,6 +94,10 @@ public class GlusterSyncJob extends GlusterJob {
     private GlusterDBUtils glusterDBUtils;
     @Inject
     private AlertDirector alertDirector;
+    @Inject
+    private StorageDomainDynamicDao storageDomainDynamicDao;
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     @Override
     public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
@@ -1062,11 +1069,25 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void refreshVolumeCapacity(GlusterVolumeEntity volume, GlusterVolumeAdvancedDetails volumeAdvancedDetails) {
+        Long confirmedFreeSize = calculateConfirmedVolumeCapacity(volume);
         if (volume.getAdvancedDetails().getCapacityInfo() == null) {
             volumeDao.addVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
         } else {
-            volumeAdvancedDetails.getCapacityInfo().setConfirmedFreeSize(calculateConfirmedVolumeCapacity(volume));
+            volumeAdvancedDetails.getCapacityInfo().setConfirmedFreeSize(confirmedFreeSize);
             volumeDao.updateVolumeCapacityInfo(volumeAdvancedDetails.getCapacityInfo());
+        }
+        if (confirmedFreeSize != null) {
+            storageDomainStaticDao.getAllForStoragePool(clusterDao.get(volume.getClusterId()).getStoragePoolId())
+                    .stream()
+                    .map(StorageDomainStatic::getId)
+                    .filter(sd -> storageServerConnectionDao.getAllForDomain(sd)
+                            .stream()
+                            .anyMatch(c -> volume.getId().equals(c.getGlusterVolumeId())))
+                    .map(i -> storageDomainDynamicDao.get(i))
+                    .forEach(d -> {
+                        d.setConfirmedAvailableDiskSize((int) (confirmedFreeSize / SizeConverter.BYTES_IN_GB));
+                        storageDomainDynamicDao.updateConfirmedSize(d);
+                    });
         }
     }
 
@@ -1078,7 +1099,7 @@ public class GlusterSyncJob extends GlusterJob {
                 .map(GlusterBrickEntity::getBrickProperties)
                 .collect(Collectors.toList());
 
-        if (bricks.stream().map(BrickProperties::getConfirmedFreeSize).filter(b -> b == null).findAny().isPresent()) {
+        if (bricks.stream().map(BrickProperties::getConfirmedFreeSize).anyMatch(Objects::isNull)) {
             //If we have bricks missing confirmed size, we can't calculate it for the volume.
             log.info("Volume {} have non-thin bricks, skipping confirmed free size calculation", volume.getName());
             return null;
@@ -1099,7 +1120,7 @@ public class GlusterSyncJob extends GlusterJob {
         case DISTRIBUTED_STRIPED_REPLICATE:
         case DISPERSE:
         default:
-            return brickSizes.collect(Collectors.summingLong(Double::longValue));
+            return brickSizes.mapToLong(Double::longValue).sum();
         }
     }
 

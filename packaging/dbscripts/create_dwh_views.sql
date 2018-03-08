@@ -68,7 +68,8 @@ CREATE OR REPLACE VIEW dwh_storage_domain_history_view AS
 SELECT storage_domain_dynamic.id AS storage_domain_id,
     COALESCE(storage_domain_shared_status.status, 0) AS storage_domain_status,
     storage_domain_dynamic.available_disk_size AS available_disk_size_gb,
-    storage_domain_dynamic.used_disk_size AS used_disk_size_gb
+    storage_domain_dynamic.used_disk_size AS used_disk_size_gb,
+    storage_domain_dynamic.confirmed_available_disk_size AS confirmed_available_disk_size_gb
 FROM storage_domain_dynamic
 INNER JOIN storage_domain_static
     ON (storage_domain_dynamic.id = storage_domain_static.id)

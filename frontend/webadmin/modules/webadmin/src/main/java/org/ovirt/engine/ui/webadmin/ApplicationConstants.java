@@ -2531,6 +2531,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String free();
 
+    String confirmedFree();
+
     @Override
     String unknown();
 
