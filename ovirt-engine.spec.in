@@ -670,7 +670,7 @@ rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
 # see also relevant %dir line to set permissions
 install -dm 700 "%{buildroot}/%{engine_log}"
-install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible}
+install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 
@@ -973,6 +973,7 @@ fi
 %license backend/manager/modules/services/src/main/webapp/lgpl-3.0.txt
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ansible
+%attr(-, %{engine_user}, %{engine_group}) %{engine_log}/db-manual
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ova
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
