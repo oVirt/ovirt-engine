@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Sta
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
@@ -91,7 +90,7 @@ public class PmHealthCheckManager implements BackendService {
             if (lock.tryLock()) {
                 try {
                     log.info("Power Management Health Check started.");
-                    List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
+                    List<VDS> hosts = vdsDao.getAll();
                     for (VDS host : hosts) {
                         if (host.isPmEnabled()) {
                             pmHealthCheck(host);
@@ -123,7 +122,7 @@ public class PmHealthCheckManager implements BackendService {
      * Check PM health of a host. Add/Remove alerts as necessary, and log the results.
      */
     public void pmHealthCheck(Guid hostId) {
-        VDS host = DbFacade.getInstance().getVdsDao().get(hostId);
+        VDS host = vdsDao.get(hostId);
         pmHealthCheck(host);
     }
 
