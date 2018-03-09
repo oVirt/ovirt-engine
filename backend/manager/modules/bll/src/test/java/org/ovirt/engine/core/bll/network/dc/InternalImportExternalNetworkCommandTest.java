@@ -121,6 +121,6 @@ public class InternalImportExternalNetworkCommandTest extends BaseCommandTest {
 
         VerificationMode expectedNumberOfCalls = attachToAllClusters ? times(1) : never();
         verify(backend, expectedNumberOfCalls).runInternalQuery(eq(QueryType.GetClustersByStoragePoolId), any(), any());
-        verify(networkHelper, expectedNumberOfCalls).attachNetworkToClusters(eq(NETWORK_ID), any());
+        verify(networkHelper, expectedNumberOfCalls).createNetworkClusters(eq(Collections.singletonList(CLUSTER_ID)));
     }
 }
