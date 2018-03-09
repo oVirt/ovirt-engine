@@ -45,7 +45,8 @@ public class InternalImportExternalNetworkCommand<P extends InternalImportExtern
         final Network network = getNetwork();
         network.setDataCenterId(dataCenterId);
 
-        ActionReturnValue addNetworkReturnValue = addNetwork(dataCenterId, network);
+        ActionReturnValue addNetworkReturnValue = addNetwork(dataCenterId, network,
+                getParameters().isAttachToAllClusters());
         if (!addNetworkReturnValue.getSucceeded()) {
             propagateFailure(addNetworkReturnValue);
             return;
@@ -60,33 +61,29 @@ public class InternalImportExternalNetworkCommand<P extends InternalImportExtern
             return;
         }
 
-        if (getParameters().isAttachToAllClusters()) {
-            ActionReturnValue attachReturnValue = attachToAllClusters(dataCenterId, network.getId());
-            if (!attachReturnValue.getSucceeded()) {
-                propagateFailure(attachReturnValue);
-                return;
-            }
-        }
-
         getReturnValue().setActionReturnValue(network.getId());
         setSucceeded(true);
     }
 
-    private ActionReturnValue addNetwork(Guid dataCenterId, Network network) {
+    private ActionReturnValue addNetwork(Guid dataCenterId, Network network, boolean attachToAllClusters) {
         AddNetworkStoragePoolParameters params =
                 new AddNetworkStoragePoolParameters(dataCenterId, network);
         params.setVnicProfileRequired(false);
+
+        if (attachToAllClusters) {
+            params.setNetworkClusterList(networkHelper.createNetworkClusters(
+                    getAllClusterIdsInDataCenter(dataCenterId)));
+        }
+
         return runInternalAction(ActionType.AddNetwork, params);
     }
 
-    private ActionReturnValue attachToAllClusters(Guid dataCenterId, Guid networkId) {
+    private List<Guid> getAllClusterIdsInDataCenter(Guid dataCenterId) {
         QueryReturnValue queryReturnValue = runInternalQuery(QueryType.GetClustersByStoragePoolId,
                 new IdQueryParameters(dataCenterId));
 
         List<Cluster> clusters = queryReturnValue.getReturnValue();
-
-        return networkHelper.attachNetworkToClusters(networkId,
-                clusters.stream().map(Cluster::getId).collect(Collectors.toList()));
+        return clusters.stream().map(Cluster::getId).collect(Collectors.toList());
     }
 
     @Override

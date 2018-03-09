@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -197,16 +198,20 @@ public class NetworkHelper {
     }
 
     public ActionReturnValue attachNetworkToClusters(Guid networkId, Collection<Guid> clusterIds) {
-        List<NetworkCluster> networkAttachments = new LinkedList<>();
-        for (Guid clusterId : clusterIds) {
-            final NetworkCluster networkCluster = new NetworkCluster();
-            networkCluster.setClusterId(clusterId);
-            networkCluster.setNetworkId(networkId);
-            networkCluster.setRequired(false);
-            networkAttachments.add(networkCluster);
-        }
+        List<NetworkCluster> networkAttachments = createNetworkClusters(clusterIds);
+        networkAttachments.forEach(networkAttachment -> networkAttachment.setNetworkId(networkId));
+
         return backend.runInternalAction(ActionType.ManageNetworkClusters,
                 new ManageNetworkClustersParameters(networkAttachments));
+    }
+
+    public List<NetworkCluster> createNetworkClusters(Collection<Guid> clusterIds) {
+        return clusterIds.stream().map(clusterId -> {
+                    final NetworkCluster networkCluster = new NetworkCluster();
+                    networkCluster.setClusterId(clusterId);
+                    networkCluster.setRequired(false);
+                    return networkCluster;
+                }).collect(Collectors.toList());
     }
 
     public ActionReturnValue addVnicProfileWithoutFilter(Network network, boolean publicUse) {
