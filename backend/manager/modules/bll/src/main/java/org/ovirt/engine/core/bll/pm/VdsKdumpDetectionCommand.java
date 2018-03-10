@@ -203,6 +203,8 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
             return;
         }
 
+        setCommandShouldBeLogged(true);
+
         kdumpDetectionResult = detectHostKdumping();
 
         getReturnValue().setSucceeded(kdumpDetectionResult == KdumpDetectionResult.KDUMP_FINISHED);
