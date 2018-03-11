@@ -1969,19 +1969,19 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         });
 
+        // add a device that points to vm.getCdPath()
+        String cdPath = vm.getCdPath();
         VmDevice nonPayload = devices.stream()
                 .filter(d -> !VmPayload.isPayload(d.getSpecParams()))
                 .findAny().orElse(null);
-        if (nonPayload != null || (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath()))) {
-            // add a device that points to vm.getCdPath()
+        if (nonPayload != null || (vm.isRunOnce() && !StringUtils.isEmpty(cdPath))) {
             cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
 
             boolean isoOnBlockDomain = false;
-            if (vm.getIsoPath() != null && vm.getIsoPath().matches(ValidationUtils.GUID)
-                    && vmInfoBuildUtils.isBlockDomainPath(vm.getCdPath())) {
+            if (vmInfoBuildUtils.isBlockDomainPath(cdPath)) {
                 isoOnBlockDomain = true;
                 String dev = vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex);
-                Matcher m = Pattern.compile(ValidationUtils.GUID).matcher(vm.getCdPath());
+                Matcher m = Pattern.compile(ValidationUtils.GUID).matcher(cdPath);
                 m.find();
                 Guid domainId = Guid.createGuidFromString(m.group());
                 m.find();
@@ -2003,7 +2003,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             writer.writeStartElement("source");
-            writer.writeAttributeString(isoOnBlockDomain ? "dev" : "file", vm.getCdPath());
+            writer.writeAttributeString(isoOnBlockDomain ? "dev" : "file", cdPath);
             writer.writeAttributeString("startupPolicy", "optional");
             writer.writeEndElement();
 

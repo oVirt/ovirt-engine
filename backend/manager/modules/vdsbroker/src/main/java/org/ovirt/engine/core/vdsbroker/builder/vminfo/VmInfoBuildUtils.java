@@ -1122,7 +1122,7 @@ public class VmInfoBuildUtils {
     }
 
     public boolean isBlockDomainPath(String path) {
-        return BLOCK_DOMAIN_MATCHER.matcher(path).matches();
+        return path != null && BLOCK_DOMAIN_MATCHER.matcher(path).matches();
     }
 
     public List<VdsNumaNode> getVdsNumaNodes(Guid vdsId) {
