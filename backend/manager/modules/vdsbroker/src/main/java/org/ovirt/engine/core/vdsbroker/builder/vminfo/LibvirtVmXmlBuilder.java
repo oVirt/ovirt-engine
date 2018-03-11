@@ -1100,7 +1100,6 @@ public class LibvirtVmXmlBuilder {
         int ideIndex = -1;
         int scsiIndex = -1;
         int virtioIndex = -1;
-        DiskInterface cdDiskInterface = DiskInterface.forValue(cdInterface);
         int pinnedDriveIndex = 0;
 
         Map<Disk, VmDevice> vmDisksToDevices = vm.getDiskMap().values().stream()
@@ -1117,7 +1116,7 @@ public class LibvirtVmXmlBuilder {
             switch(diskInterface) {
             case IDE:
                 ideIndex++;
-                if (cdDiskInterface == diskInterface) {
+                if (diskInterface.getName().equals(cdInterface)) {
                     while (ideIndex == payloadIndex || ideIndex == cdRomIndex) {
                         ideIndex++;
                     }
@@ -1127,7 +1126,7 @@ public class LibvirtVmXmlBuilder {
             case VirtIO:
                 pinTo = vmInfoBuildUtils.pinToIoThreads(vm, pinnedDriveIndex++);
                 virtioIndex++;
-                if (cdDiskInterface == diskInterface) {
+                if (diskInterface.getName().equals(cdInterface)) {
                     while (virtioIndex == payloadIndex || virtioIndex == cdRomIndex) {
                         virtioIndex++;
                     }
@@ -1137,7 +1136,7 @@ public class LibvirtVmXmlBuilder {
             case SPAPR_VSCSI:
             case VirtIO_SCSI:
                 scsiIndex++;
-                if (cdDiskInterface == diskInterface) {
+                if (diskInterface.getName().equals(cdInterface)) {
                     while (scsiIndex == payloadIndex || scsiIndex == cdRomIndex) {
                         scsiIndex++;
                     }
