@@ -17,8 +17,9 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,12 @@ public class HostUpgradeCallback implements CommandCallback {
 
     @Inject
     private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
 
     /**
      * The callback is being polling till the host move to maintenance or failed to do so.
@@ -83,7 +90,7 @@ public class HostUpgradeCallback implements CommandCallback {
      */
     private void evaluateMaintenanceHostCommandProgress(List<Guid> childCmdIds, CommandBase<?> rootCommand) {
         UpgradeHostParameters parameters = (UpgradeHostParameters) rootCommand.getParameters();
-        VdsDynamic host = DbFacade.getInstance().getVdsDynamicDao().get(parameters.getVdsId());
+        VdsDynamic host = vdsDynamicDao.get(parameters.getVdsId());
 
         switch (host.getStatus()) {
 
@@ -178,7 +185,7 @@ public class HostUpgradeCallback implements CommandCallback {
 
     private String getHostName(Guid hostId) {
         if (hostName == null) {
-            VdsStatic host = DbFacade.getInstance().getVdsStaticDao().get(hostId);
+            VdsStatic host = vdsStaticDao.get(hostId);
             hostName = host == null ? null : host.getName();
         }
 
