@@ -16,8 +16,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,9 +58,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
-import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -1836,11 +1832,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     private Map<String, String> createDiskParams(DiskImage diskImage) {
-        Map<String, String> diskParams =
-                createDiskUuidsMap(diskImage.getStoragePoolId(),
-                        diskImage.getStorageIds().get(0),
-                        diskImage.getId(),
-                        diskImage.getImageId());
+        Map<String, String> diskParams = vmInfoBuildUtils.createDiskUuidsMap(diskImage);
 
         if (!diskImage.getActive()) {
             diskParams.put(VdsProperties.Shareable, VdsProperties.Transient);
@@ -1851,14 +1843,6 @@ public class LibvirtVmXmlBuilder {
         }
 
         return diskParams;
-    }
-
-    private Map<String, String> createDiskUuidsMap(Guid poolId, Guid domainId, Guid imageId, Guid volumeId) {
-        return PDIVMapBuilder.create()
-                .setPoolId(poolId)
-                .setDomainId(domainId)
-                .setImageGroupId(imageId)
-                .setVolumeId(volumeId).build();
     }
 
     private void writeDiskTarget(DiskVmElement dve, String dev) {
@@ -1986,19 +1970,11 @@ public class LibvirtVmXmlBuilder {
                 .findAny().orElse(null);
         if (nonPayload != null || (vm.isRunOnce() && !StringUtils.isEmpty(cdPath))) {
             cdRomIndex = VmDeviceCommonUtils.getCdDeviceIndex(cdInterface);
+            String dev = vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex);
 
-            boolean isoOnBlockDomain = false;
-            if (vmInfoBuildUtils.isBlockDomainPath(cdPath)) {
-                isoOnBlockDomain = true;
-                String dev = vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex);
-                Matcher m = Pattern.compile(ValidationUtils.GUID).matcher(cdPath);
-                m.find();
-                Guid domainId = Guid.createGuidFromString(m.group());
-                m.find();
-                Guid imageId = Guid.createGuidFromString(m.group());
-                m.find();
-                Guid volumeId = Guid.createGuidFromString(m.group());
-                diskMetadata.put(dev, createDiskUuidsMap(vm.getStoragePoolId(), domainId, imageId, volumeId));
+            boolean isoOnBlockDomain = vmInfoBuildUtils.isBlockDomainPath(cdPath);
+            if (isoOnBlockDomain) {
+                diskMetadata.put(dev, vmInfoBuildUtils.createDiskUuidsMap(vm, cdPath));
             }
 
             writer.writeStartElement("disk");
@@ -2018,7 +1994,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             writer.writeStartElement("target");
-            writer.writeAttributeString("dev", vmInfoBuildUtils.makeDiskName(cdInterface, cdRomIndex));
+            writer.writeAttributeString("dev", dev);
             writer.writeAttributeString("bus", cdInterface);
             writer.writeEndElement();
 
