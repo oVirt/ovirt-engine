@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -72,6 +73,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -1267,5 +1269,32 @@ public class VmInfoBuildUtils {
             }
             break;
         }
+    }
+
+    public Map<String, String> createDiskUuidsMap(VM vm, String cdPath) {
+        Matcher m = Pattern.compile(ValidationUtils.GUID).matcher(cdPath);
+        m.find();
+        Guid domainId = Guid.createGuidFromString(m.group());
+        m.find();
+        Guid imageId = Guid.createGuidFromString(m.group());
+        m.find();
+        Guid volumeId = Guid.createGuidFromString(m.group());
+        return createDiskUuidsMap(vm.getStoragePoolId(), domainId, imageId, volumeId);
+    }
+
+    public Map<String, String> createDiskUuidsMap(DiskImage diskImage) {
+        return createDiskUuidsMap(
+                diskImage.getStoragePoolId(),
+                diskImage.getStorageIds().get(0),
+                diskImage.getId(),
+                diskImage.getImageId());
+    }
+
+    private Map<String, String> createDiskUuidsMap(Guid poolId, Guid domainId, Guid imageId, Guid volumeId) {
+        return PDIVMapBuilder.create()
+                .setPoolId(poolId)
+                .setDomainId(domainId)
+                .setImageGroupId(imageId)
+                .setVolumeId(volumeId).build();
     }
 }
