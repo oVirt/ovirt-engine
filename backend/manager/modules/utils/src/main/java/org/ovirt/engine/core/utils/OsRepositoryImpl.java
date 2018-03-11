@@ -341,6 +341,23 @@ public enum OsRepositoryImpl implements OsRepository {
         return graphicsAndDisplays;
     }
 
+    private String parseChipsetPrefixedValue(String line, ChipsetType chipset) {
+        if (StringUtils.isEmpty(line)) {
+            return null;
+        }
+
+        String defaultValue = null;
+        for (String element : line.split(",")) {
+            Pair<String, String> pair = parseSlashSeparatedPair(element);
+            if (pair == null) {
+                defaultValue = element.trim().toLowerCase();
+            } else if (chipset != null && chipset.getChipsetName().equalsIgnoreCase(pair.getFirst())) {
+                return pair.getSecond().toLowerCase();
+            }
+        }
+        return defaultValue;
+    }
+
     private static Pair<String, String> parseSlashSeparatedPair(String slashSeparatedString) {
         List<String> splitted = trimElements(slashSeparatedString.split("/"));
 
@@ -409,17 +426,8 @@ public enum OsRepositoryImpl implements OsRepository {
 
     @Override
     public String getCdInterface(int osId, Version version, ChipsetType chipset) {
-        String line = getValueByVersion(idToUnameLookup.get(osId), "devices.cdInterface", version);
-        String defaultInterface = null;
-        for (String element : line.split(",")) {
-            Pair<String, String> pair = parseSlashSeparatedPair(element);
-            if (pair == null) {
-                defaultInterface = element.trim().toLowerCase();
-            } else if (chipset != null && chipset.getChipsetName().equalsIgnoreCase(pair.getFirst())) {
-                return pair.getSecond().toLowerCase();
-            }
-        }
-        return defaultInterface;
+        return parseChipsetPrefixedValue(
+                getValueByVersion(idToUnameLookup.get(osId), "devices.cdInterface", version), chipset);
     }
 
     @Override
@@ -493,9 +501,9 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public UsbControllerModel getOsUsbControllerModel(int osId, Version version) {
-        final String osInfoName =
-                getValueByVersion(getUniqueOsNames().get(osId), "devices.usb.controller", version);
+    public UsbControllerModel getOsUsbControllerModel(int osId, Version version, ChipsetType chipset) {
+        final String osInfoName = parseChipsetPrefixedValue(
+                getValueByVersion(getUniqueOsNames().get(osId), "devices.usb.controller", version), chipset);
         if (StringUtils.isEmpty(osInfoName)) {
             return null;
         }

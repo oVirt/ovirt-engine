@@ -436,7 +436,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
         if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy() || oldTemplate.getVmType() != getVmTemplate().getVmType()) {
-            getVmDeviceUtils().updateUsbSlots(oldTemplate, getVmTemplate());
+            getVmDeviceUtils().updateUsbSlots(oldTemplate, getVmTemplate(), this::getCluster);
         }
         getVmDeviceUtils().updateVirtioScsiController(getVmTemplate(), getParameters().isVirtioScsiEnabled());
         if (getParameters().isBalloonEnabled() != null) {

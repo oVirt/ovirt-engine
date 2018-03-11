@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.bll.utils.EmulatedMachineUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -62,8 +62,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -720,35 +718,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected String getEffectiveEmulatedMachine() {
-        if (getVm().getCustomEmulatedMachine() != null) {
-            return getVm().getCustomEmulatedMachine();
-        }
-
-        // The 'default' to be set
-        String recentClusterDefault = getCluster().getEmulatedMachine();
-        if (getVm().getCustomCompatibilityVersion() == null) {
-            return recentClusterDefault;
-        }
-
-        String bestMatch = findBestMatchForEmulatedMachine(
-                recentClusterDefault,
-                Config.getValue(
-                        ConfigValues.ClusterEmulatedMachines,
-                        getVm().getCustomCompatibilityVersion().getValue()));
-        log.info("Emulated machine '{}' selected since Custom Compatibility Version is set for '{}'", bestMatch, getVm());
-        return bestMatch;
-    }
-
-    protected String findBestMatchForEmulatedMachine(
-            String currentEmulatedMachine,
-            List<String> candidateEmulatedMachines) {
-        if (candidateEmulatedMachines.contains(currentEmulatedMachine)) {
-            return currentEmulatedMachine;
-        }
-        return candidateEmulatedMachines
-                .stream()
-                .max(Comparator.comparingInt(s -> StringUtils.indexOfDifference(currentEmulatedMachine, s)))
-                .orElse(currentEmulatedMachine);
+        return EmulatedMachineUtils.getEffective(getVm().getStaticData(), this::getCluster);
     }
 
     /**
@@ -784,7 +754,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected void updateVmDevicesOnRun() {
         // Before running the VM we update its devices, as they may
         // need to be changed due to configuration option change
-        getVmDeviceUtils().updateVmDevicesOnRun(getVm());
+        getVmDeviceUtils().updateVmDevicesOnRun(getVm(), this::getCluster);
     }
 
     protected void updateCdPath() {

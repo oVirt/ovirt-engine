@@ -75,7 +75,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/windows_8/sysprepFileName").put("value", UNATTEND_XML);
         preferences.node("/os/windows_xp/id").put("value", "1");
         preferences.node("/os/windows_xp/sysprepFileName").put("value", SYSPREP_INF);
-        preferences.node("/os/rhel7/devices/usb/controller").put("value", "nec-xhci");
+        preferences.node("/os/rhel7/devices/usb/controller").put("value", "nec-xhci,q35/qemu_xhci");
         preferences.node("/os/rhel6/id").put("value", "999");
         preferences.node("/os/rhel6/devices/usb/controller").put("value", "nec-xhci");
         preferences.node("/os/rhel6/devices/usb/controller").put("value.4.0", "none");
@@ -325,15 +325,26 @@ public class OsRepositoryImplTest {
     public void testExistingUsbControllerModelWithoutVersion() {
         final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"),
-                null);
+                null,
+                ChipsetType.I440FX);
         assertEquals(UsbControllerModel.NEC_XHCI, model);
+    }
+
+    @Test
+    public void testExistingUsbControllerModelWithChipset() {
+        final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
+                OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"),
+                null,
+                ChipsetType.Q35);
+        assertEquals(UsbControllerModel.QEMU_XHCI, model);
     }
 
     @Test
     public void testExistingUsbControllerModelWithVersion() {
         final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel6"),
-                Version.v4_0);
+                Version.v4_0,
+                ChipsetType.I440FX);
         assertEquals(UsbControllerModel.NONE, model);
     }
 
@@ -341,7 +352,8 @@ public class OsRepositoryImplTest {
     public void testExistingUsbControllerModelWithNonExistingVersion() {
         final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel6"),
-                Version.v4_1);
+                Version.v4_1,
+                ChipsetType.I440FX);
         assertEquals(UsbControllerModel.NEC_XHCI, model);
     }
 
@@ -349,7 +361,8 @@ public class OsRepositoryImplTest {
     public void testNonExistingUsbControllerModel() {
         final UsbControllerModel model = OsRepositoryImpl.INSTANCE.getOsUsbControllerModel(
                 OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_8"),
-                null);
+                null,
+                ChipsetType.I440FX);
         assertNull(model);
     }
 }

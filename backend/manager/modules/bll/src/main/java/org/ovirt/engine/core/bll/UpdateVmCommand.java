@@ -288,7 +288,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         resourceManager.getVmManager(getVmId()).update(newVmStatic);
         if (getVm().isNotRunning()) {
             updateVmPayload();
-            getVmDeviceUtils().updateVmDevices(getParameters(), oldVm);
+            getVmDeviceUtils().updateVmDevices(getParameters(), oldVm, this::getCluster);
             updateWatchdog();
             updateRngDevice();
             updateGraphicsDevices();

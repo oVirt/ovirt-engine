@@ -265,9 +265,10 @@ public interface OsRepository {
     /**
      * @param osId operating system id
      * @param version may be null
-     * @return usb controller for given operating system and cluster version; may be {@code null} if not specified
+     * @param chipset the VM's chipset or null, if chipset is not defined
+     * @return USB controller for given operating system, cluster version and chipset; may be {@code null} if not specified
      */
-    UsbControllerModel getOsUsbControllerModel(int osId, Version version);
+    UsbControllerModel getOsUsbControllerModel(int osId, Version version, ChipsetType chipset);
 
     /**
      * @param osId operating system id

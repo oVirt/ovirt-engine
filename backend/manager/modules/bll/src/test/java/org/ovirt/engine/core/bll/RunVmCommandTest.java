@@ -18,7 +18,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.vdscommands.VDSCommandType.ConnectStorageServer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -56,7 +55,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -64,7 +62,6 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -462,60 +459,11 @@ public class RunVmCommandTest extends BaseCommandTest {
         assertEquals(RunVmFlow.RUN, command.getFlow());
     }
 
-    @Test
-    public void testEffectiveEmulatedMachineWithCustomSet() {
-        final VM vm = new VM();
-        final Cluster cluster = new Cluster();
-        cluster.setEmulatedMachine("cluster-pc-i440fx-rhel7.3.0");
-        vm.setCustomEmulatedMachine("testpc-i440fx-rhel7.3.0");
-        command.setCluster(cluster);
-        command.setVm(vm);
-        assertEquals("testpc-i440fx-rhel7.3.0", command.getEffectiveEmulatedMachine());
-    }
-
-    @Test
-    public void testEffectiveEmulatedMachineWithoutCustomSet() {
-        final VM vm = new VM();
-        final Cluster cluster = new Cluster();
-        cluster.setEmulatedMachine("cluster-pc-i440fx-rhel7.3.0");
-        command.setCluster(cluster);
-        command.setVm(vm);
-        assertEquals("cluster-pc-i440fx-rhel7.3.0", command.getEffectiveEmulatedMachine());
-    }
-
-    @Test
-    public void testEffectiveEmulatedMachineCCV() {
-        final VM vm = new VM();
-        final Cluster cluster = new Cluster();
-        cluster.setEmulatedMachine("pc-i440fx-rhel7.3.0");
-        vm.setCustomCompatibilityVersion(Version.v4_0);
-        command.setCluster(cluster);
-        command.setVm(vm);
-        List<String> supported = Arrays.asList("pc-i440fx-rhel7.2.0", "pc-i440fx-2.1", "pseries-rhel7.2.0");
-        mcr.mockConfigValue(ConfigValues.ClusterEmulatedMachines, Version.v4_0, supported);
-        assertEquals("pc-i440fx-rhel7.2.0", command.getEffectiveEmulatedMachine());
-    }
-
     private RunVmValidator mockSuccessfulRunVmValidator() {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
         when(runVmValidator.canRunVm(any(), any(), any(), any(), any(), anyBoolean())).thenReturn(true);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
-    }
-
-    @Test
-    public void testFindBestMatchForEmulateMachine() {
-        String original = "pc-i440fx-rhel7.3.0";
-        String bestMatch = "pc-i440fx-rhel7.2.0";
-        List<String> candidates = Arrays.asList("pc-i440fx-2.1", bestMatch, "pseries-rhel7.2.0");
-        assertEquals(bestMatch, command.findBestMatchForEmulatedMachine(original, candidates));
-    }
-
-    @Test
-    public void testFindBestMatchForEmulateMachineKeepsCurrent() {
-        String original = "pc-i440fx-rhel7.3.0";
-        List<String> candidates = Arrays.asList("pc-i440fx-2.1", original, "pseries-rhel7.2.0");
-        assertEquals(original, command.findBestMatchForEmulatedMachine(original, candidates));
     }
 
     @Test
