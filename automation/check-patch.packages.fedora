@@ -22,4 +22,4 @@ python2-psycopg2
 python2-pytest
 python3-devel
 rxjava
-yum-utils
+dnf-utils
