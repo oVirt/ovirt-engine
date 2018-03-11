@@ -273,9 +273,10 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         removeImageParams.setParentCommand(ActionType.RemoveImage);
         removeImageParams.setDbOperationScope(ImageDbOperationScope.NONE);
         removeImageParams.setShouldLockImage(false);
-        ActionReturnValue returnValue = runInternalActionWithTasksContext(
+        ActionReturnValue returnValue = runInternalAction(
                 ActionType.RemoveImage,
-                removeImageParams);
+                removeImageParams,
+                cloneContextAndDetachFromParent());
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         } else {
