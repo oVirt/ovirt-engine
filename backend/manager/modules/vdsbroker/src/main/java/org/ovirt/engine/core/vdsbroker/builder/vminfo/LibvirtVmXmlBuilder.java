@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -1104,15 +1104,12 @@ public class LibvirtVmXmlBuilder {
         int pinnedDriveIndex = 0;
 
         Map<Disk, VmDevice> vmDisksToDevices = vm.getDiskMap().values().stream()
-                        .filter(Disk::getPlugged)
-                        .collect(Collectors.toMap(Function.identity(),
-                                d -> deviceIdToDevice.get(new VmDeviceId(d.getId(), vm.getId()))));
-        for (Disk disk : vmInfoBuildUtils.getSortedDisks(vmDisksToDevices, vm.getId())) {
-            VmDevice device = deviceIdToDevice.get(new VmDeviceId(disk.getId(), vm.getId()));
-            if (device == null || !device.isManaged()) {
-                // This may happen to memory disks that do not have a corresponding device
-                continue;
-            }
+                        .map(d -> new Pair<>(d, deviceIdToDevice.get(new VmDeviceId(d.getId(), vm.getId()))))
+                        .filter(p -> p.getSecond() != null && p.getSecond().isManaged())
+                        .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
+        for (Entry<Disk, VmDevice> diskAndDevice : vmInfoBuildUtils.getSortedDisks(vmDisksToDevices, vm.getId())) {
+            Disk disk = diskAndDevice.getKey();
+            VmDevice device = diskAndDevice.getValue();
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             DiskInterface diskInterface = dve.getDiskInterface();
             int index = 0;
@@ -1128,7 +1125,7 @@ public class LibvirtVmXmlBuilder {
                 index = ideIndex;
                 break;
             case VirtIO:
-                pinTo = vmInfoBuildUtils.pinToIoThreads(vm, device, pinnedDriveIndex++);
+                pinTo = vmInfoBuildUtils.pinToIoThreads(vm, pinnedDriveIndex++);
                 virtioIndex++;
                 if (diskInterface.getName().equals(cdInterface)) {
                     while (virtioIndex == payloadIndex || virtioIndex == cdRomIndex) {

@@ -610,18 +610,19 @@ public class VmInfoBuildUtils {
         return defaultIndex;
     }
 
-    public List<Disk> getSortedDisks(Map<Disk, VmDevice> disksToDevices, Guid vmId) {
+    public List<Entry<Disk, VmDevice>> getSortedDisks(Map<Disk, VmDevice> disksToDevices, Guid vmId) {
         // Order the drives as following:
         // - Boot devices of non-snapshot disks
         // - Device address of the disk
         // - Boot devices of snapshot disks (i.e., boot disks of other VMs plugged to this one
         // - Then by the disk alias
-        List<Disk> disks = new ArrayList<>(disksToDevices.keySet());
-        disks.sort(Comparator.comparing((Disk d) -> !d.getDiskVmElementForVm(vmId).isBoot())
-                .thenComparing(d -> StringUtils.isEmpty(disksToDevices.get(d).getAddress()))
-                .thenComparing(d -> d.getDiskVmElementForVm(vmId).isBoot() && d.isDiskSnapshot())
-                .thenComparing(new LexoNumericNameableComparator<>()));
-        return disks;
+        List<Entry<Disk, VmDevice>> diskAndDevicePairs = new ArrayList<>(disksToDevices.entrySet());
+        diskAndDevicePairs.sort(
+                Comparator.comparing((Entry<Disk, VmDevice> e) -> !e.getKey().getDiskVmElementForVm(vmId).isBoot())
+                .thenComparing(e -> StringUtils.isEmpty(e.getValue().getAddress()))
+                .thenComparing(e -> e.getKey().getDiskVmElementForVm(vmId).isBoot() && e.getKey().isDiskSnapshot())
+                .thenComparing(e -> e.getKey(), new LexoNumericNameableComparator<>()));
+        return diskAndDevicePairs;
     }
 
     public List<Disk> getSortedDisks(VM vm) {
@@ -1216,7 +1217,7 @@ public class VmInfoBuildUtils {
         vmDevicesMonitoring.refreshVmDevices(vmId);
     }
 
-    public int pinToIoThreads(VM vm, VmDevice vmDevice, int pinnedDriveIndex) {
+    public int pinToIoThreads(VM vm, int pinnedDriveIndex) {
         // simple round robin e.g. for 2 threads and 4 disks it will be pinned like this:
         // disk 0 -> iothread 1
         // disk 1 -> iothread 2

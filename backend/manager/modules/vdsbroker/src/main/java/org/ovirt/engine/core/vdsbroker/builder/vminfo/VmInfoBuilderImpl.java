@@ -263,7 +263,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     break;
                 case VirtIO:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Virtio);
-                    int pinTo = vmInfoBuildUtils.pinToIoThreads(vm, vmDevice, pinnedDriveIndex++);
+                    int pinTo = vmInfoBuildUtils.pinToIoThreads(vm, pinnedDriveIndex++);
                     if (pinTo > 0) {
                         vmDevice.getSpecParams().put(VdsProperties.pinToIoThread, pinTo);
                     }
