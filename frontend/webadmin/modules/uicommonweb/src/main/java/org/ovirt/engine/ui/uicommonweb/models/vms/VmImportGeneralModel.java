@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -58,13 +61,15 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     private String fqdn;
     private String compatibilityVersion;
     private String optimizedForSystemProfile;
+    private Map<Guid, String> vmNamesMap;
+    private Guid editedVmId;
 
     private ImportSource source;
 
     public VmImportGeneralModel() {
         name = new EntityModel<>();
         operatingSystems = new ListModel<>();
-
+        vmNamesMap = new HashMap<>();
         registerNameAndOsListeners();
     }
 
@@ -74,6 +79,12 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
     public ImportSource getSource() {
         return source;
+    }
+
+    @Override public void cleanup() {
+        vmNamesMap.clear();
+        editedVmId = null;
+        super.cleanup();
     }
 
     @Override
@@ -92,12 +103,35 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         return operatingSystems;
     }
 
+    private void updateVmNamesMap(String editedName) {
+        if (editedVmId == null) {
+            VM vm = getEntity().getVm();
+            vmNamesMap.put(vm.getId(), vm.getName());
+            return;
+        }
+
+        vmNamesMap.put(editedVmId, editedName);
+    }
+
+    private void addVmOriginalNameToMapIfMissing() {
+        // Add the VM Id with it's original name to the map in case it is missing
+        if (!vmNamesMap.containsKey(editedVmId)) {
+            vmNamesMap.put(editedVmId, getEntity().getVm().getName());
+        }
+    }
+
+    private String getVmEditedName() {
+        return vmNamesMap.get(editedVmId);
+    }
+
     private void updateProperties() {
         VM vm = getEntity().getVm();
+        updateVmNamesMap(getName().getEntity());
+        editedVmId = vm.getId();
 
         super.updateProperties(vm.getId());
-
-        getName().setEntity(vm.getName());
+        addVmOriginalNameToMapIfMissing();
+        getName().setEntity(getVmEditedName());
         getOperatingSystems().setItems(AsyncDataProvider.getInstance().getOsIds(vm.getClusterArch()));
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
