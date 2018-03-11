@@ -24,8 +24,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
-import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -89,8 +87,6 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.dao.network.VnicProfileDao;
-import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.RngUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -133,23 +129,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Inject
     private VmDeviceDao vmDeviceDao;
     @Inject
-    private VnicProfileDao vnicProfileDao;
-    @Inject
-    private ProviderDao providerDao;
-    @Inject
     private VmPoolDao vmPoolDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
-    @Inject
-    private ProviderProxyFactory providerProxyFactory;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private DiskDao diskDao;
-
-    @Inject
-    private NetworkHelper networkHelper;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
