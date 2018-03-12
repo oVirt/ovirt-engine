@@ -129,7 +129,7 @@ public class OvfManager {
     private String generateOvfReaderErrorMessage(OvfReader ovf, Exception ex) {
         StringBuilder message = new StringBuilder();
         if (ovf == null) {
-            message.append("Error loading ovf, message")
+            message.append("Error loading ovf, message ")
                 .append(ex.getMessage());
         } else {
             message.append("OVF error: ")

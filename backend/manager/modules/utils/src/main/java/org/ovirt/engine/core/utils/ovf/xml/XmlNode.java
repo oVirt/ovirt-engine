@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils.ovf.xml;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Node;
@@ -28,7 +27,7 @@ public class XmlNode {
             xPath.setNamespaceContext(_xmlns);
             Object o = xPath.evaluate(string, node, XPathConstants.NODE);
             return o != null ? new XmlNode((Node) o) : null;
-        } catch (XPathExpressionException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to evaluate xpath: " + string, e);
         }
     }
@@ -39,7 +38,7 @@ public class XmlNode {
             XPath xPath = factory.newXPath();
             Object o = xPath.evaluate(string, node, XPathConstants.NODE);
             return o != null ? new XmlNode((Node) o) : null;
-        } catch (XPathExpressionException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to evaluate xpath: " + string, e);
         }
     }
@@ -50,7 +49,7 @@ public class XmlNode {
             XPath xPath = factory.newXPath();
             Object o = xPath.evaluate(string, node, XPathConstants.NODESET);
             return new XmlNodeList((NodeList) o);
-        } catch (XPathExpressionException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to evaluate xpath: " + string, e);
         }
     }
@@ -62,7 +61,7 @@ public class XmlNode {
             xPath.setNamespaceContext(xmlns);
             Object o = xPath.evaluate(string, node, XPathConstants.NODESET);
             return new XmlNodeList((NodeList) o);
-        } catch (XPathExpressionException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to evaluate xpath: " + string, e);
         }
     }
