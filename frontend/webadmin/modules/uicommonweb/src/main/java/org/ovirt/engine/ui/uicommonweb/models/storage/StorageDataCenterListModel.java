@@ -529,13 +529,15 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         setWindow(model);
 
         ArrayList<String> items = new ArrayList<>();
+        boolean isDataDomain = false;
         for (StorageDomain selected : getSelectedItems()) {
             items.add(selected.getName());
+            isDataDomain |= selected.getStorageDomainType().isDataDomain();
         }
         model.setItems(items);
 
-        model.getForce().setIsAvailable(true);
-        model.getForce().setIsChangeable(true);
+        model.getForce().setIsAvailable(isDataDomain);
+        model.getForce().setIsChangeable(isDataDomain);
         model.getForce().setEntity(false);
         model.setForceLabel(ConstantsManager.getInstance().getConstants().ignoreOVFUpdateFailure());
 
