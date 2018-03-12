@@ -132,17 +132,11 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
 
     @Override
     public void save(VdsDynamic vds) {
-        DnsResolverConfiguration reportedDnsResolverConfiguration = vds.getReportedDnsResolverConfiguration();
-        if (reportedDnsResolverConfiguration != null) {
-            dnsResolverConfigurationDao.save(reportedDnsResolverConfiguration);
-        }
-
         getCallsHandler().executeModification("InsertVdsDynamic", createFullParametersMapperForSave(vds));
     }
 
     @Override
     public void update(VdsDynamic vds) {
-        updateDnsResolverConfiguration(vds.getId(), vds.getReportedDnsResolverConfiguration());
         getCallsHandler().executeModification("UpdateVdsDynamic", createFullParametersMapper(vds));
     }
 
@@ -156,6 +150,13 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 dnsResolverConfigurationDao.update(reportedDnsResolverConfiguration);
             }
         }
+
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_guid", vdsId)
+                .addValue("dns_resolver_configuration_id",
+                        reportedDnsResolverConfiguration == null ? null : reportedDnsResolverConfiguration.getId());
+
+        getCallsHandler().executeModification("UpdateVdsDynamicDnsResolverConfigurationId", parameterSource);
     }
 
     @Override
@@ -311,19 +312,9 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled())
                 .addValue("pretty_name", vds.getPrettyName())
                 .addValue("hosted_engine_configured", vds.isHostedEngineConfigured())
-                .addValue("dns_resolver_configuration_id", getReportedDnsResolverConfigurationId(vds))
                 .addValue("in_fence_flow", vds.isInFenceFlow())
                 .addValue("kernel_features",
                         ObjectUtils.mapNullable(vds.getKernelFeatures(), JsonHelper::mapToJsonUnchecked));
-    }
-
-    private Guid getReportedDnsResolverConfigurationId(VdsDynamic vds) {
-        DnsResolverConfiguration reportedDnsResolverConfiguration = vds.getReportedDnsResolverConfiguration();
-        if (reportedDnsResolverConfiguration == null) {
-            return null;
-        }
-
-        return reportedDnsResolverConfiguration.getId();
     }
 
     @Override

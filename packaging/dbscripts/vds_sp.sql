@@ -265,7 +265,6 @@ CREATE OR REPLACE FUNCTION InsertVdsDynamic (
     v_is_hostdev_enabled BOOLEAN,
     v_kernel_args TEXT,
     v_hosted_engine_configured BOOLEAN,
-    v_dns_resolver_configuration_id UUID,
     v_in_fence_flow BOOLEAN,
     v_kernel_features JSONB
     )
@@ -333,7 +332,6 @@ BEGIN
             is_hostdev_enabled,
             kernel_args,
             hosted_engine_configured,
-            dns_resolver_configuration_id,
             in_fence_flow,
             kernel_features
             )
@@ -398,7 +396,6 @@ BEGIN
             v_is_hostdev_enabled,
             v_kernel_args,
             v_hosted_engine_configured,
-            v_dns_resolver_configuration_id,
             v_in_fence_flow,
             v_kernel_features
             );
@@ -487,7 +484,6 @@ CREATE OR REPLACE FUNCTION UpdateVdsDynamic (
     v_kernel_args TEXT,
     v_pretty_name VARCHAR(255),
     v_hosted_engine_configured BOOLEAN,
-    v_dns_resolver_configuration_id UUID,
     v_in_fence_flow BOOLEAN,
     v_kernel_features JSONB
     )
@@ -559,7 +555,6 @@ BEGIN
             kernel_args = v_kernel_args,
             pretty_name = v_pretty_name,
             hosted_engine_configured = v_hosted_engine_configured,
-            dns_resolver_configuration_id = v_dns_resolver_configuration_id,
             in_fence_flow = v_in_fence_flow,
             kernel_features = v_kernel_features
         WHERE vds_id = v_vds_id;
@@ -1330,6 +1325,18 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vds_dynamic
     SET net_config_dirty = v_net_config_dirty
+    WHERE vds_id = v_vds_guid;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateVdsDynamicDnsResolverConfigurationId (
+    v_vds_guid UUID,
+    v_dns_resolver_configuration_id UUID
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE vds_dynamic
+    SET dns_resolver_configuration_id = v_dns_resolver_configuration_id
     WHERE vds_id = v_vds_guid;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
