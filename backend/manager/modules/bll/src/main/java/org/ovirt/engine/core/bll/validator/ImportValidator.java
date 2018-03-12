@@ -112,7 +112,7 @@ public class ImportValidator {
             Map<Guid, String> failedDisksToImport) {
         for (DiskImage image : new ArrayList<>(images)) {
             StorageDomain sd = getStorageDomainDao().getForStoragePool(
-                    image.getStorageIds().get(0), getStoragePool().getId());
+                    image.getStorageIds().get(0), params.getStoragePoolId());
             ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
             if (!result.isValid()) {
                 log.error("Storage Domain '{}' with id '{}', could not be found for disk alias '{}' with image id '{}'",
