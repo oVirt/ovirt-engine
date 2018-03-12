@@ -198,11 +198,16 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         model.setHashName("maintenance_storage_domain"); //$NON-NLS-1$
         setWindow(model);
 
-        List<String> items = getSelectedItems().stream().map(StorageDomain::getName).collect(Collectors.toList());
+        boolean isDataDomain = false;
+        List<String> items = new ArrayList<>(getSelectedItems().size());
+        for (StorageDomain selected : getSelectedItems()) {
+            items.add(selected.getName());
+            isDataDomain |= selected.getStorageDomainType().isDataDomain();
+        }
         model.setItems(items);
 
-        model.getForce().setIsAvailable(true);
-        model.getForce().setIsChangeable(true);
+        model.getForce().setIsAvailable(isDataDomain);
+        model.getForce().setIsChangeable(isDataDomain);
         model.getForce().setEntity(false);
         model.setForceLabel(ConstantsManager.getInstance().getConstants().ignoreOVFUpdateFailure());
 
