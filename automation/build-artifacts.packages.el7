@@ -1,13 +1,9 @@
 autoconf
-dnf-utils
 git
 java-1.8.0-openjdk-devel
 make
 maven
-net-tools
-postgresql-contrib
-postgresql-jdbc
-postgresql-server
 pyflakes
 python-devel
 python-pep8
+yum-utils

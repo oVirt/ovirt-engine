@@ -1,9 +1,9 @@
-yum-utils
 autoconf
-make
-pyflakes
-python-pep8
-python-devel
+dnf-utils
 git
-maven
 java-1.8.0-openjdk-devel
+make
+maven
+pyflakes
+python-devel
+python-pep8
