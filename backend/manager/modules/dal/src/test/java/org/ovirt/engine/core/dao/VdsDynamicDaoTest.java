@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -33,9 +32,6 @@ public class VdsDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VdsDynamic, 
         VdsDynamic newDynamicVds = new VdsDynamic();
         newDynamicVds.setId(FixturesTool.VDS_JUST_STATIC_ID);
         newDynamicVds.setUpdateAvailable(true);
-        newDynamicVds.setReportedDnsResolverConfiguration(new DnsResolverConfiguration());
-        newDynamicVds.getReportedDnsResolverConfiguration().setNameServers(
-                Collections.singletonList(new NameServer("1.1.1.1")));
         return newDynamicVds;
     }
 
@@ -43,8 +39,6 @@ public class VdsDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VdsDynamic, 
     protected void updateExistingEntity() {
         existingEntity.setGlusterVersion(new RpmVersion("glusterfs-3.4.0.34.1u2rhs-1.el6rhs"));
         existingEntity.setLibrbdVersion(new RpmVersion("librbd1-0.80.9-1.fc21.x86_64_updated"));
-        existingEntity.getReportedDnsResolverConfiguration().setNameServers
-                (Collections.singletonList(new NameServer("1.1.1.1")));
     }
 
     @Override
@@ -145,5 +139,15 @@ public class VdsDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VdsDynamic, 
         boolean resultAfterUpdateStatus =
                 dao.checkIfExistsHostWithStatusInCluster(FixturesTool.GLUSTER_CLUSTER_ID, VDSStatus.Connecting);
         assertFalse(resultAfterUpdateStatus);
+    }
+
+    @Test
+    public void testUpdateDnsResolverConfiguration() {
+        VdsDynamic before = dao.get(getExistingEntityId());
+        before.getReportedDnsResolverConfiguration().setNameServers(
+                Collections.singletonList(new NameServer("1.1.1.1")));
+        dao.updateDnsResolverConfiguration(before.getId(), before.getReportedDnsResolverConfiguration());
+        VdsDynamic after = dao.get(getExistingEntityId());
+        assertEquals(before.getReportedDnsResolverConfiguration(), after.getReportedDnsResolverConfiguration());
     }
 }
