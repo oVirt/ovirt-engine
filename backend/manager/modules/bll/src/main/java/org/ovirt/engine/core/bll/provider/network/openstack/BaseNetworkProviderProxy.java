@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
@@ -354,11 +355,9 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         try {
             return request.execute();
         } catch (OpenStackResponseException e) {
-            log.error("{} (OpenStack response error code: {})", e.getMessage(), e.getStatus());
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, e, true);
         } catch (RuntimeException e) {
-            log.error("{}: {}", e.getMessage(), e.getCause() == null ? null : e.getCause().getMessage());
-            throw new EngineException(EngineError.PROVIDER_FAILURE, e);
+            throw new EngineException(EngineError.PROVIDER_FAILURE, ExceptionUtils.getRootCause(e), true);
         }
     }
 }

@@ -6,8 +6,15 @@ public class EngineException extends RuntimeException {
 
     private static final long serialVersionUID = 9070362191178977106L;
 
+    private boolean useRootCause;
+
     public EngineException(EngineError errCode, RuntimeException baseException) {
+        this(errCode, baseException, false);
+    }
+
+    public EngineException(EngineError errCode, Throwable baseException, boolean useRootCause) {
         super("EngineException:", baseException);
+        this.useRootCause = useRootCause;
         VDSError tempVar = new VDSError();
         tempVar.setCode(errCode);
         setVdsError(tempVar);
@@ -60,6 +67,10 @@ public class EngineException extends RuntimeException {
         this.vdsReturnValue = vdsReturnValue;
     }
 
+    public boolean isUseRootCause() {
+        return useRootCause;
+    }
+
     public EngineException() {
     }
 
@@ -67,7 +78,7 @@ public class EngineException extends RuntimeException {
     public String getMessage() {
         return String.format("%1$s (Failed with error %2$s and code %3$s)",
                 super.getMessage(),
-                privateVdsError.getCode(),
+                useRootCause ? super.getCause().getMessage() : privateVdsError.getCode(),
                 privateVdsError.getCode().getValue());
     }
 
