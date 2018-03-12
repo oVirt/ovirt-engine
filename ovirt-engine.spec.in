@@ -1129,6 +1129,9 @@ fi
 %{engine_data}/bin/engine-migrate-he.py
 
 %changelog
+* Mon Mar 12 2018 Lev Veyde <lveyde@redhat.com> - 4.1.10.3-1
+- Bump version to 4.1.10.3
+
 * Mon Feb 26 2018 Lev Veyde <lveyde@redhat.com> - 4.1.10.2-1
 - Bump version to 4.1.10.2
 
