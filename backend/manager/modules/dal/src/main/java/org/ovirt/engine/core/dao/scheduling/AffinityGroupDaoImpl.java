@@ -83,13 +83,12 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
                 .addValue("name", entity.getName())
                 .addValue("description", entity.getDescription())
                 .addValue("cluster_id", entity.getClusterId())
-                .addValue("vm_positive",
-                        entity.isVmAffinityEnabled() ? entity.isVmPositive() : false)
+                .addValue("vm_positive", entity.isVmPositive())
                 .addValue("vm_enforcing", entity.isVmEnforcing())
-                .addValue("vds_positive",
-                        entity.isVdsAffinityEnabled() ? entity.isVdsPositive() : false)
+                .addValue("vds_positive", entity.isVdsPositive())
                 .addValue("vds_enforcing", entity.isVdsEnforcing())
                 .addValue("vms_affinity_enabled", entity.isVmAffinityEnabled())
+                .addValue("vds_affinity_enabled", entity.isVdsAffinityEnabled())
                 .addValue("vm_ids", createArrayOf("uuid", entity.getVmIds().toArray()))
                 .addValue("vds_ids", createArrayOf("uuid", entity.getVdsIds().toArray()));
     }
@@ -111,10 +110,14 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
             affinityGroup.setVmEnforcing(rs.getBoolean("vm_enforcing"));
             affinityGroup.setVdsEnforcing(rs.getBoolean("vds_enforcing"));
 
-            if (rs.getBoolean("vds_positive")) {
-                affinityGroup.setVdsAffinityRule(EntityAffinityRule.POSITIVE);
+            if (rs.getBoolean("vds_affinity_enabled")) {
+                if (rs.getBoolean("vds_positive")) {
+                    affinityGroup.setVdsAffinityRule(EntityAffinityRule.POSITIVE);
+                } else {
+                    affinityGroup.setVdsAffinityRule(EntityAffinityRule.NEGATIVE);
+                }
             } else {
-                affinityGroup.setVdsAffinityRule(EntityAffinityRule.NEGATIVE);
+                affinityGroup.setVdsAffinityRule(EntityAffinityRule.DISABLED);
             }
 
             if (rs.getBoolean("vms_affinity_enabled")) {
