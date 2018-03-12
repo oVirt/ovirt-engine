@@ -160,7 +160,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && isSourceAndDestTheSame()
                 && validateSourceStorageDomain()
                 && validateDestStorage()
-                && checkTemplateInDestStorageDomain()
+                && checkTemplateDiskExistAndValidInDestStorageDomain()
                 && validateSpaceRequirements()
                 && validateVmSnapshotStatus()
                 && checkCanBeMoveInVm()
@@ -328,12 +328,15 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * The following method will check, if we can move disk to destination storage domain, when
      * it is based on template
      */
-    protected boolean checkTemplateInDestStorageDomain() {
+    protected boolean checkTemplateDiskExistAndValidInDestStorageDomain() {
         if (isMoveOperation()
                 && !Guid.Empty.equals(getImage().getImageTemplateId())) {
             DiskImage templateImage = diskImageDao.get(getImage().getImageTemplateId());
             if (!templateImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+            }
+            if (templateImage.getImageStatus() != ImageStatus.OK) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DISK_STATUS_IS_NOT_VALID);
             }
         }
         return true;
