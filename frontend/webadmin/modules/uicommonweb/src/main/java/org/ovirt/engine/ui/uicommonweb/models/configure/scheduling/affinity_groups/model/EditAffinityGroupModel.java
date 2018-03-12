@@ -18,17 +18,6 @@ public class EditAffinityGroupModel extends AffinityGroupModel {
         setTitle(ConstantsManager.getInstance().getConstants().editAffinityGroupsTitle());
         setHelpTag(HelpTag.edit_affinity_group);
         setHashName("edit_affinity_group"); //$NON-NLS-1$
-
-        getName().setEntity(getAffinityGroup().getName());
-        getDescription().setEntity(getAffinityGroup().getDescription());
-
-        // Get VM details
-        getVmAffinityRule().setSelectedItem(getAffinityGroup().getVmAffinityRule());
-        getVmAffinityEnforcing().setEntity(getAffinityGroup().isVmEnforcing());
-
-        // Get host details
-        getHostAffinityRule().setSelectedItem(getAffinityGroup().getVdsAffinityRule());
-        getHostAffinityEnforcing().setEntity(getAffinityGroup().isVdsEnforcing());
     }
 
 }

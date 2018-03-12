@@ -2913,7 +2913,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String polarityAffinityGroup();
 
+    String hostPolarityAffinityGroup();
+
     String enforceAffinityGroup();
+
+    String hostEnforceAffinityGroup();
 
     String hostMembersAffinityGroup();
 

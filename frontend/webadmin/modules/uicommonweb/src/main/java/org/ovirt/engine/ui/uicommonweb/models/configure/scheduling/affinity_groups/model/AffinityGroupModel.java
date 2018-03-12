@@ -49,24 +49,24 @@ public abstract class AffinityGroupModel extends Model {
         this.clusterId = clusterId;
         this.clusterName = clusterName;
 
-        setName(new EntityModel<String>());
-        setDescription(new EntityModel<String>());
+        setName(new EntityModel<>(getAffinityGroup().getName()));
+        setDescription(new EntityModel<>(getAffinityGroup().getDescription()));
 
         // Set VM details
         setVmAffinityRule(new ListModel<EntityAffinityRule>());
-        vmAffinityRule.setItems(Arrays.asList(EntityAffinityRule.values()), EntityAffinityRule.DISABLED);
-        setVmAffinityEnforcing(new EntityModel<>(true));
-        vmAffinityEnforcing.setIsChangeable(false);
-        vmAffinityRule.getSelectedItemChangedEvent().addListener((ev, sender, args) -> vmAffinityEnforcing.setIsChangeable(vmAffinityRule.getSelectedItem() != EntityAffinityRule.DISABLED));
+        vmAffinityRule.setItems(Arrays.asList(EntityAffinityRule.values()), affinityGroup.getVmAffinityRule());
+        setVmAffinityEnforcing(new EntityModel<>(affinityGroup.isVmEnforcing()));
+        vmAffinityRule.getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateChangeableEnforcing());
         setVmsSelectionModel(new VmsSelectionModel());
 
         // Set host details
         setHostAffinityRule(new ListModel<EntityAffinityRule>());
-        hostAffinityRule.setItems(Arrays.asList(EntityAffinityRule.values()), EntityAffinityRule.DISABLED);
-        setHostAffinityEnforcing(new EntityModel<>(true));
-        hostAffinityEnforcing.setIsChangeable(false);
-        hostAffinityRule.getSelectedItemChangedEvent().addListener((ev, sender, args) -> hostAffinityEnforcing.setIsChangeable(hostAffinityRule.getSelectedItem() != EntityAffinityRule.DISABLED));
+        hostAffinityRule.setItems(Arrays.asList(EntityAffinityRule.values()), affinityGroup.getVdsAffinityRule());
+        setHostAffinityEnforcing(new EntityModel<>(affinityGroup.isVdsEnforcing()));
+        hostAffinityRule.getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateChangeableEnforcing());
         setHostsSelectionModel(new HostsSelectionModel());
+
+        updateChangeableEnforcing();
 
         addCommands();
     }
@@ -92,6 +92,11 @@ public abstract class AffinityGroupModel extends Model {
         if (getVmsSelectionModel().isInitialized() && getHostsSelectionModel().isInitialized()) {
             stopProgress();
         }
+    }
+
+    private void updateChangeableEnforcing() {
+        vmAffinityEnforcing.setIsChangeable(vmAffinityRule.getSelectedItem() != EntityAffinityRule.DISABLED);
+        hostAffinityEnforcing.setIsChangeable(hostAffinityRule.getSelectedItem() != EntityAffinityRule.DISABLED);
     }
 
     protected AffinityGroup getAffinityGroup() {
