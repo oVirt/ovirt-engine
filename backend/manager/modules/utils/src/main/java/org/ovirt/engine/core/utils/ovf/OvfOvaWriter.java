@@ -22,56 +22,61 @@ public abstract class OvfOvaWriter extends OvfWriter {
     @Override
     protected void writeHeader() {
         super.writeHeader();
-        _writer.writeDefaultNamespace(OVF_URI);
+        _writer.writeDefaultNamespace(getOvfUri());
         _writer.setPrefix(OVIRT_PREFIX, OVIRT_URI);
         _writer.writeNamespace(OVIRT_PREFIX, OVIRT_URI);
     }
 
     @Override
+    public String getOvfUri() {
+        return OVF_URI;
+    }
+
+    @Override
     protected void writeFile(DiskImage image) {
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "href", image.getImageId().toString());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "id", image.getImageId().toString());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "size", String.valueOf(image.getActualSizeInBytes()));
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "href", image.getImageId().toString());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "id", image.getImageId().toString());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "size", String.valueOf(image.getActualSizeInBytes()));
     }
 
     @Override
     protected void writeDisk(DiskImage image) {
         DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "diskId", image.getId().toString());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "capacity",
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "diskId", image.getId().toString());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "capacity",
                 String.valueOf(convertBytesToGigabyte(image.getSize())));
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "capacityAllocationUnits", "byte * 2^30");
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "populatedSize",
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "capacityAllocationUnits", "byte * 2^30");
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "populatedSize",
                 String.valueOf(image.getActualSizeInBytes()));
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "parentRef", "");
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "fileRef", image.getImageId().toString());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "format", getVolumeImageFormat(image.getVolumeFormat()));
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "volume-format", image.getVolumeFormat().toString());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "volume-type", image.getVolumeType().toString());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk-interface", dve.getDiskInterface().toString());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "boot", String.valueOf(dve.isBoot()));
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "pass-discard", String.valueOf(dve.isPassDiscard()));
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "parentRef", "");
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "fileRef", image.getImageId().toString());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "format", getVolumeImageFormat(image.getVolumeFormat()));
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "volume-format", image.getVolumeFormat().toString());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "volume-type", image.getVolumeType().toString());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "disk-interface", dve.getDiskInterface().toString());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "boot", String.valueOf(dve.isBoot()));
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "pass-discard", String.valueOf(dve.isPassDiscard()));
         if (image.getDiskAlias() != null) {
-            _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk-alias", image.getDiskAlias());
+            _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "disk-alias", image.getDiskAlias());
         }
         if (image.getDiskDescription() != null) {
-            _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk-description", image.getDiskDescription());
+            _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "disk-description", image.getDiskDescription());
         }
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "wipe-after-delete",
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "wipe-after-delete",
                 String.valueOf(image.isWipeAfterDelete()));
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "description",
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "description",
                 StringUtils.defaultString(image.getDescription()));
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "disk_storage_type", image.getDiskStorageType().name());
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "cinder_volume_type",
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "disk_storage_type", image.getDiskStorageType().name());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "cinder_volume_type",
                 StringUtils.defaultString(image.getCinderVolumeType()));
     }
 
     @Override
     protected void writeOS() {
         _writer.writeStartElement("OperatingSystemSection");
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "id", Integer.toString(mapOsId(vmBase.getOsId())));
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "id", Integer.toString(mapOsId(vmBase.getOsId())));
         _writer.writeAttributeString(OVIRT_URI, "id", Integer.toString(vmBase.getOsId()));
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "required", "false");
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "required", "false");
         _writer.writeElement("Info", "Guest Operating System");
         _writer.writeElement("Description", osRepository.getOsName(vmBase.getOsId()));
         _writer.writeEndElement();
@@ -166,7 +171,7 @@ public abstract class OvfOvaWriter extends OvfWriter {
     @Override
     protected void startVirtualSystem() {
         _writer.writeStartElement("VirtualSystem");
-        _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "id", vmBase.getId().toString());
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "id", vmBase.getId().toString());
     }
 
     @Override
