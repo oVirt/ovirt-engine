@@ -140,10 +140,11 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                     failedDisksToImportForAuditLog))) {
                 return false;
             }
-            if (!validate(importValidator.validateStorageExistForUnregisteredEntity(getImages(),
-                    getParameters().isAllowPartialImport(),
-                    imageToDestinationDomainMap,
-                    failedDisksToImportForAuditLog))) {
+            if (getCluster() != null
+                    && !validate(importValidator.validateStorageExistForUnregisteredEntity(getImages(),
+                            getParameters().isAllowPartialImport(),
+                            imageToDestinationDomainMap,
+                            failedDisksToImportForAuditLog))) {
                 return false;
             }
             if (getVm() != null
