@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.profiles;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -10,11 +12,13 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
+import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public abstract class ProfileValidator<T extends ProfileBase> {
+    @Inject
+    private StorageQosDao storageQosDao;
 
     private final Guid profileId;
     private T profile;
@@ -27,10 +31,6 @@ public abstract class ProfileValidator<T extends ProfileBase> {
 
     public ProfileValidator(Guid profileId) {
         this.profileId = profileId;
-    }
-
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     public ValidationResult profileIsSet() {
@@ -47,7 +47,7 @@ public abstract class ProfileValidator<T extends ProfileBase> {
 
     public ValidationResult qosExistsOrNull() {
         return getProfile().getQosId() == null
-                || getDbFacade().getStorageQosDao().get(getProfile().getQosId()) != null
+                || storageQosDao.get(getProfile().getQosId()) != null
                 ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QOS_NOT_FOUND);
     }
