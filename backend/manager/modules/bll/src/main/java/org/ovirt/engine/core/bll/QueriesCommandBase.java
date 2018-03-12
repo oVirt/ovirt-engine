@@ -109,7 +109,7 @@ public abstract class QueriesCommandBase<P extends QueryParametersBase> extends 
                     Throwable th = ex instanceof EngineException ? ex : ex.getCause();
                     if (th instanceof EngineException) {
                         EngineException vdcExc = (EngineException) th;
-                        if (vdcExc.getErrorCode() != null) {
+                        if (vdcExc.getErrorCode() != null && !vdcExc.isUseRootCause()) {
                             returnValue.setExceptionString(vdcExc.getErrorCode().toString());
                         } else {
                             returnValue.setExceptionString(vdcExc.getMessage());
