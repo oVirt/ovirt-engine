@@ -95,7 +95,7 @@ public class BackendDisksResource
                                         localize(Messages.INCOMPLETE_PARAMS_DETAIL_TEMPLATE, "LogicalUnit", "", "add"),
                                         Response.Status.BAD_REQUEST);
         } else {
-            validateParameters(disk, 2, "provisionedSize|size", "format"); // Non lun disks require size and format
+            validateParameters(disk, 2, "provisionedSize", "format"); // Non lun disks require size and format
         }
     }
 
