@@ -7,11 +7,10 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -27,7 +26,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-@NonTransactiveCommandAttribute
+@InternalCommandAttribute
 public class InternalImportExternalNetworkCommand<P extends InternalImportExternalNetworkParameters> extends CommandBase<P> {
 
     @Inject
@@ -103,14 +102,6 @@ public class InternalImportExternalNetworkCommand<P extends InternalImportExtern
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getStoragePoolId(),
                 VdcObjectType.StoragePool, getActionType().getActionGroup()));
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        addCustomValue("NetworkName", getNetwork().getName());
-        addCustomValue("ProviderName", getParameters().getProviderName());
-        return getSucceeded() ? AuditLogType.NETWORK_IMPORT_EXTERNAL_NETWORK_INTERNAL :
-                AuditLogType.NETWORK_IMPORT_EXTERNAL_NETWORK_INTERNAL_FAILED;
     }
 
     @Override
