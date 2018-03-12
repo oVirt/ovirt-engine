@@ -43,6 +43,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected Version version;
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
+    public abstract String getOvfUri();
 
     public OvfWriter(VmBase vmBase, List<DiskImage> images, List<LunDisk> lunDisks, Version version) {
         _document = new XmlDocument();
@@ -64,13 +65,13 @@ public abstract class OvfWriter implements IOvfBuilder {
         _instanceId = 0;
         _writer.writeStartDocument(false);
 
-        _writer.setPrefix(OVF_PREFIX, OVF_URI);
+        _writer.setPrefix(OVF_PREFIX, getOvfUri());
         _writer.setPrefix(RASD_PREFIX, RASD_URI);
         _writer.setPrefix(VSSD_PREFIX, VSSD_URI);
         _writer.setPrefix(XSI_PREFIX, XSI_URI);
 
-        _writer.writeStartElement(OVF_URI, "Envelope");
-        _writer.writeNamespace(OVF_PREFIX, OVF_URI);
+        _writer.writeStartElement(getOvfUri(), "Envelope");
+        _writer.writeNamespace(OVF_PREFIX, getOvfUri());
         _writer.writeNamespace(RASD_PREFIX, RASD_URI);
         _writer.writeNamespace(VSSD_PREFIX, VSSD_URI);
         _writer.writeNamespace(XSI_PREFIX, XSI_URI);
@@ -107,37 +108,37 @@ public abstract class OvfWriter implements IOvfBuilder {
             VmInit vmInit = vmBase.getVmInit();
             _writer.writeStartElement("VmInit");
             if (vmInit.getHostname() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "hostname", vmInit.getHostname());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "hostname", vmInit.getHostname());
             }
             if (vmInit.getDomain() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "domain", vmInit.getDomain());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "domain", vmInit.getDomain());
             }
             if (vmInit.getTimeZone() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "timeZone", vmInit.getTimeZone());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "timeZone", vmInit.getTimeZone());
             }
             if (vmInit.getAuthorizedKeys() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "authorizedKeys", vmInit.getAuthorizedKeys());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "authorizedKeys", vmInit.getAuthorizedKeys());
             }
             if (vmInit.getRegenerateKeys() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "regenerateKeys", vmInit.getRegenerateKeys().toString());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "regenerateKeys", vmInit.getRegenerateKeys().toString());
             }
             if (vmInit.getDnsSearch() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "dnsSearch", vmInit.getDnsSearch());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "dnsSearch", vmInit.getDnsSearch());
             }
             if (vmInit.getDnsServers() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "dnsServers", vmInit.getDnsServers());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "dnsServers", vmInit.getDnsServers());
             }
             if (vmInit.getNetworks() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "networks", VmInitUtils.networkListToJson(vmInit.getNetworks()));
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "networks", VmInitUtils.networkListToJson(vmInit.getNetworks()));
             }
             if (vmInit.getWinKey() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "winKey", vmInit.getWinKey());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "winKey", vmInit.getWinKey());
             }
             if (vmInit.getRootPassword() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "rootPassword", vmInit.getRootPassword());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "rootPassword", vmInit.getRootPassword());
             }
             if (vmInit.getCustomScript() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "customScript", vmInit.getCustomScript());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "customScript", vmInit.getCustomScript());
             }
             _writer.writeEndElement();
         }
@@ -150,7 +151,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         vmBase.getInterfaces().stream().map(VmNetworkInterface::getNetworkName).filter(Objects::nonNull).distinct()
         .forEach(network -> {
             _writer.writeStartElement("Network");
-            _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "name", network);
+            _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "name", network);
             _writer.writeEndElement();
         });
         _writer.writeEndElement();
@@ -342,7 +343,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 }
 
                 _writer.writeStartElement("ProductSection");
-                _writer.writeAttributeString(OVF_PREFIX, OVF_URI, "class", product);
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "class", product);
                 _writer.writeElement("Info", app);
                 _writer.writeElement("Product", product);
                 _writer.writeElement("Version", version);

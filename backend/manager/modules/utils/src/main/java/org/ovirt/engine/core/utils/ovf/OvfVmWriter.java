@@ -110,7 +110,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
 
         for (Snapshot snapshot : snapshots) {
             _writer.writeStartElement("Snapshot");
-            _writer.writeAttributeString(OVF_URI, "id", snapshot.getId().toString());
+            _writer.writeAttributeString(getOvfUri(), "id", snapshot.getId().toString());
             _writer.writeElement("Type", snapshot.getType().name());
             _writer.writeElement("Description", snapshot.getDescription());
             _writer.writeElement("CreationDate", OvfParser.localDateToUtcDateString(snapshot.getCreationDate()));
@@ -145,7 +145,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
 
         affinityGroups.forEach(affinityGroup -> {
             _writer.writeStartElement(OvfProperties.AFFINITY_GROUP);
-            _writer.writeAttributeString(OVF_URI, "name", affinityGroup.getName());
+            _writer.writeAttributeString(getOvfUri(), "name", affinityGroup.getName());
             _writer.writeEndElement();
         });
 
@@ -163,7 +163,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
 
         affinityLabelsNames.forEach(label -> {
             _writer.writeStartElement(OvfProperties.AFFINITY_LABEL);
-            _writer.writeAttributeString(OVF_URI, "name", label.getName());
+            _writer.writeAttributeString(getOvfUri(), "name", label.getName());
             _writer.writeEndElement();
         });
 
