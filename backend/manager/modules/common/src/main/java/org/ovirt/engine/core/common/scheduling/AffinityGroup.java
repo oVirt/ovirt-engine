@@ -44,56 +44,45 @@ public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable 
     /**
      * affinity group vms polarity: positive/negative/disable(vm to vm affinity disabled)
      */
-    private EntityAffinityRule vmAffinityRule;
+    private EntityAffinityRule vmAffinityRule = EntityAffinityRule.DISABLED;
     /**
      * affinity group vms enforcement mode: hard(true)/soft(false)<br>
      * true: hard- filtering host that doesn't comply with affinity rule <br>
      * false: soft- best effort to comply with affinity rule
      */
-    private boolean vmEnforcing;
+    private boolean vmEnforcing = false;
     /**
      * list of vms uuids that are included in affinity group.<br>
      */
-    private List<Guid> vmIds;
+    private List<Guid> vmIds = new ArrayList<>();
     /**
      * list of VM entity names that are included in affinity group<br>
      * each item index matches to vmIds index,<br>
      * i.e. vmEntityNames.get(5) is the name of the entity with vmIds.get(5) id.
      */
     //TODO remove this list and change it to a set of objects that contain ids and names
-    private List<String> vmEntityNames;
+    private List<String> vmEntityNames = new ArrayList<>();
     /**
      * list of VDS entity names that are included in affinity group<br>
      * each item index matches to vdsIds index,<br>
      * i.e. vdsEntityNames.get(5) is the name of the entity with vdsIds.get(5) id.
      */
     //TODO remove this list and change it to a set of objects that contain ids and names
-    private List<String> vdsEntityNames;
+    private List<String> vdsEntityNames = new ArrayList<>();
     /**
      * affinity group vds polarity: positive(true)/negative(false- anti-affinity)
      */
-    private EntityAffinityRule vdsAffinityRule;
+    private EntityAffinityRule vdsAffinityRule = EntityAffinityRule.DISABLED;
     /**
      * affinity group vds enforcement mode: hard(true)/soft(false)<br>
      * true: hard- filtering host that doesn't comply with affinity rule <br>
      * false: soft- best effort to comply with affinity rule
      */
-    private boolean vdsEnforcing;
+    private boolean vdsEnforcing = false;
     /**
      * list of vds uuids that are included in affinity group.<br>
      */
-    private List<Guid> vdsIds;
-
-    public AffinityGroup() {
-        this.vmAffinityRule = EntityAffinityRule.POSITIVE;
-        this.vmEnforcing = true;
-        this.vdsAffinityRule = EntityAffinityRule.POSITIVE;
-        this.vdsEnforcing = false;
-        this.vmIds = new ArrayList<>();
-        this.vdsIds = new ArrayList<>();
-        this.vmEntityNames = new ArrayList<>();
-        this.vdsEntityNames = new ArrayList<>();
-    }
+    private List<Guid> vdsIds = new ArrayList<>();
 
     @Override
     public Guid getId() {
