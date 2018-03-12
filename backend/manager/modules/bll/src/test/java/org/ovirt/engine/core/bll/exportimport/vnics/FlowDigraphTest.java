@@ -25,6 +25,7 @@ import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 @RunWith(Parameterized.class)
 public class FlowDigraphTest {
 
+    private static final boolean GENERATE_DEBUG_INFO = false;
     private final String flowName;
     @Rule
     public MockitoRule initMocks = MockitoJUnit.rule();
@@ -56,6 +57,9 @@ public class FlowDigraphTest {
      */
     @Test
     public void printFlowAsDigraph() {
+        if (!GENERATE_DEBUG_INFO) {
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         underTest.getHead().print(sb);
         String graph = sb.toString().replaceAll("([a-z]{1})([A-Z]{1})", "$1\\\\n$2");

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
 public class MatchUserMappingToOvfVnicTest {
 
+    private static final boolean GENERATE_DEBUG_INFO = false;
     private static MapVnicDataPoints dataPoints;
     private static MatchUserMappingToOvfVnic matcher;
 
@@ -54,6 +55,9 @@ public class MatchUserMappingToOvfVnicTest {
     }
 
     private void print(VmNetworkInterface ovfVnicUnderTest, MapVnicsContext ctx, int count) {
+        if (!GENERATE_DEBUG_INFO) {
+            return;
+        }
         System.out.println("---------------- test #" + count + " ----------------");
         System.out.println("ovf vnic:" + ovfVnicUnderTest.getVnicProfileName() + " " + ovfVnicUnderTest.getNetworkName());
         ExternalVnicProfileMapping matched = ctx.getMatched().get(ovfVnicUnderTest);

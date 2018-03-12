@@ -10,9 +10,14 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 
-public class MapVnicFlowTestUtils {
+class MapVnicFlowTestUtils {
+
+    private static final boolean GENERATE_DEBUG_INFO = false;
 
     static void printDataPointDetails(List<VnicProfileView> views, ExternalVnicProfileMapping mapping, int count, String description) {
+        if (!GENERATE_DEBUG_INFO) {
+            return;
+        }
         System.out.println(String.format("[%s - %d] profile view from dao [%s], input mapping {%s}", description, count,
                 printProfileViews(views), printMapping(mapping)));
     }
@@ -52,6 +57,9 @@ public class MapVnicFlowTestUtils {
     }
 
     static void printContexts(MapVnicContext expected, MapVnicContext actual) {
+        if (!GENERATE_DEBUG_INFO) {
+            return;
+        }
         printContext(expected, "expected");
         printContext(actual, "actual");
         System.out.println("------------ Actual Trace Start --------------");
@@ -59,7 +67,7 @@ public class MapVnicFlowTestUtils {
         System.out.println("------------ Actual Trace End --------------");
     }
 
-    public static void printContext(MapVnicContext ctx, String ctxName) {
+    private static void printContext(MapVnicContext ctx, String ctxName) {
         System.out.println(ctxName + " " + ctx.print());
         if (ctx.getException() != null) {
             System.out.println(ctx.getException());
