@@ -44,7 +44,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.descriptionAffinityGroup(), "150px"); //$NON-NLS-1$
 
-        AbstractBooleanColumn<AffinityGroup> polarityColumn =
+        AbstractBooleanColumn<AffinityGroup> vmPolarityColumn =
                 new AbstractBooleanColumn<AffinityGroup>(constants.positiveAffinity(), constants.negativeAffinity()) {
 
             @Override
@@ -52,10 +52,10 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
                 return object.getVmPolarityBooleanObject();
             }
         };
-        polarityColumn.makeSortable();
-        getTable().addColumn(polarityColumn, constants.polarityAffinityGroup(), "100px"); //$NON-NLS-1$
+        vmPolarityColumn.makeSortable();
+        getTable().addColumn(vmPolarityColumn, constants.polarityAffinityGroup(), "100px"); //$NON-NLS-1$
 
-        AbstractBooleanColumn<AffinityGroup> enforceColumn =
+        AbstractBooleanColumn<AffinityGroup> vmEnforceColumn =
                 new AbstractBooleanColumn<AffinityGroup>(constants.hardEnforcingAffinity(), constants.softEnforcingAffinity()) {
 
                     @Override
@@ -63,8 +63,31 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
                         return object.isVmEnforcing();
                     }
                 };
-        enforceColumn.makeSortable();
-        getTable().addColumn(enforceColumn, constants.enforceAffinityGroup(), "100px"); //$NON-NLS-1$
+        vmEnforceColumn.makeSortable();
+        getTable().addColumn(vmEnforceColumn, constants.enforceAffinityGroup(), "100px"); //$NON-NLS-1$
+
+        AbstractBooleanColumn<AffinityGroup> hostPolarityColumn =
+                new AbstractBooleanColumn<AffinityGroup>(constants.positiveAffinity(), constants.negativeAffinity()) {
+
+                    @Override
+                    protected Boolean getRawValue(AffinityGroup object) {
+                        return object.getVdsPolarityBooleanObject();
+                    }
+                };
+        hostPolarityColumn.makeSortable();
+        getTable().addColumn(hostPolarityColumn, constants.hostPolarityAffinityGroup(), "100px"); //$NON-NLS-1$
+
+        AbstractBooleanColumn<AffinityGroup> hostEnforceColumn =
+                new AbstractBooleanColumn<AffinityGroup>(constants.hardEnforcingAffinity(), constants.softEnforcingAffinity()) {
+
+                    @Override
+                    protected Boolean getRawValue(AffinityGroup object) {
+                        return object.isVdsEnforcing();
+                    }
+                };
+        hostEnforceColumn.makeSortable();
+        getTable().addColumn(hostEnforceColumn, constants.hostEnforceAffinityGroup(), "100px"); //$NON-NLS-1$
+
 
         AbstractTextColumn<AffinityGroup> vmMembersColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
