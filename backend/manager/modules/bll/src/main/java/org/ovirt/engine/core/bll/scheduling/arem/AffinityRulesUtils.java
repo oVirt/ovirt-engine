@@ -193,6 +193,7 @@ public class AffinityRulesUtils {
         Set<Guid> conflictingHosts = new HashSet<>();
 
         List<AffinityGroup> affinityGroupsWithHosts = affinityGroups.stream()
+                .filter(AffinityGroup::isVdsAffinityEnabled)
                 .filter(ag -> !ag.getVdsIds().isEmpty())
                 .collect(Collectors.toList());
 
@@ -256,8 +257,10 @@ public class AffinityRulesUtils {
         Set<AffinityGroup> conflictingAffinityGroups = new HashSet<>();
         Set<Guid> conflictingVMs = new HashSet<>();
         Set<Guid> conflictingHosts = new HashSet<>();
-        List<AffinityGroup> affinityGroupsWithHosts = affinityGroups.stream().filter(affinityGroup -> !affinityGroup
-                .getVdsIds().isEmpty()).collect(Collectors.toList());
+        List<AffinityGroup> affinityGroupsWithHosts = affinityGroups.stream()
+                .filter(AffinityGroup::isVdsAffinityEnabled)
+                .filter(affinityGroup -> !affinityGroup.getVdsIds().isEmpty())
+                .collect(Collectors.toList());
 
         Set<Set<Guid>> unifiedPositive = AffinityRulesUtils.getUnifiedPositiveAffinityGroups(affinityGroups.stream()
                 .filter(AffinityGroup::isVmAffinityEnabled)
