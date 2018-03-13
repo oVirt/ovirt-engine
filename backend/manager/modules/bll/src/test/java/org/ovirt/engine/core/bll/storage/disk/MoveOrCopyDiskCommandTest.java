@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.QuotaValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -89,6 +90,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private QuotaValidator quotaValidator;
     @Mock
     private QuotaManager quotaManager;
+    @Mock
+    private DiskImagesValidator diskImagesValidator;
 
     /**
      * The command under test.
@@ -405,6 +408,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator();
         doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
         doReturn(diskValidator).when(command).createDiskValidator(disk);
+        doReturn(diskImagesValidator).when(command).createDiskImagesValidator(disk);
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
         doReturn(ActionType.MoveOrCopyDisk).when(command).getActionType();

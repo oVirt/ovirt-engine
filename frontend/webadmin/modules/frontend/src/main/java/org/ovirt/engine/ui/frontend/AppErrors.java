@@ -2893,7 +2893,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String UNSUPPORTED_FIREWALL_TYPE_FOR_CLUSTER_VERSION();
 
-    String CANNOT_MOVE_DISK();
+    String CANNOT_MOVE_DISK_SNAPSHOTS();
+
+    String CANNOT_MOVE_DISK_TEMPLATE();
 
     String CANNOT_LIVE_MIGRATE_VM_SHOULD_BE_IN_PAUSED_OR_UP_STATUS();
 }

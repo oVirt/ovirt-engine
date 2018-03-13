@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /**
  * A validator for the {@link DiskImage} class. Since most usecases require validations of multiple {@link DiskImage}s
@@ -278,6 +280,41 @@ public class DiskImagesValidator {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DUPLICATED_DISK_OR_IMAGE_IDS,
                     String.format("$ids %s", duplicated));
         }
+        return ValidationResult.VALID;
+    }
+
+    /***
+     * Block the move/copy of a disk that has snapshots created before it's extension
+     * on block pre-V4 domains.
+     * @see <a href="https://bugzilla.redhat.com/1523614">https://bugzilla.redhat.com/1523614</a>
+     * @see <a href="https://bugzilla.redhat.com/1523614">https://bugzilla.redhat.com/1554028</a>
+     */
+    public ValidationResult childDiskWasExtended(StorageDomain storageDomain) {
+        if (StorageFormatType.V4.compareTo(storageDomain.getStorageFormat()) > 0 &&
+                storageDomain.getStorageType().isBlockDomain()) {
+            DiskImage diskImage = diskImages.iterator().next();
+            List<DiskImage> diskImages = getDiskImageDao().getAllSnapshotsForImageGroup(diskImage.getId());
+
+            Guid imageTemplateId = diskImage.getImageTemplateId();
+            if (!Guid.isNullOrEmpty(imageTemplateId)) {
+                DiskImage templateDiskImage = getDiskImageDao().get(imageTemplateId);
+                if (templateDiskImage.getSize() < diskImage.getSize()) {
+                    return new ValidationResult(EngineMessage.CANNOT_MOVE_DISK_TEMPLATE);
+                }
+            }
+
+            boolean badSnapshotPresent = diskImages.stream().anyMatch(d -> d.getSize() < diskImage.getSize());
+
+            if (badSnapshotPresent) {
+                return new ValidationResult(EngineMessage.CANNOT_MOVE_DISK_SNAPSHOTS,
+                        ReplacementUtils.createSetVariableString("Snapshots",
+                                diskImages.stream()
+                                        .filter(d -> !d.getActive())
+                                        .map(DiskImage::getDescription)
+                                        .collect(Collectors.joining(", "))));
+            }
+        }
+
         return ValidationResult.VALID;
     }
 

@@ -311,7 +311,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private boolean diskContainsPreExtendSnapshots() {
-        return validate(createDiskValidator(getImage()).diskWasExtendedAfterSnapshotWasTaken(getStorageDomain()));
+        return validate(createDiskImagesValidator(getImage()).childDiskWasExtended(getStorageDomain()));
     }
 
     /**

@@ -63,6 +63,7 @@ public class DiskValidatorTest {
     private DiskValidator validator;
     private DiskImage disk;
     private DiskValidator lunValidator;
+    private DiskImagesValidator diskImagesValidator;
 
     private static DiskImage createDiskImage() {
         DiskImage disk = new DiskImage();
@@ -95,8 +96,11 @@ public class DiskValidatorTest {
         disk = createDiskImage();
         disk.setDiskAlias("disk1");
         validator = spy(new DiskValidator(disk));
+        diskImagesValidator = spy(new DiskImagesValidator(disk));
         doReturn(vmDao).when(validator).getVmDao();
         doReturn(diskImageDao).when(validator).getDiskImageDao();
+        doReturn(diskImageDao).when(diskImagesValidator).getDiskImageDao();
+
     }
 
     private void setupForLun() {
@@ -306,8 +310,8 @@ public class DiskValidatorTest {
 
         when(validator.getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId())).thenReturn(diskImages);
 
-        assertThat(validator.diskWasExtendedAfterSnapshotWasTaken(domain),
-                failsWith(EngineMessage.CANNOT_MOVE_DISK));
+        assertThat(diskImagesValidator.childDiskWasExtended(domain),
+                failsWith(EngineMessage.CANNOT_MOVE_DISK_SNAPSHOTS));
     }
 
     private LunDisk createLunDisk(ScsiGenericIO sgio) {
