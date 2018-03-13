@@ -215,6 +215,13 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
                         .addValue("sd_id", storageDomainId));
     }
 
+    @Override
+    public List<VmStatic> getByIds(List<Guid> ids) {
+        return getCallsHandler().executeReadList("GetVmStaticByVmGuids",
+                getRowMapper(),
+                getCustomMapSqlParameterSource().addValue("vm_guids", createArrayOfUUIDs(ids)));
+    }
+
     /**
      * JDBC row mapper for VM static
      */

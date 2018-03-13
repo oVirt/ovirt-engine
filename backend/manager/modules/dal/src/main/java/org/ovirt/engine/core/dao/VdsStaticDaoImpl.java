@@ -196,6 +196,13 @@ public class VdsStaticDaoImpl extends BaseDao implements VdsStaticDao {
                 customMapSqlParameterSource);
     }
 
+    @Override
+    public List<VdsStatic> getByIds(List<Guid> ids) {
+        return getCallsHandler().executeReadList("GetVdsStaticByVdsIds",
+                vdsStaticRowMapper,
+                getCustomMapSqlParameterSource().addValue("vds_ids", createArrayOfUUIDs(ids)));
+    }
+
     /**
      * Model of JSON structured column "kernel_cmdline"
      */

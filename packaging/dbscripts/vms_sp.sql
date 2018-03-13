@@ -1283,6 +1283,17 @@ LANGUAGE plpgsql;
 
 
 
+CREATE OR REPLACE FUNCTION GetVmStaticByVmGuids(v_vm_guids UUID[]) RETURNS SETOF vm_static STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT vm_static.*
+   FROM vm_static
+   WHERE vm_guid = ANY(v_vm_guids)
+       AND entity_type = 'VM';
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 
 DROP TYPE IF EXISTS GetNamesOfVmStaticDedicatedToVds_rs CASCADE;
 CREATE TYPE GetNamesOfVmStaticDedicatedToVds_rs AS (vm_name CHARACTER VARYING);

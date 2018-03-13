@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
@@ -34,6 +36,9 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     @Mock
     VmStaticDao vmStaticDao;
 
+    @Mock
+    private VdsStaticDao vdsStaticDao;
+
     AffinityGroupCRUDParameters parameters = new AffinityGroupCRUDParameters(null, createAffinityGroup());
 
     @Spy
@@ -45,9 +50,11 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     @Before
     public void setup() {
         command.setCluster(new Cluster());
+
         VmStatic vmStatic = new VmStatic();
         vmStatic.setClusterId(clusterId);
-        doReturn(vmStatic).when(vmStaticDao).get(any());
+        vmStatic.setId(vmId);
+        doReturn(Collections.singletonList(vmStatic)).when(vmStaticDao).getByIds(any());
     }
 
     @Test
@@ -72,7 +79,7 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
 
     @Test
     public void validate_vmNotExists_Test() {
-        doReturn(null).when(vmStaticDao).get(any());
+        doReturn(Collections.emptyList()).when(vmStaticDao).getByIds(any());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP);
     }
