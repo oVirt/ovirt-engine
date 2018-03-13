@@ -24,9 +24,10 @@
       }
 
       .sectionComment {
-        margin-top: 10px;
+        line-height: 30px;
         margin-left: 5px;
         font-style: italic;
+        float: left;
       }
 
       .infoIcon {
