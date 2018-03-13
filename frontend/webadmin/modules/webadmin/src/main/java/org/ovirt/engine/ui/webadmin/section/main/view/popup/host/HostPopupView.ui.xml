@@ -464,7 +464,7 @@
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
-                                    <b:Column size="SM_2" addStyleNames="pull-right text-right">
+                                    <b:Column size="SM_12" addStyleNames="text-right">
                                         <b:Button ui:field="kernelCmdlineResetButton" text="{constants.hostKernelCmdlineReset}" addStyleNames="{style.kernelCmdline-reset}"/>
                                     </b:Column>
                                 </b:Row>
