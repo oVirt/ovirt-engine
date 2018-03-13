@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -61,50 +63,72 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
         if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_CLUSTER_FOR_AFFINITY_GROUP);
         }
-        if (getParameters().getAffinityGroup().getVmIds() != null) {
-            VmStatic vmStatic = null;
-            Set<Guid> vmSet = new HashSet<>();
-            for (Guid vmId : getParameters().getAffinityGroup().getVmIds()) {
-                vmStatic = vmStaticDao.get(vmId);
-                if (vmStatic == null) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP, String
-                            .format("$entity %s", Entity_VM));
-                }
-                if (!Objects.equals(vmStatic.getClusterId(), getClusterId())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_ENTITY_NOT_IN_AFFINITY_GROUP_CLUSTER, String
-                            .format("$entity %s", Entity_VM));
-                }
-                if (vmSet.contains(vmStatic.getId())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_ENTITY_IN_AFFINITY_GROUP, String
-                            .format("$entity %s", Entity_VM));
-                } else {
-                    vmSet.add(vmStatic.getId());
-                }
-            }
-        }
-        if (getParameters().getAffinityGroup().getVdsIds() != null) {
-            VdsStatic vdsStatic = null;
-            Set<Guid> vdsSet = new HashSet<>();
-            for (Guid vdsId : getParameters().getAffinityGroup().getVdsIds()) {
-                vdsStatic = vdsStaticDao.get(vdsId);
-                if (vdsStatic == null) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP, String
-                            .format("$entity %s", Entity_VDS));
-                }
-                if (!Objects.equals(vdsStatic.getClusterId(), getClusterId())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_ENTITY_NOT_IN_AFFINITY_GROUP_CLUSTER, String
-                            .format("$entity %s", Entity_VDS));
-                }
-                if (vdsSet.contains(vdsStatic.getId())) {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_ENTITY_IN_AFFINITY_GROUP, String
-                            .format("$entity %s", Entity_VDS));
-                } else {
-                    vdsSet.add(vdsStatic.getId());
-                }
-            }
+
+        return validateVms() &&
+                validateHosts() &&
+                affinityGroupsWithoutConflict(getParameters().getAffinityGroup());
+
+    }
+
+    private boolean validateVms() {
+        List<Guid> vmIds = getParameters().getAffinityGroup().getVmIds();
+        if (vmIds.isEmpty()) {
+            return true;
         }
 
-        return affinityGroupsWithoutConflict(getParameters().getAffinityGroup());
+        Map<Guid, VmStatic> vms = vmStaticDao.getByIds(vmIds).stream()
+                .collect(Collectors.toMap(VmBase::getId, vm -> vm));
+
+        Set<Guid> vmSet = new HashSet<>();
+        for (Guid vmId : vmIds) {
+            VmStatic vmStatic = vms.get(vmId);
+            if (vmStatic == null) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP, String
+                        .format("$entity %s", Entity_VM));
+            }
+            if (!Objects.equals(vmStatic.getClusterId(), getClusterId())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_ENTITY_NOT_IN_AFFINITY_GROUP_CLUSTER, String
+                        .format("$entity %s", Entity_VM));
+            }
+            if (vmSet.contains(vmStatic.getId())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_ENTITY_IN_AFFINITY_GROUP, String
+                        .format("$entity %s", Entity_VM));
+            }
+
+            vmSet.add(vmStatic.getId());
+        }
+        return true;
+    }
+
+    private boolean validateHosts() {
+        List<Guid> hostIds = getParameters().getAffinityGroup().getVdsIds();
+        if (hostIds.isEmpty()) {
+            return true;
+        }
+
+        Map<Guid, VdsStatic> hosts = vdsStaticDao.getByIds(hostIds).stream()
+                .collect(Collectors.toMap(VdsStatic::getId, host -> host));
+
+        Set<Guid> vdsSet = new HashSet<>();
+        for (Guid vdsId : hostIds) {
+            VdsStatic vdsStatic = hosts.get(vdsId);
+            if (vdsStatic == null) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_ENTITY_FOR_AFFINITY_GROUP, String
+                        .format("$entity %s", Entity_VDS));
+            }
+            if (!Objects.equals(vdsStatic.getClusterId(), getClusterId())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_ENTITY_NOT_IN_AFFINITY_GROUP_CLUSTER, String
+                        .format("$entity %s", Entity_VDS));
+            }
+            if (vdsSet.contains(vdsStatic.getId())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DUPLICATE_ENTITY_IN_AFFINITY_GROUP, String
+                        .format("$entity %s", Entity_VDS));
+            }
+
+            vdsSet.add(vdsStatic.getId());
+        }
+
+        return true;
     }
 
     private boolean affinityGroupsWithoutConflict(AffinityGroup affinityGroup) {

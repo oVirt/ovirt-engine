@@ -54,6 +54,11 @@ public interface VdsStaticDao extends GenericDao<VdsStatic, Guid> {
     List<String> getAllHostNamesPinnedToVm(Guid vm);
 
     /**
+     * Get all VdsStatic with the given ids
+     */
+    List<VdsStatic> getByIds(List<Guid> ids);
+
+    /**
      * Separate update method for {@code last_stored_kernel_cmdline} column to prevent
      * race overwrites.
      */

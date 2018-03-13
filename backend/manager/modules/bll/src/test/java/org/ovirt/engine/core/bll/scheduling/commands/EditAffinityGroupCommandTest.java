@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
@@ -34,6 +36,9 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
 
     @Mock
     VmStaticDao vmStaticDao;
+
+    @Mock
+    private VdsStaticDao vdsStaticDao;
 
     AffinityGroupCRUDParameters parameters = new AffinityGroupCRUDParameters(null, createAffinityGroup());
 
@@ -52,7 +57,7 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
         doReturn(new Cluster()).when(command).getCluster();
         VmStatic vmStatic = new VmStatic();
         vmStatic.setClusterId(clusterId);
-        doReturn(vmStatic).when(vmStaticDao).get(any());
+        doReturn(Collections.singletonList(vmStatic)).when(vmStaticDao).getByIds(any());
         doReturn(clusterId).when(command).getClusterId();
     }
 

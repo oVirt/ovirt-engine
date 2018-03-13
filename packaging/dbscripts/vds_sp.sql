@@ -876,6 +876,19 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVdsStaticByVdsIds (v_vds_ids UUID[])
+RETURNS SETOF vds_static STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT vds_static.*
+    FROM vds_static
+    WHERE vds_id = ANY(v_vds_ids);
+
+    RETURN;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetVdsStaticByVdsName (v_host_name VARCHAR(255))
 RETURNS SETOF vds_static STABLE AS $PROCEDURE$
 BEGIN

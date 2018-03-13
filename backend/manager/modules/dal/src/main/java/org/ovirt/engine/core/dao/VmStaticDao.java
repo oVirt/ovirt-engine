@@ -164,4 +164,9 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
      * update vm_static.lease_sd_id for a given VM
      */
     void updateVmLeaseStorageDomainId(Guid vmId, Guid storageDomainId);
+
+    /**
+     * Get all VmStatic with the given ids
+     */
+    List<VmStatic> getByIds(List<Guid> ids);
 }
