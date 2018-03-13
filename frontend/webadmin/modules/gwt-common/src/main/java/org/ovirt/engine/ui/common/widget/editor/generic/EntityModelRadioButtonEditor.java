@@ -57,8 +57,6 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
             getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
             hideLabel();
         }
-        // patternfly hacks
-        getContentWidgetElement().addClassName("cbe_checkbox_pfly_fix"); //$NON-NLS-1$
     }
 
     public RadioButton asRadioButton() {

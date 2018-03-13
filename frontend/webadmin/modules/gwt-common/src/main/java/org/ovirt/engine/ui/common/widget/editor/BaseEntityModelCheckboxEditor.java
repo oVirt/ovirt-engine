@@ -23,8 +23,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidatedWidgetWithLabel<T, BaseEntityModelCheckbox<T>>
         implements IsEditor<WidgetWithLabelEditor<T, BaseEntityModelCheckboxEditor<T>>>, PatternFlyCompatible {
 
-    private static final String CBE_RIGHT_OF_LABEL_PFLY_FIX = "cbe_right_of_label_pfly_fix"; //$NON-NLS-1$
-    private static final String CBE_CHECKBOX_PFLY_FIX = "cbe_checkbox_pfly_fix"; //$NON-NLS-1$
     private static final String CBE_LABEL_PFLY_FIX = "cbe_label_pfly_fix"; //$NON-NLS-1$
     private static final String MAX_WIDTH = "maxWidth"; //$NON-NLS-1$
 
@@ -63,11 +61,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         }
 
         // patternfly hacks
-        getContentWidgetElement().addClassName(CBE_CHECKBOX_PFLY_FIX);
         getInternalLabelElement().addClassName(CBE_LABEL_PFLY_FIX);
-        if (!useCheckBoxWidgetLabel) {
-            addWrapperStyleName(CBE_RIGHT_OF_LABEL_PFLY_FIX);
-        }
         getContentWidgetElement().getStyle().setVerticalAlign(VerticalAlign.TOP);
 
     }
@@ -85,14 +79,12 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
             getCheckboxWidgetLabel().getStyle().setPosition(Position.RELATIVE);
             getCheckboxWidgetLabel().getStyle().setProperty(MAX_WIDTH, "94%"); //$NON-NLS-1$
             noPaddingNoFixes();
-            removeWrapperStyleName(CBE_RIGHT_OF_LABEL_PFLY_FIX);
         }
     }
 
     protected void noPaddingNoFixes() {
         getValidatedWidgetStyle().clearPadding();
         getCheckboxWidgetLabel().removeClassName(CBE_LABEL_PFLY_FIX);
-        getContentWidgetElement().removeClassName(CBE_CHECKBOX_PFLY_FIX);
         // checkboxes don't use form-control
         getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
         removeContentWidgetStyleName(Styles.FORM_CONTROL);
