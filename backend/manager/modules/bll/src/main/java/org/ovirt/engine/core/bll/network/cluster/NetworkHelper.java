@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -113,8 +112,10 @@ public class NetworkHelper {
         profile.setNetworkId(net.getId());
         profile.setPortMirroring(false);
 
-        NetworkFilter defaultNetworkFilter = resolveVnicProfileDefaultNetworkFilter();
-        profile.setNetworkFilterId(defaultNetworkFilter == null ? null : defaultNetworkFilter.getId());
+        if (!net.isExternal()) {
+            NetworkFilter defaultNetworkFilter = resolveVnicProfileDefaultNetworkFilter();
+            profile.setNetworkFilterId(defaultNetworkFilter == null ? null : defaultNetworkFilter.getId());
+        }
         return profile;
     }
 
@@ -212,13 +213,5 @@ public class NetworkHelper {
                     networkCluster.setRequired(false);
                     return networkCluster;
                 }).collect(Collectors.toList());
-    }
-
-    public ActionReturnValue addVnicProfileWithoutFilter(Network network, boolean publicUse) {
-        VnicProfile vnicProfile = createVnicProfile(network);
-        vnicProfile.setNetworkFilterId(null);
-        AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile);
-        parameters.setPublicUse(publicUse);
-        return backend.runInternalAction(ActionType.AddVnicProfile, parameters);
     }
 }

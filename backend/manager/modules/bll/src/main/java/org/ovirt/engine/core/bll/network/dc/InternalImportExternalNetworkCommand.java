@@ -54,13 +54,6 @@ public class InternalImportExternalNetworkCommand<P extends InternalImportExtern
 
         network.setId(addNetworkReturnValue.getActionReturnValue());
 
-        ActionReturnValue addVnicReturnValue =
-                networkHelper.addVnicProfileWithoutFilter(network, getParameters().isPublicUse());
-        if (!addVnicReturnValue.getSucceeded()) {
-            propagateFailure(addVnicReturnValue);
-            return;
-        }
-
         getReturnValue().setActionReturnValue(network.getId());
         setSucceeded(true);
     }
@@ -68,8 +61,8 @@ public class InternalImportExternalNetworkCommand<P extends InternalImportExtern
     private ActionReturnValue addNetwork(Guid dataCenterId, Network network, boolean attachToAllClusters) {
         AddNetworkStoragePoolParameters params =
                 new AddNetworkStoragePoolParameters(dataCenterId, network);
-        params.setVnicProfileRequired(false);
 
+        params.setVnicProfilePublicUse(getParameters().isPublicUse());
         if (attachToAllClusters) {
             params.setNetworkClusterList(networkHelper.createNetworkClusters(
                     getAllClusterIdsInDataCenter(dataCenterId)));

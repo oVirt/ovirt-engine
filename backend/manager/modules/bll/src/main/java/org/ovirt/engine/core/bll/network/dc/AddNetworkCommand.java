@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import javax.inject.Inject;
 
@@ -21,11 +22,13 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -73,15 +76,13 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         TransactionSupport.executeInNewTransaction(() -> {
             networkDao.save(getNetwork());
 
-            if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
-                vnicProfileDao.save(networkHelper.createVnicProfile(getNetwork()));
-            }
-
             networkHelper.addPermissionsOnNetwork(getUserId(), getNetwork().getId());
             return null;
         });
 
-        runClusterAttachment();
+        // Run cluster attachment and AddVnicProfile in separated thread
+        CompletableFuture.runAsync(this::runClusterAttachment, ThreadPoolUtil.getExecutorService())
+                .thenRunAsync(this::runAddVnicProfile);
 
         getReturnValue().setActionReturnValue(getNetwork().getId());
         setSucceeded(true);
@@ -161,7 +162,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     private void runClusterAttachment() {
         List<NetworkCluster> networkAttachments = getParameters().getNetworkClusterList();
         if (networkAttachments != null) {
-            ThreadPoolUtil.execute(() -> attachToClusters(networkAttachments, getNetwork().getId()));
+            attachToClusters(networkAttachments, getNetwork().getId());
         }
     }
 
@@ -170,6 +171,16 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         runInternalAction(ActionType.ManageNetworkClusters,
                 new ManageNetworkClustersParameters(networkAttachments),
                 getContext().clone().withoutLock());
+    }
+
+    private void runAddVnicProfile() {
+        if (getNetwork().isVmNetwork() && getParameters().isVnicProfileRequired()) {
+            VnicProfile vnicProfile = networkHelper.createVnicProfile(getNetwork());
+
+            AddVnicProfileParameters vnicProfileParameters = new AddVnicProfileParameters(vnicProfile);
+            vnicProfileParameters.setPublicUse(getParameters().isVnicProfilePublicUse());
+            runInternalAction(ActionType.AddVnicProfile, vnicProfileParameters, getContext().clone().withoutLock());
+        }
     }
 
     protected static class AddNetworkValidator extends NetworkValidator {

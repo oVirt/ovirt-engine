@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.dc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -69,7 +68,6 @@ public class InternalImportExternalNetworkCommandTest extends BaseCommandTest {
 
         ActionReturnValue returnValue = new ActionReturnValue();
         returnValue.setSucceeded(true);
-        when(networkHelper.addVnicProfileWithoutFilter(any(), anyBoolean())).thenReturn(returnValue);
         when(networkHelper.attachNetworkToClusters(eq(NETWORK_ID), any())).thenReturn(returnValue);
 
         QueryReturnValue queryReturnValue = new QueryReturnValue();
@@ -117,7 +115,6 @@ public class InternalImportExternalNetworkCommandTest extends BaseCommandTest {
 
     private void verifyCalls(boolean attachToAllClusters) {
         verify(backend).runInternalAction(eq(ActionType.AddNetwork), any(), any());
-        verify(networkHelper).addVnicProfileWithoutFilter(any(), anyBoolean());
 
         VerificationMode expectedNumberOfCalls = attachToAllClusters ? times(1) : never();
         verify(backend, expectedNumberOfCalls).runInternalQuery(eq(QueryType.GetClustersByStoragePoolId), any(), any());
