@@ -20,6 +20,8 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     private List<NetworkCluster> networkClusterList;
 
+    private boolean vnicProfilePublicUse;
+
     public AddNetworkStoragePoolParameters() {
         vnicProfileRequired = true;
     }
@@ -48,5 +50,13 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     public List<NetworkCluster> getNetworkClusterList() {
         return networkClusterList;
+    }
+
+    public boolean isVnicProfilePublicUse() {
+        return vnicProfilePublicUse;
+    }
+
+    public void setVnicProfilePublicUse(boolean vnicProfilePublicUse) {
+        this.vnicProfilePublicUse = vnicProfilePublicUse;
     }
 }
