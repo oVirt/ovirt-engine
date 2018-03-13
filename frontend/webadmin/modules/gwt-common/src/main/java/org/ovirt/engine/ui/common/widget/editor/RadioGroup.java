@@ -141,7 +141,6 @@ public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstr
             RadioButton radioButton = entry.getValue();
             if (usePatternfly) {
                 // patternfly hacks
-                Element.as(radioButton.getElement().getChild(0)).addClassName("cbe_checkbox_pfly_fix"); //$NON-NLS-1$
                 Element.as(radioButton.getElement().getChild(0)).getStyle().setVerticalAlign(VerticalAlign.TOP);
                 getRadioButtonWidgetLabel(radioButton).getStyle().setPaddingLeft(10, Unit.PX);
                 getRadioButtonWidgetLabel(radioButton).getStyle().setPosition(Position.RELATIVE);

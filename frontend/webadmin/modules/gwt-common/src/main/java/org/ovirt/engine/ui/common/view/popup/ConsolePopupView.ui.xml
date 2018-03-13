@@ -68,41 +68,41 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
 
                 <g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel} cpv_spicePanel_pfly_fix">
                     <g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle} cpv_spiceTitle_pfly_fix" />
-                    <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" />
-                    <w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
-                    <w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" usePatternFly="true" removeFormGroup="true" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" usePatternFly="true" removeFormGroup="true" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" usePatternFly="true" removeFormGroup="true" />
                     <t:WidgetTooltip ui:field="enableSpiceProxyTooltip">
-                        <w:EntityModelValueCheckBoxEditor ui:field="enableSpiceProxy" />
+                        <w:EntityModelValueCheckBoxEditor ui:field="enableSpiceProxy" usePatternFly="true" removeFormGroup="true" />
                     </t:WidgetTooltip>
 
                     <g:FlowPanel ui:field="wanOptionsPanel" >
-                        <w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" />
+                        <w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" usePatternFly="true" removeFormGroup="true" />
                     </g:FlowPanel>
 
                     <g:FlowPanel ui:field="disableSmartcardPanel" >
-                        <w:EntityModelValueCheckBoxEditor ui:field="disableSmartcard" />
+                        <w:EntityModelValueCheckBoxEditor ui:field="disableSmartcard" usePatternFly="true" removeFormGroup="true" />
                     </g:FlowPanel>
                 </g:FlowPanel>
 
                 <g:FlowPanel ui:field="vncPanel" addStyleNames="{style.protocolPanel}">
                     <v:WidgetWithInfo ui:field="vncHeadline" />
-                    <ge:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" />
+                    <ge:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" usePatternFly="true" removeFormGroup="true" />
                     <t:WidgetTooltip ui:field="noVncImplRadioButtonTooltip">
-                        <ge:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton"/>
+                        <ge:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton" usePatternFly="true" removeFormGroup="true" />
                     </t:WidgetTooltip>
                     <g:Label ui:field="vncTitle" text="{constants.vncOptions}" addStyleNames="{style.labelStyle}" />
-                    <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteVnc" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteVnc" usePatternFly="true" removeFormGroup="true" />
                 </g:FlowPanel>
 
                 <g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
                     <v:WidgetWithInfo ui:field="rdpHeadline" />
-                    <ge:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
-                    <ge:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
+                    <ge:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" usePatternFly="true" removeFormGroup="true" />
+                    <ge:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" usePatternFly="true" removeFormGroup="true" />
                     <t:WidgetTooltip ui:field="rdpPluginImplRadioButtonTooltip">
-                        <ge:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
+                        <ge:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" usePatternFly="true" removeFormGroup="true" />
                     </t:WidgetTooltip>
                     <g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
-                    <w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
+                    <w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" usePatternFly="true" removeFormGroup="true" />
                 </g:FlowPanel>
 
             </g:FlowPanel>
