@@ -261,6 +261,11 @@ public class NetworkValidator {
         return mtuValid().isValid();
     }
 
+    public ValidationResult isVmNetwork() {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK)
+                .when(!network.isVmNetwork());
+    }
+
     protected static class PluralMessages {
 
         private final EngineMessage entitiesReplacementPlural;

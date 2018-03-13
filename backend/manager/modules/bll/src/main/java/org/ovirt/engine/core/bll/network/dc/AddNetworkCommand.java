@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
@@ -80,9 +81,9 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             return null;
         });
 
-        // Run cluster attachment and AddVnicProfile in separated thread
+        // Run cluster attachment, AddVnicProfile and  auto-define in separated thread
         CompletableFuture.runAsync(this::runClusterAttachment, ThreadPoolUtil.getExecutorService())
-                .thenRunAsync(this::runAddVnicProfile);
+                .thenRunAsync(this::runAddVnicProfile).thenRunAsync(this::runAutodefine);
 
         getReturnValue().setActionReturnValue(getNetwork().getId());
         setSucceeded(true);
@@ -158,7 +159,6 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         return locks;
     }
 
-    //Run cluster attachment in separated thread
     private void runClusterAttachment() {
         List<NetworkCluster> networkAttachments = getParameters().getNetworkClusterList();
         if (networkAttachments != null) {
@@ -180,6 +180,14 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             AddVnicProfileParameters vnicProfileParameters = new AddVnicProfileParameters(vnicProfile);
             vnicProfileParameters.setPublicUse(getParameters().isVnicProfilePublicUse());
             runInternalAction(ActionType.AddVnicProfile, vnicProfileParameters, getContext().clone().withoutLock());
+        }
+    }
+
+    private void runAutodefine() {
+        if (getNetwork().isVmNetwork() && !getNetwork().isExternal()) {
+            runInternalAction(ActionType.AutodefineExternalNetwork,
+                    new IdParameters(getNetwork().getId()),
+                    getContext().clone().withoutLock());
         }
     }
 
