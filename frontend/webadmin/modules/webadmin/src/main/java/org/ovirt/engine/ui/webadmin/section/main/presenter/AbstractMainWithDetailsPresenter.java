@@ -32,7 +32,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
+import com.gwtplatform.mvp.client.presenter.slots.Slot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -62,11 +62,11 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         void setPlaceTransitionHandler(PlaceTransitionHandler handler);
     }
 
-    public static final NestedSlot TYPE_SetSearchPanel = new NestedSlot();
+    public static final Slot<SearchPanelPresenterWidget<?, ?>> TYPE_SetSearchPanel = new Slot<>();
 
-    public static final NestedSlot TYPE_SetBreadCrumbs = new NestedSlot();
+    public static final Slot<OvirtBreadCrumbsPresenterWidget<?, ?>> TYPE_SetBreadCrumbs = new Slot<>();
 
-    public static final NestedSlot TYPE_SetActionPanel = new NestedSlot();
+    public static final Slot<ActionPanelPresenterWidget<?, ?>> TYPE_SetActionPanel = new Slot<>();
 
     private final SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget;
 

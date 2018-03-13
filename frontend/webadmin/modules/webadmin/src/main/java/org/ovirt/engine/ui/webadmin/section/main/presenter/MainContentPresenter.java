@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import java.util.Set;
-
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Presenter;
@@ -9,8 +7,8 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.presenter.slots.IsSlot;
-import com.gwtplatform.mvp.client.presenter.slots.LegacySlotConvertor;
 import com.gwtplatform.mvp.client.presenter.slots.NestedSlot;
+import com.gwtplatform.mvp.client.presenter.slots.Slot;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
 public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef, MainContentPresenter.ProxyDef>
@@ -25,7 +23,7 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
 
     public static final NestedSlot TYPE_SetContent = new NestedSlot();
 
-    public static final NestedSlot TYPE_SetOverlay = new NestedSlot();
+    public static final Slot<AbstractOverlayPresenterWidget<?>> TYPE_SetOverlay = new Slot<>();
 
     @Inject
     public MainContentPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy) {
@@ -48,9 +46,8 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
 
     @Override
     public void onRevealOverlayContent(RevealOverlayContentEvent event) {
-        Set<PresenterWidget<?>> children = getChildren(LegacySlotConvertor.convert(TYPE_SetContent));
-        if (event.getContent() != null && !children.isEmpty()) {
-            event.getContent().setCurrentPlaceWidget(children.iterator().next());
+        if (event.getContent() != null) {
+            event.getContent().setCurrentPlaceWidget(getChild(TYPE_SetContent));
         }
         setInSlot(TYPE_SetOverlay, event.getContent());
     }
