@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
@@ -68,6 +69,9 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private DiskValidator diskValidator;
+
+    @Mock
+    private DiskImagesValidator diskImagesValidator;
 
     @Mock
     private DiskDao diskDao;
@@ -239,5 +243,6 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     private void mockValidators() {
         doReturn(diskValidator).when(command).createDiskValidator(any());
+        doReturn(diskImagesValidator).when(command).createDiskImagesValidator(any());
     }
 }

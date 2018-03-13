@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -198,30 +197,6 @@ public class DiskValidator {
                     EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_BY_UNDERLYING_STORAGE_WHEN_WAD_IS_ENABLED,
                     getStorageDomainNameVarReplacement(diskStorageDomain),
                     getDiskAliasVarReplacement());
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    /***
-     * Block the move/copy of a disk that has snapshots created before it's extension
-     * on block pre-V4 domains.
-     * @see <a href="https://bugzilla.redhat.com/1523614">https://bugzilla.redhat.com/1523614</a>
-     */
-    public ValidationResult diskWasExtendedAfterSnapshotWasTaken(StorageDomain storageDomain) {
-        if (StorageFormatType.V4.compareTo(storageDomain.getStorageFormat()) > 0 &&
-                storageDomain.getStorageType().isBlockDomain()) {
-            List<DiskImage> diskImages = getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
-            boolean badSnapshotsPresent = diskImages.stream().anyMatch(d -> d.getSize() < disk.getSize());
-
-            if (badSnapshotsPresent) {
-                return new ValidationResult(EngineMessage.CANNOT_MOVE_DISK,
-                        ReplacementUtils.createSetVariableString("Snapshots",
-                                diskImages.stream()
-                                        .filter(d -> !d.getActive())
-                                        .map(DiskImage::getDescription)
-                                        .collect(Collectors.joining(", "))));
-            }
         }
 
         return ValidationResult.VALID;

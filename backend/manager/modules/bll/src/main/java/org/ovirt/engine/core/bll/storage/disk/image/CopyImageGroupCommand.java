@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.inject.Instance;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -114,6 +116,10 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     public DiskValidator createDiskValidator(Disk disk) {
         return new DiskValidator(disk);
+    }
+
+    public DiskImagesValidator createDiskImagesValidator(DiskImage diskImage) {
+        return new DiskImagesValidator(Collections.singletonList(diskImage));
     }
 
     @Override
