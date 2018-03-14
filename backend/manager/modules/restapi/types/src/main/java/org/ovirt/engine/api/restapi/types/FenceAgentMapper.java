@@ -75,7 +75,8 @@ public class FenceAgentMapper {
                 : HostMapper.map(entity.getOptionsMap(), null));
         model.setEncryptOptions(entity.getEncryptOptions());
         model.setOrder(entity.getOrder());
-        model.setPassword(entity.getPassword());
+        // The password isn't mapped for security reasons:
+        // model.setPassword(entity.getPassword());
         model.setUsername(entity.getUser());
         model.setType(entity.getType());
         model.setPort(entity.getPort());
