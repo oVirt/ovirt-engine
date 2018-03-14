@@ -108,7 +108,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         if (!super.validate()) {
             return false;
         }
-        ArrayList<DiskImage> disks = new ArrayList(getVmTemplate().getDiskTemplateMap().values());
+        ArrayList<DiskImage> disks = new ArrayList<>(getVmTemplate().getDiskTemplateMap().values());
         setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), disks);
         getVmTemplate().setImages(disks);
         if (getParameters().isImagesExistOnTargetStorageDomain() &&
@@ -193,9 +193,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     }
 
     private void setImagesWithStoragePoolId(Guid storagePoolId, List<DiskImage> diskImages) {
-        for (DiskImage diskImage : diskImages) {
-            diskImage.setStoragePoolId(storagePoolId);
-        }
+        diskImages.forEach(diskImage -> diskImage.setStoragePoolId(storagePoolId));
     }
 
     private void initVmTemplate() {
@@ -222,7 +220,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
                 // For quota, update disks when required
                 if (getParameters().getDiskTemplateMap() != null) {
-                    ArrayList imageList = new ArrayList<>(getParameters().getDiskTemplateMap().values());
+                    ArrayList<DiskImage> imageList = new ArrayList<>(getParameters().getDiskTemplateMap().values());
                     vmTemplateFromConfiguration.setDiskList(imageList);
                     ensureDomainMap(imageList, getParameters().getDestDomainId());
                 }
@@ -287,9 +285,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         if (getParameters().isImagesExistOnTargetStorageDomain()) {
             if (!getImages().isEmpty()) {
                 findAndSaveDiskCopies();
-                getImages().stream().forEach(diskImage -> {
-                    initQcowVersionForDisks(diskImage.getId());
-                });
+                getImages().stream().map(DiskImage::getId).forEach(this::initQcowVersionForDisks);
             }
             unregisteredOVFDataDao.removeEntity(ovfEntityData.getEntityId(), null);
             unregisteredDisksDao.removeUnregisteredDiskRelatedToVM(ovfEntityData.getEntityId(), null);
@@ -327,11 +323,10 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         List<OvfEntityData> ovfEntityDataList =
                 unregisteredOVFDataDao.getByEntityIdAndStorageDomain(ovfEntityData.getEntityId(), null);
         List<ImageStorageDomainMap> copiedTemplateDisks = new LinkedList<>();
-        for (OvfEntityData ovfEntityDataFetched : ovfEntityDataList) {
-            populateDisksCopies(copiedTemplateDisks,
-                    getImages(),
-                    ovfEntityDataFetched.getStorageDomainId());
-        }
+        ovfEntityDataList.forEach(ovfEntityData -> populateDisksCopies(
+                copiedTemplateDisks,
+                getImages(),
+                ovfEntityData.getStorageDomainId()));
         saveImageStorageDomainMapList(copiedTemplateDisks);
     }
 
@@ -380,9 +375,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private void saveImageStorageDomainMapList(final List<ImageStorageDomainMap> copiedTemplateDisks) {
         if (!copiedTemplateDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(() -> {
-                for (ImageStorageDomainMap imageStorageDomainMap : copiedTemplateDisks) {
-                    imageStorageDomainMapDao.save(imageStorageDomainMap);
-                }
+                copiedTemplateDisks.forEach(imageStorageDomainMapDao::save);
                 return null;
             });
         }

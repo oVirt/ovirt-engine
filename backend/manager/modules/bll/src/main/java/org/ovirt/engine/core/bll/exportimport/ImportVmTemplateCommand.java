@@ -426,7 +426,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     }
 
     protected void addPermissionsToDB() {
-        // Left empty to be overriden in ImportVmTemplateFromConfigurationCommand
+        // Left empty to be overridden in ImportVmTemplateFromConfigurationCommand
     }
 
     private void updateOriginalTemplateNameOnDerivedVms() {
@@ -451,37 +451,10 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             for (DiskImage disk : disks) {
                 Guid originalDiskId = newDiskIdForDisk.get(disk.getId()).getId();
                 Guid destinationDomain = imageToDestinationDomainMap.get(originalDiskId);
-                MoveOrCopyImageGroupParameters p =
-                        new MoveOrCopyImageGroupParameters(containerID,
-                                originalDiskId,
-                                newDiskIdForDisk.get(disk.getId()).getImageId(),
-                                disk.getId(),
-                                disk.getImageId(),
-                                destinationDomain,
-                                ImageOperation.Copy);
 
-                p.setParentCommand(getActionType());
-                p.setUseCopyCollapse(true);
-                p.setVolumeType(disk.getVolumeType());
-                p.setVolumeFormat(disk.getVolumeFormat());
-                p.setCopyVolumeType(CopyVolumeType.SharedVol);
-                p.setSourceDomainId(getParameters().getSourceDomainId());
-                p.setForceOverride(getParameters().getForceOverride());
-                p.setImportEntity(true);
-                p.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, containerID));
-                p.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
-                for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
-                    if (originalDiskId.equals(diskImage.getId())) {
-                        p.setQuotaId(diskImage.getQuotaId());
-                        p.setDiskProfileId(diskImage.getDiskProfileId());
-                        break;
-                    }
-                }
-
-                p.setParentParameters(getParameters());
                 ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                         ActionType.CopyImageGroup,
-                        p);
+                        buildMoveOrCopyImageGroupParameters(containerID, disk, originalDiskId, destinationDomain));
 
                 if (!vdcRetValue.getSucceeded()) {
                     throw vdcRetValue.getFault() != null ? new EngineException(vdcRetValue.getFault().getError())
@@ -492,6 +465,41 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             }
             return null;
         });
+    }
+
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParameters(final Guid containerID,
+            DiskImage disk,
+            Guid originalDiskId,
+            Guid destinationDomain) {
+        MoveOrCopyImageGroupParameters p =
+                new MoveOrCopyImageGroupParameters(containerID,
+                        originalDiskId,
+                        newDiskIdForDisk.get(disk.getId()).getImageId(),
+                        disk.getId(),
+                        disk.getImageId(),
+                        destinationDomain,
+                        ImageOperation.Copy);
+
+        p.setParentCommand(getActionType());
+        p.setUseCopyCollapse(true);
+        p.setVolumeType(disk.getVolumeType());
+        p.setVolumeFormat(disk.getVolumeFormat());
+        p.setCopyVolumeType(CopyVolumeType.SharedVol);
+        p.setSourceDomainId(getParameters().getSourceDomainId());
+        p.setForceOverride(getParameters().getForceOverride());
+        p.setImportEntity(true);
+        p.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, containerID));
+        p.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
+        for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
+            if (originalDiskId.equals(diskImage.getId())) {
+                p.setQuotaId(diskImage.getQuotaId());
+                p.setDiskProfileId(diskImage.getDiskProfileId());
+                break;
+            }
+        }
+
+        p.setParentParameters(getParameters());
+        return p;
     }
 
     protected void addVmTemplateToDb() {
@@ -579,10 +587,8 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     }
 
     protected void removeNetwork() {
-        List<VmNic> list = vmNicDao.getAllForTemplate(getVmTemplateId());
-        for (VmNic iface : list) {
-            vmNicDao.remove(iface.getId());
-        }
+        List<VmNic> nics = vmNicDao.getAllForTemplate(getVmTemplateId());
+        nics.stream().map(VmNic::getId).forEach(vmNicDao::remove);
     }
 
     @Override
