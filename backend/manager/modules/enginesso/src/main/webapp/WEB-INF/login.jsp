@@ -26,7 +26,7 @@
     </c:if>
 
     <c:if test="${ssoSession.clientId == null}">
-        <c:redirect url="${ssoSession.engineUrl}" />
+        <c:redirect url="${applicationScope['ovirt-ssoContext'].getEngineUrl(pageContext.request)}" />
     </c:if>
 
     <c:if test="${ssoSession.reauthenticate == true}">

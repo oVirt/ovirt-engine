@@ -10,7 +10,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.conn.util.InetAddressUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
@@ -209,6 +212,17 @@ public class SsoContext implements Serializable{
 
     public String getEngineUrl() {
         return engineUrl;
+    }
+
+    public String getEngineUrl(HttpServletRequest request) {
+        String serverName = request.getServerName();
+        serverName = InetAddressUtils.isIPv6Address(serverName) ? String.format("[%s]", serverName) : serverName;
+
+        return String.format("%s://%s:%s%s",
+                request.getScheme(),
+                serverName,
+                request.getServerPort(),
+                ssoLocalConfig.getProperty("ENGINE_URI"));
     }
 
     public void setScopeDependencies(Map<String, List<String>> scopeDependenciesMap) {
