@@ -3,8 +3,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="obrand" uri="obrand" %>
-<fmt:setBundle basename="messages" var="changepasswordpage" />
 <fmt:setLocale value="${locale}" />
+<fmt:setBundle basename="messages" var="changepasswordpage" />
 <!DOCTYPE html>
 <html class="login-pf">
 <head>
