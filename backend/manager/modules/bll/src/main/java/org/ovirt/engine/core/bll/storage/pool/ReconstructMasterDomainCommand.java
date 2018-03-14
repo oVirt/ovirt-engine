@@ -116,6 +116,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     protected boolean reconstructMaster() {
+        updateStoragePoolMasterDomainVersionInDiffTransaction();
         isLastMaster = proceedStorageDomainTreatmentByDomainType(getNewMasterStorageDomain(), false);
 
         // To issue a reconstructMaster you need to set the domain inactive unless the selected domain is the current master
