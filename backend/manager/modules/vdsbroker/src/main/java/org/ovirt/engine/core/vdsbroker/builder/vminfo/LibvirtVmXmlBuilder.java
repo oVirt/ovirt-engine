@@ -1118,8 +1118,9 @@ public class LibvirtVmXmlBuilder {
                 break;
             case SPAPR_VSCSI:
             case VirtIO_SCSI:
-                index = sdIndex = skipCdIndices(++sdIndex, diskInterface);
                 vmInfoBuildUtils.calculateAddressForScsiDisk(vm, disk, device, vmDeviceSpaprVscsiUnitMap, vmDeviceVirtioScsiUnitMap);
+            case SATA:
+                index = sdIndex = skipCdIndices(++sdIndex, diskInterface);
                 break;
             }
 

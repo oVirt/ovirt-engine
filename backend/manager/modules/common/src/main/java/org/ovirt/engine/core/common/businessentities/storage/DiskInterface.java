@@ -5,7 +5,8 @@ public enum DiskInterface {
     IDE("ide"),
     VirtIO_SCSI("scsi"),
     VirtIO("virtio"),
-    SPAPR_VSCSI("scsi");
+    SPAPR_VSCSI("scsi"),
+    SATA("sata");
 
     private String name;
 

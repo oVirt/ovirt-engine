@@ -480,11 +480,10 @@ public class VmDeviceCommonUtils {
     public static int getCdPayloadDeviceIndex(String cdInterface) {
         switch (cdInterface) {
         case "scsi":
+        case "sata":
             return 1;
         case "ide":
             return 3;
-        case "sata":
-            return 1;
         default:
             return -1;
         }
