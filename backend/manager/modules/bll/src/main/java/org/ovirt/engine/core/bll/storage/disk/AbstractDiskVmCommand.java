@@ -263,10 +263,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
                 if (diskInterface == DiskInterface.VirtIO_SCSI) {
                     Map<Integer, Map<VmDevice, Integer>>  vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
-                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap), vmDevice, virtioScsiIndex, false);
+                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap), vmDevice, virtioScsiIndex, false, false);
                 } else if (diskInterface == DiskInterface.SPAPR_VSCSI) {
                     Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
-                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap), vmDevice, sPaprVscsiIndex, true);
+                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap), vmDevice, sPaprVscsiIndex, true, true);
                 }
             } finally {
                 lockManager.releaseLock(vmDiskHotPlugEngineLock);
@@ -289,9 +289,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                                        Map<VmDevice, Integer> vmDeviceUnitMap,
                                        VmDevice vmDevice,
                                        int controllerIndex,
-                                       boolean reserveFirstAddress) {
+                                       boolean reserveFirstAddress,
+                                       boolean reserveForScsiCd) {
         Map<String, String> addressMap;
-        int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress);
+        int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress, reserveForScsiCd && controllerIndex == 0);
 
         // If address has been already set before, verify its uniqueness;
         // Otherwise, set address according to the next available unit.
