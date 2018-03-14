@@ -260,6 +260,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             deactivateCinderStorageDomain();
             return;
         }
+        StorageDomainStatus lastStatus = getStorageDomain().getStatus();
         final StoragePoolIsoMap map =
                 storagePoolIsoMapDao.get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
@@ -270,38 +271,59 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
         final StorageDomain newMaster;
 
-        if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
+        boolean isMaster = getStorageDomain().getStorageDomainType() == StorageDomainType.Master;
+        if (isMaster) {
             newMaster = electNewMaster();
-            isLastMaster = proceedStorageDomainTreatmentByDomainType(newMaster, true);
+
         } else {
             newMaster = null;
-            isLastMaster = false;
         }
 
         final Guid newMasterId = newMaster != null ? newMaster.getId() : Guid.Empty;
 
-        if (isLastMaster) {
-            executeInNewTransaction(() -> {
-                getCompensationContext().snapshotEntityStatus(getStoragePool());
-                getStoragePool().setStatus(StoragePoolStatus.Maintenance);
-                storagePoolDao.updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
-                getCompensationContext().stateChanged();
-                return null;
-            });
-
-            StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
-            getStorageDomain().getStorageDynamicData().setAvailableDiskSize(null);
-            getStorageDomain().getStorageDynamicData().setUsedDiskSize(null);
-        }
+        boolean deactivateSucceeded = true;
         if (!getParameters().isInactive()) {
-            runVdsCommand(VDSCommandType.DeactivateStorageDomain,
-                    new DeactivateStorageDomainVDSCommandParameters(getStoragePool().getId(),
-                            getStorageDomain().getId(),
-                            newMasterId,
-                            getStoragePool().getMasterDomainVersion()));
+            if (isMaster) {
+                updateStoragePoolMasterDomainVersionInDiffTransaction();
+            }
+            try {
+                deactivateSucceeded = runVdsCommand(VDSCommandType.DeactivateStorageDomain,
+                        new DeactivateStorageDomainVDSCommandParameters(getStoragePool().getId(),
+                                getStorageDomain().getId(),
+                                newMasterId,
+                                getStoragePool().getMasterDomainVersion())).getSucceeded();
+            } catch (Exception e) {
+                log.error("DeactivateStorageDomainVDS failed '{}'", getParameters().getStorageDomainId(), e);
+                deactivateSucceeded = false;
+            }
+        } else {
+            log.info("DeactivateStorageDomainVDS is skipped '{}'", getParameters().getStorageDomainId());
+        }
+
+        if (deactivateSucceeded) {
+            isLastMaster = isMaster ? proceedStorageDomainTreatmentByDomainType(newMaster, true) : false;
+            if (isLastMaster) {
+                executeInNewTransaction(() -> {
+                    getCompensationContext().snapshotEntityStatus(getStoragePool());
+                    getStoragePool().setStatus(StoragePoolStatus.Maintenance);
+                    storagePoolDao.updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
+                    getCompensationContext().stateChanged();
+                    return null;
+                });
+
+                StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
+                getStorageDomain().getStorageDynamicData().setAvailableDiskSize(null);
+                getStorageDomain().getStorageDynamicData().setUsedDiskSize(null);
+            }
         }
         freeLock();
 
+        if (!deactivateSucceeded) {
+            log.error("Failed to deactivate storage domain '{}'", getParameters().getStorageDomainId());
+            changeStorageDomainStatusInTransaction(map, lastStatus);
+            setSucceeded(false);
+            return;
+        }
         VDS spm = null;
         if (getStoragePool().getSpmVdsId() != null) {
             spm = vdsDao.get(getStoragePool().getSpmVdsId());
@@ -440,8 +462,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         } else {
             updateStorageDomainStaticData(newMaster.getStorageStaticData());
         }
-
-        updateStoragePoolMasterDomainVersionInDiffTransaction();
 
         return false;
     }
