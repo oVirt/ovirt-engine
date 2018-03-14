@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum VmExitReason {
     Unknown(-1),
@@ -21,13 +24,8 @@ public enum VmExitReason {
     DestroyedOnResume(14);
 
     private final int reason;
-    private static final HashMap<Integer, VmExitReason> valueToReason = new HashMap<>();
-
-    static {
-        for (VmExitReason reason : values()) {
-            valueToReason.put(reason.getValue(), reason);
-        }
-    }
+    private static final Map<Integer, VmExitReason> valueToReason =
+            Stream.of(values()).collect(Collectors.toMap(VmExitReason::getValue, Function.identity()));
 
     private VmExitReason(int value) {
         this.reason = value;

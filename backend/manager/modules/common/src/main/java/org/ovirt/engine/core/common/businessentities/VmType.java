@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum VmType implements Identifiable {
     Desktop(0),
@@ -8,13 +11,8 @@ public enum VmType implements Identifiable {
     HighPerformance(2);
 
     private int intValue;
-    private static final HashMap<Integer, VmType> mappings = new HashMap<>();
-
-    static {
-        for (VmType vmType : values()) {
-            mappings.put(vmType.getValue(), vmType);
-        }
-    }
+    private static final Map<Integer, VmType> mappings =
+            Stream.of(values()).collect(Collectors.toMap(VmType::getValue, Function.identity()));
 
     private VmType(int value) {
         intValue = value;

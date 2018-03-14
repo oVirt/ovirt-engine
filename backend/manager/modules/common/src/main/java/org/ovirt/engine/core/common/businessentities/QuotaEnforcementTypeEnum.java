@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum QuotaEnforcementTypeEnum implements Identifiable {
     DISABLED(0),
@@ -8,13 +11,8 @@ public enum QuotaEnforcementTypeEnum implements Identifiable {
     HARD_ENFORCEMENT(2);
 
     private final int enforcementType;
-    private static final HashMap<Integer, QuotaEnforcementTypeEnum> mappings = new HashMap<>();
-
-    static {
-        for (QuotaEnforcementTypeEnum component : values()) {
-            mappings.put(component.getValue(), component);
-        }
-    }
+    private static final Map<Integer, QuotaEnforcementTypeEnum> mappings =
+            Stream.of(values()).collect(Collectors.toMap(QuotaEnforcementTypeEnum::getValue, Function.identity()));
 
     @Override
     public int getValue() {

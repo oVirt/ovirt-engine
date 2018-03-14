@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum VmPauseStatus {
     NONE(0, false),
@@ -12,22 +14,14 @@ public enum VmPauseStatus {
     NOERR(5, false),
     POSTCOPY(6, false);
 
-    private static final Map<Integer, VmPauseStatus> mappings = new HashMap<>();
-    private final boolean isError;
+    private static final Map<Integer, VmPauseStatus> mappings =
+            Stream.of(values()).collect(Collectors.toMap(VmPauseStatus::getValue, Function.identity()));
+    private final boolean error;
     private int value;
 
-    static {
-        mappings.put(0, NONE);
-        mappings.put(1, EOTHER);
-        mappings.put(2, EIO);
-        mappings.put(3, ENOSPC);
-        mappings.put(4, EPERM);
-        mappings.put(5, NOERR);
-    }
-
-    VmPauseStatus(int value, boolean isError) {
+    VmPauseStatus(int value, boolean error) {
         this.value = value;
-        this.isError = isError;
+        this.error = error;
     }
 
     public int getValue() {
@@ -35,7 +29,7 @@ public enum VmPauseStatus {
     }
 
     public boolean isError() {
-        return isError;
+        return error;
     }
 
     public static VmPauseStatus forValue(int value) {

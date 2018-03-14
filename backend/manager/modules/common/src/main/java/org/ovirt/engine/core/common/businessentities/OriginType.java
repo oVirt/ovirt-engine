@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum OriginType {
     RHEV(0),
@@ -19,14 +21,8 @@ public enum OriginType {
     HYPERV(9);
 
     private int intValue;
-    private static Map<Integer, OriginType> mappings;
-
-    static {
-        mappings = new HashMap<>();
-        for (OriginType error : values()) {
-            mappings.put(error.getValue(), error);
-        }
-    }
+    private static Map<Integer, OriginType> mappings =
+            Stream.of(values()).collect(Collectors.toMap(OriginType::getValue, Function.identity()));
 
     private OriginType(int value) {
         intValue = value;

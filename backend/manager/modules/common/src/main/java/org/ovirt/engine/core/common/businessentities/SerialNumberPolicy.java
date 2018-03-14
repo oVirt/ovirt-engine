@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Policy for assigning serial numbers to VMs
@@ -16,12 +18,8 @@ public enum SerialNumberPolicy {
 
     private int value;
 
-    private static Map<Integer, SerialNumberPolicy> mappings = new HashMap<>();
-    static {
-        for (SerialNumberPolicy enumValue : values()) {
-            mappings.put(enumValue.value, enumValue);
-        }
-    }
+    private static Map<Integer, SerialNumberPolicy> mappings =
+            Stream.of(values()).collect(Collectors.toMap(SerialNumberPolicy::getValue, Function.identity()));
 
     SerialNumberPolicy(int value) {
         this.value = value;

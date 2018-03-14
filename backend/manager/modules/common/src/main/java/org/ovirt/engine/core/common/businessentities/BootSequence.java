@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * C - HardDisk, D - CDROM, N - Network first 3 numbers for backward compatibility
@@ -26,15 +28,9 @@ public enum BootSequence {
     ND(14, N, D);
 
     private int intValue;
-    private static Map<Integer, BootSequence> mappings;
     private final List<BootSequence> components;
-
-    static {
-        mappings = new HashMap<>();
-        for (BootSequence error : values()) {
-            mappings.put(error.getValue(), error);
-        }
-    }
+    private static Map<Integer, BootSequence> mappings =
+            Stream.of(values()).collect(Collectors.toMap(BootSequence::getValue, Function.identity()));
 
     private BootSequence(int value, BootSequence... composedOf) {
         intValue = value;

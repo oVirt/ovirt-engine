@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum ArchitectureType implements Identifiable {
     // Base architectures
@@ -26,13 +29,8 @@ public enum ArchitectureType implements Identifiable {
     public static final int HOTPLUG_MEMORY_FACTOR_X86_MB = 128;
     private int value;
     private int family;
-    private static final HashMap<Integer, ArchitectureType> valueToArchitecture = new HashMap<>();
-
-    static {
-        for (ArchitectureType architecture : values()) {
-            valueToArchitecture.put(architecture.getValue(), architecture);
-        }
-    }
+    private static final Map<Integer, ArchitectureType> valueToArchitecture =
+            Stream.of(values()).collect(Collectors.toMap(ArchitectureType::getValue, Function.identity()));
 
     private ArchitectureType(int value) {
         this.value = value;

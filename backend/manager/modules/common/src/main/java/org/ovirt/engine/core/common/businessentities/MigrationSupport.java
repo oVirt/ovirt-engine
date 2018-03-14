@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * An enum for defining the migration support of the VM
@@ -17,18 +20,11 @@ public enum MigrationSupport {
     PINNED_TO_HOST(2); // can run only on the host that is set as "default host"
 
     private int value;
-    private static HashMap<Integer, MigrationSupport> mappings;
+    private static Map<Integer, MigrationSupport> mappings =
+            Stream.of(values()).collect(Collectors.toMap(MigrationSupport::getValue, Function.identity()));
 
     MigrationSupport(int value) {
         this.value = value;
-    }
-
-    static {
-        mappings = new HashMap<>();
-
-        for (MigrationSupport enumValue : MigrationSupport.values()) {
-            mappings.put(enumValue.getValue(), enumValue);
-        }
     }
 
     public static MigrationSupport forValue(int value) {

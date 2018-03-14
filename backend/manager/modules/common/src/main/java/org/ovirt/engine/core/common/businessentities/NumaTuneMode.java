@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Libvirt numatune mode definition See http://libvirt.org/formatdomain.html#elementsNUMATuning
@@ -25,14 +27,8 @@ public enum NumaTuneMode {
     PREFERRED;
 
     private String value;
-    private static Map<String, NumaTuneMode> mappings;
-
-    static {
-        mappings = new HashMap<>();
-        for (NumaTuneMode mode : values()) {
-            mappings.put(mode.getValue(), mode);
-        }
-    }
+    private static Map<String, NumaTuneMode> mappings =
+            Stream.of(values()).collect(Collectors.toMap(NumaTuneMode::getValue, Function.identity()));
 
     private NumaTuneMode() {
         value = name().toLowerCase();
