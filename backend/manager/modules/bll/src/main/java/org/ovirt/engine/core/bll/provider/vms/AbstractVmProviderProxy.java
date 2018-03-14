@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -28,6 +27,8 @@ public abstract class AbstractVmProviderProxy<P extends VmProviderProperties> im
 
     @Inject
     private StoragePoolDao storagePoolDao;
+    @Inject
+    private VdsDao vdsDao;
     @Inject
     private BackendInternal backend;
 
@@ -56,7 +57,7 @@ public abstract class AbstractVmProviderProxy<P extends VmProviderProperties> im
                 P properties = provider.getAdditionalProperties();
                 Guid proxyHostId = properties.getProxyHostId();
                 if (proxyHostId != null) {
-                    VDS proxyHost = getVdsDao().get(proxyHostId);
+                    VDS proxyHost = vdsDao.get(proxyHostId);
                     if (proxyHost == null) {
                         return new ValidationResult(EngineMessage.VDS_DOES_NOT_EXIST);
                     }
@@ -66,10 +67,6 @@ public abstract class AbstractVmProviderProxy<P extends VmProviderProperties> im
                     }
                 }
                 return ValidationResult.VALID;
-            }
-
-            private VdsDao getVdsDao() {
-                return DbFacade.getInstance().getVdsDao();
             }
         };
     }
