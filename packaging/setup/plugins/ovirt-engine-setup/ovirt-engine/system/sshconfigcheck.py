@@ -17,11 +17,12 @@
 
 
 """
-ProxyCommand in system SSH configuration checking plugin.
+ProxyCommand in file /etc/ssh/ssh_config checking plugin.
 """
 
 
 import gettext
+import os.path
 import re
 
 from otopi import plugin
@@ -40,44 +41,58 @@ def _(m):
 @util.export
 class Plugin(plugin.PluginBase):
     """
-    ProxyCommand in system SSH configuration checking plugin.
+    ProxyCommand in file /etc/ssh/ssh_config checking plugin.
     """
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
-    def _getSshConfig(self):
-        _, stdout, _ = self.execute(
-            (
-                self.command.get('ssh'),
-                '-G',
-                'localhost',
-            ),
-        )
-        return stdout
-
     def _check_ssh_config(self):
         proxy_command_found = False
-        pattern = re.compile("^\s*proxycommand\s+")
+        ssh_config_path = oenginecons.FileLocations.SSH_CLIENT_CONFIG
+        pattern = re.compile("^\s*ProxyCommand\s+")
 
-        # Find ProxyCommand in ssh configuration:
-        for line in self._getSshConfig():
-            if re.match(pattern, line):
-                proxy_command_found = True
-                break
+        # Exit if ssh configuration file does not exist:
+        if not os.path.isfile(ssh_config_path):
+            self.logger.debug(
+                _(
+                    "Ssh configuration file {config_file} does not exist"
+                ).format(
+                    config_file=ssh_config_path,
+                )
+            )
+            return proxy_command_found
+
+        # Find ProxyCommand in ssh configuration file:
+        try:
+            for line in open(ssh_config_path):
+                if re.match(pattern, line):
+                    proxy_command_found = True
+                    break
+        except IOError as e:
+            self.logger.warning(
+                _(
+                    'Failed to read {config_file}: {error}'
+                ).format(
+                    config_file=ssh_config_path,
+                    error=e,
+                )
+            )
 
         # Log error if any occurance of ProxyCommand was found:
         if proxy_command_found:
             self.logger.warn(
                 _(
                     "There is 'ProxyCommand' configuration option in"
-                    " system SSH configuration."
+                    " {config_file} file."
                     "\n If you have configured IPA client on your machine,"
                     " please re-configure it with --no-ssh option."
                     "\n If you don't have IPA client configured"
                     " please remove or comment 'ProxyCommand' configuration."
                     "\n It is very important to remove the configuration"
                     " option or the engine won't work properly."
+                ).format(
+                    config_file=ssh_config_path,
                 )
             )
 
