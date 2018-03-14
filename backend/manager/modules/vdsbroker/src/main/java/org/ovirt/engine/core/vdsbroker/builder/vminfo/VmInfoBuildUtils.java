@@ -836,7 +836,7 @@ public class VmInfoBuildUtils {
         return diskInterfaceToDevName(diskInterface) + (devIndex.isEmpty() ? 'a' : devIndex);
     }
 
-    private String diskInterfaceToDevName(String iface) {
+    public String diskInterfaceToDevName(String iface) {
         switch(iface) {
         case "virtio":
             return "vd";

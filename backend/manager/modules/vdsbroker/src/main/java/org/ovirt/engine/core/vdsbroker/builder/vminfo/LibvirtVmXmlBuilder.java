@@ -1018,7 +1018,7 @@ public class LibvirtVmXmlBuilder {
 
         // the user may specify floppy path while there is no device in the database
         if (!StringUtils.isEmpty(vm.getFloppyPath()) &&
-                !devices.stream().anyMatch(dev -> dev.getDevice().equals(VmDeviceType.FLOPPY.getName()))) {
+                devices.stream().noneMatch(dev -> dev.getDevice().equals(VmDeviceType.FLOPPY.getName()))) {
             devices.add(vmInfoBuildUtils.createFloppyDevice(vm));
         }
 
@@ -1091,9 +1091,9 @@ public class LibvirtVmXmlBuilder {
                 .collect(Collectors.toMap(VmDevice::getId, dev -> dev));
         Map<Integer, Map<VmDevice, Integer>> vmDeviceSpaprVscsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(vm);
         Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(vm);
-        int ideIndex = -1;
-        int scsiIndex = -1;
-        int virtioIndex = -1;
+        int hdIndex = -1;
+        int sdIndex = -1;
+        int vdIndex = -1;
         int pinnedDriveIndex = 0;
 
         Map<Disk, VmDevice> vmDisksToDevices = vm.getDiskMap().values().stream()
@@ -1109,34 +1109,15 @@ public class LibvirtVmXmlBuilder {
             int pinTo = 0;
             switch(diskInterface) {
             case IDE:
-                ideIndex++;
-                if (diskInterface.getName().equals(cdInterface)) {
-                    while (ideIndex == payloadIndex || ideIndex == cdRomIndex) {
-                        ideIndex++;
-                    }
-                }
-                index = ideIndex;
+                index = hdIndex = skipCdIndices(++hdIndex, diskInterface);
                 break;
             case VirtIO:
                 pinTo = vmInfoBuildUtils.pinToIoThreads(vm, pinnedDriveIndex++);
-                virtioIndex++;
-                if (diskInterface.getName().equals(cdInterface)) {
-                    while (virtioIndex == payloadIndex || virtioIndex == cdRomIndex) {
-                        virtioIndex++;
-                    }
-                }
-                index = virtioIndex;
+                index = vdIndex = skipCdIndices(++vdIndex, diskInterface);
                 break;
             case SPAPR_VSCSI:
             case VirtIO_SCSI:
-                scsiIndex++;
-                if (diskInterface.getName().equals(cdInterface)) {
-                    while (scsiIndex == payloadIndex || scsiIndex == cdRomIndex) {
-                        scsiIndex++;
-                    }
-                }
-                index = scsiIndex;
-
+                index = sdIndex = skipCdIndices(++sdIndex, diskInterface);
                 vmInfoBuildUtils.calculateAddressForScsiDisk(vm, disk, device, vmDeviceSpaprVscsiUnitMap, vmDeviceVirtioScsiUnitMap);
                 break;
             }
@@ -1144,6 +1125,17 @@ public class LibvirtVmXmlBuilder {
             String dev = vmInfoBuildUtils.makeDiskName(dve.getDiskInterface().getName(), index);
             writeDisk(device, disk, dve, dev, pinTo);
         }
+    }
+
+    private int skipCdIndices(int index, DiskInterface diskInterface) {
+        if (Objects.equals(
+                vmInfoBuildUtils.diskInterfaceToDevName(diskInterface.getName()),
+                vmInfoBuildUtils.diskInterfaceToDevName(cdInterface))) {
+            while (index == payloadIndex || index == cdRomIndex) {
+                ++index;
+            }
+        }
+        return index;
     }
 
     private void writeConsole(VmDevice device) {
