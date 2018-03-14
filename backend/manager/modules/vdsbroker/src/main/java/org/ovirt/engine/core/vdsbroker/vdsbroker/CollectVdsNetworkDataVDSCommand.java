@@ -20,7 +20,11 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
     protected void executeVdsBrokerCommand() {
         // call getVdsCapabilities verb
         super.executeVdsBrokerCommand();
-        persistCollectedData();
+
+        TransactionSupport.executeInNewTransaction(() -> {
+            persistCollectedData();
+            return null;
+        });
 
         proceedProxyReturnValue();
     }
