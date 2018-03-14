@@ -37,7 +37,6 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.network.function.NicToIpv4AddressFunction;
 import org.ovirt.engine.core.utils.network.function.NicToIpv6AddressFunction;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByNetworkNamePredicate;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,11 +127,8 @@ public class NetworkConfigurator {
     }
 
     public void refreshNetworkConfiguration() {
-        TransactionSupport.executeInNewTransaction(() -> {
-            getBackend().getResourceManager().runVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
-                    new CollectHostNetworkDataVdsCommandParameters(host));
-            return null;
-        });
+        getBackend().getResourceManager().runVdsCommand(VDSCommandType.CollectVdsNetworkDataAfterInstallation,
+                new CollectHostNetworkDataVdsCommandParameters(host));
     }
 
     public HostSetupNetworksParameters createSetupNetworkParams(VdsNetworkInterface nic) {
