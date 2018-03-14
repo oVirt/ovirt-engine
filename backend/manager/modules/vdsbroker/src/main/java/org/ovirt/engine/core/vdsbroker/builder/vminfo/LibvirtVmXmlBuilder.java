@@ -1992,7 +1992,11 @@ public class LibvirtVmXmlBuilder {
 
             if (nonPayload != null) {
                 writeAlias(nonPayload);
-                writeAddress(nonPayload);
+                if ("scsi".equals(cdInterface)) {
+                    writeAddress(vmInfoBuildUtils.createAddressForScsiDisk(0, cdRomIndex));
+                } else {
+                    writeAddress(nonPayload);
+                }
                 writeBootOrder(nonPayload.getBootOrder());
             }
 

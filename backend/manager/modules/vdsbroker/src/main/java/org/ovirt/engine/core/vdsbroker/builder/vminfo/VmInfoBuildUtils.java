@@ -482,7 +482,7 @@ public class VmInfoBuildUtils {
      * inside that particular controller. Similar for second controller.
      */
     public Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForVirtioScsiDisks(VM vm) {
-        return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false);
+        return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false, false);
     }
 
     /**
@@ -494,12 +494,13 @@ public class VmInfoBuildUtils {
      * inside that particular controller. Similar for second controller.
      */
     public Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForSpaprScsiDisks(VM vm) {
-        return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.SPAPR_VSCSI, true);
+        return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.SPAPR_VSCSI, true, true);
     }
 
     protected Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForScsiDisks(VM vm,
             DiskInterface scsiInterface,
-            boolean reserveFirstTwoLuns) {
+            boolean reserveFirstTwoLuns,
+            boolean reserveForScsiCd) {
         List<Disk> disks = getSortedDisks(vm);
         Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap = new HashMap<>();
         LinkedList<VmDevice> vmDeviceList = new LinkedList<>();
@@ -549,7 +550,7 @@ public class VmInfoBuildUtils {
                 vmDeviceUnitMap.put(controller, new HashMap<>());
             }
 
-            int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap.get(controller), reserveFirstTwoLuns);
+            int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap.get(controller), reserveFirstTwoLuns, reserveForScsiCd && controller == 0);
             vmDeviceUnitMap.get(controller).put(vmDevice, unit);
         });
 
@@ -634,12 +635,14 @@ public class VmInfoBuildUtils {
         return disks;
     }
 
-    public int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstTwoLuns) {
+    public int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstTwoLuns, boolean reserveForScsiCd) {
         int unit = reserveFirstTwoLuns ? 2 : 0;
-        if (vmDeviceUnitMap == null) {
-            return unit;
-        }
-        while (vmDeviceUnitMap.containsValue(unit)) {
+        int cdPayloadUnitIndex = VmDeviceCommonUtils.getCdPayloadDeviceIndex("scsi");
+        int cdUnitIndex = VmDeviceCommonUtils.getCdDeviceIndex("scsi");
+
+        while (reserveForScsiCd && unit == cdPayloadUnitIndex ||
+               reserveForScsiCd && unit == cdUnitIndex ||
+               (vmDeviceUnitMap != null && vmDeviceUnitMap.containsValue(unit))) {
             unit++;
         }
         return unit;
@@ -1260,7 +1263,7 @@ public class VmInfoBuildUtils {
             if (StringUtils.isEmpty(deviceFromMap.getAddress())) {
                 if (unitIndex == null) {
                     // should never get here, but for safety having this fallback and generating a new unit id
-                    unitIndex = getAvailableUnitForScsiDisk(vmDeviceVirtioScsiUnitMap.get(controllerIndex), false);
+                    unitIndex = getAvailableUnitForScsiDisk(vmDeviceVirtioScsiUnitMap.get(controllerIndex), false, false);
                     log.debug("The unit was null for disk '{}' on controller '{}', generating a new one '{}'", disk.getId(), controllerIndex, unitIndex);
                 }
                 device.setAddress(createAddressForScsiDisk(controllerIndex, unitIndex).toString());

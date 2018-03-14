@@ -302,7 +302,7 @@ public class VmInfoBuildUtilsTest {
         mcr.mockConfigValue(ConfigValues.VirtIOScsiIOThread, Version.v4_1, true);
 
         Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap =
-                underTest.getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false);
+                underTest.getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false, false);
 
         // Ensures that the boot disk unit is lower
         assertEquals(vmDeviceUnitMap.get(0).get(lunDiskVmDevice), (Integer) 1);
