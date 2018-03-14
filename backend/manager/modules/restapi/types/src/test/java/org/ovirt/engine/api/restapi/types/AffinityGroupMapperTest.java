@@ -176,6 +176,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroup model = new AffinityGroup();
 
         AffinityRule rule = new AffinityRule();
+        rule.setEnabled(true);
         rule.setEnforcing(true);
         rule.setPositive(false);
 
@@ -195,6 +196,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroup model = new AffinityGroup();
 
         AffinityRule rule = new AffinityRule();
+        rule.setEnabled(true);
         rule.setEnforcing(false);
         rule.setPositive(true);
 
@@ -244,6 +246,24 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         assertNotNull(model.getHostsRule());
         assertEquals(true, model.getHostsRule().isEnabled());
         assertEquals(false, model.getHostsRule().isPositive());
+        assertEquals(true, model.getHostsRule().isEnforcing());
+    }
+
+    @Test
+    public void testHostAffinityDisabledRestOutput() throws  Exception {
+        org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
+                new org.ovirt.engine.core.common.scheduling.AffinityGroup();
+        entity.setId(Guid.Empty);
+        entity.setClusterId(Guid.Empty);
+        entity.setVdsEnforcing(true);
+        entity.setVdsAffinityRule(EntityAffinityRule.DISABLED);
+
+        AffinityGroup model = new AffinityGroup();
+
+        AffinityGroupMapper.map(entity, model);
+
+        assertNotNull(model.getHostsRule());
+        assertEquals(false, model.getHostsRule().isEnabled());
         assertEquals(true, model.getHostsRule().isEnforcing());
     }
 

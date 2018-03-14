@@ -34,7 +34,7 @@ public class AffinityGroupMapper {
             hostsRule = new AffinityRule();
             model.setHostsRule(hostsRule);
         }
-        hostsRule.setEnabled(true);
+        hostsRule.setEnabled(entity.isVdsAffinityEnabled());
         hostsRule.setEnforcing(entity.isVdsEnforcing());
         hostsRule.setPositive(entity.isVdsPositive());
 
@@ -98,26 +98,27 @@ public class AffinityGroupMapper {
 
         AffinityRule hostsRule = model.getHostsRule();
         if (hostsRule != null) {
-            if (hostsRule.isSetEnforcing()) {
-                entity.setVdsEnforcing(hostsRule.isEnforcing());
-            }
-
-            if (hostsRule.isSetPositive()) {
+            if (hostsRule.isSetEnabled() && !hostsRule.isEnabled()) {
+                entity.setVdsAffinityRule(EntityAffinityRule.DISABLED);
+            } else if (hostsRule.isSetPositive()) {
                 entity.setVdsAffinityRule(hostsRule.isPositive()
                         ? EntityAffinityRule.POSITIVE : EntityAffinityRule.NEGATIVE);
+            }
+
+            if (hostsRule.isSetEnforcing()) {
+                entity.setVdsEnforcing(hostsRule.isEnforcing());
             }
         }
 
         AffinityRule vmsRule = model.getVmsRule();
         if (vmsRule != null) {
-            if (vmsRule.isSetEnabled()) {
-                if (!vmsRule.isEnabled()) {
-                    entity.setVmAffinityRule(EntityAffinityRule.DISABLED);
-                } else if (vmsRule.isSetPositive()) {
-                    entity.setVmAffinityRule(vmsRule.isPositive()
-                            ? EntityAffinityRule.POSITIVE : EntityAffinityRule.NEGATIVE);
-                }
+            if (vmsRule.isSetEnabled() && !vmsRule.isEnabled()) {
+                entity.setVmAffinityRule(EntityAffinityRule.DISABLED);
+            } else if (vmsRule.isSetPositive()) {
+                entity.setVmAffinityRule(vmsRule.isPositive()
+                        ? EntityAffinityRule.POSITIVE : EntityAffinityRule.NEGATIVE);
             }
+
             if (vmsRule.isSetEnforcing()) {
                 entity.setVmEnforcing(vmsRule.isEnforcing());
             }
