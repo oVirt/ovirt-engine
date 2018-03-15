@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class EngineForemanProviderFinder {
     private String engineHostName;
 
     @Inject
-    private DbFacade dbFacade;
+    private ProviderDao providerDao;
 
     @Inject
     private ProviderProxyFactory providerProxyFactory;
@@ -31,7 +31,7 @@ public class EngineForemanProviderFinder {
             return null;
         }
 
-        List<Provider<?>> hostProviders = dbFacade.getProviderDao().getAllByTypes(ProviderType.FOREMAN);
+        List<Provider<?>> hostProviders = providerDao.getAllByTypes(ProviderType.FOREMAN);
         HostProviderProxy proxy;
         for (Provider<?> provider : hostProviders) {
             proxy = providerProxyFactory.create(provider);
