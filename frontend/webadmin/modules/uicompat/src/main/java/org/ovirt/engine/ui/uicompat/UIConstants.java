@@ -1655,10 +1655,6 @@ public interface UIConstants extends Constants {
 
     String removeClusterPolicyTitle();
 
-    String ksmNotAvailable();
-
-    String ksmWithNumaAwarnessNotAvailable();
-
     String shareKsmAcrossNumaNodes();
 
     String shareKsmInsideEachNumaNode();

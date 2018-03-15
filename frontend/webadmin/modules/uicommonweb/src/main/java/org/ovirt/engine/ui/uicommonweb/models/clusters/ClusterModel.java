@@ -1578,10 +1578,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 }
             }
         }));
-        // inactive KsmPolicyForNuma if KSM disabled
-        if (getEnableKsm().getEntity() == false) {
-            getKsmPolicyForNumaSelection().setIsChangeable(false);
-        }
     }
 
     private void loadCurrentClusterManagementNetwork() {
@@ -1792,8 +1788,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         updateFencingPolicyContent(version);
 
-        updateKSMPolicy();
-
         updateMigrateOnError();
 
         refreshMigrationPolicies();
@@ -1804,18 +1798,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             initTunedProfiles();
         }
 
-    }
-
-    private void updateKSMPolicy() {
-        getEnableKsm().setIsChangeable(true);
-        getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
-
-        getKsmPolicyForNumaSelection().setIsAvailable(true);
-        getKsmPolicyForNumaSelection().setChangeProhibitionReason(ConstantsManager.getInstance()
-                .getConstants()
-                .ksmWithNumaAwarnessNotAvailable());
-        // enable NUMA aware KSM by default (matching kernel's default)
-        setKsmPolicyForNuma(true);
     }
 
     private void refreshAdditionalClusterFeaturesList() {
