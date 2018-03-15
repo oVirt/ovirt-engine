@@ -1350,6 +1350,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String freeSpaceStorage();
 
+    String confirmedFreeSpaceStorage();
+
+    String confirmedFreeSpaceStorageNonThinTooltip();
+
+    String confirmedFreeSpaceStorageThinTooltip();
+
     String newDomainStorage();
 
     String importDomainStorage();
