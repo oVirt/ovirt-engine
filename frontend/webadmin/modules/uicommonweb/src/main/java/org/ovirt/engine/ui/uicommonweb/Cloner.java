@@ -524,7 +524,7 @@ public final class Cloner {
         obj.setSmallIconId(instance.getSmallIconId());
         obj.setLargeIconId(instance.getLargeIconId());
         obj.setProviderId(instance.getProviderId());
-
+        obj.setLeaseStorageDomainId(instance.getLeaseStorageDomainId());
         return obj;
     }
 
