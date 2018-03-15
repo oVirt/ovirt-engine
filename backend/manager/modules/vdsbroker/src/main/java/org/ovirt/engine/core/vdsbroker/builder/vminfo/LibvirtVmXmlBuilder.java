@@ -374,13 +374,6 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        if (vm.getVmType() == VmType.HighPerformance) {
-            writer.writeStartElement("cache");
-            writer.writeAttributeString("level", "3");
-            writer.writeAttributeString("mode", "emulate");
-            writer.writeEndElement();
-        }
-
         writer.writeEndElement();
     }
 
