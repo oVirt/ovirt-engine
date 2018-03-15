@@ -30,7 +30,7 @@ public abstract class AbstractFormPanel extends Composite implements HasElementI
 
     //There can be a max of 12 columns
     private static final int BOOTSTRAP_GRID_SIZE = 12;
-    private static final String COL_PREFIX = "md_"; //$NON-NLS-1$
+    private static final String COL_PREFIX = "xs_"; //$NON-NLS-1$
 
     /**
      * Stores the label width and item width so we can look them up based on the {@code FormItem}.
