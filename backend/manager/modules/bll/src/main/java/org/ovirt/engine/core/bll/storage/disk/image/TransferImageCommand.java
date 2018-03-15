@@ -283,6 +283,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         lockImage();
 
         log.info("Resuming transfer for {}", getTransferDescription());
+        auditLog(this, AuditLogType.TRANSFER_IMAGE_RESUMED_BY_USER);
         extendTicketIfNecessary(context);
         updateEntityPhase(ImageTransferPhase.TRANSFERRING);
 
@@ -382,6 +383,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     }
 
     private void handlePausedUser(final StateContext context) {
+        auditLog(this, AuditLogType.TRANSFER_IMAGE_PAUSED_BY_USER);
         handlePaused(context);
     }
 
