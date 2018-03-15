@@ -346,7 +346,11 @@ public class LibvirtVmXmlBuilder {
             }
             break;
         case ppc:
-            writer.writeElement("model", cpuType);
+            writer.writeAttributeString("mode", "host-model");
+            writer.writeStartElement("model");
+            // needs to be lowercase for libvirt
+            writer.writeRaw(cpuType.toLowerCase());
+            writer.writeEndElement();
         }
 
         if ((boolean) Config.getValue(ConfigValues.SendSMPOnRunVm)) {
