@@ -2019,6 +2019,7 @@ public class LibvirtVmXmlBuilder {
 
         VnicProfile vnicProfile = vmInfoBuildUtils.getVnicProfile(nic.getVnicProfileId());
         Network network = vnicProfile != null ? vmInfoBuildUtils.getNetwork(vnicProfile.getNetworkId()) : null;
+        boolean networkless = network == null;
 
         switch (device.getDevice()) {
         case "bridge":
@@ -2035,16 +2036,16 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             writer.writeStartElement("link");
-            writer.writeAttributeString("state", nic.isLinked() ? "up" : "down");
+            writer.writeAttributeString("state", !networkless && nic.isLinked() ? "up" : "down");
             writer.writeEndElement();
             // The source element is different when using legacy or OVS bridge. We
             // expect VDSM to replace the source element if it is a non legacy bridge
             writer.writeStartElement("source");
-            writer.writeAttributeString("bridge", network != null ? network.getVdsmName() : "");
+            writer.writeAttributeString("bridge", !networkless ? network.getVdsmName() : ";vdsmdummy;");
             writer.writeEndElement();
 
             String queues = vnicProfile != null ? vnicProfile.getCustomProperties().remove("queues") : null;
-            String driverName = getDriverNameForNetwork(network != null ? network.getName() : "");
+            String driverName = getDriverNameForNetwork(!networkless ? network.getName() : "");
             if (queues != null || driverName != null) {
                 writer.writeStartElement("driver");
                 if (queues != null) {
@@ -2065,7 +2066,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("driver");
             writer.writeAttributeString("name", "vfio");
             writer.writeEndElement();
-            if (network != null && NetworkUtils.isVlan(network)) {
+            if (!networkless && NetworkUtils.isVlan(network)) {
                 writer.writeStartElement("vlan");
                 writer.writeStartElement("tag");
                 writer.writeAttributeString("id", network.getVlanId().toString());
