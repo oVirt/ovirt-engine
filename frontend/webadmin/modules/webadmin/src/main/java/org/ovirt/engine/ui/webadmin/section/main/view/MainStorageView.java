@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatu
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
@@ -140,6 +141,24 @@ public class MainStorageView extends AbstractMainWithDetailsTableView<StorageDom
         };
         freeSpaceColumn.makeSortable(StorageDomainFieldAutoCompleter.SIZE);
         getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "130px"); //$NON-NLS-1$
+
+        AbstractStorageSizeColumn<StorageDomain> confirmedFreeSpaceColumn = new AbstractStorageSizeColumn<StorageDomain>() {
+            @Override
+            public Long getRawValue(StorageDomain object) {
+                Integer confirmedAvailableSize = object.getConfirmedAvailableDiskSize();
+                Long availableDiskSize = object.getAvailableDiskSize() == null ? null : Long.valueOf(object.getAvailableDiskSize());
+                return confirmedAvailableSize == null ? availableDiskSize : Long.valueOf(confirmedAvailableSize);
+            }
+
+            @Override
+            public SafeHtml getTooltip(StorageDomain object) {
+                if (object.getConfirmedAvailableDiskSize() == null) {
+                    return SafeHtmlUtils.fromString(constants.confirmedFreeSpaceStorageNonThinTooltip());
+                }
+                return SafeHtmlUtils.fromString(constants.confirmedFreeSpaceStorageThinTooltip());
+            }
+        };
+        getTable().addColumn(confirmedFreeSpaceColumn, constants.confirmedFreeSpaceStorage(), "180px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> descriptionColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
