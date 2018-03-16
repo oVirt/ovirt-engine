@@ -182,9 +182,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         // Mtu
         if (!entity.isExternal()) {
-            final String mtuValue = entity.getMtu() == 0 ? messages.defaultMtu(defaultMtu) : String.valueOf(entity.getMtu());
-            final String mtu = templates.strongTextWithColor(constants.mtuItemInfo(), WHITE_TEXT_COLOR).asString() + ": " +templates.coloredText(mtuValue, TEXT_COLOR).asString();//$NON-NLS-1$
-            addRow(SafeHtmlUtils.fromTrustedString(mtu));
+            addMtuInfo(entity.getMtu());
         }
 
         // Boot protocol and IP info
@@ -236,6 +234,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
 
         if (nic.getItems().isEmpty() && !nic.isBonded()) {
+            insertHorizontalLine();
+            addMtuInfo(entity.getMtu());
             addBootProtoAndIpInfo(new InterfacePropertiesAccessor.FromNic(entity, null));
         }
         if (nic instanceof BondNetworkInterfaceModel) {
@@ -321,6 +321,13 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         } else {
             addRow(SafeHtmlUtils.fromSafeConstant(constants.notAvailableLabel()));
         }
+    }
+
+    private void addMtuInfo(int mtuValue) {
+        final String mtuValueString = mtuValue == 0 ? messages.defaultMtu(defaultMtu) : String.valueOf(mtuValue);
+        final String mtu = templates.strongTextWithColor(constants.mtuItemInfo(), WHITE_TEXT_COLOR).asString() + ": " + //$NON-NLS-1$
+                templates.coloredText(mtuValueString, TEXT_COLOR).asString();
+        addRow(SafeHtmlUtils.fromTrustedString(mtu));
     }
 
     private void addNonNullOrEmptyValueRow(String label, String value) {
