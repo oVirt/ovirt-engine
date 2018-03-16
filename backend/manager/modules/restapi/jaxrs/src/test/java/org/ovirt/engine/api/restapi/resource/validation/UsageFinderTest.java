@@ -38,7 +38,7 @@ public class UsageFinderTest extends Assert {
             UriInfo uriInfo = mockUri("hosts", "00000001-0001-0001-0001-000000000011", "nics");
             Request request = mockRequest("POST");
             Fault fault = usageFinder.getUsageMessage(uriInfo, request);
-            assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/apidoc#services/host-nics/methods/add", fault.getDetail());
+            assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/apidoc#services/host_nics/methods/add", fault.getDetail());
         } catch (ClassNotFoundException | IOException | URISyntaxException e) {
             fail();
         }
@@ -50,7 +50,7 @@ public class UsageFinderTest extends Assert {
             UriInfo uriInfo = mockUri("vms", "00000001-0001-0001-0001-000000000011", "freezefilesystems");
             Request request = mockRequest("POST");
             Fault fault = usageFinder.getUsageMessage(uriInfo, request);
-            assertEquals( "For correct usage, see: http://localhost:8080/ovirt-engine/apidoc#services/vm/methods/freeze-filesystems", fault.getDetail());
+            assertEquals( "For correct usage, see: http://localhost:8080/ovirt-engine/apidoc#services/vm/methods/freeze_filesystems", fault.getDetail());
         } catch (URISyntaxException | ClassNotFoundException | IOException e) {
             fail();
         }
@@ -62,7 +62,7 @@ public class UsageFinderTest extends Assert {
             UriInfo uriInfo = mockUri("hosts", "00000001-0001-0001-0001-000000000011", "nics", "116"); //LUN id.
             Request request = mockRequest("PUT");
             Fault fault = usageFinder.getUsageMessage(uriInfo, request);
-            assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/apidoc#services/host-nic/methods/update", fault.getDetail());
+            assertEquals("For correct usage, see: http://localhost:8080/ovirt-engine/apidoc#services/host_nic/methods/update", fault.getDetail());
         } catch (URISyntaxException | ClassNotFoundException | IOException e) {
             fail();
         }
