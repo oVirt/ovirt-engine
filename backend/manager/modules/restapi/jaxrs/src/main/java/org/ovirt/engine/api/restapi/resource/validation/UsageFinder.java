@@ -46,15 +46,15 @@ public class UsageFinder {
         // .../apidoc#services/vm/methods/remove   //action on *vm*
         String link = getLinkPrefix(node);
         if (isAction(node, lastPathSegment.getPath())) {
-            link += camelCaseToDash(getAction(node, lastPathSegment.getPath()));
+            link += camelCaseToUnderscore(getAction(node, lastPathSegment.getPath()));
         } else {
             link += getMethodName(httpMethod);
         }
         return link;
     }
 
-    private String camelCaseToDash(String path) {
-        return path.replaceAll("(.)(\\p{Upper})", "$1-$2").toLowerCase();
+    private String camelCaseToUnderscore(String path) {
+        return path.replaceAll("(.)(\\p{Upper})", "$1_$2").toLowerCase();
     }
 
     private boolean isAction(ServiceTreeNode node, String path) {
@@ -89,7 +89,7 @@ public class UsageFinder {
         String[] parts = node.getName().replaceAll("Resource$", "").split(CAMEL_CASE_REGEX);
         StringBuilder builder = new StringBuilder("");
         for (String part : parts) {
-            builder.append(part.toLowerCase()).append("-");
+            builder.append(part.toLowerCase()).append("_");
         }
         String name = builder.toString();
         return name.substring(0, name.length() -1);
