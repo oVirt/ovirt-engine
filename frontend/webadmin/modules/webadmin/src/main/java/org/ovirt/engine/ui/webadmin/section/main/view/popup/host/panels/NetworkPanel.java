@@ -32,8 +32,6 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
 
     public NetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style, boolean draggable) {
         super(item, style, draggable);
-        getElement().addClassName(item.getAttachedToNic() != null ? style.networkPanelAttached()
-                : style.networkPanelNotAttached());
         if (item.isManagement()) {
             getElement().addClassName(style.mgmtNetwork());
         }
