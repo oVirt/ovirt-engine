@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -65,12 +64,6 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
 
     @Mock
     ImageTransferDao imageTransferDao;
-
-    @Mock
-    DiskDao diskDao;
-
-    @Mock
-    ImageTransferUpdater imageTransferUpdater;
 
     @Spy
     @InjectMocks
