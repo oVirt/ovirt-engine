@@ -140,4 +140,8 @@ class MacsStorage {
     boolean isMacInRange(Long mac) {
         return findIncludingRange(mac) != null;
     }
+
+    boolean containsDuplicates() {
+        return ranges.stream().anyMatch(range -> range.containsDuplicates()) || customMacs.containsDuplicates();
+    }
 }

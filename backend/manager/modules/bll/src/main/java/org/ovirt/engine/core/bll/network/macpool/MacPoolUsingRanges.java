@@ -87,6 +87,11 @@ public final class MacPoolUsingRanges implements MacPool {
         }
     }
 
+    @Override
+    public boolean containsDuplicates() {
+        return macsStorage.containsDuplicates();
+    }
+
     private void logWhenMacPoolIsEmpty() {
         if (!macsStorage.availableMacExist()) {
             AuditLogable logable = new AuditLogableImpl();
