@@ -1841,6 +1841,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ERROR_CANNOT_REMOVE_ISO_DISK_ATTACHED_TO_VMS();
 
+    String ERROR_ISO_DISK_ATTACHED_TO_RUNNING_VMS();
+
     String CAN_DO_ACTION_GENERAL_FAILURE();
 
     String ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL();

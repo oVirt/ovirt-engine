@@ -368,4 +368,14 @@ public interface VmDao extends Dao {
      * @return list of VMs
      */
     List<VM> getAllPinnedToHost(Guid hostId);
+
+
+    /**
+     * Retrieves all running VM names with the specified ISO disk attached as a CDROM.
+     *
+     * @param isoDiskId
+     *            the ISO disk ID
+     * @return the running VM names with with the specified ISO disk attached as a CDROM
+     */
+    List<String> getAllRunningNamesWithSpecificIsoAttached(Guid isoDiskId);
 }

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -65,6 +66,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
@@ -79,6 +81,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private ImageStorageDomainMapDao imageStorageDomainMapDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
     @Inject
@@ -307,7 +311,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * vm should be down
      */
     protected boolean checkCanBeMoveInVm() {
-        return validate(createDiskValidator(getImage()).isDiskPluggedToAnyNonDownVm(false));
+        DiskValidator diskValidator = createDiskValidator(getImage());
+        if (getImage().getContentType() == DiskContentType.ISO) {
+            return validate(diskValidator.isIsoDiskAttachedToAnyNonDownVm());
+        }
+        return validate(diskValidator.isDiskPluggedToAnyNonDownVm(false));
     }
 
     private boolean diskContainsPreExtendSnapshots() {
@@ -549,11 +557,21 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getDiskIsBeingMigratedMessage()));
             }
         } else {
-            List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
-            if (!vmsForDisk.isEmpty()) {
-                return vmsForDisk.stream()
-                        .collect(Collectors.toMap(p -> p.getFirst().getId().toString(),
-                                p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingMigratedMessage())));
+            if (getImage().getContentType() == DiskContentType.ISO) {
+                List<Guid> vmIds = vmDynamicDao.getAllIdsWithSpecificIsoAttached(getImage().getId());
+                if (!vmIds.isEmpty()) {
+                    return vmIds.stream()
+                            .collect(Collectors.toMap(p -> p.toString(),
+                                    p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingMigratedMessage())));
+                }
+            }
+            else {
+                List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
+                if (!vmsForDisk.isEmpty()) {
+                    return vmsForDisk.stream()
+                            .collect(Collectors.toMap(p -> p.getFirst().getId().toString(),
+                                    p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingMigratedMessage())));
+                }
             }
         }
         return null;
