@@ -39,4 +39,10 @@ public interface ReadMacPool {
      * @return ID of this MacPool. Most often this should return ID of underlying DB record representing mac pool.
      */
     Guid getId();
+
+    /**
+     * @return true if this MacPool contains duplicates.
+     */
+    @AcquireReadLock
+    boolean containsDuplicates();
 }

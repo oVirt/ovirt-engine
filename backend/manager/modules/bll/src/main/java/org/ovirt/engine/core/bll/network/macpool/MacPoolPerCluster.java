@@ -150,6 +150,20 @@ public class MacPoolPerCluster {
     }
 
     /**
+     * @return true if the duplicate are not allowed in the pool but it contains duplicates
+     */
+    public boolean containsDuplicates(Guid macPoolId) {
+        return macPools.get(macPoolId).containsDuplicates();
+    }
+
+    /**
+     * @return true if the duplicate are not allowed in the pool but it contains duplicates
+     */
+    public boolean isDuplicateMacAddressesAllowed(Guid macPoolId) {
+        return macPools.get(macPoolId).isDuplicateMacAddressesAllowed();
+    }
+
+    /**
      * @param macPool pool definition to re-init the pool
      */
     public void modifyPool(org.ovirt.engine.core.common.businessentities.MacPool macPool) {

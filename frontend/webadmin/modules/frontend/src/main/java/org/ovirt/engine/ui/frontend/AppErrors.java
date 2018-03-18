@@ -2900,5 +2900,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String CANNOT_MOVE_DISK_TEMPLATE();
 
     String CANNOT_LIVE_MIGRATE_VM_SHOULD_BE_IN_PAUSED_OR_UP_STATUS();
+
+    String ACTION_TYPE_FAILED_MAC_POOL_CONTAINS_DUPLICATES();
 }
 

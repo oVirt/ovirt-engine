@@ -39,6 +39,10 @@ class Range {
         return rangeStart <= mac && rangeEnd >= mac;
     }
 
+    public boolean containsDuplicates() {
+        return macDuplicityCount.containsCounts();
+    }
+
     private void checkIfMacIsFromWithinRange(long mac) {
         if (!contains(mac)) {
             throw new IllegalArgumentException();

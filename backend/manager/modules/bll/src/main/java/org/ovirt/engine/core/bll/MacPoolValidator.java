@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -70,4 +71,16 @@ public class MacPoolValidator {
         return getDbFacade().getMacPoolDao();
     }
 
+    /**
+     * Test that if the 'allow duplicates' flag of the mac pool has been
+     * turned off there are no duplicates in the pool. For backward compatibility
+     * check that the flag has been actually modified so that the validation does
+     * not fail on old mac pools where the flag is unset but duplicates exist
+     */
+    public ValidationResult validateDuplicates(MacPoolPerCluster macPoolPerCluster) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_MAC_POOL_CONTAINS_DUPLICATES)
+            .when(!macPool.isAllowDuplicateMacAddresses() &&
+                macPoolPerCluster.isDuplicateMacAddressesAllowed(macPool.getId()) &&
+                macPoolPerCluster.containsDuplicates(macPool.getId()));
+    }
 }

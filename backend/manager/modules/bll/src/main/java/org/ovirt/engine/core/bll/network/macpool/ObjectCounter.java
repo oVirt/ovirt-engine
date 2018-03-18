@@ -77,6 +77,14 @@ class ObjectCounter<T> implements Iterable<T>{
         return counter == null ? 0 : counter.toInt();
     }
 
+    public boolean containsDuplicates() {
+        return map.values().stream().anyMatch(counter -> counter.toInt() > 1);
+    }
+
+    public boolean containsCounts() {
+        return map.values().stream().anyMatch(counter -> counter.toInt() > 0);
+    }
+
     /**
      * @return unmodifiable iterator over all 'registered' instances (i.e. all instances having count >= 0).
      */
