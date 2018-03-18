@@ -61,15 +61,18 @@ public class RangeTest {
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, false), is(false));
         assertThat(rangeOf10Macs.getAvailableCount(), is(NUMBER_OF_MACS - 1));
         assertThat(rangeOf10Macs.isAllocated(MAC_FROM_RANGE), is(true));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(false));
     }
 
     @Test
     public void testAssigningMacWithAllowedDuplicates() throws Exception {
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, true), is(true));
         assertThat(rangeOf10Macs.getAvailableCount(), is(NUMBER_OF_MACS - 1));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(false));
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, true), is(true));
         assertThat(rangeOf10Macs.getAvailableCount(), is(NUMBER_OF_MACS - 1));
         assertThat(rangeOf10Macs.isAllocated(MAC_FROM_RANGE), is(true));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(true));
     }
 
     @Test
@@ -77,10 +80,12 @@ public class RangeTest {
         final List<Long> allocatedMacs = rangeOf10Macs.allocateMacs(NUMBER_OF_MACS);
         assertThat(allocatedMacs.size(), is(NUMBER_OF_MACS));
         assertThat(rangeOf10Macs.getAvailableCount(), is(0));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(false));
 
         for(int i = 1; i <= NUMBER_OF_MACS; i++) {
             rangeOf10Macs.freeMac(allocatedMacs.remove(0));
             assertThat(rangeOf10Macs.getAvailableCount(), is(i));
+            assertThat(rangeOf10Macs.containsDuplicates(), is(false));
         }
     }
 
@@ -89,14 +94,18 @@ public class RangeTest {
         // Allocate one mac twice.
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, true), is(true));
         assertThat(rangeOf10Macs.isAllocated(MAC_FROM_RANGE), is(true));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(false));
         assertThat(rangeOf10Macs.use(MAC_FROM_RANGE, true), is(true));
         assertThat(rangeOf10Macs.isAllocated(MAC_FROM_RANGE), is(true));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(true));
 
         // Check decreasing of duplicity usage.
         rangeOf10Macs.freeMac(MAC_FROM_RANGE);
         assertThat(rangeOf10Macs.isAllocated(MAC_FROM_RANGE), is(true));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(false));
         rangeOf10Macs.freeMac(MAC_FROM_RANGE);
         assertThat(rangeOf10Macs.isAllocated(MAC_FROM_RANGE), is(false));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(false));
     }
 
     @Test
@@ -105,6 +114,7 @@ public class RangeTest {
         assertThat(rangeOf10Macs.getAvailableCount(), is(5));
         assertThat(rangeOf10Macs.allocateMacs(5).size(), is(5));
         assertThat(rangeOf10Macs.getAvailableCount(), is(0));
+        assertThat(rangeOf10Macs.containsDuplicates(), is(false));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -149,6 +159,7 @@ public class RangeTest {
             if (usedMac) {
                 boolean allowDuplicates = false;
                 range.use(i, allowDuplicates);
+                assertThat(range.containsDuplicates(), is(false));
             }
         }
 

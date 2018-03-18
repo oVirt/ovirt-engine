@@ -72,6 +72,11 @@ public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     }
 
     @Override
+    public boolean containsDuplicates() {
+        return macPool.containsDuplicates();
+    }
+
+    @Override
     public final String toString() {
         ToStringBuilder result = ToStringBuilder.forInstance(this);
 

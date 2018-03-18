@@ -30,7 +30,6 @@ public class MacPoolUsingRangesTest {
     public void testReactionToDuplicatesWhenDuplicatesDuringStartup() throws Exception {
         MacPoolUsingRanges macPoolUsingRanges = createMacPoolDisallowingDuplicates();
         macPoolUsingRanges.initialize(true, Arrays.asList(MAC_ADDRESS, MAC_ADDRESS));
-
         verify(auditLogDirector).log(any(AuditLogableBase.class), eq(AuditLogType.MAC_ADDRESS_VIOLATES_NO_DUPLICATES_SETTING), anyString());
     }
 

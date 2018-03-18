@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,6 +33,28 @@ public class MacsStorageTest {
         addRangesToStorage(ranges, macsStorage);
 
         assertReturnedRange(ranges, macsStorage, expectedRangeIndices);
+    }
+
+    @Test
+    public void testNoDuplicateCustomMacs() {
+        MacsStorage macsStorage = new MacsStorage(false);
+        assertThat(macsStorage.containsDuplicates(), is(false));
+        macsStorage.useMac(1L);
+        assertThat(macsStorage.containsDuplicates(), is(false));
+        macsStorage.useMac(1L);
+        assertThat(macsStorage.containsDuplicates(), is(false));
+    }
+
+    @Test
+    public void testDuplicateCustomMacs() {
+        MacsStorage macsStorage = new MacsStorage(true);
+        assertThat(macsStorage.containsDuplicates(), is(false));
+        macsStorage.useMac(1L);
+        assertThat(macsStorage.containsDuplicates(), is(false));
+        macsStorage.useMac(1L);
+        assertThat(macsStorage.containsDuplicates(), is(true));
+        macsStorage.freeMac(1L);
+        assertThat(macsStorage.containsDuplicates(), is(false));
     }
 
     private void assertReturnedRange(List<Range> ranges, MacsStorage macsStorage, List<Integer> expectedRangeIndices) {
