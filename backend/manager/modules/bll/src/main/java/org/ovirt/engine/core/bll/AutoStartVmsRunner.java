@@ -30,15 +30,36 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmsMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class acts as a service that automatically starts VMs.
+ *
+ * Every {@link ConfigValues#AutoStartVmsRunnerIntervalInSeconds} sec, this service wakes up, iterates over the VMs that were
+ * registered for being automatically restarted (e.g., highly-available VMs that went down unexpectedly
+ * are registered by the monitoring) and process each VM according to the following logic:
+ *
+ * - If the VM contains next-run configuration then we check every {@link ConfigValues#DelayToRunAutoStartVmIntervalInSeconds} sec
+ * whether or not that configuration was applied (by {@link ProcessDownVmCommand}). If we detect that this
+ * configuration does not exist anymore, i.e., was applied, we proceed with the restart procedure. Otherwise,
+ * after {@link ConfigValues#MaxNumOfSkipsBeforeAutoStartVm} checks, we proceed with the restart procedure that would try to start
+ * the VM using its current configuration.
+ * - If the VM is locked by other module, we skip it in the current cycle and try again in the next cycle.
+ * - If we managed to lock the VM, we check if it still needs to be automatically started. If not, we remove
+ * it from the list of VMs to start and skip it (the VM will not be automatically started).
+ * - Otherwise, we try to start the VM. If we immediately fail, we retry every {@link ConfigValues#RetryToRunAutoStartVmIntervalInSeconds}
+ * sec to start it for {@link ConfigValues#MaxNumOfTriesToRunFailedAutoStartVm} times. When all those attempts immediately fail,
+ * we remove the VM from the list of VMs to start and skip it (the VM will not be automatically started).
+ * - Otherwise, we successfully scheduled an attempt to start the VM. From this point on, it is the monitoring
+ * module ({@link VmsMonitoring}) that will track the VM and re-register it to this service in case of a failure.
+ */
 public abstract class AutoStartVmsRunner implements BackendService {
 
     /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
@@ -61,9 +82,6 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     @Inject
     private VmDynamicDao vmDynamicDao;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     private ResourceManager resourceManager;
@@ -233,10 +251,6 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     protected VmDynamicDao getVmDynamicDao() {
         return vmDynamicDao;
-    }
-
-    protected VmDao getVmDao() {
-        return vmDao;
     }
 
     private boolean runVm(Guid vmId, EngineLock lock) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 
 /**
  * This class represent a job which is responsible for running HA VMs
@@ -19,12 +21,15 @@ import org.ovirt.engine.core.compat.Guid;
 @Singleton
 public class HaAutoStartVmsRunner extends AutoStartVmsRunner {
 
+    @Inject
+    private VmDao vmDao;
+
     @Override
     protected Collection<AutoStartVmToRestart> getInitialVmsToStart() {
         // There might be HA VMs which went down just before the engine stopped, we detected
         // the failure and updated the DB but didn't made it to rerun the VM. So here we'll
         // take all the HA VMs which are down because of an error and add them to the set
-        List<VM> failedAutoStartVms = getVmDao().getAllFailedAutoStartVms();
+        List<VM> failedAutoStartVms = vmDao.getAllFailedAutoStartVms();
         ArrayList<AutoStartVmToRestart> initialFailedVms = new ArrayList<>(failedAutoStartVms.size());
         for (VM vm: failedAutoStartVms) {
             log.info("Found HA VM which is down because of an error, trying to restart it, VM '{}' ({})",
