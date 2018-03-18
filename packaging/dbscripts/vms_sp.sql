@@ -2215,6 +2215,21 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetActiveVmNamesWithIsoAttached(v_iso_disk_id UUID)
+RETURNS SETOF varchar(255) STABLE
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vs.vm_name
+    FROM vm_static vs
+    JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
+    WHERE vs.iso_path = v_iso_disk_id::VARCHAR
+        AND vd.status NOT IN (0, 14, 15);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 Create or replace FUNCTION GetVmNamesWithSpecificIsoAttached(v_iso_disk_id UUID)
 RETURNS SETOF varchar(255) STABLE
    AS $procedure$
@@ -2222,6 +2237,19 @@ BEGIN
     RETURN QUERY SELECT vm.vm_name
     FROM vm_static vm
     WHERE vm.iso_path = v_iso_disk_id::VARCHAR;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+Create or replace FUNCTION GetVmIdsWithSpecificIsoAttached(v_iso_disk_id UUID)
+RETURNS SETOF UUID STABLE
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vd.vm_guid
+    FROM vm_dynamic vd
+    WHERE vd.current_cd = v_iso_disk_id::VARCHAR;
 END; $procedure$
 LANGUAGE plpgsql;
 

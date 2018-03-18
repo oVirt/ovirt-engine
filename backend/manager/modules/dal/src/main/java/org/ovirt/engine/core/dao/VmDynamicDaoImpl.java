@@ -314,6 +314,13 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         }
     }
 
+    @Override
+    public List<Guid> getAllIdsWithSpecificIsoAttached(Guid isoDiskId) {
+        return getCallsHandler().executeReadList("GetVmIdsWithSpecificIsoAttached",
+                SingleColumnRowMapper.newInstance(Guid.class),
+                getCustomMapSqlParameterSource().addValue("iso_disk_id", isoDiskId));
+    }
+
     protected static RowMapper<VmDynamic> getRowMapper() {
         return vmDynamicRowMapper;
     }

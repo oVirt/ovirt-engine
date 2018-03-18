@@ -121,4 +121,14 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      * @param leaseInfo dynamic properties of the lease
      */
     void updateVmLeaseInfo(Guid vmId, Map<String, String> leaseInfo);
+
+
+    /**
+     * Retrieves all VM IDs with the specified ISO disk attached as a CDROM.
+     *
+     * @param isoDiskId
+     *            the ISO disk ID
+     * @return the VM IDs with with the specified ISO disk attached as a CDROM
+     */
+    List<Guid> getAllIdsWithSpecificIsoAttached(Guid isoDiskId);
 }

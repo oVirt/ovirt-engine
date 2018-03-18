@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 
 /**
  * {@code VmDaoImpl} provides a concrete implementation of {@link VmDao}.
@@ -377,5 +378,12 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         return getCallsHandler().executeReadList("GetVmsByOrigin",
                 vmRowMapper,
                 getCustomMapSqlParameterSource().addValue("origins", createArrayOf("int", originValues)));
+    }
+
+    @Override
+    public List<String> getAllRunningNamesWithSpecificIsoAttached(Guid isoDiskId) {
+        return getCallsHandler().executeReadList("GetActiveVmNamesWithIsoAttached",
+                SingleColumnRowMapper.newInstance(String.class),
+                getCustomMapSqlParameterSource().addValue("iso_disk_id", isoDiskId));
     }
 }

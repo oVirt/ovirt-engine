@@ -157,6 +157,16 @@ public class DiskValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult isIsoDiskAttachedToAnyNonDownVm() {
+        List<String> vmNames = DbFacade.getInstance().getVmDao().getAllRunningNamesWithSpecificIsoAttached(disk.getId());
+        if (!vmNames.isEmpty()) {
+            return new ValidationResult(EngineMessage.ERROR_ISO_DISK_ATTACHED_TO_RUNNING_VMS,
+                    ReplacementUtils.createSetVariableString(DISK_NAME_VARIABLE, disk.getDiskAlias()),
+                    ReplacementUtils.createSetVariableString(VM_LIST, vmNames));
+        }
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult isVmNotContainsBootDisk(VM vm) {
         Disk bootDisk = DbFacade.getInstance().getDiskDao().getVmBootActiveDisk(vm.getId());
         if (bootDisk != null) {
