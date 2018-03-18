@@ -67,11 +67,8 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
 
     @Spy
     @InjectMocks
-    protected TransferDiskImageCommand<TransferDiskImageParameters> transferImageCommand = spyCommand();
-
-    protected TransferDiskImageCommand<TransferDiskImageParameters> spyCommand() {
-        return new TransferDiskImageCommand<>(new TransferDiskImageParameters(), null);
-    }
+    protected TransferDiskImageCommand<TransferDiskImageParameters> transferImageCommand =
+            new TransferDiskImageCommand<>(new TransferDiskImageParameters(), null);
 
     private TransferDiskImageCommand<TransferDiskImageParameters> getCommand() {
         return transferImageCommand;
