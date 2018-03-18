@@ -53,7 +53,6 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -1350,9 +1349,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     protected void endSuccessfully() {
         checkTrustedService();
-        endActionOnAllImageGroups();
-        vmHandler.unLockVm(getVm());
-        setSucceeded(true);
+        super.endSuccessfully();
     }
 
     private void checkTrustedService() {
@@ -1361,17 +1358,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
         else if (!getVm().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED);
-        }
-    }
-
-    protected void endActionOnAllImageGroups() {
-        for (ActionParametersBase p : getParameters().getImagesParameters()) {
-            if (p instanceof MoveOrCopyImageGroupParameters) {
-                p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-                backend.endAction(ActionType.CopyImageGroup,
-                        p,
-                        getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-            }
         }
     }
 
@@ -1396,7 +1382,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         if (getVm() != null) {
             removeVmSnapshots();
-            endActionOnAllImageGroups();
+            endActionOnDisks();
             removeVmNetworkInterfaces();
             vmDynamicDao.remove(getVmId());
             vmStatisticsDao.remove(getVmId());
