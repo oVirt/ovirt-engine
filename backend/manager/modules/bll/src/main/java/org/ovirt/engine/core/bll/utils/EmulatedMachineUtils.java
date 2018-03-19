@@ -27,7 +27,8 @@ public class EmulatedMachineUtils {
         }
 
         // The 'default' to be set
-        String recentClusterDefault = clusterSupplier.get().getEmulatedMachine();
+        Cluster cluster = clusterSupplier.get();
+        String recentClusterDefault = cluster != null ? cluster.getEmulatedMachine() : "";
         if (vmBase.getCustomCompatibilityVersion() == null) {
             return recentClusterDefault;
         }
