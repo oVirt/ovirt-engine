@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandActionState;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -275,7 +274,7 @@ implements QuotaStorageDependent {
     protected void addVmStatic() {
         super.addVmStatic();
         getSnapshotsManager().addActiveSnapshot(
-                Guid.newGuid(), getVm(), SnapshotStatus.OK, StringUtils.EMPTY, getCompensationContext());
+                Guid.newGuid(), getVm(), SnapshotStatus.OK, null, null, getCompensationContext());
     }
 
     protected DiskImage adjustDisk(DiskImage image) {

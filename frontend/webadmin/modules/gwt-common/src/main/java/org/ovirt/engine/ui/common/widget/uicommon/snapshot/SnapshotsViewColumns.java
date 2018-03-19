@@ -49,7 +49,7 @@ public class SnapshotsViewColumns {
     public static final AbstractCheckboxColumn<Snapshot> memoryColumn = new AbstractCheckboxColumn<Snapshot>() {
         @Override
         public Boolean getValue(Snapshot object) {
-            return !object.getMemoryVolume().isEmpty();
+            return object.containsMemory();
         }
 
         @Override

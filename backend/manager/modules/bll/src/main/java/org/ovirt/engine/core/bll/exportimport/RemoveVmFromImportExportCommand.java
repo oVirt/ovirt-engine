@@ -12,7 +12,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -132,26 +131,21 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
             shouldWipe |= image.isWipeAfterDelete();
         }
 
-        Set<String> allMemoryVolumes = MemoryUtils.getMemoryVolumesFromSnapshots(getVm().getSnapshots());
-        for (String memoryVolumes : allMemoryVolumes) {
-            if (!StringUtils.isEmpty(memoryVolumes)) {
-                List<Guid> guids = Guid.createGuidListFromString(memoryVolumes);
-
-                DiskImage memoryDisk = createMemoryDisk(guids.get(2), guids.get(3), shouldWipe);
-                images.add(memoryDisk);
-
-                DiskImage metadataDisk = createMemoryDisk(guids.get(4), guids.get(5), shouldWipe);
-                images.add(metadataDisk);
-            }
+        Set<Guid> allMemoryDisks = MemoryUtils.getMemoryDiskIdsFromSnapshots(getVm().getSnapshots());
+        for (Guid memoryDiskId : allMemoryDisks) {
+            DiskImage metadataDisk = createMemoryDisk(memoryDiskId, shouldWipe);
+            images.add(metadataDisk);
         }
 
         removeVmImages(images);
     }
 
-    private DiskImage createMemoryDisk(Guid diskId, Guid imageId, boolean shouldWipe) {
+    private DiskImage createMemoryDisk(Guid diskId, boolean shouldWipe) {
         DiskImage disk = new DiskImage();
         disk.setId(diskId);
-        disk.setImageId(imageId);
+        // The image ID is meaningless when removing a memory disk but has to be set to a distinguished
+        // value due to how the remove command works
+        disk.setImageId(Guid.newGuid());
         disk.setStoragePoolId(getParameters().getStoragePoolId());
         disk.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
         disk.setWipeAfterDelete(shouldWipe);

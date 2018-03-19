@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
@@ -51,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -202,7 +204,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 FeatureSupported.isMemorySnapshotSupportedByArchitecture(
                 getVm().getClusterArch(),
                 getVm().getCompatibilityVersion())) &&
-                !StringUtils.isEmpty(getActiveSnapshot().getMemoryVolume());
+                getActiveSnapshot().containsMemory();
     }
 
     /**
@@ -594,13 +596,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
         parameters.setVmPayload(vmPayload);
         if (shouldRestoreMemory()) {
-            if (FeatureSupported.isMemoryDisksOnDifferentDomainsSupported(getVm().getCompatibilityVersion())
-                    && getActiveSnapshot().getMemoryDiskId() != null) {
-                parameters.setMemoryDumpImage((DiskImage) diskDao.get(getActiveSnapshot().getMemoryDiskId()));
-                parameters.setMemoryConfImage((DiskImage) diskDao.get(getActiveSnapshot().getMetadataDiskId()));
+            DiskImage memoryDump = (DiskImage) diskDao.get(getActiveSnapshot().getMemoryDiskId());
+            DiskImage memoryConf = (DiskImage) diskDao.get(getActiveSnapshot().getMetadataDiskId());
+            if (FeatureSupported.isMemoryDisksOnDifferentDomainsSupported(getVm().getCompatibilityVersion())) {
+                parameters.setMemoryDumpImage(memoryDump);
+                parameters.setMemoryConfImage(memoryConf);
             }
             else {
-                parameters.setHibernationVolHandle(getActiveSnapshot().getMemoryVolume());
+                parameters.setHibernationVolHandle(MemoryUtils.createHibernationVolumeString(memoryDump, memoryConf));
             }
 
             parameters.setDownSince(getVm().getStatus() == VMStatus.Suspended ?
@@ -1229,15 +1232,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     private void removeMemoryFromActiveSnapshot() {
-        String memory = getActiveSnapshot().getMemoryVolume();
-        if (StringUtils.isEmpty(memory)) {
+        // getActiveSnapshot fetches eagerly from the DB, cache it so we can remove the memory volumes
+        Snapshot activeSnapshot = getActiveSnapshot();
+        if (!activeSnapshot.containsMemory()) {
             return;
         }
 
         snapshotDao.removeMemoryFromActiveSnapshot(getVmId());
         // If the memory volumes are not used by any other snapshot, we can remove them
-        if (snapshotDao.getNumOfSnapshotsByMemory(memory) == 0) {
-            removeMemoryDisks(memory);
+        if (snapshotDao.getNumOfSnapshotsByDisks(activeSnapshot) == 0) {
+            removeMemoryDisks(activeSnapshot);
         }
     }
 

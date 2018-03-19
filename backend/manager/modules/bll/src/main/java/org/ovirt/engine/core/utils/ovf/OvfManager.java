@@ -3,18 +3,21 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
+import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -23,6 +26,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
@@ -50,6 +54,8 @@ public class OvfManager {
     private OsRepository osRepository;
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Inject
+    DiskDao diskDao;
 
     public String exportVm(VM vm, FullEntityOvfData fullEntityOvfData, Version version) {
         updateBootOrderOnDevices(vm.getStaticData(), false);
@@ -60,9 +66,14 @@ public class OvfManager {
             String engineXml = generateEngineXml(vm, cpuId, cluster.getEmulatedMachine());
             vmWriter = new HostedEngineOvfWriter(vm, fullEntityOvfData, version, cluster.getEmulatedMachine(), cpuId, osRepository, engineXml);
         } else {
-            vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, osRepository);
+            vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, osRepository, getMemoryDiskForSnapshots(vm));
         }
         return vmWriter.build().getStringRepresentation();
+    }
+
+    private Map<Guid, DiskImage> getMemoryDiskForSnapshots(VM vm) {
+        return MemoryUtils.getMemoryDiskIdsFromSnapshots(vm.getSnapshots()).stream()
+                .collect(Collectors.toMap(Function.identity(), d -> (DiskImage) diskDao.get(d)));
     }
 
     public String exportTemplate(FullEntityOvfData fullEntityOvfData, Version version) {

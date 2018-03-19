@@ -25,11 +25,6 @@ public class StatelessSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     @Override
-    public String getVolumeStringRepresentation() {
-        return activeSnapshot.getMemoryVolume();
-    }
-
-    @Override
     public Guid getMemoryDiskId() {
         return activeSnapshot.getMemoryDiskId();
     }

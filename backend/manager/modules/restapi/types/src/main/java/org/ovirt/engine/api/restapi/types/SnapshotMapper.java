@@ -24,9 +24,7 @@ public class SnapshotMapper {
         if (entity.getType() != null) {
             model.setSnapshotType(map(entity.getType(), null));
         }
-        if (entity.getMemoryVolume() != null) {
-            model.setPersistMemorystate(!entity.getMemoryVolume().isEmpty());
-        }
+        model.setPersistMemorystate(entity.containsMemory());
         return model;
     }
 

@@ -6,7 +6,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -27,19 +26,16 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     private DiskImage metadataDisk;
     private VM vm;
     private CommandBase<?> enclosingCommand;
-    private StoragePool storagePool;
     private VmOverheadCalculator vmOverheadCalculator;
     private String snapshotDescription;
     private boolean wipeAfterDelete;
 
     public LiveSnapshotMemoryImageBuilder(VM vm, Guid storageDomainId,
-            StoragePool storagePool, CommandBase<?> enclosingCommand,
-            VmOverheadCalculator vmOverheadCalculator, String snapshotDescription,
-            boolean wipeAfterDelete) {
+            CommandBase<?> enclosingCommand, VmOverheadCalculator vmOverheadCalculator,
+            String snapshotDescription, boolean wipeAfterDelete) {
         this.vm = vm;
         this.enclosingCommand = enclosingCommand;
         this.storageDomainId = storageDomainId;
-        this.storagePool = storagePool;
         this.vmOverheadCalculator = vmOverheadCalculator;
         this.snapshotDescription = snapshotDescription;
         this.wipeAfterDelete = wipeAfterDelete;
@@ -109,17 +105,6 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
 
     protected StorageDomainStaticDao getStorageDomainStaticDao() {
         return DbFacade.getInstance().getStorageDomainStaticDao();
-    }
-
-    @Override
-    public String getVolumeStringRepresentation() {
-        return MemoryUtils.createMemoryStateString(
-                storageDomainId,
-                storagePool.getId(),
-                memoryDisk.getId(),
-                memoryDisk.getImageId(),
-                metadataDisk.getId(),
-                metadataDisk.getImageId());
     }
 
     @Override

@@ -27,7 +27,7 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
 
     private StatusOnlyReturn executeSnapshotVerb() {
         String vmId = getParameters().getVmId().toString();
-        String memoryVolume = getParameters().isMemoryVolumeExists() ? getParameters().getMemoryVolume() : "";
+        String memoryVolume = getParameters().isMemoryVolumeExists() ? createMemoryStringFromDisks() : "";
         if (getParameters().isVmFrozen()) {
             return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, getParameters().isVmFrozen());
         } else if (getParameters().isMemoryVolumeExists()) {
@@ -35,6 +35,16 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
         } else {
             return getBroker().snapshot(vmId, createDisksMap());
         }
+    }
+
+    private String createMemoryStringFromDisks() {
+        return String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s",
+                getParameters().getMemoryDump().getStorageIds().get(0),
+                getParameters().getMemoryDump().getStoragePoolId(),
+                getParameters().getMemoryDump().getId(),
+                getParameters().getMemoryDump().getImageId(),
+                getParameters().getMemoryConf().getId(),
+                getParameters().getMemoryConf().getImageId());
     }
 
     private Map<String, String>[] createDisksMap() {

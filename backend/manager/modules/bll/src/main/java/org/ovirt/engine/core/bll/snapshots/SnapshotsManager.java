@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -19,7 +18,6 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
-import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
@@ -149,18 +147,24 @@ public class SnapshotsManager {
      *            The VM to save the snapshot for.
      * @param snapshotStatus
      *            The initial status of the snapshot
+     * @param memoryDumpDiskId
+     *            The memory dump disk ID
+     * @param memoryConfDiskId
+     *            The memory metadata disk ID
      * @param compensationContext
      *            Context for saving compensation details.
      */
     public Snapshot addActiveSnapshot(Guid snapshotId,
-                                      VM vm,
-                                      SnapshotStatus snapshotStatus,
-                                      String memoryVolume,
-                                      final CompensationContext compensationContext) {
+            VM vm,
+            SnapshotStatus snapshotStatus,
+            Guid memoryDumpDiskId,
+            Guid memoryConfDiskId,
+            final CompensationContext compensationContext) {
         return addActiveSnapshot(snapshotId,
                 vm,
                 snapshotStatus,
-                memoryVolume,
+                memoryDumpDiskId,
+                memoryConfDiskId,
                 null,
                 null,
                 compensationContext);
@@ -176,6 +180,10 @@ public class SnapshotsManager {
      *            The VM to save the snapshot for.
      * @param snapshotStatus
      *            The initial status of the snapshot
+     * @param memoryDumpDiskId
+     *            The memory dump disk ID
+     * @param memoryConfDiskId
+     *            The memory metadata disk ID
      * @param creationDate
      *            predefined creation date for the snapshot, null indicates 'now'
      * @param disks
@@ -186,7 +194,8 @@ public class SnapshotsManager {
     public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
             SnapshotStatus snapshotStatus,
-            String memoryVolume,
+            Guid memoryDumpDiskId,
+            Guid memoryConfDiskId,
             Date creationDate,
             List<DiskImage> disks,
             final CompensationContext compensationContext) {
@@ -196,7 +205,8 @@ public class SnapshotsManager {
                 SnapshotType.ACTIVE,
                 vm,
                 false,
-                memoryVolume,
+                memoryDumpDiskId,
+                memoryConfDiskId,
                 creationDate,
                 disks,
                 null,
@@ -218,8 +228,10 @@ public class SnapshotsManager {
      *            The VM to link to & save configuration for (if necessary).
      * @param saveVmConfiguration
      *            Should VM configuration be generated and saved?
-     * @param memoryVolume
-     *            the volume in which the snapshot's memory is stored
+     * @param memoryDumpDiskId
+     *            The memory dump disk ID
+     * @param memoryConfDiskId
+     *            The memory metadata disk ID
      * @param creationDate
      *            predefined creation date for the snapshot, null indicates 'now'
      * @param disks
@@ -231,16 +243,17 @@ public class SnapshotsManager {
      * @return the saved snapshot
      */
     public Snapshot addSnapshot(Guid snapshotId,
-                                String description,
-                                SnapshotStatus snapshotStatus,
-                                SnapshotType snapshotType,
-                                VM vm,
-                                boolean saveVmConfiguration,
-                                String memoryVolume,
-                                Date creationDate,
-                                List<DiskImage> disks,
-                                Map<Guid, VmDevice> vmDevices,
-                                final CompensationContext compensationContext) {
+            String description,
+            SnapshotStatus snapshotStatus,
+            SnapshotType snapshotType,
+            VM vm,
+            boolean saveVmConfiguration,
+            Guid memoryDumpDiskId,
+            Guid memoryConfDiskId,
+            Date creationDate,
+            List<DiskImage> disks,
+            Map<Guid, VmDevice> vmDevices,
+            final CompensationContext compensationContext) {
         final Snapshot snapshot = new Snapshot(snapshotId,
                 snapshotStatus,
                 vm.getId(),
@@ -249,9 +262,8 @@ public class SnapshotsManager {
                 description,
                 creationDate != null ? creationDate : new Date(),
                 vm.getAppList(),
-                memoryVolume,
-                MemoryUtils.getMemoryDiskId(memoryVolume),
-                MemoryUtils.getMetadataDiskId(memoryVolume));
+                memoryDumpDiskId,
+                memoryConfDiskId);
 
         snapshotDao.save(snapshot);
         compensationContext.snapshotNewEntity(snapshot);
@@ -306,14 +318,14 @@ public class SnapshotsManager {
      *
      * @param vmId
      *            The ID of the VM.
-     * @return Set of memoryVolumes of the removed snapshots
+     * @return Set of the snapshots that were removed
      */
-    public Set<String> removeSnapshots(Guid vmId) {
+    public List<Snapshot> removeSnapshots(Guid vmId) {
         final List<Snapshot> vmSnapshots = snapshotDao.getAll(vmId);
         for (Snapshot snapshot : vmSnapshots) {
             snapshotDao.remove(snapshot.getId());
         }
-        return MemoryUtils.getMemoryVolumesFromSnapshots(vmSnapshots);
+        return vmSnapshots;
     }
 
     /**

@@ -35,7 +35,7 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
             @NotNull OsRepository osRepository,
             @NotNull String engineXml) {
 
-        super(vm, fullEntityOvfData, version, osRepository);
+        super(vm, fullEntityOvfData, version, osRepository, null);
         if (!vm.isHostedEngine()) {
             throw new IllegalArgumentException(
                     String.format("The VM %s isn't hosted engine - aborting the export", vm));

@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -31,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -135,25 +135,37 @@ public class ImportValidator {
             boolean allowPartial,
             Map<Guid, String> failedDisksToImport) {
         for (Snapshot snap : snapshots) {
-            if (StringUtils.isNotEmpty(snap.getMemoryVolume())) {
-                List<Guid> guids = Guid.createGuidListFromString(snap.getMemoryVolume());
-                StorageDomain sd = getStorageDomainDao().getForStoragePool(guids.get(0), params.getStoragePoolId());
-                ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
-                if (!result.isValid()) {
-                    log.error("Storage Domain '{}', could not be found for memory disks: '{}','{}' in snapshot '{}' (id: '{}')",
-                            guids.get(0),
-                            guids.get(2),
-                            guids.get(4),
-                            snap.getDescription(),
-                            snap.getId());
-                    if (!allowPartial) {
-                        return result;
-                    }
-                    failedDisksToImport.putIfAbsent(guids.get(2), snap.getDescription() + "(memory disk)");
+            if (snap.containsMemory()) {
+                DiskImage memoryDump = (DiskImage) getDiskDao().get(snap.getMemoryDiskId());
+                StorageDomain dumpSd = getStorageDomainDao().getForStoragePool(memoryDump.getStorageIds().get(0), params.getStoragePoolId());
+                ValidationResult dumpSdResult = new StorageDomainValidator(dumpSd).isDomainExistAndActive();
+                if (!handleStorageValidationResult(dumpSdResult, memoryDump, snap, failedDisksToImport) && !allowPartial) {
+                    return dumpSdResult;
+                }
+
+                DiskImage memoryConf = (DiskImage) getDiskDao().get(snap.getMetadataDiskId());
+                StorageDomain confSd = getStorageDomainDao().getForStoragePool(memoryConf.getStorageIds().get(0), params.getStoragePoolId());
+                ValidationResult confSdResult = new StorageDomainValidator(confSd).isDomainExistAndActive();
+                if (!handleStorageValidationResult(confSdResult, memoryConf, snap, failedDisksToImport) && !allowPartial) {
+                    return confSdResult;
                 }
             }
         }
         return ValidationResult.VALID;
+    }
+
+    private boolean handleStorageValidationResult(ValidationResult result, DiskImage disk, Snapshot snapshot,
+            Map<Guid, String> failedDisksToImport) {
+        if (!result.isValid()) {
+            log.error("Storage Domain '{}', could not be found for memory disk: '{}' in snapshot '{}' (id: '{}')",
+                    disk.getStorageIds().get(0),
+                    disk.getId(),
+                    snapshot.getDescription(),
+                    snapshot.getId());
+            failedDisksToImport.putIfAbsent(disk.getId(), snapshot.getDescription() + "(memory disk)");
+            return false;
+        }
+        return true;
     }
 
     public ValidationResult validateUnregisteredEntity(OvfEntityData ovfEntityData) {
@@ -217,6 +229,10 @@ public class ImportValidator {
 
     public DiskImageDao getDiskImageDao() {
         return DbFacade.getInstance().getDiskImageDao();
+    }
+
+    public DiskDao getDiskDao() {
+        return DbFacade.getInstance().getDiskDao();
     }
 
     protected StoragePoolDao getStoragePoolDao() {

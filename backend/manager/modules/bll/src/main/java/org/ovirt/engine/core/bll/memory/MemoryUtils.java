@@ -39,14 +39,13 @@ public class MemoryUtils {
     private static final String MEMORY_DISK_DESCRIPTION = "Memory snapshot disk for snapshot '%s' of VM '%s' (VM ID: '%s')";
 
     /**
-     * Modified the given memory volume String representation to have the given storage
-     * pool and storage domain
+     * Creates a hiberenation volume from two disk images of the memory dump and the configuration
+     * To be used only on compat versions lower than 4.2 as the storage domain ID is the same for both
+     * disks by definition.
      */
-    public static String changeStorageDomainAndPoolInMemoryState(
-            String originalMemoryVolume, Guid storageDomainId, Guid storagePoolId) {
-        List<Guid> guids = Guid.createGuidListFromString(originalMemoryVolume);
-        return createMemoryStateString(storageDomainId, storagePoolId,
-                guids.get(2), guids.get(3), guids.get(4), guids.get(5));
+    public static String createHibernationVolumeString(DiskImage memoryDump, DiskImage memoryConf) {
+        return createMemoryStateString(memoryDump.getStorageIds().get(0), memoryDump.getStoragePoolId(),
+                memoryDump.getId(), memoryDump.getImageId(), memoryConf.getId(), memoryConf.getImageId());
     }
 
     public static String createMemoryStateString(
@@ -61,13 +60,15 @@ public class MemoryUtils {
                 confVolumeId);
     }
 
-    public static Set<String> getMemoryVolumesFromSnapshots(List<Snapshot> snapshots) {
-        Set<String> memories = new HashSet<>();
+    public static Set<Guid> getMemoryDiskIdsFromSnapshots(List<Snapshot> snapshots) {
+        Set<Guid> memoryDiskIds = new HashSet<>();
         for (Snapshot snapshot : snapshots) {
-            memories.add(snapshot.getMemoryVolume());
+            if (snapshot.containsMemory()) {
+                memoryDiskIds.add(snapshot.getMemoryDiskId());
+                memoryDiskIds.add(snapshot.getMetadataDiskId());
+            }
         }
-        memories.remove(StringUtils.EMPTY);
-        return memories;
+        return memoryDiskIds;
     }
 
     public static List<DiskImage> createDiskDummies(long memorySize, long metadataSize) {
