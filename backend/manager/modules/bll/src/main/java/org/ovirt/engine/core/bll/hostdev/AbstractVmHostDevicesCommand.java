@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll.hostdev;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -77,24 +77,24 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
 
     private List<HostDevice> getHostDevices() {
         if (hostDevices == null) {
-            hostDevices = new ArrayList<>();
-            for (String deviceName : getParameters().getDeviceNames()) {
-                HostDevice hostDevice = fetchHostDevice(deviceName);
-                if (hostDevice == null) {
-                    return null;
-                }
-                hostDevices.add(hostDevice);
+            hostDevices = getParameters().getDeviceNames()
+                    .stream()
+                    .map(this::fetchHostDevice)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            if (hostDevices.size() != getParameters().getDeviceNames().size()) {
+                // didn't find one or more of the specified devices
+                hostDevices = null;
             }
         }
         return hostDevices;
     }
 
     protected Set<HostDevice> getAffectedHostDevices() {
-        Set<HostDevice> affectedDevices = new HashSet<>();
-        for (HostDevice hostDevice : getHostDevices()) {
-            affectedDevices.addAll(getDeviceAtomicGroup(hostDevice));
-        }
-        return affectedDevices;
+        return getHostDevices().stream()
+                .map(this::getDeviceAtomicGroup)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
     private Collection<HostDevice> getDeviceAtomicGroup(HostDevice hostDevice) {
@@ -117,11 +117,10 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     }
 
     protected Map<String, VmHostDevice> getExistingVmHostDevicesByName() {
-        List<VmDevice> existingDevices = vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
-        List<VmHostDevice> result = new ArrayList<>();
-        for (VmDevice device : existingDevices) {
-            result.add(new VmHostDevice(device));
-        }
-        return getVmDeviceUtils().vmDevicesByDevice(result);
+        List<VmHostDevice> devices = vmDeviceDao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV)
+                .stream()
+                .map(VmHostDevice::new)
+                .collect(Collectors.toList());
+        return getVmDeviceUtils().vmDevicesByDevice(devices);
     }
 }

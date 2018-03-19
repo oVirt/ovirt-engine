@@ -1,15 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class GetVmHostDevicesQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -23,14 +22,10 @@ public class GetVmHostDevicesQuery<P extends IdQueryParameters> extends QueriesC
 
     @Override
     protected void executeQueryCommand() {
-        List<VmHostDevice> result = new ArrayList<>();
-        List<VmDevice> vmHostDevices = vmDeviceDao.getVmDeviceByVmIdAndType(
-                getParameters().getId(), VmDeviceGeneralType.HOSTDEV);
-
-        for (VmDevice device : vmHostDevices) {
-            result.add(new VmHostDevice(device));
-        }
-
-        setReturnValue(result);
+        Guid vmId = getParameters().getId();
+        setReturnValue(vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.HOSTDEV)
+                .stream()
+                .map(VmHostDevice::new)
+                .collect(Collectors.toList()));
     }
 }
