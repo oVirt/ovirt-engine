@@ -76,7 +76,10 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
-        initCommand();
+        doNothing().when(transferImageCommand).createImage();
+        doNothing().when(transferImageCommand).persistCommand(any(), anyBoolean());
+        doNothing().when(transferImageCommand).lockImage();
+        doNothing().when(transferImageCommand).startImageTransferSession();
     }
 
     protected void initializeSuppliedImage() {
@@ -92,13 +95,6 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         doReturn(diskValidator).when(getCommand()).getDiskValidator(any());
         doReturn(diskImagesValidator).when(getCommand()).getDiskImagesValidator(any());
         doReturn(storageDomainValidator).when(getCommand()).getStorageDomainValidator(any());
-    }
-
-    protected void initCommand() {
-        doNothing().when(transferImageCommand).createImage();
-        doNothing().when(transferImageCommand).persistCommand(any(), anyBoolean());
-        doNothing().when(transferImageCommand).lockImage();
-        doNothing().when(transferImageCommand).startImageTransferSession();
     }
 
     protected void initSuppliedImage(TransferImageCommand<? extends TransferImageParameters> command) {
