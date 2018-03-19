@@ -12,7 +12,6 @@ CREATE OR REPLACE FUNCTION InsertSnapshot (
     v_creation_date TIMESTAMP WITH TIME ZONE,
     v_app_list TEXT,
     v_vm_configuration TEXT,
-    v_memory_volume VARCHAR(255),
     v_memory_dump_disk_id UUID,
     v_memory_metadata_disk_id UUID
     )
@@ -27,7 +26,6 @@ BEGIN
         creation_date,
         app_list,
         vm_configuration,
-        memory_volume,
         memory_dump_disk_id,
         memory_metadata_disk_id
         )
@@ -40,7 +38,6 @@ BEGIN
         v_creation_date,
         v_app_list,
         v_vm_configuration,
-        v_memory_volume,
         v_memory_dump_disk_id,
         v_memory_metadata_disk_id
         );
@@ -56,7 +53,6 @@ CREATE OR REPLACE FUNCTION UpdateSnapshot (
     v_creation_date TIMESTAMP WITH TIME ZONE,
     v_app_list TEXT,
     v_vm_configuration TEXT,
-    v_memory_volume VARCHAR(255),
     v_memory_dump_disk_id UUID,
     v_memory_metadata_disk_id UUID,
     v_vm_configuration_broken BOOLEAN
@@ -71,7 +67,6 @@ BEGIN
         creation_date = v_creation_date,
         app_list = v_app_list,
         vm_configuration = v_vm_configuration,
-        memory_volume = v_memory_volume,
         memory_dump_disk_id = v_memory_dump_disk_id,
         memory_metadata_disk_id = v_memory_metadata_disk_id,
         vm_configuration_broken = v_vm_configuration_broken,
@@ -208,7 +203,6 @@ CREATE TYPE GetAllFromSnapshotsByVmId_rs AS (
         description VARCHAR(4000),
         creation_date TIMESTAMP WITH TIME ZONE,
         app_list TEXT,
-        memory_volume VARCHAR(255),
         memory_dump_disk_id UUID,
         memory_metadata_disk_id UUID,
         vm_configuration TEXT,
@@ -233,7 +227,6 @@ BEGIN
         description,
         creation_date,
         app_list,
-        memory_volume,
         memory_dump_disk_id,
         memory_metadata_disk_id,
         CASE
@@ -372,19 +365,19 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetNumOfSnapshotsByMemoryVolume (v_memory_volume VARCHAR(255))
+CREATE OR REPLACE FUNCTION GetNumOfSnapshotsByMemoryVolume(v_memory_disk_ids UUID[])
 RETURNS SETOF BIGINT STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
     SELECT COUNT(*)
     FROM snapshots
-    WHERE memory_volume = v_memory_volume;
+    WHERE memory_dump_disk_id  = ANY(v_memory_disk_ids)
+       OR memory_metadata_disk_id  = ANY(v_memory_disk_ids);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateMemory (
-    v_memory_volume VARCHAR(255),
     v_memory_dump_disk_id UUID,
     v_memory_metadata_disk_id UUID,
     v_vm_id UUID,
@@ -393,8 +386,7 @@ CREATE OR REPLACE FUNCTION UpdateMemory (
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE snapshots
-    SET    memory_volume = v_memory_volume,
-           memory_dump_disk_id = v_memory_dump_disk_id,
+    SET    memory_dump_disk_id = v_memory_dump_disk_id,
            memory_metadata_disk_id = v_memory_metadata_disk_id
     WHERE vm_id = v_vm_id
         AND snapshot_type = v_snapshot_type;
@@ -408,8 +400,7 @@ CREATE OR REPLACE FUNCTION RemoveMemoryFromSnapshotByVmIdAndType (
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE snapshots
-    SET    memory_volume = NULL,
-           memory_dump_disk_id = NULL,
+    SET    memory_dump_disk_id = NULL,
            memory_metadata_disk_id = NULL
     WHERE  vm_id = v_vm_id
         AND snapshot_type = v_snapshot_type;
@@ -420,8 +411,7 @@ CREATE OR REPLACE FUNCTION RemoveMemoryFromSnapshotBySnapshotId (v_snapshot_id U
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE snapshots
-    SET    memory_volume = NULL,
-           memory_dump_disk_id = NULL,
+    SET    memory_dump_disk_id = NULL,
            memory_metadata_disk_id = NULL
     WHERE  snapshot_id = v_snapshot_id;
 END; $PROCEDURE$

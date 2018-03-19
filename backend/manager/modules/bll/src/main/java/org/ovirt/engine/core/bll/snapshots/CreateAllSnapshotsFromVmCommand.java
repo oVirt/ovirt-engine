@@ -315,7 +315,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         if (getParameters().isSaveMemory() && isLiveSnapshotApplicable()) {
             boolean wipeAfterDelete = getDisksList().stream().anyMatch(DiskImage::isWipeAfterDelete);
-            return new LiveSnapshotMemoryImageBuilder(getVm(), cachedStorageDomainId, getStoragePool(),
+            return new LiveSnapshotMemoryImageBuilder(getVm(), cachedStorageDomainId,
                     this, vmOverheadCalculator, getParameters().getDescription(), wipeAfterDelete);
         }
 
@@ -331,7 +331,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 getParameters().getSnapshotType(),
                 getVm(),
                 true,
-                memoryImageBuilder.getVolumeStringRepresentation(),
+                memoryImageBuilder.getMemoryDiskId(),
+                memoryImageBuilder.getMetadataDiskId(),
                 null,
                 getDisksList(),
                 null,
@@ -474,7 +475,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private void removeMemoryVolumesOfSnapshot(Snapshot snapshot) {
         ActionReturnValue retVal = runInternalAction(
                 ActionType.RemoveMemoryVolumes,
-                new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId()), cloneContextAndDetachFromParent());
+                new RemoveMemoryVolumesParameters(snapshot, getVmId()), cloneContextAndDetachFromParent());
 
         if (!retVal.getSucceeded()) {
             log.error("Failed to remove memory volumes of snapshot '{}' ({})",
@@ -535,8 +536,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         SnapshotVDSCommandParameters parameters = new SnapshotVDSCommandParameters(
                 getVm().getRunOnVds(), getVm().getId(), filteredPluggedDisks);
 
-        if (isMemorySnapshotSupported()) {
-            parameters.setMemoryVolume(snapshot.getMemoryVolume());
+        if (isMemorySnapshotSupported() && snapshot.containsMemory()) {
+            parameters.setMemoryDump((DiskImage) diskDao.get(snapshot.getMemoryDiskId()));
+            parameters.setMemoryConf((DiskImage) diskDao.get(snapshot.getMetadataDiskId()));
         }
 
         // In case the snapshot is auto-generated for live storage migration,

@@ -20,7 +20,6 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -368,13 +367,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             Snapshot snap = snapshotDao.get(snapshotId);
             // Cinder volumes might not have correlated snapshot.
             if (snap != null) {
-                String memoryVolume = snapshotDao.get(snapshotId).getMemoryVolume();
-                if (!memoryVolume.isEmpty() &&
-                        snapshotDao.getNumOfSnapshotsByMemory(memoryVolume) == 1) {
-                    boolean succeed = removeMemoryDisks(memoryVolume);
+                if (snap.containsMemory() && snapshotDao.getNumOfSnapshotsByDisks(snap) == 1) {
+                    boolean succeed = removeMemoryDisks(snap);
                     if (!succeed) {
-                        log.error("Failed to remove memory '{}' of snapshot '{}'",
-                                memoryVolume, snapshotId);
+                        log.error("Failed to remove memory of snapshot '{}'", snapshotId);
                     }
                 }
                 snapshotDao.remove(snapshotId);
@@ -588,13 +584,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 getCompensationContext(),
                 getCurrentUser(),
                 new VmInterfaceManager(getMacPool()),
-                StringUtils.isNotEmpty(targetSnapshot.getMemoryVolume()));
+                targetSnapshot.containsMemory());
         snapshotDao.remove(targetSnapshot.getId());
         // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
         getSnapshotsManager().addActiveSnapshot(targetSnapshot.getId(),
                 getVm(),
                 SnapshotStatus.LOCKED,
-                targetSnapshot.getMemoryVolume(),
+                targetSnapshot.getMemoryDiskId(),
+                targetSnapshot.getMetadataDiskId(),
                 getCompensationContext());
     }
 

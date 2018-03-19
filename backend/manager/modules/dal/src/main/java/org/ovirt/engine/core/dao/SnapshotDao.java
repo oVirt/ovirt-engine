@@ -204,11 +204,11 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
     /**
      * Get the number of snapshots that contain the given memory
      *
-     * @param memoryVolume
-     *           The memory that should be used to filter the snapshots
+     * @param snapshot
+     *           The snapshot with memory disks that should be used to filter the snapshots
      * @return Number of snapshots containing the given memory
      */
-    int getNumOfSnapshotsByMemory(String memoryVolume);
+    int getNumOfSnapshotsByDisks(Snapshot snapshot);
 
     /**
      * Clear the memory from the active snapshot of the VM with the given id
@@ -236,10 +236,8 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *          The ID of the disk that contains the memory dump
      * @param memoryMetadataDiskId
      *          The ID of the disk that contains the memory metadata
-     * @param memoryVolume
-     *          Comma-separated String representation of the memory volumes
      */
-    void updateHibernationMemory(Guid vmId, Guid memoryDumpDiskId, Guid memoryMetadataDiskId, String memoryVolume);
+    void updateHibernationMemory(Guid vmId, Guid memoryDumpDiskId, Guid memoryMetadataDiskId);
 
     /**
      * Returns the snapshots containing the specified memory disk ID (metadata disk or memory disk)

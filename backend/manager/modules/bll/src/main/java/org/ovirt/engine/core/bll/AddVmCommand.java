@@ -1620,7 +1620,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         getSnapshotsManager().addActiveSnapshot(_vmSnapshotId,
                 getVm(),
                 Snapshot.SnapshotStatus.OK,
-                StringUtils.EMPTY,
+                null,
+                null,
                 getCompensationContext());
     }
 

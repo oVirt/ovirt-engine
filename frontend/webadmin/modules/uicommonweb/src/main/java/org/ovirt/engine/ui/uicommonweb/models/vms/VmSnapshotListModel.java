@@ -348,7 +348,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             ArrayList<DiskImage> snapshotDisks = v.getDiskList();
             List<DiskImage> disksExcludedFromSnapshot = imagesSubtract(getVmDisks(), snapshotDisks);
 
-            boolean showMemorySnapshotWarning = isMemorySnapshotSupported() && !snapshot.getMemoryVolume().isEmpty();
+            boolean showMemorySnapshotWarning = isMemorySnapshotSupported() && snapshot.containsMemory();
             boolean showPartialSnapshotWarning = !disksExcludedFromSnapshot.isEmpty();
 
             if (showMemorySnapshotWarning || showPartialSnapshotWarning) {

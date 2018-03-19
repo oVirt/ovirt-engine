@@ -19,7 +19,6 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -46,6 +45,7 @@ import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -174,22 +174,22 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private void removeMemoryVolumes() {
-        Set<String> memoryStates = MemoryUtils.getMemoryVolumesFromSnapshots(snapshotDao.getAll(getVmId()));
-        for (String memoryState : memoryStates) {
+        List<Snapshot> snapshots = snapshotDao.getAll(getVmId());
+        for (Snapshot snapshot : snapshots) {
             ActionReturnValue retVal = runInternalAction(
                     ActionType.RemoveMemoryVolumes,
-                    buildRemoveMemoryVolumesParameters(memoryState, getVmId()),
+                    buildRemoveMemoryVolumesParameters(snapshot, getVmId()),
                     cloneContextAndDetachFromParent());
 
             if (!retVal.getSucceeded()) {
-                log.error("Failed to remove memory volumes while removing vm '{}' (volumes: '{}')",
-                        getVmId(), memoryState);
+                log.error("Failed to remove memory volumes while removing vm '{}' (volumes: '{}, {}')",
+                        getVmId(), snapshot.getMemoryDiskId(), snapshot.getMetadataDiskId());
             }
         }
     }
 
-    private RemoveMemoryVolumesParameters buildRemoveMemoryVolumesParameters(String memoryState, Guid vmId) {
-        RemoveMemoryVolumesParameters params = new RemoveMemoryVolumesParameters(memoryState, vmId, true);
+    private RemoveMemoryVolumesParameters buildRemoveMemoryVolumesParameters(Snapshot snapshot, Guid vmId) {
+        RemoveMemoryVolumesParameters params = new RemoveMemoryVolumesParameters(snapshot, vmId, true);
         params.setEntityInfo(getParameters().getEntityInfo());
         return params;
     }

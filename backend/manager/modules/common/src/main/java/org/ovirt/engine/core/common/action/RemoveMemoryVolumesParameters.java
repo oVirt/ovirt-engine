@@ -1,34 +1,34 @@
 package org.ovirt.engine.core.common.action;
 
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveMemoryVolumesParameters extends ActionParametersBase {
-    /** comma-separated string of UUIDs representing the memory volumes */
-    private String memoryVolumes;
+
+    private Snapshot snapshot;
     private Guid vmId;
     private boolean forceRemove;
 
-    public RemoveMemoryVolumesParameters(String memoryVolumes, Guid vmId) {
-        this(memoryVolumes, vmId, false);
+    public RemoveMemoryVolumesParameters(Snapshot snapshot, Guid vmId) {
+        this(snapshot, vmId, false);
     }
 
-    public RemoveMemoryVolumesParameters(String memoryVolumes, Guid vmId, boolean forceRemove) {
-        this.memoryVolumes = memoryVolumes;
+    public RemoveMemoryVolumesParameters(Snapshot snapshot, Guid vmId, boolean forceRemove) {
+        this.snapshot = snapshot;
         this.vmId = vmId;
         this.forceRemove = forceRemove;
     }
 
     public RemoveMemoryVolumesParameters() {
-        this.memoryVolumes = "";
         this.vmId = Guid.Empty;
     }
 
-    public String getMemoryVolumes() {
-        return memoryVolumes;
+    public Snapshot getSnapshot() {
+        return snapshot;
     }
 
-    public void setMemoryVolumes(String memoryVolumes) {
-        this.memoryVolumes = memoryVolumes;
+    public void setSnapshot(Snapshot snapshot) {
+        this.snapshot = snapshot;
     }
 
     public Guid getVmId() {

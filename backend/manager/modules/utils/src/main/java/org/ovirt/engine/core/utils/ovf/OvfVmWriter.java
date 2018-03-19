@@ -9,19 +9,28 @@ import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class OvfVmWriter extends OvfOvirtWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
     private VM vm;
+    private Map<Guid, DiskImage> memoryDisks;
 
-    public OvfVmWriter(VM vm, FullEntityOvfData fullEntityOvfData, Version version, OsRepository osRepository) {
+
+    // Since the writer does not have access to the DAO we transfer the 'memoryDisks' parameter which contains
+    // a mapping between the memory disks of all snapshots to the corresponding DiskImage object which contains
+    // the full info needed to write in the OVF (storage domain ID, image ID, volume ID)
+    public OvfVmWriter(VM vm, FullEntityOvfData fullEntityOvfData, Version version, OsRepository osRepository,
+            Map<Guid, DiskImage> memoryDisks) {
         super(fullEntityOvfData, version, osRepository);
         this.vm = vm;
+        this.memoryDisks = memoryDisks;
     }
 
     @Override
@@ -115,8 +124,17 @@ public class OvfVmWriter extends OvfOvirtWriter {
             _writer.writeElement("Description", snapshot.getDescription());
             _writer.writeElement("CreationDate", OvfParser.localDateToUtcDateString(snapshot.getCreationDate()));
 
-            if (!snapshot.getMemoryVolume().isEmpty()) {
-                _writer.writeElement("Memory", snapshot.getMemoryVolume());
+            if (snapshot.containsMemory()) {
+                DiskImage memoryDump = memoryDisks.get(snapshot.getMemoryDiskId());
+                DiskImage memoryConf = memoryDisks.get(snapshot.getMetadataDiskId());
+                String memoryVolume = String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s",
+                        memoryDump.getStorageIds().get(0),
+                        memoryDump.getStoragePoolId(),
+                        memoryDump.getId(),
+                        memoryDump.getImageId(),
+                        memoryConf.getId(),
+                        memoryConf.getImageId());
+                _writer.writeElement("Memory", memoryVolume);
             }
 
             if (snapshot.getAppList() != null) {

@@ -156,7 +156,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         final Snapshot snapshot = snapshotDao.get(getParameters().getSnapshotId());
 
         boolean snapshotHasImages = hasImages();
-        boolean removeSnapshotMemory = isMemoryVolumeRemoveable(snapshot.getMemoryVolume());
+        boolean removeSnapshotMemory = isMemoryVolumeRemoveable(snapshot);
 
         // If the VM hasn't got any images and memory - simply remove the snapshot.
         // No need for locking, VDSM tasks, and all that jazz.
@@ -199,12 +199,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      * There is a one to many relation between memory volumes and snapshots, so memory
      * volumes should be removed only if the only snapshot that points to them is removed
      */
-    protected boolean isMemoryVolumeRemoveable(String memoryVolume) {
-        return !memoryVolume.isEmpty() && snapshotDao.getNumOfSnapshotsByMemory(memoryVolume) == 1;
+    protected boolean isMemoryVolumeRemoveable(Snapshot snapshot) {
+        return snapshot.containsMemory() && snapshotDao.getNumOfSnapshotsByDisks(snapshot) == 1;
     }
 
     private void removeMemory(final Snapshot snapshot, boolean useTaskManager) {
-        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId());
+        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(snapshot, getVmId());
         if (useTaskManager) {
             commandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
         } else {
@@ -337,7 +337,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             // Remove memory volume and update the dao.
             // Note: on failure, we can treat memory volume deletion as deleting an image
             // and remove it from the snapshot entity (rollback isn't applicable).
-            snapshot.setMemoryVolume("");
+            snapshot.setMemoryDiskId(null);
+            snapshot.setMetadataDiskId(null);
             snapshotDao.update(snapshot);
 
             if (!failedToRemoveDisks.isEmpty()) {

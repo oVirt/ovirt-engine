@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +46,6 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 .addValue("creation_date", entity.getCreationDate())
                 .addValue("app_list", entity.getAppList())
                 .addValue("vm_configuration", entity.getVmConfiguration())
-                .addValue("memory_volume", getNullableRepresentation(entity.getMemoryVolume()))
                 .addValue("memory_dump_disk_id", entity.getMemoryDiskId())
                 .addValue("memory_metadata_disk_id", entity.getMetadataDiskId())
                 .addValue("vm_configuration_broken", entity.isVmConfigurationBroken());
@@ -187,7 +187,6 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
             snapshot.setCreationDate(new Date(rs.getTimestamp("creation_date").getTime()));
             snapshot.setAppList(rs.getString("app_list"));
             snapshot.setVmConfiguration(rs.getString("vm_configuration"));
-            snapshot.setMemoryVolume(rs.getString("memory_volume"));
             snapshot.setMemoryDiskId(getGuid(rs, "memory_dump_disk_id"));
             snapshot.setMetadataDiskId(getGuid(rs, "memory_metadata_disk_id"));
             snapshot.setVmConfigurationBroken(rs.getBoolean("vm_configuration_broken"));
@@ -254,9 +253,10 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
     }
 
     @Override
-    public int getNumOfSnapshotsByMemory(String memoryVolume) {
+    public int getNumOfSnapshotsByDisks(Snapshot snapshot) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("memory_volume", getNullableRepresentation(memoryVolume));
+                .addValue("memory_disk_ids",
+                        createArrayOfUUIDs(Arrays.asList(snapshot.getMemoryDiskId(), snapshot.getMetadataDiskId())));
 
         return getCallsHandler().executeRead("GetNumOfSnapshotsByMemoryVolume",
                 SingleColumnRowMapper.newInstance(Integer.class),
@@ -273,10 +273,6 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 parameterSource);
     }
 
-    private String getNullableRepresentation(String memoryVolume) {
-        return memoryVolume.isEmpty() ? null : memoryVolume;
-    }
-
     @Override
     public void removeMemoryFromSnapshot(Guid snapshotId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -287,9 +283,8 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
     }
 
     @Override
-    public void updateHibernationMemory(Guid vmId, Guid memoryDumpDiskId, Guid memoryMetadataDiskId, String memoryVolume) {
+    public void updateHibernationMemory(Guid vmId, Guid memoryDumpDiskId, Guid memoryMetadataDiskId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("memory_volume", getNullableRepresentation(memoryVolume))
                 .addValue("memory_dump_disk_id", memoryDumpDiskId)
                 .addValue("memory_metadata_disk_id", memoryMetadataDiskId)
                 .addValue("vm_id", vmId)

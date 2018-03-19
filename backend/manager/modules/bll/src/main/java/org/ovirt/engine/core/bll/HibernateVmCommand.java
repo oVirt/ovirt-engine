@@ -252,7 +252,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         try {
             runVdsCommand(VDSCommandType.Hibernate,
                     new HibernateVDSCommandParameters(getVm().getRunOnVds(), getVmId(), hiberVol));
-            snapshotDao.updateHibernationMemory(getVmId(), dumpDisk.getId(), metadataDisk.getId(), hiberVol);
+            snapshotDao.updateHibernationMemory(getVmId(), dumpDisk.getId(), metadataDisk.getId());
         } catch (EngineException e) {
             hibernateVdsProblematic = true;
             endWithFailure();

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.memory;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -11,11 +10,6 @@ public class NullableMemoryImageBuilder implements MemoryImageBuilder {
     @Override
     public void build() {
         //no op
-    }
-
-    @Override
-    public String getVolumeStringRepresentation() {
-        return StringUtils.EMPTY;
     }
 
     @Override

@@ -103,12 +103,14 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
@@ -165,6 +167,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Inject
     private DiskImageDao diskImageDao;
     @Inject
+    private DiskDao diskDao;
+    @Inject
     private LunHelper lunHelper;
     @Inject
     private SnapshotDao snapshotDao;
@@ -179,6 +183,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private List<DiskImage> imageList;
 
     protected Map<Guid, String> failedDisksToImportForAuditLog = new HashMap<>();
+
+    private Map<Guid, Guid> memoryDiskDomainMap = new HashMap<>();
+    private Map<Guid, Guid> memoryDiskImageMap = new HashMap<>();
 
     @Override
     protected void init() {
@@ -707,13 +714,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             Snapshot activeSnapshot = getActiveSnapshot();
             if (activeSnapshot != null && activeSnapshot.containsMemory()) {
                 // Checking space for memory volume of the active image (if there is one)
-                StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(dummiesDisksList);
+                StorageDomain storageDomain = findDomainForMemoryImagesAndCreateDummies(dummiesDisksList);
                 if (storageDomain == null) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
                 }
             }
         } else { // Check space for all the snapshot's memory volumes
-            if (!updateDomainsForMemoryImages(dummiesDisksList)) {
+            if (!determineDomainsForMemoryImagesAndCreateDummies(dummiesDisksList)) {
                 return false;
             }
         }
@@ -721,40 +728,28 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     /**
-     * For each snapshot that has memory volume, this method updates the memory volume with the storage pool and storage
-     * domain it's going to be imported to.
+     * For each snapshot that has memory volume this method find a suitable storage domain and adds a dummy
+     * memory disks for future storage space validation
      *
      * @return true if we managed to assign storage domain for every memory volume, false otherwise
      */
-    private boolean updateDomainsForMemoryImages(List<DiskImage> disksList) {
-        Map<String, String> handledMemoryVolumes = new HashMap<>();
+    private boolean determineDomainsForMemoryImagesAndCreateDummies(List<DiskImage> disksList) {
         for (Snapshot snapshot : getVm().getSnapshots()) {
-            String memoryVolume = snapshot.getMemoryVolume();
-            if (memoryVolume.isEmpty()) {
+            if (!snapshot.containsMemory() || memoryDiskDomainMap.containsKey(snapshot.getMemoryDiskId())) {
                 continue;
             }
 
-            if (handledMemoryVolumes.containsKey(memoryVolume)) {
-                // replace the volume representation with the one with the correct domain & pool
-                snapshot.setMemoryVolume(handledMemoryVolumes.get(memoryVolume));
-                continue;
-            }
-
-            StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(disksList);
+            StorageDomain storageDomain = findDomainForMemoryImagesAndCreateDummies(disksList);
             if (storageDomain == null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
             }
-            String modifiedMemoryVolume = MemoryUtils.changeStorageDomainAndPoolInMemoryState(
-                    memoryVolume, storageDomain.getId(), getParameters().getStoragePoolId());
-            // replace the volume representation with the one with the correct domain & pool
-            snapshot.setMemoryVolume(modifiedMemoryVolume);
-            // save it in case we'll find other snapshots with the same memory volume
-            handledMemoryVolumes.put(memoryVolume, modifiedMemoryVolume);
+            memoryDiskDomainMap.put(snapshot.getMemoryDiskId(), storageDomain.getId());
+            memoryDiskDomainMap.put(snapshot.getMetadataDiskId(), storageDomain.getId());
         }
         return true;
     }
 
-    private StorageDomain updateStorageDomainInMemoryVolumes(List<DiskImage> disksList) {
+    private StorageDomain findDomainForMemoryImagesAndCreateDummies(List<DiskImage> disksList) {
         List<DiskImage> memoryDisksList =
                 MemoryUtils.createDiskDummies(vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                         MemoryUtils.METADATA_SIZE_IN_BYTES);
@@ -892,31 +887,55 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void copyAllMemoryImages(Guid containerId) {
-        for (String memoryVolumes : MemoryUtils.getMemoryVolumesFromSnapshots(getVm().getSnapshots())) {
-            List<Guid> guids = Guid.createGuidListFromString(memoryVolumes);
-
-            // copy the memory dump image
-            ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
-                    ActionType.CopyImageGroup,
-                    buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
-                            containerId, guids.get(0), guids.get(2), guids.get(3)));
-            if (!vdcRetValue.getSucceeded()) {
-                throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy memory image");
+        Set<Guid> handledMemoryDisks = new HashSet<>();
+        for (Snapshot snapshot : getVm().getSnapshots()) {
+            if (!snapshot.containsMemory()) {
+                continue;
             }
-            // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
-            getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
 
-            // copy the memory configuration (of the VM) image
-            vdcRetValue = runInternalActionWithTasksContext(
-                    ActionType.CopyImageGroup,
-                    buildMoveOrCopyImageGroupParametersForMemoryConfImage(
-                            containerId, guids.get(0), guids.get(4), guids.get(5)));
-            if (!vdcRetValue.getSucceeded()) {
-                throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy metadata image");
+            Guid memoryDiskId = snapshot.getMemoryDiskId();
+            if (!handledMemoryDisks.contains(memoryDiskId)) {
+                handledMemoryDisks.add(memoryDiskId);
+                // copy the memory dump image
+                ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
+                        ActionType.CopyImageGroup,
+                        buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
+                                containerId, memoryDiskDomainMap.get(memoryDiskId), memoryDiskId,
+                                getMemoryDiskImageId(memoryDiskId)));
+                if (!vdcRetValue.getSucceeded()) {
+                    throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy memory image");
+                }
+                // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
+                getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
             }
-            // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
-            getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
+
+            Guid confDiskId = snapshot.getMetadataDiskId();
+            if (!handledMemoryDisks.contains(confDiskId)) {
+                handledMemoryDisks.add(confDiskId);
+                // copy the memory configuration (of the VM) image
+                ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
+                        ActionType.CopyImageGroup,
+                        buildMoveOrCopyImageGroupParametersForMemoryConfImage(
+                                containerId, memoryDiskDomainMap.get(confDiskId), confDiskId,
+                                getMemoryDiskImageId(confDiskId)));
+                if (!vdcRetValue.getSucceeded()) {
+                    throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy metadata image");
+                }
+                // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
+                getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
+            }
         }
+    }
+
+    private Guid getMemoryDiskImageId(Guid imageGroupId) {
+        if (!memoryDiskImageMap.containsKey(imageGroupId)) {
+            StoragePoolDomainAndGroupIdBaseVDSCommandParameters getVolumesParameters = new StoragePoolDomainAndGroupIdBaseVDSCommandParameters(
+                    getParameters().getStoragePoolId(), getParameters().getSourceDomainId(), imageGroupId);
+            List<Guid> volumesList = (List<Guid>) runVdsCommand(VDSCommandType.GetVolumesList, getVolumesParameters).getReturnValue();
+            // Memory disks have exactly one volume
+            memoryDiskImageMap.put(imageGroupId, volumesList.get(0));
+        }
+        return memoryDiskImageMap.get(imageGroupId);
     }
 
     private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryDumpImage(Guid containerID,
@@ -1170,13 +1189,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         Snapshot activeSnapshot = getActiveSnapshot();
         // We currently don't support using memory from a
         // snapshot that was taken for VM with different id
-        String memoryVolume = activeSnapshot != null && !getParameters().isImportAsNewEntity() ?
-                activeSnapshot.getMemoryVolume() : StringUtils.EMPTY;
+        boolean importMemory = activeSnapshot != null && activeSnapshot.containsMemory() && !getParameters().isImportAsNewEntity();
         return getSnapshotsManager().addActiveSnapshot(
                 snapshotId,
                 getVm(),
                 SnapshotStatus.OK,
-                memoryVolume,
+                importMemory ? getActiveSnapshot().getMemoryDiskId() : null,
+                importMemory ? getActiveSnapshot().getMetadataDiskId() : null,
                 getCompensationContext());
     }
 
@@ -1201,10 +1220,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         for (Snapshot snapshot : getVm().getSnapshots()) {
-            if (!StringUtils.isEmpty(snapshot.getMemoryVolume())) {
-                updateMemoryDisks(snapshot);
-            }
-
             if (snapshotDao.exists(getVm().getId(), snapshot.getId())) {
                 snapshotDao.update(snapshot);
             } else {
@@ -1213,15 +1228,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
     }
 
-    private void updateMemoryDisks(Snapshot snapshot) {
-        List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
-        snapshot.setMemoryDiskId(guids.get(2));
-        snapshot.setMetadataDiskId(guids.get(4));
-    }
-
     private void addMemoryImages() {
         getVm().getSnapshots().stream()
-        .filter(snapshot -> !StringUtils.isEmpty(snapshot.getMemoryVolume()))
+        .filter(Snapshot::containsMemory)
         .forEach(snapshot -> {
             addDisk(createMemoryDisk(snapshot));
             addDisk(createMetadataDisk(getVm(), snapshot));
@@ -1229,9 +1238,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private DiskImage createMemoryDisk(Snapshot snapshot) {
-        List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
-        StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, guids.get(0), guids.get(2), guids.get(3));
-        DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, guids.get(2), guids.get(3));
+        StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, memoryDiskDomainMap.get(snapshot.getMemoryDiskId()));
+        DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, snapshot.getMemoryDiskId());
         if (sd == null || disk != null) {
             return null;
         }
@@ -1242,10 +1250,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 vm,
                 sd.getStorageType(),
                 vmOverheadCalculator, MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
-        memoryDisk.setId(guids.get(2));
-        memoryDisk.setImageId(guids.get(3));
-        memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));
-        memoryDisk.setStoragePoolId(guids.get(1));
+        memoryDisk.setId(snapshot.getMemoryDiskId());
+        memoryDisk.setImageId(getMemoryDiskImageId(snapshot.getMemoryDiskId()));
+        memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(sd.getId())));
+        memoryDisk.setStoragePoolId(getStoragePoolId());
         memoryDisk.setCreationDate(snapshot.getCreationDate());
         memoryDisk.setActive(true);
         memoryDisk.setWipeAfterDelete(vm.getDiskList().stream().anyMatch(DiskImage::isWipeAfterDelete));
@@ -1253,29 +1261,27 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private DiskImage createMetadataDisk(VM vm, Snapshot snapshot) {
-        List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
-        StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, guids.get(0), guids.get(4), guids.get(5));
-        DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, guids.get(4), guids.get(5));
+        StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, memoryDiskDomainMap.get(snapshot.getMetadataDiskId()));
+        DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, snapshot.getMetadataDiskId());
         if (sd == null || disk != null) {
             return null;
         }
         DiskImage memoryDisk = MemoryUtils.createSnapshotMetadataDisk(MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
-        memoryDisk.setId(guids.get(4));
-        memoryDisk.setImageId(guids.get(5));
-        memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));
-        memoryDisk.setStoragePoolId(guids.get(1));
+        memoryDisk.setId(snapshot.getMetadataDiskId());
+        memoryDisk.setImageId(getMemoryDiskImageId(snapshot.getMetadataDiskId()));
+        memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(sd.getId())));
+        memoryDisk.setStoragePoolId(getStoragePoolId());
         memoryDisk.setCreationDate(snapshot.getCreationDate());
         memoryDisk.setActive(true);
         memoryDisk.setWipeAfterDelete(vm.getDiskList().stream().anyMatch(DiskImage::isWipeAfterDelete));
         return memoryDisk;
     }
 
-    private DiskImage isMemoryDiskAlreadyExistsInDb(Snapshot snapshot, Guid diskId, Guid imageId) {
-        DiskImage disk = diskImageDao.get(imageId);
+    private DiskImage isMemoryDiskAlreadyExistsInDb(Snapshot snapshot, Guid diskId) {
+        DiskImage disk = (DiskImage) diskDao.get(diskId);
         if (disk != null) {
-            log.info("Memory disk '{}'/'{}' of snapshot '{}'(id: '{}') already exists on storage domain '{}'",
+            log.info("Memory disk '{}' of snapshot '{}'(id: '{}') already exists on storage domain '{}'",
                     diskId,
-                    imageId,
                     snapshot.getDescription(),
                     snapshot.getId(),
                     disk.getStoragesNames().get(0));
@@ -1283,12 +1289,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return disk;
     }
 
-    private StorageDomainStatic validateStorageDomainExistsInDb(Snapshot snapshot, Guid storageDomainId, Guid diskId, Guid imageId) {
+    private StorageDomainStatic validateStorageDomainExistsInDb(Snapshot snapshot, Guid storageDomainId) {
         StorageDomainStatic sd = storageDomainStaticDao.get(storageDomainId);
         if (sd == null) {
-            log.error("Memory disk '{}'/'{}' of snapshot '{}'(id: '{}') could not be added since storage domain id '{}' does not exists",
-                    diskId,
-                    imageId,
+            log.error("Memory disks of snapshot '{}'(id: '{}') could not be added since storage domain id '{}' does not exists",
                     snapshot.getDescription(),
                     snapshot.getId(),
                     storageDomainId);
@@ -1398,19 +1402,22 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @Override
     protected void removeVmSnapshots() {
         Guid vmId = getVmId();
-        Set<String> memoryStates = getSnapshotsManager().removeSnapshots(vmId);
-        for (String memoryState : memoryStates) {
-            removeMemoryVolumes(memoryState, vmId);
+        List<Snapshot> removedSnapshots = getSnapshotsManager().removeSnapshots(vmId);
+        for (Snapshot snapshot : removedSnapshots) {
+            removeMemoryVolumes(snapshot, vmId);
         }
     }
 
-    private void removeMemoryVolumes(String memoryVolume, Guid vmId) {
+    private void removeMemoryVolumes(Snapshot snapshot, Guid vmId) {
+        if (!snapshot.containsMemory()) {
+            return;
+        }
         ActionReturnValue retVal = runInternalAction(
                 ActionType.RemoveMemoryVolumes,
-                new RemoveMemoryVolumesParameters(memoryVolume, vmId), cloneContextAndDetachFromParent());
+                new RemoveMemoryVolumesParameters(snapshot, vmId), cloneContextAndDetachFromParent());
 
         if (!retVal.getSucceeded()) {
-            log.error("Failed to remove memory volumes '{}'", memoryVolume);
+            log.error("Failed to remove memory volumes '{}, {}'", snapshot.getMemoryDiskId(), snapshot.getMetadataDiskId());
         }
     }
 

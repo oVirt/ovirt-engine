@@ -77,6 +77,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -121,6 +122,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    private DiskDao diskDao;
 
     @Inject
     private ClusterUtils clusterUtils;
@@ -259,12 +262,10 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     private Collection<Snapshot> getSnapshotsToBeExportedWithMemory() {
         if (getParameters().getCopyCollapse()) {
             Snapshot activeSnapshot = snapshotDao.get(getVmId(), SnapshotType.ACTIVE);
-            return !activeSnapshot.getMemoryVolume().isEmpty() ?
-                    Collections.singleton(activeSnapshot) : Collections.emptyList();
+            return activeSnapshot.containsMemory() ? Collections.singleton(activeSnapshot) : Collections.emptyList();
         }
         else {
-            return snapshotDao.getAll(getVmId()).stream().filter(s -> !StringUtils.EMPTY.equals(s.getMemoryVolume()))
-                    .collect(Collectors.toList());
+            return snapshotDao.getAll(getVmId()).stream().filter(Snapshot::containsMemory).collect(Collectors.toList());
         }
     }
 
@@ -369,13 +370,12 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     private void copyAllMemoryImages(Guid containerID) {
         for (Snapshot snapshot : snapshotsWithMemory) {
-            List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
-
             // copy the memory dump image
+            DiskImage dumpImage = (DiskImage) diskDao.get(snapshot.getMemoryDiskId());
+
             ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                     ActionType.CopyImageGroup,
-                    buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
-                            containerID, guids.get(0), guids.get(2), guids.get(3)));
+                    buildMoveOrCopyImageGroupParametersForMemoryDumpImage(containerID, dumpImage));
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
@@ -383,10 +383,12 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
 
             // copy the memory configuration (of the VM) image
+            // This volume is always of type 'sparse' and format 'cow' so no need to convert,
+            // and there're no snapshots for it so no reason to use copy collapse
+            DiskImage confImage = (DiskImage) diskDao.get(snapshot.getMetadataDiskId());
             vdcRetValue = runInternalActionWithTasksContext(
                     ActionType.CopyImageGroup,
-                    buildMoveOrCopyImageGroupParametersForMemoryConfImage(
-                            containerID, guids.get(0), guids.get(4), guids.get(5)));
+                    buildMoveOrCopyImageGroupParameters(containerID, confImage));
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
@@ -396,17 +398,10 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     }
 
     private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
-            Guid containerID, Guid storageDomainId, Guid imageId, Guid volumeId) {
-        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, imageId,
-                volumeId, getParameters().getStorageDomainId(), ImageOperation.Copy);
-        params.setParentCommand(getActionType());
-        params.setCopyVolumeType(CopyVolumeType.LeafVol);
-        params.setForceOverride(getParameters().getForceOverride());
-        params.setSourceDomainId(storageDomainId);
-        params.setEntityInfo(getParameters().getEntityInfo());
-        params.setParentParameters(getParameters());
-
-        StorageDomainStatic sourceDomain = storageDomainStaticDao.get(storageDomainId);
+            Guid containerID, DiskImage disk) {
+        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, disk.getId(),
+                disk.getImageId(), getParameters().getStorageDomainId(), ImageOperation.Copy);
+        StorageDomainStatic sourceDomain = storageDomainStaticDao.get(disk.getStorageIds().get(0));
 
         // if the data domain is a block based storage, the memory volume type is preallocated
         // so we need to use copy collapse in order to convert it to be sparsed in the export domain
@@ -419,19 +414,15 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         return params;
     }
 
-    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryConfImage(
-            Guid containerID, Guid storageDomainId, Guid imageId, Guid volumeId) {
-        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, imageId,
-                volumeId, getParameters().getStorageDomainId(), ImageOperation.Copy);
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParameters(Guid containerID, DiskImage disk) {
+        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, disk.getId(),
+                disk.getImageId(), getParameters().getStorageDomainId(), ImageOperation.Copy);
         params.setParentCommand(getActionType());
-        // This volume is always of type 'sparse' and format 'cow' so no need to convert,
-        // and there're no snapshots for it so no reason to use copy collapse
-        params.setUseCopyCollapse(false);
         params.setEntityInfo(getParameters().getEntityInfo());
         params.setCopyVolumeType(CopyVolumeType.LeafVol);
         params.setForceOverride(getParameters().getForceOverride());
         params.setParentParameters(getParameters());
-        params.setSourceDomainId(storageDomainId);
+        params.setSourceDomainId(disk.getStorageIds().get(0));
         return params;
     }
 

@@ -128,11 +128,9 @@ public class Snapshot implements Queryable, BusinessEntityWithStatus<Guid, Snaps
             String description,
             Date creationDate,
             String appList,
-            String memoryVolume,
             Guid memoryDiskId,
             Guid metadataDiskId) {
         this(id, status, vmId, vmConfiguration, type, description, creationDate, appList);
-        setMemoryVolume(memoryVolume);
         setMemoryDiskId(memoryDiskId);
         setMetadataDiskId(metadataDiskId);
     }
@@ -222,16 +220,8 @@ public class Snapshot implements Queryable, BusinessEntityWithStatus<Guid, Snaps
         this.appList = appList;
     }
 
-    public String getMemoryVolume() {
-        return memoryVolume;
-    }
-
     public boolean containsMemory() {
-        return !memoryVolume.isEmpty();
-    }
-
-    public void setMemoryVolume(String memoryVolume) {
-        this.memoryVolume = memoryVolume == null ? "" : memoryVolume;
+        return memoryDiskId != null || metadataDiskId != null;
     }
 
     public Guid getMemoryDiskId() {

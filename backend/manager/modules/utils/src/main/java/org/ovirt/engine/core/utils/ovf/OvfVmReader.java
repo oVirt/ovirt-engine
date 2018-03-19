@@ -158,7 +158,9 @@ public class OvfVmReader extends OvfOvirtReader {
             snapshot.setDescription(selectSingleNode(node, "Description", _xmlNS).innerText);
             XmlNode memory = selectSingleNode(node, "Memory", _xmlNS);
             if (memory != null) {
-                snapshot.setMemoryVolume(memory.innerText);
+                List<Guid> guids = Guid.createGuidListFromString(memory.innerText);
+                snapshot.setMemoryDiskId(guids.get(2));
+                snapshot.setMetadataDiskId(guids.get(4));
             }
 
             final Date creationDate =

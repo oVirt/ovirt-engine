@@ -17,7 +17,6 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -152,7 +151,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         getSnapshotsManager().addActiveSnapshot(previouslyActiveSnapshot.getId(),
                 getVm(),
                 SnapshotStatus.OK,
-                previouslyActiveSnapshot.getMemoryVolume(),
+                previouslyActiveSnapshot.getMemoryDiskId(),
+                previouslyActiveSnapshot.getMetadataDiskId(),
                 getCompensationContext());
 
         super.endWithFailure();
@@ -271,7 +271,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     SnapshotType.PREVIEW,
                     getVm(),
                     true,
-                    previousActiveSnapshot.getMemoryVolume(),
+                    previousActiveSnapshot.getMemoryDiskId(),
+                    previousActiveSnapshot.getMetadataDiskId(),
                     null,
                     null,
                     null,
@@ -279,7 +280,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             getSnapshotsManager().addActiveSnapshot(newActiveSnapshotId,
                     getVm(),
                     SnapshotStatus.OK,
-                    restoreMemory ? snapshotToBePreviewed.getMemoryVolume() : StringUtils.EMPTY,
+                    restoreMemory ? snapshotToBePreviewed.getMemoryDiskId() : null,
+                    restoreMemory ? snapshotToBePreviewed.getMetadataDiskId() : null,
                     snapshotToBePreviewed.getCreationDate(),
                     images,
                     getCompensationContext());

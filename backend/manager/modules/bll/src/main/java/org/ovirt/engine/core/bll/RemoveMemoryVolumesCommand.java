@@ -35,14 +35,13 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
 
     @Override
     protected void executeCommand() {
-        if (isMemoryRemovable()) {
-            List<Guid> guids = Guid.createGuidListFromString(getParameters().getMemoryVolumes());
+        if (getParameters().getSnapshot().containsMemory() && isMemoryRemovable()) {
 
-            RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
+            RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(getParameters().getSnapshot().getMemoryDiskId());
             removeMemoryDumpDiskParameters.setShouldBeLogged(false);
             runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
 
-            RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(guids.get(4));
+            RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(getParameters().getSnapshot().getMetadataDiskId());
             removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
             runInternalAction(ActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
         }
@@ -50,7 +49,7 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
     }
 
     private boolean isMemoryRemovable() {
-        return snapshotDao.getNumOfSnapshotsByMemory(getParameters().getMemoryVolumes()) == 1
+        return snapshotDao.getNumOfSnapshotsByDisks(getParameters().getSnapshot()) == 1
                 || getParameters().isForceRemove();
     }
 

@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -17,6 +16,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StopVmParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -98,7 +98,6 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     @Override
     protected void executeVmCommand() {
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
-        String hiberVol = getActiveSnapshot().getMemoryVolume();
         suspendedVm = getVm().getStatus() == VMStatus.Suspended;
         if (suspendedVm) {
             endVmCommand();
@@ -107,12 +106,12 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
             super.executeVmCommand();
         }
         vmStaticDao.incrementDbGeneration(getVm().getId());
-        removeMemoryDisksIfNeeded(hiberVol);
+        removeMemoryDisksIfNeeded(getActiveSnapshot());
     }
 
-    private void removeMemoryDisksIfNeeded(String hiberVol) {
-        if (StringUtils.isNotEmpty(hiberVol)) {
-            removeMemoryDisks(hiberVol);
+    private void removeMemoryDisksIfNeeded(Snapshot snapshot) {
+        if (snapshot.containsMemory()) {
+            removeMemoryDisks(snapshot);
         }
     }
 

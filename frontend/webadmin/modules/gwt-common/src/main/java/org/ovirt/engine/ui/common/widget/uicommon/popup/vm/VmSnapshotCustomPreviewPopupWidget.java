@@ -179,14 +179,14 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
             @Override
             protected boolean canEdit(SnapshotModel snapshotModel) {
-                boolean containsMemory = !snapshotModel.getEntity().getMemoryVolume().isEmpty();
+                boolean containsMemory = snapshotModel.getEntity().containsMemory();
                 SnapshotModel selectedSnapshotModel = previewSnapshotModel.getSnapshotModel();
                 return containsMemory && snapshotModel == selectedSnapshotModel;
             }
 
             @Override
             public void render(Context context, SnapshotModel snapshotModel, SafeHtmlBuilder sb) {
-                if (!snapshotModel.getEntity().getMemoryVolume().isEmpty()) {
+                if (snapshotModel.getEntity().containsMemory()) {
                     super.render(context, snapshotModel, sb);
                 }
                 else {
