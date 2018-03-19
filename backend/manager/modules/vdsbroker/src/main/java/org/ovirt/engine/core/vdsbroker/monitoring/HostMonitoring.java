@@ -94,6 +94,9 @@ public class HostMonitoring {
                     // use this lock in order to allow only one host updating DB and
                     // calling UpEvent in a time
                     vdsManager.cancelRecoveryJob();
+                    if (saveVdsDynamic) {
+                        getDbFacade().getVdsDynamicDao().updateStatus(vds.getId(), vds.getStatus());
+                    }
                     log.debug("Host '{}' ({}) firing up event.", vds.getName(), vds.getId());
                     vdsManager.setIsSetNonOperationalExecuted(!getVdsEventListener().vdsUpEvent(vds));
                 }
