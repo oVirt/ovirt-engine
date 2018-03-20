@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.sso.utils;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Objects;
 
 public class Credentials {
     private String username;
@@ -38,6 +38,13 @@ public class Credentials {
         return username;
     }
 
+    public String getUsernameWithProfile() {
+        String user = String.format("%s@%s",
+                Objects.toString(username, ""),
+                Objects.toString(profile, ""));
+        return "@".equals(user) ? "N/A" : user;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -68,10 +75,8 @@ public class Credentials {
 
     @Override
     public String toString() {
-        String user = String.format("%s@%s",
-                StringUtils.defaultIfEmpty(username, ""),
-                StringUtils.defaultIfEmpty(profile, ""));
-        return "@".equals(user) ? "" : (" for user " + user);
+        String user = getUsernameWithProfile();
+        return "N/A".equals(user) ? "" : (" for user " + user);
     }
 
     public String getCredentials() {

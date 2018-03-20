@@ -690,6 +690,29 @@ public class SsoUtils {
         }
     }
 
+    public static void notifyClientOfAuditLogEvent(
+            SsoContext ssoContext,
+            String sourceIp,
+            String clientId,
+            String userName,
+            String loginErrMsg) throws Exception {
+        ClientInfo clientInfo = ssoContext.getClienInfo(clientId);
+        if (clientInfo != null) {
+            String url = clientInfo.getClientNotificationCallback();
+            if (StringUtils.isNotEmpty(url)) {
+                HttpPost request = createPost(url);
+                List<BasicNameValuePair> form = new ArrayList<>();
+                form.add(new BasicNameValuePair("event", "auditLog"));
+                form.add(new BasicNameValuePair("userName", userName));
+                form.add(new BasicNameValuePair("loginErrMsg", loginErrMsg));
+                form.add(new BasicNameValuePair("clientSecret", clientInfo.getClientSecret()));
+                form.add(new BasicNameValuePair("sourceIp", sourceIp));
+                request.setEntity(new UrlEncodedFormEntity(form, StandardCharsets.UTF_8));
+                execute(request, ssoContext, clientId);
+            }
+        }
+    }
+
     private static void notifyClientOfLogoutEvent(
             SsoContext ssoContext,
             String clientId,
