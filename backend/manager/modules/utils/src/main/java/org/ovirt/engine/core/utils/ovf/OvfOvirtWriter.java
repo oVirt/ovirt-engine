@@ -128,10 +128,10 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeAttributeString(getOvfUri(), "diskId", lun.getId().toString());
         DiskVmElement dve = lun.getDiskVmElementForVm(vmBase.getId());
         if (lun.getDiskAlias() != null) {
-            _writer.writeAttributeString(getOvfUri(), "disk-alias", lun.getDiskAlias().toString());
+            _writer.writeAttributeString(getOvfUri(), "disk-alias", lun.getDiskAlias());
         }
         if (lun.getDiskDescription() != null) {
-            _writer.writeAttributeString(getOvfUri(), "disk-description", lun.getDiskDescription().toString());
+            _writer.writeAttributeString(getOvfUri(), "disk-description", lun.getDiskDescription());
         }
         if (FeatureSupported.passDiscardSupported(version)) {
             _writer.writeAttributeString(getOvfUri(), "pass-discard", String.valueOf(dve.isPassDiscard()));
