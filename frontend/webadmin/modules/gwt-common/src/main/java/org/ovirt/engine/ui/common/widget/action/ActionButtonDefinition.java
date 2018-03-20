@@ -51,11 +51,6 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     String getUniqueId();
 
     /**
-     * Indicates whether this action button is available only from the corresponding context menu.
-     */
-    CommandLocation getCommandLocation();
-
-    /**
      * Updates the state of this action button.
      */
     void update();

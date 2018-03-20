@@ -23,10 +23,9 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     public UiMenuBarButtonDefinition(EventBus eventBus,
             String title, List<ActionButtonDefinition<T>> subActions,
-            boolean subTitledAction, CommandLocation commandLocation,
-            boolean asTitle) {
+            boolean subTitledAction, boolean asTitle) {
         super(eventBus, title, IconType.ARROW_DOWN,
-                true, true, commandLocation);
+                true, true);
         this.subActions = subActions;
         this.subTitledAction = subTitledAction;
         this.asTitle = asTitle;
@@ -34,19 +33,13 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     public UiMenuBarButtonDefinition(EventBus eventBus,
             String title, List<ActionButtonDefinition<T>> subActions) {
-        this(eventBus, title, subActions, false);
-    }
-
-    public UiMenuBarButtonDefinition(EventBus eventBus,
-            String title, List<ActionButtonDefinition<T>> subActions,
-            CommandLocation commandLocation) {
-        this(eventBus, title, subActions, false, commandLocation, false);
+        this(eventBus, title, subActions, false, false);
     }
 
     public UiMenuBarButtonDefinition(EventBus eventBus,
             String title, List<ActionButtonDefinition<T>> subActions,
             boolean asTitle) {
-        this(eventBus, title, subActions, false, CommandLocation.ContextAndToolBar, asTitle);
+        this(eventBus, title, subActions, false, asTitle);
     }
 
     @Override

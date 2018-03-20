@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.widget.action;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.action.UiMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
@@ -13,12 +12,6 @@ public class WebAdminMenuBarButtonDefinition<T> extends UiMenuBarButtonDefinitio
 
     public WebAdminMenuBarButtonDefinition(String title, List<ActionButtonDefinition<T>> subActions, boolean asTitle) {
         super(getEventBus(), title, subActions, asTitle);
-    }
-
-    public WebAdminMenuBarButtonDefinition(String title,
-            List<ActionButtonDefinition<T>> subActions,
-            CommandLocation commandLocation) {
-        super(getEventBus(), title, subActions, false, commandLocation, false);
     }
 
     public WebAdminMenuBarButtonDefinition(String title, List<ActionButtonDefinition<T>> subActions) {

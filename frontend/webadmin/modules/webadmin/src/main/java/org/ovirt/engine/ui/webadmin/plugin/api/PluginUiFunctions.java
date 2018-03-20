@@ -197,7 +197,7 @@ public class PluginUiFunctions implements HasHandlers {
     <T> ActionButtonDefinition<T> createButtonDefinition(String label,
             final ActionButtonInterface actionButtonInterface) {
         return new AbstractButtonDefinition<T>(eventBus,
-                label, actionButtonInterface.getLocation()) {
+                label) {
 
             @Override
             public void onClick(List<T> selectedItems) {

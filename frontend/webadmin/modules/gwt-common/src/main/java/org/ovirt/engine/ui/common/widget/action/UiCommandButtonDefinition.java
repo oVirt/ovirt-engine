@@ -30,18 +30,13 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
     private IEventListener<PropertyChangedEventArgs> propertyChangeListener;
 
     public UiCommandButtonDefinition(EventBus eventBus, String title,
-            CommandLocation commandLocation, boolean subTitledAction) {
-        super(eventBus, title, commandLocation, subTitledAction);
+            boolean subTitledAction) {
+        super(eventBus, title, subTitledAction);
         update();
     }
 
     public UiCommandButtonDefinition(EventBus eventBus, String title) {
-        this(eventBus, title, CommandLocation.ContextAndToolBar, false);
-    }
-
-    public UiCommandButtonDefinition(EventBus eventBus, String title,
-            CommandLocation commandLocation) {
-        this(eventBus, title, commandLocation, false);
+        this(eventBus, title, false);
     }
 
     /**

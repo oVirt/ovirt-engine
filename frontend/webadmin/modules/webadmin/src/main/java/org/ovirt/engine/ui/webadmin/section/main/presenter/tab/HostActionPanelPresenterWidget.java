@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -228,13 +227,13 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
 
         // HA global maintenance
-        addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.enableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
+        addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.enableGlobalHaMaintenanceVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEnableGlobalHaMaintenanceCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.disableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
+        addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.disableGlobalHaMaintenanceVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getDisableGlobalHaMaintenanceCommand();

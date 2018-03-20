@@ -26,23 +26,18 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
 
     protected final SafeHtml title;
 
-    // Indicates whether the given feature is available only from a context menu
-    private final CommandLocation commandLocation;
-
     // Indicates whether this action button has a title action
     private final boolean subTitledAction;
 
     public AbstractButtonDefinition(EventBus eventBus, String title,
-            CommandLocation commandLocation, boolean subTitledAction) {
+            boolean subTitledAction) {
         this.eventBus = eventBus;
         this.title = SafeHtmlUtils.fromSafeConstant(title);
-        this.commandLocation = commandLocation;
         this.subTitledAction = subTitledAction;
     }
 
-    public AbstractButtonDefinition(EventBus eventBus, String title,
-            CommandLocation commandLocation) {
-        this(eventBus, title, commandLocation, false);
+    public AbstractButtonDefinition(EventBus eventBus, String title) {
+        this(eventBus, title, false);
     }
 
     @Override
@@ -98,11 +93,6 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     @Override
     public String getText() {
         return title.asString();
-    }
-
-    @Override
-    public CommandLocation getCommandLocation() {
-        return commandLocation;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.plugin.api;
 
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsInterfaceObject;
 
@@ -38,14 +37,4 @@ public final class ActionButtonInterface extends JsInterfaceObject {
     public JsFunction isAccessible() {
         return getFunction("isAccessible"); //$NON-NLS-1$
     }
-
-    /**
-     * Returns the location of the action button, as defined in {@link CommandLocation}.
-     * <p>
-     * Default return value: {@link CommandLocation#ContextAndToolBar ContextAndToolBar}
-     */
-    public CommandLocation getLocation() {
-        return getValueAsEnum("location", CommandLocation.class, CommandLocation.ContextAndToolBar); //$NON-NLS-1$
-    }
-
 }

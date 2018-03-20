@@ -14,15 +14,6 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
 
     private HasCssName icon;
 
-    public ImageUiCommandButtonDefinition(EventBus eventBus,
-            String title,
-            HasCssName icon,
-            boolean showTitle,
-            boolean imageAfterTitle, CommandLocation commandLocation) {
-        super(eventBus, title, commandLocation);
-        this.icon = icon;
-    }
-
     /**
      * Creates a new button with the given title and images.
      *
@@ -38,12 +29,8 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
             HasCssName icon,
             boolean showTitle,
             boolean imageAfterTitle) {
-        this(eventBus,
-                title,
-                icon,
-                showTitle,
-                imageAfterTitle,
-                CommandLocation.ContextAndToolBar);
+        super(eventBus, title);
+        this.icon = icon;
     }
 
     public ImageUiCommandButtonDefinition(EventBus eventBus,
@@ -51,8 +38,8 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
         this(eventBus, title, icon, false, false);
     }
 
-    protected ImageUiCommandButtonDefinition(EventBus eventBus, String title, CommandLocation commandLocation) {
-        super(eventBus, title, commandLocation);
+    protected ImageUiCommandButtonDefinition(EventBus eventBus, String title) {
+        super(eventBus, title);
     }
 
     @Override
