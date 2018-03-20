@@ -167,7 +167,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(LockProperties.Scope.Execution);
+        return lockProperties.withScope(LockProperties.Scope.Execution).withWait(true);
     }
 
     @Override
