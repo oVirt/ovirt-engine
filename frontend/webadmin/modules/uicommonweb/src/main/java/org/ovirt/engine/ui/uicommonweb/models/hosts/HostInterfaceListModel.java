@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -72,6 +73,18 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
 
     private UICommand syncAllHostNetworksCommand;
 
+    private boolean showVirtualFunctions;
+
+    public boolean isShowVirtualFunctions() {
+        return showVirtualFunctions;
+    }
+
+    public void setShowVirtualFunctions(boolean showVirtualFunctions) {
+        this.showVirtualFunctions = showVirtualFunctions;
+    }
+
+    private Map<Guid, Guid> vfToPfMap;
+
     @Override
     public Collection<HostInterfaceLineModel> getItems() {
         return super.items;
@@ -113,6 +126,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         setSaveNetworkConfigCommand(new UICommand("SaveNetworkConfig", this)); //$NON-NLS-1$
         setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$
         setSyncAllHostNetworksCommand(new UICommand("SyncAllHostNetworks", this)); //$NON-NLS-1$
+        setShowVirtualFunctions(false);
 
         updateActionAvailability();
     }
@@ -147,10 +161,28 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(QueryType.GetVdsInterfacesByVdsId, tempVar, new AsyncQuery<QueryReturnValue>(returnValue -> {
-            List<VdsNetworkInterface> items = returnValue.getReturnValue();
-            updateItems(items);
-        }));
+        queryVirtualFunctionMap(tempVar);
+    }
+
+    private void queryVirtualFunctionMap(IdQueryParameters idQueryParameters) {
+        Frontend.getInstance()
+                .runQuery(QueryType.GetVfToPfMapByHostId,
+                        idQueryParameters,
+                        new AsyncQuery<QueryReturnValue>(returnValue -> {
+                            vfToPfMap = Optional.ofNullable((Map<Guid, Guid>) returnValue.getReturnValue())
+                                    .orElse(Collections.emptyMap());
+                            queryHostInterfaces(idQueryParameters);
+                        }));
+    }
+
+    private void queryHostInterfaces(IdQueryParameters idQueryParameters) {
+        Frontend.getInstance()
+                .runQuery(QueryType.GetVdsInterfacesByVdsId,
+                        idQueryParameters,
+                        new AsyncQuery<QueryReturnValue>(returnValue -> {
+                            List<VdsNetworkInterface> items = returnValue.getReturnValue();
+                            updateItems(items);
+                        }));
     }
 
     private void updateItems(Iterable<VdsNetworkInterface> source) {
@@ -183,6 +215,9 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
 
         // create all independent NIC models
         for (Nic nic : independentNics) {
+            if (isVirtualFunction(nic) && !isShowVirtualFunctions()) {
+                continue;
+            }
             HostInterfaceLineModel model = lineModelFromInterface(nic);
             model.getInterfaces().add(hostInterfaceFromNic(nic));
             items.add(model);
@@ -193,6 +228,10 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
 
         setItems(items);
         updateActionAvailability();
+    }
+
+    private boolean isVirtualFunction(Nic nic) {
+        return vfToPfMap.containsKey(nic.getId());
     }
 
     private List<HostVLan> gatherVlans(VdsNetworkInterface nic, Map<String, List<Vlan>> nicToVlans) {
@@ -389,6 +428,11 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
 
     private void onSyncAllHostNetworkCancelConfirm(){
         cancelConfirm();
+    }
+
+    public void onShowHideVirtualFunction(boolean show) {
+        setShowVirtualFunctions(show);
+        updateItems(getOriginalItems());
     }
 
     @Override

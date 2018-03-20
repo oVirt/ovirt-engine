@@ -4,13 +4,13 @@ import javax.inject.Inject;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-public class ExpandAllButtonPresenterWidget extends ToggleButtonPresenterWidget {
+public class ShowHideVfPresenterWidget extends ToggleButtonPresenterWidget {
 
     public interface ViewDef extends ToggleButtonPresenterWidget.ViewDef {
     }
 
     @Inject
-    public ExpandAllButtonPresenterWidget(EventBus eventBus, ExpandAllButtonPresenterWidget.ViewDef view) {
+    public ShowHideVfPresenterWidget(EventBus eventBus, ShowHideVfPresenterWidget.ViewDef view) {
         super(eventBus, view);
     }
 }

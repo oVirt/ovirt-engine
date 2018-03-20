@@ -57,6 +57,7 @@ import org.ovirt.engine.ui.common.presenter.ExpandAllButtonPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.NetworkBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.QuotaBreadCrumbsPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.ShowHideVfPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.TemplateBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.VnicProfileBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
@@ -67,6 +68,7 @@ import org.ovirt.engine.ui.common.view.ExpandAllButtonView;
 import org.ovirt.engine.ui.common.view.NetworkBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.OvirtBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.QuotaBreadCrumbsView;
+import org.ovirt.engine.ui.common.view.ShowHideVfButtonView;
 import org.ovirt.engine.ui.common.view.TemplateBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.VnicProfileBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.popup.HostMaintenanceConfirmationPopupView;
@@ -2009,6 +2011,9 @@ public class PresenterModule extends BasePresenterModule {
 
         bindPresenterWidget(ExpandAllButtonPresenterWidget.class, ExpandAllButtonPresenterWidget.ViewDef.class,
                 ExpandAllButtonView.class);
+
+        bindPresenterWidget(ShowHideVfPresenterWidget.class, ShowHideVfPresenterWidget.ViewDef.class,
+                ShowHideVfButtonView.class);
 
         // Overlays
         // Tasks

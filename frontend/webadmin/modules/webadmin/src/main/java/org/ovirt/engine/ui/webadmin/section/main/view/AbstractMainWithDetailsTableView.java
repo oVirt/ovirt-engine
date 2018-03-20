@@ -31,7 +31,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.gwtplatform.mvp.client.PresenterWidget;
 
 /**
  * Base class for table-based main tab views that work with {@link ListWithDetailsModel}.
@@ -91,12 +90,12 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
                 if (actionPanel == null) {
                     searchPanel = content;
                 } else {
-                    actionPanel.setSearchPanel((PresenterWidget<?>) content);
+                    actionPanel.addSearchPanel(content);
                 }
             } else {
                 searchPanel = null;
                 if (actionPanel != null) {
-                    actionPanel.setSearchPanel(null);
+                    actionPanel.addSearchPanel(null);
                 }
             }
         } else if (slot == AbstractMainWithDetailsPresenter.TYPE_SetActionPanel) {
@@ -104,7 +103,7 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
                 actionSearchPanel.add(content);
                 this.actionPanel = (ActionPanelPresenterWidget<T, M>) content;
                 if (searchPanel != null) {
-                    actionPanel.setSearchPanel((PresenterWidget<?>) searchPanel);
+                    actionPanel.addSearchPanel(searchPanel);
                 }
                 addResultPanel(actionPanel);
             } else {

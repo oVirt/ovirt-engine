@@ -125,6 +125,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String sysprepLabel();
 
+    String showVfLabel();
+
+    String hideVfLabel();
+
     String activeDirectoryOU();
 
     String activeDirectoryOUToolTip();
