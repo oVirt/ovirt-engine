@@ -165,6 +165,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("SessionID", StringUtils.isEmpty(sessionId) ? UNKNOWN : sessionId);
         addCustomValue("SourceIP", StringUtils.isEmpty(sourceIp) ? UNKNOWN : sourceIp);
+        addCustomValue("LoginErrMsg", "");
         return getSucceeded() ? AuditLogType.USER_VDC_LOGIN : AuditLogType.USER_VDC_LOGIN_FAILED;
     }
 }

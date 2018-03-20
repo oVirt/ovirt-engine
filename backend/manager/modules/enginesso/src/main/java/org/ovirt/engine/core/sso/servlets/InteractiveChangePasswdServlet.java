@@ -64,7 +64,7 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
                     ssoContext.getLocalizationUtils().localize(
                             SsoConstants.APP_ERROR_CHANGE_PASSWORD_FAILED,
                             (Locale) request.getAttribute(SsoConstants.LOCALE)),
-                    userCredentials == null ? "" : userCredentials.getUsername() + "@" + userCredentials.getProfile(),
+                    userCredentials == null ? "" : userCredentials.getUsernameWithProfile(),
                     ex.getMessage());
             log.error(msg);
             log.debug("Exception", ex);
@@ -77,9 +77,8 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
 
     private String changeUserPasswd(HttpServletRequest request, Credentials userCredentials)
             throws AuthenticationException {
-        log.debug("Calling Authn to change password for user '{}@{}'.",
-                userCredentials.getUsername(),
-                userCredentials.getProfile());
+        log.debug("Calling Authn to change password for user '{}'.",
+                userCredentials.getUsernameWithProfile());
         AuthenticationUtils.changePassword(ssoContext, request, userCredentials);
         SsoUtils.getSsoSession(request).setChangePasswdCredentials(null);
         if (SsoUtils.isUserAuthenticated(request)) {

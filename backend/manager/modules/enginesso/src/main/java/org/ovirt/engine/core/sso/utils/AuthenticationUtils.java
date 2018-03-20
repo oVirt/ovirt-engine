@@ -91,9 +91,8 @@ public class AuthenticationUtils {
                             (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         SsoSession ssoSession = login(ssoContext, request, credentials, null, interactive);
-        log.info("User {}@{} successfully logged in with scopes: {}",
-                credentials.getUsername(),
-                credentials.getProfile(),
+        log.info("User {} successfully logged in with scopes: {}",
+                credentials.getUsernameWithProfile(),
                 ssoSession.getScope());
     }
 
@@ -124,12 +123,20 @@ public class AuthenticationUtils {
                     SsoUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
                 }
                 log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn failed");
-                throw new AuthenticationException(
-                        AuthnMessageMapper.mapMessageErrorCode(
-                                ssoContext,
-                                request,
-                                credentials.getProfile(),
-                                outputMap));
+                String loginErrMsg = AuthnMessageMapper.mapMessageErrorCode(
+                        request,
+                        credentials.getProfile(),
+                        outputMap);
+                SsoSession ssoSession = SsoUtils.getSsoSession(request, false);
+                String sourceAddr = ssoSession == null ? null : ssoSession.getSourceAddr();
+                SsoUtils.notifyClientOfAuditLogEvent(ssoContext,
+                        sourceAddr == null ? request.getRemoteAddr() : sourceAddr,
+                        ssoContext.getSsoLocalConfig().getProperty("ENGINE_SSO_CLIENT_ID"),
+                        Optional.ofNullable(credentials).map(Credentials::getUsernameWithProfile).orElse("N/A"),
+                        ssoContext.getLocalizationUtils().localize(loginErrMsg, Locale.ENGLISH));
+                throw new AuthenticationException(ssoContext.getLocalizationUtils().localize(
+                        loginErrMsg,
+                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
             log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn succeeded");
             authRecord = outputMap.get(Authn.InvokeKeys.AUTH_RECORD);
