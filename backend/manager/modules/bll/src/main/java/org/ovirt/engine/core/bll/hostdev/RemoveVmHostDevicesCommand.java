@@ -43,7 +43,8 @@ public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmH
             if (deviceExists) {
                 VmHostDevice device = existingDevices.get(hostDevice.getDeviceName());
                 existingDevicesByIommuGroup
-                        .computeIfAbsent(getIommuGroupKey(hostDevice.getIommuGroup()), ArrayList::new).add(device);
+                        .computeIfAbsent(getIommuGroupKey(hostDevice.getIommuGroup()), k -> new ArrayList<>())
+                        .add(device);
 
                 if (shouldRemoveDevice) {
                     // first just set the flag that this device is not required
