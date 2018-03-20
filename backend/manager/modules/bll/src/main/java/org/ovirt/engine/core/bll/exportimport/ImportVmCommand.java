@@ -1351,6 +1351,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     @Override
+    protected void unlockVm() {
+        vmHandler.unLockVm(getVm());
+    }
+
+    @Override
     protected void endSuccessfully() {
         checkTrustedService();
         super.endSuccessfully();
