@@ -70,7 +70,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     }
 
     @Override
-    public void setSearchPanel(IsWidget searchPanel) {
+    public void addSearchPanel(IsWidget searchPanel) {
         if (searchPanel != null) {
             searchBarContainer.add(searchPanel);
             searchBarContainer.setVisible(true);

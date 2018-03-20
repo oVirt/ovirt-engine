@@ -71,7 +71,7 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
          * Create the container to hold the search panel as necessary and insert the
          * provided search panel to be displayed.
          */
-        void setSearchPanel(IsWidget searchPanel);
+        void addSearchPanel(IsWidget searchPanel);
 
         /**
          * Add the toolbar's search result / applied filter row to the action panel below the search panel and buttons
@@ -200,9 +200,9 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         return getModel().getSelectedItems();
     }
 
-    public void setSearchPanel(PresenterWidget<?> searchPanel) {
+    public void addSearchPanel(IsWidget searchPanel) {
         if (searchPanel != null) {
-            getView().setSearchPanel(searchPanel);
+            getView().addSearchPanel(searchPanel);
         }
     }
 
