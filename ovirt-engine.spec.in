@@ -258,6 +258,7 @@ Requires:	rubygem-fluent-plugin-rewrite-tag-filter
 Requires:	rubygem-fluent-plugin-secure-forward
 Requires:	rubygem-fluent-plugin-collectd-nest
 Requires:	rubygem-fluent-plugin-viaq_data_model
+Requires:	rubygem-fluent-plugin-elasticsearch
 
 %if 0%{?rhel}
 # JDBC drivers newer than 9.2 break engine DAL, so we cannot depend on it
