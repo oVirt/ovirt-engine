@@ -70,6 +70,17 @@
        <Class name="org.ovirt.engine.ui.common.presenter.AddActionButton" />
        <Bug code="UuF"/>
      </Match>
+       <!--
+        findbugs complains of unused field in class.
+        This is a GWT class and used to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.AddKebabMenuListItem" />
+       <Bug code="UuF"/>
+     </Match>
 
        <!--
         findbugs complain of using Boolean constructor instead of Boolean.valueOf

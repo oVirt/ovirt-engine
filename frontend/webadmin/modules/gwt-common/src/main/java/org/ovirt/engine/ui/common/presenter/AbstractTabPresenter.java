@@ -43,7 +43,12 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
     @Override
     protected void onBind() {
         super.onBind();
-        Scheduler.get().scheduleDeferred(() -> addPluginActionButtons(actionButtonPluginHandler.getButtons(getProxy().getTargetHistoryToken())));
+        Scheduler.get().scheduleDeferred(() -> {
+            addPluginActionButtons(
+                actionButtonPluginHandler.getButtons(getProxy().getTargetHistoryToken()), false);
+            addPluginActionButtons(
+                actionButtonPluginHandler.getMenuItems(getProxy().getTargetHistoryToken()), true);
+        });
         //Register this handler for whichever tab opens first, it is bound before the plugin fires its events and
         //before the actionButtonPluginHandler is instantiated and listening to events.
         registerHandler(getEventBus().addHandler(AddActionButtonEvent.getType(),
@@ -51,16 +56,28 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
                 if (getProxy().getTargetHistoryToken().equals(event.getHistoryToken())) {
                     List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
                     pluginActionButtonList.add(event.getButtonDefinition());
-                    addPluginActionButtons(pluginActionButtonList);
+                    addPluginActionButtons(pluginActionButtonList, false);
                 }
             }));
+        registerHandler(getEventBus().addHandler(AddKebabMenuListItemEvent.getType(),
+                event -> {
+                    if (getProxy().getTargetHistoryToken().equals(event.getHistoryToken())) {
+                        List<ActionButtonDefinition<?>> pluginActionButtonList = new ArrayList<>();
+                        pluginActionButtonList.add(event.getButtonDefinition());
+                        addPluginActionButtons(pluginActionButtonList, true);
+                    }
+                }));
 
     }
 
-    private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList) {
+    private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList, boolean isMenuItem) {
         if (getActionPanelPresenterWidget() != null) {
             for(ActionButtonDefinition<?> buttonDef: pluginActionButtonList) {
-                getActionPanelPresenterWidget().addActionButton((ActionButtonDefinition) buttonDef);
+                if (isMenuItem) {
+                    getActionPanelPresenterWidget().addMenuListItem((ActionButtonDefinition) buttonDef);
+                } else {
+                    getActionPanelPresenterWidget().addActionButton((ActionButtonDefinition) buttonDef);
+                }
             }
         }
     }

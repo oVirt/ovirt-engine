@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.presenter.AddActionButtonEvent;
+import org.ovirt.engine.ui.common.presenter.AddKebabMenuListItemEvent;
 import org.ovirt.engine.ui.common.presenter.RedrawDynamicTabContainerEvent;
 import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent;
 import org.ovirt.engine.ui.common.widget.AlertManager;
@@ -187,8 +188,13 @@ public class PluginUiFunctions implements HasHandlers {
         String historyToken = entityType.getMainHistoryToken();
 
         if (historyToken != null) {
-            AddActionButtonEvent.fire(this, historyToken,
-                    createButtonDefinition(label, actionButtonInterface));
+            if (actionButtonInterface.isInMoreMenu()) {
+                AddKebabMenuListItemEvent.fire(this, historyToken,
+                        createButtonDefinition(label, actionButtonInterface));
+            } else {
+                AddActionButtonEvent.fire(this, historyToken,
+                        createButtonDefinition(label, actionButtonInterface));
+            }
         }
     }
 
@@ -200,8 +206,13 @@ public class PluginUiFunctions implements HasHandlers {
         String historyToken = mainTabEntityType.getSubTabHistoryToken(subTabEntityType);
 
         if (historyToken != null) {
-            AddActionButtonEvent.fire(this, historyToken,
-                    createButtonDefinition(label, actionButtonInterface));
+            if (actionButtonInterface.isInMoreMenu()) {
+                AddKebabMenuListItemEvent.fire(this, historyToken,
+                        createButtonDefinition(label, actionButtonInterface));
+            } else {
+                AddActionButtonEvent.fire(this, historyToken,
+                        createButtonDefinition(label, actionButtonInterface));
+            }
         }
     }
 

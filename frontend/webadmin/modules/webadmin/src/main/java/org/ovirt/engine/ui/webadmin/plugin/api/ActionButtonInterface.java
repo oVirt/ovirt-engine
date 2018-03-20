@@ -37,4 +37,13 @@ public final class ActionButtonInterface extends JsInterfaceObject {
     public JsFunction isAccessible() {
         return getFunction("isAccessible"); //$NON-NLS-1$
     }
+
+    /**
+     * Determines if the action button will be a menu item in the 'more items' menu of the action panel.
+     * Default return value: {@code false}
+     */
+    public Boolean isInMoreMenu() {
+        return getValueAsBoolean("moreMenu", false); //$NON-NLS-1$
+    }
+
 }
