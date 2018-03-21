@@ -48,6 +48,12 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     public void onRevealOverlayContent(RevealOverlayContentEvent event) {
         if (event.getContent() != null) {
             event.getContent().setCurrentPlaceWidget(getChild(TYPE_SetContent));
+        } else {
+            // Force a refresh of the data when we close the overlay.
+            Presenter<?, ?> child = getChild(TYPE_SetContent);
+            if (child instanceof AbstractMainWithDetailsPresenter) {
+                ((AbstractMainWithDetailsPresenter<?, ?, ?, ?>)child).refreshMainGridData();
+            }
         }
         setInSlot(TYPE_SetOverlay, event.getContent());
     }

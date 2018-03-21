@@ -282,6 +282,10 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
         }
     }
 
+    public void refreshMainGridData() {
+        getModel().getSearchCommand().execute();
+    }
+
     @Inject
     public void setActionButtonPluginHandler(PluginActionButtonHandler actionButtonPluginHandler) {
         this.actionButtonPluginHandler = actionButtonPluginHandler;
