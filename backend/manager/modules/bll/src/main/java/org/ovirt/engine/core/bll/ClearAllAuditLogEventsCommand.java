@@ -43,6 +43,6 @@ public class ClearAllAuditLogEventsCommand<T extends ActionParametersBase> exten
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_CLEAR_ALL_AUDIT_LOG : AuditLogType.USER_CLEAR_ALL_AUDIT_LOG_FAILED;
+        return getSucceeded() ? AuditLogType.USER_CLEAR_ALL_AUDIT_LOG_EVENTS : AuditLogType.USER_CLEAR_ALL_AUDIT_LOG_EVENTS_FAILED;
     }
 }
