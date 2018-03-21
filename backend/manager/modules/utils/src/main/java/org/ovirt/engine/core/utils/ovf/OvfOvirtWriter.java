@@ -197,7 +197,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
     private void writeUserData() {
         Set<DbUser> dbUsers = fullEntityOvfData.getDbUsers();
         if (dbUsers.isEmpty()) {
-            logger.warn("There are no users with permissions on VM {} to write", vmBase.getId());
+            logger.debug("There are no users with permissions on VM {} to write", vmBase.getId());
             return;
         }
 
