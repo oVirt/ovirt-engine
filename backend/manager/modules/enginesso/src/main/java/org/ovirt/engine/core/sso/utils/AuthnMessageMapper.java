@@ -15,9 +15,9 @@ public class AuthnMessageMapper {
     static {
         messagesMap.put(Authn.AuthResult.GENERAL_ERROR, SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE);
         messagesMap.put(Authn.AuthResult.CREDENTIALS_INVALID,
-                SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
+                SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE);
         messagesMap.put(Authn.AuthResult.CREDENTIALS_INCORRECT,
-                SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
+                SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE);
         messagesMap.put(Authn.AuthResult.ACCOUNT_LOCKED, SsoConstants.APP_ERROR_USER_ACCOUNT_DISABLED);
         messagesMap.put(Authn.AuthResult.ACCOUNT_DISABLED, SsoConstants.APP_ERROR_USER_ACCOUNT_DISABLED);
         messagesMap.put(Authn.AuthResult.ACCOUNT_EXPIRED, SsoConstants.APP_ERROR_USER_ACCOUNT_EXPIRED);
