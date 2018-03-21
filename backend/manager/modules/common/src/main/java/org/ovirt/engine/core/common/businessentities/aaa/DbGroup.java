@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.aaa;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.businessentities.Queryable;
@@ -21,21 +22,28 @@ public class DbGroup implements Queryable {
      */
     private String externalId;
     private String namespace;
+    @NotNull
     private String domain;
+    @NotNull
     private String name;
+    @NotNull
     private String distinguishedName;
     private Set<String> memberOf;
 
     public DbGroup() {
-        memberOf = new HashSet<>();
+        domain = "";
+        name = "";
+        distinguishedName = "";
+
     }
 
     public DbGroup(DirectoryGroup directoryGroup) {
         externalId = directoryGroup.getId();
         setId(new Guid(directoryGroup.getId().getBytes()));
         namespace = directoryGroup.getNamespace();
-        domain = directoryGroup.getDirectoryName();
-        name = directoryGroup.getName();
+        setDomain(directoryGroup.getDirectoryName());
+        setName(directoryGroup.getName());
+        distinguishedName = "";
     }
 
     public Guid getId() {
@@ -67,7 +75,7 @@ public class DbGroup implements Queryable {
     }
 
     public void setDomain(String value) {
-        domain = value;
+        domain = value == null ? "" : value;
     }
 
     public String getName() {
@@ -75,11 +83,11 @@ public class DbGroup implements Queryable {
     }
 
     public void setName(String value) {
-        name = value;
+        name = value == null ? "" : value;
     }
 
     public void setDistinguishedName(String distinguishedName) {
-        this.distinguishedName = distinguishedName;
+        this.distinguishedName = distinguishedName == null ? "" : distinguishedName;
     }
 
     public String getDistinguishedName() {

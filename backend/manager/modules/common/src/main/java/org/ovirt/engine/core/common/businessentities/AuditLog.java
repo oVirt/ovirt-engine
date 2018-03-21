@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,20 +17,28 @@ public class AuditLog implements Queryable {
     private Date logTime;
     private String message;
     private Guid userId;
+    @NotNull
     private String userName;
     private Guid quotaId;
+    @NotNull
     private String quotaName;
     private Guid vdsId;
+    @NotNull
     private String vdsName;
     private Guid vmTemplateId;
+    @NotNull
     private String vmTemplateName;
     private Guid vmId;
+    @NotNull
     private String vmName;
     private Guid storagePoolId;
+    @NotNull
     private String storagePoolName;
     private Guid storageDomainId;
+    @NotNull
     private String storageDomainName;
     private Guid clusterId;
+    @NotNull
     private String clusterName;
     private int logType;
     private int severity;
@@ -36,6 +46,7 @@ public class AuditLog implements Queryable {
     private String correlationId;
     private Guid jobId;
     private Guid glusterVolumeId;
+    @NotNull
     private String glusterVolumeName;
     private String origin;
     private String customId;
@@ -72,6 +83,15 @@ public class AuditLog implements Queryable {
         this.customData = "";
         this.logTime = new Date();
         this.repeatable = false;
+        this.userName = "";
+        this.vmName = "";
+        this.vdsName = "";
+        this.vmTemplateName = "";
+        this.quotaName = "";
+        this.storagePoolName = "";
+        this.storageDomainName = "";
+        this.clusterName = "";
+        this.glusterVolumeName = "";
     }
 
     public AuditLog(AuditLogType type,
@@ -88,13 +108,18 @@ public class AuditLog implements Queryable {
         this(type, severity);
         this.message = message;
         this.userId = userId;
-        this.userName = userName;
+        this.setUserName(userName);
         this.vmId = vmId;
-        this.vmName = vmName;
+        this.setVmName(vmName);
         this.vdsId = vdsId;
-        this.vdsName = vdsName;
+        this.setVdsName(vdsName);
         this.vmTemplateId = vmTemplateId;
-        this.vmTemplateName = vmTemplateName;
+        this.setVmTemplateName(vmTemplateName);
+        this.quotaName = "";
+        this.storagePoolName = "";
+        this.storageDomainName = "";
+        this.clusterName = "";
+        this.glusterVolumeName = "";
     }
 
     public AuditLog(AuditLogType type,
@@ -206,7 +231,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.userName = userName == null ? "" : userName;
     }
 
     public Guid getQuotaId() {
@@ -222,7 +247,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setQuotaName(String quotaName) {
-        this.quotaName = quotaName;
+        this.quotaName = quotaName == null ? "" : quotaName;
     }
 
     public Guid getVdsId() {
@@ -238,7 +263,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setVdsName(String vdsName) {
-        this.vdsName = vdsName;
+        this.vdsName = vdsName == null ? "" : vdsName;
     }
 
     public Guid getVmTemplateId() {
@@ -254,7 +279,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setVmTemplateName(String vmTemplateName) {
-        this.vmTemplateName = vmTemplateName;
+        this.vmTemplateName = vmTemplateName == null ? "" : vmTemplateName;
     }
 
     public Guid getVmId() {
@@ -270,7 +295,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setVmName(String vmName) {
-        this.vmName = vmName;
+        this.vmName = vmName == null ? "" : vmName;
     }
 
     public Guid getStoragePoolId() {
@@ -286,7 +311,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setStoragePoolName(String storagePoolName) {
-        this.storagePoolName = storagePoolName;
+        this.storagePoolName = storagePoolName == null ? "" : storagePoolName;
     }
 
     public Guid getStorageDomainId() {
@@ -302,7 +327,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setStorageDomainName(String storageDomainName) {
-        this.storageDomainName = storageDomainName;
+        this.storageDomainName = storageDomainName == null ? "" : storageDomainName;
     }
 
     public Guid getClusterId() {
@@ -318,7 +343,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setClusterName(String clusterName) {
-        this.clusterName = clusterName;
+        this.clusterName = clusterName == null ? "" : clusterName;
     }
 
     public AuditLogType getLogType() {
@@ -395,7 +420,7 @@ public class AuditLog implements Queryable {
     }
 
     public void setGlusterVolumeName(String glusterVolumeName) {
-        this.glusterVolumeName = glusterVolumeName;
+        this.glusterVolumeName = glusterVolumeName == null ? "" : glusterVolumeName;
     }
 
     public String getOrigin() {

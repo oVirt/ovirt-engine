@@ -200,7 +200,7 @@ public class AuditLogableBase implements AuditLogable {
 
     @Override
     public String getVmTemplateName() {
-        if (vmTemplateName == null && getVmTemplate() != null) {
+        if (StringUtils.isEmpty(vmTemplateName) && getVmTemplate() != null) {
             vmTemplateName = getVmTemplate().getName();
         }
         return vmTemplateName;
@@ -240,7 +240,7 @@ public class AuditLogableBase implements AuditLogable {
 
     @Override
     public String getVmName() {
-        if (vmName == null && getVm() != null) {
+        if (StringUtils.isEmpty(vmName) && getVm() != null) {
             vmName = getVm().getName();
         }
         return vmName;
@@ -287,7 +287,7 @@ public class AuditLogableBase implements AuditLogable {
 
     @Override
     public String getVdsName() {
-        if (vdsName == null) {
+        if (StringUtils.isEmpty(vdsName)) {
             if (getVdsNoLoad() == null) {
                 if (getVdsStatic() != null) {
                     vdsName = getVdsStatic().getName();
@@ -350,7 +350,7 @@ public class AuditLogableBase implements AuditLogable {
 
     @Override
     public String getStorageDomainName() {
-        if (storageDomainName == null && getStorageDomain() != null) {
+        if (StringUtils.isEmpty(storageDomainName) && getStorageDomain() != null) {
             storageDomainName = getStorageDomain().getStorageName();
         }
         return StringUtils.defaultString(storageDomainName);
@@ -393,7 +393,7 @@ public class AuditLogableBase implements AuditLogable {
 
     @Override
     public String getStoragePoolName() {
-        if (storagePoolName == null && getStoragePool() != null) {
+        if (StringUtils.isEmpty(storagePoolName) && getStoragePool() != null) {
             storagePoolName = getStoragePool().getName();
         }
         return StringUtils.defaultString(storagePoolName);
@@ -532,7 +532,7 @@ public class AuditLogableBase implements AuditLogable {
 
     @Override
     public String getClusterName() {
-        if (clusterName == null) {
+        if (StringUtils.isEmpty(clusterName)) {
             if (getCluster() != null) {
                 clusterName = getCluster().getName();
             } else {
@@ -636,7 +636,7 @@ public class AuditLogableBase implements AuditLogable {
 
     @Override
     public String getGlusterVolumeName() {
-        if (glusterVolumeName == null && getGlusterVolume() != null) {
+        if (StringUtils.isEmpty(glusterVolumeName) && getGlusterVolume() != null) {
             glusterVolumeName = getGlusterVolume().getName();
         }
         return glusterVolumeName;
