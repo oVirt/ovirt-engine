@@ -61,7 +61,15 @@ public class FiltersHelper {
 
     public static boolean isStatusOk(Map<String, Object> response) {
         if (response.get("error") != null) {
-            throw new RuntimeException(String.format("%s: %s", response.get("error"), response.get("error_description")));
+            Object errorCode = response.get("error_code");
+            String msg;
+            // if error code is null the error is send as error and error_description
+            if (errorCode == null) {
+                msg = String.format("%s: %s", response.get("error"), response.get("error_description"));
+            } else {
+                msg = String.format("%s: %s", errorCode, response.get("error"));
+            }
+            throw new RuntimeException(msg);
         }
         return true;
     }
