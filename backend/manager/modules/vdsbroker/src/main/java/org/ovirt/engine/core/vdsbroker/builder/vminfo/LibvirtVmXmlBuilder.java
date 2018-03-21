@@ -364,6 +364,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("numa");
             NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodesSupplier.get()).forEach(vmNumaNode -> {
                 writer.writeStartElement("cell");
+                writer.writeAttributeString("id", vmNumaNode.get(VdsProperties.NUMA_NODE_INDEX).toString());
                 writer.writeAttributeString("cpus", vmNumaNode.get(VdsProperties.NUMA_NODE_CPU_LIST).toString());
                 writer.writeAttributeString("memory", String.valueOf(Integer.parseInt((String) vmNumaNode.get(VdsProperties.VM_NUMA_NODE_MEM)) * 1024));
                 if (HugePageUtils.isHugepagesShared(vm.getStaticData())) {
