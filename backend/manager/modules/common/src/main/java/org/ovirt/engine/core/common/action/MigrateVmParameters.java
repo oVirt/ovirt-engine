@@ -90,7 +90,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     }
 
     public Date getTotalMigrationTime() {
-        return startTime;
+        return totalMigrationTime;
     }
 
     public Guid getTargetClusterId() {
