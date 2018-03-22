@@ -520,6 +520,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         serialNumberPolicyEditor.setRenderer(new VisibilityRenderer.SimpleVisibilityRenderer());
         customMigrationBandwidthLimitEditor.hideLabel();
+        hostsWithBrokenConnectivityThresholdEditor.hideLabel();
 
         addStyles();
         driver.initialize(this);
