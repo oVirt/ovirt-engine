@@ -348,7 +348,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.DBUser,
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getModifiedSearchString()), SearchType.DBUser,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(QueryType.Search, tempVar);

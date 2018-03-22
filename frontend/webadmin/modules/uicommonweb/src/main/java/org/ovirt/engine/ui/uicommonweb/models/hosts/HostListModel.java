@@ -1740,7 +1740,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VDS,
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getModifiedSearchString()), SearchType.VDS,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(QueryType.Search, tempVar);

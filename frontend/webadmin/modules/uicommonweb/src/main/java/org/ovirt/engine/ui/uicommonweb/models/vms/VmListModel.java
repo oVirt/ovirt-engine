@@ -716,7 +716,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VM, isCaseSensitiveSearch());
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getModifiedSearchString()),
+                SearchType.VM, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(QueryType.Search, tempVar);
     }

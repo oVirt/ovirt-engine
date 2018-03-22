@@ -145,8 +145,12 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     private String searchString;
 
     public String getSearchString() {
+        return searchString;
+    }
+
+    public String getModifiedSearchString() {
         if (tags.isEmpty()) {
-            return searchString;
+            return getSearchString();
         } else {
             return getTaggedSearchString();
         }
@@ -160,12 +164,12 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 tags.append(" OR "); // $NON-NLS-1$
             }
         }
-        if (getDefaultSearchString().equalsIgnoreCase(searchString)) {
+        if (getDefaultSearchString().equalsIgnoreCase(getSearchString())) {
             //Nothing added, we can append the tags.
-            return searchString + tags.toString();
+            return getSearchString() + tags.toString();
         } else {
             //Have a search string with something already, append with OR.
-            return searchString + " OR " + tags.toString(); // $NON-NLS-1$
+            return getSearchString() + " OR " + tags.toString(); // $NON-NLS-1$
         }
     }
 
