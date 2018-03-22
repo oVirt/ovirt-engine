@@ -59,6 +59,12 @@ public class BackendImageTransferResource extends
     }
 
     @Override
+    public Response cancel(Action action) {
+        return performAction(ActionType.TransferImageStatus,
+                prepareStatusParams(ImageTransferPhase.CANCELLED));
+    }
+
+    @Override
     public Response doFinalize(Action action) {
         return performAction(ActionType.TransferImageStatus,
                 prepareStatusParams(ImageTransferPhase.FINALIZING_SUCCESS));
