@@ -273,9 +273,6 @@
            <ENGINE_VARS>${basedir}/src/test/resources/engine.conf</ENGINE_VARS>
          </environmentVariables>
 
-          <excludes>
-	    <exclude>**/TestHelper*.java</exclude>
-          </excludes>
           <excludedGroups>org.ovirt.engine.arquillian.IntegrationTest</excludedGroups>
         </configuration>
       </plugin>
