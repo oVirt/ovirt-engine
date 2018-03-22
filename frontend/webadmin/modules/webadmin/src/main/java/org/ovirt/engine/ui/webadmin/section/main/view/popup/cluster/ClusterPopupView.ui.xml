@@ -40,6 +40,10 @@
             padding-top: 10px;
         }
 
+        .listBoxLabel {
+            padding-left: 10px;
+        }
+
         .explanationLabel {
             font-style: italic;
             margin: 10px 5px;
@@ -464,7 +468,8 @@
                               <b:Column size="SM_12">
                                 <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" usePatternFly="true" addStyleNames="{style.floatLeft} {style.max95Width} form-group" addLabelStyleName="{style.inline}" label="{constants.skipFencingWhenConnectivityBroken}"/>
                                 <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" addStyleNames="{style.floatLeft}" />
-                                <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_7" addStyleNames="{style.floatLeft}" addLabelStyleName="{style.inline}" label="{constants.hostsWithBrokenConnectivityThresholdLabel}" />
+                                <g:Label addStyleNames="{style.inline} {style.floatLeft} {style.listBoxLabel}" text="{constants.hostsWithBrokenConnectivityThresholdLabel}" />
+                                <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" usePatternFly="true" widgetColSize="SM_12" addStyleNames="{style.floatLeft}" />
                               </b:Column>
                             </b:Row>
                             <b:Row>
