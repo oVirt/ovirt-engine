@@ -345,17 +345,6 @@ public class BackendTemplateResourceTest
     }
 
     @Test
-    public void testIncompleteExport() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        try {
-            resource.export(new Action());
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Action", "export", "storageDomain.id|name");
-        }
-    }
-
-    @Test
     public void testExportAsyncPending() throws Exception {
         doTestExportAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
     }

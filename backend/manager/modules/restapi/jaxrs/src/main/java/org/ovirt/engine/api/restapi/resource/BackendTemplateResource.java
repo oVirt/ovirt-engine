@@ -28,9 +28,11 @@ import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ExportOvaParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -86,9 +88,7 @@ public class BackendTemplateResource
     }
 
     @Override
-    public Response export(Action action) {
-        validateParameters(action, "storageDomain.id|name");
-
+    public Response exportToExportDomain(Action action) {
         MoveOrCopyParameters params = new MoveOrCopyParameters(guid, getStorageDomainId(action));
 
         if (action.isSetExclusive() && action.isExclusive()) {
@@ -96,6 +96,19 @@ public class BackendTemplateResource
         }
 
         return doAction(ActionType.ExportVmTemplate, params, action, PollingType.JOB);
+    }
+
+    @Override
+    public Response exportToPathOnHost(Action action) {
+        ExportOvaParameters params = new ExportOvaParameters();
+
+        params.setEntityType(VmEntityType.TEMPLATE);
+        params.setEntityId(guid);
+        params.setProxyHostId(getHostId(action));
+        params.setDirectory(action.getDirectory());
+        params.setName(action.getFilename());
+
+        return doAction(ActionType.ExportVmTemplateToOva, params, action);
     }
 
     @Override
