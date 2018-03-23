@@ -13,7 +13,7 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    <d:SimpleDialogPanel header="{constants.configurePopupTitle}" height="600px" width="1060px">
+    <d:SimpleDialogPanel header="{constants.configurePopupTitle}" height="600px" width="1070px">
         <d:content>
             <t:DialogTabPanel height="100%" width="100%">
                 <t:tab>
