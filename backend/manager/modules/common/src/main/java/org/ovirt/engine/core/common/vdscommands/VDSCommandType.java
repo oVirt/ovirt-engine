@@ -10,7 +10,6 @@ public enum VDSCommandType {
     CreateBroker("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DestroyVm("org.ovirt.engine.core.vdsbroker"),
     RebootVm("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    Pause("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Hibernate("org.ovirt.engine.core.vdsbroker"),
     HibernateBroker("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Resume("org.ovirt.engine.core.vdsbroker"),

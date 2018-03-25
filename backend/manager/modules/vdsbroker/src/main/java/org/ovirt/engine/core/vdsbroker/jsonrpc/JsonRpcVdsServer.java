@@ -238,14 +238,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public OneVmReturn pause(String vmId) {
-        JsonRpcRequest request = new RequestBuilder("VM.pause").withParameter("vmID", vmId).build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("vmList");
-        return new OneVmReturn(response);
-    }
-
-    @Override
     public StatusOnlyReturn hibernate(String vmId, String hiberVolHandle) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hibernate").withParameter("vmID", vmId)

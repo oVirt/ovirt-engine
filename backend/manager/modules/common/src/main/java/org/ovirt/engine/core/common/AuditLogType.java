@@ -215,7 +215,9 @@ public enum AuditLogType {
     USER_FAILED_REMOVE_VM(59, AuditLogSeverity.ERROR),
     USER_CHANGE_DISK_VM(38),
     USER_FAILED_CHANGE_DISK_VM(102, AuditLogSeverity.ERROR),
+    @Deprecated
     USER_PAUSE_VM(39),
+    @Deprecated
     USER_FAILED_PAUSE_VM(55, AuditLogSeverity.ERROR),
     USER_SUSPEND_VM(501),
     @Deprecated

@@ -18,7 +18,6 @@ public enum ActionType {
     StopVm(7, ActionGroup.STOP_VM, QuotaDependency.BOTH),
     ShutdownVm(8, ActionGroup.SHUT_DOWN_VM, QuotaDependency.CLUSTER),
     ChangeDisk(9, ActionGroup.CHANGE_VM_CD, QuotaDependency.NONE),
-    PauseVm(10, QuotaDependency.NONE),
     HibernateVm(11, ActionGroup.HIBERNATE_VM, QuotaDependency.NONE),
     RunVm(12, ActionGroup.RUN_VM, QuotaDependency.CLUSTER),
     RunVmOnce(13, ActionGroup.RUN_VM, QuotaDependency.BOTH),

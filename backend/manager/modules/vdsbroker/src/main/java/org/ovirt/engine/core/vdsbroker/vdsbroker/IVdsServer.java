@@ -63,8 +63,6 @@ public interface IVdsServer {
 
     StatusOnlyReturn setDestroyOnReboot(String vmId);
 
-    OneVmReturn pause(String vmId);
-
     StatusOnlyReturn hibernate(String vmId, String hiberVolHandle);
 
     OneVmReturn resume(String vmId);
