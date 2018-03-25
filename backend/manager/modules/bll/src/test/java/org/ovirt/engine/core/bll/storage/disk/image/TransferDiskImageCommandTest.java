@@ -78,11 +78,12 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
     }
 
     protected void initializeSuppliedImage() {
-        initSuppliedImage();
+        Guid imageId = Guid.newGuid();
+        transferImageCommand.getParameters().setImageId(imageId);
 
         DiskImage diskImage = new DiskImage();
         diskImage.setActive(true);
-        diskImage.setImageId(transferImageCommand.getParameters().getImageId());
+        diskImage.setImageId(imageId);
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
         diskImage.setStorageTypes(new ArrayList<>(Collections.singletonList(StorageType.NFS)));
         doReturn(diskImage).when(diskImageDao).get(any());
@@ -90,11 +91,6 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         doReturn(diskValidator).when(transferImageCommand).getDiskValidator(any());
         doReturn(diskImagesValidator).when(transferImageCommand).getDiskImagesValidator(any());
         doReturn(storageDomainValidator).when(transferImageCommand).getStorageDomainValidator(any());
-    }
-
-    protected void initSuppliedImage() {
-        Guid imageId = Guid.newGuid();
-        transferImageCommand.getParameters().setImageId(imageId);
     }
 
     private DiskImage initReadyImageForUpload() {
