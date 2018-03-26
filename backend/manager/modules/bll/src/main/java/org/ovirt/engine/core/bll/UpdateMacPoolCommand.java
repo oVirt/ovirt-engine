@@ -13,7 +13,9 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionRollbackListener;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
 
@@ -69,7 +71,17 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
 
     @Override
     protected void executeCommand() {
-        registerRollbackHandler((TransactionRollbackListener)() -> macPoolPerCluster.modifyPool(oldMacPool));
+        registerRollbackHandler((TransactionRollbackListener)() ->
+            TransactionSupport.executeInNewTransaction(
+                (TransactionMethod<Void>) () -> {
+                    // if the update failed before the removal of the pool need to
+                    // remove it to prevent failure during re-creation of the pool
+                    macPoolPerCluster.removePool(oldMacPool.getId());
+                    macPoolPerCluster.createPool(oldMacPool);
+                    return null;
+                }
+            )
+        );
 
         macPoolDao.update(getMacPoolEntity());
         macPoolPerCluster.modifyPool(getMacPoolEntity());
