@@ -512,21 +512,15 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
     }
 
     protected void removeVmImages() {
-        commandCoordinatorUtil.executeAsyncCommand(
-                ActionType.RemoveAllVmImages,
-                withRootCommandInfo(buildRemoveAllVmImagesParameters()),
+        runInternalAction(ActionType.RemoveAllVmImages,
+                buildRemoveAllVmImagesParameters(),
                 cloneContextAndDetachFromParent());
     }
 
     private RemoveAllVmImagesParameters buildRemoveAllVmImagesParameters() {
-        RemoveAllVmImagesParameters params = new RemoveAllVmImagesParameters(
+        return new RemoveAllVmImagesParameters(
                 getVmId(),
                 diskDao.getAllForVm(getVmId()).stream().map(DiskImage.class::cast).collect(Collectors.toList()));
-        params.setParentCommand(getActionType());
-        params.setEntityInfo(getParameters().getEntityInfo());
-        params.setParentParameters(getParameters());
-
-        return params;
     }
 
     protected CommandContext createConversionStepContext(StepEnum step) {
