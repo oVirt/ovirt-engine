@@ -47,26 +47,26 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 public class TransferDiskImageCommandTest extends BaseCommandTest {
 
     @Mock
-    DiskValidator diskValidator;
+    private DiskValidator diskValidator;
 
     @Mock
-    DiskImagesValidator diskImagesValidator;
+    private DiskImagesValidator diskImagesValidator;
 
     @Mock
-    StorageDomainValidator storageDomainValidator;
+    private StorageDomainValidator storageDomainValidator;
 
     @Mock
-    StorageDomainDao storageDomainDao;
+    private StorageDomainDao storageDomainDao;
 
     @Mock
-    DiskImageDao diskImageDao;
+    private DiskImageDao diskImageDao;
 
     @Mock
-    ImageTransferDao imageTransferDao;
+    private ImageTransferDao imageTransferDao;
 
     @Spy
     @InjectMocks
-    protected TransferDiskImageCommand<TransferDiskImageParameters> transferImageCommand =
+    private  TransferDiskImageCommand<TransferDiskImageParameters> transferImageCommand =
             new TransferDiskImageCommand<>(new TransferDiskImageParameters(), null);
 
     @Before
@@ -77,7 +77,7 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         doNothing().when(transferImageCommand).startImageTransferSession();
     }
 
-    protected void initializeSuppliedImage() {
+    private void initializeSuppliedImage() {
         Guid imageId = Guid.newGuid();
         transferImageCommand.getParameters().setImageId(imageId);
 
