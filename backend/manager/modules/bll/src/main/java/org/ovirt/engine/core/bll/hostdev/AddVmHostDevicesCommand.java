@@ -27,7 +27,6 @@ public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHost
 
     @Override
     protected void executeCommand() {
-
         Set<HostDevice> affectedHostDevices = getAffectedHostDevices();
         Map<String, VmHostDevice> existingDevices = getExistingVmHostDevicesByName();
 

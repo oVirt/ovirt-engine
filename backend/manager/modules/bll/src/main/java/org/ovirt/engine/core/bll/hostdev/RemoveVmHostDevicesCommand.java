@@ -29,7 +29,6 @@ public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmH
 
     @Override
     protected void executeCommand() {
-
         Set<HostDevice> affectedHostDevices = getAffectedHostDevices();
         Map<String, VmHostDevice> existingDevices = getExistingVmHostDevicesByName();
 
@@ -82,12 +81,7 @@ public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmH
      * Returns whether all passed in devices are just IOMMU placeholders - i.e. not required by the user
      */
     private static boolean allPlaceholder(Collection<VmHostDevice> devices) {
-        for (VmHostDevice device : devices) {
-            if (!device.isIommuPlaceholder()) {
-                return false;
-            }
-        }
-        return true;
+        return devices.stream().allMatch(VmHostDevice::isIommuPlaceholder);
     }
 
     private static int getIommuGroupKey(Integer iommuGroup) {
