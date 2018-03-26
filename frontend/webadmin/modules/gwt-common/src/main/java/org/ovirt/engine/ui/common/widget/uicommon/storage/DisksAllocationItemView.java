@@ -9,11 +9,13 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
@@ -65,7 +67,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @UiField
     @Path(value = "sourceStorageDomainName.entity")
-    EnableableFormLabel sourceStorageLabel;
+    @WithElementId
+    StringEntityModelLabelEditor sourceStorageLabel;
 
     @UiField(provided = true)
     @Path(value = "volumeType.selectedItem")
@@ -170,7 +173,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         editor.addWrapperStyleName(style.editorWrapper());
     }
 
-    private void updateLabelStyle(EnableableFormLabel label, String contentStyle) {
+    private void updateLabelStyle(Widget label, String contentStyle) {
         label.addStyleName(contentStyle);
     }
 
@@ -188,17 +191,10 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         diskSizeLabel.setText(new DiskSizeRenderer<Integer>(SizeConverter.SizeUnit.GiB).render(
                 object.getSize().getEntity()));
 
+        sourceStorageLabel.setLabel(object.getSourceStorageDomainName().getEntity());
+
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
         object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());
-
-        StorageDomain sourceDomain = object.getSourceStorageDomain().getSelectedItem();
-        if (sourceDomain != null) {
-            sourceStorageLabel.setText(sourceDomain.getName());
-        } else {
-            sourceStorageLabel.setVisible(false);
-        }
-        sourceStorageListEditor.setVisible(false);
-
     }
 
     @Override
@@ -219,8 +215,6 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
                 ElementIdUtils.createElementId(elementId, "diskAlias")); //$NON-NLS-1$
         diskSizeLabel.setId(
                 ElementIdUtils.createElementId(elementId, "diskSize")); //$NON-NLS-1$
-        sourceStorageLabel.setId(
-                ElementIdUtils.createElementId(elementId, "sourceStorageDomainName")); //$NON-NLS-1$
         volumeTypeListEditor.setElementId(
                 ElementIdUtils.createElementId(elementId, "volumeType")); //$NON-NLS-1$
         volumeFormatListEditor.setElementId(

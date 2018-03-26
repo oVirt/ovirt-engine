@@ -51,7 +51,7 @@
                 <l:EnableableFormLabel ui:field="diskSizeLabel" />
             </g:FlowPanel>
             <g:FlowPanel ui:field="sourceStorageLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
-                <l:EnableableFormLabel ui:field="sourceStorageLabel" />
+                <ge:StringEntityModelLabelEditor ui:field="sourceStorageLabel" />
             </g:FlowPanel>
             <e:ListModelListBoxEditor ui:field="volumeTypeListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
             <e:ListModelListBoxEditor ui:field="volumeFormatListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
