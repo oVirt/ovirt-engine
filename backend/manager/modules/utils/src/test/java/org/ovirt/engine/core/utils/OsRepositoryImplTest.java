@@ -75,7 +75,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/windows_8/sysprepFileName").put("value", UNATTEND_XML);
         preferences.node("/os/windows_xp/id").put("value", "1");
         preferences.node("/os/windows_xp/sysprepFileName").put("value", SYSPREP_INF);
-        preferences.node("/os/rhel7/devices/usb/controller").put("value", "nec-xhci,q35/qemu_xhci");
+        preferences.node("/os/rhel7/devices/usb/controller").put("value", "nec-xhci,q35/qemu-xhci");
         preferences.node("/os/rhel6/id").put("value", "999");
         preferences.node("/os/rhel6/devices/usb/controller").put("value", "nec-xhci");
         preferences.node("/os/rhel6/devices/usb/controller").put("value.4.0", "none");

@@ -26,7 +26,7 @@ public enum UsbControllerModel {
     VT82C686B_UHCI("vt82c686b-uhci"),
     PCI_OHCI("pci-ohci"),
     NEC_XHCI("nec-xhci"),
-    QEMU_XHCI("qemu_xhci"),
+    QEMU_XHCI("qemu-xhci"),
     /**
      * xen pvusb with qemu backend, version 1.1
      */
