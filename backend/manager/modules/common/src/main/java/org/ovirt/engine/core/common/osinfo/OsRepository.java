@@ -184,9 +184,9 @@ public interface OsRepository {
     Set<VmWatchdogType> getVmWatchdogTypes(int osId, Version version);
 
     /**
-     * @return a specific sound device for the given os.
+     * @return a specific sound device for the given OS and chipset.
      */
-    String getSoundDevice(int osId, Version version);
+    String getSoundDevice(int osId, Version version, ChipsetType chipsetType);
 
     /**
      * @return the maximum allowed number of PCI devices

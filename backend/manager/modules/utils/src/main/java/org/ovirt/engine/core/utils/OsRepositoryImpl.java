@@ -415,8 +415,9 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public String getSoundDevice(int osId, Version version) {
-        return getValueByVersion(idToUnameLookup.get(osId), "devices.audio", version);
+    public String getSoundDevice(int osId, Version version, ChipsetType chipset) {
+        return parseChipsetPrefixedValue(
+                getValueByVersion(idToUnameLookup.get(osId), "devices.audio", version), chipset);
     }
 
     @Override

@@ -107,7 +107,7 @@ void networkValue() : {} {
 }
 
 void audioValue() : {} {
-    valueSpecifier() ("ich6" | "ac97")
+    valueSpecifier() <CHIPSET_AUDIO_TYPE> (<COMMA> (<WS>)* <CHIPSET_AUDIO_TYPE> )*
 }
 
 void cdInterfaceValue() : {} {
@@ -196,6 +196,14 @@ void valueSpecifier() : {} {
 |   < USB_CONTROLLER_TYPE
     :
     ("piix3-uhci" | "piix4-uhci" | "ehci" | "ich9-ehci1" | "ich9-uhci1" | "ich9-uhci2" | "ich9-uhci3" | "vt82c686b-uhci" | "pci-ohci" | "nec-xhci" | "qemu-xhci" | "qusb1" | "qusb2" | "none")
+    >
+|   < CHIPSET_AUDIO_TYPE
+    :
+    ((<CHIPSET_TYPE>) "/")? (<AUDIO_TYPE>)
+    >
+|   < AUDIO_TYPE
+    :
+    ("ich6" | "ich9" | "ac97")
     >
 |   < BUS_WIDTH : ("32" | "64") >
 |   < INT : (<DIGIT>)+ >

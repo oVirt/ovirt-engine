@@ -77,7 +77,6 @@ public class VmDeviceUtils {
     private final MacPoolPerCluster macPoolPerCluster;
     private final RngDeviceUtils rngDeviceUtils;
     private final VideoDeviceSettings videoDeviceSettings;
-    private final ClusterUtils clusterUtils;
 
     private OsRepository osRepository;
 
@@ -90,7 +89,6 @@ public class VmDeviceUtils {
                   MacPoolPerCluster macPoolPerCluster,
                   RngDeviceUtils rngDeviceUtils,
                   VideoDeviceSettings videoDeviceSettings,
-                  ClusterUtils clusterUtils,
                   OsRepository osRepository) {
         this.vmStaticDao = vmStaticDao;
         this.vmDeviceDao = vmDeviceDao;
@@ -100,7 +98,6 @@ public class VmDeviceUtils {
         this.macPoolPerCluster = macPoolPerCluster;
         this.rngDeviceUtils = rngDeviceUtils;
         this.videoDeviceSettings = videoDeviceSettings;
-        this.clusterUtils = clusterUtils;
         this.osRepository = osRepository;
     }
 
@@ -438,9 +435,11 @@ public class VmDeviceUtils {
      * @param isSoundDeviceEnabled  true/false to enable/disable device respectively, null to leave it untouched
      */
     public void updateSoundDevice(VmBase oldVmBase, VmBase newVmBase, Version compatibilityVersion,
-                                         Boolean isSoundDeviceEnabled) {
+                                  Boolean isSoundDeviceEnabled, Supplier<Cluster> clusterSupplier) {
         boolean osChanged = oldVmBase.getOsId() != newVmBase.getOsId();
-        updateSoundDevice(newVmBase.getId(), newVmBase.getOsId(), compatibilityVersion, isSoundDeviceEnabled, osChanged);
+        ChipsetType chipset = EmulatedMachineUtils.getEffectiveChipset(newVmBase, clusterSupplier);
+        updateSoundDevice(newVmBase.getId(), newVmBase.getOsId(), compatibilityVersion, chipset, isSoundDeviceEnabled,
+                osChanged);
     }
 
     /**
@@ -450,8 +449,8 @@ public class VmDeviceUtils {
      * @param isSoundDeviceEnabled  true/false to enable/disable device respectively, null to leave it untouched
      * @param recreate              true to recreate the device even if it already exists
      */
-    public void updateSoundDevice(Guid vmId, int osId, Version compatibilityVersion,
-                                         Boolean isSoundDeviceEnabled, boolean recreate) {
+    public void updateSoundDevice(Guid vmId, int osId, Version compatibilityVersion, ChipsetType chipset,
+                                  Boolean isSoundDeviceEnabled, boolean recreate) {
         boolean removeDevice = false;
         boolean createDevice = false;
 
@@ -473,7 +472,7 @@ public class VmDeviceUtils {
             removeVmDevices(list);
         }
         if (createDevice) {
-            addSoundDevice(vmId, osId, compatibilityVersion);
+            addSoundDevice(vmId, osId, compatibilityVersion, chipset);
         }
     }
 
@@ -487,15 +486,17 @@ public class VmDeviceUtils {
     /**
      * Add new sound device to the VM.
      */
-    public VmDevice addSoundDevice(VmBase vmBase) {
-        return addSoundDevice(vmBase.getId(), vmBase.getOsId(), clusterUtils.getCompatibilityVersion(vmBase));
+    public VmDevice addSoundDevice(VmBase vmBase, Supplier<Cluster> clusterSupplier) {
+        ChipsetType chipset = EmulatedMachineUtils.getEffectiveChipset(vmBase, clusterSupplier);
+        Version compatibilityVersion = CompatibilityVersionUtils.getEffective(vmBase, clusterSupplier);
+        return addSoundDevice(vmBase.getId(), vmBase.getOsId(), compatibilityVersion, chipset);
     }
 
     /**
      * Add new sound device to the VM.
      */
-    public VmDevice addSoundDevice(Guid vmId, int osId, Version compatibilityVersion) {
-        String soundDevice = osRepository.getSoundDevice(osId, compatibilityVersion);
+    public VmDevice addSoundDevice(Guid vmId, int osId, Version compatibilityVersion, ChipsetType chipset) {
+        String soundDevice = osRepository.getSoundDevice(osId, compatibilityVersion, chipset);
         return addManagedDevice(
                 new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.SOUND,
@@ -1314,7 +1315,7 @@ public class VmDeviceUtils {
         updateUsbSlots(oldVmBase, newVmBase, clusterSupplier);
         updateMemoryBalloon(newVmBase.getId(), params.isBalloonEnabled());
         updateSoundDevice(oldVmBase, newVmBase, oldVm.getCompatibilityVersion(),
-                params.isSoundDeviceEnabled());
+                params.isSoundDeviceEnabled(), clusterSupplier);
         updateSmartcardDevice(oldVm, newVmBase);
         updateConsoleDevice(newVmBase.getId(), params.isConsoleEnabled());
         updateVirtioScsiController(newVmBase, params.isVirtioScsiEnabled());
@@ -1384,10 +1385,7 @@ public class VmDeviceUtils {
         boolean hasBalloon = false;
         boolean hasRng = hasRngDevice(dstId);
 
-        Cluster cluster = null;
-        if (dstVmBase.getClusterId() != null) {
-            cluster = clusterDao.get(dstVmBase.getClusterId());
-        }
+        final Cluster cluster = dstVmBase.getClusterId() != null ? clusterDao.get(dstVmBase.getClusterId()) : null;
 
         for (VmDevice device : srcDevices) {
             if (device.getSnapshotId() != null && !copySnapshotDevices) {
@@ -1516,15 +1514,10 @@ public class VmDeviceUtils {
             addCdDevice(dstId, dstCdPath);
         }
 
-        updateUsbSlots(srcVmBase, dstVmBase, () -> clusterDao.get(dstVmBase.getClusterId()));
+        updateUsbSlots(srcVmBase, dstVmBase, () -> cluster);
 
         if (isSoundEnabled && !hasSound) {
-            if (dstIsVm) {
-                addSoundDevice(dstVmBase);
-            } else {
-                addSoundDevice(dstVmBase.getId(), dstVmBase.getOsId(),
-                        cluster != null ? cluster.getCompatibilityVersion() : null);
-            }
+            addSoundDevice(dstVmBase, () -> cluster);
         }
 
         if (isConsoleEnabled && !hasConsole) {

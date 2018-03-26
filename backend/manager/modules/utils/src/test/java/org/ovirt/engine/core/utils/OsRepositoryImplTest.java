@@ -36,7 +36,7 @@ public class OsRepositoryImplTest {
     public static final String MAX_PCI_DEVICES = "26";
     public static final String PATH_TO_SYSPREP = "/path/to/sysprep";
     public static final String SOME_PRODUCT_KEY = "some-product-key";
-    public static final String SOUND_DEVICE = "ac97";
+    public static final String SOUND_DEVICE = "ac97,q35/ich9";
     public static final String CD_INTERFACE = "ide,q35/sata";
 
     @BeforeClass
@@ -231,7 +231,12 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testGetSoundDevice() throws Exception {
-        assertEquals(SOUND_DEVICE, OsRepositoryImpl.INSTANCE.getSoundDevice(777, null));
+        assertEquals("ac97", OsRepositoryImpl.INSTANCE.getSoundDevice(777, null, ChipsetType.I440FX));
+    }
+
+    @Test
+    public void testGetSoundDeviceQ35() throws Exception {
+        assertEquals("ich9", OsRepositoryImpl.INSTANCE.getSoundDevice(777, null, ChipsetType.Q35));
     }
 
     @Test

@@ -433,7 +433,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         getVmDeviceUtils().updateSoundDevice(oldTemplate,
                 getVmTemplate(),
                 getVmTemplate().getCompatibilityVersion(),
-                getParameters().isSoundDeviceEnabled());
+                getParameters().isSoundDeviceEnabled(),
+                this::getCluster);
 
         getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
         if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy() || oldTemplate.getVmType() != getVmTemplate().getVmType()) {
