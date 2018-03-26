@@ -2119,6 +2119,8 @@ public interface UIConstants extends Constants {
 
     String ignoreOVFUpdateFailure();
 
+    String cannotEditNotActiveLeaseDomain();
+
     String selectCacheDevicePath();
 
     String selectCacheMode();
