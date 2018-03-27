@@ -1260,6 +1260,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
+    public void migrationProgressReported(int progress) {
+        // nothing to do
+    }
+
+    @Override
     public void actualDowntimeReported(int actualDowntime) {
         // nothing to do
     }

@@ -16,9 +16,9 @@ public class MigrateVmParameters extends VmOperationParameterBase {
 
     private boolean forceMigrationForNonMigratableVm;
     private ArrayList<Guid> initialHosts;
-    // time that took the actual migration (from Engine point of view)
+    /** Start time of the actual migration (from Engine point of view) */
     private Date startTime;
-    // Total time for migration (including retries)
+    /** Start time of the whole migration process (including retries) */
     private Date totalMigrationTime;
     private Guid targetClusterId;
     private String reason;
@@ -85,14 +85,23 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     }
 
     public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-        if (this.totalMigrationTime == null) {
-            this.totalMigrationTime = this.startTime;
+        if (this.startTime == null) {
+            this.startTime = startTime;
         }
+    }
+
+    public void resetStartTime() {
+        startTime = null;
     }
 
     public Date getTotalMigrationTime() {
         return totalMigrationTime;
+    }
+
+    public void setTotalMigrationTime(Date totalMigrationTime) {
+        if (this.totalMigrationTime == null) {
+            this.totalMigrationTime = totalMigrationTime;
+        }
     }
 
     public Guid getTargetClusterId() {

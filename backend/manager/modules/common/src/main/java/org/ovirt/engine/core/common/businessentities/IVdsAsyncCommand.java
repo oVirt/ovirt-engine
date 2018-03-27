@@ -13,5 +13,7 @@ public interface IVdsAsyncCommand {
 
     void onPowerringUp();
 
+    void migrationProgressReported(int progress);
+
     void actualDowntimeReported(int actualDowntime);
 }

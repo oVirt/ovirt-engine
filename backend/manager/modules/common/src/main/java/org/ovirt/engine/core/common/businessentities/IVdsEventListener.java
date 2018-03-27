@@ -40,6 +40,8 @@ public interface IVdsEventListener {
 
     void runningSucceded(Guid vmId);
 
+    void migrationProgressReported(Guid vmId, int progress);
+
     void actualDowntimeReported(Guid vmId, int actualDowntime);
 
     void removeAsyncRunningCommand(Guid vmId);
