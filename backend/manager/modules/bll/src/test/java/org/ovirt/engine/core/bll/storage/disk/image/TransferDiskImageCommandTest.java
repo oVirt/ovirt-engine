@@ -13,7 +13,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
 import java.util.Collections;
 
 import org.junit.Before;
@@ -84,8 +83,8 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         DiskImage diskImage = new DiskImage();
         diskImage.setActive(true);
         diskImage.setImageId(imageId);
-        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
-        diskImage.setStorageTypes(new ArrayList<>(Collections.singletonList(StorageType.NFS)));
+        diskImage.setStorageIds(Collections.singletonList(Guid.newGuid()));
+        diskImage.setStorageTypes(Collections.singletonList(StorageType.NFS));
         doReturn(diskImage).when(diskImageDao).get(any());
 
         doReturn(diskValidator).when(transferImageCommand).getDiskValidator(any());
@@ -97,13 +96,10 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         Guid imageId = Guid.newGuid();
         Guid sdId = Guid.newGuid();
 
-        ArrayList<Guid> sdList = new ArrayList<>();
-        sdList.add(sdId);
-
         DiskImage readyImage = new DiskImage();
         readyImage.setImageId(imageId);
-        readyImage.setStorageIds(sdList);
-        readyImage.setStorageTypes(new ArrayList<>(Collections.singletonList(StorageType.NFS)));
+        readyImage.setStorageIds(Collections.singletonList(sdId));
+        readyImage.setStorageTypes(Collections.singletonList(StorageType.NFS));
         readyImage.setSize(1024L);
 
         doReturn(readyImage).when(transferImageCommand).getDiskImage();
