@@ -14,6 +14,7 @@ public class IntegerParser {
     private static final BigInteger MAX_UNSIGNED_SHORT = new BigInteger("65535"); // 2^16-1
     private static final BigInteger MAX_INT = new BigInteger("2147483647"); // 2^(32-1)-1
     private static final BigInteger MAX_UNSIGNED_INT = new BigInteger("4294967295"); // 2^32-1
+    private static final BigInteger MAX_LONG = new BigInteger("9223372036854775807"); // 2^(64-1)-1
 
     public static short parseShort(String value) {
         if (value.trim().equals("")) {
@@ -61,6 +62,17 @@ public class IntegerParser {
         }
         if (result.intValue() < 0) {
             throw new InvalidValueException("Negative value " + value +  " not allowed for unsigned integers, valid values are between 0 and " + MAX_UNSIGNED_INT);
+        }
+        return result.longValue();
+    }
+
+    public static long parseLong(String value) {
+        if (value.trim().equals("")) {
+            value = "0";
+        }
+        BigInteger result = DatatypeConverter.parseInteger(value);
+        if (result.compareTo(MAX_LONG) > 0) {
+            throw new InvalidValueException("Value " + value +  " is greater than maximum long " + MAX_LONG);
         }
         return result.longValue();
     }

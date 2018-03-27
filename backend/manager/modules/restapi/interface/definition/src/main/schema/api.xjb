@@ -27,6 +27,11 @@
       xmlType="xs:unsignedShort"
       parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseUnsignedShort"
       />
+    <jaxb:javaType
+      name="long"
+      xmlType="xs:long"
+      parseMethod="org.ovirt.engine.api.utils.IntegerParser.parseLong"
+      />
 
     <!-- Replace the default JAXB boolean parser with one that only accepts
          the values "true" and "false": -->
