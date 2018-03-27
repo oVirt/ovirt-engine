@@ -502,6 +502,14 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
+    public void migrationProgressReported(Guid vmId, int progress) {
+        IVdsAsyncCommand command = vdsBroker.getAsyncCommandForVm(vmId);
+        if (command != null) {
+            command.migrationProgressReported(progress);
+        }
+    }
+
+    @Override
     public void actualDowntimeReported(Guid vmId, int actualDowntime) {
         IVdsAsyncCommand command = vdsBroker.getAsyncCommandForVm(vmId);
         if (command != null) {

@@ -14,9 +14,9 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     private static final long serialVersionUID = -7523728706659584319L;
     protected boolean forceMigrationForNonMigratableVm;
     ArrayList<Guid> initialHosts;
-    // time that took the actual migration (from Engine point of view)
+    /** Start time of the actual migration (from Engine point of view) */
     protected Date startTime;
-    // Total time for migration (including retries)
+    /** Start time of the whole migration process (including retries) */
     protected Date totalMigrationTime;
     private Guid targetClusterId;
     private String reason;
@@ -83,14 +83,23 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     }
 
     public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-        if (this.totalMigrationTime == null) {
-            this.totalMigrationTime = this.startTime;
+        if (this.startTime == null) {
+            this.startTime = startTime;
         }
+    }
+
+    public void resetStartTime() {
+        startTime = null;
     }
 
     public Date getTotalMigrationTime() {
         return totalMigrationTime;
+    }
+
+    public void setTotalMigrationTime(Date totalMigrationTime) {
+        if (this.totalMigrationTime == null) {
+            this.totalMigrationTime = totalMigrationTime;
+        }
     }
 
     public Guid getTargetClusterId() {

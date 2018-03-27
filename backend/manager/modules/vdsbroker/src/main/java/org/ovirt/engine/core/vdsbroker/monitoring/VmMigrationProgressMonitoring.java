@@ -51,6 +51,7 @@ public class VmMigrationProgressMonitoring extends EventSubscriber implements Ba
                 int progress = Integer.valueOf(properties.get(VdsProperties.vm_migration_progress).toString());
                 VmStatistics vmStatistics = resourceManager.getVmManager(vmId).getStatistics();
                 vmStatistics.setMigrationProgressPercent(progress);
+                resourceManager.getEventListener().migrationProgressReported(vmId, progress);
                 Integer actualDowntime = (Integer) properties.get(VdsProperties.MIGRATION_DOWNTIME);
                 if (actualDowntime != null) {
                     resourceManager.getEventListener().actualDowntimeReported(vmId, actualDowntime);
