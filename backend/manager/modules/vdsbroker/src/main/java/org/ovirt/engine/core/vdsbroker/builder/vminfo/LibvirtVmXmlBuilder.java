@@ -101,8 +101,6 @@ public class LibvirtVmXmlBuilder {
     private static final int LIBVIRT_PORT_AUTOSELECT = -1;
     private static final Set<String> SPICE_CHANNEL_NAMES = new HashSet<>(Arrays.asList(
             "main", "display", "inputs", "cursor", "playback", "record", "smartcard", "usbredir"));
-    private static final int DEFAULT_HUGEPAGESIZE_X86_64 = 2048;
-    private static final int DEFAULT_HUGEPAGESIZE_PPC64LE = 16384;
 
     private VmInfoBuildUtils vmInfoBuildUtils;
 
@@ -679,14 +677,7 @@ public class LibvirtVmXmlBuilder {
                 .map(HugePage::getSizeKB)
                 .collect(Collectors.toList());
         if (!hugepageSizes.contains(hugepageSize)) {
-            switch(vm.getClusterArch().getFamily()) {
-            case x86:
-                hugepageSize = DEFAULT_HUGEPAGESIZE_X86_64;
-                break;
-            case ppc:
-                hugepageSize = DEFAULT_HUGEPAGESIZE_PPC64LE;
-                break;
-            }
+            hugepageSize = vmInfoBuildUtils.getDefaultHugepageSize(vm);
         }
         writer.writeAttributeString("size", String.valueOf(hugepageSize));
         writer.writeEndElement();

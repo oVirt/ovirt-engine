@@ -118,6 +118,8 @@ public class VmInfoBuildUtils {
     private static final String FIRST_MASTER_MODEL = "ich9-ehci1";
     private static final String CLOUD_INIT_VOL_ID = "config-2";
     private static final Base64 BASE_64 = new Base64(0, null);
+    private static final int DEFAULT_HUGEPAGESIZE_X86_64 = 2048;
+    private static final int DEFAULT_HUGEPAGESIZE_PPC64LE = 16384;
 
     public static final String VDSM_LIBGF_CAP_NAME = "libgfapi_supported";
 
@@ -1297,5 +1299,14 @@ public class VmInfoBuildUtils {
                 .setDomainId(domainId)
                 .setImageGroupId(imageId)
                 .setVolumeId(volumeId).build();
+    }
+
+    public int getDefaultHugepageSize(VM vm) {
+        switch(vm.getClusterArch().getFamily()) {
+        case ppc:
+            return DEFAULT_HUGEPAGESIZE_PPC64LE;
+        default:
+            return DEFAULT_HUGEPAGESIZE_X86_64;
+        }
     }
 }
