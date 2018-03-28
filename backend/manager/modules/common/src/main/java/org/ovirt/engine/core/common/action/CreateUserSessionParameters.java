@@ -91,6 +91,7 @@ public class CreateUserSessionParameters extends ActionParametersBase {
         this.email = email;
     }
 
+    @ShouldNotBeLogged
     public Collection<? extends Map> getGroupIds() {
         return groupIds;
     }
