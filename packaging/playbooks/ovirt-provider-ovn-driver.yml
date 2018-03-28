@@ -1,0 +1,10 @@
+# Allows the user to easitly reconfigure a cluster to use a specific network ovn tunneling.
+# Usage:
+#   ansible-playbook -i /usr/share/ovirt-engine-metrics/bin/ovirt-engine-hosts-ansible-inventory --extra-vars "cluster_name=<cluster name> ovn_central=<ovn central ip> ovn_tunneling_interface=<vdsm network name>"
+# The short vdsm network name must be used for the network name
+
+- name: Install and configure oVirt provider OVN driver
+  hosts: ovirt_cluster_{{cluster_name}}
+
+  roles:
+    - ovirt-provider-ovn-driver
