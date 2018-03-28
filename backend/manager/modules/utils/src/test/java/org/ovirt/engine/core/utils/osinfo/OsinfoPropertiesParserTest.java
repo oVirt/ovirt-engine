@@ -8,17 +8,15 @@ import org.junit.Test;
 
 public class OsinfoPropertiesParserTest {
 
+    /**
+     * Attempt to parse osinfo-defaults.properties.
+     * If the file is malformed, a {@link RuntimeException} will be thrown and the test will fail.
+     */
     @Test
     public void defaultProperties() {
-        try {
-            String basedir = System.getProperty("basedir");
-            assumeNotNull(basedir, "Test isn't run via Maven. Please set the basedir system property");
-            OsinfoPropertiesParser.parse(
-                    Paths.get(basedir, "../../../../packaging/conf/osinfo-defaults.properties").toString());
-        } catch (Exception e) {
-            System.err.println("oVirt-engine will fail to load with a broken osinfo properties file.");
-            System.err.println("Please fix the properties file or osinfo.jj grammar under org.ovirt.engine.core.utils.osinfo.");
-            throw e;
-        }
+        String basedir = System.getProperty("basedir");
+        assumeNotNull(basedir, "Test isn't run via Maven. Please set the basedir system property");
+        OsinfoPropertiesParser.parse(
+                Paths.get(basedir, "../../../../packaging/conf/osinfo-defaults.properties").toString());
     }
 }
