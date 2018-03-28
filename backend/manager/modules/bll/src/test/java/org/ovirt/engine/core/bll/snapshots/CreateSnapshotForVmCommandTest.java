@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 /** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
-public class CreateSnapshotsForVmCommandTest extends BaseCommandTest {
+public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     private CreateSnapshotForVmCommand<CreateSnapshotForVmParameters> cmd =
