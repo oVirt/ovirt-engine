@@ -66,6 +66,8 @@ PKG_JBOSS_MODULES=$(DATA_DIR)/modules
 PKG_LOGUTILS=$(DATA_DIR)/logutils
 PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
 PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
+PKG_BACKUP_DEFAULT_DIR=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)-backup
+PKG_BACKUP_LOG_DEFAULT_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)-backup
 PKG_STATE_DIR=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
 PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
 JBOSS_HOME=/usr/share/ovirt-engine-wildfly
@@ -183,6 +185,8 @@ export ENVFILEC
 	-e "s|@ENGINE_LIBEXEC@|$(LIBEXEC_DIR)|g" \
 	-e "s|@ENGINE_DOC@|$(PKG_DOC_DIR)|g" \
 	-e "s|@ENGINE_VAR@|$(PKG_STATE_DIR)|g" \
+	-e "s|@ENGINE_BACKUP_DEFAULT_DIR@|$(PKG_BACKUP_DEFAULT_DIR)|g" \
+	-e "s|@ENGINE_BACKUP_LOG_DEFAULT_DIR@|$(PKG_BACKUP_LOG_DEFAULT_DIR)|g" \
 	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|g" \
 	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|g" \
 	-e "s|@ENGINE_COMMON_USR@|$(DATA_DIR)|g" \
@@ -497,6 +501,8 @@ install-layout: \
 	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/ui-plugins"
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	install -d -m 750 "$(DESTDIR)$(PKG_STATE_DIR)/backups"
+	install -d -m 750 "$(DESTDIR)$(PKG_BACKUP_DEFAULT_DIR)"
+	install -d -m 750 "$(DESTDIR)$(PKG_BACKUP_LOG_DEFAULT_DIR)"
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/extensions.d"
 	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/extensions.d"
 

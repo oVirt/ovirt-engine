@@ -24,6 +24,8 @@
 # config file.
 export ENGINE_DEFAULTS="${ENGINE_DEFAULTS:-@ENGINE_DEFAULTS@}"
 export ENGINE_VARS="${ENGINE_VARS:-@ENGINE_VARS@}"
+export ENGINE_BACKUP_DEFAULT_DIR="${ENGINE_BACKUP_DEFAULT_DIR:-@ENGINE_BACKUP_DEFAULT_DIR@}"
+export ENGINE_BACKUP_LOG_DEFAULT_DIR="${ENGINE_BACKUP_LOG_DEFAULT_DIR:-@ENGINE_BACKUP_LOG_DEFAULT_DIR@}"
 PACKAGE_NAME="@PACKAGE_NAME@"
 PACKAGE_VERSION="@PACKAGE_VERSION@"
 DISPLAY_VERSION="@DISPLAY_VERSION@"
@@ -234,9 +236,9 @@ usage() {
 	cat << __EOF__
 engine-backup: back up and restore ovirt-engine environment
 USAGE:
-    $0 --mode=MODE --scope=SCOPE --file=FILE --log=FILE [options]
+    $0 [options]
  MODE is one of the following:
-    backup                          back up system into FILE
+    backup                          back up system into FILE(default)
     restore                         restore system from FILE
     verify                          verify FILE
  SCOPE is one of the following:
@@ -246,8 +248,10 @@ USAGE:
     db                              Engine database only
     dwhdb                           Data Warehouse database only
     The option --scope can be passed more than once, with different scopes.
- --file=FILE                        file to use during backup or restore
- --log=FILE                         log file to use during backup or restore
+ --file=FILE                        file to use during backup or restore.
+                                    If mode is backup,  default to $ENGINE_BACKUP_DEFAULT_DIR/ovirt-engine-backup-YmdHMS.backup
+ --log=FILE                         log file to use during backup or restore.
+                                    Default to $ENGINE_BACKUP_LOG_DEFAULT_DIR/ovirt-engine-<MODE>-YmdHMS.log
  --tmpdir=DIR                       Set temporary directory parent. See also mktemp(1).
                                     Defaults to \$TMPDIR, if set, otherwise to /tmp.
  --archive-compressor=COMPRESSOR
@@ -305,6 +309,7 @@ USAGE:
  --restore-permissions              Affects only the custom dump format. Will not
                                     pass to pg_restore '--no-owner --no-privileges'.
                                     Might not work as expected with the --*db-user options.
+                                    If provisioning databases, this option will default.
  --provision-all-databases          on restore, create a PostgreSQL database for all the
                                     databases that were included in the backup
 
@@ -791,6 +796,23 @@ parseArgs() {
 	if [ -z "${SCOPE}" ]; then
 		set_scope "${DEFAULT_SCOPE}"
 	fi
+
+       if [ -z "${MODE}" ]; then
+            MODE=backup
+       fi
+
+       local date_default_opt=$(date +"%Y%m%d%H%M%S")
+       if [ -z "${FILE}" -a "${MODE}" == "backup" ]; then
+            FILE="${ENGINE_BACKUP_DEFAULT_DIR}/ovirt-engine-backup-${date_default_opt}.backup"
+       fi
+       if [ -z "${LOG}" ]; then
+            LOG="${ENGINE_BACKUP_LOG_DEFAULT_DIR}/ovirt-engine-$MODE-${date_default_opt}.log"
+       fi
+       if [ "${PROVISIONING=}" == "1" ]; then
+           if [ -z "${RESTORE_PERMISSIONS}" ]; then
+               RESTORE_PERMISSIONS="1"
+           fi
+       fi
 }
 
 verifyArgs() {
@@ -1939,6 +1961,11 @@ verifyArgs
 TEMP_FOLDER="$(mktemp -d -t engine-backup.XXXXXXXXXX)" || logdie "Can't create temporary directory"
 
 log "Start of engine-backup mode ${MODE} scope ${SCOPE} file ${FILE}"
+
+output "Start of engine-backup with mode '${MODE}'"
+output "scope: ${SCOPE}"
+output "archive file: ${FILE}"
+output "log file: ${LOG}"
 
 if ! [ -z "$sclenv" ]; then
 	log "Setting scl env for ${sclenv}"

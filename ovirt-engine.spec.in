@@ -94,6 +94,8 @@
 %global engine_run %{_localstatedir}/run/%{engine_name}
 %global engine_state %{_localstatedir}/lib/%{engine_name}
 %global engine_tmp %{_localstatedir}/tmp/%{engine_name}
+%global engine_backup_default_dir  %{_localstatedir}/lib/%{engine_name}-backup
+%global engine_backup_log_default_dir  %{_localstatedir}/log/%{engine_name}-backup
 
 %global engine_gid 108
 %global engine_group ovirt
@@ -210,6 +212,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_JBOSS_MODULES=%{engine_jboss_modules} \\\
 	PKG_CACHE_DIR=%{engine_cache} \\\
 	PKG_LOG_DIR=%{engine_log} \\\
+	PKG_BACKUP_DEFAULT_DIR=%{engine_backup_default_dir} \\\
+	PKG_BACKUP_LOG_DEFAULT_DIR=%{engine_backup_log_default_dir} \\\
 	PKG_TMP_DIR=%{engine_tmp} \\\
 	PKG_STATE_DIR=%{engine_state} \\\
 	PKG_USER=%{engine_user} \\\
@@ -1275,6 +1279,8 @@ fi
 %{_mandir}/man8/engine-backup.*
 %{engine_data}/bin/engine-backup.sh
 %{engine_data}/bin/engine-migrate-he.py
+%{engine_backup_default_dir}
+%{engine_backup_log_default_dir}
 
 %files health-check-bundler
 %{engine_data}/setup/bin/bundle-ovirt-engine-health

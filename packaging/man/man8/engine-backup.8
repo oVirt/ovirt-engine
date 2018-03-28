@@ -6,7 +6,7 @@ engine-backup - Backup and restore ovirt-engine environment.
 [\-\-mode=\fIMODE\fR] [\-\-scope=\fISCOPE\fR] [\-\-file=\fIFILE\fR] [\-\-log=\fILOG_FILE\fR]
 .PP
 .SH MODES
-\fBbackup\fR    Backup system into \fIFILE\fR
+\fBbackup\fR    Backup system into \fIFILE\fR (default)
 .br
 \fBrestore\fR   Restore system from \fIFILE\fR
 .br
@@ -25,11 +25,13 @@ engine-backup - Backup and restore ovirt-engine environment.
 \fB\-\-file\fR=\fIFILE\fR
 .RS 4
 File to use during backup or restore.
+If use backup option, default=/var/lib/ovirt-engine-backup/ovirt-engine-backup-YmdHMS.backup
+
 .RE
 .PP
 \fB\-\-log\fR=\fILOG_FILE\fR
 .RS 4
-Log file to use.
+Log file to use (default=/var/log/ovirt-engine-backup/ovirt-engine-<MODE>-YmdHMS.log)
 .RE
 .PP
 \fB\-\-tmpdir\fR=\fITEMP_DIR\fR
