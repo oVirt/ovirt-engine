@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.snapshots;
+package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
