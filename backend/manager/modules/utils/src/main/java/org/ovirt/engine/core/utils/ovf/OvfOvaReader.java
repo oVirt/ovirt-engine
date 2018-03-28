@@ -267,6 +267,6 @@ public class OvfOvaReader extends OvfReader {
     protected void updateSingleNic(XmlNode node, VmNetworkInterface iface, int nicIdx) {
         super.updateSingleNic(node, iface, nicIdx);
         XmlNode macNode = selectSingleNode(node, "rasd:MACAddress", _xmlNS);
-        iface.setMacAddress(macNode != null ? macNode.innerText : "");
+        iface.setMacAddress(macNode != null ? macNode.innerText : null);
     }
 }
