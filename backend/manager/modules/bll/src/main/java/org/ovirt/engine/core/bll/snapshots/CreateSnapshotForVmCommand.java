@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -566,7 +567,9 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             getDiskImagesForVm().stream()
                     // Remove disks included in snapshot
                     .filter(d -> !getParameters().getDiskIds().contains(d.getId()))
-                    .forEach(d -> imageDao.updateImageVmSnapshotId(d.getImageId(), newActiveSnapshotId));
+                    .forEach(d -> imageDao.updateImageVmSnapshotId(
+                            d.getDiskStorageType() == DiskStorageType.IMAGE ? d.getImageId() : d.getId(),
+                            newActiveSnapshotId));
         }
     }
 
