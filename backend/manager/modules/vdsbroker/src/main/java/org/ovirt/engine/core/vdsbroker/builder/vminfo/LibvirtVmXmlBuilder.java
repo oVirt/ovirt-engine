@@ -327,6 +327,7 @@ public class LibvirtVmXmlBuilder {
 
         switch(vm.getClusterArch().getFamily()) {
         case x86:
+        case s390x:
             writer.writeAttributeString("match", "exact");
 
             // is this a list of strings??..
