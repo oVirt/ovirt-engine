@@ -393,7 +393,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             getDiskImagesForVm().stream()
                     // Remove disks included in snapshot
                     .filter(d -> !getParameters().getDiskIds().contains(d.getId()))
-                    .forEach(d -> imageDao.updateImageVmSnapshotId(d.getImageId(), newActiveSnapshotId));
+                    .forEach(d -> imageDao.updateImageVmSnapshotId(
+                            d.getDiskStorageType() == DiskStorageType.IMAGE ? d.getImageId() : d.getId(),
+                            newActiveSnapshotId));
         }
     }
 
