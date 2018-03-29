@@ -169,6 +169,7 @@ public enum QueryType implements Serializable {
     GetAllNetworkFilters,
     GetAllSupportedNetworkFiltersByVersion,
     GetNetworkFilterById,
+    GetClusterNetworkSyncStatus,
 
     // Certificate
     GetCACertificate(QueryAuthType.User),
