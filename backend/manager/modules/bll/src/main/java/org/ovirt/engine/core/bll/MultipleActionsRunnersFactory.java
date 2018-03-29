@@ -70,6 +70,7 @@ public class MultipleActionsRunnersFactory {
 
             break;
         case PersistentHostSetupNetworks:
+        case SyncAllHostNetworks:
             runner = new ParallelMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
         case AttachNetworkToCluster:
