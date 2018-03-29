@@ -254,8 +254,8 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
 
         transferImageCommand.handleImageIsReadyForTransfer();
 
-        assertTrue(transferImageCommand.getParameters().getStorageDomainId().equals(readyImage.getStorageIds().get(0)));
-        assertTrue(transferImageCommand.getParameters().getTransferSize() == readyImage.getSize());
+        assertEquals(transferImageCommand.getParameters().getStorageDomainId(), readyImage.getStorageIds().get(0));
+        assertEquals(transferImageCommand.getParameters().getTransferSize(), readyImage.getSize());
     }
 
     @Test
@@ -282,7 +282,7 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
      *********/
     @Test
     public void testUploadIsDefaultTransferType() {
-        assertEquals(transferImageCommand.getParameters().getTransferType(), TransferType.Upload);
+        assertEquals(TransferType.Upload, transferImageCommand.getParameters().getTransferType());
     }
 
     @Test
