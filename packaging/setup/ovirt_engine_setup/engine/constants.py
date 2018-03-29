@@ -329,11 +329,6 @@ class FileLocations(object):
         OVIRT_ENGINE_LOCALSTATEDIR,
         'external_truststore',
     )
-    SSH_CLIENT_CONFIG = os.path.join(
-        SYSCONFDIR,
-        'ssh',
-        'ssh_config',
-    )
 
 
 @util.export

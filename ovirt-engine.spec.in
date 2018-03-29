@@ -669,12 +669,18 @@ rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
 #
 # /var creation
 #
+install -dm 700 "%{buildroot}/%{engine_state}/.ssh"
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
 # see also relevant %dir line to set permissions
 install -dm 700 "%{buildroot}/%{engine_log}"
 install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual,brick-setup}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
+
+#
+# Create oVirt SSH configuration as empty file. It will be used internally by internal Ansible execution.
+#
+touch "%{buildroot}/%{engine_state}/.ssh/config"
 
 #
 # Force TLS/SSL for selected applications.
@@ -979,6 +985,8 @@ fi
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/db-manual
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ova
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
+%attr(700, %{engine_user}, %{engine_group}) %{engine_state}/.ssh/
+%attr(600, %{engine_user}, %{engine_group}) %{engine_state}/.ssh/config
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
 %dir %{engine_data}/bin
