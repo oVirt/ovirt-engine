@@ -564,6 +564,7 @@ install-dev:	\
 
 	install -d "$(DESTDIR)$(PKG_TMP_DIR)"
 	install -d "$(DESTDIR)$(PKG_CACHE_DIR)"
+	install -d "$(DESTDIR)$(PKG_STATE_DIR)/.ssh"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/content"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/setup/answers"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/host-deploy"
@@ -572,6 +573,8 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/dump"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/ansible"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/ova"
+
+	touch "$(DESTDIR)$(PKG_STATE_DIR)/.ssh/config"
 
 	if [ -e "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments" ]; then \
 		touch "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments/engine.ear.deployed"; \

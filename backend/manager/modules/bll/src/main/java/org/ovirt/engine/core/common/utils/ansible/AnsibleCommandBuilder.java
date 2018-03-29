@@ -238,6 +238,11 @@ public class AnsibleCommandBuilder {
         List<String> ansibleCommand = new ArrayList<>();
         ansibleCommand.add(ANSIBLE_COMMAND);
 
+        // Always ignore system wide SSH configuration:
+        ansibleCommand.add(
+            String.format("--ssh-common-args=-F %1$s/.ssh/config", config.getVarDir())
+        );
+
         if (verboseLevel.ordinal() > 0) {
             ansibleCommand.add(
                 "-" + IntStream.range(0, verboseLevel.ordinal()).mapToObj(i -> "v").collect(Collectors.joining())
