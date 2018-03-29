@@ -48,6 +48,10 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
                     new IdQueryParameters(getStorageDomainId()));
             setReturnValue(returnValue.getReturnValue());
             return;
+        } else if (!storageDomain.getStorageDomainType().isDataDomain()) {
+            getQueryReturnValue().setExceptionString("Operation not allowed for non-data storage domains.");
+            getQueryReturnValue().setSucceeded(false);
+            return;
         }
 
         // first, run getImagesList query into vdsm to get all of the images on the storage domain - then store in

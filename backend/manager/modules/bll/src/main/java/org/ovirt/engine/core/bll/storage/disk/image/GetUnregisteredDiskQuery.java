@@ -62,6 +62,10 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
                     new GetCinderEntityByStorageDomainIdParameters(diskId, getParameters().getStorageDomainId()));
             setReturnValue(returnValue.getReturnValue());
             return;
+        } else if (!storageDomain.getStorageDomainType().isDataDomain()) {
+            getQueryReturnValue().setExceptionString("Operation not allowed for non-data storage domains.");
+            getQueryReturnValue().setSucceeded(false);
+            return;
         }
 
         // Now get the list of volumes for each new image.
