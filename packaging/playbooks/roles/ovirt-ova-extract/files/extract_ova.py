@@ -32,7 +32,10 @@ def extract_disk(ova_file, disk_size, image_path):
                 read = remaining
             written = 0
             while written < read:
-                wbuf = memoryview(buf, written, read - written)
+                if python2:
+                    wbuf = buffer(buf, written, read - written)
+                else:
+                    wbuf = memoryview(buf)[written:read - written]
                 written += image.write(wbuf)
             copied += written
 
