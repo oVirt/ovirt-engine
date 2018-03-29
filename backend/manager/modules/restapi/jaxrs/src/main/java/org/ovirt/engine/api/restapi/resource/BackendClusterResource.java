@@ -60,6 +60,11 @@ public class BackendClusterResource<P extends BackendClustersResource>
     }
 
     @Override
+    public Response syncAllNetworks(Action action) {
+        return doAction(ActionType.SyncAllClusterNetworks, new ClusterParametersBase(guid), action);
+    }
+
+    @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
                                                              QueryType.GetPermissionsForObject,
