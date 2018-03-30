@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.TransferImageParameters;
+import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 @Typed(TransferImageCommandCallback.class)
@@ -35,7 +35,7 @@ public class TransferImageCommandCallback implements CommandCallback {
         commandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
-    private TransferImageCommand<TransferImageParameters> getCommand(Guid cmdId) {
+    private TransferDiskImageCommand<TransferDiskImageParameters> getCommand(Guid cmdId) {
         return commandCoordinatorUtil.retrieveCommand(cmdId);
     }
 
