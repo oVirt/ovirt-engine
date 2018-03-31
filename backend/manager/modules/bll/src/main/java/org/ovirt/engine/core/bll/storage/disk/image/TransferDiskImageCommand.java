@@ -812,7 +812,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             try (OutputStream outputStream = connection.getOutputStream()) {
                 outputStream.write(signedTicket.getBytes(StandardCharsets.UTF_8));
                 outputStream.flush();
-                outputStream.close();
             }
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
