@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -46,6 +47,7 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -60,6 +62,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -77,6 +80,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     private VmIconDao vmIconDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -255,6 +260,18 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 return false;
             }
         }
+
+        // Validate VM lease storage domain is active
+        if (getVm().getLeaseStorageDomainId() != null) {
+            StorageDomain leaseStorageDomain =
+                    storageDomainDao.getForStoragePool(getVm().getLeaseStorageDomainId(), getVm().getStoragePoolId());
+            StorageDomainValidator storageDomainValidator = new StorageDomainValidator(leaseStorageDomain);
+            if (!validate(storageDomainValidator.isDomainExistAndActive())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_INVALID_VM_LEASE_STORAGE_DOMAIN_STATUS,
+                        String.format("$LeaseStorageDomainName %1$s", leaseStorageDomain.getName()));
+            }
+        }
+
 
         // Handle VM status with ImageLocked
         VmValidator vmValidator = new VmValidator(getVm());
