@@ -64,6 +64,11 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = True
+        self._file_exists = False
+        self._current_content = None
+        self._new_content = None
+        self._missing_params = None
+        self._changed_lines = []
         self._params = {
             'SSLCertificateFile': (
                 oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT
@@ -78,6 +83,25 @@ class Plugin(plugin.PluginBase):
                 oengcommcons.Const.HTTPD_SSL_PROTOCOLS
             ),
         }
+
+    def _read_and_process_file(self):
+        with open(
+            self.environment[
+                oengcommcons.ApacheEnv.HTTPD_CONF_SSL
+            ],
+            'r'
+        ) as f:
+            self._current_content = f.read()
+
+        self._missing_params = []
+        self._new_content = osetuputil.editConfigContent(
+            content=_apply_logging(self._current_content.splitlines()),
+            params=self._params,
+            changed_lines=self._changed_lines,
+            separator_re='\s+',
+            new_line_tpl='{spaces}{param} {value}',
+            added_params=self._missing_params,
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -111,6 +135,14 @@ class Plugin(plugin.PluginBase):
             )
         ):
             self._enabled = False
+
+        if os.path.exists(
+            self.environment[
+                oengcommcons.ApacheEnv.HTTPD_CONF_SSL
+            ]
+        ):
+            self._file_exists = True
+            self._read_and_process_file()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -155,11 +187,7 @@ class Plugin(plugin.PluginBase):
         ]
 
         if self._enabled:
-            if not os.path.exists(
-                self.environment[
-                    oengcommcons.ApacheEnv.HTTPD_CONF_SSL
-                ]
-            ):
+            if not self._file_exists:
                 self.logger.warning(
                     _(
                         "Automatic Apache SSL configuration was requested. "
@@ -168,6 +196,34 @@ class Plugin(plugin.PluginBase):
                     )
                 )
                 self._enabled = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        condition=lambda self: (
+            self.environment[oengcommcons.ApacheEnv.CONFIGURED] and
+            self._current_content != self._new_content
+        ),
+        before=(
+            oengcommcons.Stages.DIALOG_TITLES_E_APACHE,
+        ),
+        after=(
+            oengcommcons.Stages.DIALOG_TITLES_S_APACHE,
+        ),
+    )
+    def _customization_already_configured(self):
+        self._enabled = dialog.queryBoolean(
+            dialog=self.dialog,
+            name='OVESETUP_APACHE_RECONFIG_SSL',
+            note=_(
+                'Apache httpd SSL was already configured in the past, '
+                'but some needed changes are missing there.\n'
+                'Configure again? (@VALUES@) [@DEFAULT@]: '
+            ),
+            prompt=True,
+            true=_('Automatic'),
+            false=_('Manual'),
+            default=True,
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
@@ -180,60 +236,37 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
-        condition=lambda self: self._enabled,
+        condition=lambda self: self._enabled and self._missing_params,
     )
     def _validate_ssl(self):
-        with open(
-            self.environment[
-                oengcommcons.ApacheEnv.HTTPD_CONF_SSL
-            ],
-            'r'
-        ) as f:
-            self._sslData = f.read()
-
-        missingParams = []
-        osetuputil.editConfigContent(
-            content=self._sslData.splitlines(),
-            params=self._params,
-            separator_re='\s+',
-            new_line_tpl='{spaces}{param} {value}',
-            added_params=missingParams,
-        )
-        if missingParams:
-            self.logger.warning(
-                _(
-                    'Expected parameter(s) {missingParams} were not '
-                    'found in {file}. Automatic '
-                    'configuration of this file will not be '
-                    'performed.'
-                ).format(
-                    missingParams=missingParams,
-                    file=self.environment[
-                        oengcommcons.ApacheEnv.HTTPD_CONF_SSL
-                    ]
-                )
+        self.logger.warning(
+            _(
+                'Expected parameter(s) {missingParams} were not '
+                'found in {file}. Automatic '
+                'configuration of this file will not be '
+                'performed.'
+            ).format(
+                missingParams=self._missing_params,
+                file=self.environment[
+                    oengcommcons.ApacheEnv.HTTPD_CONF_SSL
+                ]
             )
-            self._enabled = False
+        )
+        self._enabled = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
     )
     def _misc(self):
+        self._read_and_process_file()  # Read again, in case it was updated
         self.environment[oengcommcons.ApacheEnv.NEED_RESTART] = True
-        changed_lines = []
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=self.environment[
                     oengcommcons.ApacheEnv.HTTPD_CONF_SSL
                 ],
-                content=osetuputil.editConfigContent(
-                    content=_apply_logging(self._sslData.splitlines()),
-                    params=self._params,
-                    changed_lines=changed_lines,
-                    separator_re='\s+',
-                    new_line_tpl='{spaces}{param} {value}',
-                ),
+                content=self._new_content,
             )
         )
         self.environment[
@@ -245,7 +278,7 @@ class Plugin(plugin.PluginBase):
         ).addChanges(
             'ssl',
             self.environment[oengcommcons.ApacheEnv.HTTPD_CONF_SSL],
-            changed_lines,
+            self._changed_lines,
         )
         self.environment[
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
