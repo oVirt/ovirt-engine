@@ -1232,6 +1232,11 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetAllNetworksByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 
+    public void getClusterNetworkSyncStatus(AsyncQuery<Boolean> aQuery, Guid clusterId) {
+        aQuery.converterCallback = returnValue -> (Boolean) returnValue;
+        Frontend.getInstance().runQuery(QueryType.GetClusterNetworkSyncStatus, new IdQueryParameters(clusterId), aQuery);
+    }
+
     public void getAllNetworkQos(Guid dcId, AsyncQuery<List<NetworkQoS>> query) {
         query.converterCallback = new ListConverter<NetworkQoS>() {
 

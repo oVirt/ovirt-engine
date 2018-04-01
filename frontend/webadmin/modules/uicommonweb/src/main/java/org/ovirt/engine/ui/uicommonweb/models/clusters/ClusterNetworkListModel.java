@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
@@ -25,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -61,6 +63,16 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
         privateSetAsDisplayCommand = value;
     }
 
+    private UICommand syncAllNetworksCommand;
+
+    public UICommand getSyncAllNetworksCommand() {
+        return syncAllNetworksCommand;
+    }
+
+    public void setSyncAllNetworksCommand(UICommand value) {
+        this.syncAllNetworksCommand = value;
+    }
+
     public ClusterNetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
         setHelpTag(HelpTag.logical_networks);
@@ -69,6 +81,7 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
         setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
         setSetAsDisplayCommand(new UICommand("SetAsDisplay", this)); //$NON-NLS-1$
         setNewNetworkCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setSyncAllNetworksCommand(new UICommand("SyncAllClusterNetworks", this)); //$NON-NLS-1$
         getSetAsDisplayCommand().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         updateActionAvailability();
     }
@@ -196,7 +209,45 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
         getSetAsDisplayCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
                 && network != null && !network.getCluster().isDisplay()
                 && network.getCluster().getStatus() != NetworkStatus.NON_OPERATIONAL);
+
+        updateActionAvailabilitySyncAllNetworks();
     }
+
+    private void updateActionAvailabilitySyncAllNetworks() {
+        if (getEntity() != null) {
+            AsyncDataProvider.getInstance().getClusterNetworkSyncStatus(new AsyncQuery<>(isOutOfSync ->
+                getSyncAllNetworksCommand().setIsExecutionAllowed(isOutOfSync)), getEntity().getId());
+        }
+    }
+
+    private void syncAllNetworks() {
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().syncAllClusterNetworkConfirmationDialogTitle());
+        model.setHelpTag(HelpTag.sync_all_cluster_networks);
+        model.setHashName("sync_all_cluster_networks"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToSyncAllClusterNetworksMsg());
+
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSyncAllClusterNetworksConfirm", this); //$NON-NLS-1$
+        model.getCommands().add(tempVar);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        model.getCommands().add(tempVar2);
+    }
+
+    private void onSyncAllClusterNetworksConfirm(){
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+        if (model.getProgress() != null) {
+            return;
+        }
+        getWindow().startProgress();
+        Frontend.getInstance().runAction(ActionType.SyncAllClusterNetworks,
+                new ClusterParametersBase(getEntity().getId()),
+                result -> {
+                    getWindow().stopProgress();
+                    cancel();
+                });
+    }
+
 
     public void newEntity() {
         if (getWindow() != null) {
@@ -225,6 +276,10 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
             setAsDisplay();
         } else if ("New".equals(command.getName())) { //$NON-NLS-1$
             newEntity();
+        } else if (command == getSyncAllNetworksCommand()) {
+            syncAllNetworks();
+        } else if ("OnSyncAllClusterNetworksConfirm".equals(command.getName())) { //$NON-NLS-1$
+            onSyncAllClusterNetworksConfirm();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }

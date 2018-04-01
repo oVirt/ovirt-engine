@@ -1852,6 +1852,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String syncAllHostNetworks();
 
+    String syncAllClusterNetworks();
+
     String dateCreatedInterface();
 
     String eventNameHook();
