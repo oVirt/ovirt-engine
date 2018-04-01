@@ -1467,7 +1467,11 @@ public interface UIConstants extends Constants {
 
     String syncAllHostNetworkConfirmationDialogTitle();
 
+    String syncAllClusterNetworkConfirmationDialogTitle();
+
     String areYouSureYouWantToSyncAllHostNetworksMsg();
+
+    String areYouSureYouWantToSyncAllClusterNetworksMsg();
 
     String nullOperationTooManyNonVlans();
 

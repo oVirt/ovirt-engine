@@ -48,5 +48,11 @@ public class ClusterNetworkActionPanelPresenterWidget extends
                 return getDetailModel().getSetAsDisplayCommand();
             }
         });
+        addActionButton(new WebAdminButtonDefinition<Network>(constants.syncAllClusterNetworks()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getSyncAllNetworksCommand();
+            }
+        });
     }
 }
