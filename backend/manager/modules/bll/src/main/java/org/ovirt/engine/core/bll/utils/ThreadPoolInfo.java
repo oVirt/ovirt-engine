@@ -17,7 +17,8 @@ public class ThreadPoolInfo {
     private int maxThreads;
     private static AtomicInteger ZERO = new AtomicInteger(0);
     private static Map<String, String> configMaxThreadAttrNamesMap = new HashMap<>();
-    private static String msg = "Thread pool '%s' is using %s threads out of %s and %s tasks are waiting in the queue.";
+    private static String msg =
+            "Thread pool '%s' is using %s threads out of %s, %s threads waiting for tasks.";
     private static String engineMsg =
             "Thread pool '%s' is using %s threads out of %s, %s threads waiting for tasks and %s tasks in queue.";
 
