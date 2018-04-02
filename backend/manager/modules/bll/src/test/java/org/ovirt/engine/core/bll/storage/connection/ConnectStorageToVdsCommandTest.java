@@ -15,13 +15,13 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class ConnectStorageToVdsCommandTest extends BaseCommandTest {
 
-    private ConnectStorageToVdsCommand command;
+    private ConnectStorageToVdsCommand<StorageServerConnectionParametersBase> command;
     private StorageServerConnectionParametersBase params;
 
     @Before
     public void prepareCommand() {
         params = new StorageServerConnectionParametersBase();
-        command = new ConnectStorageToVdsCommand(params, null);
+        command = new ConnectStorageToVdsCommand<>(params, null);
     }
 
     private StorageServerConnections createConnection(StorageType storageType, String mountOptions) {
