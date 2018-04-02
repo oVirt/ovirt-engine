@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
@@ -51,10 +52,12 @@ public class DynamicUrlContentPopupView extends AbstractPopupView<SimpleDialogPa
     @Override
     public void init(String title, String width, String height,
             boolean closeIconVisible) {
-        dialogPanel.setTitle(title);
+        dialogPanel.setHeader(title);
         asWidget().setWidth(width);
         asWidget().setHeight(height);
         asWidget().setCloseIconButtonVisible(closeIconVisible);
+        // Let the plugins set margins and other things.
+        dialogPanel.getContent().getParent().removeStyleName(Styles.MODAL_BODY);
     }
 
     @Override
