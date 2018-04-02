@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -46,6 +47,8 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     private CINDERStorageHelper cinderStorageHelper;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public DetachStorageDomainFromPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -92,6 +95,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         } else {
             detachSucceeded = detachNonMasterStorageDomain();
         }
+        auditOnExistingLeasesIfExist();
         log.info("End detach storage domain");
         setSucceeded(detachSucceeded);
     }
@@ -160,18 +164,16 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     @Override
     protected boolean validate() {
         return canDetachStorageDomainWithVmsAndDisks(getStorageDomain()) &&
-                canDetachDomain(getParameters().getDestroyingPool()) &&
-                isNoLeasesOnStorageDomain();
+                canDetachDomain(getParameters().getDestroyingPool());
     }
 
-    private boolean isNoLeasesOnStorageDomain() {
+    private void auditOnExistingLeasesIfExist() {
         List<VmStatic> entitiesWithLeases = vmStaticDao.getAllWithLeaseOnStorageDomain(getStorageDomain().getId());
         if (!entitiesWithLeases.isEmpty()) {
             String names = entitiesWithLeases.stream().map(VmStatic::getName).collect(Collectors.joining(", "));
-            return failValidation(EngineMessage.ERROR_CANNOT_DETACH_DOMAIN_WITH_VMS_AND_TEMPLATES_LEASES,
-                    String.format("$entitiesNames %s", names));
+            addCustomValue("entitiesNames", names);
+            auditLogDirector.log(this, AuditLogType.DETACH_DOMAIN_WITH_VMS_AND_TEMPLATES_LEASES);
         }
-        return true;
     }
 
     @Override
