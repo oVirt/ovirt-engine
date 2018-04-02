@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -32,6 +36,9 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     private AnsibleExecutor ansibleExecutor;
     @Inject
     private VmHandler vmHandler;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public ExtractOvaCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -61,7 +68,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 setSucceeded(true);
             }
         } catch(EngineException e) {
-            log.error("Failed to extract OVA file");
+            log.error("Failed to extract OVA file", e);
             setCommandStatus(CommandStatus.FAILED);
         }
     }
@@ -128,6 +135,11 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 image.getId(),
                 image.getImageId(),
                 getParameters().getProxyHostId());
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 
 }
