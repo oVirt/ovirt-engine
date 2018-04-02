@@ -34,11 +34,12 @@ public class SerialChildCommandsExecutionCallback extends ChildCommandsCallbackB
                         return;
                     }
                 } catch (Exception e) {
-                    log.info("Command '{}' id: '{}' failed when attempting to perform the next operation, marking as FAILED '{}'",
+                    log.error("Command '{}' id: '{}' with children {} failed when attempting to perform the next operation, marking as '{}'",
                             command.getActionType(),
                             cmdId,
                             childCmdIds,
                             command.getCommandStatus());
+                    log.error(e.getMessage(), e);
                     serialChildExecutingCommand.handleFailure();
                     anyFailed = true;
                 }
