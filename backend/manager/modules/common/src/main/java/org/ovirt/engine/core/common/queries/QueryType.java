@@ -22,6 +22,7 @@ public enum QueryType implements Serializable {
     GetVmCustomProperties(QueryAuthType.User),
     GetVmConfigurationBySnapshot(QueryAuthType.User),
     GetVmFromConfiguration(QueryAuthType.User),
+    GetVmTemplateFromConfiguration(QueryAuthType.User),
     GetVmOvfByVmId(QueryAuthType.User),
     GetSnapshotBySnapshotId(QueryAuthType.User),
     GetVmsByDiskGuid,

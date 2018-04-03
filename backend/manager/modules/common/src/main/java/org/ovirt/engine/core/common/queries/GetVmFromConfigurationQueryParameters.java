@@ -11,7 +11,6 @@ public class GetVmFromConfigurationQueryParameters extends QueryParametersBase {
     }
 
     public GetVmFromConfigurationQueryParameters(ConfigurationType configurationType, String vmConfiguration) {
-        super();
         this.configurationType = configurationType;
         this.vmConfiguration = vmConfiguration;
     }

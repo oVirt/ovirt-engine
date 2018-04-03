@@ -89,7 +89,6 @@ public class OvfManager {
             VM vm,
             FullEntityOvfData fullEntityOvfData)
             throws OvfReaderException {
-
         OvfReader ovf = null;
         try {
             ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, fullEntityOvfData, osRepository);
@@ -108,10 +107,9 @@ public class OvfManager {
             VM vm,
             FullEntityOvfData fullEntityOvfData)
             throws OvfReaderException {
-
         OvfReader ovf = null;
         try {
-            ovf = new OvfOvaReader(new XmlDocument(ovfstring), fullEntityOvfData, vm, osRepository);
+            ovf = new OvfOvaVmReader(new XmlDocument(ovfstring), fullEntityOvfData, vm, osRepository);
             ovf.build();
         } catch (Exception ex) {
             String message = generateOvfReaderErrorMessage(ovf, ex);
@@ -124,10 +122,23 @@ public class OvfManager {
 
     public void importTemplate(String ovfstring, FullEntityOvfData fullEntityOvfData)
             throws OvfReaderException {
-
         OvfReader ovf = null;
         try {
             ovf = new OvfTemplateReader(new XmlDocument(ovfstring), fullEntityOvfData, osRepository);
+            ovf.build();
+            initIcons(fullEntityOvfData.getVmBase());
+        } catch (Exception ex) {
+            String message = generateOvfReaderErrorMessage(ovf, ex);
+            logOvfLoadError(message, ovfstring);
+            throw new OvfReaderException(message);
+        }
+    }
+
+    public void importTemplateFromOva(String ovfstring, FullEntityOvfData fullEntityOvfData)
+            throws OvfReaderException {
+        OvfReader ovf = null;
+        try {
+            ovf = new OvfOvaTemplateReader(new XmlDocument(ovfstring), fullEntityOvfData, osRepository);
             ovf.build();
             initIcons(fullEntityOvfData.getVmBase());
         } catch (Exception ex) {
