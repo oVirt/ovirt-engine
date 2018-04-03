@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TransferDiskImageParameters extends ImagesActionsParametersBase {
-    private static final long serialVersionUID = 724300532243034213L;
+    private static final long serialVersionUID = 7834167203208979364L;
 
     // Members used to persist data during command execution
     long sessionExpiration;
@@ -16,6 +16,7 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
     private long transferSize;
     private TransferType transferType = TransferType.Upload;
     private AddDiskParameters addDiskParameters;
+    private Integer clientInactivityTimeout;
 
     public TransferDiskImageParameters() {}
 
@@ -86,5 +87,13 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
 
     public void setRetryExtendTicket(boolean retryExtendTicket) {
         this.retryExtendTicket = retryExtendTicket;
+    }
+
+    public Integer getClientInactivityTimeout() {
+        return clientInactivityTimeout;
+    }
+
+    public void setClientInactivityTimeout(Integer clientInactivityTimeout) {
+        this.clientInactivityTimeout = clientInactivityTimeout;
     }
 }

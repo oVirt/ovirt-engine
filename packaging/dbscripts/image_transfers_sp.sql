@@ -68,7 +68,8 @@ CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_daemon_uri VARCHAR,
     v_signed_ticket VARCHAR,
     v_bytes_sent BIGINT,
-    v_bytes_total BIGINT
+    v_bytes_total BIGINT,
+    v_client_inactivity_timeout INTEGER
     )
 RETURNS VOID
 AS $PROCEDURE$
@@ -88,7 +89,8 @@ BEGIN
         daemon_uri = v_daemon_uri,
         signed_ticket = v_signed_ticket,
         bytes_sent = v_bytes_sent,
-        bytes_total = v_bytes_total
+        bytes_total = v_bytes_total,
+        client_inactivity_timeout = v_client_inactivity_timeout
     WHERE command_id = v_command_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -120,7 +122,8 @@ CREATE OR REPLACE FUNCTION InsertImageUploads(
     v_daemon_uri VARCHAR,
     v_signed_ticket VARCHAR,
     v_bytes_sent BIGINT,
-    v_bytes_total BIGINT
+    v_bytes_total BIGINT,
+    v_client_inactivity_timeout INTEGER
     )
 RETURNS VOID
 AS $PROCEDURE$
@@ -140,7 +143,8 @@ BEGIN
         daemon_uri,
         signed_ticket,
         bytes_sent,
-        bytes_total
+        bytes_total,
+        client_inactivity_timeout
         )
     VALUES (
         v_command_id,
@@ -157,7 +161,8 @@ BEGIN
         v_daemon_uri,
         v_signed_ticket,
         v_bytes_sent,
-        v_bytes_total
+        v_bytes_total,
+        v_client_inactivity_timeout
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;

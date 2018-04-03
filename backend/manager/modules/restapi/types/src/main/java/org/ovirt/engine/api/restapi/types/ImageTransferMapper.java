@@ -65,6 +65,9 @@ public class ImageTransferMapper {
         if (entity.getBytesSent() != null) {
             model.setTransferred(entity.getBytesSent());
         }
+        if (entity.getClientInactivityTimeout() != null) {
+            model.setInactivityTimeout(entity.getClientInactivityTimeout());
+        }
         return model;
     }
 

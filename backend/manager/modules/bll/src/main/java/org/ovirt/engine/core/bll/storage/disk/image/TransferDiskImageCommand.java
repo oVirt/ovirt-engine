@@ -295,6 +295,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         entity.setActive(false);
         entity.setLastUpdated(new Date());
         entity.setBytesTotal(getParameters().getTransferSize());
+        entity.setClientInactivityTimeout(getParameters().getClientInactivityTimeout() != null ?
+                getParameters().getClientInactivityTimeout() :
+                getTransferImageClientInactivityTimeoutInSeconds());
         imageTransferDao.save(entity);
 
         if (isImageProvided()) {
@@ -685,7 +688,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean shouldAbortOnClientInactivityTimeout(ImageTransfer entity, long ts, Integer idleTimeFromTicket) {
-        int inactivityTimeout = getTransferImageClientInactivityTimeoutInSeconds();
+        int inactivityTimeout = entity.getClientInactivityTimeout();
         // For new daemon (1.3.0), we check timeout according to 'idle_time' in ticket;
         // otherwise, fallback to check according to entity's 'lastUpdated'.
         boolean timeoutExceeded = idleTimeFromTicket != null ?

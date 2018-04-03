@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
+    private static final long serialVersionUID = -2022195484408789358L;
 
-    private static final long serialVersionUID = 3761304077670003457L;
     private Guid commandId;
     private ActionType commandType;
     private ImageTransferPhase phase;
@@ -29,6 +29,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
 
     private Long bytesSent;
     private Long bytesTotal;
+    private Integer clientInactivityTimeout;
 
     public ImageTransfer(Guid commandId) {
         this.commandId = commandId;
@@ -164,6 +165,14 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         return getDaemonUri() + "/" + getImagedTicketId();
     }
 
+    public Integer getClientInactivityTimeout() {
+        return clientInactivityTimeout;
+    }
+
+    public void setClientInactivityTimeout(Integer clientInactivityTimeout) {
+        this.clientInactivityTimeout = clientInactivityTimeout;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -188,6 +197,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 && Objects.equals(signedTicket, other.signedTicket)
                 && Objects.equals(bytesSent, other.bytesSent)
                 && Objects.equals(bytesTotal, other.bytesTotal)
+                && Objects.equals(clientInactivityTimeout, other.clientInactivityTimeout)
                 && type == other.type;
     }
 
@@ -206,7 +216,8 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 proxyUri,
                 signedTicket,
                 bytesSent,
-                bytesTotal
+                bytesTotal,
+                clientInactivityTimeout
         );
     }
 
@@ -226,6 +237,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 .append("signedTicket", getSignedTicket())
                 .append("bytesSent", getBytesSent())
                 .append("bytesTotal", getBytesTotal())
+                .append("clientInactivityTimeout", getClientInactivityTimeout())
                 .build();
     }
 

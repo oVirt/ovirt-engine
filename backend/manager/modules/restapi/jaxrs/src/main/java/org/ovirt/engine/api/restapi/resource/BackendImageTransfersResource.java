@@ -57,6 +57,9 @@ public class BackendImageTransfersResource
         if (imageTransfer.isSetHost() && imageTransfer.getHost().isSetId()) {
             params.setVdsId(Guid.createGuidFromString(imageTransfer.getHost().getId()));
         }
+        if (imageTransfer.isSetInactivityTimeout()) {
+            params.setClientInactivityTimeout(imageTransfer.getInactivityTimeout());
+        }
         return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
                 IdQueryParameters.class));
     }
