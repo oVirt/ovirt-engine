@@ -476,19 +476,6 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
-    public void testAddIncompleteParameters() throws Exception {
-        Template model = new Template();
-        model.setName(NAMES[0]);
-        setUriInfo(setUpBasicUriExpectations());
-        try {
-            collection.add(model);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Template", "add", "vm.id|name");
-        }
-    }
-
-    @Test
     public void testAddUploadIcon() throws Exception {
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(0, 0, 1);

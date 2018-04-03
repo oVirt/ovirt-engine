@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
+import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
+import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VirtioScsi;
@@ -23,12 +25,15 @@ import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
+import org.ovirt.engine.api.restapi.types.TemplateMapper;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -39,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
+import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
@@ -75,8 +81,7 @@ public class BackendTemplatesResource
     }
 
     @Override
-    public Response add(Template template) {
-        validateParameters(template, "name", "vm.id|name");
+    public Response addFromVm(Template template) {
         validateIconParameters(template);
         Guid clusterId = null;
         Cluster cluster = null;
@@ -96,8 +101,8 @@ public class BackendTemplatesResource
 
         // REVISIT: powershell has a IsVmTemlateWithSameNameExist safety check
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,
-                                       template.getName(),
-                                       template.getDescription());
+                template.getName(),
+                template.getDescription());
         if (template.getVersion() != null) {
             params.setBaseTemplateId(Guid.createGuidFromString(template.getVersion().getBaseTemplate().getId()));
             params.setTemplateVersionName(template.getVersion().getVersionName());
@@ -125,22 +130,22 @@ public class BackendTemplatesResource
             isDomainSet = true;
         }
         params.setDiskInfoDestinationMap(
-            getDestinationTemplateDiskMap(
-                template.getVm(),
-                originalVm.getId(),
-                params.getDestinationStorageDomainId(),
-                isDomainSet
-            )
-        );
+                getDestinationTemplateDiskMap(
+                        template.getVm(),
+                        originalVm.getId(),
+                        params.getDestinationStorageDomainId(),
+                        isDomainSet
+                        )
+                );
 
         setupOptionalParameters(params);
         IconHelper.setIconToParams(template, params);
 
         Response response = performCreate(
-            ActionType.AddVmTemplate,
-            params,
-            new QueryIdResolver<Guid>(QueryType.GetVmTemplate, GetVmTemplateParameters.class)
-        );
+                ActionType.AddVmTemplate,
+                params,
+                new QueryIdResolver<Guid>(QueryType.GetVmTemplate, GetVmTemplateParameters.class)
+                );
 
         Template result = (Template) response.getEntity();
         if (result != null) {
@@ -148,6 +153,30 @@ public class BackendTemplatesResource
         }
 
         return response;
+    }
+
+    @Override
+    public Response addFromConfiguration(Template template) {
+        Initialization initialization = template.getInitialization();
+        Configuration config = initialization.getConfiguration();
+        org.ovirt.engine.core.common.businessentities.VmTemplate templateConfiguration =
+                getEntity(org.ovirt.engine.core.common.businessentities.VmTemplate.class,
+                        QueryType.GetVmTemplateFromConfiguration,
+                        new GetVmFromConfigurationQueryParameters(VmMapper.map(config.getType(), null), config.getData().trim()),
+                        "");
+
+        TemplateMapper.map(template, templateConfiguration);
+
+        Guid clusterId = namedCluster(template) ? getClusterId(template) : asGuid(template.getCluster().getId());
+        ImportVmTemplateFromConfParameters parameters = new ImportVmTemplateFromConfParameters();
+        parameters.setVmTemplate(templateConfiguration);
+        parameters.setClusterId(clusterId);
+        if (initialization.isSetRegenerateIds()) {
+            parameters.setImportAsNewEntity(initialization.isRegenerateIds());
+        }
+        return performCreate(ActionType.ImportVmTemplateFromConfiguration,
+                parameters,
+                new QueryIdResolver<Guid>(QueryType.GetVmTemplate, GetVmTemplateParameters.class));
     }
 
     private void validateIconParameters(Template incoming) {
