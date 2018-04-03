@@ -802,7 +802,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public MemorySizeEntityModelTextBoxEditor minAllocatedMemoryEditor;
 
     @UiField(provided = true)
-    public EntityModelDetachableWidget detachableMinAllocatedMemoryEditor;
+    public EntityModelDetachableWidgetWithInfo detachableMinAllocatedMemoryEditor;
 
     @UiField(provided = true)
     @Path(value = "ioThreadsEnabled.entity")
@@ -1100,7 +1100,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         detachablePriorityEditor = new EntityModelDetachableWidgetWithLabel(priorityEditor);
         isMemoryBalloonDeviceEnabledDetachable = new EntityModelDetachableWidget(isMemoryBalloonDeviceEnabled);
         isIoThreadsEnabledDetachable = new EntityModelDetachableWidget(isIoThreadsEnabled);
-        detachableMinAllocatedMemoryEditor = new EntityModelDetachableWidget(minAllocatedMemoryEditor);
+
+        final EnableableFormLabel physMemGuarLabel = new EnableableFormLabel(constants.physMemGuarVmPopup());
+        minAllocatedMemoryEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        detachableMinAllocatedMemoryEditor = new EntityModelDetachableWidgetWithInfo(physMemGuarLabel, minAllocatedMemoryEditor);
+
         overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.IGNORE);
         overrideMigrationDowntimeEditorWithDetachable.setupContentWrapper(Align.RIGHT);
 
@@ -1536,6 +1540,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private void localizeSafeHtmlFields() {
         rngSourceUrandomInfoIcon.setText(SafeHtmlUtils.fromString(constants.vmUrandomInfoIcon()));
         detachableMaxMemorySizeEditor.setExplanation(SafeHtmlUtils.fromString(constants.maxMemoryInfoIcon()));
+        detachableMinAllocatedMemoryEditor.setExplanation(SafeHtmlUtils.fromString(constants.physMemGuarInfoIcon()));
     }
 
     private void setNumaInfoMsg(String message) {
@@ -1859,6 +1864,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = systemTab.setTabIndexes(nextTabIndex);
         memSizeEditor.setTabIndex(nextTabIndex++);
         maxMemorySizeEditor.setTabIndex(nextTabIndex++);
+        minAllocatedMemoryEditor.setTabIndex(nextTabIndex++);
         totalvCPUsEditor.setTabIndex(nextTabIndex++);
 
         nextTabIndex = vcpusAdvancedParameterExpander.setTabIndexes(nextTabIndex);
@@ -1928,7 +1934,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // ==Resource Allocation Tab==
         nextTabIndex = resourceAllocationTab.setTabIndexes(nextTabIndex);
         cpuProfilesEditor.setTabIndex(nextTabIndex++);
-        minAllocatedMemoryEditor.setTabIndex(nextTabIndex++);
         provisioningThinEditor.setTabIndex(nextTabIndex++);
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
         cpuPinning.setTabIndex(nextTabIndex++);

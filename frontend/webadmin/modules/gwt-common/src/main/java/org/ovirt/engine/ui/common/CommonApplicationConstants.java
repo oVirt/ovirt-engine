@@ -1741,6 +1741,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String kernelCmdlinePciReallocInfoIcon();
 
+    String physMemGuarInfoIcon();
+
     String maxMemoryInfoIcon();
 
     String vmUrandomInfoIcon();

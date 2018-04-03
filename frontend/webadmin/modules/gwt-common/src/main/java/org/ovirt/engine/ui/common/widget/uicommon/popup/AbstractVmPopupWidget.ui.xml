@@ -197,6 +197,10 @@
                       <ge:MemorySizeEntityModelTextBoxEditor ui:field="maxMemorySizeEditor" usePatternFly="true" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
+                      <w:EntityModelDetachableWidgetWithInfo ui:field="detachableMinAllocatedMemoryEditor" usePatternFly="true" labelColSize="SM_5"/>
+                      <ge:MemorySizeEntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" usePatternFly="true" widgetColSize="SM_6" />
+                    </b:Row>
+                    <b:Row>
                       <w:EntityModelDetachableWidgetWithInfo ui:field="totalvCPUsEditorWithInfoIcon" usePatternFly="true" labelColSize="SM_5"/>
                       <ge:StringEntityModelTextBoxOnlyEditor ui:field="totalvCPUsEditor" label="{constants.numOfVCPUs}" removeFormGroup="true" usePatternFly="true" widgetColSize="SM_6" />
                     </b:Row>
@@ -556,17 +560,6 @@
                 <b:Row>
                   <b:Column size="SM_12">
                     <g:Label text="{constants.memAllocVmPopup}" addStyleNames="{style.sectionLabel}" />
-                  </b:Column>
-                </b:Row>
-                <b:Row>
-                  <b:Column size="SM_5">
-                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.physMemGuarVmPopup}" />
-                  </b:Column>
-                  <b:Column size="SM_1">
-                    <ge:EntityModelDetachableWidget ui:field="detachableMinAllocatedMemoryEditor" usePatternFly="true"/>
-                  </b:Column>
-                  <b:Column size="SM_6">
-                    <ge:MemorySizeEntityModelTextBoxEditor ui:field="minAllocatedMemoryEditor" usePatternFly="true"/>
                   </b:Column>
                 </b:Row>
                 <b:Row>

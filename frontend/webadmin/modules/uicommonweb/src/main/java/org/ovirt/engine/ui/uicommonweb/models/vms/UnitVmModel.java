@@ -253,6 +253,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getInstanceTypes().setIsChangeable(false);
             getMemSize().setIsChangeable(false);
             getMaxMemorySize().setIsChangeable(false);
+            getMinAllocatedMemory().setIsChangeable(false);
             getTotalCPUCores().setIsChangeable(false);
 
             getCustomCpu().setIsChangeable(false);
@@ -298,7 +299,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getCustomCompatibilityVersion().setIsChangeable(false);
 
             // ==Resource Allocation Tab==
-            getMinAllocatedMemory().setIsChangeable(false);
             getProvisioning().setIsChangeable(false);
             getProvisioningThin_IsSelected().setIsChangeable(false);
             getProvisioningClone_IsSelected().setIsChangeable(false);
@@ -2963,11 +2963,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         validateMaxMemorySize();
         validateMemoryAlignment(getMemSize());
 
-        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid());
-
         setValidTab(TabName.SYSTEM_TAB,
                 getMemSize().getIsValid() &&
                 getMaxMemorySize().getIsValid() &&
+                getMinAllocatedMemory().getIsValid() &&
                 getTotalCPUCores().getIsValid() &&
                 getSerialNumberPolicy().getCustomSerialNumber().getIsValid() &&
                 getEmulatedMachine().getIsValid() &&
