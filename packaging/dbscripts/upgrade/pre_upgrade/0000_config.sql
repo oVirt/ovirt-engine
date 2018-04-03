@@ -1029,6 +1029,9 @@ select fn_db_update_default_config_value('UploadImageChunkSizeKB','8192', '10240
 -- Increase default value of ImageTransferClientTicketValidityInSeconds
 select fn_db_update_default_config_value('ImageTransferClientTicketValidityInSeconds','3600', '36000', 'general', false);
 
+-- Increase default value of TransferImageClientInactivityTimeoutInSeconds
+select fn_db_update_default_config_value('TransferImageClientInactivityTimeoutInSeconds','60', '600', 'general', false);
+
 -- Increaded default value of maximum number of LVs per storage domain
 select fn_db_update_default_config_value('AlertOnNumberOfLVs', '300', '1300', 'general', false);
 select fn_db_update_default_config_value('AlertOnNumberOfLVs', '1000', '1300', 'general', false);
