@@ -147,16 +147,19 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         getParameters().setCreatedSnapshotId(createdSnapshotId);
         MemoryImageBuilder memoryImageBuilder = getMemoryImageBuilder();
         freezeVm();
-        createSnapshotsForDisks();
-        memoryImageBuilder.build();
-        addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
-        fastForwardDisksToActiveSnapshot();
-        setSucceeded(true);
+        ActionReturnValue actionReturnValue = createSnapshotsForDisks();
+        if (actionReturnValue.getSucceeded()) {
+            memoryImageBuilder.build();
+            addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
+            fastForwardDisksToActiveSnapshot();
+            setSucceeded(true);
+        }
     }
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
         if (getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_VOLUME) {
+            getParameters().setCreateSnapshotStage(CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_STARTED);
             Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
             // if the snapshot was not created in the DB
             // the command should also be handled as a failure
@@ -171,18 +174,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
                     logMemorySavingFailed();
                     snapshotDao.removeMemoryFromSnapshot(createdSnapshot.getId());
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
-                }
-
-            } else {
-                if (createdSnapshot != null) {
-                    revertToActiveSnapshot(createdSnapshot.getId());
-                    // If the removed snapshot contained memory, remove the memory volumes
-                    // Note that the memory volumes might not have been created
-                    if (snapshotWithMemory(createdSnapshot)) {
-                        removeMemoryVolumesOfSnapshot(createdSnapshot);
-                    }
-                } else {
-                    log.warn("No snapshot was created for VM '{}' which is in LOCKED status", getVmId());
                 }
             }
 
@@ -408,6 +399,25 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
 
     @Override
     protected void endVmCommand() {
+        if (!getParameters().getTaskGroupSuccess())  {
+            Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
+            if (getParameters().getCreatedSnapshotId() != null &&
+                    getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_STARTED ||
+                    getParameters().getCreateSnapshotStage() == CreateSnapshotForVmParameters.CreateSnapshotStage.CREATE_SNAPSHOT_COMPLETED) {
+                revertToActiveSnapshot(createdSnapshot.getId());
+                // If the removed snapshot contained memory, remove the memory volumes
+                // Note that the memory volumes might not have been created
+                if (snapshotWithMemory(createdSnapshot)) {
+                    removeMemoryVolumesOfSnapshot(createdSnapshot);
+                }
+            } else {
+                log.warn("No snapshot was created for VM '{}' which is in LOCKED status", getVmId());
+            }
+
+        }
+
+        // In case of failure the memory disks will remain on the storage but not on the engine
+        // this will be handled in: https://bugzilla.redhat.com/1568887
         incrementVmGeneration();
         thawVm();
         endActionOnDisks();
@@ -512,7 +522,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
                         + " snapshot: {}");
     }
 
-    private void createSnapshotsForDisks() {
+    private ActionReturnValue createSnapshotsForDisks() {
         CreateSnapshotDiskParameters parameters = new CreateSnapshotDiskParameters();
         parameters.setDiskIdsToIgnoreInChecks(getParameters().getDiskIdsToIgnoreInChecks());
         parameters.setDiskToImageIds(getParameters().getDiskToImageIds());
@@ -525,7 +535,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEntityInfo(getParameters().getEntityInfo());
-        runInternalAction(ActionType.CreateSnapshotDisk,
+        return runInternalAction(ActionType.CreateSnapshotDisk,
                 parameters,
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
     }
@@ -768,7 +778,8 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
 
     @Override
     protected boolean overrideChildCommandSuccess() {
-        return false;
+        // If this command fails we would want the children to execute their endWithFailure flow
+        return true;
     }
 
     @Override

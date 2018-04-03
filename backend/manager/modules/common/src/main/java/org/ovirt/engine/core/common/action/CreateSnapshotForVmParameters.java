@@ -163,6 +163,7 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     public enum CreateSnapshotStage {
         CREATE_VOLUME,
+        CREATE_SNAPSHOT_STARTED,
         CREATE_SNAPSHOT_COMPLETED,
     }
 }
