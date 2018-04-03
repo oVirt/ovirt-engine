@@ -33,6 +33,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
+import org.ovirt.engine.core.utils.ExecutorServiceRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,6 +48,9 @@ public class StorageDeviceSyncJobTest {
     private static final Guid DEVICE_WITH_CHANGE = new Guid("00000000-0000-0000-0000-000000000001");
     private static final Guid DEVICE_WITH_NAME_CHANGE = new Guid("00000000-0000-0000-0000-000000000002");
     private static final Guid DEVICE_WITH_DEVUUID_BUT_NAME_CHANGED = new Guid("00000000-0000-0000-0000-000000000003");
+
+    @ClassRule
+    public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
 
     @Mock
     private StorageDeviceDao storageDeviceDao;

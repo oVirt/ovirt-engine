@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
+import org.ovirt.engine.core.utils.ExecutorServiceRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -65,6 +66,9 @@ public class GlusterHookSyncJobTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
+
+    @ClassRule
+    public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
 
     private void mockDaos() {
         List<Cluster> clusters = new ArrayList<>();

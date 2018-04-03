@@ -37,6 +37,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.utils.ExecutorServiceRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -77,6 +78,9 @@ public class GlusterTasksSyncJobTest {
     public static MockConfigRule mcr = new MockConfigRule(
         mockConfig(ConfigValues.GlusterTaskMinWaitForCleanupInMins, 10)
     );
+
+    @ClassRule
+    public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
 
     @Before
     public void init() {
