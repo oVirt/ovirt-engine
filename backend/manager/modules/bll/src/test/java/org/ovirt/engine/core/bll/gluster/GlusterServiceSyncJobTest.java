@@ -47,6 +47,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
+import org.ovirt.engine.core.utils.ExecutorServiceRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -71,6 +72,9 @@ public class GlusterServiceSyncJobTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterServicesEnabled, Version.getLast(), true));
+
+    @ClassRule
+    public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
 
     @Mock
     private GlusterServerServiceDao serverServiceDao;
