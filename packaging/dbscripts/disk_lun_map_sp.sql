@@ -5,7 +5,7 @@
 --
 CREATE OR REPLACE FUNCTION InsertDiskLunMap (
     v_disk_id UUID,
-    v_lun_id VARCHAR(50)
+    v_lun_id VARCHAR(255)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -22,7 +22,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteDiskLunMap (
     v_disk_id UUID,
-    v_lun_id VARCHAR(50)
+    v_lun_id VARCHAR(255)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -45,7 +45,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDiskLunMapByDiskLunMapId (
     v_disk_id UUID,
-    v_lun_id VARCHAR(50)
+    v_lun_id VARCHAR(255)
     )
 RETURNS SETOF disk_lun_map STABLE AS $PROCEDURE$
 BEGIN
@@ -58,7 +58,7 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetDiskLunMapByLunId (v_lun_id VARCHAR(50))
+CREATE OR REPLACE FUNCTION GetDiskLunMapByLunId (v_lun_id VARCHAR(255))
 RETURNS SETOF disk_lun_map STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
