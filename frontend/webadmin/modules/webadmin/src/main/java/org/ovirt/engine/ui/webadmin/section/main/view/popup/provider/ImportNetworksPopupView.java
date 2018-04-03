@@ -111,7 +111,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
             public String getValue(ExternalNetwork model) {
                 return model.getDisplayName();
             }
-        }, constants.nameNetworkHeader());
+        }, constants.nameNetworkHeader(), "25%"); //$NON-NLS-1$
 
         Column<ExternalNetwork, String> idColumn = new AbstractTextColumn<ExternalNetwork>() {
             @Override
@@ -120,7 +120,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
             }
         };
         providerNetworks.addColumn(idColumn, constants.idNetworkHeader());
-        importedNetworks.addColumn(idColumn, constants.idNetworkHeader());
+        importedNetworks.addColumn(idColumn, constants.idNetworkHeader(), "30%"); //$NON-NLS-1$
 
         dcColumn = new AbstractListModelListBoxColumn<ExternalNetwork, StoragePool>(new NameRenderer<StoragePool>()) {
             @Override
@@ -128,7 +128,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
                 return network.getDataCenters();
             }
         };
-        importedNetworks.addColumn(dcColumn, constants.dcNetworkHeader());
+        importedNetworks.addColumn(dcColumn, constants.dcNetworkHeader(), "20%"); //$NON-NLS-1$
 
         AbstractCheckboxHeader publicAllHeader =
                 new AbstractCheckboxHeader() {
@@ -194,7 +194,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<BaseImp
                 sb.append(templates.textForCheckBox("")); //$NON-NLS-1$
             }
 
-        }, publicAllHeader, "80px"); //$NON-NLS-1$
+        }, publicAllHeader, "20%"); //$NON-NLS-1$
     }
 
     @Override

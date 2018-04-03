@@ -19,7 +19,7 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel ui:field="mainPanel" width="600px" height="625px">
+    <d:SimpleDialogPanel ui:field="mainPanel" width="800px" height="625px">
         <d:content>
             <g:ScrollPanel addStyleNames="{style.scrollPanel}">
                 <b:Container addStyleNames="{style.container}">
