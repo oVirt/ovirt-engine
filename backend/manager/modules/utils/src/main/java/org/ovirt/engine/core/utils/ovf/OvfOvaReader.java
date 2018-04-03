@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -22,22 +22,22 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OvfOvaReader extends OvfReader {
+public abstract class OvfOvaReader extends OvfReader {
     private static final Logger log = LoggerFactory.getLogger(OvfReader.class);
 
-    private VM vm;
+    private VmBase vm;
     /** Maps ovf:id to the other attributes of File reference */
     private Map<String, XmlAttributeCollection> fileIdToFileAttributes;
 
     public OvfOvaReader(XmlDocument document,
             FullEntityOvfData fullEntityOvfData,
-            VM vm,
+            VmBase vm,
             OsRepository osRepository) {
         super(document,
                 fullEntityOvfData.getDiskImages(),
                 Collections.EMPTY_LIST,
                 fullEntityOvfData.getInterfaces(),
-                vm.getStaticData(),
+                vm,
                 osRepository);
         this.vm = vm;
         fileIdToFileAttributes = new HashMap<>();
@@ -85,7 +85,7 @@ public class OvfOvaReader extends OvfReader {
         int osId = ovirtOsId != null ?
                 Integer.parseInt(ovirtOsId.getValue())
                 : mapOsId(section.attributes.get("ovf:id").getValue());
-        vm.setVmOs(osId);
+        vm.setOsId(osId);
         setClusterArch(osRepository.getArchitectureFromOS(osId));
     }
 
@@ -155,9 +155,7 @@ public class OvfOvaReader extends OvfReader {
         }
     }
 
-    protected void setClusterArch(ArchitectureType arch) {
-        vm.setClusterArch(arch);
-    }
+    protected abstract void setClusterArch(ArchitectureType arch);
 
     protected void buildFileReference() {
         // TODO: read information needed for extracting the disks

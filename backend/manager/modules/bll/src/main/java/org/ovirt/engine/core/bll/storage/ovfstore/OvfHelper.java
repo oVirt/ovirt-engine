@@ -119,9 +119,7 @@ public class OvfHelper {
      *        Maps disk UUID to a pair of (filename, actual size) as they are within the OVA
      */
     public VM readVmFromOva(String ovf) throws OvfReaderException {
-        ovf = ovf
-                .replaceAll("[\r\n]+", "") // remove new lines
-                .replaceAll("xmlns=[^-\\s]*", ""); // remove global namespace
+        ovf = format(ovf);
         VM vm = new VM();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
         ovfManager.importVmFromOva(ovf, vm, fullEntityOvfData);
@@ -141,16 +139,35 @@ public class OvfHelper {
      * @return
      *        VmTemplate that represents the given ovf data
      */
-    public FullEntityOvfData readVmTemplateFromOvf(String ovf) throws OvfReaderException {
+    public VmTemplate readVmTemplateFromOva(String ovf) throws OvfReaderException {
+        ovf = format(ovf);
+        VmTemplate template = new VmTemplate();
+        FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
+        ovfManager.importTemplateFromOva(ovf, fullEntityOvfData);
+        template.setInterfaces(fullEntityOvfData.getInterfaces());
+        // add disk map
+        fullEntityOvfData.getDiskImages().forEach(disk -> template.getDiskTemplateMap().put(disk.getId(), disk));
+        return template;
+    }
 
+    private String format(String ovf) {
+        return ovf
+                .replaceAll("[\r\n]+", "") // remove new lines
+                .replaceAll("xmlns=[^-\\s]*", ""); // remove global namespace
+    }
+
+    /**
+     * parses a given ovf to a VmTemplate, initialized with images and interfaces.
+     * @return
+     *        VmTemplate that represents the given ovf data
+     */
+    public FullEntityOvfData readVmTemplateFromOvf(String ovf) throws OvfReaderException {
         VmTemplate template = new VmTemplate();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
         ovfManager.importTemplate(ovf, fullEntityOvfData);
         template.setInterfaces(fullEntityOvfData.getInterfaces());
         // add disk map
-        for (DiskImage disk : fullEntityOvfData.getDiskImages()) {
-            template.getDiskTemplateMap().put(disk.getId(), disk);
-        }
+        fullEntityOvfData.getDiskImages().forEach(disk -> template.getDiskTemplateMap().put(disk.getId(), disk));
         return fullEntityOvfData;
     }
 

@@ -7,12 +7,12 @@ import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
-public class GetVmFromConfigurationQuery<P extends GetVmFromConfigurationQueryParameters> extends QueriesCommandBase<P> {
+public class GetVmTemplateFromConfigurationQuery<P extends GetVmFromConfigurationQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
     private OvfHelper ovfHelper;
 
-    public GetVmFromConfigurationQuery(P parameters, EngineContext engineContext) {
+    public GetVmTemplateFromConfigurationQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
     @Override
@@ -27,7 +27,7 @@ public class GetVmFromConfigurationQuery<P extends GetVmFromConfigurationQueryPa
         switch(getParameters().getConfigurationType()) {
         case OVF:
             try {
-                getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOvf(getParameters().getVmConfiguration()).getVm());
+                getQueryReturnValue().setReturnValue(ovfHelper.readVmTemplateFromOvf(getParameters().getVmConfiguration()).getVm());
             } catch (OvfReaderException e) {
                 log.warn("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);
                 getQueryReturnValue().setSucceeded(false);
@@ -37,7 +37,7 @@ public class GetVmFromConfigurationQuery<P extends GetVmFromConfigurationQueryPa
 
         case OVA:
             try {
-                getQueryReturnValue().setReturnValue(ovfHelper.readVmFromOva(getParameters().getVmConfiguration()));
+                getQueryReturnValue().setReturnValue(ovfHelper.readVmTemplateFromOva(getParameters().getVmConfiguration()));
             } catch (OvfReaderException e) {
                 log.warn("failed to parse a given ovf configuration: \n" + getParameters().getVmConfiguration(), e);
                 getQueryReturnValue().setSucceeded(false);
