@@ -103,15 +103,13 @@ public class BackendTemplatesResource
             params.setTemplateVersionName(template.getVersion().getVersionName());
         }
         params.setConsoleEnabled(template.getConsole() != null && template.getConsole().isSetEnabled() ?
-                        template.getConsole().isEnabled() :
-                        !getConsoleDevicesForEntity(originalVm.getId()).isEmpty());
+                template.getConsole().isEnabled()
+                : !getConsoleDevicesForEntity(originalVm.getId()).isEmpty());
         params.setVirtioScsiEnabled(template.isSetVirtioScsi() && template.getVirtioScsi().isSetEnabled() ?
                 template.getVirtioScsi().isEnabled() : null);
-        if(template.isSetSoundcardEnabled()) {
-            params.setSoundDeviceEnabled(template.isSoundcardEnabled());
-        } else {
-            params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, originalVm.getId()).isEmpty());
-        }
+        params.setSoundDeviceEnabled(template.isSetSoundcardEnabled() ?
+                template.isSoundcardEnabled()
+                : !VmHelper.getSoundDevicesForEntity(this, originalVm.getId()).isEmpty());
         if (template.isSetRngDevice()) {
             params.setUpdateRngDevice(true);
             params.setRngDevice(RngDeviceMapper.map(template.getRngDevice(), null));
@@ -119,17 +117,16 @@ public class BackendTemplatesResource
 
         DisplayHelper.setGraphicsToParams(template.getDisplay(), params);
 
-        boolean isDomainSet = false;
-        if (template.isSetStorageDomain() && template.getStorageDomain().isSetId()) {
+        boolean domainSet = template.isSetStorageDomain() && template.getStorageDomain().isSetId();
+        if (domainSet) {
             params.setDestinationStorageDomainId(asGuid(template.getStorageDomain().getId()));
-            isDomainSet = true;
         }
         params.setDiskInfoDestinationMap(
             getDestinationTemplateDiskMap(
                 template.getVm(),
                 originalVm.getId(),
                 params.getDestinationStorageDomainId(),
-                isDomainSet
+                domainSet
             )
         );
 
