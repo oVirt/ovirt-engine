@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureL
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
@@ -217,13 +218,12 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
             }
         });
 
-        clusterCpuTypeEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<ServerCpu>() {
+        clusterCpuTypeEditor = new ListModelListBoxEditor<>(new AbstractRenderer<ServerCpu>() {
             @Override
-            public String renderNullSafe(ServerCpu object) {
-                return object.getCpuName();
+            public String render(ServerCpu object) {
+                return object != null ? object.getCpuName() : constants.autoDetect();
             }
         });
-
 
         // Optimization options.
         optimizationNoneEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$

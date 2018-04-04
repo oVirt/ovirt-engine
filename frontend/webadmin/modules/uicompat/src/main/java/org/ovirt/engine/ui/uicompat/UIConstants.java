@@ -1555,6 +1555,8 @@ public interface UIConstants extends Constants {
 
     String hosCPUUnavailable();
 
+    String cpuAutoDetect();
+
     String cpuPinningUnavailable();
 
     String portMirroringNotSupportedExternalNetworks();
