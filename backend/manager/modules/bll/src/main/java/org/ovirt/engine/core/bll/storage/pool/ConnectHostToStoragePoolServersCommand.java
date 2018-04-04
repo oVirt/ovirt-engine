@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -11,11 +12,15 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We
@@ -31,6 +36,8 @@ public class ConnectHostToStoragePoolServersCommand extends
     private AuditLogDirector auditLogDirector;
     @Inject
     private CINDERStorageHelper cinderStorageHelper;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public ConnectHostToStoragePoolServersCommand(ConnectHostToStoragePoolServersParameters parameters,
             CommandContext cmdContext) {
@@ -72,11 +79,51 @@ public class ConnectHostToStoragePoolServersCommand extends
         if (!storageHelperDirector.getItem(storageType).prepareConnectHostToStoragePoolServers(getContext(), getParameters(), connections)) {
             return false;
         }
+        if (storageType.isFileDomain()) {
+            return connectFileStorageServers(storageType, connections);
+        } else {
+            return connectStorageServer(storageType, connections, true);
+        }
+    }
 
+    private boolean connectFileStorageServers(StorageType storageType, List<StorageServerConnections> connections) {
+        Map<StorageDomainType, List<StorageServerConnections>> connByType = connections.stream()
+                .collect(Collectors.groupingBy(c -> storageDomainDao.getAllByConnectionId(Guid.createGuidFromString(
+                        c.getId())).get(0)
+                        .getStorageDomainType()));
+        boolean connectSucceeded = connectStorageServer(storageType, connByType.get(StorageDomainType.Master), true);
+        connectSucceeded &= connectStorageServer(storageType, connByType.get(StorageDomainType.Data), true);
+
+        connectStorageServerIgnoreFailure(storageType, connByType.get(StorageDomainType.ISO), StorageDomainType.ISO);
+        connectStorageServerIgnoreFailure(storageType, connByType.get(StorageDomainType.ImportExport), StorageDomainType.ImportExport);
+
+        return connectSucceeded;
+    }
+
+    private void connectStorageServerIgnoreFailure(StorageType storageType, List<StorageServerConnections>
+            connections, StorageDomainType sdType) {
+        try {
+            boolean connectSucceeded = connectStorageServer(storageType, connections, false);
+            if (!connectSucceeded) {
+                log.warn("Ignoring failed connection to domain of type {}.'", sdType);
+            }
+        } catch (EngineException e) {
+            log.warn("Ignoring failed connection to domain of type {}.'", sdType);
+        }
+    }
+
+    private boolean connectStorageServer(StorageType storageType, List<StorageServerConnections> connections, boolean
+            sendNetworkEventOnFailure) {
+        if (connections == null || connections.isEmpty()) {
+            return true;
+        }
+        StorageServerConnectionManagementVDSParameters parameters =
+                new StorageServerConnectionManagementVDSParameters(getVds().getId(),
+                        getStoragePool().getId(), storageType, connections);
+        parameters.setSendNetworkEventOnFailure(sendNetworkEventOnFailure);
         Map<String, String> retValues = (Map<String, String>) runVdsCommand(
-                        VDSCommandType.ConnectStorageServer,
-                        new StorageServerConnectionManagementVDSParameters(getVds().getId(),
-                                getStoragePool().getId(), storageType, connections)).getReturnValue();
+                VDSCommandType.ConnectStorageServer,
+                parameters).getReturnValue();
         return storageHelperDirector.getItem(storageType).isConnectSucceeded(retValues, connections);
     }
 

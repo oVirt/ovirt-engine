@@ -108,12 +108,25 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
 
     @Override
     protected void executeVDSCommand() {
+        executeVdsCommandWithNetworkEvent(true);
+    }
+
+    /**
+     * Execute the Vds command and handle exceptions
+     *
+     * @param sendNetworkErrorEvent
+     *            This flag is needed in cases where there is a need to not send a event when a
+     *            network error occurs. For example, when the] connection to export and ISO domain fails.
+     */
+    protected void executeVdsCommandWithNetworkEvent(boolean sendNetworkErrorEvent) {
         try {
             executeVdsBrokerCommand();
         } catch (VDSNetworkException ex) {
             printReturnValue();
             updateNetworkException(ex, ex.getMessage());
-            networkError.fire(ex);
+            if (sendNetworkErrorEvent) {
+                networkError.fire(ex);
+            }
             throw ex;
         } catch (VDSExceptionBase ex) {
             printReturnValue();
@@ -121,7 +134,9 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         } catch (TransportRunTimeException ex) {
             VDSNetworkException networkException = createNetworkException(ex);
             printReturnValue();
-            networkError.fire(networkException);
+            if (sendNetworkErrorEvent) {
+                networkError.fire(networkException);
+            }
             throw networkException;
         }
 

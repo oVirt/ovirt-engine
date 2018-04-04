@@ -37,6 +37,11 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     }
 
     @Override
+    protected void executeVDSCommand() {
+        executeVdsCommandWithNetworkEvent(getParameters().getSendNetworkEventOnFailure());
+    }
+
+    @Override
     protected void executeVdsBrokerCommand() {
         _result = getBroker().connectStorageServer(getParameters().getStorageType().getValue(),
                 getParameters().getStoragePoolId().toString(), buildStructFromConnectionListObject());

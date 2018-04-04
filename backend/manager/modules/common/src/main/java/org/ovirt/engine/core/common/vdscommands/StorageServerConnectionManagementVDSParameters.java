@@ -9,6 +9,15 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionManagementVDSParameters extends GetStorageConnectionsListVDSCommandParameters {
     private StorageType privateStorageType;
+    private boolean sendNetworkEventOnFailure = true;
+
+    public boolean getSendNetworkEventOnFailure() {
+        return sendNetworkEventOnFailure;
+    }
+
+    public void setSendNetworkEventOnFailure(boolean sendNetworkEventOnFailure) {
+        this.sendNetworkEventOnFailure = sendNetworkEventOnFailure;
+    }
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -43,6 +52,7 @@ public class StorageServerConnectionManagementVDSParameters extends GetStorageCo
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("storageType", getStorageType())
-                .append("connectionList", getConnectionList());
+                .append("connectionList", getConnectionList())
+                .append("sendNetworkEventOnFailure", getSendNetworkEventOnFailure());
     }
 }
