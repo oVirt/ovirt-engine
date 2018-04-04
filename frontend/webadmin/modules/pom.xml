@@ -26,7 +26,7 @@
     <guice.version>4.1.0</guice.version>
     <gin.version>2.1.2</gin.version>
     <!-- gwtbootstrap3 version -->
-    <gwtbootstrap3.version>0.9.3</gwtbootstrap3.version>
+    <gwtbootstrap3.version>0.9.4</gwtbootstrap3.version>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
     <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
     <!-- Using older maven-processor-plugin version for Maven 2 compatibility -->
