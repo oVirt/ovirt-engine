@@ -1020,6 +1020,9 @@ select fn_db_update_default_config_value('DwhHeartBeatInterval', '30', '15', 'ge
 -- Increase default value of UploadImageXhrTimeoutInSeconds from 10 to 120 seconds
 select fn_db_update_default_config_value('UploadImageXhrTimeoutInSeconds', '10', '120', 'general', false);
 
+-- Increase default value of UploadImageXhrTimeoutInSeconds
+select fn_db_update_default_config_value('UploadImageXhrTimeoutInSeconds','120', '300', 'general', false);
+
 -- Increase default value of UploadImageChunkSizeKB
 select fn_db_update_default_config_value('UploadImageChunkSizeKB','8192', '102400', 'general', false);
 
