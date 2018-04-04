@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class ConfigureLocalStorageModel extends Model implements HasValidatedTabs {
 
@@ -102,6 +103,8 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         privateCommonName = value;
     }
 
+    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
     public ConfigureLocalStorageModel() {
 
         setStorage(new LocalStorageModel());
@@ -112,6 +115,8 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         setCluster(new ClusterModel());
         getCluster().init(false);
         getCluster().setIsNew(true);
+
+        getCluster().getCPU().setIsChangeable(false, constants.cpuAutoDetect());
 
         setFormattedStorageName(new EntityModel<String>());
 
@@ -341,13 +346,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         // Choose default CPU name to match host.
         List<ServerCpu> serverCpus = (List<ServerCpu>) getCluster().getCPU().getItems();
-        if (host.getCpuName() != null) {
-            getCluster().getCPU().setSelectedItem(Linq.firstOrNull(
-                    serverCpus, new Linq.ServerCpuPredicate(host.getCpuName().getCpuName())));
-        }
-        else {
-            getCluster().getCPU().setSelectedItem(serverCpus.isEmpty() ? null : serverCpus.get(0));
-        }
+        getCluster().getCPU().setSelectedItem(serverCpus.isEmpty() ? null : serverCpus.get(0));
 
         // Always choose a available storage name.
         List<StorageDomain> storages = context.storageList;

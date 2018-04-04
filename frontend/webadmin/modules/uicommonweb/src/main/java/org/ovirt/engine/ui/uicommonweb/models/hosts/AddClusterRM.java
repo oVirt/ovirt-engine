@@ -88,7 +88,6 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster.setName(clusterName);
                 cluster.setDescription(clusterModel.getDescription().getEntity());
                 cluster.setStoragePoolId(enlistmentContext.getDataCenterId());
-                cluster.setCpuName(clusterModel.getCPU().getSelectedItem().getCpuName());
                 cluster.setMaxVdsMemoryOverCommit(clusterModel.getMemoryOverCommit());
                 cluster.setCountThreadsAsCores(Boolean.TRUE.equals(clusterModel.getVersionSupportsCpuThreads().getEntity())
                         && Boolean.TRUE.equals(clusterModel.getCountThreadsAsCores().getEntity()));
