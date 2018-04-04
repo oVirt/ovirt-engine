@@ -68,5 +68,21 @@ class Plugin(plugin.PluginBase):
             ),
         )
 
+        self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
+            statement="""
+                update sso_clients
+                   set notification_callback = %(notification_callback)s
+                 where client_id = %(client_id)s
+            """,
+            args=dict(
+                notification_callback='https://%s:%s/%s' % (
+                    self.environment[osetupcons.RenameEnv.FQDN],
+                    engine_port,
+                    'ovirt-engine/services/sso-callback',
+                ),
+                client_id='ovirt-engine-core',
+            ),
+        )
+
 
 # vim: expandtab tabstop=4 shiftwidth=4
