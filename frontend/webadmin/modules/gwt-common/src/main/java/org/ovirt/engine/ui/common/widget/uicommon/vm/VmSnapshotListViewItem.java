@@ -273,6 +273,8 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             iconSpan.addStyleName(IconType.EYE.getCssName());
         } else if (SnapshotStatus.LOCKED.equals(getEntity().getStatus())) {
             iconSpan.addStyleName(IconType.LOCK.getCssName());
+        } else if (getEntity().containsMemory()) {
+            iconSpan.addStyleName(IconType.MICROCHIP.getCssName());
         } else {
             iconSpan.addStyleName(IconType.CAMERA.getCssName());
         }
