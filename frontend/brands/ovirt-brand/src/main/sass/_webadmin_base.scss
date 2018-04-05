@@ -84,13 +84,9 @@ here. Please create new partials when it makes sense.
            rgba(0,0,0,0) 100%);
     float: left;
     height: 25px;
-    margin-top: 22px;
+    margin-top: 42px;
     margin-left: 5px;
     margin-right: 5px;
-}
-
-.vm-network-icon {
-    padding-top: 11px;
 }
 
 .nic-speed-drop {
@@ -186,4 +182,46 @@ here. Please create new partials when it makes sense.
 .nav-pf-vertical-collapsible-menus .secondary-nav-item-pf .active .secondary-collapse-toggle-pf {
     opacity: 1;
     pointer-events: all;
+}
+
+.vm-nic-overflow dt, .vm-nic-overflow dd {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.status-icon .fa {
+    font-size: 1em
+}
+
+.vm-nic-info-heading {
+    font-size: 18px;
+    padding-left: 50px;
+    padding-bottom: 20px;
+}
+
+.vm-nic-info-column {
+    border-right: 1px solid #d1d1d1;
+}
+
+.vm-nic-info-row {
+    display: flex;
+}
+
+.vm-nic-info-column sub {
+    bottom: 0px;
+}
+
+.network-list-item .list-view-pf-main-info {
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.network-list-item .list-group-item-heading {
+    width: 100%;
+    font-size: 20px;
+}
+
+.network-list-item .list-view-pf-additional-info > .container {
+    margin-left: 0px;
+    width: 100%;
 }

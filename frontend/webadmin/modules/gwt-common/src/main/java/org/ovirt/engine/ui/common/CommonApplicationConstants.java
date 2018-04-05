@@ -285,8 +285,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String statistics();
 
-    String guestAgentData();
-
     String nicsLabel();
 
     String applicationsLabel();
@@ -632,6 +630,8 @@ public interface CommonApplicationConstants extends Constants {
     String dropsInterface();
 
     String portMirroring();
+
+    String guestInterfaceName();
 
     String plugged();
 
