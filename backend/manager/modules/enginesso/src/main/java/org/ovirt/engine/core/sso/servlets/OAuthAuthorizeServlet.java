@@ -136,7 +136,7 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         String appAuthSeq = ssoContext.getSsoLocalConfig().getProperty("SSO_AUTH_LOGIN_SEQUENCE");
 
         String authSeq = null;
-        if (!SsoUtils.scopeAsList(scopes).contains("ovirt-ext=auth:sequence-priority=")) {
+        if (StringUtils.isEmpty(scopes) || !scopes.contains("ovirt-ext=auth:sequence-priority=")) {
             authSeq = "~";
         } else {
             for (String scope : SsoUtils.scopeAsList(scopes)) {
