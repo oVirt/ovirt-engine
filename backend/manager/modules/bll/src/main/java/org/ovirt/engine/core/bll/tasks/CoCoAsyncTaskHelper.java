@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -51,6 +51,10 @@ public class CoCoAsyncTaskHelper {
     private Instance<AsyncTaskManager> asyncTaskManager;
     @Inject
     private VDSBrokerFrontend resourceManager;
+    @Inject
+    private AsyncTaskDao asyncTaskDao;
+    @Inject
+    private ExecutionHandler executionHandler;
 
     /**
      * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use
@@ -72,7 +76,7 @@ public class CoCoAsyncTaskHelper {
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
         Step taskStep =
-                ExecutionHandler.getInstance().addTaskStep(command.getExecutionContext(),
+                executionHandler.addTaskStep(command.getExecutionContext(),
                         StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
                         description,
                         command.getCommandStepSubjectEntities());
@@ -85,7 +89,7 @@ public class CoCoAsyncTaskHelper {
         AsyncTaskUtils.addOrUpdateTaskInDB(coco.get(), task);
         asyncTaskManager.get().lockAndAddTaskToManager(task);
         Guid vdsmTaskId = task.getVdsmTaskId();
-        ExecutionHandler.getInstance().updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
+        executionHandler.updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
         return vdsmTaskId;
 
     }
@@ -149,7 +153,7 @@ public class CoCoAsyncTaskHelper {
     }
 
     public List<AsyncTask> getAllAsyncTasksFromDb() {
-        List<AsyncTask> asyncTasks = DbFacade.getInstance().getAsyncTaskDao().getAll();
+        List<AsyncTask> asyncTasks = asyncTaskDao.getAll();
         for (AsyncTask asyncTask : asyncTasks) {
             asyncTask.setRootCmdEntity(getCommandEntity(asyncTask.getRootCommandId()));
             asyncTask.setChildCmdEntity(getCommandEntity(asyncTask.getCommandId()));
@@ -178,7 +182,7 @@ public class CoCoAsyncTaskHelper {
      */
     public void saveAsyncTaskToDb(final AsyncTask asyncTask) {
         TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-            DbFacade.getInstance().getAsyncTaskDao().save(asyncTask);
+            asyncTaskDao.save(asyncTask);
             coco.get().persistCommand(asyncTask.getRootCmdEntity());
             coco.get().persistCommand(asyncTask.getChildCmdEntity());
             return null;
@@ -186,7 +190,7 @@ public class CoCoAsyncTaskHelper {
     }
 
     public AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
-        AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(asyncTaskId);
+        AsyncTask asyncTask = asyncTaskDao.get(asyncTaskId);
         if (asyncTask != null) {
             asyncTask.setRootCmdEntity(getCommandEntity(asyncTask.getRootCommandId()));
             asyncTask.setChildCmdEntity(getCommandEntity(asyncTask.getCommandId()));
@@ -196,8 +200,8 @@ public class CoCoAsyncTaskHelper {
 
     public int removeTaskFromDbByTaskId(final Guid taskId) throws RuntimeException {
         return TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-            AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
-            int retVal = DbFacade.getInstance().getAsyncTaskDao().remove(taskId);
+            AsyncTask asyncTask = asyncTaskDao.get(taskId);
+            int retVal = asyncTaskDao.remove(taskId);
             if (shouldRemoveCommand(asyncTask)) {
                 coco.get().removeCommand(asyncTask.getCommandId());
                 if (!coco.get().hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
@@ -224,7 +228,7 @@ public class CoCoAsyncTaskHelper {
     }
 
     public AsyncTask getByVdsmTaskId(Guid vdsmTaskId) {
-        AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
+        AsyncTask asyncTask = asyncTaskDao.getByVdsmTaskId(vdsmTaskId);
         if (asyncTask != null) {
             asyncTask.setRootCmdEntity(getCommandEntity(asyncTask.getRootCommandId()));
             asyncTask.setChildCmdEntity(getCommandEntity(asyncTask.getCommandId()));
@@ -234,8 +238,8 @@ public class CoCoAsyncTaskHelper {
 
     public int removeByVdsmTaskId(final Guid vdsmTaskId) {
         return TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-            AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
-            int retVal = DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(vdsmTaskId);
+            AsyncTask asyncTask = asyncTaskDao.getByVdsmTaskId(vdsmTaskId);
+            int retVal = asyncTaskDao.removeByVdsmTaskId(vdsmTaskId);
             if (shouldRemoveCommand(asyncTask)) {
                 coco.get().removeCommand(asyncTask.getCommandId());
                 if (!coco.get().hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
@@ -254,7 +258,7 @@ public class CoCoAsyncTaskHelper {
                 coco.get().persistCommand(asyncTask.getRootCmdEntity());
             }
             coco.get().persistCommand(asyncTask.getChildCmdEntity());
-            DbFacade.getInstance().getAsyncTaskDao().saveOrUpdate(asyncTask);
+            asyncTaskDao.saveOrUpdate(asyncTask);
             return null;
         });
     }
