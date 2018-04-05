@@ -1122,7 +1122,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getUserName().setEntity(vds.getSshUsername());
         getAuthSshPort().setEntity(vds.getSshPort());
         if (StringHelper.isNotNullOrEmpty(vds.getKernelArgs())) {
-            getCurrentKernelCmdLine().setEntity(constants.currentKernelCmdLine() + vds.getKernelArgs());
+            getCurrentKernelCmdLine().setEntity(constants.currentKernelCmdLine() + " " + vds.getKernelArgs()); //$NON-NLS-1$
         }
         setPort(vds);
         boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
