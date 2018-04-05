@@ -63,6 +63,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     private static final String RATE_DIVIDER = "rate-divider"; // $NON-NLS-1$
     private static final String NIC_SPEED_DROP = "nic-speed-drop"; // $NON-NLS-1$
     private static final String NETWORK_DATA_ROW = "network-data-row"; // $NON-NLS-1$
+    private static final String NETWORK_LIST_ITEM = "network-list-item"; // $NON-NLS-1$
 
     private ExpandableListViewItem logicalNetworkExpand;
 
@@ -74,7 +75,6 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     public HostNetworkInterfaceListViewItem(String name, HostInterfaceLineModel entity) {
         super(name, entity);
         applyHostInterfaceSpecificStyles();
-        expansionLinkContainer.addStyleName(EXPANSION_CONTAINER);
         expansionLinkContainer.add(createDetailAdditionalInfo());
         listGroupItem.add(expansionLinkContainer);
         logicalNetworkContainer = createLogicalNetworkContainer();
@@ -91,13 +91,9 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
 
     private void applyHostInterfaceSpecificStyles() {
         // Modify some styling from a standard list view item to allow for what we are trying to achieve.
-        mainInfoPanel.getElement().getStyle().setPaddingBottom(0, Unit.PX);
-        mainInfoPanel.getElement().getStyle().setPaddingTop(0, Unit.PX);
-        detailedInfoContainer.getElement().getStyle().setMarginLeft(0, Unit.PX);
-        detailedInfoContainer.getElement().getStyle().setWidth(100, Unit.PCT);
+        listGroupItem.addStyleName(NETWORK_LIST_ITEM);
+        expansionLinkContainer.addStyleName(EXPANSION_CONTAINER);
         descriptionPanel.getElement().getStyle().setWidth(10, Unit.PCT);
-        descriptionHeaderPanel.getElement().getStyle().setWidth(100, Unit.PCT);
-        descriptionHeaderPanel.getElement().getStyle().setFontSize(20, Unit.PX);
         descriptionPanel.removeStyleName(PatternflyConstants.PF_LIST_VIEW_DESCRIPTION);
     }
 
