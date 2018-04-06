@@ -24,4 +24,4 @@
   when:
     - ovn_central is defined
     - ovn_central | ipaddr
-    - ovn_engine_cluster_version | version_compare('4.2', '>=')
+    - ovn_engine_cluster_version is version_compare('4.2', '>=')

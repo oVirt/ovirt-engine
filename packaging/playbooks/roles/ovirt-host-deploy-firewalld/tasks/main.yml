@@ -4,7 +4,7 @@
     msg: "VDSM version {{ host_deploy_vdsm_version }} is not supported for FirewallD."
   when:
     - "host_deploy_firewall_type == 'FIREWALLD'"
-    - "host_deploy_vdsm_version | version_compare('4.20', '<')"
+    - "host_deploy_vdsm_version is version_compare('4.20', '<')"
 
 - block:
     - name: Stop iptables service if running
@@ -33,7 +33,7 @@
         state: enabled
 
     - name: Apply default firewalld rules
-      include: firewalld.yml
+      include_tasks: firewalld.yml
       vars:
         firewald_rules_file: firewalld_rules_{{ outer_item.0 }}.yml
 
@@ -45,7 +45,7 @@
         loop_var: outer_item
 
     - name: Apply cluster specific firewalld rules
-      include: firewalld.yml
+      include_tasks: firewalld.yml
       vars:
         firewald_rules_file: firewalld_rules_{{ outer_item.0 }}_{{ host_deploy_cluster_version }}.yml
 
@@ -58,4 +58,4 @@
   when:
     - "host_deploy_override_firewall"
     - "host_deploy_firewall_type == 'FIREWALLD'"
-    - "host_deploy_vdsm_version | version_compare('4.20', '>=')"
+    - "host_deploy_vdsm_version is version_compare('4.20', '>=')"

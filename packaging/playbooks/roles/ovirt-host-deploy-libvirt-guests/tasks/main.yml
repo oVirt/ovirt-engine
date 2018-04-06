@@ -13,4 +13,4 @@
         enabled: yes
 
   when:
-    - "host_deploy_vdsm_version | version_compare('4.20', '>=')"
+    - "host_deploy_vdsm_version is version_compare('4.20', '>=')"
