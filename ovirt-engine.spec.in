@@ -225,7 +225,7 @@ Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	%{name}-dashboard >= 1.2.0
-Requires:	ansible >= 2.4
+Requires:	ansible >= 2.5
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
