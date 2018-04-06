@@ -15,5 +15,5 @@
       when: "host_deploy_post_tasks is defined"
 
     - name: Executing post tasks defined by user
-      include: "{{ host_deploy_post_tasks }}"
+      include_tasks: "{{ host_deploy_post_tasks }}"
       when: "host_deploy_post_tasks is defined and stat_post_tasks.stat.exists"

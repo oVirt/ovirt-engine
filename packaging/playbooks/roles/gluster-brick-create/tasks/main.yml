@@ -42,7 +42,7 @@
     vgname: "{{ vgname }}"
     poolname: "{{ lvname }}_pool"
 
-- include: lvmcache.yml
+- include_tasks: lvmcache.yml
   when: ssd is defined and ssd != ''
 
 - name: Create an xfs filesystem
