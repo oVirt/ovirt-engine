@@ -112,24 +112,6 @@ public class IscsiBondValidator {
         return false;
     }
 
-    private List<Guid> getNetworksMissingInDataCenter(Collection<Guid> networks, Guid dataCenterId) {
-        Set<Guid> existingNetworkIds = new HashSet<>();
-        List<Guid> res = new LinkedList<>();
-
-        List<Network> dcLogicalNetworks = getDBFacade().getNetworkDao().getAllForDataCenter(dataCenterId);
-        for (Network network : dcLogicalNetworks) {
-            existingNetworkIds.add(network.getId());
-        }
-
-        for (Guid id : networks) {
-            if (!existingNetworkIds.contains(id)) {
-                res.add(id);
-            }
-        }
-
-        return res;
-    }
-
     private ValidationResult validateAddedStorageConnections(Collection<String> addedStorageConnections, Guid dataCenterId) {
         if (!addedStorageConnections.isEmpty()) {
             List<String> connectionsNotInDataCenter = getStorageConnectionsMissingInDataCenter(addedStorageConnections, dataCenterId);
