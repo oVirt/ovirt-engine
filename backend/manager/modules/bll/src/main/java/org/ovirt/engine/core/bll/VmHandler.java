@@ -1063,7 +1063,8 @@ public class VmHandler implements BackendService {
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase, Version clusterVersion) {
-        Version version = CompatibilityVersionUtils.getEffective(vmBase.getCustomCompatibilityVersion(), () -> clusterVersion);
+        Version version = CompatibilityVersionUtils.getEffective(vmBase.getCustomCompatibilityVersion(),
+                () -> clusterVersion);
 
         if (FeatureSupported.isResumeBehaviorSupported(version)) {
             if (vmBase.isAutoStartup() && vmBase.getLeaseStorageDomainId() != null) {

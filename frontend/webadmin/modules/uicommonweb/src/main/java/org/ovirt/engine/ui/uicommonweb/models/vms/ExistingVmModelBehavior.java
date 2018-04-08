@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -230,7 +230,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 null : getModel().getCustomCompatibilityVersion().getSelectedItem();
         Version newClusterVersion = getModel().getSelectedCluster() == null ?
                 null : getModel().getSelectedCluster().getCompatibilityVersion();
-        Version newVmEffectiveVersion = CommonCompatibilityVersionUtils.getEffective(newVmCustomCompatibilityVersion,
+        Version newVmEffectiveVersion = CompatibilityVersionUtils.getEffective(newVmCustomCompatibilityVersion,
                 newClusterVersion, Version.getLast());
 
         return oldVmEffectiveVersion.equals(newVmEffectiveVersion);

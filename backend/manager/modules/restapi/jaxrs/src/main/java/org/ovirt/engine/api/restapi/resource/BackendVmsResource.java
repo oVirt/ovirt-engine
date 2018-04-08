@@ -91,7 +91,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -484,7 +484,7 @@ public class BackendVmsResource extends
         if (devices != null && !devices.isEmpty()) {
             final VmRngDevice rngDevice = devices.get(0);
             final Version effectiveVersion =
-                    CommonCompatibilityVersionUtils.getEffective(vmStatic.getCustomCompatibilityVersion(),
+                    CompatibilityVersionUtils.getEffective(vmStatic.getCustomCompatibilityVersion(),
                             cluster.getCompatibilityVersion(),
                             null);
             rngDevice.updateSourceByVersion(effectiveVersion);

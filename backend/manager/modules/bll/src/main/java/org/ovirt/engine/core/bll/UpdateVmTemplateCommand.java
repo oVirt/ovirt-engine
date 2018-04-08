@@ -160,7 +160,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
-        Version effectiveCompatibilityVersion = CompatibilityVersionUtils.getEffective(getParameters().getVmTemplateData(), this::getCluster);
+        Version effectiveCompatibilityVersion =
+                CompatibilityVersionUtils.getEffective(getParameters().getVmTemplateData(), this::getCluster);
         if (getParameters().getVmTemplateData().getVmType() == VmType.HighPerformance
                 && !FeatureSupported.isHighPerformanceTypeSupported(effectiveCompatibilityVersion)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_HIGH_PERFORMANCE_IS_NOT_SUPPORTED,

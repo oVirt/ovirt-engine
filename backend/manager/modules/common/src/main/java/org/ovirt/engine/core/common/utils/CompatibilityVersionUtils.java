@@ -7,7 +7,18 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Version;
 
-public class CompatibilityVersionUtils extends  CommonCompatibilityVersionUtils {
+public class CompatibilityVersionUtils {
+
+    public static Version getEffective(Version vmCustomCompatibilityVersion,
+            Version clusterCompatibilityVersion, Version defaultVersion) {
+        if (vmCustomCompatibilityVersion != null) {
+            return vmCustomCompatibilityVersion;
+        }
+        if (clusterCompatibilityVersion != null) {
+            return clusterCompatibilityVersion;
+        }
+        return defaultVersion;
+    }
 
     public static Version getEffective(Version vmCustomCompatibilityVersion,
             Supplier<Version> clusterCompatibilityVersionSupplier) {
@@ -26,10 +37,7 @@ public class CompatibilityVersionUtils extends  CommonCompatibilityVersionUtils 
     public static Version getEffective(VmBase vmBase, Cluster cluster) {
         Version vmCustomCompatibilityVersion = vmBase != null ? vmBase.getCustomCompatibilityVersion() : null;
         Version clusterCompatibilityVersion = cluster != null ? cluster.getCompatibilityVersion() : null;
-        return CompatibilityVersionUtils.getEffective(
-                vmCustomCompatibilityVersion,
-                clusterCompatibilityVersion,
-                Version.getLast());
+        return getEffective(vmCustomCompatibilityVersion, clusterCompatibilityVersion, Version.getLast());
     }
 
     public static Version getEffective(VmBase vmBase, Supplier<Cluster> clusterSupplier) {
@@ -44,4 +52,5 @@ public class CompatibilityVersionUtils extends  CommonCompatibilityVersionUtils 
     public static Version getEffective(VM vm, Supplier<Cluster> clusterSupplier) {
         return getEffective(vm != null ? vm.getStaticData() : null, clusterSupplier);
     }
+
 }

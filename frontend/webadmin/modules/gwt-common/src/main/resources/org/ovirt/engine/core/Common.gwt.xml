@@ -334,7 +334,7 @@
         <include name="common/businessentities/Entities.java"/>
         <include name="common/utils/ToStringBuilder.java"/>
         <include name="common/utils/NetworkCommonUtils.java"/>
-        <include name="common/utils/CommonCompatibilityVersionUtils.java"/>
+        <include name="common/utils/CompatibilityVersionUtils.java"/>
         <include name="common/utils/MathUtils.java"/>
 
         <!-- TODO: Remove when UI will be refactored to use FenceProxySourceType -->
