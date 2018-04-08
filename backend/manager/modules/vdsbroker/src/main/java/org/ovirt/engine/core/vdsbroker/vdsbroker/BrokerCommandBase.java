@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -255,15 +253,9 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
     @SuppressWarnings("unchecked")
     protected void printReturnValue() {
         if (getReturnValueFromBroker() != null && getIsPrintReturnValue()) {
-            String returnValue;
             StringBuilder builder = new StringBuilder();
-            if (getReturnValueFromBroker() instanceof Map) {
-                ObjectDescriptor.toStringBuilder((Map<String, ?>) getReturnValueFromBroker(), builder);
-                returnValue = builder.toString();
-            } else {
-                returnValue = getReturnValueFromBroker().toString();
-            }
-            log.info("Command '{}' return value '{}'", getClass().getName(), returnValue);
+            ObjectDescriptor.toStringBuilder(getReturnValueFromBroker(), builder);
+            log.info("Command '{}' return value '{}'", getClass().getName(), builder.toString());
             if (!StringUtils.isEmpty(getAdditionalInformation())) {
                 log.info(getAdditionalInformation());
             }
