@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.connection.iscsibond;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.IscsiBondValidator;
@@ -15,6 +17,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseIscsiBondCommand<T> {
+    @Inject
+    private IscsiBondValidator validator;
 
     public AddIscsiBondCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -26,7 +30,6 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
 
     @Override
     protected boolean validate() {
-        IscsiBondValidator validator = new IscsiBondValidator();
         return validate(validator.iscsiBondWithTheSameNameExistInDataCenter(getIscsiBond())) &&
                 validate(validator.validateAddedLogicalNetworks(getIscsiBond())) &&
                 validate(validator.validateAddedStorageConnections(getIscsiBond()));

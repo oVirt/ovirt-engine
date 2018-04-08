@@ -24,7 +24,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends BaseIscsiBondCommand<T> {
-
+    @Inject
+    private IscsiBondValidator validator;
     @Inject
     private AuditLogDirector auditLogDirector;
 
@@ -47,8 +48,6 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
 
     @Override
     protected boolean validate() {
-        IscsiBondValidator validator = new IscsiBondValidator();
-
         if (!validate(validator.isIscsiBondExist(getExistingIscsiBond()))) {
             return false;
         }

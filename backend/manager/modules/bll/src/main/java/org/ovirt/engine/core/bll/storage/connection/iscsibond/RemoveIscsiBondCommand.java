@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.connection.iscsibond;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.IscsiBondValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -9,6 +11,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends BaseIscsiBondCommand<T> {
+    @Inject
+    private IscsiBondValidator validator;
 
     private IscsiBond iscsiBond;
 
@@ -18,7 +22,6 @@ public class RemoveIscsiBondCommand<T extends RemoveIscsiBondParameters> extends
 
     @Override
     protected boolean validate() {
-        IscsiBondValidator validator = new IscsiBondValidator();
         return validate(validator.isIscsiBondExist(getIscsiBond()));
     }
 

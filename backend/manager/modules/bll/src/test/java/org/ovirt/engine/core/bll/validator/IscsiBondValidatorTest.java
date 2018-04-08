@@ -4,15 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -31,8 +29,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IscsiBondValidatorTest {
-    @Mock
-    private DbFacade dbFacade;
     @Mock
     private IscsiBondDao iscsiBondDao;
     @Mock
@@ -42,18 +38,8 @@ public class IscsiBondValidatorTest {
     @Mock
     private StorageServerConnectionDao storageServerConnectionDao;
 
+    @InjectMocks
     private IscsiBondValidator validator;
-
-    @Before
-    public void setUp() {
-        validator = spy(new IscsiBondValidator());
-
-        doReturn(dbFacade).when(validator).getDBFacade();
-        doReturn(iscsiBondDao).when(dbFacade).getIscsiBondDao();
-        doReturn(networkDao).when(dbFacade).getNetworkDao();
-        doReturn(networkClusterDao).when(dbFacade).getNetworkClusterDao();
-        doReturn(storageServerConnectionDao).when(dbFacade).getStorageServerConnectionDao();
-    }
 
     @Test
     public void iscsiBondExists() {
