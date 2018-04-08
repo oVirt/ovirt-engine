@@ -165,6 +165,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
+    private BiosType biosType;
+
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)
     @ValidI18NExtraName(message = "ACTION_TYPE_FAILED_CPU_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class })
@@ -395,6 +400,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         customProperties = "";
         consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
         resumeBehavior = VmResumeBehavior.AUTO_RESUME;
+        biosType = BiosType.I440FX_SEA_BIOS;
     }
 
     @EditableVmField
@@ -569,6 +575,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getPredefinedProperties(),
                 vmBase.getCustomProperties(),
                 vmBase.getCustomEmulatedMachine(),
+                vmBase.getBiosType(),
                 vmBase.getCustomCpuName(),
                 vmBase.getSmallIconId(),
                 vmBase.getLargeIconId(),
@@ -638,6 +645,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             String predefinedProperties,
             String customProperties,
             String customEmulatedMachine,
+            BiosType biosType,
             String customCpuName,
             Guid smallIconId,
             Guid largeIconId,
@@ -705,6 +713,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.predefinedProperties = predefinedProperties;
         this.customProperties = customProperties;
         this.customEmulatedMachine = customEmulatedMachine;
+        this.biosType = biosType;
         this.customCpuName = customCpuName;
         this.smallIconId = smallIconId;
         this.largeIconId = largeIconId;
@@ -1121,6 +1130,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 predefinedProperties,
                 userDefinedProperties,
                 customEmulatedMachine,
+                biosType,
                 customCpuName,
                 smallIconId,
                 largeIconId,
@@ -1189,6 +1199,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(predefinedProperties, other.predefinedProperties)
                 && Objects.equals(userDefinedProperties, other.userDefinedProperties)
                 && Objects.equals(customEmulatedMachine, other.customEmulatedMachine)
+                && biosType == other.biosType
                 && Objects.equals(customCpuName, other.customCpuName)
                 && Objects.equals(smallIconId, other.smallIconId)
                 && Objects.equals(largeIconId, other.largeIconId)
@@ -1474,6 +1485,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setCustomEmulatedMachine(String customEmulatedMachine) {
         this.customEmulatedMachine = customEmulatedMachine == null || customEmulatedMachine.trim().isEmpty() ? null : customEmulatedMachine;
+    }
+
+    public BiosType getBiosType() {
+        return biosType;
+    }
+
+    public void setBiosType(BiosType biosType) {
+        this.biosType = biosType;
     }
 
     public String getCustomCpuName() {

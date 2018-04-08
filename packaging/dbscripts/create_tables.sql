@@ -2809,6 +2809,7 @@ CREATE TABLE vm_static (
     is_auto_converge boolean,
     is_migrate_compressed boolean,
     custom_emulated_machine character varying(40),
+    bios_type integer DEFAULT 0 NOT NULL,
     custom_cpu_name character varying(40),
     small_icon_id uuid,
     large_icon_id uuid,

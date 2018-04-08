@@ -74,6 +74,7 @@
         <include name="common/businessentities/VmWithStatusForExclusiveLock.java" />
         <include name="common/businessentities/HugePage.java" />
         <include name="common/businessentities/ConsoleTargetType.java" />
+        <include name="common/businessentities/BiosType.java" />
 
         <!-- Network business entities -->
         <include name="common/businessentities/network/VdsNetworkInterface.java" />

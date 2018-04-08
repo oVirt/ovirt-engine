@@ -233,6 +233,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.vmStatic.setCustomEmulatedMachine(value);
     }
 
+    public BiosType getBiosType() {
+        return this.vmStatic.getBiosType();
+    }
+
+    public void setBiosType(BiosType biosType) {
+        this.vmStatic.setBiosType(biosType);
+    }
+
     public String getStopReason() {
         return this.vmDynamic.getStopReason();
     }
