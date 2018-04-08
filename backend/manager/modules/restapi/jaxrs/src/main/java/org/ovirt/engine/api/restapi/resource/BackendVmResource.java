@@ -519,7 +519,7 @@ public class BackendVmResource
         params.setDirectory(action.getDirectory());
         params.setName(action.getFilename());
 
-        return doAction(ActionType.ExportOva, params, action);
+        return doAction(ActionType.ExportVmToOva, params, action);
     }
 
     @Override

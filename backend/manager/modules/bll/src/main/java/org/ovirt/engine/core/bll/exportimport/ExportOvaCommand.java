@@ -19,8 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.CreateOvaCommand;
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
-import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -33,7 +31,6 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -45,6 +42,7 @@ import org.ovirt.engine.core.common.action.ExportOvaParameters.Phase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -56,7 +54,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
@@ -69,8 +66,7 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
-@NonTransactiveCommandAttribute
-public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase<T> implements SerialChildExecutingCommand {
+public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase<T> implements SerialChildExecutingCommand {
 
     @Inject
     private DiskDao diskDao;
@@ -90,8 +86,7 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
 
     @Override
     protected void init() {
-        setVmId(getParameters().getEntityId());
-        if (getVm() == null) {
+        if (getEntity() == null) {
             return;
         }
         String path = getParameters().getDirectory();
@@ -101,7 +96,6 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
         if (StringUtils.isEmpty(getParameters().getName())) {
             getParameters().setName(String.format("%s.ova", getVm().getName()));
         }
-        setStoragePoolId(getVm().getStoragePoolId());
         setVdsId(getParameters().getProxyHostId());
         if (getParameters().getDiskInfoDestinationMap() == null) {
             // TODO: map to different storage domains
@@ -112,12 +106,10 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
         }
     }
 
+    protected abstract Nameable getEntity();
+
     @Override
     protected boolean validate() {
-        if (getVm() == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-        }
-
         if (getParameters().getProxyHostId() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROXY_HOST_MUST_BE_SPECIFIED);
         }
@@ -330,33 +322,10 @@ public class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase
         return lockProperties.withScope(Scope.Command);
     }
 
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getEntityId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-    };
-
     @Override
     protected void endWithFailure() {
         removeTemporaryDisks();
         super.endWithFailure();
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ?
-                    AuditLogType.IMPORTEXPORT_STARTING_EXPORT_VM_TO_OVA
-                    : AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
-
-        case END_SUCCESS:
-            return getSucceeded() ?
-                    AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA
-                    : AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
-
-        default:
-            return AuditLogType.IMPORTEXPORT_EXPORT_VM_TO_OVA_FAILED;
-        }
     }
 
     @Override

@@ -29,7 +29,7 @@ public enum ActionType {
     ExportVm(23, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     ExportVmTemplate(24, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     RestoreStatelessVm(25, QuotaDependency.NONE),
-    ExportOva(26, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    ExportVmToOva(26, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     CreateOva(27, QuotaDependency.NONE),
     AddVmInterface(28, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),

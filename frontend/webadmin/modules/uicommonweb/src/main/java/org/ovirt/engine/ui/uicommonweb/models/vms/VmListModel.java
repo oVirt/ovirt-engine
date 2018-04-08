@@ -1166,7 +1166,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(parameters);
         }
 
-        Frontend.getInstance().runMultipleAction(ActionType.ExportOva, list,
+        Frontend.getInstance().runMultipleAction(ActionType.ExportVmToOva, list,
                 result -> {
                     ExportOvaModel localModel = (ExportOvaModel) result.getState();
                     localModel.stopProgress();
