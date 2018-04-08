@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.dal;
 
-import java.util.Arrays;
-import java.util.Map;
-
+import org.ovirt.engine.core.utils.ObjectDescriptor;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -31,7 +29,9 @@ public abstract class VdcCommandBase {
 
         try {
             executeCommand();
-            LoggedUtils.logReturn(log, logId, this, getReturnValue() != null && getReturnValue() instanceof Map[] ? Arrays.asList((Map[])getReturnValue()) : getReturnValue());
+            StringBuilder builder = new StringBuilder();
+            ObjectDescriptor.toStringBuilder(getReturnValue(), builder);
+            LoggedUtils.logReturn(log, logId, this, builder.toString());
         } catch (Exception e) {
             LoggedUtils.logError(log, logId, this, e);
             IllegalStateException ise = new IllegalStateException();

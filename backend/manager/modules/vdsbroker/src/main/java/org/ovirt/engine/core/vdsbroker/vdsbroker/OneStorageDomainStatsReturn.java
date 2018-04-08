@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
+import org.ovirt.engine.core.utils.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 
 @SuppressWarnings("unchecked")

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
-import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
+import org.ovirt.engine.core.utils.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

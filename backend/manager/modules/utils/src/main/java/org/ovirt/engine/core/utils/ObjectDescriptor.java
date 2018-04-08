@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker;
+package org.ovirt.engine.core.utils;
 
 import java.util.Arrays;
 import java.util.Iterator;

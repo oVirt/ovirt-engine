@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
+import org.ovirt.engine.core.utils.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;

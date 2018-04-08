@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.ObjectDescriptor;
+import org.ovirt.engine.core.utils.ObjectDescriptor;
 
 public final class GetVmsInfoReturn extends StatusReturn {
     private static final String VM_LIST = "vmlist";
