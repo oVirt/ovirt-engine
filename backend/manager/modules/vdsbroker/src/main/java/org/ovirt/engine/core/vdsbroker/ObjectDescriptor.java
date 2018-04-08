@@ -1,60 +1,51 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 
 public class ObjectDescriptor {
-    public static void toStringBuilder(Map<String, ?> map, StringBuilder builder) {
-        if (map == null) {
+
+    public static void toStringBuilder(Object object, StringBuilder builder) {
+        if (object == null) {
             return;
         }
 
-        for (Map.Entry<String, ?> entry : map.entrySet()) {
-            if (entry.getValue() instanceof Map) {
-                builder.append(String.format("%1$s:", entry.getKey()));
-                builder.append("\n");
-                toStringBuilder((Map<String, Object>) entry.getValue(), builder);
-                builder.append("\n");
-            } else if (!(entry.getValue() instanceof String) && entry.getValue() instanceof Iterable) {
-                builder.append(String.format("%1$s:", entry.getKey()));
-                builder.append("\n");
-                toStringBuilder((Iterable) entry.getValue(), builder);
-                builder.append("\n");
-            } else if (entry.getValue() instanceof Object[]) {
-                builder.append(String.format("%1$s:", entry.getKey()));
-                builder.append("\n");
-                builder.append(Arrays.deepToString((Object[]) entry.getValue()));
-                builder.append("\n");
-            } else {
-                builder.append(String.format("%1$s = %2$s", entry.getKey(), entry.getValue().toString()));
-                builder.append("\n");
-            }
+        if (object instanceof Iterable) {
+            toStringBuilder((Iterable<Object>) object, builder);
+        } else if (object instanceof Object[]) {
+                toStringBuilder(Arrays.asList((Object[]) object), builder);
+        } else if (object instanceof Map) {
+            toStringBuilder((Map<String, Object>) object, builder);
+        } else {
+            builder.append(object.toString());
         }
     }
 
-    public static void toStringBuilder(Map[] map, StringBuilder builder) {
-        if (map == null) {
-            return;
+    private static void toStringBuilder(Map<String, ?> map, StringBuilder builder) {
+        builder.append("{");
+        Iterator<? extends Map.Entry<String, ?>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, ?> entry = iterator.next();
+            builder.append(String.format("%1$s=", entry.getKey()));
+            toStringBuilder(entry.getValue(), builder);
+            if (iterator.hasNext()) {
+                builder.append(", ");
+            }
         }
-
-        for (Map entry : map) {
-            toStringBuilder(entry, builder);
-        }
+        builder.append("}");
     }
 
     private static void toStringBuilder(Iterable iterable, StringBuilder builder) {
-        if (iterable == null) {
-            return;
-        }
-
-        for (Object value : iterable) {
-            if (value instanceof Iterable) {
-                toStringBuilder((Iterable) value, builder);
-            } else {
-                builder.append(value.toString());
-                builder.append("\n");
+        builder.append("[");
+        Iterator<Object> iterator = iterable.iterator();
+        while (iterator.hasNext()) {
+            toStringBuilder(iterator.next(), builder);
+            if (iterator.hasNext()) {
+                builder.append(", ");
             }
         }
+        builder.append("]");
     }
 
 }
