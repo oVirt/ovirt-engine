@@ -118,7 +118,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
         removeInvalidUsers(getImportValidator());
         removeInavlidRoles(getImportValidator());
-        return super.validate();
+        return true;
     }
 
     private void updateVnicsFromMapping() {
