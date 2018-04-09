@@ -73,9 +73,9 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteLUN (v_LUN_id VARCHAR(50))
+CREATE OR REPLACE FUNCTION DeleteLUN (v_LUN_id VARCHAR(255))
 RETURNS VOID AS $PROCEDURE$
-DECLARE v_val VARCHAR(50);
+DECLARE v_val VARCHAR(255);
 
 BEGIN
     -- Get (and keep) a shared lock with "right to upgrade to exclusive"
