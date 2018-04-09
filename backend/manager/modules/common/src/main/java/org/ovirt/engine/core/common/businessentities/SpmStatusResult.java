@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
 public class SpmStatusResult implements Serializable {
     private static final long serialVersionUID = 7385117784725872207L;
     private SpmStatus spmStatus;
@@ -36,5 +38,14 @@ public class SpmStatusResult implements Serializable {
 
     public SpmStatusResult() {
         spmStatus = SpmStatus.SPM;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("SPM Id", spmId)
+                .append("SPM LVER", spmLVER)
+                .append("SPM Status", spmStatus)
+                .build();
     }
 }
