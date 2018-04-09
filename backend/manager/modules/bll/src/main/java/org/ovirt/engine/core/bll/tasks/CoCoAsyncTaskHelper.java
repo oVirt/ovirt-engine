@@ -44,6 +44,8 @@ public class CoCoAsyncTaskHelper {
     @Inject
     private AsyncTaskFactory asyncTaskFactory;
     @Inject
+    private AsyncTaskUtils asyncTaskUtils;
+    @Inject
     private Instance<CommandCoordinator> coco;
     @Inject
     private Instance<CommandsRepository> commandsRepositoryInstance;
@@ -86,7 +88,7 @@ public class CoCoAsyncTaskHelper {
         }
         SPMAsyncTask task = concreteCreateTask(taskId, command, asyncTaskCreationInfo, parentCommand);
         task.setEntitiesMap(entitiesMap);
-        AsyncTaskUtils.addOrUpdateTaskInDB(coco.get(), task);
+        asyncTaskUtils.addOrUpdateTaskInDB(coco.get(), task);
         asyncTaskManager.get().lockAndAddTaskToManager(task);
         Guid vdsmTaskId = task.getVdsmTaskId();
         executionHandler.updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);

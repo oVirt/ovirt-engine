@@ -65,6 +65,9 @@ public final class AsyncTaskManager implements BackendService {
     private AsyncTaskFactory asyncTaskFactory;
 
     @Inject
+    private AsyncTaskUtils asyncTaskUtils;
+
+    @Inject
     private CommandCoordinator coco;
 
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskManager.class);
@@ -684,7 +687,7 @@ public final class AsyncTaskManager implements BackendService {
 
                 TransactionSupport.executeInNewTransaction(() -> {
                     for (SPMTask task : newlyAddedTasks) {
-                        AsyncTaskUtils.addOrUpdateTaskInDB(coco, task);
+                        asyncTaskUtils.addOrUpdateTaskInDB(coco, task);
                     }
                     return null;
                 });
