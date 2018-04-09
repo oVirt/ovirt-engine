@@ -3,38 +3,38 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 public class SpmStatusResult implements Serializable {
-    private static final long serialVersionUID = -2043744550859733845L;
-    private SpmStatus privateSpmStatus;
+    private static final long serialVersionUID = 7385117784725872207L;
+    private SpmStatus spmStatus;
 
     public SpmStatus getSpmStatus() {
-        return privateSpmStatus;
+        return spmStatus;
     }
 
     public void setSpmStatus(SpmStatus value) {
-        privateSpmStatus = value;
+        spmStatus = value;
     }
 
-    private String privateSpmLVER;
+    private String spmLVER;
 
     public String getSpmLVER() {
-        return privateSpmLVER;
+        return spmLVER;
     }
 
     public void setSpmLVER(String value) {
-        privateSpmLVER = value;
+        spmLVER = value;
     }
 
-    private int privateSpmId;
+    private int spmId;
 
     public int getSpmId() {
-        return privateSpmId;
+        return spmId;
     }
 
     public void setSpmId(int value) {
-        privateSpmId = value;
+        spmId = value;
     }
 
     public SpmStatusResult() {
-        privateSpmStatus = SpmStatus.SPM;
+        spmStatus = SpmStatus.SPM;
     }
 }
