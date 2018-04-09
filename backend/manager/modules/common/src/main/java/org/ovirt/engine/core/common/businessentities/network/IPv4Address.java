@@ -7,6 +7,10 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.Ipv4;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
 
+/**
+ * To represent no address, no gateway or no netmask use {@code null};
+ * Do NOT use an empty string.
+ */
 public class IPv4Address implements Serializable {
     private static final long serialVersionUID = -3762999158282212711L;
 

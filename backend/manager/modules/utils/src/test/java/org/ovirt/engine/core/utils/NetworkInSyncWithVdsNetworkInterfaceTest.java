@@ -469,12 +469,10 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv4GatewayBothBlank() {
-        List<String> blankValues = Arrays.asList(null, "");
+    public void testIsNetworkInSyncWhenIpv4GatewayBothNull() {
         initIpv4ConfigurationStaticBootProtocol(Ipv4BootProtocol.STATIC_IP);
-        int blankIndex = RandomUtils.instance().nextInt(2);
-        ipv4Address.setGateway(blankValues.get(blankIndex));
-        iface.setIpv4Gateway(blankValues.get(blankIndex ^ 1));
+        ipv4Address.setGateway(null);
+        iface.setIpv4Gateway(null);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 
@@ -602,12 +600,10 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testIsNetworkInSyncWhenIpv6GatewayBothBlank() {
-        List<String> blankValues = Arrays.asList(null, "");
+    public void testIsNetworkInSyncWhenIpv6GatewayBothNull() {
         initIpv6ConfigurationStaticBootProtocol(Ipv6BootProtocol.STATIC_IP);
-        int blankIndex = RandomUtils.instance().nextInt(2);
-        ipv6Address.setGateway(blankValues.get(blankIndex));
-        iface.setIpv6Gateway(blankValues.get(blankIndex ^ 1));
+        ipv6Address.setGateway(null);
+        iface.setIpv6Gateway(null);
         assertThat(createTestedInstance().isNetworkInSync(), is(true));
     }
 

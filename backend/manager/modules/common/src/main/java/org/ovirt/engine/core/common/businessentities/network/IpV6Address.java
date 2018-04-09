@@ -9,6 +9,10 @@ import javax.validation.constraints.Min;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.Ipv6;
 
+/**
+ * To represent no address or no gateway use {@code null};
+ * Do NOT use an empty string.
+ */
 public class IpV6Address implements Serializable {
     private static final long serialVersionUID = 5112759833343439658L;
 

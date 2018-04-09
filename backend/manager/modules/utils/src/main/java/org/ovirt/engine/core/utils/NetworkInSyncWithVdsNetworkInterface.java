@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
@@ -115,8 +114,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
     private boolean isIpv4GatewayInSync() {
         String gatewayDesiredValue = getIpv4PrimaryAddress().getGateway();
         String gatewayActualValue = iface.getIpv4Gateway();
-        boolean bothBlank = StringUtils.isBlank(gatewayDesiredValue) && StringUtils.isBlank(gatewayActualValue);
-        return bothBlank || Objects.equals(gatewayDesiredValue, gatewayActualValue);
+        return Objects.equals(gatewayDesiredValue, gatewayActualValue);
     }
 
     private boolean isIpv6PrefixInSync() {
@@ -126,8 +124,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
     private boolean isIpv6GatewayInSync() {
         String gatewayDesiredValue = getIpv6PrimaryAddress().getGateway();
         String gatewayActualValue = iface.getIpv6Gateway();
-        boolean bothBlank = StringUtils.isBlank(gatewayDesiredValue) && StringUtils.isBlank(gatewayActualValue);
-        return bothBlank || Objects.equals(gatewayDesiredValue, gatewayActualValue);
+        return Objects.equals(gatewayDesiredValue, gatewayActualValue);
     }
 
     private SubnetUtils getsSubnetUtilsInstance() {

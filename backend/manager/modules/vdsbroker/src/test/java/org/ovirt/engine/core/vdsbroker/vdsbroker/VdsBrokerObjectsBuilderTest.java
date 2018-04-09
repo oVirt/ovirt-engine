@@ -26,6 +26,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
+import com.google.common.collect.ImmutableMap;
+
 public class VdsBrokerObjectsBuilderTest {
     private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder = new VdsBrokerObjectsBuilder();
 
@@ -391,5 +393,31 @@ public class VdsBrokerObjectsBuilderTest {
     @Test
     public void testExtractProperIpv6AddressMultipleSlashes() {
         assertThat(vdsBrokerObjectsBuilder.extractIpv6Address(":/:/123"), is(":/:/123"));
+    }
+
+    @Test
+    public void testExtractIpv6AddressEmptyString() {
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Address(""), nullValue());
+    }
+
+
+    @Test
+    public void testExtractIpv6GatewayEmptyString() {
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Gateway(ImmutableMap.of(VdsProperties.IPV6_GLOBAL_GATEWAY, "")), nullValue());
+    }
+
+    @Test
+    public void testExtractIpv4AddressEmptyString() {
+        assertThat(vdsBrokerObjectsBuilder.extractAddress(ImmutableMap.of(VdsProperties.ADDR, "")), nullValue());
+    }
+
+    @Test
+    public void testExtractIpv4SubnetEmptyString() {
+        assertThat(vdsBrokerObjectsBuilder.extractSubnet(ImmutableMap.of(VdsProperties.NETMASK, "")), nullValue());
+    }
+
+    @Test
+    public void testExtractIpv4GatewayEmptyString() {
+        assertThat(vdsBrokerObjectsBuilder.extractGateway(ImmutableMap.of(VdsProperties.GLOBAL_GATEWAY, "")), nullValue());
     }
 }

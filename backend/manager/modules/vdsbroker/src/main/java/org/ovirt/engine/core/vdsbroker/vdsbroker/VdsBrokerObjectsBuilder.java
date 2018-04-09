@@ -1896,21 +1896,23 @@ public class VdsBrokerObjectsBuilder {
                                     bridgeProperties : networkProperties;
                     String v4addr = extractAddress(effectiveProperties);
                     String v4Subnet = extractSubnet(effectiveProperties);
-                    String v4gateway = (String) effectiveProperties.get(VdsProperties.GLOBAL_GATEWAY);
+                    String v4gateway = extractGateway(effectiveProperties);
                     boolean v4DefaultRoute = assignBoolValue(effectiveProperties, VdsProperties.IPV4_DEFAULT_ROUTE);
 
                     final String rawIpv6Address = getIpv6Address(effectiveProperties);
                     String v6Addr = extractIpv6Address(rawIpv6Address);
                     Integer v6Prefix = extractIpv6Prefix(rawIpv6Address);
-                    String v6gateway = (String) effectiveProperties.get(VdsProperties.IPV6_GLOBAL_GATEWAY);
+                    String v6gateway = extractIpv6Gateway(effectiveProperties);
 
                     List<VdsNetworkInterface> interfaces = findNetworkInterfaces(vdsInterfaces, interfaceName, bridgeProperties);
                     for (VdsNetworkInterface iface : interfaces) {
                         iface.setNetworkName(networkName);
                         iface.setIpv4Address(v4addr);
                         iface.setIpv4Subnet(v4Subnet);
+                        iface.setIpv4Gateway(v4gateway);
                         iface.setIpv4DefaultRoute(v4DefaultRoute);
                         iface.setIpv6Address(v6Addr);
+                        iface.setIpv6Gateway(v6gateway);
                         iface.setIpv6Prefix(v6Prefix);
                         iface.setBridged(bridgedNetwork);
                         iface.setReportedSwitchType(switchType);
@@ -1919,14 +1921,6 @@ public class VdsBrokerObjectsBuilder {
                         // set the management ip
                         if (getManagementNetworkUtil().isManagementNetwork(iface.getNetworkName(), host.getClusterId())) {
                             iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
-                        }
-
-                        if (StringUtils.isNotEmpty(v4gateway)) {
-                            iface.setIpv4Gateway(v4gateway);
-                        }
-
-                        if (StringUtils.isNotEmpty(v6gateway)) {
-                            iface.setIpv6Gateway(v6gateway);
                         }
 
                         if (bridgedNetwork) {
@@ -2248,12 +2242,25 @@ public class VdsBrokerObjectsBuilder {
         return null;
     }
 
-    private static String extractAddress(Map<String, Object> properties) {
-        return (String) properties.get("addr");
+    String extractAddress(Map<String, Object> properties) {
+        return extractNonEmptyProperty(properties, VdsProperties.ADDR);
     }
 
-    private static String extractSubnet(Map<String, Object> properties) {
-        return (String) properties.get("netmask");
+    String extractSubnet(Map<String, Object> properties) {
+        return extractNonEmptyProperty(properties, VdsProperties.NETMASK);
+    }
+
+    String extractGateway(Map<String, Object> properties) {
+        return extractNonEmptyProperty(properties, VdsProperties.GLOBAL_GATEWAY);
+    }
+
+    String extractIpv6Gateway(Map<String, Object> properties) {
+        return extractNonEmptyProperty(properties, VdsProperties.IPV6_GLOBAL_GATEWAY);
+    }
+
+    private String extractNonEmptyProperty(Map<String, Object> properties, String name) {
+        String value = (String) properties.get(name);
+        return StringUtils.isEmpty(value) ? null : value;
     }
 
     private static String getIpv6Address(Map<String, Object> properties) {

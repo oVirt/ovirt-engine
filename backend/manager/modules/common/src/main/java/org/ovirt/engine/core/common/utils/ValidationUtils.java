@@ -28,6 +28,7 @@ public class ValidationUtils {
     public static final String NO_TRIMMING_WHITE_SPACES_PATTERN = "^$|\\S.*\\S|^\\S+$";
     public static final String IPV4_PATTERN_NON_EMPTY =
             "\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)";
+    // IPv4 pattern should not match the empty string because 'no entry' is represented in engine with null
     public static final String IPV4_PATTERN = "^" + IPV4_PATTERN_NON_EMPTY;
     private static final String IPV6_ADDRESS_BLOCK = "[0-9a-fA-F]{1,4}";
     private static final String IPV6_HEX_COMPRESSED_PATTERN =
