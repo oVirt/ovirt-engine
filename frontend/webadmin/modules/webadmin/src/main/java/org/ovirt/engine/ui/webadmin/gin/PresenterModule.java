@@ -1473,6 +1473,10 @@ public class PresenterModule extends BasePresenterModule {
         bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<GlusterVolumeEntity>>(){},
             new TypeLiteral<ActionPanelView<GlusterVolumeEntity>>(){});
 
+        // Events
+        bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<AuditLog>>(){},
+                new TypeLiteral<ActionPanelView<AuditLog>>(){});
+
         // Main section: popups
 
         // Permissions

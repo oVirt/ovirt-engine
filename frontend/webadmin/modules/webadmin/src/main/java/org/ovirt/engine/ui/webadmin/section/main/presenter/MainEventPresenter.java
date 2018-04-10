@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.EventActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -40,9 +41,9 @@ public class MainEventPresenter extends AbstractMainWithDetailsPresenter<AuditLo
     public MainEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<AuditLog, EventListModel<Void>> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<AuditLog, EventListModel<Void>> breadCrumbs) {
-        // Events view has no action panel, passing null.
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, null);
+            OvirtBreadCrumbsPresenterWidget<AuditLog, EventListModel<Void>> breadCrumbs,
+            EventActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

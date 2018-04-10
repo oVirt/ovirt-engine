@@ -191,4 +191,8 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
     protected PlaceTransitionHandler getPlaceTransitionHandler() {
         return placeTransitionHandler;
     }
+
+    protected FlowPanel getActionSearchPanel() {
+        return actionSearchPanel;
+    }
 }
