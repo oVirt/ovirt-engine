@@ -61,4 +61,9 @@ public class KeyValuePairCompat<K, V> implements Map.Entry<K, V>, Serializable {
                 && Objects.equals(value, other.value);
     }
 
+    @Override
+    public final String toString() {
+        return key + "=" + value;
+    }
+
 }
