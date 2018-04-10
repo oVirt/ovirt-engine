@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
+import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 public abstract class GlusterJob {
 
@@ -118,7 +120,16 @@ public abstract class GlusterJob {
     @Inject
     protected GlusterAuditLogUtil logUtil;
 
+    @Inject
+    private SchedulerUtilQuartzImpl scheduler;
+
     public abstract Collection<GlusterJobSchedulingDetails> getSchedulingDetails();
+
+    public void schedule() {
+        getSchedulingDetails().forEach(j -> scheduler.scheduleAFixedDelayJob(
+                this, j.getMethodName(), new Class[0], new Class[0], j.getDelay(), j.getDelay(), TimeUnit.SECONDS
+        ));
+    }
 
     @SuppressWarnings("unchecked")
     protected List<GlusterServerInfo> fetchServers(VDS upServer) {
