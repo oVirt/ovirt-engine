@@ -1584,6 +1584,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     ResetBrickSupported,
 
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    EnableKASLRDump,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

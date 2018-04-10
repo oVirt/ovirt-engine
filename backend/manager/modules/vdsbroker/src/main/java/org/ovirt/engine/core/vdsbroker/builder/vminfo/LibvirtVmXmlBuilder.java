@@ -625,7 +625,8 @@ public class LibvirtVmXmlBuilder {
         //   </hyperv>
         // <features/>
         boolean acpiEnabled = vm.getAcpiEnable();
-        if (!acpiEnabled && !hypervEnabled) {
+        boolean kaslr = vmInfoBuildUtils.isKASLRDumpEnabled(vm.getVmOsId());
+        if (!acpiEnabled && !hypervEnabled && !kaslr) {
             return;
         }
 
@@ -653,6 +654,10 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
 
             writer.writeEndElement();
+        }
+
+        if (kaslr) {
+            writer.writeElement("vmcoreinfo");
         }
 
         writer.writeEndElement();
