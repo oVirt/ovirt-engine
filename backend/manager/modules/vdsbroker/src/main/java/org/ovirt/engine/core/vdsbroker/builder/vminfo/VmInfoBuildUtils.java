@@ -1200,6 +1200,10 @@ public class VmInfoBuildUtils {
         return osRepository.getCdInterface(osId, version, chipset);
     }
 
+    public boolean isKASLRDumpEnabled(int osId) {
+        return osRepository.isLinux(osId) && Config.<Boolean> getValue(ConfigValues.EnableKASLRDump);
+    }
+
     public List<VmNicFilterParameter> getAllNetworkFiltersForVmNic(Guid nicId)  {
         return vmNicFilterParameterDao.getAllForVmNic(nicId);
     }

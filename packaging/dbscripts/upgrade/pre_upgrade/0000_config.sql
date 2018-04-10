@@ -780,6 +780,7 @@ select fn_db_add_config_value_for_versions_up_to('VdsFenceType',
 select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'false', '4.1');
 select fn_db_add_config_value('IsHighPerformanceTypeSupported', 'true', '4.2');
 select fn_db_add_config_value('AlwaysFilterResultsForWebUi', 'false', 'general');
+select fn_db_add_config_value('EnableKASLRDump','false','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
