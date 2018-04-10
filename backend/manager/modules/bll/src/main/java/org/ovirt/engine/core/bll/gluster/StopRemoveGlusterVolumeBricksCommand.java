@@ -45,7 +45,7 @@ public class StopRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBas
             return false;
         }
 
-        if (!validate(getBrickValidator().canStopOrCommitRemoveBrick(volume, getParameters().getBricks()))) {
+        if (!validate(brickValidator.canStopOrCommitRemoveBrick(volume, getParameters().getBricks()))) {
             return false;
         }
 

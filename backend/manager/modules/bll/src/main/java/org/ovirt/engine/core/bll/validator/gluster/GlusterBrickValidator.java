@@ -2,20 +2,25 @@ package org.ovirt.engine.core.bll.validator.gluster;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
 /**
  * Helps to validate the details of the bricks.
  *
  */
+@Singleton
 public class GlusterBrickValidator {
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
 
     /**
      * Checks that all brick ids passed are valid, also updating the bricks with server name and brick directory using
@@ -112,8 +117,7 @@ public class GlusterBrickValidator {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
         }
 
-        List<GlusterBrickEntity> bricksForTask =
-                getGlusterBrickDao().getGlusterVolumeBricksByTaskId(asyncTask.getTaskId());
+        List<GlusterBrickEntity> bricksForTask = glusterBrickDao.getGlusterVolumeBricksByTaskId(asyncTask.getTaskId());
 
 
         if (paramBricks.size() != bricksForTask.size() || !areBricksInTheList(volumeEntity, paramBricks, bricksForTask)) {
@@ -155,10 +159,6 @@ public class GlusterBrickValidator {
         }
 
         return found;
-    }
-
-    public GlusterBrickDao getGlusterBrickDao() {
-        return DbFacade.getInstance().getGlusterBrickDao();
     }
 
     private String getValidBrickNames(List<GlusterBrickEntity> bricksForTask) {

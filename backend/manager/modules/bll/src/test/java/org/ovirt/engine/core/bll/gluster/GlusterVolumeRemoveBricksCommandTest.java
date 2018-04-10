@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -29,6 +30,10 @@ public class GlusterVolumeRemoveBricksCommandTest extends BaseCommandTest {
 
     @Mock
     GlusterVolumeDao volumeDao;
+
+    @Spy
+    @InjectMocks
+    private GlusterBrickValidator brickValidator;
 
     private final Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
 

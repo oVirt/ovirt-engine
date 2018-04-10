@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -64,7 +63,6 @@ public class StartRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBa
             return false;
         }
 
-        GlusterBrickValidator brickValidator = new GlusterBrickValidator();
         return validate(brickValidator.canRemoveBrick(getParameters().getBricks(),
                 getGlusterVolume(),
                 getParameters().getReplicaCount(), false));

@@ -3,11 +3,13 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
@@ -33,6 +35,9 @@ public abstract class AbstractRemoveGlusterVolumeBricksCommandTest extends BaseC
     protected VDSBrokerFrontend vdsBrokerFrontend;
     @Spy
     private GlusterTaskUtils glusterTaskUtils;
+    @InjectMocks
+    @Spy
+    private GlusterBrickValidator brickValidator;
 
     protected final Guid volumeWithRemoveBricksTask = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     protected final Guid volumeWithoutAsyncTask = new Guid("000000000000-0000-0000-0000-00000003");

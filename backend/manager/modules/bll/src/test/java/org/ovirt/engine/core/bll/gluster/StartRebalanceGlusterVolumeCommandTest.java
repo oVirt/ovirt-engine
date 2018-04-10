@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -29,6 +30,10 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 public class StartRebalanceGlusterVolumeCommandTest extends BaseCommandTest {
     @Mock
     GlusterVolumeDao volumeDao;
+
+    @Spy
+    @InjectMocks
+    private GlusterBrickValidator brickValidator;
 
     private final Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private final Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");

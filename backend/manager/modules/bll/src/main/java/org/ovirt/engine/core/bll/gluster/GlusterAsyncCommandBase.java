@@ -39,6 +39,8 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
     protected GlusterTaskUtils glusterTaskUtils;
     @Inject
     private StepDao stepDao;
+    @Inject
+    protected GlusterBrickValidator brickValidator;
 
     public GlusterAsyncCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);
@@ -127,9 +129,5 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         EngineLock lock = new EngineLock(getExclusiveLocks(), getSharedLocks());
         setLock(lock);
         freeLock();
-    }
-
-    public GlusterBrickValidator getBrickValidator() {
-        return new GlusterBrickValidator();
     }
 }

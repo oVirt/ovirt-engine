@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
@@ -25,6 +27,9 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBrick
 public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<GlusterVolumeRemoveBricksParameters> {
     private static final long serialVersionUID = 1465299601226267507L;
     private final List<GlusterBrickEntity> bricks = new ArrayList<>();
+
+    @Inject
+    private GlusterBrickValidator brickValidator;
 
     public GlusterVolumeRemoveBricksCommand(GlusterVolumeRemoveBricksParameters params, CommandContext commandContext) {
         super(params, commandContext);
@@ -57,7 +62,6 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISPERSE_VOLUME_NOT_SUPPORTED);
         }
 
-        GlusterBrickValidator brickValidator = new GlusterBrickValidator();
         return validate(brickValidator.canRemoveBrick(getParameters().getBricks(),
                 getGlusterVolume(),
                 getParameters().getReplicaCount(),

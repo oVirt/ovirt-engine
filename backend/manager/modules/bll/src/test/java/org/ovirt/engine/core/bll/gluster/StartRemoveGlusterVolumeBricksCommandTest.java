@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
@@ -47,6 +48,9 @@ public class StartRemoveGlusterVolumeBricksCommandTest extends BaseCommandTest {
     protected BackendInternal backend;
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
+    @Spy
+    @InjectMocks
+    private GlusterBrickValidator brickValidator;
 
     private final Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
 
