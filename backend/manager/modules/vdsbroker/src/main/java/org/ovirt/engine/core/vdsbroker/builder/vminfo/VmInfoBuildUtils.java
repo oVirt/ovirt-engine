@@ -924,7 +924,10 @@ public class VmInfoBuildUtils {
         return Optional.empty();
     }
 
-    public String getDiskType(VM vm, DiskImage diskImage) {
+    public String getDiskType(VM vm, DiskImage diskImage, VmDevice device) {
+        if (device.getSnapshotId() != null) {
+            return "file"; // transient disks are always files
+        }
         StorageType storageType = diskImage.getStorageTypes().get(0);
         Optional<String> diskType = getNetworkDiskType(vm, storageType);
         return diskType.orElseGet(() -> storageType.isBlockDomain() ? "block" : "file");
