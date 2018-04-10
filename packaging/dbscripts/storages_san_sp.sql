@@ -70,17 +70,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteLUN (v_LUN_id VARCHAR(255))
 RETURNS VOID AS $PROCEDURE$
-DECLARE v_val VARCHAR(255);
-
 BEGIN
-    -- Get (and keep) a shared lock with "right to upgrade to exclusive"
-    -- in order to force locking parent before children
-    SELECT LUN_id
-    INTO v_val
-    FROM LUNs
-    WHERE LUN_id = v_LUN_id
-    FOR UPDATE;
-
     DELETE
     FROM LUNs
     WHERE LUN_id = v_LUN_id;
