@@ -206,6 +206,7 @@ public final class Cloner {
         vm.setManagedDeviceMap(instance.getManagedVmDeviceMap());
         vm.setUnmanagedDeviceList(instance.getUnmanagedDeviceList());
         vm.setRuntimeDeviceCustomProperties(instance.getRuntimeDeviceCustomProperties());
+        vm.setLeaseStorageDomainId(instance.getLeaseStorageDomainId());
         return vm;
     }
 
@@ -471,6 +472,7 @@ public final class Cloner {
         obj.setCustomProperties(instance.getCustomProperties());
         obj.setSmallIconId(instance.getSmallIconId());
         obj.setLargeIconId(instance.getLargeIconId());
+        obj.setLeaseStorageDomainId(instance.getLeaseStorageDomainId());
 
         return obj;
     }
