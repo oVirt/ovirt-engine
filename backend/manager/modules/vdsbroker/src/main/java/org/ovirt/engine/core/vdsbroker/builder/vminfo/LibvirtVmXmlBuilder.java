@@ -1585,7 +1585,7 @@ public class LibvirtVmXmlBuilder {
 
         writeGeneralDiskAttributes(device, disk, dve);
         writeDiskTarget(dve, dev);
-        writeDiskSource(disk, dev);
+        writeDiskSource(device, disk, dev);
         writeDiskDriver(device, disk, dve, pinTo);
         writeAlias(device);
         writeAddress(device);
@@ -1657,7 +1657,7 @@ public class LibvirtVmXmlBuilder {
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
-            String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage);
+            String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage, device);
             nativeIO = !"file".equals(diskType);
             writer.writeAttributeString("io", nativeIO ? "native" : "threads");
             writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
@@ -1706,7 +1706,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDiskSource(Disk disk, String dev) {
+    private void writeDiskSource(VmDevice device, Disk disk, String dev) {
         writer.writeStartElement("source");
         switch (disk.getDiskStorageType()) {
         case IMAGE:
@@ -1723,7 +1723,7 @@ public class LibvirtVmXmlBuilder {
                 addVolumeLease(diskImage.getImageId(), diskImage.getStorageIds().get(0));
             }
 
-            String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage);
+            String diskType = this.vmInfoBuildUtils.getDiskType(this.vm, diskImage, device);
 
             switch (diskType) {
             case "block":
@@ -1827,7 +1827,7 @@ public class LibvirtVmXmlBuilder {
 
         switch (disk.getDiskStorageType()) {
         case IMAGE:
-            writer.writeAttributeString("type", this.vmInfoBuildUtils.getDiskType(this.vm, (DiskImage) disk));
+            writer.writeAttributeString("type", this.vmInfoBuildUtils.getDiskType(this.vm, (DiskImage) disk, device));
             break;
         case LUN:
             writer.writeAttributeString("type", "block");
