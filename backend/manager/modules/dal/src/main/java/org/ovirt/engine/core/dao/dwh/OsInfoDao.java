@@ -2,6 +2,8 @@ package org.ovirt.engine.core.dao.dwh;
 
 import java.util.Map;
 
-public interface OsInfoDao {
+import org.ovirt.engine.core.dao.Dao;
+
+public interface OsInfoDao extends Dao {
     void populateDwhOsInfo(Map<Integer, String> osIdToName);
 }
