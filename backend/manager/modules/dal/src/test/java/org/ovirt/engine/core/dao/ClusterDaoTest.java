@@ -17,6 +17,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -33,7 +35,15 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     private static final int NUMBER_OF_TRUSTED_GROUPS = 4;
     private static final int NUMBER_OF_GROUPS_FOR_PRIVELEGED_USER = 2;
 
+    @Inject
     private ClusterDao dao;
+    @Inject
+    private ClusterPolicyDao clusterPolicyDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+
     private Cluster existingCluster;
     private Cluster newGroup;
     private Cluster groupWithNoRunningVms;
@@ -42,10 +52,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getClusterDao();
-
         existingCluster = dao.get(FixturesTool.CLUSTER_RHEL6_ISCSI);
-        groupWithNoRunningVms = dbFacade.getClusterDao().get(FixturesTool.CLUSTER_NO_RUNNING_VMS);
+        groupWithNoRunningVms = dao.get(FixturesTool.CLUSTER_NO_RUNNING_VMS);
 
         newGroup = new Cluster();
         newGroup.setName("New VDS Group");
@@ -53,7 +61,6 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         newGroup.setVirtService(true);
         newGroup.setGlusterService(false);
         newGroup.setClusterPolicyId(existingCluster.getClusterPolicyId());
-        ClusterPolicyDao clusterPolicyDao = dbFacade.getClusterPolicyDao();
         // set cluster policy name to allow equals method to succeed
         newGroup.setClusterPolicyName(clusterPolicyDao.get(existingCluster.getClusterPolicyId(),
                 Collections.emptyMap()).getName());
@@ -448,10 +455,10 @@ public class ClusterDaoTest extends BaseDaoTestCase {
 
         final int migrationCount = migrationFreeClusters.size();
         // get a cluster with migrating VMs
-        List<VM> vms = dbFacade.getVmDao().getAllRunningByCluster(FixturesTool.CLUSTER_RHEL6_ISCSI);
+        List<VM> vms = vmDao.getAllRunningByCluster(FixturesTool.CLUSTER_RHEL6_ISCSI);
         // set every VM to UP
         for(VM migratingVM : vms) {
-            dbFacade.getVmDynamicDao().updateStatus(migratingVM.getId(), VMStatus.Up);
+            vmDynamicDao.updateStatus(migratingVM.getId(), VMStatus.Up);
             migrationFreeClusters = dao.getWithoutMigratingVms();
         }
         assertEquals(migrationCount + 1, migrationFreeClusters.size());
