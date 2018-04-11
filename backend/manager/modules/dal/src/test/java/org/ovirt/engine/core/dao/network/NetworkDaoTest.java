@@ -10,6 +10,8 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.NameServer;
@@ -22,7 +24,6 @@ import org.ovirt.engine.core.dao.FixturesTool;
 public class NetworkDaoTest extends BaseDaoTestCase {
     private static final Guid MANAGEMENT_NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-1234567890ab");
 
-    private NetworkDao dao;
     private Network newNet;
     private static final String EXISTING_NETWORK_NAME1 = "engine";
     private static final String EXISTING_NETWORK_NAME2 = "engine3";
@@ -30,11 +31,16 @@ public class NetworkDaoTest extends BaseDaoTestCase {
     private static final int NUM_OF_MANAGEMENT_NETWORKS = 1;
     private static final String NETWORK_LABEL = "lbl1";
 
+    @Inject
+    private NetworkDao dao;
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getNetworkDao();
 
         newNet = new Network();
         newNet.setName("newnet1");
@@ -351,9 +357,9 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testSave() {
-        List<NetworkCluster> clustersFromDB = dbFacade.getNetworkClusterDao().getAllForCluster(FixturesTool.CLUSTER);
+        List<NetworkCluster> clustersFromDB = networkClusterDao.getAllForCluster(FixturesTool.CLUSTER);
         DnsResolverConfiguration dnsResolverConfiguration =
-                dbFacade.getDnsResolverConfigurationDao().get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION);
+                dnsResolverConfigurationDao.get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION);
 
         NetworkCluster clusterFromDB = clustersFromDB.get(0);
         assertNotNull(clusterFromDB);
@@ -389,8 +395,6 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        DnsResolverConfigurationDao dnsResolverConfigurationDao = dbFacade.getDnsResolverConfigurationDao();
-
         Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME2, FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
