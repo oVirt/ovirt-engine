@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -55,6 +54,8 @@ import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -100,9 +101,6 @@ public class VdsManager {
     private ManagedScheduledExecutorService executor;
 
     @Inject
-    private DbFacade dbFacade;
-
-    @Inject
     private VdsDao vdsDao;
 
     @Inject
@@ -122,6 +120,12 @@ public class VdsManager {
 
     @Inject
     private SupportedHostFeatureDao hostFeatureDao;
+
+    @Inject
+    private InterfaceDao interfaceDao;
+
+    @Inject
+    private NetworkDao networkDao;
 
     @Inject
     private HostNetworkTopologyPersister hostNetworkTopologyPersister;
@@ -273,7 +277,10 @@ public class VdsManager {
                                             cachedVds,
                                             monitoringStrategy,
                                             resourceManager,
-                                            dbFacade,
+                                            vdsDynamicDao,
+                                            interfaceDao,
+                                            vdsNumaNodeDao,
+                                            networkDao,
                                             auditLogDirector);
                             hostMonitoring.refresh();
                         }

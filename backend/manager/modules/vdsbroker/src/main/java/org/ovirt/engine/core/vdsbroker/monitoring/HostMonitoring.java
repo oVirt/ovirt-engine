@@ -37,10 +37,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -63,22 +66,31 @@ public class HostMonitoring {
     private volatile boolean vdsMaintenanceTimeoutOccurred;
     private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<>();
     private final ResourceManager resourceManager;
-    private final DbFacade dbFacade;
     private final AuditLogDirector auditLogDirector;
+    private final VdsDynamicDao vdsDynamicDao;
+    private final InterfaceDao interfaceDao;
+    private final VdsNumaNodeDao vdsNumaNodeDao;
+    private final NetworkDao networkDao;
     private static final Logger log = LoggerFactory.getLogger(HostMonitoring.class);
 
     public HostMonitoring(VdsManager vdsManager,
             VDS vds,
             MonitoringStrategy monitoringStrategy,
             ResourceManager resourceManager,
-            DbFacade dbFacade,
+            VdsDynamicDao vdsDynamicDao,
+            InterfaceDao interfaceDao,
+            VdsNumaNodeDao vdsNumaNodeDao,
+            NetworkDao networkDao,
             AuditLogDirector auditLogDirector) {
         this.vdsManager = vdsManager;
         this.vds = vds;
         firstStatus = vds.getStatus();
         this.monitoringStrategy = monitoringStrategy;
         this.resourceManager = resourceManager;
-        this.dbFacade = dbFacade;
+        this.vdsDynamicDao = vdsDynamicDao;
+        this.interfaceDao = interfaceDao;
+        this.vdsNumaNodeDao = vdsNumaNodeDao;
+        this.networkDao = networkDao;
         this.auditLogDirector = auditLogDirector;
     }
 
@@ -95,7 +107,7 @@ public class HostMonitoring {
                     // calling UpEvent in a time
                     vdsManager.cancelRecoveryJob();
                     if (saveVdsDynamic) {
-                        getDbFacade().getVdsDynamicDao().updateStatus(vds.getId(), vds.getStatus());
+                        vdsDynamicDao.updateStatus(vds.getId(), vds.getStatus());
                     }
                     log.debug("Host '{}' ({}) firing up event.", vds.getName(), vds.getId());
                     vdsManager.setIsSetNonOperationalExecuted(!getVdsEventListener().vdsUpEvent(vds));
@@ -260,7 +272,7 @@ public class HostMonitoring {
             if (!statistics.isEmpty()) {
                 TransactionSupport.executeInScope(TransactionScopeOption.Required,
                         () -> {
-                            getDbFacade().getInterfaceDao().massUpdateStatisticsForVds(statistics);
+                            interfaceDao.massUpdateStatisticsForVds(statistics);
                             return null;
                         });
             }
@@ -272,8 +284,7 @@ public class HostMonitoring {
         final List<VdsNumaNode> vdsNumaNodesToSave = new ArrayList<>();
         List<VdsNumaNode> updateNumaNodes = vds.getNumaNodeList();
         if (!updateNumaNodes.isEmpty()) {
-            List<VdsNumaNode> dbVdsNumaNodes = getDbFacade().getVdsNumaNodeDao()
-                    .getAllVdsNumaNodeByVdsId(vds.getId());
+            List<VdsNumaNode> dbVdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vds.getId());
             Map<Integer, VdsNumaNode> nodesMap = new HashMap<>();
             for (VdsNumaNode node : dbVdsNumaNodes) {
                 nodesMap.put(node.getIndex(), node);
@@ -289,7 +300,7 @@ public class HostMonitoring {
             }
         }
         if (!vdsNumaNodesToSave.isEmpty()) {
-            getDbFacade().getVdsNumaNodeDao().massUpdateNumaNodeStatistics(vdsNumaNodesToSave);
+            vdsNumaNodeDao.massUpdateNumaNodeStatistics(vdsNumaNodesToSave);
         }
     }
 
@@ -454,7 +465,7 @@ public class HostMonitoring {
 
     private void markIsSetNonOperationalExecuted() {
         if (!vdsManager.isSetNonOperationalExecuted()) {
-            VdsDynamic vdsDynamic = getDbFacade().getVdsDynamicDao().get(vds.getId());
+            VdsDynamic vdsDynamic = vdsDynamicDao.get(vds.getId());
             if (vdsDynamic.getStatus() == VDSStatus.NonOperational) {
                 vdsManager.setIsSetNonOperationalExecuted(true);
             }
@@ -534,7 +545,7 @@ public class HostMonitoring {
     private void fetchHostInterfaces() {
         List<VdsNetworkInterface> nics;
         if (vds.getInterfaces().isEmpty()) {
-             nics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(vds.getId());
+             nics = interfaceDao.getAllInterfacesForVds(vds.getId());
             vds.getInterfaces().addAll(nics);
         } else {
             nics = vds.getInterfaces();
@@ -611,7 +622,7 @@ public class HostMonitoring {
         try {
             reportNicStatusChanges();
             problematicNicsWithNetworks = NetworkMonitoringHelper.determineProblematicNics(vds.getInterfaces(),
-                    getDbFacade().getNetworkDao().getAllForCluster(vds.getClusterId()));
+                    networkDao.getAllForCluster(vds.getClusterId()));
         } catch (Exception e) {
             log.error("Failure on checkInterfaces on update runtime info for host '{}': {}",
                     vds.getName(), e.getMessage());
@@ -817,7 +828,7 @@ public class HostMonitoring {
     private void moveVDSToMaintenanceIfNeeded() {
         if (vds.getStatus() == VDSStatus.PreparingForMaintenance) {
             if (monitoringStrategy.canMoveToMaintenance(vds)) {
-                VdsDynamic dbVds = getDbFacade().getVdsDynamicDao().get(vds.getId());
+                VdsDynamic dbVds = vdsDynamicDao.get(vds.getId());
                 vds.setMaintenanceReason(dbVds.getMaintenanceReason());
                 vdsManager.setStatus(VDSStatus.Maintenance, vds);
                 saveVdsDynamic = true;
@@ -869,9 +880,5 @@ public class HostMonitoring {
 
     private void auditLog(AuditLogable auditLogable, AuditLogType logType) {
         auditLogDirector.log(auditLogable, logType);
-    }
-
-    private DbFacade getDbFacade() {
-        return dbFacade;
     }
 }
