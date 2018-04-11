@@ -19,6 +19,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -28,7 +29,6 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Inject
     private AuditLogDirector auditLogDirector;
-
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
     @Inject
@@ -47,6 +47,8 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     private VmDao vmDao;
     @Inject
     private ClusterDao clusterDao;
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
 
     private NetworkCluster oldNetworkCluster;
 
@@ -171,6 +173,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
                 interfaceDao,
                 networkDao,
                 vdsDao,
+                glusterBrickDao,
                 getNetworkCluster(),
                 getOldNetworkCluster());
     }

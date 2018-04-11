@@ -1,26 +1,28 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class UpdateNetworkClusterValidator extends NetworkClusterValidatorBase {
-
+    private final GlusterBrickDao glusterBrickDao;
     private final NetworkCluster oldNetworkCluster;
 
     public UpdateNetworkClusterValidator(InterfaceDao interfaceDao,
             NetworkDao networkDao,
             VdsDao vdsDao,
+            GlusterBrickDao glusterBrickDao,
             NetworkCluster networkCluster,
             NetworkCluster oldNetworkCluster) {
         super(interfaceDao, networkDao, vdsDao, networkCluster);
-
+        this.glusterBrickDao = Objects.requireNonNull(glusterBrickDao, "glusterBrickDao cannot be null");
         this.oldNetworkCluster = oldNetworkCluster;
     }
 
@@ -41,11 +43,7 @@ public class UpdateNetworkClusterValidator extends NetworkClusterValidatorBase {
     }
 
     private boolean isGlusterNetworkInUse() {
-        return !getGlusterBrickDao().getAllByClusterAndNetworkId(oldNetworkCluster.getClusterId(),
+        return !glusterBrickDao.getAllByClusterAndNetworkId(oldNetworkCluster.getClusterId(),
                 oldNetworkCluster.getNetworkId()).isEmpty();
-    }
-
-    GlusterBrickDao getGlusterBrickDao() {
-        return DbFacade.getInstance().getGlusterBrickDao();
     }
 }

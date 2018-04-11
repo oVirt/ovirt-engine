@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.network.cluster;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -30,7 +29,8 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
     @Override
     protected UpdateNetworkClusterValidator createValidator() {
         oldNetworkCluster = new NetworkCluster();
-        return new UpdateNetworkClusterValidator(interfaceDao, networkDao, vdsDao, networkCluster, oldNetworkCluster);
+        return new UpdateNetworkClusterValidator(
+                interfaceDao, networkDao, vdsDao, brickDao, networkCluster, oldNetworkCluster);
     }
 
     @Test
@@ -144,7 +144,6 @@ public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTe
         oldNetworkCluster.setGluster(glusterNetworkBefore);
         networkCluster.setGluster(glusterNetworkAfter);
         cluster.setGlusterService(glusterService);
-        doReturn(brickDao).when(validator).getGlusterBrickDao();
         when(brickDao.getAllByClusterAndNetworkId(any(), any())).thenReturn(hasBricks ?
                 Collections.singletonList(null) : Collections.emptyList());
         assertThat(validator.glusterNetworkInUseAndUnset(cluster), expectedResult);
