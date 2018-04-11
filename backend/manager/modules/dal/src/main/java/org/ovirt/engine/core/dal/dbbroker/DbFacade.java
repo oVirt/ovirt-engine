@@ -377,7 +377,7 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link org.ovirt.engine.core.dao.ClusterDao}.
+     * Returns the singleton instance of {@link ClusterDao}.
      *
      * @return the dao
      */
@@ -458,7 +458,7 @@ public class DbFacade {
     }
 
     /**
-     * * Returns the singleton instance if {@link org.ovirt.engine.core.dao.VmIconDao}
+     * * Returns the singleton instance if {@link VmIconDao}
      *
      * @return the dao
      */
@@ -880,7 +880,7 @@ public class DbFacade {
     }
 
     /**
-     * Retrieves the singleton instance of {@link org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao}.
+     * Retrieves the singleton instance of {@link StorageServerConnectionExtensionDao}.
      *
      * @return the dao
      */
