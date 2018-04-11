@@ -48,18 +48,6 @@ public class DnsResolverConfigurationDaoTest
         return 2;
     }
 
-    public DnsResolverConfiguration dnsResolverConfigurationFromFixtures() {
-        DnsResolverConfiguration expected = new DnsResolverConfiguration();
-
-        expected.setId(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION);
-        expected.setNameServers(Arrays.asList(
-                new NameServer("192.168.1.2"),
-                new NameServer("2002:0db8:85a3:0000:0000:8a2e:0370:7334")
-        ));
-
-        return expected;
-    }
-
     @Test
     public void testRemoveByNetworkAttachmentId() {
         assertNotNull(dao.get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION));
