@@ -35,11 +35,6 @@ public class VmStatisticsDaoTest extends BaseGenericDaoTestCase<Guid, VmStatisti
     }
 
     @Override
-    protected VmStatisticsDao prepareDao() {
-        return dbFacade.getVmStatisticsDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

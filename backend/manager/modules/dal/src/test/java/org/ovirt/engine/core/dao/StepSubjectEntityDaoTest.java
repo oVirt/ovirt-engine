@@ -6,22 +6,12 @@ import static org.junit.Assert.assertNotEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StepSubjectEntityDaoTest extends BaseDaoTestCase {
-    private StepSubjectEntityDao dao;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getStepSubjectEntityDao();
-    }
-
+public class StepSubjectEntityDaoTest extends BaseDaoTestCase<StepSubjectEntityDao> {
     @Test
     public void saveStepSubjectEntities() {
         VdcObjectType type = VdcObjectType.VmPool;

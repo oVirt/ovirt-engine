@@ -43,11 +43,6 @@ public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider<?>, P
     }
 
     @Override
-    protected ProviderDao prepareDao() {
-        return dbFacade.getProviderDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

@@ -77,11 +77,6 @@ public class MacPoolDaoTest extends BaseGenericDaoTestCase<Guid, MacPool, MacPoo
     }
 
     @Override
-    protected MacPoolDao prepareDao() {
-        return dbFacade.getMacPoolDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

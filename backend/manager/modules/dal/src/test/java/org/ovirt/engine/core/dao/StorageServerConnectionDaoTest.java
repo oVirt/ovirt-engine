@@ -35,8 +35,6 @@ public class StorageServerConnectionDaoTest
     private static final String EXISTING_DOMAIN_STORAGE_NAME = "G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ";
 
     @Inject
-    private StorageServerConnectionDao dao;
-    @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
     @Inject
     private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
@@ -62,11 +60,6 @@ public class StorageServerConnectionDaoTest
     @Override
     protected String getExistingEntityId() {
         return "0cc146e8-e5ed-482c-8814-270bc48c297f";
-    }
-
-    @Override
-    protected StorageServerConnectionDao prepareDao() {
-        return dao;
     }
 
     @Override

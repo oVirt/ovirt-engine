@@ -18,13 +18,11 @@ import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class OsInfoDaoImplTest extends BaseDaoTestCase {
+public class OsInfoDaoImplTest extends BaseDaoTestCase<OsInfoDao> {
 
     private static final String OS_NAME = "test os name";
     private static final int OS_ID = 666;
 
-    @Inject
-    private OsInfoDaoImpl underTest;
     @Inject
     private JdbcTemplate jdbcTemplate;
     @Inject
@@ -37,7 +35,7 @@ public class OsInfoDaoImplTest extends BaseDaoTestCase {
         emptyTable();
 
         final Map<Integer, String> expected = Collections.singletonMap(OS_ID, OS_NAME);
-        underTest.populateDwhOsInfo(expected);
+        dao.populateDwhOsInfo(expected);
 
         assertResult();
     }
@@ -47,7 +45,7 @@ public class OsInfoDaoImplTest extends BaseDaoTestCase {
         insertOldValues();
 
         final Map<Integer, String> expected = Collections.singletonMap(OS_ID, OS_NAME);
-        underTest.populateDwhOsInfo(expected);
+        dao.populateDwhOsInfo(expected);
 
         assertResult();
     }

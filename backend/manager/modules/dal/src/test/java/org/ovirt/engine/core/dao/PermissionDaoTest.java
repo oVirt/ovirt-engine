@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class PermissionDaoTest extends BaseDaoTestCase {
+public class PermissionDaoTest extends BaseDaoTestCase<PermissionDao> {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ApplicationMode, 255));
 
@@ -42,14 +42,11 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     private static final Guid DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS =
             new Guid("88D4301A-17AF-496C-A793-584640853D4B");
 
-    private PermissionDao dao;
     private Permission new_permissions;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getPermissionDao();
 
         new_permissions = new Permission(AD_ELEMENT_ID, ROLE_ID, FixturesTool.DATA_CENTER,
                 VdcObjectType.StoragePool);

@@ -14,9 +14,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class EngineBackupLogDaoTest extends BaseDaoTestCase {
-
-    private EngineBackupLogDao dao;
+public class EngineBackupLogDaoTest extends BaseDaoTestCase<EngineBackupLogDao> {
     private EngineBackupLog existingEngineBackupLog;
     private EngineBackupLog newEntity;
     private static final String SCOPE = "db";
@@ -26,7 +24,6 @@ public class EngineBackupLogDaoTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getEngineBackupLogDao();
         existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(SCOPE);
         newEntity = new EngineBackupLog();
         newEntity.setScope(RandomUtils.instance().nextString(20));

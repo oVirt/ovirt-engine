@@ -35,11 +35,6 @@ public class LibvirtSecretDaoTest extends BaseGenericDaoTestCase<Guid, LibvirtSe
     }
 
     @Override
-    protected LibvirtSecretDao prepareDao() {
-        return dbFacade.getLibvirtSecretDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

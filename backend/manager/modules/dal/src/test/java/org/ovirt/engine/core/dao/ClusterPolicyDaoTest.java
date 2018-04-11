@@ -15,18 +15,16 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 
-public class ClusterPolicyDaoTest extends BaseDaoTestCase {
+public class ClusterPolicyDaoTest extends BaseDaoTestCase<ClusterPolicyDao> {
 
     private static final int NUMBER_OF_CLUSTER_POLICIES = 2;
 
-    private ClusterPolicyDao dao;
     private ClusterPolicy existingPolicy;
     private ClusterPolicy dummyPolicy;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getClusterPolicyDao();
         existingPolicy = dao.get(FixturesTool.CLUSTER_POLICY_EVEN_DISTRIBUTION, Collections.emptyMap());
         createDummyPolicy();
     }

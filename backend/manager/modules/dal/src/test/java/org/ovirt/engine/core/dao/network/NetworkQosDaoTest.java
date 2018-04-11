@@ -11,21 +11,12 @@ import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 import org.springframework.dao.DuplicateKeyException;
 
-public class NetworkQosDaoTest extends BaseDaoTestCase {
-
-    private NetworkQoSDao dao;
-
+public class NetworkQosDaoTest extends BaseDaoTestCase<NetworkQoSDao> {
     private static final Guid qosAId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253314");
     private static final Guid qosBId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253315");
     private static final Guid qosCId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253316");
     private static final Guid qosDId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253317");
 
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = getDbFacade().getNetworkQosDao();
-    }
     /**
      * Ensures that retrieving with an invalid ID returns null.
      */

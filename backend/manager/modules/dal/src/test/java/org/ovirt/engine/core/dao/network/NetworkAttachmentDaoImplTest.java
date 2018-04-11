@@ -29,11 +29,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
+public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase<NetworkAttachmentDao> {
 
     private NetworkAttachment networkAttachment;
-    @Inject
-    private NetworkAttachmentDao dao;
     @Inject
     private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 

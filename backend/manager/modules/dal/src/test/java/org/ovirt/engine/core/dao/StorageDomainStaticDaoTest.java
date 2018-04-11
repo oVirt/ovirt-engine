@@ -50,11 +50,6 @@ public class StorageDomainStaticDaoTest
     }
 
     @Override
-    protected StorageDomainStaticDao prepareDao() {
-        return dbFacade.getStorageDomainStaticDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

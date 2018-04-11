@@ -7,15 +7,13 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 
-public class StorageDomainDRDaoTest extends BaseDaoTestCase {
+public class StorageDomainDRDaoTest extends BaseDaoTestCase<StorageDomainDRDao> {
 
-    private StorageDomainDRDao dao;
     private StorageDomainDR storageDomainDR;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getStorageDomainDRDao();
 
         storageDomainDR = new StorageDomainDR();
         storageDomainDR.setStorageDomainId(FixturesTool.POSIX_STORAGE_DOMAIN_ID);

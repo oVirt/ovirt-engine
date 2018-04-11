@@ -27,12 +27,10 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmDaoTest extends BaseDaoTestCase {
+public class VmDaoTest extends BaseDaoTestCase<VmDao> {
     private static final int VM_COUNT = 8;
     private VM existingVm;
 
-    @Inject
-    private VmDao dao;
     @Inject
     private VmStaticDao vmStaticDao;
     @Inject

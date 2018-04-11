@@ -29,11 +29,6 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     @Override
-    protected DiskDao prepareDao() {
-        return dbFacade.getDiskDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.Empty;
     }

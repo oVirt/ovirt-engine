@@ -29,12 +29,10 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VdsDaoTest extends BaseDaoTestCase {
+public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
     private static final Guid CLUSTER_WITH_FEDORA = FixturesTool.CLUSTER;
     private static final Guid CLUSTER_WITH_RHELS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d2");
 
-    @Inject
-    private VdsDao dao;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
     @Inject

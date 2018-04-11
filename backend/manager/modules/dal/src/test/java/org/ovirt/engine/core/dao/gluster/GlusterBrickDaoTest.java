@@ -18,15 +18,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class GlusterBrickDaoTest extends BaseDaoTestCase {
+public class GlusterBrickDaoTest extends BaseDaoTestCase<GlusterBrickDao> {
     private static final String BRICK_EXPORT_DIR = "/export/test-vol-distribute-1/dir3";
-    private GlusterBrickDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getGlusterBrickDao();
-    }
 
     @Test
     public void testSaveAndGetById() {

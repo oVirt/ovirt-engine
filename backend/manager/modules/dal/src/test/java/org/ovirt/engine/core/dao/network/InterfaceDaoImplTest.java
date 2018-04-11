@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,20 +27,17 @@ import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class InterfaceDaoImplTest extends BaseDaoTestCase {
+public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
     private static final String IP_ADDR = "10.35.110.10";
     private static final Guid VDS_ID = FixturesTool.VDS_RHEL6_NFS_SPM;
     private static final String TARGET_ID = "0cc146e8-e5ed-482c-8814-270bc48c297b";
     private static final String LABEL = "abc";
 
-    private HostNetworkStatisticsDaoTest statsTest;
     private VdsNetworkInterface existingVdsInterface;
     private VdsNetworkInterface newVdsInterface;
     private VdsNetworkStatistics newVdsStatistics;
     private HostNetworkQos newQos;
 
-    @Inject
-    private InterfaceDao dao;
     @Inject
     private NetworkQoSDao networkQoSDao;
 
@@ -49,7 +45,6 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        statsTest = new HostNetworkStatisticsDaoTest();
         existingVdsInterface = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
 
         newQos = new HostNetworkQos();
@@ -201,30 +196,6 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
     @Test
     public void testUpdateInterfaceWithoutQos() {
         testUpdateInterface(FixturesTool.VDS_NETWORK_INTERFACE_WITHOUT_QOS);
-    }
-
-    private class HostNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VdsNetworkStatistics> {
-
-        @Override
-        protected List<? extends NetworkInterface<VdsNetworkStatistics>> getAllInterfaces() {
-            return dao.getAllInterfacesForVds(VDS_ID);
-        }
-
-        @Override
-        protected void updateStatistics(VdsNetworkStatistics stats) {
-            dao.updateStatisticsForVds(stats);
-        }
-
-    }
-
-    @Test
-    public void testUpdateStatisticsWithValues() {
-        statsTest.testUpdateStatistics(999.0, 999L);
-    }
-
-    @Test
-    public void testUpdateStatisticsNullValues() {
-        statsTest.testUpdateStatistics(null, null);
     }
 
     @Test

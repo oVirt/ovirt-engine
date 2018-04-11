@@ -40,11 +40,6 @@ public class StoragePoolDaoTest extends BaseGenericDaoTestCase<Guid, StoragePool
     }
 
     @Override
-    protected StoragePoolDao prepareDao() {
-        return dbFacade.getStoragePoolDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

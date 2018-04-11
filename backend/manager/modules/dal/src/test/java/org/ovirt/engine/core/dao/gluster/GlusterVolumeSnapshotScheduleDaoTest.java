@@ -13,20 +13,18 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterVolumeSnapshotScheduleDaoTest extends BaseDaoTestCase {
+public class GlusterVolumeSnapshotScheduleDaoTest extends BaseDaoTestCase<GlusterVolumeSnapshotScheduleDao> {
 
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid VOLUME_ID_1 = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid VOLUME_ID_2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
 
-    private GlusterVolumeSnapshotScheduleDao dao;
     private GlusterVolumeSnapshotSchedule existingSchedule;
     private GlusterVolumeSnapshotSchedule newSchedule;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getGlusterVolumeSnapshotScheduleDao();
         existingSchedule = dao.getByVolumeId(VOLUME_ID_1);
     }
 

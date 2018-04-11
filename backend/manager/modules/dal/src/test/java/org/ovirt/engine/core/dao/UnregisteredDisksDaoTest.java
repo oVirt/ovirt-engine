@@ -16,15 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDiskId;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.util.StringUtils;
 
-public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
-    private UnregisteredDisksDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getUnregisteredDisksDao();
-    }
-
+public class UnregisteredDisksDaoTest extends BaseDaoTestCase<UnregisteredDisksDao> {
     @Test
     public void testGetWithDiskId() {
         List<UnregisteredDisk> unregisteredDisk =

@@ -31,11 +31,6 @@ public class VdsSpmIdMapDaoTest extends BaseGenericDaoTestCase<Guid, VdsSpmIdMap
     }
 
     @Override
-    protected VdsSpmIdMapDao prepareDao() {
-        return dbFacade.getVdsSpmIdMapDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

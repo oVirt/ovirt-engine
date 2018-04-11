@@ -133,11 +133,6 @@ public class VmNicDaoTest extends BaseGenericDaoTestCase<Guid, VmNic, VmNicDao> 
     }
 
     @Override
-    protected VmNicDao prepareDao() {
-        return dbFacade.getVmNicDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

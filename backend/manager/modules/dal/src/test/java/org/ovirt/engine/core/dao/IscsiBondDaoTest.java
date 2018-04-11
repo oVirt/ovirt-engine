@@ -32,11 +32,6 @@ public class IscsiBondDaoTest extends BaseGenericDaoTestCase<Guid, IscsiBond, Is
     }
 
     @Override
-    protected IscsiBondDao prepareDao() {
-        return dbFacade.getIscsiBondDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

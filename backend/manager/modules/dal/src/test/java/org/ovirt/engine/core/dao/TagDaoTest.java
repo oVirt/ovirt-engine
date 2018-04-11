@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * {@code TagDaoTest} provides unit tests to validate the functionality for {@link TagDao}.
  */
-public class TagDaoTest extends BaseDaoTestCase {
+public class TagDaoTest extends BaseDaoTestCase<TagDao> {
     private static final Guid EXISTING_TAG_ID = new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c");
     private static final int TAG_COUNT = 3;
     private static final Guid EXISTING_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
@@ -30,7 +30,6 @@ public class TagDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = FixturesTool.VM_RHEL5_POOL_50;
     private static final Guid FREE_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
-    private TagDao dao;
     private Tags newTag;
     private Tags existingTag;
     private Guid parent;
@@ -51,8 +50,6 @@ public class TagDaoTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getTagDao();
 
         existingTag = dao.get(EXISTING_TAG_ID);
         existingTag = dao.get(new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"));

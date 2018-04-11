@@ -35,11 +35,6 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
     }
 
     @Override
-    protected DiskImageDynamicDao prepareDao() {
-        return dbFacade.getDiskImageDynamicDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

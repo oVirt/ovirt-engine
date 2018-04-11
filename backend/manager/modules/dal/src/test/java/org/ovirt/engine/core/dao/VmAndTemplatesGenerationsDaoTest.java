@@ -15,9 +15,7 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
-    @Inject
-    private VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao;
+public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase<VmAndTemplatesGenerationsDao> {
     @Inject
     private VmDao vmDao;
     @Inject
@@ -25,7 +23,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetOvfGenerations() {
-        Long value = vmAndTemplatesGenerationsDao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_50);
+        Long value = dao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_50);
         assertNotNull("ovf generation wasn't retrieved succesfully", value);
         assertEquals("ovf generation was retrieved but it's value isn't as expected", 1, value.longValue());
     }
@@ -41,12 +39,12 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         ovfVersions.add(updatedOvfForVm50);
         ovfVersions.add(updatedOvfForVm51);
         List<String> ovfData = Arrays.asList("a", "b");
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(vmsGuids, ovfVersions, ovfData);
+        dao.updateOvfGenerations(vmsGuids, ovfVersions, ovfData);
 
-        long dbRecievedOvfVer = vmAndTemplatesGenerationsDao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_50);
+        long dbRecievedOvfVer = dao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_50);
         assertEquals("ovf generations weren't updated properly", updatedOvfForVm50, dbRecievedOvfVer);
 
-        dbRecievedOvfVer = vmAndTemplatesGenerationsDao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_51);
+        dbRecievedOvfVer = dao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_51);
         assertEquals("ovf generations weren't updated properly", updatedOvfForVm51, dbRecievedOvfVer);
     }
 
@@ -58,24 +56,24 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_51);
-        vmAndTemplatesGenerationsDao.deleteOvfGenerations(vmsGuids);
-        Long value = vmAndTemplatesGenerationsDao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_50);
+        dao.deleteOvfGenerations(vmsGuids);
+        Long value = dao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_50);
         assertNull("ovf generation wasn't deleted succesfully", value);
-        value = vmAndTemplatesGenerationsDao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_51);
+        value = dao.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_51);
         assertNull("ovf generation wasn't deleted succesfully", value);
     }
 
     @Test
     public void testGetVmTemplatesIdsForOvfUpdateNoForUpdate() {
-        List<Guid> guids = vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertTrue("there shouldn't be any templates that needs ovf update", guids.isEmpty());
     }
 
     @Test
     public void testGetVmTemplatesIdsForOvfUpdateOneTemplate() {
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_TEMPLATE_RHEL5), Collections.singletonList(0L), Collections.singletonList("a"));
+        dao.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_TEMPLATE_RHEL5), Collections.singletonList(0L), Collections.singletonList("a"));
 
-        List<Guid> guids = vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("one template should need ovf update", 1, guids.size());
         assertEquals("wrong template returned as in need for ovf update", FixturesTool.VM_TEMPLATE_RHEL5, guids.get(0));
     }
@@ -94,9 +92,9 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         ovfData.add("a");
         ovfData.add("b");
 
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(templates, values, ovfData);
+        dao.updateOvfGenerations(templates, values, ovfData);
 
-        List<Guid> guids = vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("two templates should need ovf update", 2, guids.size());
         assertTrue("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL5));
         assertTrue("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL5_2));
@@ -124,15 +122,15 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         ovfData.add("c");
         ovfData.add("d");
 
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(templates, values, ovfData);
+        dao.updateOvfGenerations(templates, values, ovfData);
 
-        List<Guid> guids = vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("two templates should need ovf update", 2, guids.size());
         assertTrue("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL5));
         assertTrue("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL5_2));
 
 
-        guids = vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        guids = dao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals("two templates should need ovf update", 2, guids.size());
         assertTrue("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL6_1));
         assertTrue("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_TEMPLATE_RHEL6_2));
@@ -140,15 +138,15 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetVmsIdsForOvfUpdateNoneForUpdate() {
-        List<Guid> guids = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertTrue("there shouldn't be any vms that needs ovf update", guids.isEmpty());
     }
 
     @Test
     public void testGetVmssIdsForOvfUpdateOneVm() {
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_RHEL5_POOL_50), Collections.singletonList(0L), Collections.singletonList("a"));
+        dao.updateOvfGenerations(Collections.singletonList(FixturesTool.VM_RHEL5_POOL_50), Collections.singletonList(0L), Collections.singletonList("a"));
 
-        List<Guid> guids = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("one vm should need ovf update", 1, guids.size());
         assertEquals("wrong vm returned as in need for ovf update", FixturesTool.VM_RHEL5_POOL_50, guids.get(0));
     }
@@ -167,9 +165,9 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         ovfData.add("a");
         ovfData.add("b");
 
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(vms, values, ovfData);
+        dao.updateOvfGenerations(vms, values, ovfData);
 
-        List<Guid> guids = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("two vms should need ovf update", 2, guids.size());
         assertTrue("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_50));
         assertTrue("templates ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_51));
@@ -197,15 +195,15 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         ovfData.add("c");
         ovfData.add("d");
 
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(vms, values, ovfData);
+        dao.updateOvfGenerations(vms, values, ovfData);
 
-        List<Guid> guids = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("two vms should need ovf update in pool:" +FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER , 2, guids.size());
         assertTrue("vms ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_50));
         assertTrue("vms ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_51));
 
 
-        guids = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        guids = dao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals("two vms should need ovf update in pool" + FixturesTool.STORAGE_POOL_MIXED_TYPES, 2, guids.size());
         assertTrue("vm ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_59));
         assertTrue("vm ids for ovf update didn't contain expected id", guids.contains(FixturesTool.VM_RHEL5_POOL_60));
@@ -234,42 +232,41 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         ovfData.add("c");
         ovfData.add("d");
 
-        vmAndTemplatesGenerationsDao.updateOvfGenerations(toUpdate, values, ovfData);
+        dao.updateOvfGenerations(toUpdate, values, ovfData);
 
-        List<Guid> guids =
-                vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guids = dao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("one template should need ovf update in pool " + FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER,
                 1,
                 guids.size());
         assertTrue("templates ids for ovf update didn't contain expected id in pool"
                 + FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER, guids.contains(FixturesTool.VM_TEMPLATE_RHEL5));
 
-        guids = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        guids = dao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("one vm should need ovf update in pool " + FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER,
                 1,
                 guids.size());
         assertTrue("vm ids for ovf update didn't contain expected id in pool"
                 + FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER, guids.contains(FixturesTool.VM_RHEL5_POOL_50));
 
-        guids = vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        guids = dao.getVmTemplatesIdsForOvfUpdate(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals("one template should need ovf update in pool" + FixturesTool.STORAGE_POOL_MIXED_TYPES, 1, guids.size());
         assertTrue("templates ids for ovf update didn't contain expected id in pool" + FixturesTool.STORAGE_POOL_NFS, guids.contains(FixturesTool.VM_TEMPLATE_RHEL6_1));
 
-        guids = vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        guids = dao.getVmsIdsForOvfUpdate(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals("one vm should need ovf update in pool" + FixturesTool.STORAGE_POOL_MIXED_TYPES, 1, guids.size());
         assertTrue("vm ids for ovf update didn't contain expected id in pool" + FixturesTool.STORAGE_POOL_NFS, guids.contains(FixturesTool.VM_RHEL5_POOL_60));
     }
 
     @Test
     public void testGetIdsForOvfDeletionNoToDelete() {
-        List<Guid> guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertTrue("there shouldn't be any ovfs for deletion", guidsToDelete.isEmpty());
     }
 
     @Test
     public void testGetIdsForOvfDeletionOneToDelete() {
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
-        List<Guid> guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("there should be 1 ovf for deletion", 1, guidsToDelete.size());
         assertTrue("the list of guids for deletion doesn't contain the expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_50));
@@ -279,7 +276,7 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
     public void testGetIdsForOvfDeletionTwoToDelete() {
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_51);
-        List<Guid> guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("there should be 2 ovfs for deletion", 2, guidsToDelete.size());
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_50));
@@ -292,12 +289,12 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_60);
 
-        List<Guid> guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("the list of ovfs for deletion wasn't in the expected size", 1, guidsToDelete.size());
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_50));
 
-        guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals("the list of ovfs for deletion wasn't in the expected size", 1, guidsToDelete.size());
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_60));
@@ -309,14 +306,14 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_59);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_60);
-        List<Guid> guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("the list of ovfs for deletion wasn't in the expected size", 2, guidsToDelete.size());
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_51));
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_50));
 
-        guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals("the list of ovfs for deletion wasn't in the expected size", 2, guidsToDelete.size());
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_60));
@@ -334,14 +331,14 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         templateDao.remove(FixturesTool.VM_TEMPLATE_RHEL6_2);
 
 
-        List<Guid> guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        List<Guid> guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("unexpected number of ovfs for deletion", 2, guidsToDelete.size());
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_51));
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_50));
 
-        guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        guidsToDelete = dao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals("unexpected number of ovfs for deletion", 4, guidsToDelete.size());
         assertTrue("the list of guids for deletion doesn't contain an expected guid",
                 guidsToDelete.contains(FixturesTool.VM_RHEL5_POOL_60));

@@ -48,11 +48,6 @@ public class StorageQosDaoTest extends BaseGenericDaoTestCase<Guid, StorageQos, 
     }
 
     @Override
-    protected StorageQosDao prepareDao() {
-        return dbFacade.getStorageQosDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

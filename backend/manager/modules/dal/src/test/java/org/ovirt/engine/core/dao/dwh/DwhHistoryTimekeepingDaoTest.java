@@ -14,7 +14,7 @@ import org.ovirt.engine.core.dao.BaseDaoTestCase;
 /**
  * {@link DwhHistoryTimekeepingDao} tests
  */
-public class DwhHistoryTimekeepingDaoTest extends BaseDaoTestCase {
+public class DwhHistoryTimekeepingDaoTest extends BaseDaoTestCase<DwhHistoryTimekeepingDao> {
     /**
      * Tests reading existing variables
      */
@@ -22,7 +22,7 @@ public class DwhHistoryTimekeepingDaoTest extends BaseDaoTestCase {
     public void getAllExistingVariables() {
         for (DwhHistoryTimekeepingVariable var: DwhHistoryTimekeepingVariable.values()) {
             if (var != DwhHistoryTimekeepingVariable.UNDEFINED) {
-                assertNotNull(dbFacade.getDwhHistoryTimekeepingDao().get(var));
+                assertNotNull(dao.get(var));
             }
         }
     }
@@ -32,7 +32,7 @@ public class DwhHistoryTimekeepingDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void getNonexistentVariable() {
-        assertNull(dbFacade.getDwhHistoryTimekeepingDao().get(DwhHistoryTimekeepingVariable.UNDEFINED));
+        assertNull(dao.get(DwhHistoryTimekeepingVariable.UNDEFINED));
     }
 
     /**
@@ -44,8 +44,6 @@ public class DwhHistoryTimekeepingDaoTest extends BaseDaoTestCase {
         var.setVariable(DwhHistoryTimekeepingVariable.HEART_BEAT);
         var.setValue(null);
         var.setDateTime(new Date());
-
-        DwhHistoryTimekeepingDao dao = dbFacade.getDwhHistoryTimekeepingDao();
 
         dao.save(var);
 

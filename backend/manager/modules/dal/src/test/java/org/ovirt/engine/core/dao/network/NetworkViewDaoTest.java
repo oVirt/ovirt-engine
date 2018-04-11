@@ -11,15 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class NetworkViewDaoTest extends BaseDaoTestCase {
-    private NetworkViewDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getNetworkViewDao();
-    }
-
+public class NetworkViewDaoTest extends BaseDaoTestCase<NetworkViewDao> {
     /**
      * Test query
      */

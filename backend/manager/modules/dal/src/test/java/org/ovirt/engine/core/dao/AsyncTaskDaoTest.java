@@ -26,9 +26,8 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 /**
  * {@code AsyncTaskDaoTest} performs tests against the {@link AsyncTaskDao} type.
  */
-public class AsyncTaskDaoTest extends BaseDaoTestCase {
+public class AsyncTaskDaoTest extends BaseDaoTestCase<AsyncTaskDao> {
     private static final int TASK_COUNT = 2;
-    private AsyncTaskDao dao;
     private AsyncTask newAsyncTask;
     private AsyncTask existingAsyncTask;
 
@@ -37,7 +36,6 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getAsyncTaskDao();
         ActionParametersBase params = new ActionParametersBase();
         params.setSessionId("ASESSIONID");
         params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);

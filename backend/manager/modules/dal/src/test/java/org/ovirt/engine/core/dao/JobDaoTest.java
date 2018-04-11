@@ -34,11 +34,6 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     }
 
     @Override
-    protected JobDao prepareDao() {
-        return dbFacade.getJobDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

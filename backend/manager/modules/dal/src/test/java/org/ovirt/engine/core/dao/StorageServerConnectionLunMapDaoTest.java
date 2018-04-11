@@ -30,11 +30,6 @@ public class StorageServerConnectionLunMapDaoTest extends BaseGenericDaoTestCase
     }
 
     @Override
-    protected StorageServerConnectionLunMapDao prepareDao() {
-        return dbFacade.getStorageServerConnectionLunMapDao();
-    }
-
-    @Override
     protected LUNStorageServerConnectionMapId generateNonExistingId() {
         return new LUNStorageServerConnectionMapId("not", "exists");
     }

@@ -14,10 +14,9 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 
-public class PolicyUnitDaoTest extends BaseDaoTestCase {
+public class PolicyUnitDaoTest extends BaseDaoTestCase<PolicyUnitDao> {
 
     private static final int NUMBER_OF_POLICY_UNITS = 2;
-    PolicyUnitDao dao;
     PolicyUnit existingPolicyUnit;
     PolicyUnit dummyPolicyUnit;
 
@@ -25,7 +24,6 @@ public class PolicyUnitDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getPolicyUnitDao();
         existingPolicyUnit = dao.get(FixturesTool.POLICY_UNIT_MIGRATION);
         createDummyPolicyUnit();
     }

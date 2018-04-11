@@ -19,14 +19,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase {
+public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase<VmNetworkInterfaceDao> {
     private static final Guid TEMPLATE_ID = FixturesTool.VM_TEMPLATE_RHEL5;
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_57;
 
     protected static final Guid PRIVILEGED_USER_ID   = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
-
-    private VmNetworkInterfaceDao dao;
 
     private VmNetworkInterface existingVmInterface;
     private VmNetworkInterface existingTemplateInterface;
@@ -37,7 +35,6 @@ public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getVmNetworkInterfaceDao();
         existingVmInterface = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
         existingTemplateInterface = dao.get(FixturesTool.TEMPLATE_NETWORK_INTERFACE);
 

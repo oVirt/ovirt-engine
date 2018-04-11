@@ -16,12 +16,10 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetworkStatistics> {
+public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetworkStatisticsDao, VmNetworkStatistics> {
     private static final Guid NEW_INTERFACE_ID = new Guid("14550e82-1e1f-47b5-ae41-b009348dabfa");
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_57;
 
-    @Inject
-    private VmNetworkStatisticsDao dao;
     @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 

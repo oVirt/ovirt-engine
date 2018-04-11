@@ -6,25 +6,15 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class JobSubjectEntityDaoTest extends BaseDaoTestCase {
+public class JobSubjectEntityDaoTest extends BaseDaoTestCase<JobSubjectEntityDao> {
 
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5111");
 
     private static final int TOTAL_JOBS_SUBJECT_ENTITIES = 1;
-
-    private JobSubjectEntityDao dao;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getJobSubjectEntityDao();
-    }
 
     @Test
     public void getJobSubjectEntityByJobId() {

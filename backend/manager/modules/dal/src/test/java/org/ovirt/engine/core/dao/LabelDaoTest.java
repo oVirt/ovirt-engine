@@ -24,10 +24,7 @@ import org.ovirt.engine.core.compat.Version;
 
 import com.google.common.collect.Lists;
 
-public class LabelDaoTest extends BaseDaoTestCase {
-    @Inject
-    private LabelDao labelDao;
-
+public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
     @Inject
     private VmStaticDao vmDao;
 
@@ -70,8 +67,8 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .id(guid)
                 .build();
 
-        labelDao.save(label);
-        Label read = labelDao.get(guid);
+        dao.save(label);
+        Label read = dao.get(guid);
 
         assertNotNull(read);
         assertEquals(guid, read.getId());
@@ -87,8 +84,8 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .id(guid)
                 .build();
 
-        labelDao.save(label);
-        List<Label> readList = labelDao.getAll();
+        dao.save(label);
+        List<Label> readList = dao.getAll();
 
         assertNotNull(readList);
 
@@ -111,8 +108,8 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .vm(vm.getId())
                 .build();
 
-        labelDao.save(label);
-        Label read = labelDao.get(guid);
+        dao.save(label);
+        Label read = dao.get(guid);
 
         assertNotNull(read);
         assertEquals(guid, read.getId());
@@ -133,8 +130,8 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .entity(host)
                 .build();
 
-        labelDao.save(label);
-        Label read = labelDao.get(guid);
+        dao.save(label);
+        Label read = dao.get(guid);
 
         assertNotNull(read);
         assertEquals(guid, read.getId());
@@ -153,7 +150,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .entity(host)
                 .build();
 
-        labelDao.save(label);
+        dao.save(label);
 
         VmStatic vm = createAndSaveVm();
 
@@ -163,7 +160,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .entity(vm)
                 .build();
 
-        labelDao.save(label);
+        dao.save(label);
 
         VmStatic vm2 = createAndSaveVm();
 
@@ -173,9 +170,9 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .entity(vm2)
                 .build();
 
-        labelDao.save(label);
+        dao.save(label);
 
-        List<Label> read = labelDao.getAllByEntityIds(Lists.newArrayList(host.getId(), vm.getId(), Guid.newGuid()));
+        List<Label> read = dao.getAllByEntityIds(Lists.newArrayList(host.getId(), vm.getId(), Guid.newGuid()));
 
         assertNotNull(read);
         assertEquals(2, read.size());
@@ -189,7 +186,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .entity(host)
                 .build();
 
-        labelDao.save(label);
+        dao.save(label);
 
         VmStatic vm = createAndSaveVm();
         VmStatic vm2 = createAndSaveVm();
@@ -200,7 +197,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .entity(vm)
                 .build();
 
-        labelDao.save(label2);
+        dao.save(label2);
 
         label = new LabelBuilder()
                 .name("test label not in result")
@@ -208,9 +205,9 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .entity(vm2)
                 .build();
 
-        labelDao.save(label);
+        dao.save(label);
 
-        List<Label> read = labelDao.getAllByIds(Lists.newArrayList(label.getId(), label2.getId()));
+        List<Label> read = dao.getAllByIds(Lists.newArrayList(label.getId(), label2.getId()));
 
         assertNotNull(read);
         assertEquals(2, read.size());
@@ -226,9 +223,9 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .entities(host, vm)
                 .build();
 
-        labelDao.save(label);
+        dao.save(label);
 
-        List<Label> read = labelDao.getAllByEntityIds(Lists.newArrayList(host.getId(), vm.getId()));
+        List<Label> read = dao.getAllByEntityIds(Lists.newArrayList(host.getId(), vm.getId()));
 
         assertNotNull(read);
         assertEquals(1, read.size());
@@ -244,9 +241,9 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .host(host.getId())
                 .build();
 
-        labelDao.save(label);
-        labelDao.remove(label.getId());
-        Label read = labelDao.get(guid);
+        dao.save(label);
+        dao.remove(label.getId());
+        Label read = dao.get(guid);
 
         assertNull(read);
     }
@@ -262,9 +259,9 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .map(Label::getId)
                 .collect(Collectors.toList());
 
-        labelDao.addVmToLabels(vm.getId(), guidsForLabelsToAssign);
+        dao.addVmToLabels(vm.getId(), guidsForLabelsToAssign);
 
-        List<Label> assignedLabels = labelDao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
+        List<Label> assignedLabels = dao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
 
         assertNotNull(assignedLabels);
         assertTrue(labelsToAssign.containsAll(assignedLabels) && assignedLabels.containsAll(labelsToAssign));
@@ -280,9 +277,9 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .map(Label::getId)
                 .collect(Collectors.toList());
 
-        labelDao.addHostToLabels(host.getId(), guidsForLabelsToAssign);
+        dao.addHostToLabels(host.getId(), guidsForLabelsToAssign);
 
-        List<Label> assignedLabels = labelDao.getAllByEntityIds(Lists.newArrayList(host.getId()));
+        List<Label> assignedLabels = dao.getAllByEntityIds(Lists.newArrayList(host.getId()));
 
         assertNotNull(assignedLabels);
         assertTrue(labelsToAssign.containsAll(assignedLabels) && assignedLabels.containsAll(labelsToAssign));
@@ -293,13 +290,13 @@ public class LabelDaoTest extends BaseDaoTestCase {
         VmStatic vm = createAndSaveVm();
 
         Label label = createAndSaveLabel("test_label");
-        labelDao.addVmToLabels(vm.getId(), Lists.newArrayList(label.getId()));
+        dao.addVmToLabels(vm.getId(), Lists.newArrayList(label.getId()));
 
         Label label2 = createAndSaveLabel("test_label_2");
 
-        labelDao.updateLabelsForVm(vm.getId(), Lists.newArrayList(label2.getId()));
+        dao.updateLabelsForVm(vm.getId(), Lists.newArrayList(label2.getId()));
 
-        List<Label> assignedLabels = labelDao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
+        List<Label> assignedLabels = dao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
 
         assertNotNull(assignedLabels);
         assertEquals(Lists.newArrayList(label2), assignedLabels);
@@ -308,13 +305,13 @@ public class LabelDaoTest extends BaseDaoTestCase {
     @Test
     public void testUpdateLabelsForHost() {
         Label label = createAndSaveLabel("test_label");
-        labelDao.addHostToLabels(host.getId(), Lists.newArrayList(label.getId()));
+        dao.addHostToLabels(host.getId(), Lists.newArrayList(label.getId()));
 
         Label label2 = createAndSaveLabel("test_label_2");
 
-        labelDao.updateLabelsForHost(host.getId(), Lists.newArrayList(label2.getId()));
+        dao.updateLabelsForHost(host.getId(), Lists.newArrayList(label2.getId()));
 
-        List<Label> assignedLabels = labelDao.getAllByEntityIds(Lists.newArrayList(host.getId()));
+        List<Label> assignedLabels = dao.getAllByEntityIds(Lists.newArrayList(host.getId()));
 
         assertNotNull(assignedLabels);
         assertEquals(Lists.newArrayList(label2), assignedLabels);
@@ -331,12 +328,12 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .map(Label::getId)
                 .collect(Collectors.toList());
 
-        labelDao.addVmToLabels(vm.getId(), guidsForLabelsToAssign);
+        dao.addVmToLabels(vm.getId(), guidsForLabelsToAssign);
 
         guidsForLabelsToAssign.remove(label2.getId());
-        labelDao.updateLabelsForVm(vm.getId(), guidsForLabelsToAssign);
+        dao.updateLabelsForVm(vm.getId(), guidsForLabelsToAssign);
 
-        List<Label> labelsForVm = labelDao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
+        List<Label> labelsForVm = dao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
 
         assertTrue(labelsForVm.size() == 1);
         assertEquals(label, labelsForVm.get(0));
@@ -348,7 +345,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
                 .id(Guid.newGuid())
                 .build();
 
-        labelDao.save(label);
+        dao.save(label);
 
         return label;
     }

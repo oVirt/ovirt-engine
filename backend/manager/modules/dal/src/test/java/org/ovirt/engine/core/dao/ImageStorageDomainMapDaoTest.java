@@ -16,17 +16,10 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
+public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase<ImageStorageDomainMapDao> {
 
     private static final Guid EXISTING_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
     private static final Guid EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY = new Guid("f9a559d9-8666-40d1-9967-759502b19f0f");
-    private ImageStorageDomainMapDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getImageStorageDomainMapDao();
-    }
 
     @Test
     public void testGetAllByImageId() {

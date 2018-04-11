@@ -17,16 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmJobState;
 import org.ovirt.engine.core.common.businessentities.VmJobType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmJobDaoTest extends BaseDaoTestCase {
-    private VmJobDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getVmJobDao();
-    }
-
+public class VmJobDaoTest extends BaseDaoTestCase<VmJobDao> {
     @Test(expected = UnsupportedOperationException.class)
     public void testGetForwardCompatibility() {
         dao.get(Guid.newGuid());

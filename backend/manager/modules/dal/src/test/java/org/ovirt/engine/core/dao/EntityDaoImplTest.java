@@ -30,7 +30,7 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 
-public class EntityDaoImplTest extends BaseDaoTestCase {
+public class EntityDaoImplTest extends BaseDaoTestCase<EntityDao> {
 
     // entity IDs for testing retrieving an entity by id and type
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_50_ID;
@@ -44,9 +44,6 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
     private static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
     private static final Guid NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
     private static final Guid VM_STATIC_GUID = FixturesTool.VM_RHEL5_POOL_50;
-
-    @Inject
-    private EntityDao underTest;
 
     @Inject
     private VmStaticDao vmStaticDao;
@@ -88,7 +85,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VmStatic vmStatic = vmStaticDao.get(VM_ID);
         assertNotNull(vmStatic);
         String name = vmStatic.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM));
+        assertEquals(name, dao.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM));
     }
 
     @Test
@@ -96,7 +93,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VmTemplate vmTemplate = vmTemplateDao.get(VM_TEMPLATE_ID);
         assertNotNull(vmTemplate);
         String name = vmTemplate.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(VM_TEMPLATE_ID, VdcObjectType.VmTemplate));
+        assertEquals(name, dao.getEntityNameByIdAndType(VM_TEMPLATE_ID, VdcObjectType.VmTemplate));
     }
 
     @Test
@@ -104,7 +101,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VdsStatic vds = vdsStaticDao.get(FixturesTool.VDS_RHEL6_NFS_SPM);
         assertNotNull(vds);
         String name = vds.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.VDS_RHEL6_NFS_SPM, VdcObjectType.VDS));
+        assertEquals(name, dao.getEntityNameByIdAndType(FixturesTool.VDS_RHEL6_NFS_SPM, VdcObjectType.VDS));
     }
 
     @Test
@@ -112,7 +109,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VmPool vmPool = vmPoolDao.get(VM_POOL_ID);
         assertNotNull(vmPool);
         String name = vmPool.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool));
+        assertEquals(name, dao.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool));
     }
 
     @Test
@@ -120,7 +117,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Tags tag = tagDao.get(TAG_ID);
         assertNotNull(tag);
         String name = tag.getTagName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags));
+        assertEquals(name, dao.getEntityNameByIdAndType(TAG_ID, VdcObjectType.Tags));
     }
 
     @Test
@@ -128,7 +125,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Bookmark bookmark = bookmarkDao.get(BOOKMARK_ID);
         assertNotNull(bookmark);
         String name = bookmark.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks));
+        assertEquals(name, dao.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks));
     }
 
     @Test
@@ -136,7 +133,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Cluster cluster = clusterDao.get(FixturesTool.CLUSTER);
         assertNotNull(cluster);
         String name = cluster.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.CLUSTER, VdcObjectType.Cluster));
+        assertEquals(name, dao.getEntityNameByIdAndType(FixturesTool.CLUSTER, VdcObjectType.Cluster));
     }
 
     @Test
@@ -144,7 +141,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         StorageDomain storageDomain = storageDomainDao.get(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         assertNotNull(storageDomain);
         String name = storageDomain.getStorageName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, VdcObjectType.Storage));
+        assertEquals(name, dao.getEntityNameByIdAndType(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, VdcObjectType.Storage));
     }
 
     @Test
@@ -152,7 +149,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         StoragePool storagePool = storagePoolDao.get(FixturesTool.DATA_CENTER);
         assertNotNull(storagePool);
         String name = storagePool.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.DATA_CENTER, VdcObjectType.StoragePool));
+        assertEquals(name, dao.getEntityNameByIdAndType(FixturesTool.DATA_CENTER, VdcObjectType.StoragePool));
     }
 
     @Test
@@ -160,7 +157,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         DbUser dbUser = dbUserDao.get(USER_ID);
         assertNotNull(dbUser);
         String name = dbUser.getLoginName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(USER_ID, VdcObjectType.User));
+        assertEquals(name, dao.getEntityNameByIdAndType(USER_ID, VdcObjectType.User));
     }
 
     @Test
@@ -168,7 +165,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Role role = roleDao.get(ROLE_ID);
         assertNotNull(role);
         String name = role.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role));
+        assertEquals(name, dao.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role));
     }
 
     @Test
@@ -176,7 +173,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Quota quota = quotaDao.getById(QUOTA_ID);
         assertNotNull(quota);
         String name = quota.getQuotaName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(QUOTA_ID, VdcObjectType.Quota));
+        assertEquals(name, dao.getEntityNameByIdAndType(QUOTA_ID, VdcObjectType.Quota));
     }
 
     @Test
@@ -184,7 +181,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         BaseDisk disk = baseDiskDao.get(DISK_ID);
         assertNotNull(disk);
         String name = disk.getDiskAlias();
-        assertEquals(name, underTest.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk));
+        assertEquals(name, dao.getEntityNameByIdAndType(DISK_ID, VdcObjectType.Disk));
     }
 
     @Test
@@ -192,7 +189,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         Network network = networkDao.get(NETWORK_ID);
         assertNotNull(network);
         String name = network.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network));
+        assertEquals(name, dao.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network));
     }
 
     @Test
@@ -200,7 +197,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         VnicProfile vnicProfile = vnicProfileDao.get(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
         assertNotNull(vnicProfile);
         String name = vnicProfile.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, VdcObjectType.VnicProfile));
+        assertEquals(name, dao.getEntityNameByIdAndType(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, VdcObjectType.VnicProfile));
     }
 
     @Test
@@ -208,7 +205,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         DiskProfile diskProfile = diskProfileDao.get(FixturesTool.DISK_PROFILE_1);
         assertNotNull(diskProfile);
         String name = diskProfile.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.DISK_PROFILE_1, VdcObjectType.DiskProfile));
+        assertEquals(name, dao.getEntityNameByIdAndType(FixturesTool.DISK_PROFILE_1, VdcObjectType.DiskProfile));
     }
 
     @Test
@@ -216,6 +213,6 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
         CpuProfile cpuProfile = cpuProfileDao.get(FixturesTool.CPU_PROFILE_1);
         assertNotNull(cpuProfile);
         String name = cpuProfile.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.CPU_PROFILE_1, VdcObjectType.CpuProfile));
+        assertEquals(name, dao.getEntityNameByIdAndType(FixturesTool.CPU_PROFILE_1, VdcObjectType.CpuProfile));
     }
 }

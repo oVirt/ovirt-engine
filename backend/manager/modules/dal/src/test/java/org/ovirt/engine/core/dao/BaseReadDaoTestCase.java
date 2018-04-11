@@ -12,9 +12,8 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 
 public abstract class BaseReadDaoTestCase<ID extends Serializable, T extends BusinessEntity<ID>,
-D extends ReadDao<T, ID>> extends BaseDaoTestCase {
+D extends ReadDao<T, ID>> extends BaseDaoTestCase<D> {
 
-    protected D dao;
     protected T existingEntity;
 
     public BaseReadDaoTestCase() {
@@ -24,15 +23,10 @@ D extends ReadDao<T, ID>> extends BaseDaoTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = prepareDao();
-
         existingEntity = dao.get(getExistingEntityId());
     }
 
     protected abstract ID getExistingEntityId();
-
-    protected abstract D prepareDao();
 
     /**
      * Ensures that fetching an entity with an invalid id fails.

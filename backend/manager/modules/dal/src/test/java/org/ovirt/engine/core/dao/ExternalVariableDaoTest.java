@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.ExternalVariable;
 /**
  * {@link ExternalVariableDao} tests
  */
-public class ExternalVariableDaoTest extends BaseDaoTestCase {
+public class ExternalVariableDaoTest extends BaseDaoTestCase<ExternalVariableDao> {
     /**
      * Test getting existing variable
      */
@@ -21,7 +21,7 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
         ExternalVariable expected = new ExternalVariable();
         expected.setName("fence-kdump-listener");
 
-        ExternalVariable found = dbFacade.getExternalVariableDao().get(expected.getName());
+        ExternalVariable found = dao.get(expected.getName());
 
         assertNotNull(found);
         assertEquals(expected, found);
@@ -33,7 +33,7 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void getNonExistentVariable() {
-        ExternalVariable found = dbFacade.getExternalVariableDao().get("non-existent");
+        ExternalVariable found = dao.get("non-existent");
 
         assertNull(found);
     }
@@ -48,9 +48,9 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
         newVar.setValue("123456");
         newVar.setUpdateDate(new Date());
 
-        dbFacade.getExternalVariableDao().save(newVar);
+        dao.save(newVar);
 
-        ExternalVariable found = dbFacade.getExternalVariableDao().get(newVar.getName());
+        ExternalVariable found = dao.get(newVar.getName());
 
         assertNotNull(found);
         assertEquals(newVar, found);
@@ -66,9 +66,9 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
         newVar.setValue("123456");
         newVar.setUpdateDate(new Date());
 
-        dbFacade.getExternalVariableDao().saveOrUpdate(newVar);
+        dao.saveOrUpdate(newVar);
 
-        ExternalVariable found = dbFacade.getExternalVariableDao().get(newVar.getName());
+        ExternalVariable found = dao.get(newVar.getName());
 
         assertNotNull(found);
         assertEquals(newVar, found);
@@ -83,9 +83,9 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
         newVar.setName("new-var");
         newVar.setValue("123456");
 
-        dbFacade.getExternalVariableDao().save(newVar);
+        dao.save(newVar);
 
-        ExternalVariable found = dbFacade.getExternalVariableDao().get(newVar.getName());
+        ExternalVariable found = dao.get(newVar.getName());
 
         assertNotNull(found);
         assertEquals(newVar.getName(), found.getName());
@@ -100,13 +100,13 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
     public void updateExistingVariable() {
         String name = "fence-kdump-listener";
 
-        ExternalVariable existing = dbFacade.getExternalVariableDao().get(name);
+        ExternalVariable existing = dao.get(name);
         existing.setValue("123456");
         existing.setUpdateDate(new Date());
 
-        dbFacade.getExternalVariableDao().update(existing);
+        dao.update(existing);
 
-        ExternalVariable found = dbFacade.getExternalVariableDao().get(name);
+        ExternalVariable found = dao.get(name);
 
         assertNotNull(found);
         assertEquals(existing, found);
@@ -119,13 +119,13 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
     public void saveOrUpdatepdateExistingVariable() {
         String name = "fence-kdump-listener";
 
-        ExternalVariable existing = dbFacade.getExternalVariableDao().get(name);
+        ExternalVariable existing = dao.get(name);
         existing.setValue("123456");
         existing.setUpdateDate(new Date());
 
-        dbFacade.getExternalVariableDao().saveOrUpdate(existing);
+        dao.saveOrUpdate(existing);
 
-        ExternalVariable found = dbFacade.getExternalVariableDao().get(name);
+        ExternalVariable found = dao.get(name);
 
         assertNotNull(found);
         assertEquals(existing, found);
@@ -141,16 +141,16 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
         var.setValue("123456");
         var.setUpdateDate(new Date());
 
-        dbFacade.getExternalVariableDao().save(var);
+        dao.save(var);
 
-        ExternalVariable found = dbFacade.getExternalVariableDao().get(var.getName());
+        ExternalVariable found = dao.get(var.getName());
         assertNotNull(found);
         assertEquals(var, found);
 
-        dbFacade.getExternalVariableDao().remove(var.getName());
+        dao.remove(var.getName());
 
-        dbFacade.getExternalVariableDao().get(var.getName());
-        ExternalVariable removed = dbFacade.getExternalVariableDao().get(var.getName());
+        dao.get(var.getName());
+        ExternalVariable removed = dao.get(var.getName());
         assertNull(removed);
     }
 
@@ -159,6 +159,6 @@ public class ExternalVariableDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void removeNonExistentVariable() {
-        dbFacade.getExternalVariableDao().remove("non-existent-var");
+        dao.remove("non-existent-var");
     }
 }

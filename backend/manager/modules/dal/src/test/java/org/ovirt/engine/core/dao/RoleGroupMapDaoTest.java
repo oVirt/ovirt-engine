@@ -12,8 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RoleGroupMapDaoTest extends BaseDaoTestCase {
-    private RoleGroupMapDao dao;
+public class RoleGroupMapDaoTest extends BaseDaoTestCase<RoleGroupMapDao> {
     private RoleGroupMap newRoleGroupMap;
     private ActionGroup actionGroup;
     private RoleGroupMap existingRoleGroupMap;
@@ -21,8 +20,6 @@ public class RoleGroupMapDaoTest extends BaseDaoTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getRoleGroupMapDao();
 
         existingRoleGroupMap = dao.getByActionGroupAndRole(ActionGroup.RUN_VM, FixturesTool.ROLE_ID);
 

@@ -20,11 +20,9 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DbUserDaoTest extends BaseDaoTestCase {
+public class DbUserDaoTest extends BaseDaoTestCase<DbUserDao> {
     private static final Guid ADMIN_ROLE_TYPE_FROM_FIXTURE_ID = new Guid("F5972BFA-7102-4D33-AD22-9DD421BFBA78");
     private static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
-    @Inject
-    private DbUserDao dao;
     @Inject
     private PermissionDao permissionDao;
     private DbUser existingUser;
@@ -269,16 +267,14 @@ public class DbUserDaoTest extends BaseDaoTestCase {
     public void testUpdateLastAdminCheckStatus() {
 
         // Getting a nonAdmin user that is defined in the fixtures
-        DbUser nonAdminUser =
-                dbFacade.getDbUserDao().getByUsernameAndDomain("userportal2@testportal.redhat.com",
-                        "testportal.redhat.com");
+        DbUser nonAdminUser = dao.getByUsernameAndDomain("userportal2@testportal.redhat.com", "testportal.redhat.com");
 
         assertNotNull(nonAdminUser);
         assertFalse(nonAdminUser.isAdmin());
 
         // execute and validate when not admin
         dao.updateLastAdminCheckStatus(nonAdminUser.getId());
-        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
+        nonAdminUser = dao.get(nonAdminUser.getId());
 
         assertFalse(nonAdminUser.isAdmin());
 

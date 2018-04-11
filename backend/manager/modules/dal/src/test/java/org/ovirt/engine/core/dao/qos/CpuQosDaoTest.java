@@ -40,11 +40,6 @@ public class CpuQosDaoTest extends BaseGenericDaoTestCase<Guid, CpuQos, CpuQosDa
     }
 
     @Override
-    protected CpuQosDao prepareDao() {
-        return dbFacade.getCpuQosDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

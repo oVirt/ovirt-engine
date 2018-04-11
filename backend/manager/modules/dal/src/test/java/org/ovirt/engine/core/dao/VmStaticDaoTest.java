@@ -43,8 +43,6 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
             FixturesTool.GLUSTER_BRICK_SERVER1};
 
     @Inject
-    private VmStaticDao dao;
-    @Inject
     private SnapshotDao snapshotDao;
     @Inject
     private PermissionDao permissionsDao;
@@ -86,11 +84,6 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     @Override
     protected Guid getExistingEntityId() {
         return FixturesTool.VM_RHEL5_POOL_57;
-    }
-
-    @Override
-    protected VmStaticDao prepareDao() {
-        return dao;
     }
 
     @Override

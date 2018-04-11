@@ -12,16 +12,9 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmGuestAgentInterfaceDaoTest extends BaseDaoTestCase {
+public class VmGuestAgentInterfaceDaoTest extends BaseDaoTestCase<VmGuestAgentInterfaceDao> {
 
     private static final int VM_GUEST_AGENT_INTERFACES_SIZE = 2;
-    private VmGuestAgentInterfaceDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getVmGuestAgentInterfaceDao();
-    }
 
     @Test
     public void getAllForVm() {

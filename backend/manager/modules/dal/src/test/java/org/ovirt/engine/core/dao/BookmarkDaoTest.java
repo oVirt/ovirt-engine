@@ -15,11 +15,10 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * {@code BookmarkDaoTest} performs tests against the {@link BookmarkDao} type.
  */
-public class BookmarkDaoTest extends BaseDaoTestCase {
+public class BookmarkDaoTest extends BaseDaoTestCase<BookmarkDao> {
     private static final int BOOKMARK_COUNT = 2;
     private static final int BOOKMARK_MAX_RANDOM_NUMBER = 10000;
 
-    private BookmarkDao dao;
     private Bookmark new_bookmark;
     private Bookmark existing_bookmark;
 
@@ -27,8 +26,6 @@ public class BookmarkDaoTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getBookmarkDao();
 
         // create some test data
         new_bookmark = new Bookmark();

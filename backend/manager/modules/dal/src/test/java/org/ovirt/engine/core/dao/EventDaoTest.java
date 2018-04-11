@@ -14,9 +14,8 @@ import org.ovirt.engine.core.common.businessentities.EventNotificationHist;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.compat.Guid;
 
-public class EventDaoTest extends BaseDaoTestCase {
+public class EventDaoTest extends BaseDaoTestCase<EventDao> {
     private static final int FREE_AUDIT_LOG_ID = 44295;
-    private EventDao dao;
     private Guid existingSubscriber;
     private Guid newSubscriber;
     private EventSubscriber newSubscription;
@@ -26,7 +25,6 @@ public class EventDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getEventDao();
         existingSubscriber = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
         newSubscriber = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
         newSubscription = new EventSubscriber();

@@ -9,16 +9,8 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
-public class ActionGroupDaoTest extends BaseDaoTestCase {
+public class ActionGroupDaoTest extends BaseDaoTestCase<ActionGroupDao> {
     private static final int ACTION_GROUP_COUNT = 3;
-    private ActionGroupDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getActionGroupDao();
-    }
 
     @Test
     public void testGetAllActionGroupsForRole() {

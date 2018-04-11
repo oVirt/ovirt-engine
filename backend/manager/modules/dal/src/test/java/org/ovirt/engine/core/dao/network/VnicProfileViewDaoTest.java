@@ -19,11 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class VnicProfileViewDaoTest extends BaseDaoTestCase {
-
-    @Inject
-    private VnicProfileViewDao dao;
-
+public class VnicProfileViewDaoTest extends BaseDaoTestCase<VnicProfileViewDao> {
     @Inject
     private NetworkDao networkDao;
 

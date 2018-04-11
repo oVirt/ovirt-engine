@@ -12,15 +12,7 @@ import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.compat.Version;
 
-public class UnregisteredOVFDataDaoTest extends BaseDaoTestCase {
-    private UnregisteredOVFDataDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getUnregisteredOVFDataDao();
-    }
-
+public class UnregisteredOVFDataDaoTest extends BaseDaoTestCase<UnregisteredOVFDataDao> {
     @Test
     public void testGetWithEntityId() {
         List<OvfEntityData> ovfEntityDataList =

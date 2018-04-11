@@ -16,13 +16,7 @@ import org.ovirt.engine.core.dao.FixturesTool;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.provider.HostProviderBindingDao;
 
-
-
-public class HostProviderBindingDaoImplTest extends BaseDaoTestCase {
-
-    @Inject
-    private HostProviderBindingDao dao;
-
+public class HostProviderBindingDaoImplTest extends BaseDaoTestCase<HostProviderBindingDao> {
     @Inject
     private VdsStaticDao vdsStaticDao;
 

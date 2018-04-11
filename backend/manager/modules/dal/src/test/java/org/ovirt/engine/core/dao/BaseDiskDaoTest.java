@@ -45,11 +45,6 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
     }
 
     @Override
-    protected BaseDiskDao prepareDao() {
-        return dbFacade.getBaseDiskDao();
-    }
-
-    @Override
     protected Guid getExistingEntityId() {
         return EXISTING_DISK_ID;
     }

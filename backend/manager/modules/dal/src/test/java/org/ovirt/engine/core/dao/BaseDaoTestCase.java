@@ -20,7 +20,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
@@ -41,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TestExecutionListeners({ TransactionalTestExecutionListener.class, DependencyInjectionTestExecutionListener.class })
 @ContextConfiguration(locations = { "classpath:/test-beans.xml" })
 @Transactional
-public abstract class BaseDaoTestCase {
+public abstract class BaseDaoTestCase<D extends Dao> {
     protected static final Guid PRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     protected static final String PRIVILEGED_USER_ENGINE_SESSION_ID = "c6f975b2-6f67-11e4-8455-3c970e14c386";
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
@@ -49,7 +48,7 @@ public abstract class BaseDaoTestCase {
     private static boolean initialized = false;
 
     @Inject
-    protected DbFacade dbFacade;
+    protected D dao;
     private static Object dataFactory;
     protected static boolean needInitializationSql = false;
     protected static String initSql;
@@ -151,10 +150,6 @@ public abstract class BaseDaoTestCase {
     private static void loadDataFactory(String dataFactoryClassname) throws Exception {
         Class<?> clazz = Class.forName(dataFactoryClassname);
         dataFactory = clazz.newInstance();
-    }
-
-    public DbFacade getDbFacade() {
-        return dbFacade;
     }
 
     public static DataSource getDataSource() {

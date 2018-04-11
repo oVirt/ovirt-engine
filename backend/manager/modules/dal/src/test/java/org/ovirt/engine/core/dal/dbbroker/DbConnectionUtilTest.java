@@ -10,12 +10,13 @@ import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
+import org.ovirt.engine.core.dao.TagDao;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.annotation.DirtiesContext;
 
-public class DbConnectionUtilTest extends BaseDaoTestCase{
+public class DbConnectionUtilTest extends BaseDaoTestCase<TagDao> {
 
     @Inject
     private JdbcTemplate jdbcTemplate;

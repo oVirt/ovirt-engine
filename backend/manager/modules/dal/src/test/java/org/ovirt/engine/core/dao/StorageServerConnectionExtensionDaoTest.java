@@ -32,11 +32,6 @@ public class StorageServerConnectionExtensionDaoTest
     }
 
     @Override
-    protected StorageServerConnectionExtensionDao prepareDao() {
-        return dbFacade.getStorageServerConnectionExtensionDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }
@@ -44,11 +39,6 @@ public class StorageServerConnectionExtensionDaoTest
     @Override
     protected int getEntitiesTotalCount() {
         return 2;
-    }
-
-    @Override public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getStorageServerConnectionExtensionDao();
     }
 
     private void fillWithRandomData(StorageServerConnectionExtension ssce) {

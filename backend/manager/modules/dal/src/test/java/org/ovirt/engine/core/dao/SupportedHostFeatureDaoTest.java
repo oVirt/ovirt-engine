@@ -13,16 +13,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-public class SupportedHostFeatureDaoTest extends BaseDaoTestCase {
-
-    private SupportedHostFeatureDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getSupportedHostFeatureDao();
-    }
-
+public class SupportedHostFeatureDaoTest extends BaseDaoTestCase<SupportedHostFeatureDao> {
     @Test
     public void testGetSupportedHostFeaturesByHostId() {
         Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);

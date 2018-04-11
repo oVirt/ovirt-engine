@@ -44,20 +44,12 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     private DiskDao diskDao;
     @Inject
     private StepSubjectEntityDao subjectEntityDao;
-    @Inject
-    private StepDao dao;
 
     @Override
     protected Guid getExistingEntityId() {
         return EXISTING_STEP_ID;
     }
 
-    @Override
-    protected StepDao prepareDao() {
-        return dao;
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

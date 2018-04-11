@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * {@link VdsKdumpStatusDao} tests
  */
-public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
+public class VdsKdumpStatusDaoTest extends BaseDaoTestCase<VdsKdumpStatusDao> {
     /**
      * Test getting status for existing VDS
      */
@@ -25,7 +25,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
         expected.setStatus(KdumpFlowStatus.DUMPING);
         expected.setAddress("[\"192.168.122.18\", 2222]");
 
-        VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(expected.getVdsId());
+        VdsKdumpStatus found = dao.get(expected.getVdsId());
 
         assertNotNull(found);
         assertEquals(expected, found);
@@ -36,7 +36,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void getForNonExistentVds() {
-        VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(
+        VdsKdumpStatus found = dao.get(
                 new Guid("11111111-2222-3333-4444-555555555555")
         );
 
@@ -53,9 +53,9 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
         newVdsKdumpStatus.setStatus(KdumpFlowStatus.DUMPING);
         newVdsKdumpStatus.setAddress("[\"192.168.122.16\", 1111]");
 
-        dbFacade.getVdsKdumpStatusDao().update(newVdsKdumpStatus);
+        dao.update(newVdsKdumpStatus);
 
-        VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(newVdsKdumpStatus.getVdsId());
+        VdsKdumpStatus found = dao.get(newVdsKdumpStatus.getVdsId());
 
         assertNotNull(found);
         assertEquals(newVdsKdumpStatus, found);
@@ -70,10 +70,10 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
         newVdsKdumpStatus.setStatus(KdumpFlowStatus.DUMPING);
         newVdsKdumpStatus.setAddress("[\"10.35.110.10\", 1111]");
 
-        dbFacade.getVdsKdumpStatusDao().updateForIp("10.35.110.10", newVdsKdumpStatus);
+        dao.updateForIp("10.35.110.10", newVdsKdumpStatus);
         newVdsKdumpStatus.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
 
-        VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(newVdsKdumpStatus.getVdsId());
+        VdsKdumpStatus found = dao.get(newVdsKdumpStatus.getVdsId());
 
         assertNotNull(found);
         assertEquals(newVdsKdumpStatus, found);
@@ -89,9 +89,9 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
         existing.setStatus(KdumpFlowStatus.FINISHED);
         existing.setAddress("[\"192.168.122.25\", 4444]");
 
-        dbFacade.getVdsKdumpStatusDao().update(existing);
+        dao.update(existing);
 
-        VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(existing.getVdsId());
+        VdsKdumpStatus found = dao.get(existing.getVdsId());
 
         assertNotNull(found);
         assertEquals(existing, found);
@@ -106,10 +106,10 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
         existing.setStatus(KdumpFlowStatus.FINISHED);
         existing.setAddress("[\"10.35.110.10\", 4444]");
 
-        dbFacade.getVdsKdumpStatusDao().updateForIp("10.35.110.10", existing);
+        dao.updateForIp("10.35.110.10", existing);
 
         existing.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
-        VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(existing.getVdsId());
+        VdsKdumpStatus found = dao.get(existing.getVdsId());
 
         assertNotNull(found);
         assertEquals(existing, found);
@@ -122,8 +122,8 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
     public void removeForExistingVds() {
         Guid vdsId = new Guid("11111111-1111-1111-1111-111111111112");
 
-        dbFacade.getVdsKdumpStatusDao().remove(vdsId);
-        VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(vdsId);
+        dao.remove(vdsId);
+        VdsKdumpStatus found = dao.get(vdsId);
 
         assertNull(found);
     }
@@ -133,7 +133,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void removeForNonExistentVds() {
-        dbFacade.getVdsKdumpStatusDao().remove(
+        dao.remove(
                 new Guid("11111111-2222-3333-4444-555555555555")
         );
     }
@@ -143,7 +143,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void getAllUnfinishedKdumpStatus() {
-        List<VdsKdumpStatus> result = dbFacade.getVdsKdumpStatusDao().getAllUnfinishedVdsKdumpStatus();
+        List<VdsKdumpStatus> result = dao.getAllUnfinishedVdsKdumpStatus();
 
         assertNotNull(result);
         assertEquals(1, result.size());

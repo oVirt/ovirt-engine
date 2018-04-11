@@ -14,14 +14,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class StoageDeviceDaoTest extends BaseDaoTestCase {
+public class StoageDeviceDaoTest extends BaseDaoTestCase<StorageDeviceDao > {
 
     private static final Guid NEW_STORAGE_DEVICE_ID = new Guid("00000000-0000-0000-0000-000000000003");
     private static final Guid EXISTING_STORAGE_DEVICE_ID_1 = new Guid("00000000-0000-0000-0000-000000000001");
     private static final Guid EXISTING_STORAGE_DEVICE_ID_2 = new Guid("00000000-0000-0000-0000-000000000002");
     private static final Guid NON_EXISTING_STORAGE_DEVICE_ID = new Guid("00000000-0000-0000-0000-000000000000");
-
-    private StorageDeviceDao dao;
 
     private StorageDevice getStorageDevice() {
         StorageDevice storageDevice = new StorageDevice();
@@ -36,11 +34,6 @@ public class StoageDeviceDaoTest extends BaseDaoTestCase {
         storageDevice.setVdsId(FixturesTool.GLUSTER_BRICK_SERVER1);
         return storageDevice;
 
-    }
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getStorageDeviceDao();
     }
 
     @Test

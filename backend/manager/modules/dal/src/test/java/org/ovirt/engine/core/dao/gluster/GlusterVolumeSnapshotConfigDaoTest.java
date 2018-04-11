@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase {
+public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase<GlusterVolumeSnapshotConfigDao> {
 
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid VOLUME_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
@@ -25,12 +25,10 @@ public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase {
     private GlusterVolumeSnapshotConfig existingConfig2;
     private GlusterVolumeSnapshotConfig existingConfig3;
     private GlusterVolumeSnapshotConfig newConfig;
-    private GlusterVolumeSnapshotConfigDao dao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getGlusterVolumeSnapshotConfigDao();
         existingConfig1 = dao.getConfigByVolumeIdAndName(CLUSTER_ID, VOLUME_ID, PARAM_NAME_1);
         existingConfig2 = dao.getConfigByVolumeIdAndName(CLUSTER_ID, VOLUME_ID, PARAM_NAME_2);
         existingConfig3 = dao.getConfigByClusterIdAndName(CLUSTER_ID, PARAM_NAME_3);

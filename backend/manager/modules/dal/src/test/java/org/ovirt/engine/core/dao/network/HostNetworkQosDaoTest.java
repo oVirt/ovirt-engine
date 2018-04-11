@@ -37,11 +37,6 @@ public class HostNetworkQosDaoTest extends BaseGenericDaoTestCase<Guid, HostNetw
     }
 
     @Override
-    protected HostNetworkQosDao prepareDao() {
-        return dbFacade.getHostNetworkQosDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

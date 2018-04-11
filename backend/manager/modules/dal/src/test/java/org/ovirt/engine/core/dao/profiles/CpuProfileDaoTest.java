@@ -36,11 +36,6 @@ public class CpuProfileDaoTest extends BaseGenericDaoTestCase<Guid, CpuProfile, 
     }
 
     @Override
-    protected CpuProfileDao prepareDao() {
-        return dbFacade.getCpuProfileDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

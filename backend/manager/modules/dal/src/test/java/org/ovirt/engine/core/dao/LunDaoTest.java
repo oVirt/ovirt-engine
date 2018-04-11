@@ -18,11 +18,6 @@ public class LunDaoTest extends BaseGenericDaoTestCase<String, LUNs, LunDao> {
     }
 
     @Override
-    protected LunDao prepareDao() {
-        return dbFacade.getLunDao();
-    }
-
-    @Override
     protected LUNs generateNewEntity() {
         LUNs newLUN = new LUNs();
         newLUN.setLUNId("oicu812");

@@ -17,17 +17,10 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class QuotaDaoTest extends BaseDaoTestCase {
-    private QuotaDao dao;
+public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
     private static final Long unlimited = -1L;
     private static final int STORAGE_NUM_QUOTAS = 5;
     private static final int VDS_GRUOP_NUM_QUOTAS = 4;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getQuotaDao();
-    }
 
     @Test
     public void testGeneralQuotaLimitations() {

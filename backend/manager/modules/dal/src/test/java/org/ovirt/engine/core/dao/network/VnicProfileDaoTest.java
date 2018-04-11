@@ -44,11 +44,6 @@ public class VnicProfileDaoTest extends BaseGenericDaoTestCase<Guid, VnicProfile
     }
 
     @Override
-    protected VnicProfileDao prepareDao() {
-        return dbFacade.getVnicProfileDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

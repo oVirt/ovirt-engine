@@ -31,11 +31,6 @@ public class StorageDomainDynamicDaoTest
     }
 
     @Override
-    protected StorageDomainDynamicDao prepareDao() {
-        return dbFacade.getStorageDomainDynamicDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

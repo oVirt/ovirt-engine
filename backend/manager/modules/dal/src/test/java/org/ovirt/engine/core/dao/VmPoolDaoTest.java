@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmPoolDaoTest extends BaseDaoTestCase {
+public class VmPoolDaoTest extends BaseDaoTestCase<VmPoolDao> {
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final Guid DELETABLE_VM_POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0078");
     private static final Guid EXISTING_VM_POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
@@ -28,8 +28,6 @@ public class VmPoolDaoTest extends BaseDaoTestCase {
     private VmPool deletableVmPool;
     private VmPool newVmPool;
     private VmPoolMap newVmPoolMap;
-    @Inject
-    private VmPoolDao dao;
     @Inject
     private VmDao vmDao;
 

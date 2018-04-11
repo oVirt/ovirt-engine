@@ -16,20 +16,12 @@ import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
-public class AffinityGroupDaoTest extends BaseDaoTestCase {
+public class AffinityGroupDaoTest extends BaseDaoTestCase<AffinityGroupDao> {
 
     private static final String AFFINITY_GROUP_NAME = "affinityGroup1";
     private static final int NUM_OF_AFFINITY_GROUPS_IN_CLUSTER = 3;
     private static final int NUM_OF_AFFINITY_GROUPS_FOR_VM = 2;
     private static final int NUM_OF_VMS_IN_EXISTING_AFFINITY_GROUP = 2;
-
-    private AffinityGroupDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getAffinityGroupDao();
-    }
 
     @Test
     public void testGetById() {

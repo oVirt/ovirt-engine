@@ -15,8 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * {@code EngineSessionDaoTest} performs tests against the {@link org.ovirt.engine.core.dao.EngineSessionDao} type.
  */
-public class EngineSessionDaoTest extends BaseDaoTestCase {
-    private EngineSessionDao dao;
+public class EngineSessionDaoTest extends BaseDaoTestCase<EngineSessionDao> {
     private EngineSession newEngineSession;
     private EngineSession existingEngineSession;
 
@@ -24,8 +23,6 @@ public class EngineSessionDaoTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getEngineSessionDao();
 
         // create some test data
         newEngineSession = new EngineSession();

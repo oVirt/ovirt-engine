@@ -34,13 +34,11 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class StorageDomainDaoTest extends BaseDaoTestCase {
+public class StorageDomainDaoTest extends BaseDaoTestCase<StorageDomainDao> {
     private static final int NUMBER_OF_STORAGE_DOMAINS_FOR_PRIVELEGED_USER = 1;
     private static final String EXISTING_CONNECTION = "10.35.64.25:/export/share";
     private static final long NUMBER_OF_IMAGES_ON_EXISTING_DOMAIN = 5;
 
-    @Inject
-    private StorageDomainDao dao;
     @Inject
     private VmDao vmDao;
     @Inject

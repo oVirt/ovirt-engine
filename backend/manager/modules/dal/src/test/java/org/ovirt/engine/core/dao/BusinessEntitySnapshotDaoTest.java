@@ -9,23 +9,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.KeyValue;
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BusinessEntitySnapshotDaoTest extends BaseDaoTestCase {
-    private BusinessEntitySnapshotDao dao;
+public class BusinessEntitySnapshotDaoTest extends BaseDaoTestCase<BusinessEntitySnapshotDao> {
     private Guid commandWithTwoSnapshotsId = new Guid("48e85ac4-17cc-40d1-8b4e-37edcea8d78a");
     private Guid commandWithOneSnapshotId = new Guid("0dcaa6a5-16fe-4270-8614-5dd249a057e0");
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getBusinessEntitySnapshotDao();
-    }
-
 
     @Test
     public void testGetByCommandId() {

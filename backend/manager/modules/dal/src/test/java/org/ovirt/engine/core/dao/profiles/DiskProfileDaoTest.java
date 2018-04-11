@@ -38,11 +38,6 @@ public class DiskProfileDaoTest extends BaseGenericDaoTestCase<Guid, DiskProfile
     }
 
     @Override
-    protected DiskProfileDao prepareDao() {
-        return dbFacade.getDiskProfileDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

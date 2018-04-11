@@ -34,11 +34,6 @@ public class DnsResolverConfigurationDaoTest
     }
 
     @Override
-    protected DnsResolverConfigurationDao prepareDao() {
-        return dbFacade.getDnsResolverConfigurationDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

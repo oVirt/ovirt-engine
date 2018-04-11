@@ -110,11 +110,6 @@ public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVm
     }
 
     @Override
-    protected DiskVmElementDao prepareDao() {
-        return dbFacade.getDiskVmElementDao();
-    }
-
-    @Override
     protected VmDeviceId generateNonExistingId() {
         return new VmDeviceId(Guid.newGuid(), Guid.newGuid());
     }

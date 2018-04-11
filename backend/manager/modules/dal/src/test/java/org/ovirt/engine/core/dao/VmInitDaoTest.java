@@ -8,17 +8,15 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmInitDaoTest extends BaseDaoTestCase {
+public class VmInitDaoTest extends BaseDaoTestCase<VmInitDao> {
     private static final Guid EXISTING_VM = FixturesTool.VM_RHEL5_POOL_57;
 
     private VmInit vmInit;
-    private VmInitDao vmInitDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        vmInitDao = dbFacade.getVmInitDao();
         vmInit = new VmInit();
         vmInit.setId(EXISTING_VM);
     }
@@ -28,13 +26,13 @@ public class VmInitDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VmInit result = vmInitDao.get(Guid.newGuid());
+        VmInit result = dao.get(Guid.newGuid());
         assertNull(result);
     }
 
     @Test
     public void testGet() {
-        VmInit result = vmInitDao.get(EXISTING_VM);
+        VmInit result = dao.get(EXISTING_VM);
         assertNotNull(result != null);
     }
 
@@ -42,7 +40,7 @@ public class VmInitDaoTest extends BaseDaoTestCase {
     public void testSave() {
         addVmInit();
 
-        VmInit result = vmInitDao.get(EXISTING_VM);
+        VmInit result = dao.get(EXISTING_VM);
         assertNotNull(result);
         assertEquals("hostname", result.getHostname());
     }
@@ -51,17 +49,17 @@ public class VmInitDaoTest extends BaseDaoTestCase {
         VmInit init = new VmInit();
         init.setId(EXISTING_VM);
         init.setHostname("hostname");
-        vmInitDao.save(init);
+        dao.save(init);
     }
 
     @Test
     public void testUpdate() {
         addVmInit();
-        VmInit init = vmInitDao.get(EXISTING_VM);
+        VmInit init = dao.get(EXISTING_VM);
         init.setHostname("newhostname");
-        vmInitDao.update(init);
+        dao.update(init);
 
-        VmInit result = vmInitDao.get(init.getId());
+        VmInit result = dao.get(init.getId());
         assertNotNull(result);
         assertEquals("newhostname", result.getHostname());
     }
@@ -69,11 +67,11 @@ public class VmInitDaoTest extends BaseDaoTestCase {
     @Test
     public void testRemove() {
         addVmInit();
-        VmInit result = vmInitDao.get(EXISTING_VM);
+        VmInit result = dao.get(EXISTING_VM);
         assertNotNull(result);
 
-        vmInitDao.remove(EXISTING_VM);
-        result = vmInitDao.get(EXISTING_VM);
+        dao.remove(EXISTING_VM);
+        result = dao.get(EXISTING_VM);
         assertNull(result);
     }
 }

@@ -14,17 +14,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class NetworkClusterDaoTest extends BaseDaoTestCase {
+public class NetworkClusterDaoTest extends BaseDaoTestCase<NetworkClusterDao> {
     private static final int NETWORK_CLUSTER_COUNT = 4;
-    private NetworkClusterDao dao;
     private NetworkCluster newNetworkCluster;
     private NetworkCluster existingNetworkCluster;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getNetworkClusterDao();
 
         createNewNetworkCluster();
 

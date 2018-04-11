@@ -14,9 +14,8 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Performs tests against the {@link DbGroupDao} type.
  */
-public class DbGroupDaoTest extends BaseDaoTestCase {
+public class DbGroupDaoTest extends BaseDaoTestCase<DbGroupDao> {
     private static final int GROUP_COUNT = 10;
-    private DbGroupDao dao;
     private DbGroup newGroup;
     private DbGroup existingGroup;
 
@@ -24,8 +23,6 @@ public class DbGroupDaoTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getDbGroupDao();
 
         // create some test data
         newGroup = new DbGroup();

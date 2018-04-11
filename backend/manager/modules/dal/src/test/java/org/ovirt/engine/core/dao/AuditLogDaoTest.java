@@ -22,7 +22,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 /**
  * {@code AuditLogDaoTest} performs tests against the {@link AuditLogDao} type.
  */
-public class AuditLogDaoTest extends BaseDaoTestCase {
+public class AuditLogDaoTest extends BaseDaoTestCase<AuditLogDao> {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
@@ -37,7 +37,6 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     private static final int AFTER_DATE_COUNT = 7;
     private static final int TOTAL_COUNT = 8;
     private static final int CUSTOM_BAKUP_EVENT_ID = 9022;
-    private AuditLogDao dao;
 
     /** Note that {@link SimpleDateFormat} is inherently not thread-safe, and should not be static */
     private final SimpleDateFormat EXPECTED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -50,7 +49,6 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getAuditLogDao();
 
         // create some test data
         newAuditLog = new AuditLog();

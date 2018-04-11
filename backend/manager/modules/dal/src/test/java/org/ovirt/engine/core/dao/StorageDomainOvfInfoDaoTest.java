@@ -31,11 +31,6 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
     }
 
     @Override
-    protected StorageDomainOvfInfoDao prepareDao() {
-        return dbFacade.getStorageDomainOvfInfoDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

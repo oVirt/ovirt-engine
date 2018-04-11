@@ -45,11 +45,6 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     }
 
     @Override
-    protected DiskImageDao prepareDao() {
-        return dbFacade.getDiskImageDao();
-    }
-
-    @Override
     protected Guid getExistingEntityId() {
         return IMAGE_ID;
     }

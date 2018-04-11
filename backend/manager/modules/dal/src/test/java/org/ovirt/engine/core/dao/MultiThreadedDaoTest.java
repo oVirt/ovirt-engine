@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
@@ -19,22 +18,13 @@ import org.ovirt.engine.core.compat.Guid;
  * The following test checks multi-threading issues with Dao usage.
  * The test uses the TagsDao, but any other Dao can be used
  */
-public class MultiThreadedDaoTest extends BaseDaoTestCase {
-
-    private TagDao dao;
+public class MultiThreadedDaoTest extends BaseDaoTestCase<TagDao> {
     private static final Guid[] EXISTING_TAGS_IDS = {
             new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"),
             new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0d"),
             new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0e") };
 
     private CountDownLatch latch = null;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getTagDao();
-    }
 
     @Test
     public void testGetSameID() throws Exception {

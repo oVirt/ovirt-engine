@@ -45,11 +45,6 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
     }
 
     @Override
-    protected VmDynamicDao prepareDao() {
-        return dbFacade.getVmDynamicDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

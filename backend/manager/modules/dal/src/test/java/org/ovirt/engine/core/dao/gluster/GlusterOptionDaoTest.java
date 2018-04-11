@@ -14,21 +14,13 @@ import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterOptionDaoTest extends BaseDaoTestCase {
+public class GlusterOptionDaoTest extends BaseDaoTestCase<GlusterOptionDao> {
     private static final Guid EXISTING_VOL_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid EXISTING_OPTION_ID = new Guid("9e6a606e-9a7a-4398-9b13-3ad4777abfba");
     private static final String OPTION_AUTH_REJECT = "auth.reject";
     private static final String OPTION_AUTH_REJECT_VALUE = "192.168.1.123";
     private static final String OPTION_AUTH_ALLOW_VALUE_NEW = "192.168.1.321";
     private static final String OPTION_AUTH_ALLOW_VALUE_ALL = "*";
-
-    private GlusterOptionDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getGlusterOptionDao();
-    }
 
     @Test
     public void testSaveAndGetById() {

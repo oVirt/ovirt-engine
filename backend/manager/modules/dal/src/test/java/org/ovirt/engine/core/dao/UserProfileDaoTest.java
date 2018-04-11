@@ -12,8 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.compat.Guid;
 
-public class UserProfileDaoTest extends BaseDaoTestCase {
-    private UserProfileDao dao;
+public class UserProfileDaoTest extends BaseDaoTestCase<UserProfileDao> {
     private UserProfile existingProfile;
     private UserProfile deletableProfile;
     private UserProfile newProfile;
@@ -22,8 +21,6 @@ public class UserProfileDaoTest extends BaseDaoTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getUserProfileDao();
 
         existingProfile = dao.get(new Guid("38cb5663-96bc-485c-834a-cbbc03acc820"));
         deletableProfile = dao.get(new Guid("38cb5663-96bc-485c-834a-cbbc03acc821"));

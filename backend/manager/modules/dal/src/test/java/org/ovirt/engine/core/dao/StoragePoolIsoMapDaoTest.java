@@ -33,11 +33,6 @@ public class StoragePoolIsoMapDaoTest extends
     }
 
     @Override
-    protected StoragePoolIsoMapDao prepareDao() {
-        return dbFacade.getStoragePoolIsoMapDao();
-    }
-
-    @Override
     protected StoragePoolIsoMapId generateNonExistingId() {
         return new StoragePoolIsoMapId(Guid.newGuid(), Guid.newGuid());
     }

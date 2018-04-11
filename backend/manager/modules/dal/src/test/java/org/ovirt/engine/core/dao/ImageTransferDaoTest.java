@@ -7,8 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
@@ -23,14 +21,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class ImageTransferDaoTest extends BaseGenericDaoTestCase<Guid, ImageTransfer, ImageTransferDao> {
 
     private static final int TOTAL_IMAGE_TRANSFERS = 2;
-
-    @Inject
-    private ImageTransferDao dao;
-
-    @Override
-    protected ImageTransferDao prepareDao() {
-        return dao;
-    }
 
     @Override
     protected int getEntitiesTotalCount() {

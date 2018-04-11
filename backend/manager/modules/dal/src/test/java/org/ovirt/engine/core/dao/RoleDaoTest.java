@@ -48,11 +48,6 @@ public class RoleDaoTest extends BaseGenericDaoTestCase<Guid, Role, RoleDao> {
     }
 
     @Override
-    protected RoleDao prepareDao() {
-        return dbFacade.getRoleDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

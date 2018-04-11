@@ -60,11 +60,6 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
     }
 
     @Override
-    protected VmTemplateDao prepareDao() {
-        return dbFacade.getVmTemplateDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

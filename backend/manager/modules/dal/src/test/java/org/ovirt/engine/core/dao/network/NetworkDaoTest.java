@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class NetworkDaoTest extends BaseDaoTestCase {
+public class NetworkDaoTest extends BaseDaoTestCase<NetworkDao> {
     private static final Guid MANAGEMENT_NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-1234567890ab");
 
     private Network newNet;

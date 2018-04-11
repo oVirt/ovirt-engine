@@ -60,11 +60,6 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
     }
 
     @Override
-    protected HostDeviceDao prepareDao() {
-        return dbFacade.getHostDeviceDao();
-    }
-
-    @Override
     protected HostDeviceId generateNonExistingId() {
         return new HostDeviceId(Guid.newGuid(), "this_device_probably_doesnt_exist");
     }

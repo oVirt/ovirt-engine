@@ -11,20 +11,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 
-public class GlusterServiceDaoTest extends BaseDaoTestCase {
+public class GlusterServiceDaoTest extends BaseDaoTestCase<GlusterServiceDao> {
     private static final String GLUSTER_SERVICE = "gluster-test";
     private static final Guid GLUSTER_SERVICE_ID = new Guid("fc00df54-4fcd-4495-8756-b217780bdad7");
     private static final String GLUSTER_SWIFT_SERVICE1 = "gluster-swift-test-1";
     private static final Guid GLUSTER_SWIFT_SERVICE1_ID =
             new Guid("c83c9ee3-b7d8-4709-ae4b-5d86a152e6b1");
     private static final String GLUSTER_SWIFT_SERVICE2 = "gluster-swift-test-2";
-    private GlusterServiceDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getGlusterServiceDao();
-    }
 
     @Test
     public void testGetByServiceType() {

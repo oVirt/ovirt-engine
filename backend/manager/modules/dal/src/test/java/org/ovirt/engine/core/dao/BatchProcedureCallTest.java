@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
@@ -19,24 +18,12 @@ import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.SimpleJdbcCallsHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class BatchProcedureCallTest extends BaseDaoTestCase {
-
-    private TagDao dao;
-
+public class BatchProcedureCallTest extends BaseDaoTestCase<TagDao> {
     @Inject
     private DbEngineDialect dbEngineDialect;
 
     @Inject
     private SimpleJdbcCallsHandler jdbcCallsHandler;
-
-    public BatchProcedureCallTest() {
-    }
-
-    @Override
-    @Before
-    public void setUp() {
-        dao = dbFacade.getTagDao();
-    }
 
     protected CustomMapSqlParameterSource getParamsSource(Tags tag) {
         CustomMapSqlParameterSource paramsSource = new CustomMapSqlParameterSource(dbEngineDialect);

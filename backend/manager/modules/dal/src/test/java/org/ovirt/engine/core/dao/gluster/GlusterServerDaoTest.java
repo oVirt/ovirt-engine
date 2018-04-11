@@ -13,15 +13,7 @@ import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 
-public class GlusterServerDaoTest extends BaseDaoTestCase {
-    private GlusterServerDao dao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getGlusterServerDao();
-    }
-
+public class GlusterServerDaoTest extends BaseDaoTestCase<GlusterServerDao> {
     @Test
     public void testSave() {
         GlusterServer newEntity = new GlusterServer();

@@ -39,11 +39,6 @@ public class VdsStaticDaoTest extends BaseGenericDaoTestCase<Guid, VdsStatic, Vd
     }
 
     @Override
-    protected VdsStaticDao prepareDao() {
-        return dbFacade.getVdsStaticDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }

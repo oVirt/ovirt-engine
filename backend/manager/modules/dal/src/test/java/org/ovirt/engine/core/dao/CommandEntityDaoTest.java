@@ -55,11 +55,6 @@ public class CommandEntityDaoTest extends BaseGenericDaoTestCase<Guid, CommandEn
     }
 
     @Override
-    protected CommandEntityDao prepareDao() {
-        return dbFacade.getCommandEntityDao();
-    }
-
-    @Override
     protected Guid generateNonExistingId() {
         return Guid.newGuid();
     }
@@ -71,16 +66,16 @@ public class CommandEntityDaoTest extends BaseGenericDaoTestCase<Guid, CommandEn
 
     @Test
     public void testRemove() {
-        CommandEntity cmd = dbFacade.getCommandEntityDao().get(getExistingEntityId());
+        CommandEntity cmd = dao.get(getExistingEntityId());
         assertNotNull(cmd);
-        dbFacade.getCommandEntityDao().remove(getExistingEntityId());
-        CommandEntity cmdAfterRemoval = dbFacade.getCommandEntityDao().get(getExistingEntityId());
+        dao.remove(getExistingEntityId());
+        CommandEntity cmdAfterRemoval = dao.get(getExistingEntityId());
         assertNull(cmdAfterRemoval);
     }
 
     @Test
     public void testGetAll() {
-        List<CommandEntity> cmds = dbFacade.getCommandEntityDao().getAll();
+        List<CommandEntity> cmds = dao.getAll();
         assertNotNull(cmds);
         assertTrue(cmds.size() > 0);
     }

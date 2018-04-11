@@ -20,8 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class HostNicVfsConfigDaoTest extends BaseDaoTestCase {
-    private HostNicVfsConfigDao dao;
+public class HostNicVfsConfigDaoTest extends BaseDaoTestCase<HostNicVfsConfigDao> {
 
     // Map the vfsConfig id to the number of networks and labels it has
     private static final Map<Guid, Pair<Integer, Integer>> EXPECTED_GUIDS;
@@ -31,13 +30,6 @@ public class HostNicVfsConfigDaoTest extends BaseDaoTestCase {
         tmpMap.put(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1, new Pair<>(2, 2));
         tmpMap.put(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_2, new Pair<>(1, 3));
         EXPECTED_GUIDS = Collections.unmodifiableMap(tmpMap);
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getHostNicVfsConfigDao();
     }
 
     /**
