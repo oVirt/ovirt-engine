@@ -56,7 +56,7 @@ public abstract class BaseDaoTestCase {
     protected static DataSource dataSource;
 
     @BeforeClass
-    public static void initTestCase() throws Exception {
+    public static void initTestCase() {
         if(dataSource == null) {
             try {
                 dataSource = createDataSource();

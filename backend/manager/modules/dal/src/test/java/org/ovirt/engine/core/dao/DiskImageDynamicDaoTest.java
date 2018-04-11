@@ -61,7 +61,7 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
     }
 
     @Test
-    public void testUpdateAll() throws Exception {
+    public void testUpdateAll() {
         DiskImageDynamic existingEntity2 = dao.get(new Guid("42058975-3d5e-484a-80c1-01c31207f579"));
         existingEntity.setActualSize(100);
         existingEntity2.setReadRate(120);
@@ -75,7 +75,7 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
     }
 
     @Test
-    public void updateAllDiskImageDynamicWithDiskIdByVmId() throws Exception {
+    public void updateAllDiskImageDynamicWithDiskIdByVmId() {
         Guid imageId = FixturesTool.IMAGE_ID_2;
         Guid imageGroupId = FixturesTool.IMAGE_GROUP_ID_2;
 
@@ -100,7 +100,7 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
     }
 
     @Test
-    public void sortDiskImageDynamicForUpdate() throws Exception {
+    public void sortDiskImageDynamicForUpdate() {
         Guid firstGuid = Guid.Empty;
         Guid secondGuid = Guid.createGuidFromString("11111111-1111-1111-1111-111111111111");
         Guid thirdGuid = Guid.createGuidFromString("22222222-2222-2222-2222-222222222222");

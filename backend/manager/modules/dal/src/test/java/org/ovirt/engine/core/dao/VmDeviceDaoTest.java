@@ -65,12 +65,12 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     }
 
     @Test
-    public void existsForExistingVmDevice() throws Exception {
+    public void existsForExistingVmDevice() {
         assertTrue(dao.exists(new VmDeviceId(EXISTING_DEVICE_ID, EXISTING_VM_ID)));
     }
 
     @Test
-    public void existsForNonExistingVmDevice() throws Exception {
+    public void existsForNonExistingVmDevice() {
         assertFalse(dao.exists(new VmDeviceId(Guid.newGuid(), Guid.newGuid())));
     }
 

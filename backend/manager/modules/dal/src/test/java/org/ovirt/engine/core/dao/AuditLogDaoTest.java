@@ -249,16 +249,14 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testRemoveAllForVds()
-            throws Exception {
+    public void testRemoveAllForVds() {
         dao.removeAllForVds(FixturesTool.VDS_RHEL6_NFS_SPM, true);
         List<AuditLog> result = dao.getAll(null, false);
         assertEquals(7, result.size());
     }
 
     @Test
-    public void testRemoveAllOfTypeForVds()
-            throws Exception {
+    public void testRemoveAllOfTypeForVds() {
         dao.removeAllOfTypeForVds(FixturesTool.VDS_RHEL6_NFS_SPM,
                 AuditLogType.IRS_DISK_SPACE_LOW_ERROR.getValue());
         // show be 1 left that was in event_notification_hist

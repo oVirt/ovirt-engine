@@ -83,25 +83,25 @@ public class VmNicDaoTest extends BaseGenericDaoTestCase<Guid, VmNic, VmNicDao> 
     }
 
     @Test
-    public void testGetAllForTemplatesByNetwork() throws Exception {
+    public void testGetAllForTemplatesByNetwork() {
         List<VmNic> result = dao.getAllForTemplatesByNetwork(FixturesTool.NETWORK_ENGINE);
         assertEquals(existingTemplateNic, result.get(0));
     }
 
     @Test
-    public void testGetAllForNetwork() throws Exception {
+    public void testGetAllForNetwork() {
         List<VmNic> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
         assertEquals(existingEntity, result.get(0));
     }
 
     @Test
-    public void testGetAllMacsByStoragePool() throws Exception {
+    public void testGetAllMacsByStoragePool() {
         List<String> result = dao.getAllMacsByDataCenter(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         assertEquals(FixturesTool.MAC_ADDRESS, result.get(0));
     }
 
     @Test
-    public void testGetPluggedForMac() throws Exception {
+    public void testGetPluggedForMac() {
         List<VmNic> result = dao.getPluggedForMac(FixturesTool.MAC_ADDRESS);
         for (VmNic vmNetworkInterface : result) {
             assertEquals(FixturesTool.MAC_ADDRESS, vmNetworkInterface.getMacAddress());

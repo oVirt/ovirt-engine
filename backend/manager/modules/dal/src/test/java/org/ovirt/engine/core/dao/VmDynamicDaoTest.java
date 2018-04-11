@@ -91,7 +91,7 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
     }
 
     @Test
-    public void testUpdateAll() throws Exception {
+    public void testUpdateAll() {
         VmDynamic existingVm2 = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         existingEntity.setStatus(VMStatus.Down);
         existingVm2.setIp("111");
@@ -108,7 +108,7 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
      * without a previous console user succeeds and returns {@code true}.
      */
     @Test
-    public void testUpdateConsoleUserWithOptimisticLockingSuccess() throws Exception {
+    public void testUpdateConsoleUserWithOptimisticLockingSuccess() {
         VmDynamic vmWithoutConsoleUser = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         vmWithoutConsoleUser.setConsoleUserId(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
 
@@ -122,7 +122,7 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
      * that already as a previous console user fails and returns {@code false}.
      */
     @Test
-    public void testUpdateConsoleUserWithOptimisticLockingFailure() throws Exception {
+    public void testUpdateConsoleUserWithOptimisticLockingFailure() {
         VmDynamic vmWithoutConsoleUser = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         vmWithoutConsoleUser.setConsoleUserId(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
 
@@ -132,7 +132,7 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
     }
 
     @Test
-    public void testClearMigratingToVds() throws Exception {
+    public void testClearMigratingToVds() {
         VmDynamic vmDynamic = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         assertNotNull("migrating_to_vds field should not be null before we clear it",
                 vmDynamic.getMigratingToVds());
@@ -145,7 +145,7 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
     }
 
     @Test
-    public void testGuestAgentStatus() throws Exception {
+    public void testGuestAgentStatus() {
         Guid vmId = FixturesTool.VM_RHEL5_POOL_51;
         VmDynamic vmDynamic = dao.get(vmId);
         vmDynamic.setGuestAgentStatus(GuestAgentStatus.UpdateNeeded);

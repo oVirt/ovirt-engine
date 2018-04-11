@@ -8,12 +8,12 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class EventKeyComposerTest {
     @Test
-    public void composeObjectIdForAnEmptyAuditLogForInjectedImpl() throws Exception {
+    public void composeObjectIdForAnEmptyAuditLogForInjectedImpl() {
         composeObjectIdForAnEmptyAuditLog(new AuditLogableBase());
     }
 
     @Test
-    public void composeObjectIdForAnEmptyAuditLogForNonInjectedImpl() throws Exception {
+    public void composeObjectIdForAnEmptyAuditLogForNonInjectedImpl() {
         composeObjectIdForAnEmptyAuditLog(new AuditLogableImpl());
     }
 
@@ -31,13 +31,13 @@ public class EventKeyComposerTest {
     }
 
     @Test
-    public void composeObjectIdWithAuditLogableBase() throws Exception {
+    public void composeObjectIdWithAuditLogableBase() {
         AuditLogableBase event = new AuditLogableBase();
         createEventAndAssert(event);
     }
 
     @Test
-    public void composeObjectIdWithAuditLogableImpl() throws Exception {
+    public void composeObjectIdWithAuditLogableImpl() {
         AuditLogable event = new AuditLogableImpl();
         createEventAndAssert(event);
     }

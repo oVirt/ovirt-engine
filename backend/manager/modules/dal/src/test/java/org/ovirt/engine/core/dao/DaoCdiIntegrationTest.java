@@ -18,7 +18,7 @@ public class DaoCdiIntegrationTest {
     private static Set<Class<? extends Dao>> daoClasses;
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         final Reflections reflections = new Reflections("org.ovirt.engine");
 
         daoClasses = Collections.unmodifiableSet(reflections.getSubTypesOf(Dao.class));

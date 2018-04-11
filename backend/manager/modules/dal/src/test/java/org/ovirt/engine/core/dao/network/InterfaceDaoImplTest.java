@@ -228,7 +228,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testMasshUpdateStatisticsForVds() throws Exception {
+    public void testMasshUpdateStatisticsForVds() {
         List<VdsNetworkInterface> interfaces = dao.getAllInterfacesForVds(VDS_ID);
         List<VdsNetworkStatistics> statistics = new ArrayList<>(interfaces.size());
         for (VdsNetworkInterface iface : interfaces) {
@@ -333,7 +333,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
      * Asserts that the correct VdsNetworkInterface is returned for the given network.
      */
     @Test
-    public void testGetVdsInterfacesByNetworkId() throws Exception {
+    public void testGetVdsInterfacesByNetworkId() {
         List<VdsNetworkInterface> result = dao.getVdsInterfacesByNetworkId(FixturesTool.NETWORK_ENGINE);
         assertEquals(existingVdsInterface, result.get(0));
     }

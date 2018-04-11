@@ -34,7 +34,7 @@ public class BatchProcedureCallTest extends BaseDaoTestCase {
 
     @Override
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         dao = dbFacade.getTagDao();
     }
 

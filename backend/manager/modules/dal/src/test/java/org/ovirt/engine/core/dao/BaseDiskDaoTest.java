@@ -55,12 +55,12 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
     }
 
     @Test
-    public void existsForExistingDisk() throws Exception {
+    public void existsForExistingDisk() {
         assertTrue(dao.exists(EXISTING_DISK_ID));
     }
 
     @Test
-    public void existsForNonExistingDisk() throws Exception {
+    public void existsForNonExistingDisk() {
         assertFalse(dao.exists(Guid.Empty));
     }
 

@@ -30,7 +30,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGeneralQuotaLimitations() throws Exception {
+    public void testGeneralQuotaLimitations() {
         // Set new Quota definition.
         Quota quota = createGeneralQuota();
         setQuotaGlobalLimitations(quota);
@@ -47,7 +47,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testSpecificQuotaLimitations() throws Exception {
+    public void testSpecificQuotaLimitations() {
         // Set new Quota definition.
         Quota quota = createGeneralQuota();
         quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quota.getId())));
@@ -60,7 +60,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testSpecificAndGeneralQuotaLimitations() throws Exception {
+    public void testSpecificAndGeneralQuotaLimitations() {
         // Set new Quota definition.
         Quota quota = createGeneralQuota();
         quota.setQuotaClusters(getQuotaCluster(getSpecificQuotaCluster(quota.getId())));
@@ -78,7 +78,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * The returned value from the query, should be the specific limitation and the global usage on the storage pool.
      */
     @Test
-    public void testFetchClusterWithUnlimitedGlobalLimitation() throws Exception {
+    public void testFetchClusterWithUnlimitedGlobalLimitation() {
         List<QuotaCluster> quotaClusterList =
                 dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
 
@@ -98,7 +98,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * The returned value from the query, should be the global limitation and the global usage on the storage pool.
      */
     @Test
-    public void testFetchGlobalQuotaUsageForSpecificCluster() throws Exception {
+    public void testFetchGlobalQuotaUsageForSpecificCluster() {
         List<QuotaCluster> quotaClusterList =
                 dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_GENERAL);
         QuotaCluster quotaCluster = quotaClusterList.get(0);
@@ -117,7 +117,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * The value that should be returned, is the global limitation and the global usage on the storage pool.
      */
     @Test
-    public void testFetchGlobalQuotaUsageForGlobalCluster() throws Exception {
+    public void testFetchGlobalQuotaUsageForGlobalCluster() {
         List<QuotaCluster> quotaClusterList = dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_GENERAL);
         QuotaCluster quotaCluster = quotaClusterList.get(0);
         assertEquals(1, quotaClusterList.size());
@@ -134,7 +134,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * group or fetching per storage pool should be the same.
      */
     @Test
-    public void testCompareFetchGlobalQuotaForSpecificAndForGlobalCluster() throws Exception {
+    public void testCompareFetchGlobalQuotaForSpecificAndForGlobalCluster() {
         List<QuotaCluster> quotaClusterGlobalList =
                 dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_GENERAL);
         List<QuotaCluster> quotaClusterSpecificList =
@@ -150,7 +150,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * The returned value from the query, should be the specific limitation and the specific usage on the vds group.
      */
     @Test
-    public void testFetchSpecificQuotaUsageForSpecificCluster() throws Exception {
+    public void testFetchSpecificQuotaUsageForSpecificCluster() {
         List<QuotaCluster> quotaClusterList =
                 dao.getQuotaClusterByClusterGuid(FixturesTool.CLUSTER_RHEL6_ISCSI, FixturesTool.QUOTA_SPECIFIC);
         QuotaCluster quotaCluster = quotaClusterList.get(0);
@@ -167,7 +167,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * The value that should be returned, is the specific limitations and the specific usage on the storage pool.
      */
     @Test
-    public void testFetchSpecificQuotaUsageForGlobalCluster() throws Exception {
+    public void testFetchSpecificQuotaUsageForGlobalCluster() {
         List<QuotaCluster> quotaClusterList = dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_SPECIFIC);
         QuotaCluster quotaCluster = quotaClusterList.get(0);
         assertEquals(2, quotaClusterList.size());
@@ -175,7 +175,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testFetchSpecificAndGeneralQuotaForStorage() throws Exception {
+    public void testFetchSpecificAndGeneralQuotaForStorage() {
         List<QuotaStorage> quotaStorageList =
                 dao.getQuotaStorageByStorageGuid(null, FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
         QuotaStorage quotaStorage = quotaStorageList.get(0);
@@ -187,7 +187,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testFetchAllClusterForQuota() throws Exception {
+    public void testFetchAllClusterForQuota() {
         List<QuotaCluster> quotaClusterList =
                 dao.getQuotaClusterByClusterGuid(null, FixturesTool.QUOTA_SPECIFIC);
         assertNotNull(quotaClusterList);
@@ -295,7 +295,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testRemoveQuota() throws Exception {
+    public void testRemoveQuota() {
         Quota quota = dao.getById(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
         assertNotNull(quota);
         dao.remove(FixturesTool.QUOTA_SPECIFIC_AND_GENERAL);
@@ -308,7 +308,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Make Quota specific to be the same as Quota general and specific.
      */
     @Test
-    public void testUpdateQuota() throws Exception {
+    public void testUpdateQuota() {
         Quota quotaGeneralToSpecific = dao.getById(FixturesTool.QUOTA_GENERAL);
 
         // Save quotaName and cluster list for future check.
@@ -340,7 +340,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test get Quota by Name, with name of specific Quota.
      */
     @Test
-    public void testGetQuotaByExistingName() throws Exception {
+    public void testGetQuotaByExistingName() {
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General", FixturesTool.STORAGE_POOL_NFS);
         assertEquals(dao.getById(FixturesTool.QUOTA_GENERAL)
                 .getQuotaName(), quotaGeneralToSpecific.getQuotaName());
@@ -351,7 +351,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test get Quota by Name, with name of specific Quota.
      */
     @Test
-    public void testGetQuotaByAdElementId() throws Exception {
+    public void testGetQuotaByAdElementId() {
         List<Quota> quotaByAdElementIdList =
                 dao.getQuotaByAdElementId(FixturesTool.USER_EXISTING_ID, FixturesTool.STORAGE_POOL_NFS, false);
 
@@ -363,7 +363,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test get all Quotas in the setup
      */
     @Test
-    public void testGetFetchAllQuotaInTheSetup() throws Exception {
+    public void testGetFetchAllQuotaInTheSetup() {
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(null);
         assertEquals(13, quotaList.size());
     }
@@ -372,7 +372,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test get Quota by storage pool Id
      */
     @Test
-    public void testGetFetchForSpecificStoragePool() throws Exception {
+    public void testGetFetchForSpecificStoragePool() {
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(FixturesTool.STORAGE_POOL_NFS);
         assertEquals(6, quotaList.size());
     }
@@ -381,7 +381,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test get Quota by storage pool Id, for storage pool with no quotas in it.
      */
     @Test
-    public void testFetchStoragePoolWithNoQuota() throws Exception {
+    public void testFetchStoragePoolWithNoQuota() {
         List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(Guid.newGuid());
         assertEquals(0, quotaList.size());
     }
@@ -390,7 +390,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test get Quota by Name, with name that does not exist for the storage pool.
      */
     @Test
-    public void testGetQuotaByExistingNameWIthNoMatchingStoragePool() throws Exception {
+    public void testGetQuotaByExistingNameWIthNoMatchingStoragePool() {
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Quota General",
                 FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
 
@@ -409,7 +409,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test get Quota by Name, with not existing name.
      */
     @Test
-    public void testGetQuotaWithNoExistingName() throws Exception {
+    public void testGetQuotaWithNoExistingName() {
         Quota quotaGeneralToSpecific = dao.getQuotaByQuotaName("Any name", FixturesTool.STORAGE_POOL_NFS);
         assertNull(quotaGeneralToSpecific);
     }
@@ -418,7 +418,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid, long, boolean)} with an existing storage domain
      */
     @Test
-    public void testGetRelevantQuotasExistingStorage() throws Exception {
+    public void testGetRelevantQuotasExistingStorage() {
         // there is one specific quota and all the general ones defined on this storage domain
         assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOMAIN_NFS_MASTER, STORAGE_NUM_QUOTAS);
     }
@@ -427,7 +427,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid, long, boolean)}} with a storage domain with no specific quotas
      */
     @Test
-    public void testGetRelevantQuotasExistingStorageNoSpecificQuotas() throws Exception {
+    public void testGetRelevantQuotasExistingStorageNoSpecificQuotas() {
         // there are no specific quotas, but all the general quotas relate to the storage pool containing this domain
         assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOMAIN_NFS_ISO, STORAGE_NUM_QUOTAS - 1);
     }
@@ -436,7 +436,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test {@link QuotaDao#getAllRelevantQuotasForStorage(Guid, long, boolean)}} with a non existing storage domain
      */
     @Test
-    public void testGetRelevantQuotasNonExistingStorage() throws Exception {
+    public void testGetRelevantQuotasNonExistingStorage() {
         // There is no such storgae, so no quotas are defined on it
         assertGetAllRelevantQuoatsForStorage(Guid.newGuid(), 0);
     }
@@ -453,7 +453,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test getAllRelevantQuotasForStorage(Guid, long, boolean)} with an existing VDS Group
      */
     @Test
-    public void testGetRelevantQuotasExistingCluster() throws Exception {
+    public void testGetRelevantQuotasExistingCluster() {
         // there is one specific quota and all the general ones defined on this VDS Group
         assertGetAllRelevantQuoatsForCluster(FixturesTool.CLUSTER_RHEL6_NFS, VDS_GRUOP_NUM_QUOTAS);
     }
@@ -462,7 +462,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test getAllRelevantQuotasForStorage(Guid, long, boolean)} with a VDS Group domain with no specific quotas
      */
     @Test
-    public void testGetRelevantQuotasExistingClusterNoSpecificQuotas() throws Exception {
+    public void testGetRelevantQuotasExistingClusterNoSpecificQuotas() {
         // there are no specific quotas, but all the general quotas relate to the storage pool containing this group
         assertGetAllRelevantQuoatsForCluster(FixturesTool.CLUSTER_RHEL6_NFS_NO_SPECIFIC_QUOTAS, VDS_GRUOP_NUM_QUOTAS - 1);
     }
@@ -471,7 +471,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Test getAllRelevantQuotasForStorage(Guid, long, boolean)} with a non existing VDS Group
      */
     @Test
-    public void testGetRelevantQuotasNonExistingCluster() throws Exception {
+    public void testGetRelevantQuotasNonExistingCluster() {
         // There is no such storgae, so no quotas are defined on it
         assertGetAllRelevantQuoatsForCluster(Guid.newGuid(), 0);
     }
@@ -481,7 +481,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * without privileges for quota.
      */
     @Test
-    public void testGetRelevantStorageQuotaForUserWithoutPrivileges() throws Exception {
+    public void testGetRelevantStorageQuotaForUserWithoutPrivileges() {
         List<Quota> quotas = dao.getAllRelevantQuotasForStorage(FixturesTool.STORAGE_DOMAIN_NFS_MASTER, FixturesTool.UNPRIVILEGED_SESSION_ID, true);
         assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
     }
@@ -491,7 +491,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * without privileges for quota.
      */
     @Test
-    public void testGetRelevantClusterQuotaForUserWithoutPrivileges() throws Exception {
+    public void testGetRelevantClusterQuotaForUserWithoutPrivileges() {
         List<Quota> quotas = dao.getAllRelevantQuotasForCluster(FixturesTool.CLUSTER_RHEL6_NFS,
                 FixturesTool.UNPRIVILEGED_SESSION_ID,
                 true);

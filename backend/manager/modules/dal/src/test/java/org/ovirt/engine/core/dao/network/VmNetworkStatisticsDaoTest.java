@@ -113,12 +113,12 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testGetAll() throws Exception {
+    public void testGetAll() {
         dao.getAll();
     }
 
     @Test
-    public void testUpdateAll() throws Exception {
+    public void testUpdateAll() {
         VmNetworkStatistics existingStats = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
         VmNetworkStatistics existingStats2 = dao.get(new Guid("e2817b12-f873-4046-b0da-0098293c0000"));
         existingStats.setReceiveDropRate(10.0);

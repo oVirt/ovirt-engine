@@ -201,20 +201,20 @@ public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testGetAll() throws Exception {
+    public void testGetAll() {
         List<VmNetworkInterface> interfaces = dao.getAll();
         assertNotNull(interfaces);
         assertEquals(FixturesTool.NUMBER_OF_VM_INTERFACE_VIEWS, interfaces.size());
     }
 
     @Test
-    public void testGetAllForTemplatesByNetwork() throws Exception {
+    public void testGetAllForTemplatesByNetwork() {
         List<VmNetworkInterface> result = dao.getAllForTemplatesByNetwork(FixturesTool.NETWORK_ENGINE);
         assertEquals(existingTemplateInterface, result.get(0));
     }
 
     @Test
-    public void testGetAllForNetwork() throws Exception {
+    public void testGetAllForNetwork() {
         List<VmNetworkInterface> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
         assertEquals(existingVmInterface, result.get(0));
     }

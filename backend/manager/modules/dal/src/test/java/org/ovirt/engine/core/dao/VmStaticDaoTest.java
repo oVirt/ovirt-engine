@@ -268,7 +268,7 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     }
 
     @Test
-    public void testGetAllNamesPinnedToHostReturnsNothingForRandomHost() throws Exception {
+    public void testGetAllNamesPinnedToHostReturnsNothingForRandomHost() {
         assertTrue(dao.getAllNamesPinnedToHost(Guid.newGuid()).isEmpty());
     }
 
@@ -300,12 +300,12 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     }
 
     @Test
-    public void testGetAllNamesPinnedToHostReturnsNothingForHostButNotPinned() throws Exception {
+    public void testGetAllNamesPinnedToHostReturnsNothingForHostButNotPinned() {
         assertTrue(dao.getAllNamesPinnedToHost(FixturesTool.HOST_ID).isEmpty());
     }
 
     @Test
-    public void testGetAllNamesPinnedToHostReturnsVmNameForHostPinned() throws Exception {
+    public void testGetAllNamesPinnedToHostReturnsVmNameForHostPinned() {
         List<String> namesPinnedToHost = dao.getAllNamesPinnedToHost(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertFalse(namesPinnedToHost.isEmpty());

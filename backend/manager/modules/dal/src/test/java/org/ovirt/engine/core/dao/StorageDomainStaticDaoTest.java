@@ -108,7 +108,7 @@ public class StorageDomainStaticDaoTest
     }
 
     @Test
-    public void testGetAllIdsForNonExistingStoragePoolId() throws Exception {
+    public void testGetAllIdsForNonExistingStoragePoolId() {
         List<Guid> result = dao.getAllIds(Guid.newGuid(), StorageDomainStatus.Active);
 
         assertNotNull(result);
@@ -116,7 +116,7 @@ public class StorageDomainStaticDaoTest
     }
 
     @Test
-    public void testGetAllIdsForNonExistingStatus() throws Exception {
+    public void testGetAllIdsForNonExistingStatus() {
         List<Guid> result = dao.getAllIds(FixturesTool.DATA_CENTER, StorageDomainStatus.Unknown);
 
         assertNotNull(result);
@@ -124,7 +124,7 @@ public class StorageDomainStaticDaoTest
     }
 
     @Test
-    public void testGetAllIds() throws Exception {
+    public void testGetAllIds() {
         List<Guid> result = dao.getAllIds(FixturesTool.DATA_CENTER, StorageDomainStatus.Active);
 
         assertNotNull(result);
