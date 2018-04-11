@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -39,6 +41,13 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     private static final Guid REBALANCING_GLUSTER_VOLUME_STEP_ID = new Guid("cd75984e-1fd4-48fb-baf8-e45800a61a66");
     private static final int TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME = 1;
 
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private StepSubjectEntityDao subjectEntityDao;
+    @Inject
+    private StepDao dao;
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -52,7 +61,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
 
     @Override
     protected StepDao prepareDao() {
-        return dbFacade.getStepDao();
+        return dao;
     }
 
     @Override
@@ -151,10 +160,10 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     private void prepareProgressTest(Guid entityId) {
         VdcObjectType type = VdcObjectType.Disk;
 
-        BaseDisk diskImage = getDiskDao().get(entityId);
+        BaseDisk diskImage = diskDao.get(entityId);
         assertProgress(null, diskImage);
 
-        getStepSubjectEntityDao().saveAll(Arrays.asList(new StepSubjectEntity(FixturesTool.STEP_ID, type, entityId, 30),
+        subjectEntityDao.saveAll(Arrays.asList(new StepSubjectEntity(FixturesTool.STEP_ID, type, entityId, 30),
                 new StepSubjectEntity(FixturesTool.STEP_ID_2, type, entityId, 50)));
     }
 
@@ -166,7 +175,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         updateStepProgress(FixturesTool.STEP_ID, 10);
         updateStepProgress(FixturesTool.STEP_ID_2, 80);
 
-        BaseDisk diskImage = getDiskDao().get(entityId);
+        BaseDisk diskImage = diskDao.get(entityId);
         assertProgress(43, diskImage);
     }
 
@@ -178,7 +187,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         updateStepProgress(FixturesTool.STEP_ID, null);
         updateStepProgress(FixturesTool.STEP_ID_2, null);
 
-        BaseDisk diskImage = getDiskDao().get(entityId);
+        BaseDisk diskImage = diskDao.get(entityId);
         assertProgress(0, diskImage);
     }
 
@@ -194,7 +203,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
             dao.update(s);
         });
 
-        BaseDisk diskImage = getDiskDao().get(entityId);
+        BaseDisk diskImage = diskDao.get(entityId);
         assertProgress(80, diskImage);
     }
 
@@ -203,7 +212,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         Guid entityId = Guid.newGuid();
         VdcObjectType entityType = VdcObjectType.EXECUTION_HOST;
         StepSubjectEntity subjectEntity = new StepSubjectEntity(FixturesTool.STEP_ID, entityType, entityId);
-        getStepSubjectEntityDao().saveAll(Arrays.asList(subjectEntity));
+        subjectEntityDao.saveAll(Arrays.asList(subjectEntity));
 
         Step s = dao.get(FixturesTool.STEP_ID);
         s.setStatus(JobExecutionStatus.STARTED);
@@ -258,13 +267,5 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
 
     private void assertNoStartedStepsForSubjectEntity(SubjectEntity subjectEntity) {
         assertThat(dao.getStartedStepsByStepSubjectEntity(subjectEntity), emptyCollectionOf(Step.class));
-    }
-
-    private DiskDao getDiskDao() {
-        return dbFacade.getDiskDao();
-    }
-
-    private StepSubjectEntityDao getStepSubjectEntityDao() {
-        return dbFacade.getStepSubjectEntityDao();
     }
 }
