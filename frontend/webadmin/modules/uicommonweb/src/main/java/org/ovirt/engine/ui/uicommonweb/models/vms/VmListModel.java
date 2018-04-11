@@ -2072,19 +2072,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private boolean isConsoleCommandsExecutionAllowed() {
-        final List<VM> list = getSelectedItem() == null ? null : getSelectedItems();
-        if (list == null) {
+        if (getSelectedItems() == null) {
             return false;
         }
 
         // return true, if at least one console is available
-        for (VM vm : list) {
-            if (consolesFactory.getVmConsolesForVm(vm).canConnectToConsole()) {
-                return true;
-            }
-        }
-
-        return false;
+        return getSelectedItems()
+                .stream()
+                .map(consolesFactory::getVmConsolesForVm)
+                .anyMatch(VmConsoles::canConnectToConsole);
     }
 
     /**
