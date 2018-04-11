@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
@@ -26,9 +27,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
@@ -41,28 +41,26 @@ public class VmsListFetcherTest {
     public static VmTestPairs[] vms = VmTestPairs.values();
 
     @Mock
-    DbFacade dbFacade;
-    @Mock
     VdsManager vdsManager;
     @Mock
     ResourceManager resourceManager;
     @Mock
-    VdsDao vdsDao;
-    @Mock
     private VmDynamicDao vmDynamicDao;
     @Captor
     ArgumentCaptor<List<VmDynamic>> vdsManagerArgumentCaptor;
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getVmDynamicDao()).thenReturn(vmDynamicDao);
+        injectorRule.bind(ResourceManager.class, resourceManager);
+        injectorRule.bind(VmDynamicDao.class, vmDynamicDao);
         VDS vds = new VDS();
         vds.setId(VmTestPairs.SRC_HOST_ID);
         when(vdsManager.getCopyVds()).thenReturn(vds);
         when(vdsManager.getVdsId()).thenReturn(vds.getId());
-        vmsListFetcher = new VmsListFetcher(vdsManager, dbFacade, resourceManager);
+        vmsListFetcher = new VmsListFetcher(vdsManager);
     }
 
     @Theory
