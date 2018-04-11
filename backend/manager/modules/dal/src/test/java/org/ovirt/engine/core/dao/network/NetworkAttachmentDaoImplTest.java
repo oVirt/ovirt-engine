@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
@@ -30,15 +32,15 @@ import org.ovirt.engine.core.dao.FixturesTool;
 public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase {
 
     private NetworkAttachment networkAttachment;
+    @Inject
     private NetworkAttachmentDao dao;
+    @Inject
     private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getNetworkAttachmentDao();
-        dnsResolverConfigurationDao = dbFacade.getDnsResolverConfigurationDao();
         networkAttachment = new NetworkAttachment();
         networkAttachment.setNicId(FixturesTool.VDS_NETWORK_INTERFACE);
         networkAttachment.setProperties(new HashMap<>());
