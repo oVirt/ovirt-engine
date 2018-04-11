@@ -67,6 +67,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.di.Injector;
@@ -93,6 +94,8 @@ public class SchedulingManager implements BackendService {
     private ExternalSchedulerDiscovery exSchedulerDiscovery;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
     @Inject
     private ClusterDao clusterDao;
     @Inject
@@ -325,6 +328,7 @@ public class SchedulingManager implements BackendService {
             vdsList = removeBlacklistedHosts(vdsList, hostBlackList);
             vdsList = keepOnlyWhitelistedHosts(vdsList, hostWhiteList);
             refreshCachedPendingValues(vdsList);
+            subtractRunningVmResources(cluster, vm, vdsList);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             Map<String, String> parameters = createClusterPolicyParameters(cluster);
 
@@ -540,6 +544,7 @@ public class SchedulingManager implements BackendService {
         vdsList = removeBlacklistedHosts(vdsList, vdsBlackList);
         vdsList = keepOnlyWhitelistedHosts(vdsList, vdsWhiteList);
         refreshCachedPendingValues(vdsList);
+        subtractRunningVmResources(cluster, vm, vdsList);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
         Map<String, String> parameters = createClusterPolicyParameters(cluster);
 
@@ -823,6 +828,32 @@ public class SchedulingManager implements BackendService {
             selector.record(nametoGuidMap.getOrDefault(resultEntry.getWeightUnit(), null),
                     resultEntry.getHost(), resultEntry.getWeight());
         }
+    }
+
+    private void subtractRunningVmResources(Cluster cluster, VM vm, List<VDS> hosts) {
+        // Check if VM is running
+        if (Guid.isNullOrEmpty(vm.getRunOnVds())) {
+            return;
+        }
+
+        // Find host where it runs
+        VDS host = hosts.stream()
+                 .filter(h -> h.getId().equals(vm.getRunOnVds()))
+                 .findAny().orElse(null);
+
+        if (host == null) {
+            return;
+        }
+
+        vm.setStatisticsData(vmStatisticsDao.get(vm.getId()));
+
+        // Subtract cpu load
+        int hostCpus = slaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
+        float cpuCoef = ((float) vm.getNumOfCpus()) / ((float) hostCpus);
+        host.setUsageCpuPercent(host.getUsageCpuPercent() - Math.round(vm.getUsageCpuPercent() * cpuCoef));
+
+        // Subtract memory
+        host.setMemCommited(host.getMemCommited() - vmOverheadCalculator.getTotalRequiredMemoryInMb(vm));
     }
 
     public Map<String, String> getCustomPropertiesRegexMap(ClusterPolicy clusterPolicy) {
