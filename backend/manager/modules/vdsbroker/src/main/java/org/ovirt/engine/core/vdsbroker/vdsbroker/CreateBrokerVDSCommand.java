@@ -31,6 +31,8 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     private VmInfoBuildUtils vmInfoBuildUtils;
     @Inject
     private SysprepHandler sysprepHandler;
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
     public CreateBrokerVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
@@ -41,7 +43,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     protected void executeVdsBrokerCommand() {
         vmReturn = getBroker().create(createInfo());
         proceedProxyReturnValue();
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
+        vdsBrokerObjectsBuilder.updateVMDynamicData(vm.getDynamicData(),
                 vmReturn.vm, getVds());
     }
 

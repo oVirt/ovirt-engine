@@ -3,9 +3,13 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 
 public class ChangeDiskVDSCommand<P extends ChangeDiskVDSCommandParameters> extends VmReturnVdsBrokerCommand<P> {
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
     public ChangeDiskVDSCommand(P parameters) {
         super(parameters);
@@ -23,7 +27,7 @@ public class ChangeDiskVDSCommand<P extends ChangeDiskVDSCommandParameters> exte
             vmReturn = getBroker().changeDisk(vmId.toString(), getParameters().getDiskPath());
         }
         proceedProxyReturnValue();
-        setReturnValue(VdsBrokerObjectsBuilder.buildVMDynamicData(vmReturn.vm, getVds()).getStatus());
+        setReturnValue(vdsBrokerObjectsBuilder.buildVMDynamicData(vmReturn.vm, getVds()).getStatus());
     }
 
 }

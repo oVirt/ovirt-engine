@@ -3,6 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
@@ -10,6 +12,9 @@ import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 @Logged(executionLevel = LogLevel.DEBUG)
 public class GetStatsAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends InfoVdsBrokerCommand<P> {
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+
     public GetStatsAsyncVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
     }
@@ -36,8 +41,8 @@ public class GetStatsAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
             try {
                 infoReturn = new VDSInfoReturn(response);
                 proceedProxyReturnValue();
-                VdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.info);
-                VdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.info);
+                vdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.info);
+                vdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.info);
                 getParameters().getCallback().onResponse(Collections.singletonMap("result", getVDSReturnValue()));
             } catch (Exception ex) {
                 getParameters().getCallback().onFailure(ex);

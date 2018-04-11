@@ -16,11 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.businessentities.LeaseStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -28,27 +24,15 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
 public class VdsBrokerObjectsBuilderTest {
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
-
-    @Mock
-    private AuditLogDirector auditLogDirector;
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder = new VdsBrokerObjectsBuilder();
 
     private static final long SIZE_FOR_DISK_STATS = 100L;
     private static final Guid IMAGE_ID = Guid.createGuidFromString("ed185868-3f9e-4040-a340-e1a64726ebc0");
     private static final Guid VM_ID = Guid.createGuidFromString("71ca53fb-c223-4b31-926d-de1c2ab0b0a9");
     private static final String DEFAULT_VALUE = "0.00";
-
-    @Before
-    public void setUpBase() {
-        MockitoAnnotations.initMocks(this);
-        injectorRule.bind(AuditLogDirector.class, auditLogDirector);
-    }
 
     @Test
     public void testDisksUsages() {
@@ -84,7 +68,7 @@ public class VdsBrokerObjectsBuilderTest {
     public void testNullDisksUsages() {
         VmStatistics vmStatistics = getVmStatistics();
         Map<String, Object> xml = setDisksUsage(null);
-        VdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
+        vdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
         assertNull(vmStatistics.getDisksUsage());
     }
 
@@ -94,7 +78,7 @@ public class VdsBrokerObjectsBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_flush_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        List<DiskImageDynamic> disks = VdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
         assertEquals(new Double("0.000000001"), disks.get(0).getFlushLatency());
     }
 
@@ -104,7 +88,7 @@ public class VdsBrokerObjectsBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_read_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        List<DiskImageDynamic> disks = VdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
         assertEquals(new Double("0.000000002"), disks.get(0).getReadLatency());
     }
 
@@ -114,7 +98,7 @@ public class VdsBrokerObjectsBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_write_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        List<DiskImageDynamic> disks = VdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
         assertEquals(new Double("0.000000003"), disks.get(0).getWriteLatency());
     }
 
@@ -124,7 +108,7 @@ public class VdsBrokerObjectsBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_write_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        List<DiskImageDynamic> disks = VdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
         assertEquals(new Double("1"), disks.get(0).getWriteLatency());
     }
 
@@ -134,7 +118,7 @@ public class VdsBrokerObjectsBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_write_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        List<DiskImageDynamic> disks = VdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
         assertEquals(new Double("0"), disks.get(0).getWriteLatency());
     }
 
@@ -144,7 +128,7 @@ public class VdsBrokerObjectsBuilderTest {
         Map<String, Object> diskData = setDiskData();
         diskData.put(VdsProperties.vm_disk_write_latency, doubleValue);
         Map<String, Object> xml = setMockForTesting(diskData);
-        List<DiskImageDynamic> disks = VdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
         assertEquals(new Double("999999999"), disks.get(0).getWriteLatency());
     }
 
@@ -155,7 +139,7 @@ public class VdsBrokerObjectsBuilderTest {
         diskData.put(VdsProperties.vm_disk_read_latency, null);
         diskData.put(VdsProperties.vm_disk_flush_latency, null);
         Map<String, Object> xml = setMockForTesting(diskData);
-        List<DiskImageDynamic> disks = VdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
         assertEquals(disks.get(0).getWriteLatency(), new Double(DEFAULT_VALUE));
         assertEquals(disks.get(0).getReadLatency(), new Double(DEFAULT_VALUE));
         assertEquals(disks.get(0).getFlushLatency(), new Double(DEFAULT_VALUE));
@@ -172,7 +156,7 @@ public class VdsBrokerObjectsBuilderTest {
         diskData.put(VdsProperties.vm_disk_flush_latency, DEFAULT_VALUE);
 
         Map<String, Object> xml = setMockForTesting(diskData);
-        List<DiskImageDynamic> disks = VdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
         assertNull(disks.get(0).getWriteLatency());
         assertNull(disks.get(0).getReadLatency());
         assertEquals(disks.get(0).getFlushLatency(), new Double(DEFAULT_VALUE));
@@ -202,7 +186,7 @@ public class VdsBrokerObjectsBuilderTest {
     @Test
     public void testNoDiskStats() {
         VDS vds = getVds();
-        VdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, new HashMap<>());
+        vdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, new HashMap<>());
 
         assertNull(vds.getLocalDisksUsage());
     }
@@ -248,7 +232,7 @@ public class VdsBrokerObjectsBuilderTest {
     }
 
     private void validateVmNetworkInterfaceId(String nicId, Map<String, Object> vmStruct) {
-        List<VmNetworkInterface> vmNetworkInterfaceList = VdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct);
+        List<VmNetworkInterface> vmNetworkInterfaceList = vdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct);
         assertNotNull(vmNetworkInterfaceList);
         assertEquals(1, vmNetworkInterfaceList.size());
 
@@ -256,14 +240,14 @@ public class VdsBrokerObjectsBuilderTest {
         assertEquals(Guid.createGuidFromString(nicId), vmNetworkInterface.getId());
     }
 
-    private static void validateDisksUsagesList(VmStatistics vmStatistics, Object[] disksUsages, Map<String, Object> xml) {
-        VdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
+    private void validateDisksUsagesList(VmStatistics vmStatistics, Object[] disksUsages, Map<String, Object> xml) {
+        vdsBrokerObjectsBuilder.updateVMStatisticsData(vmStatistics, xml);
         assertEquals(Arrays.asList(disksUsages),
                 new JsonObjectDeserializer().deserializeUnformattedJson(vmStatistics.getDisksUsage(), ArrayList.class));
     }
 
-    private static void validateDisksStatsList(VDS vds, Map<String, Object> xml, boolean assertNullValues) {
-        VdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, xml);
+    private void validateDisksStatsList(VDS vds, Map<String, Object> xml, boolean assertNullValues) {
+        vdsBrokerObjectsBuilder.updateLocalDisksUsage(vds, xml);
         assertNotNull(vds.getLocalDisksUsage());
 
         for (Long usage : vds.getLocalDisksUsage().values()) {
@@ -356,56 +340,56 @@ public class VdsBrokerObjectsBuilderTest {
     }
 
     private LeaseStatus getLeaseStatus(Object[] owners) {
-        return VdsBrokerObjectsBuilder.buildLeaseStatus(Collections.singletonMap("owners", owners));
+        return vdsBrokerObjectsBuilder.buildLeaseStatus(Collections.singletonMap("owners", owners));
     }
 
     @Test
     public void testExtractIpv6Prefix() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Prefix("::/128"), is(128));
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Prefix("::/128"), is(128));
     }
 
     @Test
     public void testExtractIpv6PrefixNull() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Prefix(null), nullValue());
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Prefix(null), nullValue());
     }
 
     @Test
     public void testExtractIpv6PrefixNoPrefix() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Prefix("::"), nullValue());
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Prefix("::"), nullValue());
     }
 
     @Test
     public void testExtractIpv6PrefixInvalidPrefix() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Prefix("::/zzz"), nullValue());
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Prefix("::/zzz"), nullValue());
     }
 
     @Test
     public void testExtractProperIpv6AddressWithPrefix() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Address("::/123"), is("::"));
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Address("::/123"), is("::"));
     }
 
     @Test
     public void testExtractProperIpv6AddressWithTooLongPrefix() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Address("::/1234"), is("::/1234"));
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Address("::/1234"), is("::/1234"));
     }
 
     @Test
     public void testExtractProperIpv6AddressWithInvalidPrefix() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Address("::/a"), is("::/a"));
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Address("::/a"), is("::/a"));
     }
 
     @Test
     public void testExtractProperIpv6AddressWithNoPrefix() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Address("::/"), is("::/"));
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Address("::/"), is("::/"));
     }
 
     @Test
     public void testExtractProperIpv6AddressWithoutSlash() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Address("::"), is("::"));
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Address("::"), is("::"));
     }
 
     @Test
     public void testExtractProperIpv6AddressMultipleSlashes() {
-        assertThat(VdsBrokerObjectsBuilder.extractIpv6Address(":/:/123"), is(":/:/123"));
+        assertThat(vdsBrokerObjectsBuilder.extractIpv6Address(":/:/123"), is(":/:/123"));
     }
 }

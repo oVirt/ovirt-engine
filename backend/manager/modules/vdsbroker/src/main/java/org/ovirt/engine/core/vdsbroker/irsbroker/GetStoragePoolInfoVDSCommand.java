@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -20,6 +22,10 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 @Logged(executionLevel = LogLevel.DEBUG)
 public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommandParameters>
         extends IrsBrokerCommand<P> {
+
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+
     private StoragePoolInfo result;
 
     public GetStoragePoolInfoVDSCommand(P parameters) {
@@ -30,7 +36,7 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     protected void executeIrsBrokerCommand() {
         result = getIrsProxy().getStoragePoolInfo(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
-        StoragePool sp = VdsBrokerObjectsBuilder.buildStoragePool(result.storagePoolInfo);
+        StoragePool sp = vdsBrokerObjectsBuilder.buildStoragePool(result.storagePoolInfo);
         Guid masterId = Guid.Empty;
         if (result.storagePoolInfo.containsKey("master_uuid")) {
             masterId = new Guid(result.storagePoolInfo.get("master_uuid").toString());

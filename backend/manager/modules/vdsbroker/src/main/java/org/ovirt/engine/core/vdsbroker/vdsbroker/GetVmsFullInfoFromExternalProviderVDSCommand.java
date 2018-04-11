@@ -25,6 +25,8 @@ public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromEx
 
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
     public GetVmsFullInfoFromExternalProviderVDSCommand(T parameters) {
         super(parameters);
@@ -38,7 +40,7 @@ public class GetVmsFullInfoFromExternalProviderVDSCommand<T extends GetVmsFromEx
         List<VM> vms = new ArrayList<>();
         List<VM> notDownVms = new ArrayList<>();
         for (Map<String, Object> map : vmListReturn.vmList) {
-            VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(map);
+            VM vm = vdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(map);
             if (vm != null) {
                 vm.setOrigin(getParameters().getOriginType());
                 if (vm.getOrigin() == OriginType.KVM) {

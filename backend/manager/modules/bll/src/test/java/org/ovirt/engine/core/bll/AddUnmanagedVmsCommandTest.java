@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,6 +43,8 @@ public class AddUnmanagedVmsCommandTest {
 
     @Mock
     private VmStaticDao vmStaticDao;
+    @Spy
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
     @Spy
     @InjectMocks

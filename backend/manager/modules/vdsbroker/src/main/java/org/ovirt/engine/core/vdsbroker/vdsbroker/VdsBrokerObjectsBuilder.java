@@ -26,6 +26,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -106,10 +109,10 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
@@ -125,19 +128,24 @@ import org.slf4j.LoggerFactory;
  * This class has methods that receive struct and construct the following Classes: VmDynamic VdsDynamic VdsStatic.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@Singleton
 public class VdsBrokerObjectsBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(VdsBrokerObjectsBuilder.class);
 
     private static final int VNC_START_PORT = 5900;
     private static final double NANO_SECONDS = 1000000000;
-    private static final AuditLogDirector auditLogDirector = Injector.get(AuditLogDirector.class);
 
     private static final Comparator<VdsNumaNode> numaNodeComparator = Comparator.comparing(VdsNumaNode::getIndex);
     private static final Pattern IPV6_ADDRESS_CAPTURE_PREFIX_PATTERN = Pattern.compile("^.*?/(\\d+)?$");
     private static final Pattern IPV6_ADDRESS_CAPTURE_PATTERN = Pattern.compile("^([^/]+)(:?/\\d{1,3})?$");
 
-    public static VM buildVmsDataFromExternalProvider(Map<String, Object> struct) {
+    @Inject
+    private AuditLogDirector auditLogDirector;
+    @Inject
+    private InterfaceDao interfaceDao;
+
+    public VM buildVmsDataFromExternalProvider(Map<String, Object> struct) {
         VmStatic vmStatic = buildVmStaticDataFromExternalProvider(struct);
         if (vmStatic == null) {
             return null;
@@ -169,7 +177,7 @@ public class VdsBrokerObjectsBuilder {
      *
      * @return A List of Disk Images {@linkplain DiskImage}
      */
-    public static ArrayList<DiskImage> buildDiskImagesFromDevices(Map<String, Object> vmStruct, Guid vmId) {
+    public ArrayList<DiskImage> buildDiskImagesFromDevices(Map<String, Object> vmStruct, Guid vmId) {
         ArrayList<DiskImage> diskImages = new ArrayList<>();
         Object[] devices = (Object[]) vmStruct.get("devices");
         if (devices != null) {
@@ -222,7 +230,7 @@ public class VdsBrokerObjectsBuilder {
      *
      * @return A List of VM network interfaces {@linkplain VmNetworkInterface}
      */
-    public static ArrayList<VmNetworkInterface> buildVmNetworkInterfacesFromDevices(Map<String, Object> vmStruct) {
+    public ArrayList<VmNetworkInterface> buildVmNetworkInterfacesFromDevices(Map<String, Object> vmStruct) {
         ArrayList<VmNetworkInterface> nics = new ArrayList<>();
         Object[] devices = (Object[]) vmStruct.get(VdsProperties.Devices);
         if (devices != null) {
@@ -256,7 +264,7 @@ public class VdsBrokerObjectsBuilder {
         return nics;
     }
 
-    public static VmDevice buildConsoleDevice(Map<String, Object> vmStruct, Guid vmId){
+    public VmDevice buildConsoleDevice(Map<String, Object> vmStruct, Guid vmId){
         Object[] devices = (Object[]) vmStruct.get(VdsProperties.Devices);
         if (devices != null) {
             for (Object device : devices) {
@@ -286,7 +294,7 @@ public class VdsBrokerObjectsBuilder {
         return null;
     }
 
-    private static VmStatic buildVmStaticDataFromExternalProvider(Map<String, Object> struct) {
+    private VmStatic buildVmStaticDataFromExternalProvider(Map<String, Object> struct) {
         if (!struct.containsKey(VdsProperties.vm_guid) || !struct.containsKey(VdsProperties.vm_name)
                 || !struct.containsKey(VdsProperties.mem_size_mb)
                 || !struct.containsKey(VdsProperties.num_of_cpus)) {
@@ -416,7 +424,7 @@ public class VdsBrokerObjectsBuilder {
         return nic;
     }
 
-    public static VmDynamic buildVMDynamicDataFromList(Map<String, Object> struct) {
+    public VmDynamic buildVMDynamicDataFromList(Map<String, Object> struct) {
         VmDynamic vmdynamic = new VmDynamic();
         if (struct.containsKey(VdsProperties.vm_guid)) {
             vmdynamic.setId(new Guid((String) struct.get(VdsProperties.vm_guid)));
@@ -427,27 +435,27 @@ public class VdsBrokerObjectsBuilder {
         return vmdynamic;
     }
 
-    public static Double getVdsmCallTimestamp(Map<String, Object> struct) {
+    public Double getVdsmCallTimestamp(Map<String, Object> struct) {
         if (struct.containsKey(VdsProperties.statusTime)) {
             return assignDoubleValue(struct, VdsProperties.statusTime);
         }
         return -1d;
     }
 
-    public static String getVmDevicesHash(Map<String, Object> struct) {
+    public String getVmDevicesHash(Map<String, Object> struct) {
         if (struct.containsKey(VdsProperties.hash)) {
             return (String) struct.get(VdsProperties.hash);
         }
         return null;
     }
 
-    public static VmDynamic buildVMDynamicData(Map<String, Object> struct, VDS host) {
+    public VmDynamic buildVMDynamicData(Map<String, Object> struct, VDS host) {
         VmDynamic vmdynamic = new VmDynamic();
         updateVMDynamicData(vmdynamic, struct, host);
         return vmdynamic;
     }
 
-    public static StoragePool buildStoragePool(Map<String, Object> struct) {
+    public StoragePool buildStoragePool(Map<String, Object> struct) {
         StoragePool sPool = new StoragePool();
         if (struct.containsKey("type")) {
             sPool.setIsLocal(StorageType.valueOf(struct.get("type").toString()).isLocal());
@@ -460,13 +468,13 @@ public class VdsBrokerObjectsBuilder {
         return sPool;
     }
 
-    public static VmStatistics buildVMStatisticsData(Map<String, Object> struct) {
+    public VmStatistics buildVMStatisticsData(Map<String, Object> struct) {
         VmStatistics vmStatistics = new VmStatistics();
         updateVMStatisticsData(vmStatistics, struct);
         return vmStatistics;
     }
 
-    public static Map<String, LUNs> buildVmLunDisksData(Map<String, Object> struct) {
+    public Map<String, LUNs> buildVmLunDisksData(Map<String, Object> struct) {
         Map<String, Object> disks = (Map<String, Object>) struct.get(VdsProperties.vm_disks);
         if (disks == null) {
             return Collections.emptyMap();
@@ -494,7 +502,7 @@ public class VdsBrokerObjectsBuilder {
         return lunsMap;
     }
 
-    public static void updateVMDynamicData(VmDynamic vm, Map<String, Object> struct, VDS host) {
+    public void updateVMDynamicData(VmDynamic vm, Map<String, Object> struct, VDS host) {
         if (struct.containsKey(VdsProperties.vm_guid)) {
             vm.setId(new Guid((String) struct.get(VdsProperties.vm_guid)));
         }
@@ -798,7 +806,7 @@ public class VdsBrokerObjectsBuilder {
      * Some properties were changed recently from String to Integer
      * This method checks what type is the property, and returns int
      */
-    public static int parseIntVdsProperty(Object vdsProperty) {
+    public int parseIntVdsProperty(Object vdsProperty) {
         if (vdsProperty instanceof Integer) {
             return (Integer) vdsProperty;
         } else {
@@ -810,7 +818,7 @@ public class VdsBrokerObjectsBuilder {
         return ArchitectureType.valueOf((String) struct.get(VdsProperties.vm_arch));
     }
 
-    public static List<VmNetworkInterface> buildInterfaceStatisticsData(Map<String, Object> struct) {
+    public List<VmNetworkInterface> buildInterfaceStatisticsData(Map<String, Object> struct) {
         // ------------- vm network statistics -----------------------
         if (!struct.containsKey(VdsProperties.VM_NETWORK)) {
             return null;
@@ -834,7 +842,7 @@ public class VdsBrokerObjectsBuilder {
         return interfaceStatistics;
     }
 
-    public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> struct) {
+    public void updateVMStatisticsData(VmStatistics vm, Map<String, Object> struct) {
         if (struct.containsKey(VdsProperties.vm_guid)) {
             vm.setId(new Guid((String) struct.get(VdsProperties.vm_guid)));
         }
@@ -870,7 +878,7 @@ public class VdsBrokerObjectsBuilder {
         vm.setMigrationProgressPercent(migrationProgress != null ? migrationProgress : 0);
     }
 
-    public static VmBalloonInfo buildVmBalloonInfo(Map<String, Object> struct) {
+    public VmBalloonInfo buildVmBalloonInfo(Map<String, Object> struct) {
         VmBalloonInfo vmBalloonInfo = new VmBalloonInfo();
         Map<String, Object> balloonInfo = (Map<String, Object>) struct.get(VdsProperties.vm_balloonInfo);
         if (balloonInfo != null && !balloonInfo.isEmpty()) {
@@ -884,7 +892,7 @@ public class VdsBrokerObjectsBuilder {
         return vmBalloonInfo;
     }
 
-    public static List<VmJob> buildVmJobsData(Map<String, Object> struct) {
+    public List<VmJob> buildVmJobsData(Map<String, Object> struct) {
         if (!struct.containsKey(VdsProperties.vmJobs)) {
             return null;
         }
@@ -923,7 +931,7 @@ public class VdsBrokerObjectsBuilder {
         return ret;
     }
 
-    public static void updateVDSDynamicData(VDS vds, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
+    public void updateVDSDynamicData(VDS vds, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
         vds.setSupportedClusterLevels(assignStringValueFromArray(struct, VdsProperties.supported_cluster_levels));
 
         setDnsResolverConfigurationData(vds, struct);
@@ -1031,7 +1039,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    public static void checkTimeDrift(VDS vds, Map<String, Object> struct) {
+    public void checkTimeDrift(VDS vds, Map<String, Object> struct) {
         Boolean isHostTimeDriftEnabled = Config.getValue(ConfigValues.EnableHostTimeDrift);
         if (isHostTimeDriftEnabled) {
             Integer maxTimeDriftAllowed = Config.getValue(ConfigValues.HostTimeDriftInSec);
@@ -1177,7 +1185,7 @@ public class VdsBrokerObjectsBuilder {
         return new RpmVersion(sb.toString());
     }
 
-    public static void updateHardwareSystemInformation(Map<String, Object> hwInfo, VDS vds){
+    public void updateHardwareSystemInformation(Map<String, Object> hwInfo, VDS vds){
         vds.setHardwareManufacturer(assignStringValue(hwInfo, VdsProperties.hwManufacturer));
         vds.setHardwareProductName(assignStringValue(hwInfo, VdsProperties.hwProductName));
         vds.setHardwareVersion(assignStringValue(hwInfo, VdsProperties.hwVersion));
@@ -1211,7 +1219,7 @@ public class VdsBrokerObjectsBuilder {
         return sb.toString();
     }
 
-    public static void updateVDSStatisticsData(VDS vds, Map<String, Object> struct) {
+    public void updateVDSStatisticsData(VDS vds, Map<String, Object> struct) {
         // ------------- vds memory usage ---------------------------
         vds.setUsageMemPercent(assignIntValue(struct, VdsProperties.mem_usage));
 
@@ -1380,7 +1388,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    public static void updateNumaStatisticsData(VDS vds, Map<String, Object> struct) {
+    public void updateNumaStatisticsData(VDS vds, Map<String, Object> struct) {
         List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
         if (vds.getNumaNodeList() != null && !vds.getNumaNodeList().isEmpty()) {
             vdsNumaNodes.addAll(vds.getNumaNodeList());
@@ -1480,7 +1488,7 @@ public class VdsBrokerObjectsBuilder {
      * @param struct
      *            The struct to extract the usage from.
      */
-    protected static void updateLocalDisksUsage(VDS vds, Map<String, Object> struct) {
+    protected void updateLocalDisksUsage(VDS vds, Map<String, Object> struct) {
         if (struct.containsKey(VdsProperties.DISK_STATS)) {
             Map<String, Object> diskStatsStruct = (Map<String, Object>) struct.get(VdsProperties.DISK_STATS);
             Map<String, Long> diskStats = new HashMap<>();
@@ -1666,7 +1674,7 @@ public class VdsBrokerObjectsBuilder {
         return Boolean.FALSE;
     }
 
-    public static List<DiskImageDynamic> buildVmDiskStatistics(Map<String, Object> vmStruct) {
+    public List<DiskImageDynamic> buildVmDiskStatistics(Map<String, Object> vmStruct) {
         Map<String, Object> disks = (Map<String, Object>) vmStruct.get(VdsProperties.vm_disks);
         if (disks == null) {
             return Collections.emptyList();
@@ -1763,7 +1771,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    public static VMStatus convertToVmStatus(String status) {
+    public VMStatus convertToVmStatus(String status) {
         switch(status) {
         case VdsProperties.MIGRATION_SOURCE:
             return VMStatus.MigratingFrom;
@@ -1790,9 +1798,8 @@ public class VdsBrokerObjectsBuilder {
      * @param struct
      *            A nested map contains network interfaces data
      */
-    public static void updateNetworkData(VDS vds, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
-        List<VdsNetworkInterface> oldInterfaces =
-                DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vds.getId());
+    public void updateNetworkData(VDS vds, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
+        List<VdsNetworkInterface> oldInterfaces = interfaceDao.getAllInterfacesForVds(vds.getId());
         vds.getInterfaces().clear();
 
         addHostNetworkInterfaces(vds, struct);
@@ -1845,7 +1852,7 @@ public class VdsBrokerObjectsBuilder {
         return activeIface;
     }
 
-    private static void addHostNetworksAndUpdateInterfaces(VDS host, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
+    private void addHostNetworksAndUpdateInterfaces(VDS host, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
 
         Map<String, Map<String, Object>> bridges =
                 (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_BRIDGES);
@@ -1934,7 +1941,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static String findActiveNicName(VDS vds, Map<String, Map<String, Object>> bridges) {
+    private String findActiveNicName(VDS vds, Map<String, Map<String, Object>> bridges) {
         final String hostIp = NetworkUtils.getHostIp(vds);
         final String activeBridge = findActiveBridge(hostIp, bridges);
         if (activeBridge != null) {
@@ -1950,7 +1957,7 @@ public class VdsBrokerObjectsBuilder {
     /***
      * @return the name of the bridge obtaining ipAddress, null in case no such exist
      */
-    private static String findActiveBridge(String ipAddress, Map<String, Map<String, Object>> bridges) {
+    private String findActiveBridge(String ipAddress, Map<String, Map<String, Object>> bridges) {
         if (bridges != null) {
             final Predicate<String> ipAddressPredicate = new IpAddressPredicate(ipAddress);
             for (Entry<String, Map<String, Object>> entry : bridges.entrySet()) {
@@ -1980,7 +1987,7 @@ public class VdsBrokerObjectsBuilder {
      * @param vds
      *            The host in which the network is defined
      */
-    private static void reportInvalidInterfacesForNetwork(List<VdsNetworkInterface> interfaces, String networkName, VDS vds) {
+    private void reportInvalidInterfacesForNetwork(List<VdsNetworkInterface> interfaces, String networkName, VDS vds) {
         if (interfaces.isEmpty()) {
             auditLogDirector.log(createHostNetworkAuditLog(networkName, vds), AuditLogType.NETWORK_WITHOUT_INTERFACES);
         } else if (interfaces.size() > 1) {
@@ -2031,7 +2038,7 @@ public class VdsBrokerObjectsBuilder {
         return new ArrayList<>();
     }
 
-    private static void addHostBondDevices(VDS vds, Map<String, Object> struct) {
+    private void addHostBondDevices(VDS vds, Map<String, Object> struct) {
         Map<String, Map<String, Object>> bonds =
                 (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
@@ -2116,7 +2123,7 @@ public class VdsBrokerObjectsBuilder {
      * @param struct
      *            a map contains pairs of vlan device name and vlan data
      */
-    private static void addHostVlanDevices(VDS vds, Map<String, Object> struct) {
+    private void addHostVlanDevices(VDS vds, Map<String, Object> struct) {
         // vlans
         Map<String, Map<String, Object>> vlans = (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_VLANS);
         if (vlans != null) {
@@ -2149,7 +2156,7 @@ public class VdsBrokerObjectsBuilder {
      * @param struct
      *            A nested map contains network interfaces data
      */
-    private static void addHostNetworkInterfaces(VDS vds, Map<String, Object> struct) {
+    private void addHostNetworkInterfaces(VDS vds, Map<String, Object> struct) {
         Map<String, Map<String, Object>> nics =
                 (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_NICS);
         if (nics != null) {
@@ -2184,7 +2191,7 @@ public class VdsBrokerObjectsBuilder {
      * @param ifaceEntry
      *            A pair whose key is the interface's name, and whose value it a map of the interface properties.
      */
-    private static void updateCommonInterfaceData(VdsNetworkInterface iface,
+    private void updateCommonInterfaceData(VdsNetworkInterface iface,
             VDS host,
             Entry<String, Map<String, Object>> ifaceEntry) {
 
@@ -2228,7 +2235,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    static Integer extractIpv6Prefix(String ipv6Address) {
+    Integer extractIpv6Prefix(String ipv6Address) {
         if (ipv6Address == null) {
             return null;
         }
@@ -2257,7 +2264,7 @@ public class VdsBrokerObjectsBuilder {
         return (String) ipv6Addresses[0];
     }
 
-    static String extractIpv6Address(String address) {
+    String extractIpv6Address(String address) {
         if (StringUtils.isEmpty(address)) {
             return null;
         }
@@ -2382,7 +2389,7 @@ public class VdsBrokerObjectsBuilder {
      *            the structure that describes the VM as reported by VDSM
      * @return a list of {@link VmGuestAgentInterface} or null if no guest vNics were reported
      */
-    public static List<VmGuestAgentInterface> buildVmGuestAgentInterfacesData(Guid vmId, Map<String, Object> struct) {
+    public List<VmGuestAgentInterface> buildVmGuestAgentInterfacesData(Guid vmId, Map<String, Object> struct) {
         if (!struct.containsKey(VdsProperties.VM_NETWORK_INTERFACES)) {
             return null;
         }
@@ -2514,7 +2521,7 @@ public class VdsBrokerObjectsBuilder {
 
      * }
      */
-    public static List<HostDevice> buildHostDevices(Map<String, Map<String, Map<String, Object>>> deviceList) {
+    public List<HostDevice> buildHostDevices(Map<String, Map<String, Map<String, Object>>> deviceList) {
         List<HostDevice> devices = new ArrayList<>();
 
         for (Entry<String, Map<String, Map<String, Object>>> entry : deviceList.entrySet()) {
@@ -2606,7 +2613,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    public static Double removeNotifyTimeFromVmStatusEvent(Map<String, Object> struct) {
+    public Double removeNotifyTimeFromVmStatusEvent(Map<String, Object> struct) {
         Object notifyTime = struct.remove(VdsProperties.notify_time);
         if (Long.class.isInstance(notifyTime)) {
             return ((Long) notifyTime).doubleValue();
@@ -2614,7 +2621,7 @@ public class VdsBrokerObjectsBuilder {
         return null;
     }
 
-    public static LeaseStatus buildLeaseStatus(Map<String, Object> struct) {
+    public LeaseStatus buildLeaseStatus(Map<String, Object> struct) {
         return new LeaseStatus(extractList(struct, "owners", true));
     }
 }

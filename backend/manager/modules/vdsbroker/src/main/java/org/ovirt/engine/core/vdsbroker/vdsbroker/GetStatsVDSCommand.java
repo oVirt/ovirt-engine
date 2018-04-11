@@ -10,6 +10,8 @@ import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 public class GetStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends InfoVdsBrokerCommand<P> {
     @Inject
     private MultipathHealthHandler multipathHealthHandler;
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
     public GetStatsVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
@@ -25,8 +27,8 @@ public class GetStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> e
         infoReturn = getBroker().getVdsStats();
         proceedProxyReturnValue();
 
-        VdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.info);
+        vdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.info);
         multipathHealthHandler.handleMultipathHealthReport(getVds(), infoReturn.info);
-        VdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.info);
+        vdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.info);
     }
 }

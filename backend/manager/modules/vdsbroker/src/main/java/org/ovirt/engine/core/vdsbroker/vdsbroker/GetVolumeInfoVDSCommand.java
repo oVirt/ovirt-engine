@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -16,6 +18,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProperties;
 
 public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters> extends VdsBrokerCommand<P> {
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+
     private VolumeInfoReturn result;
 
     public GetVolumeInfoVDSCommand(P parameters) {
@@ -98,7 +103,7 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
 
             if (struct.containsKey("lease") && struct.get("lease") != null) {
                 Map<String, Object> leaseStatus = (Map<String, Object>) struct.get("lease");
-                newImage.getImage().setLeaseStatus(VdsBrokerObjectsBuilder.buildLeaseStatus(leaseStatus));
+                newImage.getImage().setLeaseStatus(vdsBrokerObjectsBuilder.buildLeaseStatus(leaseStatus));
             }
 
             if (struct.containsKey("generation")) {

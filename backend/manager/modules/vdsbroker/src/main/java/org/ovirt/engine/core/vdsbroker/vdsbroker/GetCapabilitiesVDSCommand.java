@@ -12,6 +12,8 @@ public class GetCapabilitiesVDSCommand<P extends VdsIdAndVdsVDSCommandParameters
 
     @Inject
     private NetworkVdsmNameMapper vdsmNameMapper;
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
     public GetCapabilitiesVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
@@ -21,7 +23,7 @@ public class GetCapabilitiesVDSCommand<P extends VdsIdAndVdsVDSCommandParameters
     protected void executeVdsBrokerCommand() {
         infoReturn = getBroker().getCapabilities();
         proceedProxyReturnValue();
-        VdsBrokerObjectsBuilder.updateVDSDynamicData(
+        vdsBrokerObjectsBuilder.updateVDSDynamicData(
                 getVds(), vdsmNameMapper.createVdsmNameMapping(getVds().getClusterId()), infoReturn.info);
         setReturnValue(getVds());
     }

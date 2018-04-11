@@ -66,6 +66,8 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     private VmStaticDao vmStaticDao;
     @Inject
     private OsRepository osRepository;
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
     private Set<String> graphicsDeviceTypes = new HashSet<>(Arrays.asList(
             GraphicsType.SPICE.toString().toLowerCase(),
@@ -117,12 +119,12 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
         vmStatic.setClusterId(getClusterId());
         vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
         vmStatic.setOrigin(OriginType.EXTERNAL);
-        vmStatic.setNumOfSockets(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
-        vmStatic.setMemSizeMb(VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
+        vmStatic.setNumOfSockets(vdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
+        vmStatic.setMemSizeMb(vdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
 
         // VMs started before engine 3.6 may not have 'maxMemory' set
         final int maxMemorySize = vmInfo.get(VdsProperties.maxMemSize) != null
-                ? VdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.maxMemSize))
+                ? vdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.maxMemSize))
                 : vmStatic.getMemSizeMb();
         vmStatic.setMaxMemorySizeMb(maxMemorySize);
         vmStatic.setSingleQxlPci(false);
@@ -175,10 +177,10 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
 
     // Visible for testing
     protected void importHostedEngineVm(Map<String, Object> vmStruct) {
-        VM vm = VdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
+        VM vm = vdsBrokerObjectsBuilder.buildVmsDataFromExternalProvider(vmStruct);
         if (vm != null) {
-            vm.setImages(VdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct, vm.getId()));
-            vm.setInterfaces(VdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct));
+            vm.setImages(vdsBrokerObjectsBuilder.buildDiskImagesFromDevices(vmStruct, vm.getId()));
+            vm.setInterfaces(vdsBrokerObjectsBuilder.buildVmNetworkInterfacesFromDevices(vmStruct));
             for (DiskImage diskImage : vm.getImages()) {
                 vm.getDiskMap().put(diskImage.getId(), diskImage);
             }
@@ -197,7 +199,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             for (GraphicsDevice graphicsDevice : graphicsDevices) {
                 vm.getManagedVmDeviceMap().put(graphicsDevice.getDeviceId(), graphicsDevice);
             }
-            VmDevice consoleDevice = VdsBrokerObjectsBuilder.buildConsoleDevice(vmStruct, vm.getId());
+            VmDevice consoleDevice = vdsBrokerObjectsBuilder.buildConsoleDevice(vmStruct, vm.getId());
             if(consoleDevice != null){
                 vm.getManagedVmDeviceMap().put(consoleDevice.getDeviceId(), consoleDevice);
             }

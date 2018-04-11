@@ -26,6 +26,8 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
     private Subscription subscription;
     @Inject
     private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
     private final ResourceManager resourceManager;
     private final PollVmStatsRefresher allVmStatsOnlyRefresher;
 
@@ -76,7 +78,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
 
             @SuppressWarnings("unchecked")
             private List<Pair<VmDynamic, VdsmVm>> convertEvent(Map<String, Object> map) {
-                Double notifyTime = VdsBrokerObjectsBuilder.removeNotifyTimeFromVmStatusEvent(map);
+                Double notifyTime = vdsBrokerObjectsBuilder.removeNotifyTimeFromVmStatusEvent(map);
                 return map.entrySet().stream()
                         .map(idToMap -> toMonitoredVm(
                                 new Guid(idToMap.getKey()),
@@ -102,10 +104,10 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
             private VdsmVm createVdsmVm(VmDynamic dbVmDynamic, Map<String, Object> struct, Double notifyTime) {
                 // send a clone of vm dynamic to be overridden with new data
                 VmDynamic clonedVmDynamic = new VmDynamic(dbVmDynamic);
-                VdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, struct, vdsManager.getCopyVds());
+                vdsBrokerObjectsBuilder.updateVMDynamicData(clonedVmDynamic, struct, vdsManager.getCopyVds());
                 return new VdsmVm(notifyTime)
                         .setVmDynamic(clonedVmDynamic)
-                        .setDevicesHash(VdsBrokerObjectsBuilder.getVmDevicesHash(struct));
+                        .setDevicesHash(vdsBrokerObjectsBuilder.getVmDevicesHash(struct));
             }
 
             @Override

@@ -16,6 +16,9 @@ public class GetCapabilitiesAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParam
 
     @Inject
     private NetworkVdsmNameMapper vdsmNameMapper;
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+
 
     public GetCapabilitiesAsyncVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
@@ -38,7 +41,7 @@ public class GetCapabilitiesAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParam
             try {
                 infoReturn = new VDSInfoReturn(response);
                 proceedProxyReturnValue();
-                VdsBrokerObjectsBuilder.updateVDSDynamicData(getVds(),
+                vdsBrokerObjectsBuilder.updateVDSDynamicData(getVds(),
                         vdsmNameMapper.createVdsmNameMapping(getVds().getClusterId()),
                         infoReturn.info);
                 setReturnValue(getVds());

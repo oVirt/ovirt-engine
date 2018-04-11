@@ -3,10 +3,15 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 public class GetHardwareInfoAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends InfoVdsBrokerCommand<P> {
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+
     public GetHardwareInfoAsyncVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
     }
@@ -28,7 +33,7 @@ public class GetHardwareInfoAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParam
             try {
                 infoReturn = new VDSInfoReturn(response);
                 proceedProxyReturnValue();
-                VdsBrokerObjectsBuilder.updateHardwareSystemInformation(infoReturn.info, getVds());
+                vdsBrokerObjectsBuilder.updateHardwareSystemInformation(infoReturn.info, getVds());
                 if (getParameters().getCallback() != null) {
                     getParameters().getCallback().onResponse(Collections.singletonMap("result", getVDSReturnValue()));
                 }
