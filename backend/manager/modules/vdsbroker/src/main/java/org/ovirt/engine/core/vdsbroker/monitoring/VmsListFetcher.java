@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -141,10 +140,6 @@ public class VmsListFetcher {
 
     public ResourceManager getResourceManager() {
         return resourceManager;
-    }
-
-    public Collection<VdsmVm> getVdsmVms() {
-        return vdsmVms.values();
     }
 
     public List<Pair<VmDynamic, VdsmVm>> getChangedVms() {
