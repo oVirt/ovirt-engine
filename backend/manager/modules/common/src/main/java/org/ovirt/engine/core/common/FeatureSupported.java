@@ -128,6 +128,16 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.ManagedBlockDomainSupported, version);
     }
 
+    /**
+     * Checks if deferring file-based volume pre-allocation supported is supported by cluster version
+     *
+     * @param version
+     *            Compatibility version to check for.
+     */
+    public static boolean isDeferringFileVolumePreallocationSupported(Version version) {
+        return supportedInConfig(ConfigValues.IsDeferringFileVolumePreallocationSupported, version);
+    }
+
     public static boolean isAgentChannelNamingSupported(Version version) {
         return supportedInConfig(ConfigValues.AgentChannelNamingSupported, version);
     }
