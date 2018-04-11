@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -42,7 +41,6 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
     private static final String OPTION_KEY_NFS_DISABLE = "nfs.disable";
     private static final String OPTION_VALUE_OFF = "off";
     private GlusterVolumeDao dao;
-    private VdsStatic server;
     private GlusterVolumeEntity existingDistVol;
     private GlusterVolumeEntity existingReplVol;
     private GlusterVolumeEntity newVolume;
@@ -51,7 +49,6 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getGlusterVolumeDao();
-        server = dbFacade.getVdsStaticDao().get(FixturesTool.VDS_RHEL6_NFS_SPM);
         existingDistVol = dao.getById(EXISTING_VOL_DIST_ID);
         existingReplVol = dao.getById(EXISTING_VOL_REPL_ID);
     }
@@ -471,8 +468,8 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
 
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setVolumeId(volumeId);
-        brick.setServerId(server.getId());
-        brick.setServerName(server.getHostName());
+        brick.setServerId(FixturesTool.VDS_RHEL6_NFS_SPM);
+        brick.setServerName("some host name");
         brick.setBrickDirectory("/export/testVol1");
         brick.setStatus(GlusterStatus.UP);
         brick.setBrickOrder(0);
