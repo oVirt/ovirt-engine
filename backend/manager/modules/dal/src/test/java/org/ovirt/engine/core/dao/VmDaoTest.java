@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -27,14 +29,21 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmDaoTest extends BaseDaoTestCase {
     private static final int VM_COUNT = 8;
-    private VmDao dao;
     private VM existingVm;
+
+    @Inject
+    private VmDao dao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmStatisticsDao vmStatisticsDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getVmDao();
         existingVm = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         existingVm.setStatus(VMStatus.Up);
 
@@ -573,15 +582,15 @@ public class VmDaoTest extends BaseDaoTestCase {
         vmStatic.setName("HostedEngine");
         vmStatic.setOrigin(OriginType.HOSTED_ENGINE);
         vmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_1);
-        getDbFacade().getVmStaticDao().save(vmStatic);
+        vmStaticDao.save(vmStatic);
 
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(id);
-        getDbFacade().getVmDynamicDao().save(vmDynamic);
+        vmDynamicDao.save(vmDynamic);
 
         VmStatistics vmStatistics = new VmStatistics();
         vmStatistics.setId(id);
-        getDbFacade().getVmStatisticsDao().save(vmStatistics);
+        vmStatisticsDao.save(vmStatistics);
     }
 
     @Test
