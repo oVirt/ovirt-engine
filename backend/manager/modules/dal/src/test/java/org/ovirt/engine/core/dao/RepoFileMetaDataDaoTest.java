@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -21,13 +23,11 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    private RepoFileMetaDataDao repoFileMetaDataDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        repoFileMetaDataDao = dbFacade.getRepoFileMetaDataDao();
-    }
+    @Inject
+    private RepoFileMetaDataDao repoFileMetaDataDao;
 
     /**
      * Ensures that saving a domain works as expected.
@@ -86,7 +86,6 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
         assertFalse(listOfRepoFiles.isEmpty());
 
         // Test remove Iso
-        StorageDomainDao storageDomainDao = dbFacade.getStorageDomainDao();
         storageDomainDao.remove(FixturesTool.SHARED_ISO_STORAGE_DOMAIN_FOR_SP2_AND_SP3);
         listOfRepoFiles = getActiveIsoDomain();
 
