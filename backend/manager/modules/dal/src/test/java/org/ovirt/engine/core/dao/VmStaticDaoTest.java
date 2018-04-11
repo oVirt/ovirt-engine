@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.inject.Inject;
+
 import org.hamcrest.Matchers;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -39,6 +41,21 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     protected static final Guid[] HOST_GUIDS = { FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
             FixturesTool.HOST_ID,
             FixturesTool.GLUSTER_BRICK_SERVER1};
+
+    @Inject
+    private VmStaticDao dao;
+    @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
+    private PermissionDao permissionsDao;
+    @Inject
+    private DiskDao diskDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
 
     @Override
     protected VmStatic generateNewEntity() {
@@ -73,7 +90,7 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
 
     @Override
     protected VmStaticDao prepareDao() {
-        return dbFacade.getVmStaticDao();
+        return dao;
     }
 
     @Override
@@ -162,24 +179,22 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     @Test
     @Override
     public void testRemove() {
-        for (Snapshot s : dbFacade.getSnapshotDao().getAll()) {
-            dbFacade.getSnapshotDao().remove(s.getId());
+        for (Snapshot s : snapshotDao.getAll()) {
+            snapshotDao.remove(s.getId());
         }
 
         dao.remove(getExistingEntityId());
         VmStatic result = dao.get(getExistingEntityId());
         assertNull(result);
-        PermissionDao permissionsDao = dbFacade.getPermissionDao();
         assertEquals("vm permissions wasn't removed", 0, permissionsDao.getAllForEntity(getExistingEntityId()).size());
     }
 
     @Test
     public void testRemoveWithoutPermissions() {
-        for (Snapshot s : dbFacade.getSnapshotDao().getAll()) {
-            dbFacade.getSnapshotDao().remove(s.getId());
+        for (Snapshot s : snapshotDao.getAll()) {
+            snapshotDao.remove(s.getId());
         }
 
-        PermissionDao permissionsDao = dbFacade.getPermissionDao();
         int numberOfPermissionsBeforeRemove = permissionsDao.getAllForEntity(getExistingEntityId()).size();
 
         dao.remove(getExistingEntityId(), false);
@@ -190,19 +205,19 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     }
 
     private void checkDisks(Guid id, boolean hasDisks) {
-        assertEquals(hasDisks, !dbFacade.getDiskDao().getAllForVm(id).isEmpty());
+        assertEquals(hasDisks, !diskDao.getAllForVm(id).isEmpty());
     }
 
     private void checkVmsDcAndDisks(List<Guid> vmIds, Guid storagePoolId, boolean hasDisks) {
         for (Guid vmId : vmIds) {
-            assertEquals(storagePoolId, dbFacade.getVmDao().get(vmId).getStoragePoolId());
+            assertEquals(storagePoolId, vmDao.get(vmId).getStoragePoolId());
             checkDisks(vmId, hasDisks);
         }
     }
 
     private void checkTemplatesDcAndDisks(List<Guid> templateIds, Guid storagePoolId, boolean hasDisks) {
         for (Guid templateId : templateIds) {
-            assertEquals(storagePoolId, dbFacade.getVmTemplateDao().get(templateId).getStoragePoolId());
+            assertEquals(storagePoolId, vmTemplateDao.get(templateId).getStoragePoolId());
             checkDisks(templateId, hasDisks);
         }
     }
@@ -249,7 +264,7 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
                 null,
                 snapshotId,
                 null);
-        dbFacade.getVmDeviceDao().save(device);
+        vmDeviceDao.save(device);
     }
 
     @Test
