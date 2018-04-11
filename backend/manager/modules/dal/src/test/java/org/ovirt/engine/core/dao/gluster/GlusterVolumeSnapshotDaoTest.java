@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -24,17 +26,17 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_SNAPSHOT_ID_1 = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea7");
     private static final String EXISTING_SNAPSHOT_NAME_1 = "test-vol-distribute-1-snap2";
     private static final String NEW_SNAPSHOT_NAME = "test-vol-distribute-1-snap3";
-    private GlusterVolumeSnapshotDao dao;
-    private GlusterVolumeDao volumeDao;
     private GlusterVolumeSnapshotEntity existingSnapshot;
     private GlusterVolumeSnapshotEntity existingSnapshot1;
     private GlusterVolumeSnapshotEntity newSnapshot;
+    @Inject
+    private GlusterVolumeSnapshotDao dao;
+    @Inject
+    private GlusterVolumeDao volumeDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getGlusterVolumeSnapshotDao();
-        volumeDao = dbFacade.getGlusterVolumeDao();
         existingSnapshot = dao.getById(EXISTING_SNAPSHOT_ID);
         existingSnapshot1 = dao.getById(EXISTING_SNAPSHOT_ID_1);
     }
