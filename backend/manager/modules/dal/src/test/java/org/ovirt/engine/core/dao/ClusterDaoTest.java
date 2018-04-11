@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.network.FirewallType;
@@ -38,15 +37,10 @@ public class ClusterDaoTest extends BaseDaoTestCase {
     private Cluster existingCluster;
     private Cluster newGroup;
     private Cluster groupWithNoRunningVms;
-    private StoragePool storagePool;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        StoragePoolDao storagePoolDao = dbFacade.getStoragePoolDao();
-
-        storagePool = storagePoolDao.get(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
 
         dao = dbFacade.getClusterDao();
 
@@ -202,7 +196,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStoragePool() {
-        List<Cluster> result = dao.getAllForStoragePool(storagePool.getId());
+        List<Cluster> result = dao.getAllForStoragePool(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertGetAllForStoragePoolValidResult(result);
     }
 
@@ -211,7 +205,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStoragePoolFilteredWithNoPermissions() {
-        List<Cluster> result = dao.getAllForStoragePool(storagePool.getId(), UNPRIVILEGED_USER_ID, true);
+        List<Cluster> result =
+                dao.getAllForStoragePool(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER, UNPRIVILEGED_USER_ID, true);
         assertGetAllForStoragePoolInvalidResult(result);
     }
 
@@ -220,7 +215,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStoragePoolFilteredWithNoPermissionsAndNoFilter() {
-        List<Cluster> result = dao.getAllForStoragePool(storagePool.getId(), UNPRIVILEGED_USER_ID, false);
+        List<Cluster> result =
+                dao.getAllForStoragePool(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER, UNPRIVILEGED_USER_ID, false);
         assertGetAllForStoragePoolValidResult(result);
     }
 
@@ -229,7 +225,8 @@ public class ClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStoragePoolFilteredWithPermissions() {
-        List<Cluster> result = dao.getAllForStoragePool(storagePool.getId(), PRIVILEGED_USER_ID, true);
+        List<Cluster> result =
+                dao.getAllForStoragePool(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER, PRIVILEGED_USER_ID, true);
         assertGetAllForStoragePoolValidResult(result);
     }
 
@@ -238,11 +235,11 @@ public class ClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testClusterCorrectStoragePoolName() {
-        List<Cluster> result = dao.getAllForStoragePool(storagePool.getId());
+        List<Cluster> result = dao.getAllForStoragePool(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (Cluster group : result) {
-            assertEquals(storagePool.getName(), group.getStoragePoolName());
+            assertEquals(FixturesTool.DATA_CENTER_NAME, group.getStoragePoolName());
         }
     }
 
@@ -261,7 +258,7 @@ public class ClusterDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (Cluster group : result) {
-            assertEquals(storagePool.getId(), group.getStoragePoolId());
+            assertEquals(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER, group.getStoragePoolId());
         }
     }
 
