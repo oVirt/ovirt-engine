@@ -432,12 +432,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         getVmDeviceUtils().updateSoundDevice(oldTemplate,
                 getVmTemplate(),
                 getVmTemplate().getCompatibilityVersion(),
-                getParameters().isSoundDeviceEnabled(),
-                this::getCluster);
+                getParameters().isSoundDeviceEnabled());
 
         getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
         if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy() || oldTemplate.getVmType() != getVmTemplate().getVmType()) {
-            getVmDeviceUtils().updateUsbSlots(oldTemplate, getVmTemplate(), this::getCluster);
+            getVmDeviceUtils().updateUsbSlots(oldTemplate, getVmTemplate());
         }
         getVmDeviceUtils().updateVirtioScsiController(getVmTemplate(), getParameters().isVirtioScsiEnabled());
         if (getParameters().isBalloonEnabled() != null) {

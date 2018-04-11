@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.config.Config;
@@ -16,10 +15,6 @@ import org.slf4j.LoggerFactory;
 public class EmulatedMachineUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EmulatedMachineUtils.class);
-
-    public static ChipsetType getEffectiveChipset(VmBase vmBase, Supplier<Cluster> clusterSupplier) {
-        return ChipsetType.fromMachineType(getEffective(vmBase, clusterSupplier));
-    }
 
     public static String getEffective(VmBase vmBase, Supplier<Cluster> clusterSupplier) {
         if (vmBase.getCustomEmulatedMachine() != null) {

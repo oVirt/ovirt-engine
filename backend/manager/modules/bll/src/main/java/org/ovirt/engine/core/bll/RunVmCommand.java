@@ -754,7 +754,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected void updateVmDevicesOnRun() {
         // Before running the VM we update its devices, as they may
         // need to be changed due to configuration option change
-        getVmDeviceUtils().updateVmDevicesOnRun(getVm(), this::getCluster);
+        getVmDeviceUtils().updateVmDevicesOnRun(getVm());
     }
 
     protected void updateCdPath() {
