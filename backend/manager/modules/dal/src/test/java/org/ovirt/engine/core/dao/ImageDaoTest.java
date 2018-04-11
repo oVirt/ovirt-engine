@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNotSame;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -27,6 +29,9 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
 
     private static final int TOTAL_IMAGES = 13;
     private Image newImage;
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     @Override
     protected Guid generateNonExistingId() {
@@ -95,13 +100,13 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
     @Test
     public void updateStatusOfImagesByImageGroupId() {
         Image image = dao.get(EXISTING_IMAGE_ID);
-        List<DiskImage> snapshots = dbFacade.getDiskImageDao().getAllSnapshotsForImageGroup(image.getDiskId());
+        List<DiskImage> snapshots = diskImageDao.getAllSnapshotsForImageGroup(image.getDiskId());
         assertNotEquals(1, snapshots.size());
         for (DiskImage diskImage : snapshots) {
             assertNotSame(ImageStatus.LOCKED, diskImage.getImageStatus());
         }
         dao.updateStatusOfImagesByImageGroupId(image.getDiskId(), ImageStatus.LOCKED);
-        snapshots = dbFacade.getDiskImageDao().getAllSnapshotsForImageGroup(image.getDiskId());
+        snapshots = diskImageDao.getAllSnapshotsForImageGroup(image.getDiskId());
 
         for (DiskImage diskImage : snapshots) {
             assertEquals(ImageStatus.LOCKED, diskImage.getImageStatus());
