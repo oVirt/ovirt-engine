@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -37,14 +39,31 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
     private static final String EXISTING_CONNECTION = "10.35.64.25:/export/share";
     private static final long NUMBER_OF_IMAGES_ON_EXISTING_DOMAIN = 5;
 
+    @Inject
     private StorageDomainDao dao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
+    private ImageDao imageDao;
+    @Inject
+    private ImageStorageDomainMapDao imageStorageDomainMapDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+
     private StorageDomain existingDomain;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getStorageDomainDao();
         existingDomain = dao.get(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
     }
 
@@ -444,10 +463,9 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
-        List<VmTemplate> templates =
-                getDbFacade().getVmTemplateDao().getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
-        BaseDisk diskImage = getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID);
+        List<VM> vms = vmDao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
+        List<VmTemplate> templates = vmTemplateDao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
+        BaseDisk diskImage = baseDiskDao.get(FixturesTool.DISK_ID);
 
         assertNotNull(diskImage);
         assertFalse(vms.isEmpty());
@@ -460,13 +478,13 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         assertNull(dao.get(FixturesTool.STORAGE_DOMAIN_SCALE_SD5));
 
         for (VM vm : vms) {
-            assertNull(getDbFacade().getVmDao().get(vm.getId()));
+            assertNull(vmDao.get(vm.getId()));
         }
 
         for (VmTemplate template : templates) {
-            assertNull(getDbFacade().getVmTemplateDao().get(template.getId()));
+            assertNull(vmTemplateDao.get(template.getId()));
         }
-        assertNull(getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID));
+        assertNull(baseDiskDao.get(FixturesTool.DISK_ID));
     }
 
     @Test
@@ -487,10 +505,9 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemoveEntitesFromStorageDomain() {
-        List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
-        List<VmTemplate> templates =
-                getDbFacade().getVmTemplateDao().getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
-        BaseDisk diskImage = getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID);
+        List<VM> vms = vmDao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
+        List<VmTemplate> templates = vmTemplateDao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
+        BaseDisk diskImage = baseDiskDao.get(FixturesTool.DISK_ID);
 
         assertNotNull(diskImage);
         assertFalse(vms.isEmpty());
@@ -501,13 +518,13 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         dao.removeEntitesFromStorageDomain(existingDomain.getId());
 
         for (VM vm : vms) {
-            assertNull(getDbFacade().getVmDao().get(vm.getId()));
+            assertNull(vmDao.get(vm.getId()));
         }
 
         for (VmTemplate template : templates) {
-            assertNull(getDbFacade().getVmTemplateDao().get(template.getId()));
+            assertNull(vmTemplateDao.get(template.getId()));
         }
-        assertNull(getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID));
+        assertNull(baseDiskDao.get(FixturesTool.DISK_ID));
     }
 
     @Test
@@ -537,7 +554,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         VmStatic vm = new VmStatic();
         vm.setId(Guid.newGuid());
         vm.setOrigin(OriginType.HOSTED_ENGINE);
-        dbFacade.getVmStaticDao().save(vm);
+        vmStaticDao.save(vm);
 
         // create disk for HE
         DiskImage disk = new DiskImage();
@@ -547,13 +564,13 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         disk.setVolumeType(VolumeType.Preallocated);
         disk.setVolumeFormat(VolumeFormat.RAW);
 
-        dbFacade.getImageDao().save(disk.getImage());
-        dbFacade.getBaseDiskDao().save(disk);
+        imageDao.save(disk.getImage());
+        baseDiskDao.save(disk);
 
         ImageStorageDomainMap map = new ImageStorageDomainMap(
                 disk.getImageId(), existingDomain.getId(), null, null);
 
-        dbFacade.getImageStorageDomainMapDao().save(map);
+        imageStorageDomainMapDao.save(map);
 
         // attach disk
         VmDevice device = new VmDevice(
@@ -570,11 +587,11 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
                 null,
                 null);
 
-        dbFacade.getVmDeviceDao().save(device);
+        vmDeviceDao.save(device);
 
         DiskVmElement diskVmElement = new DiskVmElement(device.getId());
         diskVmElement.setDiskInterface(DiskInterface.IDE);
-        dbFacade.getDiskVmElementDao().save(diskVmElement);
+        diskVmElementDao.save(diskVmElement);
 
         // run test
         StorageDomain domain = dao.get(existingDomain.getId());
@@ -582,7 +599,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
 
         // change origin
         vm.setOrigin(OriginType.MANAGED_HOSTED_ENGINE);
-        dbFacade.getVmStaticDao().update(vm);
+        vmStaticDao.update(vm);
 
         // run test again
         domain = dao.get(existingDomain.getId());
