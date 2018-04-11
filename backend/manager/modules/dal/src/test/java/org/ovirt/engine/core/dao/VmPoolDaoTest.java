@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -22,19 +24,18 @@ public class VmPoolDaoTest extends BaseDaoTestCase {
     private static final Guid FREE_VM_ID = FixturesTool.VM_RHEL5_POOL_51;
     private static final Guid EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_57;
     private static final int VM_POOL_COUNT = 3;
-    private VmPoolDao dao;
     private VmPool existingVmPool;
     private VmPool deletableVmPool;
     private VmPool newVmPool;
     private VmPoolMap newVmPoolMap;
+    @Inject
+    private VmPoolDao dao;
+    @Inject
     private VmDao vmDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getVmPoolDao();
-        vmDao = dbFacade.getVmDao();
 
         existingVmPool = dao.get(EXISTING_VM_POOL_ID);
         deletableVmPool = dao.get(DELETABLE_VM_POOL_ID);
