@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
@@ -28,12 +27,6 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     private static final int NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID = 1;
     private static final int NUMBER_OF_JOBS_FOR_ENGINE_SESSION_SEQ_ID_AND_STATUS = 5;
     private static final int TOTAL_JOBS = 6;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     @Override
     protected Guid getExistingEntityId() {

@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
@@ -47,12 +46,6 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     private StepSubjectEntityDao subjectEntityDao;
     @Inject
     private StepDao dao;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     @Override
     protected Guid getExistingEntityId() {

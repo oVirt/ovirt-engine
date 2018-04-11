@@ -27,11 +27,6 @@ public class VnicProfileViewDaoTest extends BaseDaoTestCase {
     @Inject
     private NetworkDao networkDao;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     /**
      * Ensures the right set of vnic profiles is returned for the given data center.
      */

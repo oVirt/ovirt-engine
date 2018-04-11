@@ -26,11 +26,6 @@ public class HostProviderBindingDaoImplTest extends BaseDaoTestCase {
     @Inject
     private VdsStaticDao vdsStaticDao;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     /**
      * Ensures proper value is returned
      */
