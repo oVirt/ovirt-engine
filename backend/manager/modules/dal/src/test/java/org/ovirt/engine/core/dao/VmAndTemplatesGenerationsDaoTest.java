@@ -10,18 +10,18 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
-
+    @Inject
     private VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        vmAndTemplatesGenerationsDao = dbFacade.getVmAndTemplatesGenerationsDao();
-    }
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmTemplateDao templateDao;
 
     @Test
     public void testGetOvfGenerations() {
@@ -56,7 +56,6 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
         vmsGuids.add(FixturesTool.VM_RHEL5_POOL_50);
         vmsGuids.add(FixturesTool.VM_RHEL5_POOL_51);
 
-        VmDao vmDao = dbFacade.getVmDao();
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_51);
         vmAndTemplatesGenerationsDao.deleteOvfGenerations(vmsGuids);
@@ -269,7 +268,6 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetIdsForOvfDeletionOneToDelete() {
-        VmDao vmDao= dbFacade.getVmDao();
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         List<Guid> guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals("there should be 1 ovf for deletion", 1, guidsToDelete.size());
@@ -279,7 +277,6 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetIdsForOvfDeletionTwoToDelete() {
-        VmDao vmDao= dbFacade.getVmDao();
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_51);
         List<Guid> guidsToDelete = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
@@ -292,7 +289,6 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetIdsForOvfDeletionOneInEachPool() {
-        VmDao vmDao= dbFacade.getVmDao();
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_60);
 
@@ -309,7 +305,6 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetIdsForOvfDeletionMultipleInEachPool() {
-        VmDao vmDao= dbFacade.getVmDao();
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_51);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_59);
@@ -331,8 +326,6 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testGetIdsForOvfDeletionMultipleVmsAndTemplatesInDifferentPools() {
-        VmDao vmDao= dbFacade.getVmDao();
-        VmTemplateDao templateDao = dbFacade.getVmTemplateDao();
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_51);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
         vmDao.remove(FixturesTool.VM_RHEL5_POOL_59);
