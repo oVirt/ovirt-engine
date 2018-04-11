@@ -23,7 +23,7 @@ import org.ovirt.engine.core.compat.Version;
  * Mocking is done by calling {@link #mockConfigValue(ConfigValues, Object)} or {@link #mockConfigValue(ConfigValues, String, Object)} with the value you need.
  */
 public class MockConfigRule extends TestWatcher {
-    private final ConfigUtilsBase mockConfigUtils = mock(ConfigUtilsBase.class);
+    private final IConfigUtilsInterface mockConfigUtils = mock(IConfigUtilsInterface.class);
 
     /** A descriptor for a single config mocking */
     public static class MockConfigDescriptor<T> {
