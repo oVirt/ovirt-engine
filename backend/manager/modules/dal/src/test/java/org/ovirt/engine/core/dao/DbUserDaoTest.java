@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -21,8 +23,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class DbUserDaoTest extends BaseDaoTestCase {
     private static final Guid ADMIN_ROLE_TYPE_FROM_FIXTURE_ID = new Guid("F5972BFA-7102-4D33-AD22-9DD421BFBA78");
     private static final Guid SYSTEM_OBJECT_ID = new Guid("AAA00000-0000-0000-0000-123456789AAA");
-
+    @Inject
     private DbUserDao dao;
+    @Inject
+    private PermissionDao permissionDao;
     private DbUser existingUser;
     private DbUser deletableUser;
     private DbUser newUser;
@@ -33,7 +37,6 @@ public class DbUserDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = dbFacade.getDbUserDao();
         vm = FixturesTool.VM_RHEL5_POOL_50;
 
         existingUser = dao
@@ -289,12 +292,12 @@ public class DbUserDaoTest extends BaseDaoTestCase {
         perms.setObjectType(VdcObjectType.System);
 
         // Save the permission to the DB and make sure it has been saved
-        dbFacade.getPermissionDao().save(perms);
-        assertNotNull(dbFacade.getPermissionDao().get(perms.getId()));
+        permissionDao.save(perms);
+        assertNotNull(permissionDao.get(perms.getId()));
 
         // execute and validate when admin
         dao.updateLastAdminCheckStatus(nonAdminUser.getId());
-        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
+        nonAdminUser = dao.get(nonAdminUser.getId());
 
         assertTrue(nonAdminUser.isAdmin());
     }
