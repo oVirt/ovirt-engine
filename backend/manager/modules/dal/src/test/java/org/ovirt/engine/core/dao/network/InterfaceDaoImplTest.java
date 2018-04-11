@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
@@ -33,18 +35,21 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
     private static final String LABEL = "abc";
 
     private HostNetworkStatisticsDaoTest statsTest;
-    private InterfaceDao dao;
     private VdsNetworkInterface existingVdsInterface;
     private VdsNetworkInterface newVdsInterface;
     private VdsNetworkStatistics newVdsStatistics;
     private HostNetworkQos newQos;
+
+    @Inject
+    private InterfaceDao dao;
+    @Inject
+    private NetworkQoSDao networkQoSDao;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
         statsTest = new HostNetworkStatisticsDaoTest();
-        dao = dbFacade.getInterfaceDao();
         existingVdsInterface = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
 
         newQos = new HostNetworkQos();
@@ -133,7 +138,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
             found |= FixturesTool.VDS_NETWORK_INTERFACE.equals(iface.getId());
         }
         assertTrue(found);
-        assertNotNull(dbFacade.getNetworkQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));
+        assertNotNull(networkQoSDao.get(FixturesTool.VDS_NETWORK_INTERFACE));
 
         dao.removeInterfaceFromVds(FixturesTool.VDS_NETWORK_INTERFACE);
 
@@ -142,7 +147,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
         for (VdsNetworkInterface iface : after) {
             assertNotSame(FixturesTool.VDS_NETWORK_INTERFACE, iface.getId());
         }
-        assertNull(dbFacade.getNetworkQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));
+        assertNull(networkQoSDao.get(FixturesTool.VDS_NETWORK_INTERFACE));
     }
 
     /**
