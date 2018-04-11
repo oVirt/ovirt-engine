@@ -1470,6 +1470,9 @@ public enum ConfigValues {
     CinderlibCommandTimeoutInMinutes,
 
     @TypeConverterAttribute(Boolean.class)
+    IsDeferringFileVolumePreallocationSupported,
+
+    @TypeConverterAttribute(Boolean.class)
     DomainXML,
 
     @TypeConverterAttribute(Boolean.class)
