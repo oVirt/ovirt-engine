@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -31,7 +33,15 @@ public class VdsDaoTest extends BaseDaoTestCase {
     private static final Guid CLUSTER_WITH_FEDORA = FixturesTool.CLUSTER;
     private static final Guid CLUSTER_WITH_RHELS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d2");
 
+    @Inject
     private VdsDao dao;
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private VmDynamicDao vmDynamicDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
+
     private VDS existingVds;
     private VDS existingVds2;
     private Guid newVmId;
@@ -39,7 +49,6 @@ public class VdsDaoTest extends BaseDaoTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = dbFacade.getVdsDao();
         existingVds = dao.get(FixturesTool.HOST_ID);
         existingVds2 = dao.get(FixturesTool.VDS_RHEL6_NFS_SPM);
         newVmId = Guid.newGuid();
@@ -320,7 +329,7 @@ public class VdsDaoTest extends BaseDaoTestCase {
     }
 
     private void prepareHostWithDifferentStatus() {
-        dbFacade.getVdsDynamicDao().updateStatus(existingVds.getId(), VDSStatus.Maintenance);
+        vdsDynamicDao.updateStatus(existingVds.getId(), VDSStatus.Maintenance);
         existingVds.setStatus(VDSStatus.Maintenance);
         assertNotEquals(existingVds.getStatus(), existingVds2.getStatus());
     }
@@ -599,17 +608,17 @@ public class VdsDaoTest extends BaseDaoTestCase {
         VmStatic vmStatic = new VmStatic();
         vmStatic.setId(newVmId);
         vmStatic.setOrigin(isHostedEngineVm ? OriginType.MANAGED_HOSTED_ENGINE : OriginType.RHEV);
-        dbFacade.getVmStaticDao().save(vmStatic);
+        vmStaticDao.save(vmStatic);
 
         // create the VmDynamic instance
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(newVmId);
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setRunOnVds(existingVds.getId());
-        dbFacade.getVmDynamicDao().save(vmDynamic);
+        vmDynamicDao.save(vmDynamic);
 
         // update the VDS instance
         existingVds.setVmCount(vmCount);
-        dbFacade.getVdsDynamicDao().update(existingVds.getDynamicData());
+        vdsDynamicDao.update(existingVds.getDynamicData());
     }
 }
