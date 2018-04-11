@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -27,7 +26,6 @@ public class NetworkAttachmentValidator {
     private final VdsDao vdsDao;
     private final NetworkDao networkDao;
     private final NetworkClusterDao networkClusterDao;
-    private final VmDao vmDao;
 
     private final NetworkAttachment attachment;
     private final VDS host;
@@ -40,15 +38,13 @@ public class NetworkAttachmentValidator {
             VDS host,
             NetworkClusterDao networkClusterDao,
             NetworkDao networkDao,
-            VdsDao vdsDao,
-            VmDao vmDao) {
+            VdsDao vdsDao) {
 
         this.attachment = attachment;
         this.host = host;
         this.networkClusterDao = networkClusterDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
-        this.vmDao = vmDao;
     }
 
     public ValidationResult networkAttachmentIsSet() {
@@ -176,7 +172,7 @@ public class NetworkAttachmentValidator {
 
     NetworkValidator getNetworkValidator() {
         if (networkValidator == null) {
-            networkValidator = new NetworkValidator(vmDao, getNetwork());
+            networkValidator = new NetworkValidator(getNetwork());
         }
 
         return networkValidator;

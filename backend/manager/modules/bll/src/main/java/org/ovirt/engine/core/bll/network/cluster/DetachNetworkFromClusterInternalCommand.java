@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
@@ -40,8 +39,6 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private GlusterBrickDao glusterBrickDao;
-    @Inject
-    private VmDao vmDao;
 
     public DetachNetworkFromClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -58,7 +55,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
     @Override
     protected boolean validate() {
         DetachNetworkValidator validator =
-                new DetachNetworkValidator(vmDao, getNetwork(), getParameters().getNetworkCluster());
+                new DetachNetworkValidator(getNetwork(), getParameters().getNetworkCluster());
         return validate(validator.notManagementNetwork())
                 && validate(validator.clusterNetworkNotUsedByVms())
                 && validate(validator.clusterNetworkNotUsedByTemplates())
@@ -79,8 +76,8 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
 
         private final NetworkCluster networkCluster;
 
-        public DetachNetworkValidator(VmDao vmDao, Network network, NetworkCluster networkCluster) {
-            super(vmDao, network);
+        public DetachNetworkValidator(Network network, NetworkCluster networkCluster) {
+            super(network);
             this.networkCluster = networkCluster;
         }
 

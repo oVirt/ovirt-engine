@@ -7,24 +7,15 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.dc.UpdateNetworkCommand.UpdateNetworkValidator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateNetworkValidatorTest {
-
-    @Mock
-    private VmDao vmDao;
-    @Mock
-    private InterfaceDao interfaceDao;
-
     private Network network;
 
     private UpdateNetworkValidator validator;
@@ -32,7 +23,7 @@ public class UpdateNetworkValidatorTest {
     @Before
     public void setup() {
         network = new Network();
-        validator = new UpdateNetworkValidator(network, vmDao, interfaceDao);
+        validator = new UpdateNetworkValidator(network);
     }
 
     private Network createExternalNetwork() {

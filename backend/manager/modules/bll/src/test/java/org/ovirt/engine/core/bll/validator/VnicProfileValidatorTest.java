@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -79,6 +81,9 @@ public class VnicProfileValidatorTest {
     @Mock
     private NetworkQoS networkQos;
 
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     private List<VnicProfile> vnicProfiles = new ArrayList<>();
 
     private VnicProfileValidator validator;
@@ -87,7 +92,7 @@ public class VnicProfileValidatorTest {
     public void setup() {
 
         // spy on attempts to access the database
-        validator = spy(new VnicProfileValidator(vnicProfile, vmDao, dcDao, networkFilterDao));
+        validator = spy(new VnicProfileValidator(vnicProfile, dcDao, networkFilterDao));
         doReturn(dbFacade).when(validator).getDbFacade();
 
         // mock some commonly used Daos
@@ -95,6 +100,7 @@ public class VnicProfileValidatorTest {
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
         when(dbFacade.getNetworkQosDao()).thenReturn(networkQosDao);
         when(dbFacade.getVmDao()).thenReturn(vmDao);
+        injectorRule.bind(VmDao.class, vmDao);
         initNetworkFilterDao();
 
         // mock their getters
@@ -115,7 +121,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNull() throws Exception {
-        validator = new VnicProfileValidator(null, vmDao, dcDao, networkFilterDao);
+        validator = new VnicProfileValidator(null, dcDao, networkFilterDao);
         assertThat(validator.vnicProfileIsSet(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 

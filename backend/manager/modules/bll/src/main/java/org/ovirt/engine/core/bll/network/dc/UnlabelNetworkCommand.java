@@ -18,15 +18,12 @@ import org.ovirt.engine.core.common.action.UnlabelNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends CommandBase<T> {
 
     @Inject
     private NetworkDao networkDao;
-    @Inject
-    private VmDao vmDao;
 
     private Network network;
 
@@ -61,7 +58,7 @@ public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends C
 
     @Override
     protected boolean validate() {
-        NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
+        NetworkValidator validatorNew = new NetworkValidator(getNetwork());
         return validate(validatorNew.networkIsSet(getParameters().getNetworkId()));
     }
 

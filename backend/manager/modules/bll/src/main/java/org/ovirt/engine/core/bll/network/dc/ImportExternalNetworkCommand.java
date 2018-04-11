@@ -83,7 +83,7 @@ public class ImportExternalNetworkCommand<P extends ImportExternalNetworkParamet
     @Override
     protected boolean validate() {
         NetworkProviderValidator providerValidator = new NetworkProviderValidator(getProvider());
-        NetworkValidator networkValidator = new NetworkValidator(null, getNetwork());
+        NetworkValidator networkValidator = new NetworkValidator(getNetwork());
 
         return validate(providerValidator.providerIsSet())
                 && validate(providerValidator.providerTypeIsNetwork())

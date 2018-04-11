@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
@@ -27,7 +26,6 @@ public class VnicProfileValidator {
     static final String VAR_VNIC_PROFILE_NAME = "VAR_VNIC_PROFILE_NAME";
     static final String VAR_NETWORK_FILTER_ID = "VAR_NETWORK_FILTER_ID";
 
-    private final VmDao vmDao;
     private final StoragePoolDao dcDao;
     private final NetworkFilterDao networkFilterDao;
 
@@ -37,10 +35,9 @@ public class VnicProfileValidator {
     private List<VnicProfile> vnicProfiles;
     private List<VM> vms;
 
-    public VnicProfileValidator(VnicProfile vnicProfile, VmDao vmDao, StoragePoolDao dcDao, NetworkFilterDao networkFilterDao) {
+    public VnicProfileValidator(VnicProfile vnicProfile, StoragePoolDao dcDao, NetworkFilterDao networkFilterDao) {
         this.vnicProfile = vnicProfile;
 
-        this.vmDao = vmDao;
         this.dcDao = dcDao;
         this.networkFilterDao = networkFilterDao;
     }
@@ -62,7 +59,7 @@ public class VnicProfileValidator {
     }
 
     public ValidationResult networkExists() {
-        return new NetworkValidator(vmDao, getNetwork()).networkIsSet(vnicProfile.getNetworkId());
+        return new NetworkValidator(getNetwork()).networkIsSet(vnicProfile.getNetworkId());
     }
 
     public ValidationResult networkQosExistsOrNull() {

@@ -19,15 +19,12 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class LabelNetworkCommand<T extends LabelNetworkParameters> extends CommandBase<T> {
 
     @Inject
     private NetworkDao networkDao;
-    @Inject
-    private VmDao vmDao;
 
     private Network network;
 
@@ -63,7 +60,7 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
 
     @Override
     protected boolean validate() {
-        NetworkValidator validator = new NetworkValidator(vmDao, getNetwork());
+        NetworkValidator validator = new NetworkValidator(getNetwork());
         return validate(validator.networkIsSet(getParameters().getNetworkId()))
                 && validate(validator.notLabeled())
                 && validate(validator.notExternalNetwork());

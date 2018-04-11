@@ -35,8 +35,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
@@ -55,8 +53,6 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     private VnicProfileDao vnicProfileDao;
     @Inject
     private ProviderDao providerDao;
-    @Inject
-    private VmDao vmDao;
     @Inject
     private NetworkLocking networkLocking;
 
@@ -110,7 +106,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     }
 
     protected AddNetworkValidator getNetworkValidator() {
-        return new AddNetworkValidator(vmDao, getNetwork());
+        return new AddNetworkValidator(getNetwork());
     }
 
     private boolean externalNetworkValid(AddNetworkValidator validator) {
@@ -193,18 +189,13 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     protected static class AddNetworkValidator extends NetworkValidator {
 
-        public AddNetworkValidator(VmDao vmDao, Network network) {
-            super(vmDao, network);
+        public AddNetworkValidator(Network network) {
+            super(network);
         }
 
         public ValidationResult externalNetworkVlanValid() {
             return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED)
                     .when(network.getVlanId() != null && network.getLabel() == null);
-        }
-
-        @Override
-        protected DbFacade getDbFacade() {
-            return super.getDbFacade();
         }
 
         /**

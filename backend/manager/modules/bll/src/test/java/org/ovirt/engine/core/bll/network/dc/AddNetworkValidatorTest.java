@@ -2,9 +2,7 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -13,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,9 +20,8 @@ import org.ovirt.engine.core.bll.network.dc.AddNetworkCommand.AddNetworkValidato
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -33,26 +31,20 @@ public class AddNetworkValidatorTest {
     private Network network;
 
     @Mock
-    private DbFacade dbFacade;
-
-    @Mock
     private NetworkDao networkDao;
 
-    @Mock
-    private VmDao vmDao;
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     private List<Network> networks = new ArrayList<>();
     private AddNetworkValidator validator;
 
     @Before
     public void setup() {
-        validator = spy(new AddNetworkValidator(vmDao, network));
-
-        // spy on attempts to access the database
-        doReturn(dbFacade).when(validator).getDbFacade();
+        validator = new AddNetworkValidator(network);
 
         // mock some commonly used Daos
-        when(dbFacade.getNetworkDao()).thenReturn(networkDao);
+        injectorRule.bind(NetworkDao.class, networkDao);
 
         // mock their getters
         when(networkDao.getAllForDataCenter(any())).thenReturn(networks);

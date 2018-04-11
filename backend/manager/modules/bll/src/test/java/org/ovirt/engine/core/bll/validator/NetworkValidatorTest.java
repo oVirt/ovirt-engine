@@ -4,9 +4,7 @@ import static java.util.stream.Collectors.joining;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -18,6 +16,7 @@ import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,20 +24,18 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.IscsiBondDao;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
@@ -52,20 +49,14 @@ public class NetworkValidatorTest {
     private static final Guid DEFAULT_GUID = Guid.newGuid();
     private static final Guid OTHER_GUID = Guid.newGuid();
 
-    @Mock
-    private DbFacade dbFacade;
-
-    @Mock
-    private StoragePoolDao dataCenterDao;
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private NetworkDao networkDao;
 
     @Mock
     private Network network;
-
-    @Mock
-    private StoragePool dataCenter;
 
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;
@@ -80,13 +71,10 @@ public class NetworkValidatorTest {
     public void setup() {
 
         // spy on attempts to access the database
-        validator = spy(new NetworkValidator(vmDao, network));
-        doReturn(dbFacade).when(validator).getDbFacade();
-        doReturn(managementNetworkUtil).when(validator).getManagementNetworkUtil();
-        doReturn(networkDao).when(validator).getNetworkDao();
-
-        // mock some commonly used Daos
-        when(dbFacade.getNetworkDao()).thenReturn(networkDao);
+        validator = new NetworkValidator(network);
+        injectorRule.bind(ManagementNetworkUtil.class, managementNetworkUtil);
+        injectorRule.bind(NetworkDao.class, networkDao);
+        injectorRule.bind(VmDao.class, vmDao);
 
         // mock their getters
         when(networkDao.getAllForDataCenter(any())).thenReturn(networks);
@@ -99,7 +87,7 @@ public class NetworkValidatorTest {
 
     @Test
     public void networkNull() throws Exception {
-        validator = new NetworkValidator(vmDao, null);
+        validator = new NetworkValidator(null);
         assertThat(validator.networkIsSet(Guid.newGuid()), failsWith(EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS));
     }
 
@@ -170,7 +158,7 @@ public class NetworkValidatorTest {
     private void notIscsiBondNetworkTest(Matcher<ValidationResult> matcher, List<IscsiBond> iscsiBonds) {
         IscsiBondDao iscsiBondDao = mock(IscsiBondDao.class);
         when(iscsiBondDao.getIscsiBondsByNetworkId(any())).thenReturn(iscsiBonds);
-        when(dbFacade.getIscsiBondDao()).thenReturn(iscsiBondDao);
+        injectorRule.bind(IscsiBondDao.class, iscsiBondDao);
         assertThat(validator.notIscsiBondNetwork(), matcher);
     }
 
@@ -295,7 +283,7 @@ public class NetworkValidatorTest {
     private void networkNotUsedByHostsTest(Matcher<ValidationResult> matcher, List<VDS> hosts) {
         VdsDao hostDao = mock(VdsDao.class);
         when(hostDao.getAllForNetwork(any())).thenReturn(hosts);
-        when(dbFacade.getVdsDao()).thenReturn(hostDao);
+        injectorRule.bind(VdsDao.class, hostDao);
         assertThat(validator.networkNotUsedByHosts(), matcher);
     }
 
@@ -326,7 +314,7 @@ public class NetworkValidatorTest {
     private void networkNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
         VmTemplateDao templateDao = mock(VmTemplateDao.class);
         when(templateDao.getAllForNetwork(any())).thenReturn(templates);
-        when(dbFacade.getVmTemplateDao()).thenReturn(templateDao);
+        injectorRule.bind(VmTemplateDao.class, templateDao);
         assertThat(validator.networkNotUsedByTemplates(), matcher);
     }
 

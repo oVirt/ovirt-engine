@@ -49,7 +49,6 @@ import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -78,8 +77,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private VdsDao vdsDao;
-    @Inject
-    private VmDao vmDao;
     @Inject
     private DiskLunMapDao diskLunMapDao;
 
@@ -376,7 +373,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     protected NetworkValidator getNetworkValidator(Network network) {
-        return new NetworkValidator(vmDao, network);
+        return new NetworkValidator(network);
     }
 
     @Override

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -36,8 +35,6 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     private ProviderDao providerDao;
     @Inject
     private NetworkDao networkDao;
-    @Inject
-    private VmDao vmDao;
     @Inject
     private ClusterDao clusterDao;
     @Inject
@@ -81,8 +78,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected boolean validate() {
-        RemoveProviderValidator validator = new RemoveProviderValidator(vmDao, networkDao, clusterDao,
-                getDeletedProvider());
+        RemoveProviderValidator validator = new RemoveProviderValidator(networkDao, clusterDao, getDeletedProvider());
         return validate(validator.providerIsSet()) && validate(validator.providerNetworksNotUsed())
                 && validate(validator.providerIsNoDefaultProvider()) && validateRemoveProvider();
     }
@@ -125,14 +121,11 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     protected static class RemoveProviderValidator extends ProviderValidator {
 
-        private final VmDao vmDao;
         private final NetworkDao networkDao;
         private final ClusterDao clusterDao;
 
-        public RemoveProviderValidator(VmDao vmDao, NetworkDao networkDao, ClusterDao clusterDao,
-                                       Provider<?> provider) {
+        public RemoveProviderValidator(NetworkDao networkDao, ClusterDao clusterDao, Provider<?> provider) {
             super(provider);
-            this.vmDao = vmDao;
             this.networkDao = networkDao;
             this.clusterDao = clusterDao;
         }
@@ -171,7 +164,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
         }
 
         protected NetworkValidator getValidator(Network network) {
-            return new NetworkValidator(vmDao, network);
+            return new NetworkValidator(network);
         }
     }
 }

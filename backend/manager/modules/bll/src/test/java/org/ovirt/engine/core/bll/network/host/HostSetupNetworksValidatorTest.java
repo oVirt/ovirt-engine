@@ -71,7 +71,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -98,9 +97,6 @@ public class HostSetupNetworksValidatorTest {
 
     @Mock
     private VdsDao vdsDaoMock;
-
-    @Mock
-    private VmDao vmDao;
 
     @Rule
     public ErrorCollector collector= new ErrorCollector();
@@ -1803,7 +1799,6 @@ public class HostSetupNetworksValidatorTest {
                 vdsDaoMock,
                 findActiveVmsUsingNetwork,
                 new HostSetupNetworksValidatorHelper(),
-                vmDao,
                 mockNetworkExclusivenessValidatorResolver,
                 mockNetworkAttachmentIpConfigurationValidator,
                 new UnmanagedNetworkValidator(),

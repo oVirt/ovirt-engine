@@ -45,11 +45,11 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.VdsStaticDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
@@ -65,10 +65,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     private NetworkDao networkDao;
     @Inject
     private NetworkClusterDao networkClusterDao;
-    @Inject
-    private InterfaceDao interfaceDao;
-    @Inject
-    private VmDao vmDao;
     @Inject
     private NetworkLocking networkLocking;
 
@@ -136,8 +132,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         final HasStoragePoolValidator hasStoragePoolValidator = new HasStoragePoolValidator(getNetwork());
-        final NetworkValidator validatorNew = new NetworkValidator(vmDao, getNetwork());
-        final UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork(), vmDao, interfaceDao);
+        final NetworkValidator validatorNew = new NetworkValidator(getNetwork());
+        final UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork());
         return validate(hasStoragePoolValidator.storagePoolExists())
                 && validate(validatorNew.stpForVmNetworkOnly())
                 && validate(validatorNew.mtuValid())
@@ -207,14 +203,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     protected static class UpdateNetworkValidator extends NetworkValidator {
 
-        private final InterfaceDao interfaceDao;
-
-        public UpdateNetworkValidator(
-                Network network,
-                VmDao vmDao,
-                InterfaceDao interfaceDao) {
-            super(vmDao, network);
-            this.interfaceDao = interfaceDao;
+        public UpdateNetworkValidator(Network network) {
+            super(network);
         }
 
         public ValidationResult notRenamingLabel(String newLabel) {
@@ -223,7 +213,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 return ValidationResult.VALID;
             }
 
-            List<VdsNetworkInterface> nics = interfaceDao.getVdsInterfacesByNetworkId(network.getId());
+            List<VdsNetworkInterface> nics = Injector.get(InterfaceDao.class).getVdsInterfacesByNetworkId(network.getId());
             for (VdsNetworkInterface nic : nics) {
                 VdsNetworkInterface labeledNic = nic;
                 if (NetworkCommonUtils.isVlan(nic)) {
@@ -239,7 +229,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         private VdsNetworkInterface getBaseInterface(VdsNetworkInterface vlan) {
-            List<VdsNetworkInterface> hostNics = interfaceDao.getAllInterfacesForVds(vlan.getVdsId());
+            List<VdsNetworkInterface> hostNics = Injector.get(InterfaceDao.class).getAllInterfacesForVds(vlan.getVdsId());
 
             for (VdsNetworkInterface hostNic : hostNics) {
                 if (NetworkUtils.interfaceBasedOn(vlan, hostNic.getName())) {

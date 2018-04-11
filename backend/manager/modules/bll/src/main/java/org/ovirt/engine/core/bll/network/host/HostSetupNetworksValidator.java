@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -86,7 +85,6 @@ public class HostSetupNetworksValidator {
     private final VdsDao vdsDao;
     private final BusinessEntityMap<CreateOrUpdateBond> createOrUpdateBondBusinessEntityMap;
     private final FindActiveVmsUsingNetwork findActiveVmsUsingNetwork;
-    private final VmDao vmDao;
     private Map<Guid, NetworkAttachment> existingAttachmentsByNetworkId;
     private Map<String, NicLabel> nicLabelByLabel;
     private HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper;
@@ -105,7 +103,6 @@ public class HostSetupNetworksValidator {
             VdsDao vdsDao,
             FindActiveVmsUsingNetwork findActiveVmsUsingNetwork,
             HostSetupNetworksValidatorHelper hostSetupNetworksValidatorHelper,
-            VmDao vmDao,
             NetworkExclusivenessValidatorResolver networkExclusivenessValidatorResolver,
             NetworkAttachmentIpConfigurationValidator networkAttachmentIpConfigurationValidator,
             UnmanagedNetworkValidator unmanagedNetworkValidator,
@@ -118,7 +115,6 @@ public class HostSetupNetworksValidator {
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
         this.findActiveVmsUsingNetwork = findActiveVmsUsingNetwork;
-        this.vmDao = vmDao;
         this.existingInterfacesMap = new BusinessEntityMap<>(existingInterfaces);
         this.networkBusinessEntityMap = networkBusinessEntityMap;
         this.existingInterfaces = existingInterfaces;
@@ -819,12 +815,7 @@ public class HostSetupNetworksValidator {
     }
 
     private NetworkAttachmentValidator createNetworkAttachmentValidator(NetworkAttachment attachmentToValidate) {
-        return new NetworkAttachmentValidator(attachmentToValidate,
-            host,
-            networkClusterDao,
-            networkDao,
-            vdsDao,
-            vmDao);
+        return new NetworkAttachmentValidator(attachmentToValidate, host, networkClusterDao, networkDao, vdsDao);
     }
 
     /**

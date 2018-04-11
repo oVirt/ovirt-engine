@@ -32,7 +32,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -56,9 +55,6 @@ public class AutodefineExternalNetworkCommand<T extends IdParameters> extends Co
 
     @Inject
     private NetworkHelper networkHelper;
-
-    @Inject
-    private VmDao vmDao;
 
     @Inject
     private NetworkLocking networkLocking;
@@ -87,7 +83,7 @@ public class AutodefineExternalNetworkCommand<T extends IdParameters> extends Co
 
     @Override
     protected boolean validate() {
-        NetworkValidator validator = new NetworkValidator(vmDao, getNetwork());
+        NetworkValidator validator = new NetworkValidator(getNetwork());
         return validate(validator.networkIsSet(getParameters().getId()))
                 && validate(validator.isVmNetwork())
                 && validate(validator.notExternalNetwork());

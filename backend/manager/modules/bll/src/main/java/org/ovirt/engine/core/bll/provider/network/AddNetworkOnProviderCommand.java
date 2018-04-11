@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -24,8 +23,6 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
     @Inject
     private ProviderDao providerDao;
-    @Inject
-    private VmDao vmDao;
     @Inject
     private NetworkDao networkDao;
     @Inject
@@ -84,12 +81,12 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
     @Override
     protected AddNetworkValidator getNetworkValidator() {
-        return new AddNetworkOnProviderValidator(vmDao, getNetwork());
+        return new AddNetworkOnProviderValidator(getNetwork());
     }
 
     protected class AddNetworkOnProviderValidator extends AddNetworkValidator {
-        public AddNetworkOnProviderValidator(VmDao vmDao, Network network) {
-            super(vmDao, network);
+        public AddNetworkOnProviderValidator(Network network) {
+            super(network);
         }
 
         /**

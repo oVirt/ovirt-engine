@@ -83,7 +83,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -169,8 +168,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private InterfaceDao interfaceDao;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
-    @Inject
-    private VmDao vmDao;
 
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
@@ -291,7 +288,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 vdsDao,
                 findActiveVmsUsingNetwork,
                 hostSetupNetworksValidatorHelper,
-                vmDao,
                 networkExclusivenessValidatorResolver,
                 networkAttachmentIpConfigurationValidator,
                 unmanagedNetworkValidator,
