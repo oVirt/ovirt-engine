@@ -1745,6 +1745,11 @@ public class VmDeviceUtils {
                     vmDevice.setSpecParams(getVideoDeviceSpecParams(vmBase));
                     break;
 
+                case GRAPHICS:
+                case CONSOLE:
+                    vmDevice.setPlugged(true);
+                    break;
+
                 case HOSTDEV:
                     // it is currently unsafe to import host devices, due to possibility of invalid dedicatedVmForVds
                     continue;
