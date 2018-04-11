@@ -158,6 +158,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Inject
     private CommandCompensator compensator;
 
+    @Inject
+    private DBConfigUtils dbConfigUtils;
+
     private void initHandlers() {
         BaseConditionFieldAutoCompleter.tagsHandler = tagsDirector;
         serviceLoader.load(VmHandler.class);
@@ -238,7 +241,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // initialize CDI services
         serviceLoader.load(CacheManager.class);
         // initialize configuration utils to use DB
-        Config.setConfigUtils(new DBConfigUtils());
+        Config.setConfigUtils(dbConfigUtils);
 
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository
         initOsRepository();

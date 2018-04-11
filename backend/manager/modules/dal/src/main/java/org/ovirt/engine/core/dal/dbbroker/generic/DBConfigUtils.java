@@ -13,6 +13,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -22,18 +26,21 @@ import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.Reloadable;
 import org.ovirt.engine.core.common.config.TypeConverterAttribute;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class DBConfigUtils implements IConfigUtilsInterface {
     private static final Logger log = LoggerFactory.getLogger(DBConfigUtils.class);
 
     private static final String TEMP = "Temp";
-    private static final Map<String, Map<String, Object>> _vdcOptionCache = new HashMap<>();
+    private final Map<String, Map<String, Object>> _vdcOptionCache = new HashMap<>();
+
+    @Inject
+    private VdcOptionDao vdcOptionDao;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static Object parseValue(String value, String name, Class<?> fieldType) {
@@ -120,9 +127,10 @@ public class DBConfigUtils implements IConfigUtilsInterface {
     /**
      * Refreshes the VDC option cache.
      */
+    @PostConstruct
     public void refresh() {
         _vdcOptionCache.clear();
-        List<VdcOption> list = moveDependentToEnd(getVdcOptionDao().getAll());
+        List<VdcOption> list = moveDependentToEnd(vdcOptionDao.getAll());
         for (VdcOption option : list) {
             try {
                 if (!_vdcOptionCache.containsKey(option.getOptionName()) ||
@@ -135,13 +143,6 @@ public class DBConfigUtils implements IConfigUtilsInterface {
                         ConfigValues.class.getSimpleName());
             }
         }
-    }
-
-    /**
-     * Initializes a new instance of the DBConfigUtils class.
-     */
-    public DBConfigUtils() {
-        refresh();
     }
 
     @Override
@@ -163,10 +164,6 @@ public class DBConfigUtils implements IConfigUtilsInterface {
     public boolean valueExists(ConfigValues configValue, String version) {
         Map<String, Object> values = getValuesForAllVersions(configValue);
         return values != null && values.containsKey(version);
-    }
-
-    private static VdcOptionDao getVdcOptionDao() {
-        return DbFacade.getInstance().getVdcOptionDao();
     }
 
     private void updateOption(VdcOption option) {
