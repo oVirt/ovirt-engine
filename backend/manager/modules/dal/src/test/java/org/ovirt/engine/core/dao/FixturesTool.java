@@ -123,7 +123,7 @@ public class FixturesTool {
     /**
      * Predefined vds group with no running VMs
      */
-    protected static final Guid CLUSTER_NO_RUNNING_VMS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3");
+    public static final Guid CLUSTER_NO_RUNNING_VMS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3");
 
     /**
      * Predefined NFS storage pool.

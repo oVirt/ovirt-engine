@@ -8,43 +8,23 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 public class NetworkClusterDaoTest extends BaseDaoTestCase {
     private static final int NETWORK_CLUSTER_COUNT = 4;
-    private Guid datacenter;
     private NetworkClusterDao dao;
-    private Cluster cluster;
-    private Network network;
     private NetworkCluster newNetworkCluster;
-    private Network networkNoCluster;
     private NetworkCluster existingNetworkCluster;
-    private Cluster freeCluster;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        datacenter = FixturesTool.DATA_CENTER;
-
         dao = dbFacade.getNetworkClusterDao();
-
-        ClusterDao clusterDao = dbFacade.getClusterDao();
-
-        cluster = clusterDao.get(FixturesTool.CLUSTER);
-        freeCluster = clusterDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
-
-        NetworkDao networkDao = dbFacade.getNetworkDao();
-
-        network = networkDao.getByNameAndDataCenter("engine", datacenter);
-        networkNoCluster = networkDao.getByNameAndDataCenter("engine3", datacenter);
 
         createNewNetworkCluster();
 
@@ -53,8 +33,8 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
 
     private void createNewNetworkCluster() {
         newNetworkCluster = new NetworkCluster();
-        newNetworkCluster.setNetworkId(networkNoCluster.getId());
-        newNetworkCluster.setClusterId(freeCluster.getId());
+        newNetworkCluster.setNetworkId(FixturesTool.NETWORK_NO_CLUSTERS_ATTACHED);
+        newNetworkCluster.setClusterId(FixturesTool.CLUSTER_NO_RUNNING_VMS);
         newNetworkCluster.setStatus(NetworkStatus.OPERATIONAL);
         newNetworkCluster.setManagement(true);
         newNetworkCluster.setRequired(true);
@@ -98,12 +78,12 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForCluster() {
-        List<NetworkCluster> result = dao.getAllForCluster(cluster.getId());
+        List<NetworkCluster> result = dao.getAllForCluster(FixturesTool.CLUSTER);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (NetworkCluster thiscluster : result) {
-            assertEquals(cluster.getId(), thiscluster.getClusterId());
+            assertEquals(FixturesTool.CLUSTER, thiscluster.getClusterId());
         }
     }
 
@@ -112,7 +92,7 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForNetworkWithInvalidNetwork() {
-        List<NetworkCluster> result = dao.getAllForNetwork(networkNoCluster.getId());
+        List<NetworkCluster> result = dao.getAllForNetwork(FixturesTool.NETWORK_NO_CLUSTERS_ATTACHED);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -123,12 +103,12 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForNetwork() {
-        List<NetworkCluster> result = dao.getAllForNetwork(network.getId());
+        List<NetworkCluster> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (NetworkCluster cluster : result) {
-            assertEquals(network.getId(), cluster.getNetworkId());
+            assertEquals(FixturesTool.NETWORK_ENGINE, cluster.getNetworkId());
         }
     }
 
@@ -137,14 +117,14 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testSave() {
-        List<NetworkCluster> before = dao.getAllForNetwork(networkNoCluster.getId());
+        List<NetworkCluster> before = dao.getAllForNetwork(FixturesTool.NETWORK_NO_CLUSTERS_ATTACHED);
 
         // ensure that we have nothing to start
         assertTrue(before.isEmpty());
 
         dao.save(newNetworkCluster);
 
-        List<NetworkCluster> after = dao.getAllForNetwork(networkNoCluster.getId());
+        List<NetworkCluster> after = dao.getAllForNetwork(FixturesTool.NETWORK_NO_CLUSTERS_ATTACHED);
 
         assertFalse(after.isEmpty());
         assertNetworkClustersEqual(newNetworkCluster, after.get(0));
