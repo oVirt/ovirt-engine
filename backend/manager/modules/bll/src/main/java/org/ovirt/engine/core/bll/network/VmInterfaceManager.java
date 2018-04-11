@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -223,19 +222,19 @@ public class VmInterfaceManager {
     }
 
     protected VmNetworkStatisticsDao getVmNetworkStatisticsDao() {
-        return DbFacade.getInstance().getVmNetworkStatisticsDao();
+        return Injector.get(VmNetworkStatisticsDao.class);
     }
 
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDao();
+        return Injector.get(VmNetworkInterfaceDao.class);
     }
 
     protected VmNicDao getVmNicDao() {
-        return DbFacade.getInstance().getVmNicDao();
+        return Injector.get(VmNicDao.class);
     }
 
     protected VmDao getVmDao() {
-        return DbFacade.getInstance().getVmDao();
+        return Injector.get(VmDao.class);
     }
 
     private ExternalNetworkManagerFactory getExternalNetworkManagerFactory() {

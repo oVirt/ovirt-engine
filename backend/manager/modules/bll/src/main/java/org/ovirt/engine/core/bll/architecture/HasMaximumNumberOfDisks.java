@@ -6,7 +6,8 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.archstrategy.ArchCommand;
 
 
@@ -15,7 +16,7 @@ public class HasMaximumNumberOfDisks implements ArchCommand {
     private List<DiskVmElement> allDiskVmElements;
 
     public HasMaximumNumberOfDisks(Guid vmId) {
-        allDiskVmElements = DbFacade.getInstance().getDiskVmElementDao().getAllForVm(vmId);
+        allDiskVmElements = Injector.get(DiskVmElementDao.class).getAllForVm(vmId);
     }
 
     private int countDisks(final DiskInterface diskType) {

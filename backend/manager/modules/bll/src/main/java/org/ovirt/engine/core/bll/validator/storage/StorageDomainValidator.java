@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.di.Injector;
@@ -517,10 +516,10 @@ public class StorageDomainValidator {
     }
 
     protected VmDao getVmDao() {
-        return DbFacade.getInstance().getVmDao();
+        return Injector.get(VmDao.class);
     }
 
     protected VmDynamicDao getVmDynamicDao() {
-        return DbFacade.getInstance().getVmDynamicDao();
+        return Injector.get(VmDynamicDao.class);
     }
 }

@@ -21,7 +21,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmIconDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class IconValidator {
 
@@ -60,7 +61,7 @@ public class IconValidator {
     }
 
     public static ValidationResult validateIconId(Guid iconId, String nameForErrorMessage) {
-        if (DbFacade.getInstance().getVmIconDao().exists(iconId)) {
+        if (Injector.get(VmIconDao.class).exists(iconId)) {
             return ValidationResult.VALID;
         }
         return new ValidationResult(EngineMessage.ICON_OF_PROVIDED_ID_DOES_NOT_EXIST,

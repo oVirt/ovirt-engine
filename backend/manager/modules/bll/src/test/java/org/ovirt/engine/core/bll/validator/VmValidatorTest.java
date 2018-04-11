@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.DbDependentTestBase;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
@@ -39,7 +38,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
-public class VmValidatorTest extends DbDependentTestBase {
+public class VmValidatorTest extends BaseCommandTest {
 
     private VmValidator validator;
 
@@ -75,8 +74,9 @@ public class VmValidatorTest extends DbDependentTestBase {
         vm = createVm();
         validator = new VmValidator(vm);
 
-        when(DbFacade.getInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDao);
-        when(DbFacade.getInstance().getVnicProfileDao()).thenReturn(vnicProfileDao);
+        injectorRule.bind(VmNetworkInterfaceDao.class, vmNetworkInterfaceDao);
+        injectorRule.bind(VnicProfileDao.class, vnicProfileDao);
+        injectorRule.bind(DiskVmElementDao.class, diskVmElementDao);
     }
 
     private VM createVm() {
@@ -200,7 +200,6 @@ public class VmValidatorTest extends DbDependentTestBase {
         DiskVmElement dve = new DiskVmElement(null, vm.getId());
         dve.setUsingScsiReservation(vmHasDisksPluggedWithReservation);
 
-        when(DbFacade.getInstance().getDiskVmElementDao()).thenReturn(diskVmElementDao);
         when(diskVmElementDao.getAllPluggedToVm(vm.getId())).thenReturn(
                 Collections.singletonList(dve));
 

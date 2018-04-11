@@ -17,8 +17,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.slf4j.Logger;
@@ -208,7 +210,7 @@ public final class GlusterVolumesListReturn extends StatusReturn {
             log.warn("Could not add brick '{}' to volume '{}' - server uuid '{}' not found in cluster '{}'", brickName, volumeId, hostUuid, clusterId);
             return null;
         }
-        VdsStatic server = DbFacade.getInstance().getVdsStaticDao().get(glusterServer.getId());
+        VdsStatic server = Injector.get(VdsStaticDao.class).get(glusterServer.getId());
         String networkAddress = null;
         Guid networkId = null;
         if (!server.getHostName().equals(hostAddress)) {
@@ -250,8 +252,7 @@ public final class GlusterVolumesListReturn extends StatusReturn {
     }
 
     private Network getGlusterNetworkId(VdsStatic server, String networkAddress) {
-        List<Network> allNetworksInCluster =
-                DbFacade.getInstance().getNetworkDao().getAllForCluster(server.getClusterId());
+        List<Network> allNetworksInCluster = Injector.get(NetworkDao.class).getAllForCluster(server.getClusterId());
 
         for (Network network : allNetworksInCluster) {
             if (network.getCluster().isGluster()
@@ -263,7 +264,7 @@ public final class GlusterVolumesListReturn extends StatusReturn {
     }
 
     private Boolean isSameNetworkAddress(Guid hostId, String glusterNetworkName, String networkAddress) {
-        final List<VdsNetworkInterface> nics = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(hostId);
+        final List<VdsNetworkInterface> nics = Injector.get(InterfaceDao.class).getAllInterfacesForVds(hostId);
         String brickAddress = null;
         try {
             brickAddress = InetAddress.getByName(networkAddress).getHostAddress();

@@ -4,9 +4,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class LibvirtSecretValidator {
 
@@ -16,12 +16,8 @@ public class LibvirtSecretValidator {
 
     public LibvirtSecretValidator(LibvirtSecret libvirtSecret) {
         this.libvirtSecret = libvirtSecret;
-        this.providerDao = getDbFacade().getProviderDao();
-        this.libvirtSecretDao = getDbFacade().getLibvirtSecretDao();
-    }
-
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
+        this.providerDao = Injector.get(ProviderDao.class);
+        this.libvirtSecretDao = Injector.get(LibvirtSecretDao.class);
     }
 
     public ValidationResult uuidNotEmpty() {

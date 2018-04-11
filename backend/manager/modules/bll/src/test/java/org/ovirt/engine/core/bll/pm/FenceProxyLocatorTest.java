@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.DbDependentTestBase;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
@@ -40,7 +39,7 @@ import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
  * This class tests the FenceProxyLocator
  */
 @RunWith(MockitoJUnitRunner.class)
-public class FenceProxyLocatorTest extends DbDependentTestBase {
+public class FenceProxyLocatorTest extends BaseCommandTest {
 
     private static Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
     private static Guid FENCED_HOST_CLUSTER_ID = new Guid("22222222-2222-2222-2222-222222222222");
@@ -48,9 +47,6 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
     private static Guid OTHER_CLUSTER_ID = new Guid("66666666-6666-6666-6666-666666666666");
     private static Guid OTHER_CLUSTER_ID_2 = new Guid("88888888-8888-8888-8888-888888888888");
     private static Guid OTHER_DATACENTER_ID = new Guid("77777777-7777-7777-7777-777777777777");
-
-    @Mock
-    private DbFacade dbFacade;
 
     @Mock
     private VdsDao vdsDao;
@@ -64,8 +60,8 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     @Before
     public void setup() {
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getFenceAgentDao()).thenReturn(fenceAgentDao);
+        injectorRule.bind(VdsDao.class, vdsDao);
+        injectorRule.bind(FenceAgentDao.class, fenceAgentDao);
 
         mockVdsFenceOptions(true);
         mockFencedHost();
@@ -337,7 +333,6 @@ public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     private FenceProxyLocator setupLocator(FencingPolicy fencingPolicy) {
         FenceProxyLocator fenceProxyLocator = spy(new FenceProxyLocator(fencedHost, fencingPolicy));
-        when(fenceProxyLocator.getDbFacade()).thenReturn(dbFacade);
         doReturn(vdsFenceOptions).when(fenceProxyLocator).createVdsFenceOptions(any());
         doReturn(0L).when(fenceProxyLocator).getDelayBetweenRetries();
         doReturn(1).when(fenceProxyLocator).getFindFenceProxyRetries();

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,15 +17,12 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageServerConnectionExtensionValidatorTest {
-    @Mock
-    private DbFacade dbFacade;
-
     @Mock
     private VdsDao vdsDao;
 
@@ -34,14 +32,16 @@ public class StorageServerConnectionExtensionValidatorTest {
     @Spy
     private StorageServerConnectionExtensionValidator validator;
 
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     private StorageServerConnectionExtension conn;
 
     @Before
     public void setup() {
         Guid hostId = Guid.newGuid();
-        doReturn(dbFacade).when(validator).getDbFacade();
-        doReturn(storageServerConnectionExtensionDao).when(dbFacade).getStorageServerConnectionExtensionDao();
-        doReturn(vdsDao).when(dbFacade).getVdsDao();
+        injectorRule.bind(StorageServerConnectionExtensionDao.class, storageServerConnectionExtensionDao);
+        injectorRule.bind(VdsDao.class, vdsDao);
         doReturn(new VDS()).when(vdsDao).get(hostId);
 
         conn = new StorageServerConnectionExtension();

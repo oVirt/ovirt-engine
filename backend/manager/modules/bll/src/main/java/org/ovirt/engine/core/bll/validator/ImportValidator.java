@@ -23,12 +23,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,19 +214,19 @@ public class ImportValidator {
     }
 
     public StorageDomainDao getStorageDomainDao() {
-        return DbFacade.getInstance().getStorageDomainDao();
+        return Injector.get(StorageDomainDao.class);
     }
 
     public DiskImageDao getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDao();
+        return Injector.get(DiskImageDao.class);
     }
 
     public DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
+        return Injector.get(DiskDao.class);
     }
 
     protected StoragePoolDao getStoragePoolDao() {
-        return DbFacade.getInstance().getStoragePoolDao();
+        return Injector.get(StoragePoolDao.class);
     }
 
     public StoragePool getStoragePool() {
@@ -297,7 +297,7 @@ public class ImportValidator {
     }
 
     private DbUserDao getDbUserDao() {
-        return DbFacade.getInstance().getDbUserDao();
+        return Injector.get(DbUserDao.class);
     }
 
 }

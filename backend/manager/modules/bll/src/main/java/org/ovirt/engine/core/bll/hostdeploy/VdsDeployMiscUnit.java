@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.otopi.constants.NetEnv;
 import org.ovirt.otopi.constants.SysEnv;
@@ -50,7 +51,7 @@ public class VdsDeployMiscUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+            Cluster cluster = Injector.get(ClusterDao.class).get(
                 _deploy.getVds().getClusterId()
             );
             String tunedProfile = cluster.supportsGlusterService() ? cluster.getGlusterTunedProfile() : null;
@@ -62,7 +63,7 @@ public class VdsDeployMiscUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+            Cluster cluster = Injector.get(ClusterDao.class).get(
                 _deploy.getVds().getClusterId()
             );
             _deploy.getParser().cliEnvironmentSet(

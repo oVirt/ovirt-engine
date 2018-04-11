@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.di.Injector;
@@ -83,7 +82,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     protected DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
+        return Injector.get(DiskDao.class);
     }
 
     private AddDiskParameters buildAddDiskParameters(DiskImage disk) {
@@ -100,7 +99,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     protected StorageDomainStaticDao getStorageDomainStaticDao() {
-        return DbFacade.getInstance().getStorageDomainStaticDao();
+        return Injector.get(StorageDomainStaticDao.class);
     }
 
     @Override

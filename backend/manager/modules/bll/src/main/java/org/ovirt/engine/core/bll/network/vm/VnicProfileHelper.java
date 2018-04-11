@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -160,15 +159,15 @@ public class VnicProfileHelper {
     }
 
     NetworkDao getNetworkDao() {
-        return DbFacade.getInstance().getNetworkDao();
+        return Injector.get(NetworkDao.class);
     }
 
     private VnicProfileViewDao getVnicProfileViewDao() {
-        return DbFacade.getInstance().getVnicProfileViewDao();
+        return Injector.get(VnicProfileViewDao.class);
     }
 
     private VnicProfileDao getVnicProfileDao() {
-        return DbFacade.getInstance().getVnicProfileDao();
+        return Injector.get(VnicProfileDao.class);
     }
 
     AuditLogDirector createAuditLogDirector() {

@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * This builder is responsible to create the memory volumes for stateless snapshot -
@@ -40,6 +40,6 @@ public class StatelessSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
+        return Injector.get(SnapshotDao.class);
     }
 }

@@ -18,7 +18,9 @@ import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.FenceAgentDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 import org.slf4j.Logger;
@@ -91,7 +93,7 @@ public class FenceProxyLocator {
     }
 
     protected VDS selectBestProxy(FenceProxySourceType fenceProxySource, Guid excludedHostId) {
-        return getDbFacade().getVdsDao().getAll().stream()
+        return Injector.get(VdsDao.class).getAll().stream()
                 .peek(vds -> log.debug("Evaluating host '{}'", vds.getHostName()))
                 .filter(vds -> !Objects.equals(vds.getId(), fencedHost.getId()))
                 .filter(vds -> !isHostExcluded(vds, excludedHostId))
@@ -139,7 +141,7 @@ public class FenceProxyLocator {
     protected boolean areAgentsVersionCompatible(VDS proxyCandidate) {
         VdsFenceOptions options = createVdsFenceOptions(proxyCandidate.getClusterCompatibilityVersion().getValue());
         boolean compatible = true;
-        for (FenceAgent agent : getDbFacade().getFenceAgentDao().getFenceAgentsForHost(fencedHost.getId())) {
+        for (FenceAgent agent : Injector.get(FenceAgentDao.class).getFenceAgentsForHost(fencedHost.getId())) {
             if (!options.isAgentSupported(agent.getType())) {
                 compatible = false;
                 break;
@@ -202,10 +204,5 @@ public class FenceProxyLocator {
 
     protected VdsFenceOptions createVdsFenceOptions(String version) {
         return new VdsFenceOptions(version);
-    }
-
-    // TODO Investigate if injection is possible
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 }

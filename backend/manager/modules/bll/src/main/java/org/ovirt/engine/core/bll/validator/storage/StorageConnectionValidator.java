@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class StorageConnectionValidator {
     private static final String STORAGE_DOMAIN_NAME_REPLACEMENT = "$domainNames %1$s";
@@ -85,6 +85,6 @@ public class StorageConnectionValidator {
     }
 
     protected StorageServerConnectionDao getStorageServerConnectionDao() {
-        return DbFacade.getInstance().getStorageServerConnectionDao();
+        return Injector.get(StorageServerConnectionDao.class);
     }
 }

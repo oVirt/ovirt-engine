@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class ProviderValidator<P extends Provider.AdditionalProperties> {
@@ -17,13 +17,9 @@ public class ProviderValidator<P extends Provider.AdditionalProperties> {
         this.provider = provider;
     }
 
-    protected ProviderDao getProviderDao() {
-        return DbFacade.getInstance().getProviderDao();
-    }
-
     public ValidationResult nameAvailable() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED)
-                .when(getProviderDao().getByName(provider.getName()) != null);
+                .when(Injector.get(ProviderDao.class).getByName(provider.getName()) != null);
     }
 
     public ValidationResult providerIsSet() {

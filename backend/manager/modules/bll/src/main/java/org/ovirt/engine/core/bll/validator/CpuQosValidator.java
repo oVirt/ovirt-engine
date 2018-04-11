@@ -3,8 +3,9 @@ package org.ovirt.engine.core.bll.validator;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.qos.CpuQosDao;
 import org.ovirt.engine.core.dao.qos.QosDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class CpuQosValidator extends QosValidator<CpuQos> {
 
@@ -14,7 +15,7 @@ public class CpuQosValidator extends QosValidator<CpuQos> {
 
     @Override
     protected QosDao<CpuQos> getQosDao() {
-        return DbFacade.getInstance().getCpuQosDao();
+        return Injector.get(CpuQosDao.class);
     }
 
     @Override

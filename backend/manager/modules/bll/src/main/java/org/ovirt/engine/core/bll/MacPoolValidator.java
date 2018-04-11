@@ -8,9 +8,9 @@ import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class MacPoolValidator {
@@ -27,17 +27,13 @@ public class MacPoolValidator {
     }
 
     public ValidationResult notRemovingUsedPool() {
-        final ClusterDao clusterDao = getDbFacade().getClusterDao();
+        final ClusterDao clusterDao = Injector.get(ClusterDao.class);
         final List<Cluster> clusters = clusterDao.getAllClustersByMacPoolId(macPool.getId());
 
         final Collection<String> replacements = ReplacementUtils.replaceWithNameable("CLUSTERS_USING_MAC_POOL", clusters);
         replacements.add(EngineMessage.VAR__ENTITIES__CLUSTERS.name());
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL,
                 replacements.toArray(new String[replacements.size()])).when(clusters.size() != 0);
-    }
-
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     public ValidationResult macPoolExists() {
@@ -68,7 +64,7 @@ public class MacPoolValidator {
     }
 
     private MacPoolDao getMacPoolDao() {
-        return getDbFacade().getMacPoolDao();
+        return Injector.get(MacPoolDao.class);
     }
 
     /**

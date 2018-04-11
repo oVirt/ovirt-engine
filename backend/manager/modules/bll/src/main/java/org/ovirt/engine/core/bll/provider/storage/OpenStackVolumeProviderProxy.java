@@ -14,6 +14,9 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 
 import com.woorea.openstack.base.client.OpenStackRequest;
@@ -135,16 +138,17 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
 
     @Override
     public void onRemoval() {
-        List<StorageDomain> storageDomains = getDbFacade().getStorageDomainDao().getAllByConnectionId(provider.getId());
+        List<StorageDomain> storageDomains =
+                Injector.get(StorageDomainDao.class).getAllByConnectionId(provider.getId());
 
         // Removing the static and dynamic storage domain entries
         StorageDomain storageDomainEntry = storageDomains.get(0);
-        getDbFacade().getStorageDomainDao().remove(storageDomainEntry.getId());
+        Injector.get(StorageDomainDao.class).remove(storageDomainEntry.getId());
     }
 
     public static OpenStackVolumeProviderProxy getFromStorageDomainId(Guid storageDomainId,
             ProviderProxyFactory providerProxyFactory) {
-        StorageDomainStatic storageDomainStatic = getDbFacade().getStorageDomainStaticDao().get(storageDomainId);
+        StorageDomainStatic storageDomainStatic = Injector.get(StorageDomainStaticDao.class).get(storageDomainId);
         if (storageDomainStatic != null) {
             return getProviderFromStorageDomainStatic(storageDomainStatic, providerProxyFactory);
         }
@@ -155,9 +159,9 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
             Guid userID,
             boolean isFiltered,
             ProviderProxyFactory providerProxyFactory) {
-        StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(storageDomainId, userID, isFiltered);
+        StorageDomain storageDomain = Injector.get(StorageDomainDao.class).get(storageDomainId, userID, isFiltered);
         if (storageDomain != null) {
-            Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomain.getStorage()));
+            Provider provider = Injector.get(ProviderDao.class).get(new Guid(storageDomain.getStorage()));
             return providerProxyFactory.create(provider);
         }
         return null;
@@ -165,7 +169,7 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
 
     private static OpenStackVolumeProviderProxy getProviderFromStorageDomainStatic(
             StorageDomainStatic storageDomainStatic, ProviderProxyFactory providerProxyFactory) {
-        Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));
+        Provider provider = Injector.get(ProviderDao.class).get(new Guid(storageDomainStatic.getStorage()));
         return providerProxyFactory.create(provider);
     }
 

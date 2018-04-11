@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.validator;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.businessentities.HasStoragePool;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * A validator for an {@link HasStoragePool} instance.
@@ -35,7 +35,7 @@ public class HasStoragePoolValidator {
     }
 
     protected StoragePoolDao getStoragePoolDao() {
-        return DbFacade.getInstance().getStoragePoolDao();
+        return Injector.get(StoragePoolDao.class);
     }
 
 }

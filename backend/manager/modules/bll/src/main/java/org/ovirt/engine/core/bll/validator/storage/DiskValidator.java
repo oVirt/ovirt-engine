@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -46,11 +46,11 @@ public class DiskValidator {
     }
 
     protected VmDao getVmDao() {
-        return DbFacade.getInstance().getVmDao();
+        return Injector.get(VmDao.class);
     }
 
     protected DiskImageDao getDiskImageDao() {
-        return DbFacade.getInstance().getDiskImageDao();
+        return Injector.get(DiskImageDao.class);
     }
 
     public ValidationResult validateUnsupportedDiskStorageType(DiskStorageType... diskStorageTypes) {
@@ -158,7 +158,7 @@ public class DiskValidator {
     }
 
     public ValidationResult isIsoDiskAttachedToAnyNonDownVm() {
-        List<String> vmNames = DbFacade.getInstance().getVmDao().getAllRunningNamesWithSpecificIsoAttached(disk.getId());
+        List<String> vmNames = Injector.get(VmDao.class).getAllRunningNamesWithSpecificIsoAttached(disk.getId());
         if (!vmNames.isEmpty()) {
             return new ValidationResult(EngineMessage.ERROR_ISO_DISK_ATTACHED_TO_RUNNING_VMS,
                     ReplacementUtils.createSetVariableString(DISK_NAME_VARIABLE, disk.getDiskAlias()),
@@ -168,7 +168,7 @@ public class DiskValidator {
     }
 
     public ValidationResult isVmNotContainsBootDisk(VM vm) {
-        Disk bootDisk = DbFacade.getInstance().getDiskDao().getVmBootActiveDisk(vm.getId());
+        Disk bootDisk = Injector.get(DiskDao.class).getVmBootActiveDisk(vm.getId());
         if (bootDisk != null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE,
                     ReplacementUtils.createSetVariableString("VmName", vm.getName()),

@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStat
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public final class GlusterVolumeSnapshotInfoReturn extends StatusReturn {
     }
 
     private GlusterVolumeDao getGlusterVolumeDao() {
-        return DbFacade.getInstance().getGlusterVolumeDao();
+        return Injector.get(GlusterVolumeDao.class);
     }
 
     public Status getStatus() {

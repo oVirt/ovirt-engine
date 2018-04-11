@@ -11,7 +11,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 
 /**
@@ -64,7 +65,7 @@ public class GlusterServicesReturn extends StatusReturn {
     private static Map<String, GlusterService> getServicesMap() {
         Map<String, GlusterService> serviceNames = new HashMap<>();
 
-        List<GlusterService> services = DbFacade.getInstance().getGlusterServiceDao().getAll();
+        List<GlusterService> services = Injector.get(GlusterServiceDao.class).getAll();
         for (GlusterService service : services) {
             serviceNames.put(service.getServiceName(), service);
         }

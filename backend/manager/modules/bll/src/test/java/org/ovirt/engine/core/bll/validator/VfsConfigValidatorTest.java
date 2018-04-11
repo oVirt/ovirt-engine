@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -11,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VfsConfigValidatorTest {
@@ -50,9 +49,6 @@ public class VfsConfigValidatorTest {
     private HostNicVfsConfig oldVfsConfig;
 
     @Mock
-    private DbFacade dbFacade;
-
-    @Mock
     private InterfaceDao interfaceDao;
 
     @Mock
@@ -61,19 +57,21 @@ public class VfsConfigValidatorTest {
     @Mock
     private NetworkDao networkDao;
 
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     private VfsConfigValidator validator;
 
     @Before
     public void setup() {
         createValidator();
 
-        when(dbFacade.getInterfaceDao()).thenReturn(interfaceDao);
-        when(dbFacade.getNetworkDao()).thenReturn(networkDao);
+        injectorRule.bind(InterfaceDao.class, interfaceDao);
+        injectorRule.bind(NetworkDao.class, networkDao);
     }
 
     private void createValidator() {
-        validator = spy(new VfsConfigValidator(NIC_ID, oldVfsConfig));
-        doReturn(dbFacade).when(validator).getDbFacade();
+        validator = new VfsConfigValidator(NIC_ID, oldVfsConfig);
     }
 
     @Test

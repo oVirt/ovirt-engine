@@ -1,17 +1,16 @@
 package org.ovirt.engine.core.bll.provider;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -19,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperti
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,15 +26,18 @@ public class ProviderValidatorTest {
 
     protected Provider<AdditionalProperties> provider = createProvider("provider");
 
+    private ProviderValidator validator = new ProviderValidator(provider);
+
     @Mock
     private ProviderDao providerDao;
 
-    @Spy
-    private ProviderValidator validator = new ProviderValidator(provider);
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
 
     @Before
     public void setup() {
-        doReturn(providerDao).when(validator).getProviderDao();
+        injectorRule.bind(ProviderDao.class, providerDao);
     }
 
     @Test

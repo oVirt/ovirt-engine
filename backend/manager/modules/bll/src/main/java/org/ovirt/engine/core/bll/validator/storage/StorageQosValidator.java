@@ -4,8 +4,9 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.qos.QosDao;
+import org.ovirt.engine.core.dao.qos.StorageQosDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class StorageQosValidator extends QosValidator<StorageQos> {
 
@@ -15,7 +16,7 @@ public class StorageQosValidator extends QosValidator<StorageQos> {
 
     @Override
     protected QosDao<StorageQos> getQosDao() {
-        return DbFacade.getInstance().getStorageQosDao();
+        return Injector.get(StorageQosDao.class);
     }
 
     /*

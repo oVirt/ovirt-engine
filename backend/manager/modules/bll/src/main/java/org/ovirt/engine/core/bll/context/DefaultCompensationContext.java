@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.TransientCompensationBusine
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.Serializer;
 
 /**
@@ -177,7 +178,7 @@ public class DefaultCompensationContext extends CompensationContextBase {
 
         if (verifyDaoExistence) {
             //callMustNotFail
-            DbFacade.getInstance().getDaoForEntity(entityClass);
+            Injector.get(DbFacade.class).getDaoForEntity(entityClass);
         }
     }
 

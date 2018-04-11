@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,15 +26,12 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.FenceAgentDao;
+import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HostFenceActionExecutorTest {
     private static Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
-
-    @Mock
-    DbFacade dbFacade;
 
     @Mock
     FenceAgentDao fenceAgentDao;
@@ -47,18 +45,20 @@ public class HostFenceActionExecutorTest {
     @Mock
     SingleAgentFenceActionExecutor agentExecutor2;
 
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     HostFenceActionExecutor executor;
 
     List<FenceAgent> fenceAgents;
 
     @Before
     public void setup() {
-        when(dbFacade.getFenceAgentDao()).thenReturn(fenceAgentDao);
+        injectorRule.bind(FenceAgentDao.class, fenceAgentDao);
 
         when(fencedHost.getId()).thenReturn(FENCECD_HOST_ID);
 
         executor = spy(new HostFenceActionExecutor(fencedHost, new FencingPolicy()));
-        doReturn(dbFacade).when(executor).getDbFacade();
         doReturn(agentExecutor1).doReturn(agentExecutor2).when(executor).createFenceActionExecutor(any());
     }
 

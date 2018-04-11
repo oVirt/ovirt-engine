@@ -6,9 +6,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * Validate validation methods for attaching a storage domain to a DC (pool).
@@ -23,7 +23,7 @@ public class StorageDomainToPoolRelationValidator {
     }
 
     protected StorageDomainDao getStorageDomainDao() {
-        return DbFacade.getInstance().getStorageDomainDao();
+        return Injector.get(StorageDomainDao.class);
     }
 
     private boolean isStorageDomainOfTypeIsoOrExport() {
@@ -97,7 +97,7 @@ public class StorageDomainToPoolRelationValidator {
     }
 
     protected StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
-        return DbFacade.getInstance().getStoragePoolIsoMapDao();
+        return Injector.get(StoragePoolIsoMapDao.class);
     }
 
     public ValidationResult validateDomainCanBeAttachedToPool() {

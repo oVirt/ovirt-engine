@@ -3,8 +3,9 @@ package org.ovirt.engine.core.bll.validator;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.qos.QosDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class NetworkQosValidator extends QosValidator<NetworkQoS> {
 
@@ -44,7 +45,7 @@ public class NetworkQosValidator extends QosValidator<NetworkQoS> {
 
     @Override
     protected QosDao<NetworkQoS> getQosDao() {
-        return DbFacade.getInstance().getNetworkQosDao();
+        return Injector.get(NetworkQoSDao.class);
     }
 
 }

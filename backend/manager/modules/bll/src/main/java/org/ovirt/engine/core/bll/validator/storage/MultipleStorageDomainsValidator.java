@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * A validator for multiple storage domains.
@@ -164,7 +164,7 @@ public class MultipleStorageDomainsValidator {
 
     /** @return The Dao object used to retrieve storage domains */
     public StorageDomainDao getStorageDomainDao() {
-        return DbFacade.getInstance().getStorageDomainDao();
+        return Injector.get(StorageDomainDao.class);
     }
 
     /**

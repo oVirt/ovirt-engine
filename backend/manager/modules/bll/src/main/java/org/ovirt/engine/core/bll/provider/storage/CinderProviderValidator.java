@@ -20,6 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class CinderProviderValidator extends ProviderValidator {
 
@@ -31,6 +32,9 @@ public class CinderProviderValidator extends ProviderValidator {
 
     @Inject
     private DiskImageDao diskImageDao;
+
+    @Inject
+    private ProviderDao providerDao;
 
     StorageDomain cinderStorageDomain;
 
@@ -108,7 +112,7 @@ public class CinderProviderValidator extends ProviderValidator {
     }
 
     public ValidationResult isCinderAlreadyExists() {
-        List<Provider<?>> cinderProvidersFromDB = getProviderDao().getAllByTypes(ProviderType.OPENSTACK_VOLUME);
+        List<Provider<?>> cinderProvidersFromDB = providerDao.getAllByTypes(ProviderType.OPENSTACK_VOLUME);
         for (Provider cinderProviderFromDB : cinderProvidersFromDB) {
             if (provider.getUrl().equals(cinderProviderFromDB.getUrl())) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CINDER_ALREADY_EXISTS);

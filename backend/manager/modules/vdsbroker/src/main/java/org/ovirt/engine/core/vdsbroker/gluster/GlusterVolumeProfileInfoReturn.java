@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.TimeConverter;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.Status;
 
@@ -170,7 +170,7 @@ public final class GlusterVolumeProfileInfoReturn extends StatusReturn {
     }
 
     protected GlusterVolumeDao getGlusterVolumeDao() {
-        return DbFacade.getInstance().getGlusterVolumeDao();
+        return Injector.get(GlusterVolumeDao.class);
     }
 
     public Status getStatus() {

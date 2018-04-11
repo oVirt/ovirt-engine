@@ -21,7 +21,7 @@ import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.DbDependentTestBase;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
@@ -35,7 +35,7 @@ import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MacPoolPerClusterTest extends DbDependentTestBase {
+public class MacPoolPerClusterTest extends BaseCommandTest {
     private static final String SESSION_ID = "session id";
 
     @ClassRule

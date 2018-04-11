@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.di.Injector;
@@ -273,7 +273,7 @@ public class GlusterVolumeStatusReturn extends StatusReturn {
                 return null;
             }
             String brickDir = brickParts[1];
-            return DbFacade.getInstance().getGlusterBrickDao().getBrickByServerIdAndDirectory(glusterServer.getId(), brickDir);
+            return Injector.get(GlusterBrickDao.class).getBrickByServerIdAndDirectory(glusterServer.getId(), brickDir);
         }
         return GlusterCoreUtil.getBrickByQualifiedName(volume.getBricks(), brickName);
     }
@@ -329,7 +329,7 @@ public class GlusterVolumeStatusReturn extends StatusReturn {
     }
 
     protected GlusterVolumeDao getGlusterVolumeDao() {
-        return DbFacade.getInstance().getGlusterVolumeDao();
+        return Injector.get(GlusterVolumeDao.class);
     }
 
     public Status getStatus() {

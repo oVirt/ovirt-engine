@@ -14,7 +14,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.ovirt.engine.core.bll.DbDependentTestBase;
+import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDependentTestBase {
+public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));

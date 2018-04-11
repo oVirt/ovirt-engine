@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.di.Injector;
@@ -221,10 +220,10 @@ public class CinderDisksValidator {
     }
 
     protected DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
+        return Injector.get(DiskDao.class);
     }
 
     protected StorageDomainDao getStorageDomainDao() {
-        return DbFacade.getInstance().getStorageDomainDao();
+        return Injector.get(StorageDomainDao.class);
     }
 }

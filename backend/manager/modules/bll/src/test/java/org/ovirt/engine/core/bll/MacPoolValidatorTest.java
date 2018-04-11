@@ -17,12 +17,11 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MacPoolValidatorTest extends DbDependentTestBase {
+public class MacPoolValidatorTest extends BaseCommandTest {
 
     private final MacPool macPool = new MacPool();
 
@@ -37,8 +36,8 @@ public class MacPoolValidatorTest extends DbDependentTestBase {
     @Before
     public void setUp() throws Exception {
         this.macPoolValidator = createMacPoolValidator(macPool);
-        when(DbFacade.getInstance().getMacPoolDao()).thenReturn(macPoolDaoMock);
-        when(DbFacade.getInstance().getClusterDao()).thenReturn(clusterDao);
+        injectorRule.bind(MacPoolDao.class, macPoolDaoMock);
+        injectorRule.bind(ClusterDao.class, clusterDao);
     }
 
     private MacPoolValidator createMacPoolValidator(MacPool macPool) {

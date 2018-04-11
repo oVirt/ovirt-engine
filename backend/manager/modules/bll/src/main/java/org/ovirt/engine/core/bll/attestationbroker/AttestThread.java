@@ -17,7 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
 import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
@@ -54,7 +55,7 @@ public class AttestThread extends Thread {
 
     private void handleValues(List<AttestationValue> values) {
         for (AttestationValue value : values) {
-            List<VDS> vdses = DbFacade.getInstance().getVdsDao().getAllForHostname(value.getHostName());
+            List<VDS> vdses = Injector.get(VdsDao.class).getAllForHostname(value.getHostName());
             if (vdses != null && vdses.size() > 0) {
                 VDS vds = vdses.get(0);
                 if (value.getTrustLevel().equals(AttestationResultEnum.TRUSTED)) {
@@ -76,7 +77,7 @@ public class AttestThread extends Thread {
     private void moveVdsToUp(VDS vds) {
         trustedVdses.add(vds.getId());
         vds.setStatus(VDSStatus.Up);
-        DbFacade.getInstance().getVdsDynamicDao().update(vds.getDynamicData());
+        Injector.get(VdsDynamicDao.class).update(vds.getDynamicData());
     }
 
     public static boolean isTrustedVds(Guid vdsId) {

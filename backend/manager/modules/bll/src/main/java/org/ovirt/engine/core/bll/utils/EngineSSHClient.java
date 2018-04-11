@@ -9,7 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 import org.ovirt.engine.core.uutils.ssh.SSHClient;
@@ -51,7 +52,7 @@ public class EngineSSHClient extends SSHClient {
             if (StringUtils.isEmpty(vds.getSshKeyFingerprint())) {
                 vds.setSshKeyFingerprint(getHostFingerprint());
                 try {
-                    DbFacade.getInstance().getVdsStaticDao().update(vds.getStaticData());
+                    Injector.get(VdsStaticDao.class).update(vds.getStaticData());
                 } catch (Exception e) {
                     throw new SecurityException(
                             String.format(

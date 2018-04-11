@@ -8,7 +8,8 @@ import java.util.concurrent.Callable;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.otopi.constants.NetEnv;
 import org.ovirt.otopi.dialog.Event;
 
@@ -53,7 +54,7 @@ public class VdsDeployIptablesUnit implements VdsDeployUnit {
     }
 
     private String getIpTables() {
-        Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+        Cluster cluster = Injector.get(ClusterDao.class).get(
             _deploy.getVds().getClusterId()
         );
 

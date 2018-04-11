@@ -12,7 +12,10 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.otopi.dialog.Event;
@@ -98,7 +101,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+            Cluster cluster = Injector.get(ClusterDao.class).get(
                 _deploy.getVds().getClusterId()
             );
             _deploy.getParser().cliEnvironmentSet(
@@ -108,7 +111,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            Cluster cluster = DbFacade.getInstance().getClusterDao().get(
+            Cluster cluster = Injector.get(ClusterDao.class).get(
                 _deploy.getVds().getClusterId()
             );
             _deploy.getParser().cliEnvironmentSet(
@@ -139,7 +142,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
             vdsmid
         );
 
-        final List<VDS> list = DbFacade.getInstance().getVdsDao().getAllWithUniqueId(vdsmid).stream().filter(
+        final List<VDS> list = Injector.get(VdsDao.class).getAllWithUniqueId(vdsmid).stream().filter(
                 vds -> !vds.getId().equals(_deploy.getVds().getId())).collect(Collectors.toList()
         );
 
@@ -171,7 +174,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
         _deploy.getVds().setUniqueId(vdsmid);
 
         TransactionSupport.executeInNewTransaction(() -> {
-            DbFacade.getInstance().getVdsStaticDao().update(_deploy.getVds().getStaticData());
+            Injector.get(VdsStaticDao.class).update(_deploy.getVds().getStaticData());
             return null;
         });
     }
@@ -185,7 +188,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
         _deploy.getVds().setVdsType(hostType);
 
         TransactionSupport.executeInNewTransaction(() -> {
-            DbFacade.getInstance().getVdsStaticDao().update(_deploy.getVds().getStaticData());
+            Injector.get(VdsStaticDao.class).update(_deploy.getVds().getStaticData());
             return null;
         });
     }

@@ -177,14 +177,9 @@ import org.ovirt.engine.core.dao.qos.StorageQosDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class DbFacade {
-
-    private static final Logger log = LoggerFactory.getLogger(DbFacade.class);
-
     @SuppressWarnings("serial")
     private static final Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>() {
         {
@@ -244,20 +239,8 @@ public class DbFacade {
         }
     };
 
-    private static DbFacade instance;
-
     @Inject
     private Instance<Dao> daos;
-
-    DbFacade() {
-        init();
-    }
-
-    private void init() {
-        log.info("Initializing the DbFacade");
-
-        instance = this;
-    }
 
     /**
      * Return the correct Dao for the given {@link BusinessEntity} class.
@@ -282,13 +265,6 @@ public class DbFacade {
             }
         }
         throw new IllegalArgumentException("There is no Dao registered for dao type " + daoType.getName());
-    }
-
-    @Deprecated
-    // To obtain an instance please inject it through CDI.
-    // Static access to the instance is bug prone and couldn't be mocked.
-    public static DbFacade getInstance() {
-        return instance;
     }
 
     /**

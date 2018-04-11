@@ -15,7 +15,10 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,11 +103,11 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
         domainStaticEntry.setStorageDomainType(storageDomainType);
         domainStaticEntry.setWipeAfterDelete(false);
         domainStaticEntry.setDiscardAfterDelete(false);
-        getDbFacade().getStorageDomainStaticDao().save(domainStaticEntry);
+        Injector.get(StorageDomainStaticDao.class).save(domainStaticEntry);
         // Storage domain dynamic
         StorageDomainDynamic domainDynamicEntry = new StorageDomainDynamic();
         domainDynamicEntry.setId(domainStaticEntry.getId());
-        getDbFacade().getStorageDomainDynamicDao().save(domainDynamicEntry);
+        Injector.get(StorageDomainDynamicDao.class).save(domainDynamicEntry);
         return domainStaticEntry.getId();
     }
 
@@ -112,35 +115,29 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
     public void onModification() {
         // updating storage domain information
         Guid storageDomainId = getProviderStorageDomain().getId();
-        StorageDomainStatic domainStaticEntry =
-                getDbFacade().getStorageDomainStaticDao().get(storageDomainId);
+        StorageDomainStatic domainStaticEntry = Injector.get(StorageDomainStaticDao.class).get(storageDomainId);
         domainStaticEntry.setStorageName(provider.getName());
         domainStaticEntry.setDescription(provider.getDescription());
-        getDbFacade().getStorageDomainStaticDao().update(domainStaticEntry);
+        Injector.get(StorageDomainStaticDao.class).update(domainStaticEntry);
     }
 
     @Override
     public void onRemoval() {
-        List<StorageDomain> storageDomains = getDbFacade()
-                .getStorageDomainDao().getAllByConnectionId(provider.getId());
+        List<StorageDomain> storageDomains =
+                Injector.get(StorageDomainDao.class).getAllByConnectionId(provider.getId());
 
         // removing the static and dynamic storage domain entries
         StorageDomain storageDomainEntry = storageDomains.get(0);
-        getDbFacade().getStorageDomainDynamicDao().remove(storageDomainEntry.getId());
-        getDbFacade().getStorageDomainStaticDao().remove(storageDomainEntry.getId());
+        Injector.get(StorageDomainDynamicDao.class).remove(storageDomainEntry.getId());
+        Injector.get(StorageDomainStaticDao.class).remove(storageDomainEntry.getId());
     }
 
     protected StorageDomain getProviderStorageDomain() {
         if (storageDomain == null) {
             List<StorageDomain> storageDomains =
-                    getDbFacade().getStorageDomainDao().getAllByConnectionId(provider.getId());
+                    Injector.get(StorageDomainDao.class).getAllByConnectionId(provider.getId());
             storageDomain = storageDomains.get(0);
         }
         return storageDomain;
     }
-
-    protected static DbFacade getDbFacade() {
-        return DbFacade.getInstance();
-    }
-
 }

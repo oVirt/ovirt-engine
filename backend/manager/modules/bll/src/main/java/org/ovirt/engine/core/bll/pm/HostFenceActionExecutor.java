@@ -10,7 +10,8 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.FenceAgentDao;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * It manages:
@@ -50,7 +51,7 @@ public class HostFenceActionExecutor {
      * @return result of the action
      */
     public FenceOperationResult fence(FenceActionType fenceAction) {
-        List<FenceAgent> fenceAgents = getDbFacade().getFenceAgentDao().getFenceAgentsForHost(fencedHost.getId());
+        List<FenceAgent> fenceAgents = Injector.get(FenceAgentDao.class).getFenceAgentsForHost(fencedHost.getId());
         if (fenceAgents == null || fenceAgents.isEmpty()) {
             return new FenceOperationResult(
                     Status.ERROR,
@@ -122,10 +123,5 @@ public class HostFenceActionExecutor {
         } else {
             return new ConcurrentAgentsFenceActionExecutor(fencedHost, fenceAgents, fencingPolicy);
         }
-    }
-
-    // TODO Investigate if injection is possible
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 }

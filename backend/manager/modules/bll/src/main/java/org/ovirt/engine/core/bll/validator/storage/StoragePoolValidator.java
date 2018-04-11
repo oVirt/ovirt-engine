@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.di.Injector;
 
 /**
  * Validate validation methods for storage pool handling
@@ -26,11 +26,11 @@ public class StoragePoolValidator {
     }
 
     protected ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
+        return Injector.get(ClusterDao.class);
     }
 
     public StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
-        return DbFacade.getInstance().getStoragePoolIsoMapDao();
+        return Injector.get(StoragePoolIsoMapDao.class);
     }
 
     public ValidationResult isNotLocalfsWithDefaultCluster() {
