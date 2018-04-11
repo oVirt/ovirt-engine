@@ -23,14 +23,12 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDaoTest extends BaseDaoTestCase {
     private static final int VM_COUNT = 8;
     private VmDao dao;
     private VM existingVm;
-    private VmTemplate existingTemplate;
 
     @Override
     public void setUp() throws Exception {
@@ -39,18 +37,16 @@ public class VmDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getVmDao();
         existingVm = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         existingVm.setStatus(VMStatus.Up);
-        VmTemplate vmtemplate = dbFacade.getVmTemplateDao().get(FixturesTool.VM_TEMPLATE_RHEL5);
-        existingTemplate = dbFacade.getVmTemplateDao().get(FixturesTool.VM_TEMPLATE_RHEL5);
 
         VM newVm = new VM();
         newVm.setId(Guid.newGuid());
         newVm.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
-        newVm.setVmtGuid(vmtemplate.getId());
+        newVm.setVmtGuid(FixturesTool.VM_TEMPLATE_RHEL5);
 
         VmStatic newVmStatic = new VmStatic();
         newVmStatic.setName("New Virtual Machine");
         newVmStatic.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
-        newVmStatic.setVmtGuid(vmtemplate.getId());
+        newVmStatic.setVmtGuid(FixturesTool.VM_TEMPLATE_RHEL5);
     }
 
     /**
@@ -372,13 +368,12 @@ public class VmDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllWithTemplate() {
-        List<VM> result = dao
-                .getAllWithTemplate(existingTemplate.getId());
+        List<VM> result = dao.getAllWithTemplate(FixturesTool.VM_TEMPLATE_RHEL5);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VM vm : result) {
-            assertEquals(existingTemplate.getId(), vm.getVmtGuid());
+            assertEquals(FixturesTool.VM_TEMPLATE_RHEL5, vm.getVmtGuid());
         }
     }
 
