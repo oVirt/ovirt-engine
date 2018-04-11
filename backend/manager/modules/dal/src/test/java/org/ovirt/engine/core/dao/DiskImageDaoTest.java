@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -29,6 +31,7 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     private DiskImage existingTemplate;
 
     private static final int TOTAL_DISK_IMAGES = 7;
+    @Inject
     private BaseDiskDao diskDao;
 
     @Override
@@ -55,7 +58,6 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     public void setUp() throws Exception {
         super.setUp();
 
-        diskDao = dbFacade.getBaseDiskDao();
         existingTemplate = dao.get(TEMPLATE_IMAGE_ID);
     }
 
