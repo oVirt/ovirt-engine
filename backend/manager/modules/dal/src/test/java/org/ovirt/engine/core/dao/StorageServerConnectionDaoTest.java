@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
@@ -31,6 +33,13 @@ public class StorageServerConnectionDaoTest
 
     private static final int SERVER_CONNECTION_COUNT_FOR_SPECIFIC_STORAGE = 7;
     private static final String EXISTING_DOMAIN_STORAGE_NAME = "G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ";
+
+    @Inject
+    private StorageServerConnectionDao dao;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
 
     @Override
     protected StorageServerConnections generateNewEntity() {
@@ -57,7 +66,7 @@ public class StorageServerConnectionDaoTest
 
     @Override
     protected StorageServerConnectionDao prepareDao() {
-        return dbFacade.getStorageServerConnectionDao();
+        return dao;
     }
 
     @Override
@@ -174,7 +183,7 @@ public class StorageServerConnectionDaoTest
     public void getStorageConnectionsByStorageTypeWithRecords(EnumSet<StorageDomainStatus> statuses,
             Collection<Guid> expectedDomains) {
         List<StoragePoolIsoMap> poolIsoMap =
-                dbFacade.getStoragePoolIsoMapDao().getAllForStoragePool(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+                storagePoolIsoMapDao.getAllForStoragePool(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         List<Guid> storageDomainIds = poolIsoMap.stream()
                 .filter(isoMap -> statuses.contains(isoMap.getStatus()))
                 .map(StoragePoolIsoMap::getStorageId)
@@ -214,8 +223,8 @@ public class StorageServerConnectionDaoTest
      */
     @Test
     public void testgetAllForVolumeGroup() {
-        Set<String> lunConns1 = getLunConnections(dbFacade.getStorageServerConnectionLunMapDao().getAll(FixturesTool.LUN_ID1));
-        Set<String> lunConns2 = getLunConnections(dbFacade.getStorageServerConnectionLunMapDao().getAll(FixturesTool.LUN_ID2));
+        Set<String> lunConns1 = getLunConnections(storageServerConnectionLunMapDao.getAll(FixturesTool.LUN_ID1));
+        Set<String> lunConns2 = getLunConnections(storageServerConnectionLunMapDao.getAll(FixturesTool.LUN_ID2));
         assertTrue("Both LUNs should have at least one mutual connection",
                 CollectionUtils.containsAny(lunConns1, lunConns2));
 
