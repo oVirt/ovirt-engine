@@ -15,9 +15,14 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 
@@ -26,24 +31,14 @@ public class VnicProfileValidator {
     static final String VAR_VNIC_PROFILE_NAME = "VAR_VNIC_PROFILE_NAME";
     static final String VAR_NETWORK_FILTER_ID = "VAR_NETWORK_FILTER_ID";
 
-    private final StoragePoolDao dcDao;
-    private final NetworkFilterDao networkFilterDao;
-
     private VnicProfile vnicProfile;
     private VnicProfile oldVnicProfile;
     private Network network;
     private List<VnicProfile> vnicProfiles;
     private List<VM> vms;
 
-    public VnicProfileValidator(VnicProfile vnicProfile, StoragePoolDao dcDao, NetworkFilterDao networkFilterDao) {
+    public VnicProfileValidator(VnicProfile vnicProfile) {
         this.vnicProfile = vnicProfile;
-
-        this.dcDao = dcDao;
-        this.networkFilterDao = networkFilterDao;
-    }
-
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     public ValidationResult vnicProfileIsSet() {
@@ -64,7 +59,7 @@ public class VnicProfileValidator {
 
     public ValidationResult networkQosExistsOrNull() {
         return vnicProfile.getNetworkQosId() == null
-                || getDbFacade().getNetworkQosDao().get(vnicProfile.getNetworkQosId()) != null
+                || Injector.get(NetworkQoSDao.class).get(vnicProfile.getNetworkQosId()) != null
                 ? ValidationResult.VALID
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS);
     }
@@ -92,7 +87,7 @@ public class VnicProfileValidator {
     }
 
     public ValidationResult vnicProfileNotUsedByTemplates() {
-        return vnicProfileNotUsed(getDbFacade().getVmTemplateDao().getAllForVnicProfile(vnicProfile.getId()),
+        return vnicProfileNotUsed(Injector.get(VmTemplateDao.class).getAllForVnicProfile(vnicProfile.getId()),
                 EngineMessage.VAR__ENTITIES__VM_TEMPLATES, EngineMessage.VAR__ENTITIES__VM_TEMPLATE);
     }
 
@@ -148,7 +143,7 @@ public class VnicProfileValidator {
     }
 
     public boolean validateCustomProperties(List<String> messages) {
-        StoragePool dataCenter = dcDao.get(getNetwork().getDataCenterId());
+        StoragePool dataCenter = Injector.get(StoragePoolDao.class).get(getNetwork().getDataCenterId());
         List<ValidationError> errors =
                 DevicePropertiesUtils.getInstance().validateProperties(dataCenter.getCompatibilityVersion(),
                         VmDeviceGeneralType.INTERFACE,
@@ -170,7 +165,7 @@ public class VnicProfileValidator {
 
     protected Network getNetwork() {
         if (network == null) {
-            network = getDbFacade().getNetworkDao().get(vnicProfile.getNetworkId());
+            network = Injector.get(NetworkDao.class).get(vnicProfile.getNetworkId());
         }
 
         return network;
@@ -178,7 +173,7 @@ public class VnicProfileValidator {
 
     protected List<VnicProfile> getVnicProfiles() {
         if (vnicProfiles == null) {
-            vnicProfiles = getDbFacade().getVnicProfileDao().getAllForNetwork(vnicProfile.getNetworkId());
+            vnicProfiles = Injector.get(VnicProfileDao.class).getAllForNetwork(vnicProfile.getNetworkId());
         }
 
         return vnicProfiles;
@@ -186,7 +181,7 @@ public class VnicProfileValidator {
 
     protected VnicProfile getOldVnicProfile() {
         if (oldVnicProfile == null) {
-            oldVnicProfile = getDbFacade().getVnicProfileDao().get(vnicProfile.getId());
+            oldVnicProfile = Injector.get(VnicProfileDao.class).get(vnicProfile.getId());
         }
 
         return oldVnicProfile;
@@ -194,7 +189,7 @@ public class VnicProfileValidator {
 
     protected List<VM> getVmsUsingProfile() {
         if (vms == null) {
-            vms = getDbFacade().getVmDao().getAllForVnicProfile(vnicProfile.getId());
+            vms = Injector.get(VmDao.class).getAllForVnicProfile(vnicProfile.getId());
         }
 
         return vms;
@@ -207,7 +202,7 @@ public class VnicProfileValidator {
             return ValidationResult.VALID;
         }
 
-        NetworkFilter networkFilter = networkFilterDao.getNetworkFilterById(networkFilterId);
+        NetworkFilter networkFilter = Injector.get(NetworkFilterDao.class).getNetworkFilterById(networkFilterId);
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_INVALID_VNIC_PROFILE_NETWORK_FILTER_ID,
                 ReplacementUtils.createSetVariableString(VAR_VNIC_PROFILE_NAME, vnicProfile.getName()),
                 ReplacementUtils.createSetVariableString(VAR_NETWORK_FILTER_ID, networkFilterId))

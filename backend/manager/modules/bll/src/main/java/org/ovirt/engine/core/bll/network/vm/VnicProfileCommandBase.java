@@ -17,14 +17,11 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 
 public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> extends CommandBase<T> {
 
     private Network network;
 
-    @Inject
-    private NetworkFilterDao networkFilterDao;
     @Inject
     private StoragePoolDao storagePoolDao;
     @Inject
@@ -85,6 +82,6 @@ public abstract class VnicProfileCommandBase<T extends VnicProfileParameters> ex
     }
 
     protected VnicProfileValidator createVnicProfileValidator() {
-        return new VnicProfileValidator(getVnicProfile(), storagePoolDao, networkFilterDao);
+        return new VnicProfileValidator(getVnicProfile());
     }
 }

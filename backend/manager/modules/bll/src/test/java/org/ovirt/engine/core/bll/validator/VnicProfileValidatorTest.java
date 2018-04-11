@@ -2,9 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -29,8 +27,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -52,9 +48,6 @@ public class VnicProfileValidatorTest {
     private static final Guid INVALID_NETWORK_FILTER_ID = Guid.newGuid();
 
     @Mock
-    private DbFacade dbFacade;
-
-    @Mock
     private VnicProfileDao vnicProfileDao;
 
     @Mock
@@ -65,9 +58,6 @@ public class VnicProfileValidatorTest {
 
     @Mock
     private VmDao vmDao;
-
-    @Mock
-    private StoragePoolDao dcDao;
 
     @Mock
     private NetworkFilterDao networkFilterDao;
@@ -90,16 +80,12 @@ public class VnicProfileValidatorTest {
 
     @Before
     public void setup() {
-
-        // spy on attempts to access the database
-        validator = spy(new VnicProfileValidator(vnicProfile, dcDao, networkFilterDao));
-        doReturn(dbFacade).when(validator).getDbFacade();
+        validator = new VnicProfileValidator(vnicProfile);
 
         // mock some commonly used Daos
-        when(dbFacade.getVnicProfileDao()).thenReturn(vnicProfileDao);
-        when(dbFacade.getNetworkDao()).thenReturn(networkDao);
-        when(dbFacade.getNetworkQosDao()).thenReturn(networkQosDao);
-        when(dbFacade.getVmDao()).thenReturn(vmDao);
+        injectorRule.bind(VnicProfileDao.class, vnicProfileDao);
+        injectorRule.bind(NetworkDao.class, networkDao);
+        injectorRule.bind(NetworkQoSDao.class, networkQosDao);
         injectorRule.bind(VmDao.class, vmDao);
         initNetworkFilterDao();
 
@@ -112,6 +98,7 @@ public class VnicProfileValidatorTest {
         when(networkFilterDao.getNetworkFilterById(INVALID_NETWORK_FILTER_ID)).thenReturn(null);
         when(networkFilterDao.getNetworkFilterById(VALID_NETWORK_FILTER_ID))
                 .thenReturn(new NetworkFilter(VALID_NETWORK_FILTER_ID));
+        injectorRule.bind(NetworkFilterDao.class, networkFilterDao);
     }
 
     @Test
@@ -121,7 +108,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNull() throws Exception {
-        validator = new VnicProfileValidator(null, dcDao, networkFilterDao);
+        validator = new VnicProfileValidator(null);
         assertThat(validator.vnicProfileIsSet(), failsWith(EngineMessage.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
@@ -285,7 +272,7 @@ public class VnicProfileValidatorTest {
     private void vnicProfileNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
         VmTemplateDao templateDao = mock(VmTemplateDao.class);
         when(templateDao.getAllForVnicProfile(any())).thenReturn(templates);
-        when(dbFacade.getVmTemplateDao()).thenReturn(templateDao);
+        injectorRule.bind(VmTemplateDao.class, templateDao);
         assertThat(validator.vnicProfileNotUsedByTemplates(), matcher);
     }
 
