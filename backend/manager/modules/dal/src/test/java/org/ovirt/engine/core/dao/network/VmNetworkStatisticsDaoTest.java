@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -18,15 +20,16 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
     private static final Guid NEW_INTERFACE_ID = new Guid("14550e82-1e1f-47b5-ae41-b009348dabfa");
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_57;
 
+    @Inject
     private VmNetworkStatisticsDao dao;
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     private VmNetworkStatistics newVmStatistics;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        dao = dbFacade.getVmNetworkStatisticsDao();
 
         newVmStatistics = new VmNetworkStatistics();
         newVmStatistics.setId(NEW_INTERFACE_ID);
@@ -79,7 +82,7 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
 
     @Override
     protected List<VmNetworkInterface> getAllInterfaces() {
-        return dbFacade.getVmNetworkInterfaceDao().getAllForVm(VM_ID);
+        return vmNetworkInterfaceDao.getAllForVm(VM_ID);
     }
 
     @Override
