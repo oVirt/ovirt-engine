@@ -332,12 +332,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             setImageGroupId(entity.getDiskId());
         }
 
-        // Check conditions for pausing the transfer (ie UI is MIA)
         long ts = System.currentTimeMillis() / 1000;
-        if (stopTransferIfNecessary(entity, ts)) {
-            return;
-        }
-
         executeStateHandler(entity, ts, childCmdId);
     }
 
@@ -532,6 +527,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (getParameters().getTransferType() == TransferType.Download) {
             finalizeDownloadIfNecessary(context, upToDateImageTransfer);
         }
+
+        // Check conditions for pausing the transfer (ie UI is MIA)
+        stopTransferIfNecessary(upToDateImageTransfer, context.iterationTimestamp, ticketInfo.getIdleTime());
     }
 
     private ImageTransfer updateTransferStatusWithTicketInformation(ImageTransfer oldImageTransfer,
@@ -672,14 +670,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     /**
      * Verify conditions for continuing the transfer, stopping it if necessary.
-     * @return true if transfer was stopped.
      */
-    private boolean stopTransferIfNecessary(ImageTransfer entity, long ts) {
-        if (getTransferImageClientInactivityTimeoutInSeconds() > 0
-                && (entity.getPhase() == ImageTransferPhase.INITIALIZING ||
-                    entity.getPhase() == ImageTransferPhase.TRANSFERRING)
-                && (entity.getLastUpdated().getTime() / 1000) +
-                getTransferImageClientInactivityTimeoutInSeconds() < ts) {
+    private void stopTransferIfNecessary(ImageTransfer entity, long ts, Integer idleTimeFromTicket) {
+        if (shouldAbortOnClientInactivityTimeout(entity, ts, idleTimeFromTicket)) {
             if (getParameters().getTransferType() == TransferType.Download) {
                 // In download flows, we can cancel the transfer if there was no activity
                 // for a while, as the download is handled by the client.
@@ -689,9 +682,19 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 updateEntityPhaseToPausedBySystem(
                         AuditLogType.UPLOAD_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
             }
-            return true;
         }
-        return false;
+    }
+
+    private boolean shouldAbortOnClientInactivityTimeout(ImageTransfer entity, long ts, Integer idleTimeFromTicket) {
+        int inactivityTimeout = getTransferImageClientInactivityTimeoutInSeconds();
+        // For new daemon (1.3.0), we check timeout according to 'idle_time' in ticket;
+        // otherwise, fallback to check according to entity's 'lastUpdated'.
+        boolean timeoutExceeded = idleTimeFromTicket != null ?
+                idleTimeFromTicket > inactivityTimeout :
+                ts > (entity.getLastUpdated().getTime() / 1000) + inactivityTimeout;
+        return inactivityTimeout > 0
+                && timeoutExceeded
+                && !entity.getActive();
     }
 
     private void resetPeriodicPauseLogTime(long ts) {
