@@ -116,7 +116,7 @@ public class ImportValidator {
             ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
             if (!result.isValid()) {
                 log.error("Storage Domain '{}' with id '{}', could not be found for disk alias '{}' with image id '{}'",
-                        sd == null ? null : sd.getStorageName(),
+                        sd == null ? "unknown" : sd.getStorageName(),
                         image.getStorageIds().get(0),
                         image.getDiskAlias(),
                         image.getId());
