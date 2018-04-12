@@ -9,12 +9,22 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
  * used in the packages that need to undergo GWT compilation.
  */
 public class NoFinalMemberCheck extends AbstractCheck {
-
     private boolean run = true;
 
     /** This check is not configurable */
+
+    @Override
+    public int[] getAcceptableTokens() {
+        return getDefaultTokens();
+    }
+
     @Override
     public int[] getDefaultTokens() {
+        return getRequiredTokens();
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
         return new int[] { TokenTypes.VARIABLE_DEF};
     }
 

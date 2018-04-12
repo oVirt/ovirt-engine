@@ -23,13 +23,18 @@ public class NoMemberInitializationCheck extends AbstractCheck {
     private boolean run = true;
 
     @Override
-    public final int[] getDefaultTokens() {
-        return new int[] { TokenTypes.VARIABLE_DEF };
+    public int[] getAcceptableTokens() {
+        return getDefaultTokens();
     }
 
     @Override
-    public final int[] getRequiredTokens() {
-        return getDefaultTokens();
+    public int[] getDefaultTokens() {
+        return getRequiredTokens();
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
+        return new int[] { TokenTypes.VARIABLE_DEF };
     }
 
     @Override

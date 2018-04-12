@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
+import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
 public class NlsCheck extends AbstractCheck {
     private static final Pattern patternString = Pattern.compile("[\"][^\"]*[^\\\\][\"]");
@@ -14,7 +15,17 @@ public class NlsCheck extends AbstractCheck {
     private boolean run = false;
 
     @Override
+    public int[] getAcceptableTokens() {
+        return getDefaultTokens();
+    }
+
+    @Override
     public int[] getDefaultTokens() {
+        return getRequiredTokens();
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
         return new int[0];
     }
 

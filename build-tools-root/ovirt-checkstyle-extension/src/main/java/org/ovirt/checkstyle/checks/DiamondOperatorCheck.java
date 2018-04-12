@@ -36,7 +36,17 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
  */
 public class DiamondOperatorCheck extends AbstractCheck {
     @Override
+    public int[] getAcceptableTokens() {
+        return getDefaultTokens();
+    }
+
+    @Override
     public int[] getDefaultTokens() {
+        return getRequiredTokens();
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
         return new int[] { TokenTypes.ASSIGN };
     }
 

@@ -11,15 +11,25 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
  */
 public class NoArgConstructorCheck extends AbstractCheck {
 
-    private boolean run = true;
-
-    public void setRun(boolean run) {
-        this.run = run;
+    @Override
+    public int[] getAcceptableTokens() {
+        return getDefaultTokens();
     }
 
     @Override
     public int[] getDefaultTokens() {
+        return getRequiredTokens();
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
         return new int[] { TokenTypes.CLASS_DEF };
+    }
+
+    private boolean run = true;
+
+    public void setRun(boolean run) {
+        this.run = run;
     }
 
     @Override
