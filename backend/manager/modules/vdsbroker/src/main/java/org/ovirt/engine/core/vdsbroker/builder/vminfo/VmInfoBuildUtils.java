@@ -520,12 +520,12 @@ public class VmInfoBuildUtils {
                 if (StringUtils.isNotEmpty(unitStr) && StringUtils.isNotEmpty(controllerStr)) {
                     Integer controllerInt = Integer.valueOf(controllerStr);
 
-                    boolean controllerOutOfRange = controllerInt >= vm.getNumOfIoThreads() + getDefaultVirtioScsiIndex(vm);
+                    boolean controllerOutOfRange = controllerInt >= vm.getNumOfIoThreads() + getDefaultVirtioScsiIndex(vm, dve.getDiskInterface());
                     boolean ioThreadsEnabled = vm.getNumOfIoThreads() > 0 &&
                             FeatureSupported.virtioScsiIoThread(vm.getCompatibilityVersion());
 
                     if ((ioThreadsEnabled && !controllerOutOfRange) ||
-                            (controllerInt == getDefaultVirtioScsiIndex(vm))) {
+                            (controllerInt == getDefaultVirtioScsiIndex(vm, dve.getDiskInterface()))) {
                         if (!vmDeviceUnitMap.containsKey(controllerInt)) {
                             vmDeviceUnitMap.put(controllerInt, new HashMap<>());
                         }
@@ -546,7 +546,7 @@ public class VmInfoBuildUtils {
             VmDevice vmDevice = vmDeviceList.get(index);
             // TODO: consider changing this so that it will search for the next available and
             // less used controller instead of always starting from index.
-            int controller = getControllerForScsiDisk(vmDevice, vm, index);
+            int controller = getControllerForScsiDisk(vmDevice, vm, scsiInterface, index);
 
             if (!vmDeviceUnitMap.containsKey(controller)) {
                 vmDeviceUnitMap.put(controller, new HashMap<>());
@@ -560,11 +560,13 @@ public class VmInfoBuildUtils {
     }
 
 
-    private int getDefaultVirtioScsiIndex(VM vm) {
+    private int getDefaultVirtioScsiIndex(VM vm, DiskInterface diskInterface) {
         Map<DiskInterface, Integer> controllerIndexMap =
                 ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
 
-        return controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
+        return diskInterface == DiskInterface.SPAPR_VSCSI ?
+                controllerIndexMap.get(DiskInterface.SPAPR_VSCSI) :
+                controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
     }
 
     /**
@@ -573,14 +575,15 @@ public class VmInfoBuildUtils {
      *
      * @param disk the disk for which the controller id has to be generated
      * @param vm a VM to which this disk is attached
+     * @param diskInterface the interface type of the disk
      * @param increment a number from 0..N to let the round robin cycle
      * @return a controller id
      */
-    public int getControllerForScsiDisk(VmDevice disk, VM vm, int increment) {
+    public int getControllerForScsiDisk(VmDevice disk, VM vm, DiskInterface diskInterface, int increment) {
         Map<String, String> address = StringMapUtils.string2Map(disk.getAddress());
         String controllerStr = address.get(VdsProperties.Controller);
 
-        int defaultIndex = getDefaultVirtioScsiIndex(vm);
+        int defaultIndex = getDefaultVirtioScsiIndex(vm, diskInterface);
         boolean ioThreadsEnabled = FeatureSupported.virtioScsiIoThread(vm.getCompatibilityVersion());
 
         if (!ioThreadsEnabled) {
@@ -590,7 +593,7 @@ public class VmInfoBuildUtils {
 
         if (StringUtils.isNotEmpty(controllerStr)) {
             int controllerInt = Integer.parseInt(controllerStr);
-            boolean controllerOutOfRange = controllerInt > vm.getNumOfIoThreads() + getDefaultVirtioScsiIndex(vm);
+            boolean controllerOutOfRange = controllerInt > vm.getNumOfIoThreads() + getDefaultVirtioScsiIndex(vm, diskInterface);
 
             if (!controllerOutOfRange) {
                 // io threads enabled and the controller in range, use it
