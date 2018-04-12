@@ -70,6 +70,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
+import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllersForDomainXml;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -817,6 +818,7 @@ public class LibvirtVmXmlBuilder {
         devices = overrideDevicesForRunOnce(devices);
         devices = processPayload(devices);
         devices.stream().filter(d -> d.getSpecParams() == null).forEach(d -> d.setSpecParams(Collections.emptyMap()));
+        ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllersForDomainXml(devices));
 
         writer.writeStartElement("devices");
 
