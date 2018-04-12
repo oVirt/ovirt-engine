@@ -81,6 +81,24 @@ public class VmToHostAffinityWeightPolicyUnitTest extends VmToHostAffinityPolicy
         assertEquals(2, (long) results.get(host_not_in_affinity_group.getId()));
     }
 
+    @Test
+    public void testNegativeAndPositiveAffinityViolationScoreWithRunningVm() throws Exception {
+        hosts = Arrays.asList(host_positive_enforcing, host_negative_enforcing, host_not_in_affinity_group);
+
+        positive_enforcing_group.setVdsEnforcing(false);
+        negative_enforcing_group.setVdsEnforcing(false);
+
+        vm.setRunOnVds(host_not_in_affinity_group.getId());
+
+        List<AffinityGroup> affinityGroups = Arrays.asList(positive_enforcing_group, negative_enforcing_group);
+        doReturn(affinityGroups).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
+
+        Map<Guid, Integer> results = getScoreResults();
+        assertEquals(4, (long) results.get(host_negative_enforcing.getId()));
+        assertEquals(2, (long) results.get(host_not_in_affinity_group.getId()));
+    }
+
+
     private Map<Guid, Integer> getScoreResults() {
         List<Pair<Guid, Integer>> weights = unit.score(cluster, hosts, vm, new HashMap<>());
         Map<Guid, Integer> results = weights.stream().collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
