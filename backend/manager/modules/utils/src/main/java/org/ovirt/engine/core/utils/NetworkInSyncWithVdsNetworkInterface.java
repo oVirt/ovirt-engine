@@ -63,8 +63,8 @@ public class NetworkInSyncWithVdsNetworkInterface {
     public ReportedConfigurations reportConfigurationsOnHost () {
         ReportedConfigurations result = new ReportedConfigurations();
 
-        Integer networkMtu = network.isDefaultMtu() ? NetworkUtils.getDefaultMtu() : network.getMtu();
-        result.add(ReportedConfigurationType.MTU, iface.getMtu(), networkMtu, isNetworkMtuInSync());
+        result.add(ReportedConfigurationType.MTU, iface.getMtu(), NetworkUtils.getMtuActualValue(network),
+                isNetworkMtuInSync());
         result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), network.isVmNetwork());
         result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId());
         result.add(ReportedConfigurationType.SWITCH_TYPE,
