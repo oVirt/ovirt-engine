@@ -39,10 +39,6 @@ public class HostNicsUtil {
         this.networkImplementationDetailsUtils = Objects.requireNonNull(networkImplementationDetailsUtils);
     }
 
-    public List<VdsNetworkInterface> findHostNics(VdsStatic vdsStatic) {
-        return findHostNics(vdsStatic.getId(), (x) -> vdsStatic.getClusterId(), null, false);
-    }
-
     public List<VdsNetworkInterface> findHostNics(Guid hostId, Guid userID, boolean isFiltered) {
         return findHostNics(hostId, this::findHostClusterId, userID, isFiltered);
     }
