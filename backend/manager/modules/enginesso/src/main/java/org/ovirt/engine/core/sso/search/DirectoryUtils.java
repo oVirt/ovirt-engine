@@ -128,7 +128,7 @@ public class DirectoryUtils {
             final String namespace,
             final ExtMap input) {
         final List<ExtMap> records = new ArrayList<>();
-        queryImpl(extension, namespace, input, (queryResults) -> {
+        queryImpl(extension, namespace, input, queryResults -> {
             boolean result = true;
             for (ExtMap queryResult : queryResults) {
                 if (records.size() < QUERIES_RESULTS_LIMIT) {

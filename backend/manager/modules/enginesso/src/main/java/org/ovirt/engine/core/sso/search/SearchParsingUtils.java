@@ -47,7 +47,7 @@ public class SearchParsingUtils {
                 Authz.InvokeKeys.QUERY_ENTITY,
                 queryEntity);
         ExtKey key = queryEntity.equals(Authz.QueryEntity.GROUP) ? Authz.GroupRecord.ID : Authz.PrincipalRecord.ID;
-        List<ExtMap> filter = ids.stream().map((id) -> createMapForKeyAndValue(key, id)).collect(Collectors.toList());
+        List<ExtMap> filter = ids.stream().map(id -> createMapForKeyAndValue(key, id)).collect(Collectors.toList());
         result.mput(
                 QueryFilterRecord.OPERATOR,
                 QueryFilterOperator.OR

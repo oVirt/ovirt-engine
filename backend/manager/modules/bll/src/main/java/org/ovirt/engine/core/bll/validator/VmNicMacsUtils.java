@@ -48,7 +48,7 @@ public class VmNicMacsUtils {
 
     public void replaceInvalidEmptyStringMacAddressesWithNull(List<VmNetworkInterface> vmNetworkInterfaces) {
         vmNetworkInterfaces.stream()
-                .filter((vmNetworkInterface) -> StringUtils.isEmpty(vmNetworkInterface.getMacAddress()))
+                .filter(vmNetworkInterface -> StringUtils.isEmpty(vmNetworkInterface.getMacAddress()))
                 .forEach(e->e.setMacAddress(null));
     }
 
