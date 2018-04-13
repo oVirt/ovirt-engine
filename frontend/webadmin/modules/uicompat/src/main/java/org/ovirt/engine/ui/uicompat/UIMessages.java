@@ -213,8 +213,6 @@ public interface UIMessages extends Messages {
 
     String bridlessNetworkNotSupported(String version);
 
-    String mtuOverrideNotSupported(String version);
-
     String numberOfVmsForHostsLoad(int numberOfVms);
 
     String cpuInfoLabel(int numberOfCpus, int numberOfSockets, int numberOfCpusPerSocket, int numberOfThreadsPerCore);
