@@ -16,6 +16,7 @@ declare
     IMAGE_LOCKED integer;
     SNAPSHOT_OK varchar;
     SNAPSHOT_LOCKED varchar;
+    ILLEGAL integer;
 BEGIN
     DOWN:=0;
     OK:=1;
@@ -25,9 +26,11 @@ BEGIN
     IMAGE_LOCKED:=15;
     SNAPSHOT_OK:='OK';
     SNAPSHOT_LOCKED:='LOCKED';
+    ILLEGAL:=4;
     update vm_static set template_status = TEMPLATE_OK where template_status = TEMPLATE_LOCKED;
     update vm_dynamic set status = DOWN where status = IMAGE_LOCKED;
     update images set imagestatus = OK where imagestatus = LOCKED;
     update snapshots set status = SNAPSHOT_OK where status ilike SNAPSHOT_LOCKED;
+    UPDATE images SET imagestatus = OK WHERE imagestatus = ILLEGAL;
 END; $procedure$
 LANGUAGE plpgsql;
