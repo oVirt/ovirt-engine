@@ -71,7 +71,7 @@
     </module>
 
     <!-- oVirt checks -->
-    <module name="org.ovirt.checkstyle.checks.DiamondOperator"/>
+    <module name="org.ovirt.checkstyle.checks.DiamondOperatorCheck"/>
     <module name="org.ovirt.checkstyle.checks.NlsCheck">
       <property name="run" value="${runNlsCheck}" default="false"/>
     </module>
