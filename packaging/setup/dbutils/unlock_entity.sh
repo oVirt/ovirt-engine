@@ -17,7 +17,7 @@ Usage: $0 [options] [ENTITIES]
     -h            - This help text.
     -v            - Turn on verbosity                         (WARNING: lots of output)
     -l LOGFILE    - The logfile for capturing output          (def. ${DBFUNC_LOGFILE})
-    -t TYPE       - The object type {all | vm | template | disk | snapshot}
+    -t TYPE       - The object type {all | vm | template | disk | snapshot | illegal_images}
                     If "all" is used then no ENTITIES are expected.
     -r            - Recursive, unlocks all disks under the selected vm/template.
     -q            - Query db and display a list of the locked entites.
@@ -51,12 +51,13 @@ entity_unlock() {
 		CMD="select fn_db_unlock_disk('${id}');"
 	elif [ "${object_type}" = "snapshot" ]; then
 		CMD="select fn_db_unlock_snapshot('${id}');"
+	elif [ "${object_type}" = "illegal_images" ]; then
+		CMD="UPDATE images SET imagestatus = '1' WHERE image_guid = '${id}';"
 	elif [ "${object_type}" = "all" ]; then
 		CMD="select fn_db_unlock_all();"
 	else
 		printf "Error: $* "
 	fi
-
 	if [ -n "${CMD}" ]; then
 		echo "${CMD}"
 		if dbfunc_psql --command="${CMD}"; then
@@ -87,6 +88,9 @@ entity_unlock() {
 }
 
 query_vm() {
+	echo ""
+	echo "Locked VMs"
+	echo ""
 	dbfunc_psql_die --command="
 			select
 				vm_name as vm_name
@@ -124,6 +128,9 @@ query_vm() {
 }
 
 query_template() {
+	echo ""
+	echo "Locked templates"
+	echo ""
 	dbfunc_psql_die --command="
 			select vm_name as template_name
 			from vm_static
@@ -146,6 +153,9 @@ query_template() {
 }
 
 query_disk() {
+	echo ""
+	echo "Locked disks"
+	echo ""
 	dbfunc_psql_die --command="
 			select distinct
 				vm_id,
@@ -163,6 +173,9 @@ query_disk() {
 }
 
 query_snapshot() {
+	echo ""
+	echo "Locked snapshots"
+	echo ""
 	dbfunc_psql_die --command="
 			select
 				vm_id,
@@ -174,10 +187,30 @@ query_snapshot() {
 		"
 }
 
+query_illegal_images() {
+	echo ""
+	echo "Illegal images"
+	echo ""
+	dbfunc_psql_die --command="
+			SELECT
+				vm_name,
+				image_guid
+			FROM
+				images a,
+				vm_static b,
+				vm_device c
+			WHERE
+				a.image_group_id = c.device_id AND
+				b.vm_guid = c.vm_id AND
+				imagestatus = '${ILLEGAL}';
+		"
+}
+
 #Displays locked entities
 entity_query() {
 	local object_type="$1"
 	local LOCKED=2
+	local ILLEGAL=4
 	local TEMPLATE_LOCKED=1
 	local IMAGE_LOCKED=15;
 	local SNAPSHOT_LOCKED=LOCKED
@@ -190,15 +223,14 @@ entity_query() {
 		query_disk
 	elif [ "${object_type}" = "snapshot" ]; then
 		query_snapshot
+	elif [ "${object_type}" = "illegal_images" ]; then
+		query_illegal_images
 	elif [ "${object_type}" = "all" ]; then
-		echo "Locked VMs:"
 		query_vm
-		echo "Locked templates:"
 		query_template
-		echo "Locked disks:"
 		query_disk
-		echo "Locked snapshots:"
 		query_snapshot
+		query_illegal_images
 	fi
 }
 
@@ -246,17 +278,25 @@ dbfunc_init
 # Install fn_db_unlock_all procedure
 dbfunc_psql_die --file="$(dirname "$0")/unlock_entity.sql" > /dev/null
 
+print_caution_msg() {
+	    echo ""
+	    echo "##########################################"
+	    echo "CAUTION, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
+	    echo "##########################################"
+	    echo ""
+	    echo "Are you sure you want to proceed? [y/n]"
+	    read answer
+	    [ "${answer}" = "y" ] || die "Please contact support for further assistance."
+}
 # Execute
 if [ -n "${QUERY}" ]; then
 	entity_query "${TYPE}"
 else
         if [ "${TYPE}" = "all" ]; then
+	    print_caution_msg
             entity_unlock "${TYPE}" "" "$(whoami)" ${RECURSIVE}
         else
-	    echo "Caution, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
-	    echo "Are you sure you want to proceed? [y/n]"
-	    read answer
-	    [ "${answer}" = "y" ] || die "Please contact support for further assistance."
+	    print_caution_msg
 
 	    for ID in ${IDS} ; do
 	    	entity_unlock "${TYPE}" "${ID}" "$(whoami)" ${RECURSIVE}
