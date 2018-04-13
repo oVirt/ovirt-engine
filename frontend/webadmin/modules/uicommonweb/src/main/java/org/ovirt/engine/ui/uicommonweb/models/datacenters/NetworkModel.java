@@ -91,7 +91,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private ListModel<HostNetworkQos> qos;
     private DnsConfigurationModel dnsConfigurationModel;
     private boolean isSupportBridgesReportByVDSM = false;
-    private boolean mtuOverrideSupported = false;
     private ListModel<StoragePool> privateDataCenters;
     private NetworkProfilesModel profiles;
     private EntityModel<Boolean> createSubnet;
@@ -409,15 +408,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         this.isSupportBridgesReportByVDSM = true;
     }
 
-    public boolean isMTUOverrideSupported() {
-        return mtuOverrideSupported;
-    }
-
-    public void setMTUOverrideSupported() {
-        this.mtuOverrideSupported = true;
-        updateMtuSelectorsChangeability();
-    }
-
     public ListModel<StoragePool> getDataCenters() {
         return privateDataCenters;
     }
@@ -636,7 +626,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         }
 
         setSupportBridgesReportByVDSM();
-        setMTUOverrideSupported();
 
         AsyncDataProvider.getInstance().getAllHostNetworkQos(dc.getId(), new AsyncQuery<>(qos -> {
             getQos().setItems(qos);
@@ -873,13 +862,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     }
 
     protected void updateMtuSelectorsChangeability() {
-
-        if (getSelectedDc() != null && !isMTUOverrideSupported()) {
-            setMtuSelectorsChangeability(false, ConstantsManager.getInstance().getMessages()
-                    .mtuOverrideNotSupported(getSelectedDc().getCompatibilityVersion().toString()));
-            return;
-        }
-
         if (getExternal().getEntity()) {
             setMtuSelectorsChangeability(false, null);
             return;
