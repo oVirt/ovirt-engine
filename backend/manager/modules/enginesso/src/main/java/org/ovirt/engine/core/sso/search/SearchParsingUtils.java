@@ -58,13 +58,6 @@ public class SearchParsingUtils {
         return result;
     }
 
-    public static ExtMap generateQueryForName(String name, ExtUUID queryEntity) {
-        StringBuilder query = new StringBuilder(getQueryPrefixByEntity(queryEntity)).append("|");
-        attributesToKeys.keySet()
-                .forEach((key) -> query.append(String.format("(%1$s=%2$s)", key, name)));
-        return generateQueryMap(query.append(")").toString(), queryEntity);
-    }
-
     public static ExtMap generateQueryMap(String query, ExtUUID queryEntity) {
         String queryPrefix = getQueryPrefixByEntity(queryEntity);
         ExtMap result = new ExtMap();
