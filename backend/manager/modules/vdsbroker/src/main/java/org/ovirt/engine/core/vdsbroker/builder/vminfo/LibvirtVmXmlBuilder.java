@@ -2181,6 +2181,12 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("address", nic.getMacAddress());
         writer.writeEndElement();
 
+        if (!networkless) {
+            writer.writeStartElement("mtu");
+            writer.writeAttributeString("size", String.valueOf(NetworkUtils.getVmMtuActualValue(network)));
+            writer.writeEndElement();
+        }
+
         NetworkFilter networkFilter = vmInfoBuildUtils.fetchVnicProfileNetworkFilter(nic);
         if (networkFilter != null) {
             writer.writeStartElement("filterref");
