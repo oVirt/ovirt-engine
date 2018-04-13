@@ -42,6 +42,10 @@ public final class NetworkUtils {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }
 
+    public static int getMtuActualValue(Network network) {
+        return network.isDefaultMtu() ? NetworkUtils.getDefaultMtu() : network.getMtu();
+    }
+
     /**
      * Check if the proposed interface represents a VLAN of the given interface name or is equal to it.<br>
      * If either of the parameters is null, <code>false</code> is returned.
