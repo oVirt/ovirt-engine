@@ -70,7 +70,7 @@ public class AlertPanel extends Composite {
     /**
      * The types of PatternFly alerts (currently 4).
      *
-     * @see https://www.patternfly.org/widgets/#alerts
+     * @see <a href="https://www.patternfly.org/widgets/#alerts">Patternfly Alerts</a>
      */
     public enum Type {
 

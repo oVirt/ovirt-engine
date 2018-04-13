@@ -31,8 +31,8 @@ public class WebUtils {
      *
      * @param name The name of the new window
      * @param url The URL to open
-     * @param options The options to pass to the window, option are described here:<br/>
-     * {@link https://developer.mozilla.org/en-US/docs/DOM/window.open}
+     * @param options The options to pass to the window, option are described
+     *                <a href="https://developer.mozilla.org/en-US/docs/DOM/window.open">here</a>.
      */
     public static void openUrlInNewWindow(final String name, final String url, final String options) {
         Window.open(url, name.replace(" ", "_"), options); //$NON-NLS-1$ //$NON-NLS-2$

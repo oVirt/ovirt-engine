@@ -6,9 +6,9 @@ import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 /**
  * Model object representing List of errata (singular: Erratum)  for the engine itself (aka System).
  *
- * @see {@link EngineErrataListModel}
- * @see {@link HostErrataListModel}
- * @see {@link VmErrataListModel}
+ * @see EngineErrataListModel
+ * @see HostErrataListModel
+ * @see VmErrataListModel
  *
  */
 public class EngineErrataListModel extends AbstractErrataListModel {

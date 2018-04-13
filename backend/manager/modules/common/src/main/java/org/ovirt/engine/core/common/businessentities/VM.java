@@ -1257,7 +1257,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     /**
      * assumption: Qumranet Agent version stored in app_list by "Qumranet Agent" name. Qumranet Agent version,
      * received from vds in format : a.b.d there is no major revision received from vds - always 0
-     * @see {@link Version}
+     * @see Version
      */
     public Version getGuestAgentVersion() {
         return privateGuestAgentVersion;

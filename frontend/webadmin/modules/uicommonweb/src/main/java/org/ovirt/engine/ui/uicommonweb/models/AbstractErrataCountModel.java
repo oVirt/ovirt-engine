@@ -17,10 +17,10 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 /**
  * Model object representing counts (summary info) about errata for a VM or a Host.
  *
- * @see {@link Erratum}
- * @see {@link ErrataCounts}
- * @see {@link HostErrataCountModel}
- * @see {@link VmErrataCountModel}
+ * @see org.ovirt.engine.core.common.businessentities.Erratum
+ * @see ErrataCounts
+ * @see HostErrataCountModel
+ * @see VmErrataCountModel
  */
 public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
 

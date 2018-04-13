@@ -269,7 +269,7 @@ public class FutureMap implements Map<String, Object> {
     }
 
     /**
-     * @param clazz- A type of response which will be use instead of default <code>Map</code>.
+     * @param clazz A type of response which will be use instead of default <code>Map</code>.
      * @return this <code>FutureMap</code>.
      */
     public FutureMap withResponseType(Class<?> clazz) {

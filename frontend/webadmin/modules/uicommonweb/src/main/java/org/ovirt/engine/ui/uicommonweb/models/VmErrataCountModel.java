@@ -7,8 +7,8 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 /**
  * Model object representing counts (summary info) about errata for a VM.
  *
- * @see {@link Erratum}
- * @see {@link ErrataCounts}
+ * @see org.ovirt.engine.core.common.businessentities.Erratum
+ * @see org.ovirt.engine.core.common.businessentities.ErrataCounts
  */
 public class VmErrataCountModel extends AbstractErrataCountModel {
 

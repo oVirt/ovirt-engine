@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
  * Bugfix: the new packages contain one or more bug fixes
  * Security: the new packages fix one or more security vulnerabilities"
  * <p>
- * @see http://www.katello.org/docs//user_guide/errata/index.html
+ * @link http://www.katello.org/docs//user_guide/errata/index.html
  */
 public class Erratum implements Queryable, BusinessEntity<String>, Nameable {
 

@@ -7,8 +7,8 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 /**
  * Model object representing counts (summary info) about errata for a Host.
  *
- * @see {@link Erratum}
- * @see {@link ErrataCounts}
+ * @see org.ovirt.engine.core.common.businessentities.Erratum
+ * @see org.ovirt.engine.core.common.businessentities.ErrataCounts
  */
 public class HostErrataCountModel extends AbstractErrataCountModel {
 

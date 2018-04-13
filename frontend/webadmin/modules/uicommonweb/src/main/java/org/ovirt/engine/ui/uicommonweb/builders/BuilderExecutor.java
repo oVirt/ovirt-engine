@@ -52,7 +52,7 @@ public class BuilderExecutor<S, D> {
     }
 
     /**
-     * @see BuilderExecutor(org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor.BuilderExecutionFinishedCaller)
+     * @see BuilderExecutionFinishedCaller
      */
     public BuilderExecutor(BuilderExecutionFinished<S, D> callback, List<Builder<S, D>> builders) {
         this.builders = new BuilderList<>(builders).append(new BuilderExecutionFinishedCaller(callback));
