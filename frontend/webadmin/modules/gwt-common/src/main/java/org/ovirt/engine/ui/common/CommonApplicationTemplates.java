@@ -74,9 +74,6 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("{0} <sub>{1}</sub>")
     SafeHtml sub(String main, String sub);
 
-    @Template("<b><font style='{0}'>{1}</font></b>")
-    SafeHtml snapshotDescription(SafeStyles style, String description);
-
     @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
     SafeHtml imageTextCardStatus(SafeHtml image, String text);
