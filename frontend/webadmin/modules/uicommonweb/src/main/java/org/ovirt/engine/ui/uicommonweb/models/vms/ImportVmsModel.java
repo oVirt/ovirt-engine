@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -90,6 +92,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private ListModel<VDS> hosts;
     private EntityModel<String> ovaPath;
+    private Map<String, String> vmNameToOva;
 
     private EntityModel<String> xenUri;
     private ListModel<VDS> xenProxyHosts;
@@ -230,6 +233,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             importFromOvaModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
             importFromOvaModel.setIsoName(getOvaPath().getEntity());
             importFromOvaModel.setHostId(getHosts().getSelectedItem().getId());
+            importFromOvaModel.setVmNameToOva(vmNameToOva);
             selectedImportVmModel = importFromOvaModel;
             break;
         case XEN:
@@ -585,8 +589,10 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         startProgress();
         AsyncDataProvider.getInstance().getVmFromOva(new AsyncQuery<>(returnValue -> {
             if (returnValue.getSucceeded()) {
-                VM vm = returnValue.getReturnValue();
-                updateVms(Collections.singletonList(vm));
+                Map<VM, String> vmToOva = returnValue.getReturnValue();
+                vmNameToOva = vmToOva.entrySet().stream()
+                        .collect(Collectors.toMap(e -> e.getKey().getName(), Entry::getValue));
+                updateVms(vmToOva.keySet());
             } else {
                 setError(messages.failedToLoadOva(getOvaPath().getEntity()));
             }
@@ -773,7 +779,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                         + cluster;
     }
 
-    private void updateVms(List<VM> vms) {
+    private void updateVms(Collection<VM> vms) {
         clearVms();
         List<EntityModel<VM>> externalVms = new ArrayList<>();
 

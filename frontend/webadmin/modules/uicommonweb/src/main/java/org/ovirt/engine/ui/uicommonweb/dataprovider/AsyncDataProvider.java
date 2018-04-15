@@ -1998,9 +1998,11 @@ public class AsyncDataProvider {
 
     public void getVmFromOva(AsyncQuery<QueryReturnValue> aQuery, Guid vdsId, String path) {
         aQuery.setHandleFailure(true);
+        GetVmFromOvaQueryParameters params = new GetVmFromOvaQueryParameters(vdsId, path);
+        params.setListDirectory(true);
         Frontend.getInstance().runQuery(
                 QueryType.GetVmFromOva,
-                new GetVmFromOvaQueryParameters(vdsId, path),
+                params,
                 aQuery);
     }
 

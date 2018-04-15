@@ -25,6 +25,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
 
     private String ovaPath;
     private Guid hostId;
+    private Map<String, String> vmNameToOva;
 
     @Inject
     protected ImportVmFromOvaModel(VmImportGeneralModel vmImportGeneralModel,
@@ -48,6 +49,10 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
         this.hostId = hostId;
     }
 
+    public void setVmNameToOva(Map<String, String> vmNameToOva) {
+        this.vmNameToOva = vmNameToOva;
+    }
+
     @Override
     public void importVms(IFrontendMultipleActionAsyncCallback callback) {
         Frontend.getInstance().runMultipleAction(
@@ -67,7 +72,8 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
                 getStorage().getSelectedItem().getId(),
                 getStoragePool().getId(),
                 getCluster().getSelectedItem().getId());
-        prm.setOvaPath(ovaPath);
+        String ovaFilename = vmNameToOva.get(importVmData.getName());
+        prm.setOvaPath(ovaFilename == null ? ovaPath : ovaPath + "/" + ovaFilename); //$NON-NLS-1$
         prm.setProxyHostId(hostId);
         prm.setVirtioIsoName(getIso().getIsChangable() && getIso().getSelectedItem() != null ?
                 getIso().getSelectedItem().getRepoImageId() : null);
