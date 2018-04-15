@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -138,12 +138,11 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     vmsFromDB = returnValue.getReturnValue();
 
-                    Set<String> existingNames = new HashSet<>();
-                    for (VM vm : vmsFromDB) {
-                        if (vm.getStoragePoolId().equals(getStoragePool().getId())) {
-                            existingNames.add(vm.getName());
-                        }
-                    }
+                    Set<String> existingNames = vmsFromDB
+                            .stream()
+                            .filter(vm -> vm.getStoragePoolId().equals(getStoragePool().getId()))
+                            .map(VM::getName)
+                            .collect(Collectors.toSet());
 
                     List<ImportVmData> vmDataList = new ArrayList<>();
                     for (VM vm : externalVms) {

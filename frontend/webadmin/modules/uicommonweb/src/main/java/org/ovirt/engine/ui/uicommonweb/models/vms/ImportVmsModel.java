@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -775,22 +776,15 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private void updateVms(List<VM> vms) {
         clearVms();
-        List<EntityModel<VM>> externalVms = new ArrayList<>();
-
-        for (VM vm : vms) {
-            externalVms.add(new EntityModel<>(vm));
-        }
-
-        externalVmModels.setItems(externalVms);
+        externalVmModels.setItems(vms.stream().map(EntityModel::new).collect(Collectors.toList()));
         stopProgress();
     }
 
     public List<VM> getVmsToImport() {
-        List<VM> vmsToImport = new ArrayList<>();
-        for (EntityModel<VM> externalVm : importedVmModels.getItems()) {
-            vmsToImport.add(externalVm.getEntity());
-        }
-        return vmsToImport;
+        return importedVmModels.getItems()
+                .stream()
+                .map(EntityModel::getEntity)
+                .collect(Collectors.toList());
     }
 
     private void addImport() {
