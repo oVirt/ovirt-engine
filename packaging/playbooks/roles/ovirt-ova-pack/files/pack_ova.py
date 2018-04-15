@@ -30,7 +30,6 @@ def pad_to_block_size(file):
 
 
 def write_ovf(ova_path, ovf):
-    ovf = ovf.encode('utf-8')
     print ("writing ovf: %s" % ovf)
     with io.open(ova_path, "r+b") as ova_file:
         tar_info = create_tar_info("vm.ovf", len(ovf))
