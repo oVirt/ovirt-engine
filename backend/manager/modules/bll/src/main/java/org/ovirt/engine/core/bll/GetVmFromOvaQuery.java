@@ -1,6 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -39,11 +44,33 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
 
     @Override
     protected void executeQueryCommand() {
+        String stdout = runAnsibleQueryOvaInfoPlaybook();
+        stdout = stdout.trim();
+        Object result = getParameters().isListDirectory() ? parseOvfs(stdout) : parseOvf(stdout);
+        setReturnValue(result);
+        getQueryReturnValue().setSucceeded(result != null);
+    }
+
+    private Map<VM, String> parseOvfs(String stdout) {
+        if (stdout.startsWith("{")) {
+            stdout = stdout.substring(1, stdout.length()-1);
+            return Arrays.stream(stdout.split("::"))
+                    .map(str -> {
+                        int delimiter = str.indexOf('=');
+                        return new String[] { str.substring(0, delimiter), str.substring(delimiter+1) };
+                    })
+                    .collect(Collectors.toMap(arr -> parseOvf(arr[1]), arr -> arr[0]));
+        } else {
+            VM vm = parseOvf(stdout);
+            return new HashMap<>(Collections.singletonMap(vm, null));
+        }
+    }
+
+    private VM parseOvf(String ovf) {
         boolean originOvirt = false;
         VM vm = null;
-        String ovf = null;
+
         try {
-            ovf = runAnsibleQueryOvaInfoPlaybook();
             originOvirt = ovf.contains("xmlns:ovirt");
             vm = readVmFromOva(ovf);
         } catch (Exception e) {
@@ -63,8 +90,7 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
             vm.setOrigin(OriginType.OVIRT);
         }
 
-        setReturnValue(vm);
-        getQueryReturnValue().setSucceeded(vm != null);
+        return vm;
     }
 
     private VM getVmInfoFromOvaFile() {
@@ -82,7 +108,8 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Qu
         AnsibleCommandBuilder command = new AnsibleCommandBuilder()
                 .hostnames(hostname)
                 .variables(
-                    new Pair<>("ovirt_query_ova_path", getParameters().getPath())
+                    new Pair<>("ovirt_query_ova_path", getParameters().getPath()),
+                    new Pair<>("list_directory", getParameters().isListDirectory() ? "True" : "False")
                 )
                 // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
                 .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)

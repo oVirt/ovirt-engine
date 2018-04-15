@@ -3,4 +3,5 @@
   script: >
     query_ova.py
     "{{ ovirt_query_ova_path }}"
+    "{{ list_directory }}"
   register: extraction_result

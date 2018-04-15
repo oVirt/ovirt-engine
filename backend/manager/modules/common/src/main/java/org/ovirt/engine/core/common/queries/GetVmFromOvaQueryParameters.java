@@ -7,6 +7,7 @@ public class GetVmFromOvaQueryParameters extends QueryParametersBase {
 
     private Guid vdsId;
     private String path;
+    private boolean listDirectory;
 
     public GetVmFromOvaQueryParameters() {
     }
@@ -30,5 +31,13 @@ public class GetVmFromOvaQueryParameters extends QueryParametersBase {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public boolean isListDirectory() {
+        return listDirectory;
+    }
+
+    public void setListDirectory(boolean listDirectory) {
+        this.listDirectory = listDirectory;
     }
 }
