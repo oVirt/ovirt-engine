@@ -171,15 +171,6 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/disk.png")
     ImageResource diskImage();
 
-    @Source("images/nic.png")
-    ImageResource nicImage();
-
-    @Source("images/general.png")
-    ImageResource generalImage();
-
-    @Source("images/applications.png")
-    ImageResource applicationsImage();
-
     @Source("images/wait.png")
     ImageResource waitImage();
 
