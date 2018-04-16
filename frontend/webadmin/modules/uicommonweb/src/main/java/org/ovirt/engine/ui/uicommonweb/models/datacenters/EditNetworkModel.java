@@ -101,6 +101,7 @@ public class EditNetworkModel extends NetworkModel {
     protected void onExportChanged() {
         super.onExportChanged();
         if (getExternal().getEntity()) {
+            getName().setIsChangeable(false);
             getHasVLanTag().setIsChangeable(false);
             getVLanTag().setIsChangeable(false);
             getExternalProviders().setIsChangeable(false);
