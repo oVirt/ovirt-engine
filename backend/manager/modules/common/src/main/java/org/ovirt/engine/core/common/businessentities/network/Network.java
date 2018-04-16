@@ -70,6 +70,8 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
     @MTU
     private int mtu;
 
+    private static final int DEFAULT_MTU = 0;
+
     private Guid qosId;
 
     @Valid
@@ -324,6 +326,14 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
 
     public void setMtu(int mtu) {
         this.mtu = mtu;
+    }
+
+    public boolean isDefaultMtu() {
+        return mtu == DEFAULT_MTU;
+    }
+
+    public void setDefaultMtu() {
+        mtu = DEFAULT_MTU;
     }
 
     public boolean isVmNetwork() {

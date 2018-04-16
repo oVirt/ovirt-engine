@@ -94,7 +94,7 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
          */
         @Override
         public ValidationResult mtuValid() {
-            return network.getMtu() == 0 ? ValidationResult.VALID
+            return network.isDefaultMtu() ? ValidationResult.VALID
                     : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_HAVE_MTU);
         }
     }
