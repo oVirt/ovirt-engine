@@ -670,7 +670,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         }
         network.setLabel(StringHelper.isNotNullOrEmpty(label) ? label : null);
 
-        network.setMtu(0);
+        network.setDefaultMtu();
         if (getMtu().getIsChangable()) {
             network.setMtu(Integer.parseInt(getMtu().getEntity().toString()));
         }

@@ -64,7 +64,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
     public ReportedConfigurations reportConfigurationsOnHost () {
         ReportedConfigurations result = new ReportedConfigurations();
 
-        Integer networkMtu = network.getMtu() == 0 ? NetworkUtils.getDefaultMtu() : network.getMtu();
+        Integer networkMtu = network.isDefaultMtu() ? NetworkUtils.getDefaultMtu() : network.getMtu();
         result.add(ReportedConfigurationType.MTU, iface.getMtu(), networkMtu, isNetworkMtuInSync());
         result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), network.isVmNetwork());
         result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId());
@@ -102,9 +102,8 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     private boolean isNetworkMtuInSync() {
-        boolean networkValueSetToDefaultMtu = network.getMtu() == 0;
         boolean ifaceValueSetToDefaultMtu = iface.getMtu() == NetworkUtils.getDefaultMtu();
-        boolean bothUsesDefaultValue = networkValueSetToDefaultMtu && ifaceValueSetToDefaultMtu;
+        boolean bothUsesDefaultValue = network.isDefaultMtu() && ifaceValueSetToDefaultMtu;
         return bothUsesDefaultValue || iface.getMtu() == network.getMtu();
     }
 

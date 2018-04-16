@@ -63,7 +63,7 @@ public class NetworkMtuValidator {
         for (Network net : ifaceNetworks) {
             mtuDiffNetworks.add(String.format("%s(%s)",
                 net.getName(),
-                net.getMtu() == 0 ? "default" : String.valueOf(net.getMtu())));
+                net.isDefaultMtu() ? "default" : String.valueOf(net.getMtu())));
         }
 
         return new ValidationResult(EngineMessage.NETWORK_MTU_DIFFERENCES,
@@ -87,6 +87,6 @@ public class NetworkMtuValidator {
     }
 
     private int getMtuActualValue(Network network) {
-        return network.getMtu() == 0 ? NetworkUtils.getDefaultMtu() : network.getMtu();
+        return network.isDefaultMtu() ? NetworkUtils.getDefaultMtu() : network.getMtu();
     }
 }
