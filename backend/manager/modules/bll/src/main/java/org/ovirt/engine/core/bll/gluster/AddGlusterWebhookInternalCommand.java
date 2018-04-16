@@ -31,11 +31,6 @@ public class AddGlusterWebhookInternalCommand<T extends VdsActionParameters> ext
         setVdsId(getParameters().getVdsId());
     }
 
-/*    @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution).withWait(true);
-    }*/
-
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__ADD);
