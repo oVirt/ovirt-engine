@@ -23,10 +23,5 @@ public class DownloadImageManager {
         log.info("Start download for disks: " + Linq.getDiskAliases(disks)); //$NON-NLS-1$
         disks.forEach(disk -> new DownloadImageHandler(disk).start());
     }
-
-    public void stopDownload(List<DiskImage> disks) {
-        log.info("Stop download for disks: " + Linq.getDiskAliases(disks)); //$NON-NLS-1$
-        disks.forEach(disk -> new DownloadImageHandler(disk).stop());
-    }
 }
 

@@ -181,16 +181,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         downloadCommand = value;
     }
 
-    private UICommand stopDownloadCommand;
-
-    public UICommand getStopDownloadCommand() {
-        return stopDownloadCommand;
-    }
-
-    private void setStopDownloadCommand(UICommand value) {
-        stopDownloadCommand = value;
-    }
-
     private EntityModel<DiskStorageType> diskViewType;
 
     public EntityModel<DiskStorageType> getDiskViewType() {
@@ -249,7 +239,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         setPauseUploadCommand(new UICommand("PauseUpload", this)); //$NON-NLS-1$
         setResumeUploadCommand(new UICommand("ResumeUpload", this)); //$NON-NLS-1$
         setDownloadCommand(new UICommand("Download", this)); //$NON-NLS-1$
-        setStopDownloadCommand(new UICommand("StopDownload", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -538,10 +527,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         DownloadImageManager.getInstance().startDownload(getSelectedDiskImages());
     }
 
-    private void stopDownload() {
-        DownloadImageManager.getInstance().stopDownload(getSelectedDiskImages());
-    }
-
     private List<DiskImage> getSelectedDiskImages() {
         return getSelectedItems().stream().map(disk -> (DiskImage) disk).collect(Collectors.toList());
     }
@@ -566,7 +551,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
         getResumeUploadCommand().setIsExecutionAllowed(UploadImageModel.isResumeAllowed(disks));
         getDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isDownloadAllowed(disks));
-        getStopDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isStopDownloadAllowed(disks));
     }
 
     private boolean isDiskLocked(Disk disk) {
@@ -756,9 +740,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         }
         else if (command == getDownloadCommand()) {
             download();
-        }
-        else if (command == getStopDownloadCommand()) {
-            stopDownload();
         }
     }
 

@@ -4,15 +4,12 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
-import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
-import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -65,10 +62,6 @@ public class DownloadImageHandler {
                 this);
     }
 
-    public void stop() {
-        closeSession(ImageTransferPhase.CANCELLED, null);
-    }
-
     private void initiateDownload(ImageTransfer imageTransfer) {
         String url = imageTransfer.getProxyUri() + "/" + imageTransfer.getImagedTicketId(); //$NON-NLS-1$
 
@@ -82,24 +75,6 @@ public class DownloadImageHandler {
         RootPanel.get().add(frame);
     }
 
-    private void closeSession(ImageTransferPhase imageTransferPhase, AuditLogType auditLogType) {
-        ImageTransfer updates = new ImageTransfer();
-        updates.setPhase(imageTransferPhase);
-        TransferImageStatusParameters parameters = new TransferImageStatusParameters();
-        parameters.setDiskId(diskImage.getId());
-        parameters.setUpdates(updates);
-        if (auditLogType != null) {
-            parameters.setAuditLogType(auditLogType);
-        }
-
-        Frontend.getInstance().runAction(ActionType.TransferImageStatus, parameters);
-    }
-
-    private void logError(String url) {
-        log.info("Failed starting session from: " + url); //$NON-NLS-1$
-        closeSession(ImageTransferPhase.FINALIZING_FAILURE, AuditLogType.DOWNLOAD_IMAGE_NETWORK_ERROR);
-    }
-
     public static boolean isDownloadAllowed(List<? extends Disk> disks) {
         return disks != null && !disks.isEmpty() && disks.stream()
                 .allMatch((Predicate<Disk>) disk ->
@@ -108,13 +83,5 @@ public class DownloadImageHandler {
                         && ((DiskImage) disk).getImageStatus() == ImageStatus.OK
                         && ((DiskImage) disk).getActualSizeInBytes() > 0
                         && ((DiskImage) disk).getParentId().equals(Guid.Empty));
-    }
-
-    public static boolean isStopDownloadAllowed(List<? extends Disk> disks) {
-        return disks != null && !disks.isEmpty() && disks.stream()
-                .allMatch((Predicate<Disk>) disk ->
-                        disk instanceof DiskImage
-                        && disk.getTransferType() == TransferType.Download
-                        && disk.getImageTransferPhase().isPaused());
     }
 }
