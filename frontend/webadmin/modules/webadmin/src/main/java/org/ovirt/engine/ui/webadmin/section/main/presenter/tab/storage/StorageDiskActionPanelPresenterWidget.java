@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -69,22 +68,12 @@ public class StorageDiskActionPanelPresenterWidget extends
         });
         addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.uploadImage(), uploadActions), uploadActions);
 
-        // Download operations drop down
-        List<ActionButtonDefinition<Disk>> downloadActions = new LinkedList<>();
-        downloadActions.add(new WebAdminButtonDefinition<Disk>(constants.downloadImageStart()) {
+        addActionButton(new WebAdminButtonDefinition<Disk>(constants.downloadImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDownloadCommand();
             }
         });
-        downloadActions.add(new WebAdminButtonDefinition<Disk>(constants.downloadImageCancel()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getStopDownloadCommand();
-            }
-        });
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.downloadImage(),
-                downloadActions), downloadActions);
     }
 
 }
