@@ -13,8 +13,9 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * This class is the kebab(three vertical dots) button and menu. The class allows you to add items to the drop down
- * as well as dividers if needed.
+ * This class is the kebab (three vertical dots) button and menu.
+ * <p>
+ * The class allows you to add items to the drop down as well as dividers if needed.
  */
 public class Kebab extends ButtonGroup {
 
@@ -38,7 +39,7 @@ public class Kebab extends ButtonGroup {
             // Unfortunately we have to make assumptions about the structure of the widget in order to get at the
             // reference for the caretWidget (which is normally a down arrow) to replace it with a kebab icon.
             if (kebabButton.getWidgetCount() > 2) {
-                Widget caretWidget = (Widget) kebabButton.getWidget(2);
+                Widget caretWidget = kebabButton.getWidget(2);
                 caretWidget.removeStyleName(PatternflyConstants.PF_CARET);
                 caretWidget.addStyleName(Styles.FONT_AWESOME_BASE);
                 caretWidget.addStyleName(FA_ELLIPSIS_V);
@@ -66,7 +67,15 @@ public class Kebab extends ButtonGroup {
     }
 
     public void addMenuItem(ActionButton actionButton) {
-        kebabMenu.add(actionButton);
+        addMenuItem(actionButton, Integer.MAX_VALUE);
+    }
+
+    public void addMenuItem(ActionButton actionButton, int index) {
+        if (index > kebabMenu.getWidgetCount()) {
+            kebabMenu.add(actionButton);
+        } else {
+            kebabMenu.insert(actionButton.asWidget(), index);
+        }
     }
 
     public boolean containsMenuItem(ActionButton actionButton) {
@@ -80,4 +89,5 @@ public class Kebab extends ButtonGroup {
     public void addDivider() {
         kebabMenu.add(new Divider());
     }
+
 }

@@ -94,6 +94,7 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
         initializeButtons();
     }
 
+    @Override
     public void addMenuListItem(final ActionButtonDefinition<T> menuItemDef) {
         ActionButton newActionMenuListItem = getView().addMenuListItem(menuItemDef);
         registerSelectionChangeHandler(menuItemDef);
@@ -128,9 +129,14 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
      * Adds a new button to the action panel.
      * @param buttonDef The button definition.
      */
+    @Override
     public void addActionButton(ActionButtonDefinition<T> buttonDef) {
         ActionButton newButton = getView().addActionButton(buttonDef);
-        actionButtonDefinitions.add(buttonDef);
+        if (buttonDef.getIndex() > actionButtonDefinitions.size()) {
+            actionButtonDefinitions.add(buttonDef);
+        } else {
+            actionButtonDefinitions.add(buttonDef.getIndex(), buttonDef);
+        }
         initButton(buttonDef, newButton);
     }
 
@@ -224,4 +230,5 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
     }
 
     protected abstract void initializeButtons();
+
 }

@@ -50,7 +50,7 @@ public class DrawerNotification extends Div {
     }
 
     private void setIconType(Span icon, AuditLog model) {
-        switch(((AuditLog)model).getSeverity()) {
+        switch (model.getSeverity()) {
         case ALERT:
             icon.addStyleName(PatternflyConstants.PFICON_WARNING_TRIANGLE_O);
             break;
@@ -73,4 +73,5 @@ public class DrawerNotification extends Div {
         notificationKebab.addMenuItem(actionButton);
         notificationKebab.setVisible(notificationKebab.getWidgetCount() > 0);
     }
+
 }

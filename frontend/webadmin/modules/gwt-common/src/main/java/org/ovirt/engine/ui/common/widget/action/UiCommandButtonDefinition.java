@@ -29,8 +29,7 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
     private UICommand command;
     private IEventListener<PropertyChangedEventArgs> propertyChangeListener;
 
-    public UiCommandButtonDefinition(EventBus eventBus, String title,
-            boolean subTitledAction) {
+    public UiCommandButtonDefinition(EventBus eventBus, String title, boolean subTitledAction) {
         super(eventBus, title, subTitledAction);
         update();
     }
@@ -108,7 +107,7 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
 
     @Override
     public boolean isVisible(List<T> selectedItems) {
-        return command != null ? command.getIsVisible() : true;
+        return command == null || command.getIsVisible();
     }
 
     @Override
@@ -119,6 +118,12 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
     @Override
     public void onClick(List<T> selectedItems) {
         command.execute();
+    }
+
+    @Override
+    public int getIndex() {
+        // Place this button after all existing buttons
+        return Integer.MAX_VALUE;
     }
 
 }

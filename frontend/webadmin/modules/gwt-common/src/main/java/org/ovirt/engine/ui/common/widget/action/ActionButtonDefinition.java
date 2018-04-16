@@ -70,4 +70,10 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
      */
     SafeHtml getMenuItemTooltip();
 
+    /**
+     * Returns the index of this action button, denoting its relative position within
+     * the action panel.
+     */
+    int getIndex();
+
 }

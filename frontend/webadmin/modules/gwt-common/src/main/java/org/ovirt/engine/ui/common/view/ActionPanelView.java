@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,19 +100,21 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
         }
 
         actionItemMap.put(menuItemDef, menuItem);
-        actionKebab.addMenuItem(menuItem);
+        actionKebab.addMenuItem(menuItem, menuItemDef.getIndex());
         return menuItem;
     }
 
     /**
      * Adds a new button to the action panel.
      */
+    @Override
     public ActionButton addActionButton(ActionButtonDefinition<T> buttonDef) {
         SimpleActionButton newActionButton = createNewActionButton(buttonDef);
         initButton(buttonDef, newActionButton);
         return newActionButton;
     }
 
+    @Override
     public ActionButton addDropdownActionButton(ActionButtonDefinition<T> buttonDef,
             List<ActionButtonDefinition<T>> subActions, SelectedItemsProvider<T> selectedItemsProvider) {
         DropdownActionButton<T> dropdownActionButton = new DropdownActionButton<>(subActions, selectedItemsProvider);
@@ -119,6 +122,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
         return dropdownActionButton;
     }
 
+    @Override
     public ActionButton addDropdownComboActionButton(ActionButtonDefinition<T> buttonDef,
             List<ActionButtonDefinition<T>> subActions, SelectedItemsProvider<T> selectedItemsProvider) {
         DropdownActionButton<T> dropdownActionButton;
@@ -144,8 +148,25 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
 
         // No insert available so need to remove the kebab and then add it at the end.
         actionFormGroup.remove(actionKebab);
-        actionFormGroup.add(button);
-        actionFormGroup.add(actionKebab);
+
+        if (buttonDef.getIndex() >= actionFormGroup.getWidgetCount()) {
+            // Add the button at the end
+            actionFormGroup.add(button);
+            actionFormGroup.add(actionKebab);
+        } else {
+            // Re-create ordered button list
+            List<Widget> currentButtons = new ArrayList<>();
+            for (int i = 0; i < actionFormGroup.getWidgetCount(); i++) {
+                currentButtons.add(actionFormGroup.getWidget(i));
+            }
+            currentButtons.add(buttonDef.getIndex(), button.asWidget());
+
+            // Re-add all buttons
+            actionFormGroup.clear();
+            currentButtons.forEach(existingButton -> actionFormGroup.add(existingButton));
+            actionFormGroup.add(actionKebab);
+        }
+
         actionItemMap.put(buttonDef, button);
     }
 
@@ -219,4 +240,5 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     public Map<ActionButtonDefinition<T>, ActionButton> getActionItems() {
         return actionItemMap;
     }
+
 }

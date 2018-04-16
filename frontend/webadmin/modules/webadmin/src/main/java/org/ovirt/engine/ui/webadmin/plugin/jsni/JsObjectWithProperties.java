@@ -22,13 +22,22 @@ public abstract class JsObjectWithProperties extends JavaScriptObject {
     }-*/;
 
     /**
-     * Returns the value for the given key as Double.
+     * Returns the value for the given key as Double (equivalent to native JS {@code number}).
      * <p>
      * Returns {@code defaultValue} on missing key, {@code null} value or wrong value type.
      */
     protected final native Double getValueAsDouble(String key, Double defaultValue) /*-{
         return (this[key] != null && typeof this[key] === 'number') ? @java.lang.Double::valueOf(D)(this[key]) : defaultValue;
     }-*/;
+
+    /**
+     * Returns the value for the given key as Integer (converted from native JS {@code number}).
+     * <p>
+     * Returns {@code defaultValue} on missing key, {@code null} value or wrong value type.
+     */
+    protected final Integer getValueAsInteger(String key, Integer defaultValue) {
+        return getValueAsDouble(key, defaultValue.doubleValue()).intValue();
+    }
 
     /**
      * Returns the value for the given key as Boolean.

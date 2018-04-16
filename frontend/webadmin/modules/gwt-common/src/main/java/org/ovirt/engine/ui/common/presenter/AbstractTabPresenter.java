@@ -49,8 +49,8 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
             addPluginActionButtons(
                 actionButtonPluginHandler.getMenuItems(getProxy().getTargetHistoryToken()), true);
         });
-        //Register this handler for whichever tab opens first, it is bound before the plugin fires its events and
-        //before the actionButtonPluginHandler is instantiated and listening to events.
+        // Register this handler for whichever tab opens first, it is bound before the plugin fires
+        // its events and before the actionButtonPluginHandler is instantiated and listening to events.
         registerHandler(getEventBus().addHandler(AddActionButtonEvent.getType(),
             event -> {
                 if (getProxy().getTargetHistoryToken().equals(event.getHistoryToken())) {
@@ -72,7 +72,7 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
 
     private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList, boolean isMenuItem) {
         if (getActionPanelPresenterWidget() != null) {
-            for(ActionButtonDefinition<?> buttonDef: pluginActionButtonList) {
+            for (ActionButtonDefinition<?> buttonDef: pluginActionButtonList) {
                 if (isMenuItem) {
                     getActionPanelPresenterWidget().addMenuListItem((ActionButtonDefinition) buttonDef);
                 } else {
@@ -86,4 +86,5 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
     public void setActionButtonPluginHandler(PluginActionButtonHandler actionButtonPluginHandler) {
         this.actionButtonPluginHandler = actionButtonPluginHandler;
     }
+
 }

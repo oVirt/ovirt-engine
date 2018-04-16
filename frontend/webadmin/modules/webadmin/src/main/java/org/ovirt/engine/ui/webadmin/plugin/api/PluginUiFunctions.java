@@ -188,12 +188,12 @@ public class PluginUiFunctions implements HasHandlers {
         String historyToken = entityType.getMainHistoryToken();
 
         if (historyToken != null) {
+            ActionButtonDefinition<?> actionButton = createButtonDefinition(label, actionButtonInterface);
+
             if (actionButtonInterface.isInMoreMenu()) {
-                AddKebabMenuListItemEvent.fire(this, historyToken,
-                        createButtonDefinition(label, actionButtonInterface));
+                AddKebabMenuListItemEvent.fire(this, historyToken, actionButton);
             } else {
-                AddActionButtonEvent.fire(this, historyToken,
-                        createButtonDefinition(label, actionButtonInterface));
+                AddActionButtonEvent.fire(this, historyToken, actionButton);
             }
         }
     }
@@ -206,20 +206,18 @@ public class PluginUiFunctions implements HasHandlers {
         String historyToken = mainTabEntityType.getSubTabHistoryToken(subTabEntityType);
 
         if (historyToken != null) {
+            ActionButtonDefinition<?> actionButton = createButtonDefinition(label, actionButtonInterface);
+
             if (actionButtonInterface.isInMoreMenu()) {
-                AddKebabMenuListItemEvent.fire(this, historyToken,
-                        createButtonDefinition(label, actionButtonInterface));
+                AddKebabMenuListItemEvent.fire(this, historyToken, actionButton);
             } else {
-                AddActionButtonEvent.fire(this, historyToken,
-                        createButtonDefinition(label, actionButtonInterface));
+                AddActionButtonEvent.fire(this, historyToken, actionButton);
             }
         }
     }
 
-    <T> ActionButtonDefinition<T> createButtonDefinition(String label,
-            final ActionButtonInterface actionButtonInterface) {
-        return new AbstractButtonDefinition<T>(eventBus,
-                label) {
+    <T> ActionButtonDefinition<T> createButtonDefinition(String label, ActionButtonInterface actionButtonInterface) {
+        return new AbstractButtonDefinition<T>(eventBus, label) {
 
             @Override
             public void onClick(List<T> selectedItems) {
@@ -241,6 +239,11 @@ public class PluginUiFunctions implements HasHandlers {
                         actionButtonInterface.isAccessible(),
                         EntityObject.arrayFrom(selectedItems != null ? selectedItems : Collections.emptyList()),
                             null, true);
+            }
+
+            @Override
+            public int getIndex() {
+                return actionButtonInterface.getIndex();
             }
 
         };
