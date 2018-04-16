@@ -95,6 +95,9 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         com.woorea.openstack.quantum.model.Network networkForCreate = new com.woorea.openstack.quantum.model.Network();
         networkForCreate.setAdminStateUp(true);
         networkForCreate.setName(network.getName());
+        if (!network.isDefaultMtu()) {
+            networkForCreate.setMtu(network.getMtu());
+        }
 
         if (NetworkUtils.isLabeled(network)) {
             networkForCreate.setProviderPhysicalNetwork(network.getLabel());
@@ -189,6 +192,9 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
             network.setVmNetwork(true);
             network.setProvidedBy(new ProviderNetwork(getProvider().getId(), externalNetwork.getId()));
             network.setName(externalNetwork.getName());
+            if (externalNetwork.getMtu() != null) {
+                network.setMtu(externalNetwork.getMtu());
+            }
             networks.add(network);
         }
 
