@@ -645,7 +645,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 VmDeviceGeneralType.DISK,
                 "device",
                 "address",
-                1,
                 new HashMap<>(),
                 true,
                 true,

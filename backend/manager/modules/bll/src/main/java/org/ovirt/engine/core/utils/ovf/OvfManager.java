@@ -1,21 +1,29 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.slf4j.Logger;
@@ -28,9 +36,13 @@ public class OvfManager {
             OvfVmIconDefaultsProvider.class);
 
     private ClusterDao clusterDao = Injector.get(ClusterDao.class);
+    private DiskVmElementDao diskVmElementDao = Injector.get(DiskVmElementDao.class);
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao = Injector.get(VmNetworkInterfaceDao.class);
+
     private CpuFlagsManagerHandler cpuFlagsManagerHandler = Injector.get(CpuFlagsManagerHandler.class);
 
     public String exportVm(VM vm, List<DiskImage> images, Version version) {
+        updateBootOrderOnDevices(vm.getStaticData(), false);
         final OvfVmWriter vmWriter;
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
@@ -43,6 +55,7 @@ public class OvfManager {
     }
 
     public String exportTemplate(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
+        updateBootOrderOnDevices(vmTemplate, true);
         return new OvfTemplateWriter(vmTemplate, images, version).build().getStringRepresentation();
     }
 
@@ -118,5 +131,27 @@ public class OvfManager {
 
     public boolean isOvfTemplate(String ovfstring) throws OvfReaderException {
         return new OvfParser(ovfstring).isTemplate();
+    }
+
+    /**
+     * For backward compatibility we need to set the boot order on each device
+     * in the OVF. This can be dropped as soon as we drop support for 4.0.
+     * Note that this method is made public for visibility for tests outside of its package.
+     */
+    public void updateBootOrderOnDevices(VmBase vmBase, boolean template) {
+        Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
+        // Reset current boot order
+        devices.forEach(device -> device.setBootOrder(0));
+        Map<VmDeviceId, DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(vmBase.getId())
+                .stream()
+                .collect(Collectors.toMap(DiskVmElement::getId, element -> element));
+        List<VmNetworkInterface> interfaces = template ?
+                vmNetworkInterfaceDao.getAllForTemplate(vmBase.getId())
+                : vmNetworkInterfaceDao.getAllForVm(vmBase.getId());
+        VmDeviceCommonUtils.updateVmDevicesBootOrder(
+                vmBase.getDefaultBootSequence(),
+                devices,
+                interfaces,
+                diskVmElements);
     }
 }

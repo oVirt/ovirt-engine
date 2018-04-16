@@ -191,7 +191,6 @@ public class VmInfoBuildUtils {
 
         addAddress(vmDevice, struct);
         struct.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
-        addBootOrder(vmDevice, struct);
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
 
         Map<String, Object> specParams = new HashMap<>();
@@ -551,13 +550,6 @@ public class VmInfoBuildUtils {
     VmDevice getVmDeviceByDiskId(Guid diskId, Guid vmId) {
         // get vm device for this disk from DB
         return vmDeviceDao.get(new VmDeviceId(diskId, vmId));
-    }
-
-    void addBootOrder(VmDevice vmDevice, Map<String, Object> struct) {
-        String s = String.valueOf(vmDevice.getBootOrder());
-        if (!StringUtils.isEmpty(s) && !s.equals("0")) {
-            struct.put(VdsProperties.BootOrder, s);
-        }
     }
 
     private void reportUnsupportedVnicProfileFeatures(VM vm,

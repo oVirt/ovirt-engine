@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -29,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -86,14 +90,14 @@ public class OvfManagerTest {
     @Rule
     public InjectorRule injectorRule = new InjectorRule();
 
-    private OvfManager manager;
+    @Spy
+    private OvfManager manager = new OvfManager();
 
     @Before
     public void setUp() throws Exception {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         injectorRule.bind(ClusterDao.class, clusterDao);
-        manager = new OvfManager();
         final HashMap<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
@@ -103,6 +107,7 @@ public class OvfManagerTest {
         final List<Pair<GraphicsType, DisplayType>> gndExistingOs = new ArrayList<>();
         gndExistingOs.add(new Pair<>(GraphicsType.SPICE, DisplayType.cirrus));
 
+        doNothing().when(manager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
         when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
         when(osRepository.getOsIdByUniqueName(anyString())).thenAnswer(invocation-> {

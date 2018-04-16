@@ -255,7 +255,6 @@ public class VdsBrokerObjectsBuilder {
                             VmDeviceGeneralType.forValue(typeName),
                             deviceName,
                             "",
-                            0,
                             new HashMap<>(),
                             false,
                             true,

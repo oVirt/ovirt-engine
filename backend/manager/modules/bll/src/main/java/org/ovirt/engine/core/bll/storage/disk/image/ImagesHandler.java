@@ -742,14 +742,20 @@ public final class ImagesHandler {
         return prepareSnapshotConfigWithAlternateImage(snapshot, imageId, null);
     }
 
+    public static Snapshot prepareSnapshotConfigWithoutImageSingleImage(Snapshot snapshot, Guid imageId, OvfManager ovfManager) {
+        return prepareSnapshotConfigWithAlternateImage(snapshot, imageId, null, ovfManager);
+    }
+
+    public static Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage) {
+        return prepareSnapshotConfigWithAlternateImage(snapshot, oldImageId, newImage, new OvfManager());
+    }
 
     /**
      * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the given disk,
      * substituting a new disk in its place if a new disk is provided to the method.
      */
-    public static Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage) {
+    public static Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage, OvfManager ovfManager) {
         try {
-            OvfManager ovfManager = new OvfManager();
             String snapConfig = snapshot.getVmConfiguration();
 
             if (snapshot.isVmConfigurationAvailable() && snapConfig != null) {

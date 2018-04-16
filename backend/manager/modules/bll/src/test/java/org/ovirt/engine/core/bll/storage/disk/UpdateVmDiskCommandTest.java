@@ -605,7 +605,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         mockGetForDisk(vm);
         mockGetVmsListForDisk(vm);
         doNothing().when(command).reloadDisks();
-        doNothing().when(command).updateBootOrder();
 
         doAnswer(invocation -> invocation.getArguments()[0] != null ?
                     invocation.getArguments()[0] : Guid.newGuid())
@@ -901,7 +900,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK.getName(),
                 "",
-                0,
                 null,
                 true,
                 true,

@@ -213,9 +213,6 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             }
         }
 
-        // update vm device boot order
-        updateBootOrderInVmDevice();
-
         if (getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down) {
             performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice);
         }
@@ -227,7 +224,6 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK.getName(),
                 "",
-                0,
                 null,
                 true,
                 getParameters().isPlugUnPlug(),
@@ -239,10 +235,6 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     protected boolean isOperationPerformedOnDiskSnapshot() {
         return getParameters().getSnapshotId() != null;
-    }
-
-    protected void updateBootOrderInVmDevice() {
-        getVmDeviceUtils().updateBootOrder(getVm().getId());
     }
 
     private void updateDiskVmSnapshotId() {

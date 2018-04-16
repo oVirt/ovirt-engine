@@ -560,7 +560,6 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK.getName(),
                 "",
-                0,
                 null,
                 true,
                 false,

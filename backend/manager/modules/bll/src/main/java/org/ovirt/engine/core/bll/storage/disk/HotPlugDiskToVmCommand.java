@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> extends AbstractDiskVmCommand<T> {
@@ -150,13 +149,6 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
         // so we can update the needed device properties
         updateDeviceProperties();
 
-        // Now after updating 'isPlugged' property of the plugged/unplugged device, its time to
-        // update the boot order for all VM devices. Failure to do that doesn't change the fact that
-        // device is already plugged to or unplugged from VM.
-        if (getDiskVmElement().isBoot()) {
-            updateBootOrder();
-        }
-
         vmStaticDao.incrementDbGeneration(getVm().getId());
         setSucceeded(true);
     }
@@ -165,13 +157,6 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
         VmDevice device = vmDeviceDao.get(oldVmDevice.getId());
         device.setIsPlugged(true);
         vmDeviceDao.updateHotPlugDisk(device);
-    }
-
-    private void updateBootOrder() {
-        TransactionSupport.executeInNewTransaction(() -> {
-            getVmDeviceUtils().updateBootOrder(getVm().getId());
-            return null;
-        });
     }
 
     @Override

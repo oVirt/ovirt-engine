@@ -95,7 +95,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     private final VM vm;
 
     private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
-    private List<VmDevice> managedDevices = null;
+    private List<VmDevice> bootableDevices = null;
     private Guid vdsId;
     private Cluster cluster;
     private int numOfReservedScsiIndexes = 0;
@@ -122,10 +122,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         this.vdsId = vdsId;
         this.vm = vm;
         this.createInfo = createInfo;
-        final boolean hasNonDefaultBootOrder = vm.getBootSequence() != vm.getDefaultBootSequence();
-        if (hasNonDefaultBootOrder) {
-            managedDevices = new ArrayList<>();
-        }
+        bootableDevices = new ArrayList<>();
     }
 
     @Override
@@ -183,7 +180,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                             VmDeviceGeneralType.DISK,
                             VmDeviceType.CDROM.getName(),
                             "",
-                            0,
                             null,
                             true,
                             true,
@@ -238,7 +234,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                             VmDeviceGeneralType.DISK,
                             VmDeviceType.FLOPPY.getName(),
                             "",
-                            0,
                             null,
                             true,
                             true,
@@ -376,7 +371,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                     vmInfoBuildUtils.buildCinderDisk((CinderDisk) disk, struct);
                     break;
                 }
-                vmInfoBuildUtils.addBootOrder(vmDevice, struct);
                 struct.put(VdsProperties.Shareable,
                         (vmDevice.getSnapshotId() != null)
                                 ? VdsProperties.Transient : String.valueOf(disk.isShareable()));
@@ -385,7 +379,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                 struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
                 devices.add(struct);
-                addToManagedDevices(vmDevice);
+                bootableDevices.add(vmDevice);
             }
         }
 
@@ -492,7 +486,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 }
 
                 devices.add(struct);
-                addToManagedDevices(vmDevice);
+                bootableDevices.add(vmDevice);
             }
         }
     }
@@ -538,24 +532,20 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildVmBootSequence() {
-        // Check if boot sequence in parameters is different from default boot sequence
-        if (managedDevices != null) {
-            // recalculate boot order from source devices and set it to target devices
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(
-                    vm,
-                    vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
-                    managedDevices);
-            for (VmDevice vmDevice : managedDevices) {
-                for (Map<String, Object> struct : devices) {
-                    String deviceId = (String) struct.get(VdsProperties.DeviceId);
-                    if (deviceId != null && deviceId.equals(vmDevice.getDeviceId().toString())) {
-                        if (vmDevice.getBootOrder() > 0) {
-                            struct.put(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
-                        } else {
-                            struct.keySet().remove(VdsProperties.BootOrder);
-                        }
-                        break;
+        // recalculate boot order from source devices and set it to target devices
+        VmDeviceCommonUtils.updateVmDevicesBootOrder(
+                vm.isRunOnce() ? vm.getBootSequence() : vm.getDefaultBootSequence(),
+                bootableDevices,
+                vm.getInterfaces(),
+                VmDeviceCommonUtils.extractDiskVmElements(vm));
+        for (VmDevice vmDevice : bootableDevices) {
+            for (Map<String, Object> struct : devices) {
+                String deviceId = (String) struct.get(VdsProperties.DeviceId);
+                if (deviceId != null && deviceId.equals(vmDevice.getDeviceId().toString())) {
+                    if (vmDevice.getBootOrder() > 0) {
+                        struct.put(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
                     }
+                    break;
                 }
             }
         }
@@ -577,7 +567,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         VmDeviceGeneralType.DISK,
                         VmDeviceType.FLOPPY.getName(),
                         "",
-                        0,
                         vmPayload.getSpecParams(),
                         true,
                         true,
@@ -606,7 +595,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         VmDeviceGeneralType.DISK,
                         VmDeviceType.CDROM.getName(),
                         "",
-                        0,
                         vmPayload.getSpecParams(),
                         true,
                         true,
@@ -637,7 +625,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                             VmDeviceGeneralType.BALLOON,
                             VmDeviceType.MEMBALLOON.getName(),
                             "",
-                            0,
                             specParams,
                             true,
                             true,
@@ -978,7 +965,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             vmInfoBuildUtils.addAddress(vmVideoDevice, struct);
             struct.put(VdsProperties.SpecParams, vmVideoDevice.getSpecParams());
             struct.put(VdsProperties.DeviceId, String.valueOf(vmVideoDevice.getId().getDeviceId()));
-            addToManagedDevices(vmVideoDevice);
             devices.add(struct);
         }
     }
@@ -1068,7 +1054,6 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
         vmInfoBuildUtils.addAddress(vmDevice, struct);
         struct.put(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
-        vmInfoBuildUtils.addBootOrder(vmDevice, struct);
         struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
         struct.put(VdsProperties.NIC_TYPE, nicModel);
@@ -1100,15 +1085,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         }
         struct.put(VdsProperties.SpecParams, specParams);
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-        vmInfoBuildUtils.addBootOrder(vmDevice, struct);
         devices.add(struct);
-        addToManagedDevices(vmDevice);
-    }
-
-    private void addToManagedDevices(VmDevice vmDevice) {
-        if (managedDevices != null) {
-            managedDevices.add(vmDevice);
-        }
+        bootableDevices.add(vmDevice);
     }
 
     private void buildVmUsbControllers() {

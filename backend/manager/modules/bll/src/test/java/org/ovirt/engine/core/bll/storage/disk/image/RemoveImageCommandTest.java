@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -13,6 +16,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -20,6 +24,7 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -56,6 +61,10 @@ public class RemoveImageCommandTest extends BaseCommandTest {
     @Mock
     private ClusterDao clusterDao;
 
+    @Spy
+    @InjectMocks
+    private OvfManager ovfManager = new OvfManager();
+
     /** The command to test */
     @Spy
     private RemoveImageCommand<RemoveImageParameters> cmd =
@@ -70,6 +79,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
                     Guid.createGuidFromString("00000000-0000-0000-0000-00000000000b")));
         }});
 
+        doNothing().when(ovfManager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         SimpleDependencyInjector.getInstance().bind(OvfVmIconDefaultsProvider.class, iconDefaultsProvider);
         injectorRule.bind(ClusterDao.class, clusterDao);
@@ -96,7 +106,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         dve2.setDiskInterface(DiskInterface.IDE);
         disk2.setDiskVmElements(Collections.singletonList(dve2));
 
-        OvfManager ovfManager = new OvfManager();
         ArrayList<DiskImage> disks = new ArrayList<>(Arrays.asList(disk1, disk2));
         String ovf = ovfManager.exportVm(vm, disks, Version.getLast());
         Snapshot snap = new Snapshot();
@@ -106,7 +115,7 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         doReturn(disk2).when(cmd).getDiskImage();
         doReturn(disk2).when(cmd).getImage();
         doReturn(disk2.getId()).when(cmd).getImageId();
-        Snapshot actual = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snap, disk2.getImageId());
+        Snapshot actual = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(snap, disk2.getImageId(), ovfManager);
         String actualOvf = actual.getVmConfiguration();
 
         ArrayList<DiskImage> actualImages = new ArrayList<>();

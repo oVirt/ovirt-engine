@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -44,7 +43,7 @@ public class VmDeviceDaoImpl extends
                 .addValue("device", entity.getDevice())
                 .addValue("type", entity.getType().getValue())
                 .addValue("address", entity.getAddress())
-                .addValue("boot_order", entity.getBootOrder())
+                .addValue("boot_order", 0)
                 .addValue("spec_params", SerializationFactory.getSerializer().serialize(entity.getSpecParams()))
                 .addValue("is_managed", entity.getIsManaged())
                 .addValue("is_plugged", entity.getIsPlugged())
@@ -179,7 +178,6 @@ public class VmDeviceDaoImpl extends
         vmDevice.setDevice(rs.getString("device"));
         vmDevice.setType(VmDeviceGeneralType.forValue(rs.getString("type")));
         vmDevice.setAddress(rs.getString("address"));
-        vmDevice.setBootOrder(rs.getInt("boot_order"));
         vmDevice.setSpecParams(SerializationFactory.getDeserializer()
                 .deserializeOrCreateNew(rs.getString("spec_params"), HashMap.class));
         vmDevice.setIsManaged(rs.getBoolean("is_managed"));
@@ -253,22 +251,4 @@ public class VmDeviceDaoImpl extends
         getCallsHandler().executeModification("UpdateVmDeviceForHotPlugDisk", paramsForUpdate);
     }
 
-    @Override
-    public void updateBootOrder(VmDevice vmDevice) {
-        MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
-                .addValue("boot_order", vmDevice.getBootOrder());
-        getCallsHandler().executeModification("UpdateVmDeviceBootOrder", paramsForUpdate);
-    }
-
-    public MapSqlParameterMapper<VmDevice> getBootOrderBatchMapper() {
-        return entity -> new MapSqlParameterSource()
-                .addValue("device_id", entity.getDeviceId())
-                .addValue("vm_id", entity.getVmId())
-                .addValue("boot_order", entity.getBootOrder());
-    }
-
-    @Override
-    public void updateBootOrderInBatch(List<VmDevice> vmDevices) {
-        updateAllInBatch("UpdateVmDeviceBootOrder", vmDevices, getBootOrderBatchMapper());
-    }
 }

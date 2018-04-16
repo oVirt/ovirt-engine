@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -259,12 +257,6 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setDevice(String.valueOf(selectSingleNode(node, OvfProperties.VMD_DEVICE, _xmlNS).innerText));
         } else {
             setDeviceByResource(node, vmDevice);
-        }
-        if (selectSingleNode(node, OvfProperties.VMD_BOOT_ORDER, _xmlNS) != null
-                && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_BOOT_ORDER, _xmlNS).innerText)) {
-            vmDevice.setBootOrder(Integer.parseInt(selectSingleNode(node, OvfProperties.VMD_BOOT_ORDER, _xmlNS).innerText));
-        } else {
-            vmDevice.setBootOrder(0);
         }
         if (selectSingleNode(node, OvfProperties.VMD_IS_PLUGGED, _xmlNS) != null
                 && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_IS_PLUGGED, _xmlNS).innerText)) {
@@ -567,8 +559,8 @@ public abstract class OvfReader implements IOvfBuilder {
 
         // after reading the hardware section, if graphics device is still absent, add a default one
         addDefaultGraphicsDevice();
-        // if boot order is not set, figure out some default based on the set of bootable disks
-        setDefaultBootDevice();
+
+        fixDiskVmElements();
 
         // due to dependency on vmBase.getOsId() must be read AFTER readOsSection
         node = selectSingleNode(content, OvfProperties.TIMEZONE);
@@ -1043,7 +1035,7 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
-    private void setDefaultBootDevice() {
+    private void fixDiskVmElements() {
         // In the time of disk creation the VM ID is an empty Guid, this is changed to the real ID only after the reading
         // of the OS properties which comes after the disks creation so the disk VM elements are set to the wrong VM ID
         // this part sets them to the correct VM ID
@@ -1051,20 +1043,6 @@ public abstract class OvfReader implements IOvfBuilder {
             disk.getDiskVmElements().stream().forEach(dve -> dve.setId(new VmDeviceId(disk.getId(), vmBase.getId())));
             disk.setDiskVmElements(disk.getDiskVmElements());
         }
-
-        boolean hasBootDevice =
-                vmBase.getManagedDeviceMap().values().stream()
-                        .anyMatch(device -> device.getBootOrder() > 0);
-        if (hasBootDevice) {
-            return;
-        }
-
-        AtomicInteger order = new AtomicInteger(1);  // regular non-final variable cannot be used in lambda expression
-        _images.stream()
-                .filter(d -> d.getDiskVmElementForVm(vmBase.getId()).isBoot())
-                .map(image -> vmBase.getManagedDeviceMap().get(image.getId()))
-                .filter(Objects::nonNull)
-                .forEachOrdered(device -> device.setBootOrder(order.getAndIncrement()));
     }
 
     private static Map<String, Object> getMapNode(XmlNode node) {

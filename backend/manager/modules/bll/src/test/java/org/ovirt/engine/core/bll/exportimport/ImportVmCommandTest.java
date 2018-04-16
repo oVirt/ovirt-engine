@@ -147,7 +147,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         Map<String, Object> specParams = new HashMap<>();
         specParams.put(VdsProperties.Model, VdsProperties.Virtio);
         VmDevice balloon = new VmDevice(new VmDeviceId(deviceId, vm.getId()),
-                VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON.toString(), null, 0, specParams,
+                VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON.toString(), null, specParams,
                 true, true, true, null, null, null, null);
 
         vm.getManagedVmDeviceMap().put(deviceId, balloon);
@@ -157,7 +157,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         Guid deviceId = Guid.newGuid();
         Map<String, Object> specParams = new HashMap<>();
         VmDevice sound = new VmDevice(new VmDeviceId(deviceId, vm.getId()),
-                VmDeviceGeneralType.SOUND, "", null, 0, specParams,
+                VmDeviceGeneralType.SOUND, "", null, specParams,
                 true, true, true, null, null, null, null);
 
         vm.getManagedVmDeviceMap().put(deviceId, sound);

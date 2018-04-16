@@ -1172,41 +1172,6 @@ public class VmDeviceUtils {
     }
 
     /*
-     * Boot order
-     */
-
-    /**
-     * If default boot sequence differs in the old and new VMs, updates boot order in all devices in the new VM
-     * according to the new default boot sequence. Stores the updated devices in the DB.
-     */
-    private void updateBootOrder(VmBase oldVmBase, VmBase newVmBase) {
-        if (oldVmBase.getDefaultBootSequence() != newVmBase.getDefaultBootSequence()) {
-            updateBootOrder(newVmBase.getId());
-        }
-    }
-
-    /**
-     * Updates boot order in all devices in the VM according to the default boot sequence.
-     * Stores the updated devices in the DB.
-     */
-    public void updateBootOrder(Guid vmId) {
-        VM vm = vmDao.get(vmId);
-        if (vm != null) {
-            // Returns the devices sorted in ascending order
-            List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId);
-            // Reset current boot order
-            for (VmDevice device: devices) {
-                device.setBootOrder(0);
-            }
-            vmHandler.updateDisksForVm(vm, diskDao.getAllForVm(vmId));
-            vmHandler.updateDisksVmDataForVm(vm);
-            vmHandler.updateNetworkInterfacesFromDb(vm);
-            VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices);
-            vmDeviceDao.updateBootOrderInBatch(devices);
-        }
-    }
-
-    /*
      * Generic device methods
      */
 
@@ -1279,7 +1244,6 @@ public class VmDeviceUtils {
         }
 
         updateCdPath(oldVmBase, newVmBase);
-        updateBootOrder(oldVmBase, newVmBase);
         updateVideoDevices(oldVmBase, newVmBase);
         updateUsbSlots(oldVmBase, newVmBase);
         updateMemoryBalloon(newVmBase.getId(), params.isBalloonEnabled());
@@ -1510,7 +1474,6 @@ public class VmDeviceUtils {
         }
 
         if (dstIsVm) {
-            updateBootOrder(dstVmBase.getId());
             addVideoDevices(dstVmBase, getNeededNumberOfVideoDevices(dstVmBase));
         }
     }
@@ -1629,7 +1592,6 @@ public class VmDeviceUtils {
                         generalType,
                         type.getName(),
                         StringUtils.isNotBlank(address) ? address : "",
-                        0,
                         specParams,
                         true,
                         isPlugged,
@@ -1639,11 +1601,6 @@ public class VmDeviceUtils {
                         null,
                         null);
         vmDeviceDao.save(managedDevice);
-
-        // If we've added Disk/Interface/CD/Floppy, we have to recalculate boot order
-        if (generalType == VmDeviceGeneralType.DISK || generalType == VmDeviceGeneralType.INTERFACE) {
-            updateBootOrder(id.getVmId());
-        }
 
         return managedDevice;
     }
@@ -1761,7 +1718,6 @@ public class VmDeviceUtils {
         VmDevice exportedDevice = vmBase.getManagedDeviceMap().get(deviceId);
         if (exportedDevice != null) {
             vmDevice.setAddress(exportedDevice.getAddress());
-            vmDevice.setBootOrder(exportedDevice.getBootOrder());
             vmDevice.setIsPlugged(exportedDevice.getIsPlugged());
             vmDevice.setIsReadOnly(exportedDevice.getIsReadOnly());
             vmDevicesToUpdate.add(vmDevice);
@@ -1859,7 +1815,6 @@ public class VmDeviceUtils {
                                     update.getGeneralType(),
                                     update.getType().getName(),
                                     "",
-                                    0,
                                     Collections.emptyMap(),
                                     true,
                                     true,
@@ -1911,7 +1866,6 @@ public class VmDeviceUtils {
                     VmDeviceGeneralType.VIDEO,
                     vmVideoDeviceTypeforNextRun.toString(),
                     "",
-                    0,
                     Collections.emptyMap(),
                     true,
                     true,

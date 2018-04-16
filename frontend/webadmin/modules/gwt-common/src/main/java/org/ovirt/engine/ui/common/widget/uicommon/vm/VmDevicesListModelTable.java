@@ -29,7 +29,6 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
         addGeneralTypeColumn();
         addDeviceTypeColumn();
         addAddressColumn();
-        addBootOrderColumn();
         addReadOnlyColumn();
         addPluggedColumn();
         addManagedColumn();
@@ -111,21 +110,6 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
         };
         managedColumn.makeSortable();
         getTable().addColumn(managedColumn, constants.deviceManagedAlias(), "70px"); //$NON-NLS-1$
-    }
-
-    private void addBootOrderColumn() {
-        final AbstractTextColumn<VmDevice> bootOrderColumn = new AbstractTextColumn<VmDevice>() {
-            @Override
-            public String getValue(VmDevice device) {
-                if (device.getBootOrder() != 0) {
-                    return String.valueOf(device.getBootOrder());
-                } else {
-                    return ""; //$NON-NLS-1$
-                }
-            }
-        };
-        bootOrderColumn.makeSortable();
-        getTable().addColumn(bootOrderColumn , constants.deviceBootOrderAlias(), "70px"); //$NON-NLS-1$
     }
 
     private void addSpecParamsColumn() {

@@ -44,6 +44,7 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
     /**
      * The device boot order (if applicable).
      */
+    @TransientField
     private int bootOrder;
 
     /**
@@ -98,7 +99,6 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
     }
 
     public VmDevice(VmDeviceId id, VmDeviceGeneralType type, String device, String address,
-                    int bootOrder,
                     Map<String, Object> specParams,
                     boolean isManaged,
                     Boolean isPlugged,
@@ -111,7 +111,6 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
         this.type = type;
         this.device = device;
         this.address = address;
-        this.bootOrder = bootOrder;
         this.specParams = specParams;
         this.isManaged = isManaged;
         this.isPlugged = isPlugged;
@@ -264,7 +263,6 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 device,
                 type,
                 address,
-                bootOrder,
                 specParams,
                 isManaged,
                 isPlugged,
@@ -290,7 +288,6 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 && device.equals(other.device)
                 && type.equals(other.type)
                 && address.equals(other.address)
-                && bootOrder == other.bootOrder
                 && Objects.equals(specParams, other.specParams)
                 && isManaged == other.isManaged
                 && getIsPlugged() == other.getIsPlugged()
@@ -308,7 +305,6 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
                 .append("id", id)
                 .append("device", getDevice())
                 .append("type", getType())
-                .append("bootOrder", getBootOrder())
                 .append("specParams", getSpecParams())
                 .append("address", getAddress())
                 .append("managed", getIsManaged())
