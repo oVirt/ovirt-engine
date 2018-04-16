@@ -63,7 +63,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
     public ReportedConfigurations reportConfigurationsOnHost () {
         ReportedConfigurations result = new ReportedConfigurations();
 
-        result.add(ReportedConfigurationType.MTU, iface.getMtu(), NetworkUtils.getMtuActualValue(network),
+        result.add(ReportedConfigurationType.MTU, iface.getMtu(), NetworkUtils.getHostMtuActualValue(network),
                 isNetworkMtuInSync());
         result.add(ReportedConfigurationType.BRIDGED, iface.isBridged(), network.isVmNetwork());
         result.add(ReportedConfigurationType.VLAN, iface.getVlanId(), network.getVlanId());
@@ -101,9 +101,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     private boolean isNetworkMtuInSync() {
-        boolean ifaceValueSetToDefaultMtu = iface.getMtu() == NetworkUtils.getDefaultMtu();
-        boolean bothUsesDefaultValue = network.isDefaultMtu() && ifaceValueSetToDefaultMtu;
-        return bothUsesDefaultValue || iface.getMtu() == network.getMtu();
+        return iface.getMtu() == NetworkUtils.getHostMtuActualValue(network);
     }
 
     private boolean isIpv4NetworkSubnetInSync() {

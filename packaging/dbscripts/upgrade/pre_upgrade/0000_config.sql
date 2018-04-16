@@ -613,6 +613,7 @@ select fn_db_add_config_value('DefaultSerialNumberPolicy','HOST_ID','general');
 select fn_db_add_config_value('DefaultCustomSerialNumber','Dummy serial number.','general');
 
 select fn_db_add_config_value('DefaultMTU', '1500', 'general');
+select fn_db_add_config_value('TunnelledDefaultMTU', '1442', 'general');
 
 select fn_db_add_config_value('FenceKdumpDestinationAddress','','general');
 select fn_db_add_config_value('FenceKdumpDestinationPort','7410','general');

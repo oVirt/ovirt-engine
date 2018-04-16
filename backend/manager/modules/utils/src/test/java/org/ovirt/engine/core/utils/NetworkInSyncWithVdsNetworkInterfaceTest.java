@@ -98,6 +98,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         iface.setQos(ifaceQos);
         iface.setReportedSwitchType(SwitchType.LEGACY);
         iface.setIpv4DefaultRoute(false);
+        iface.setMtu(getDefaultHostMtu());
 
         network = new Network();
         network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
@@ -206,6 +207,10 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         ifaceQos.setOutAverageRealtime(1);
         networkQos.setOutAverageRealtime(2);
         assertThat(createTestedInstanceWithSameNonQosValues().isNetworkInSync(), is(false));
+    }
+
+    private int getDefaultHostMtu() {
+        return NetworkUtils.getHostMtuActualValue(new Network());
     }
 
     private NetworkInSyncWithVdsNetworkInterface createTestedInstanceWithSameNonQosValues() {

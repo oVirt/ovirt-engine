@@ -81,8 +81,8 @@ public class NetworkMtuValidator {
             return true;
         }
 
-        int nonVlanNetworkActualMtu = NetworkUtils.getMtuActualValue(nonVlanNetwork);
-        return networksOnNic.stream().map(network -> NetworkUtils.getMtuActualValue(network)).noneMatch(
+        int nonVlanNetworkActualMtu = NetworkUtils.getHostMtuActualValue(nonVlanNetwork);
+        return networksOnNic.stream().map(network -> NetworkUtils.getHostMtuActualValue(network)).noneMatch(
                 networkMtu -> networkMtu != nonVlanNetworkActualMtu);
     }
 }
