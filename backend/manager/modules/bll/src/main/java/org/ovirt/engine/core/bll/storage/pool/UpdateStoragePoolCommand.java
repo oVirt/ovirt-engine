@@ -310,8 +310,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 List<Network> networks = networkDao.getAllForDataCenter(getStoragePoolId());
                 for (Network network : networks) {
                     NetworkValidator validator = getNetworkValidator(network);
-                    if (!getManagementNetworkUtil().isManagementNetwork(network.getId())
-                            || !validator.canNetworkCompatibilityBeDecreased()) {
+                    if (!getManagementNetworkUtil().isManagementNetwork(network.getId())) {
                         return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
                     }
                 }

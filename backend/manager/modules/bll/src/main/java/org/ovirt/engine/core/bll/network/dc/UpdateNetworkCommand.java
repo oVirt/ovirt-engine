@@ -134,7 +134,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         final UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork(), vmDao, interfaceDao);
         return validate(hasStoragePoolValidator.storagePoolExists())
                 && validate(validatorNew.stpForVmNetworkOnly())
-                && validate(validatorNew.mtuValid())
                 && validate(validatorNew.networkPrefixValid())
                 && validate(validatorNew.qosExistsInDc())
                 && validate(validatorOld.networkIsSet(getNetwork().getId()))

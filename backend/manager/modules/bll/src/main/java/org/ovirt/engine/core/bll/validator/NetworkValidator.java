@@ -70,13 +70,6 @@ public class NetworkValidator {
     }
 
     /**
-     * @return {@link ValidationResult#VALID}, This method exists only so it could be overridden.
-     */
-    public ValidationResult mtuValid() {
-        return ValidationResult.VALID;
-    }
-
-    /**
      * @return An error iff network is named as if it were a bond.
      */
     public ValidationResult networkPrefixValid() {
@@ -270,10 +263,6 @@ public class NetworkValidator {
         }
 
         return templates;
-    }
-
-    public boolean canNetworkCompatibilityBeDecreased() {
-        return mtuValid().isValid();
     }
 
     public ValidationResult isVmNetwork() {

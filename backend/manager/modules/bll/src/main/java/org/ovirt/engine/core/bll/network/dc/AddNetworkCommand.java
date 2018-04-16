@@ -101,7 +101,6 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         AddNetworkValidator validator = getNetworkValidator();
         return validate(hasStoragePoolValidator.storagePoolExists())
                 && validate(validator.stpForVmNetworkOnly())
-                && validate(validator.mtuValid())
                 && validate(validator.networkPrefixValid())
                 && validate(validator.networkNameNotUsed())
                 && validate(validator.networkNameNotUsedAsVdsmName())

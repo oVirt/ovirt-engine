@@ -130,11 +130,6 @@ public class NetworkValidatorTest {
         stpTest(isValid(), false, false);
     }
 
-    @Test
-    public void mtuValid() {
-        assertThat(validator.mtuValid(), isValid());
-    }
-
     private void networkPrefixValidTest(Matcher<ValidationResult> matcher, String networkName) {
         when(network.getName()).thenReturn(networkName);
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
-import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -179,39 +177,11 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void lowerVersionMgmtNetworkAndRegularNetworks() {
-        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
-        addNonDefaultClusterToPool();
-        addManagementNetworkToPool();
-        addNonManagementNetworksToPool(2);
-        setupNetworkValidator(true);
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
-    }
-
-    @Test
     public void lowerVersionHostsAndNetwork() {
         cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
         addNonDefaultClusterToPool();
         addHostsToCluster();
         addNonManagementNetworkToPool();
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
-    }
-
-    @Test
-    public void lowerVersionMgmtNetworkSupportedFeatures() {
-        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
-        addNonDefaultClusterToPool();
-        addManagementNetworksToPool(2);
-        setupNetworkValidator(true);
-        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
-    }
-
-    @Test
-    public void lowerVersionMgmtNetworkNonSupportedFeatures() {
-        cmd.getStoragePool().setCompatibilityVersion(VERSION_1_0);
-        addNonDefaultClusterToPool();
-        addManagementNetworksToPool(2);
-        setupNetworkValidator(false);
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_CANNOT_DECREASE_DATA_CENTER_COMPATIBILITY_VERSION);
     }
 
@@ -318,12 +288,6 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
         Network network = new Network();
         network.setId(networkId);
         return network;
-    }
-
-    private void setupNetworkValidator(boolean valid) {
-        NetworkValidator validator = mock(NetworkValidator.class);
-        when(validator.canNetworkCompatibilityBeDecreased()).thenReturn(valid);
-        when(cmd.getNetworkValidator(any())).thenReturn(validator);
     }
 
     private void addNonManagementNetworkToPool() {
