@@ -38,12 +38,21 @@ public final class NetworkUtils {
     private static final Logger log = LoggerFactory.getLogger(NetworkUtils.class);
     private static final Pattern VALID_VDS_NAME_PATTERN = Pattern.compile(
             String.format("^[0-9a-zA-Z_-]{1,%d}$", BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH));
-    public static Integer getDefaultMtu() {
+    private static Integer getHostDefaultMtu() {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }
 
-    public static int getMtuActualValue(Network network) {
-        return network.isDefaultMtu() ? NetworkUtils.getDefaultMtu() : network.getMtu();
+    private static Integer getVmDefaultMtu(Network network) {
+        return network.isTunnelled() ?
+                Config.<Integer> getValue(ConfigValues.TunnelledDefaultMTU) : getHostDefaultMtu();
+    }
+
+    public static int getVmMtuActualValue(Network network) {
+        return network.isDefaultMtu() ? NetworkUtils.getVmDefaultMtu(network) : network.getMtu();
+    }
+
+    public static int getHostMtuActualValue(Network network) {
+        return network.isDefaultMtu() ? NetworkUtils.getHostDefaultMtu() : network.getMtu();
     }
 
     /**

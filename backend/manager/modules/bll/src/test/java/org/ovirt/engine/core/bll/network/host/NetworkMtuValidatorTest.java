@@ -57,7 +57,7 @@ public class NetworkMtuValidatorTest {
         Network networkA = createNetwork(0, false, "netA");
         networkA.setVlanId(11);
 
-        Network networkB = createNetwork(NetworkUtils.getDefaultMtu(), false, "netB");
+        Network networkB = createNetwork(getDefaultHostMtu(), false, "netB");
 
         List<Network> networks = Arrays.asList(networkA, networkB);
         Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
@@ -109,6 +109,10 @@ public class NetworkMtuValidatorTest {
         assertThat(networksOnNics.get(nicAName), CoreMatchers.hasItems(networkA, networkB));
         assertThat(networksOnNics.get(nicCName).size(), is(1));
         assertThat(networksOnNics.get(nicCName), CoreMatchers.hasItems(networkC));
+    }
+
+    private int getDefaultHostMtu() {
+        return NetworkUtils.getHostMtuActualValue(new Network());
     }
 
     private NetworkAttachment createNetworkAttachment(Network networkA, String nicAName) {

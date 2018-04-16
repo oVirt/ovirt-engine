@@ -1220,6 +1220,12 @@ public enum ConfigValues {
     DefaultMTU(ClientAccessLevel.Admin),
 
     /**
+     * The default MTU (in Bytes) for tunnelled networks.
+     */
+    @TypeConverterAttribute(Integer.class)
+    TunnelledDefaultMTU(ClientAccessLevel.Admin),
+
+    /**
      * Defines the hostname(s) or IP address(es) to send fence_kdump messages to. If empty, engine FQDN is used.
      */
     @TypeConverterAttribute(String.class)

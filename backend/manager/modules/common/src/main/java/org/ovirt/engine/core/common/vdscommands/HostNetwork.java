@@ -66,8 +66,8 @@ public class HostNetwork {
         return network.getVlanId() != null;
     }
 
-    public int getMtu() {
-        return network.getMtu();
+    public Network getNetwork() {
+        return network;
     }
 
     public boolean isVmNetwork() {
@@ -199,7 +199,6 @@ public class HostNetwork {
                 .append("vdsmName", getVdsmName())
                 .append("nicName", getNicName())
                 .append("vlan", getVlan())
-                .append("mtu", getMtu())
                 .append("vmNetwork", isVmNetwork())
                 .append("stp", isStp())
                 .append("properties", getProperties())

@@ -65,11 +65,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
             attributes.put("vlan", hostNetwork.getVlan().toString());
         }
 
-        if (hostNetwork.getMtu() == 0) {
-            attributes.put(VdsProperties.MTU, NetworkUtils.getDefaultMtu());
-        } else {
-            attributes.put(VdsProperties.MTU, hostNetwork.getMtu());
-        }
+        attributes.put(VdsProperties.MTU, NetworkUtils.getHostMtuActualValue(hostNetwork.getNetwork()));
 
         attributes.put("bridged", Boolean.toString(hostNetwork.isVmNetwork()));
         if (hostNetwork.isVmNetwork()) {

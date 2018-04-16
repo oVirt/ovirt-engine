@@ -229,6 +229,10 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
         return providedBy != null;
     }
 
+    public boolean isTunnelled() {
+        return isExternal() && getProvidedBy().getPhysicalNetworkId()==null;
+    }
+
     public String getLabel() {
         return label;
     }
