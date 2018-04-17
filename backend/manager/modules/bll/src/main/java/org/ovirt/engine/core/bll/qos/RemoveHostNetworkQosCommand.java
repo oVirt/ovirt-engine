@@ -12,9 +12,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-public class RemoveHostNetworkQosCommand
-        extends RemoveQosCommandBase<HostNetworkQos, HostNetworkQosValidator, HostNetworkQosDao> {
-
+public class RemoveHostNetworkQosCommand extends RemoveQosCommandBase<HostNetworkQos, HostNetworkQosValidator> {
     @Inject
     private RefreshNetworksParametersFactory refreshNetworksParametersFactory;
     @Inject
@@ -22,6 +20,12 @@ public class RemoveHostNetworkQosCommand
 
     public RemoveHostNetworkQosCommand(QosParametersBase<HostNetworkQos> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected HostNetworkQosDao getQosDao() {
+        //might NOT be replaced with injection; superclass constructor accesses this and thus this dao would be null.
+        return hostNetworkQosDao;
     }
 
     @Override

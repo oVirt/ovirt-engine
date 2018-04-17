@@ -1,16 +1,13 @@
 package org.ovirt.engine.core.bll.qos;
 
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dao.qos.QosDao;
 
-public abstract class UpdateQosCommandBase<T extends QosBase, M extends QosValidator<T>, D extends QosDao<T>>
-        extends QosCommandBase<T, M, D> {
+public abstract class UpdateQosCommandBase<T extends QosBase, M extends QosValidator<T>> extends QosCommandBase<T, M> {
 
     public UpdateQosCommandBase(QosParametersBase<T> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

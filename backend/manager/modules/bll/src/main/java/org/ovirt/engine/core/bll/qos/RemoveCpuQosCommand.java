@@ -11,15 +11,20 @@ import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.qos.CpuQosDao;
+import org.ovirt.engine.core.dao.qos.QosDao;
 
-public class RemoveCpuQosCommand extends RemoveQosCommandBase<CpuQos, QosValidator<CpuQos>, CpuQosDao> {
+public class RemoveCpuQosCommand extends RemoveQosCommandBase<CpuQos, QosValidator<CpuQos>> {
 
     @Inject
     VmSlaPolicyUtils vmSlaPolicyUtils;
 
     public RemoveCpuQosCommand(QosParametersBase<CpuQos> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected QosDao<CpuQos> getQosDao() {
+        return cpuQosDao;
     }
 
     @Override

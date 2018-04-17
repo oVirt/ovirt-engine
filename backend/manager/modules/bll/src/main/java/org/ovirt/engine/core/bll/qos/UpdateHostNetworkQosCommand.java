@@ -11,14 +11,18 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 
-public class UpdateHostNetworkQosCommand
-        extends UpdateQosCommandBase<HostNetworkQos, HostNetworkQosValidator, HostNetworkQosDao> {
+public class UpdateHostNetworkQosCommand extends UpdateQosCommandBase<HostNetworkQos, HostNetworkQosValidator> {
 
     @Inject
     private RefreshNetworksParametersFactory refreshNetworksParametersFactory;
 
     public UpdateHostNetworkQosCommand(QosParametersBase<HostNetworkQos> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected HostNetworkQosDao getQosDao() {
+        return hostNetworkQosDao;
     }
 
     @Override

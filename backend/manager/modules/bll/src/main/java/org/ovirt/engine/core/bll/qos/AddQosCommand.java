@@ -8,10 +8,8 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.qos.QosDao;
 
-public abstract class AddQosCommand<T extends QosBase, M extends QosValidator<T>, D extends QosDao<T>>
-        extends QosCommandBase<T, M, D> {
+public abstract class AddQosCommand<T extends QosBase, M extends QosValidator<T>> extends QosCommandBase<T, M> {
 
     public AddQosCommand(QosParametersBase<T> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

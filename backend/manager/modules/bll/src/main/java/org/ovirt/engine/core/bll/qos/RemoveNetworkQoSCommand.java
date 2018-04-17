@@ -5,12 +5,17 @@ import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.qos.QosDao;
 
-public class RemoveNetworkQoSCommand extends RemoveQosCommandBase<NetworkQoS, NetworkQosValidator, NetworkQoSDao> {
+public class RemoveNetworkQoSCommand extends RemoveQosCommandBase<NetworkQoS, NetworkQosValidator> {
 
     public RemoveNetworkQoSCommand(QosParametersBase<NetworkQoS> parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected QosDao<NetworkQoS> getQosDao() {
+        return networkQosDao;
     }
 
     @Override
