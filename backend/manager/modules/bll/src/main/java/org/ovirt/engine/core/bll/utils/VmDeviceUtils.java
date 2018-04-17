@@ -1745,6 +1745,7 @@ public class VmDeviceUtils {
                     break;
 
                 case GRAPHICS:
+                case CONSOLE:
                     vmDevice.setPlugged(true);
                     break;
 
