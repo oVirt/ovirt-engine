@@ -36,7 +36,6 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
@@ -82,7 +81,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -98,8 +96,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     private String cachedSnapshotIsBeingTakenMessage;
 
     @Inject
-    private VmDao vmDao;
-    @Inject
     private AuditLogDirector auditLogDirector;
     @Inject
     private VmOverheadCalculator vmOverheadCalculator;
@@ -109,8 +105,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     private MemoryStorageHandler memoryStorageHandler;
     @Inject
     private SnapshotDao snapshotDao;
-    @Inject
-    private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     private ImageDao imageDao;
     @Inject

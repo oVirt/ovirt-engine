@@ -103,9 +103,7 @@ public class VmDeviceCommonUtils {
         int bootOrder = 0;
 
         // reset current boot order of all relevant devices before recomputing it.
-        for (VmDevice device : devices) {
-            device.setBootOrder(0);
-        }
+        devices.forEach(device -> device.setBootOrder(0));
 
         switch (bootSequence) {
         case C:

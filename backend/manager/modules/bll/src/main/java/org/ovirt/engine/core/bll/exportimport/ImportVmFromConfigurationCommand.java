@@ -179,7 +179,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     protected void init() {
         VM vmFromConfiguration = getParameters().getVm();
         if (vmFromConfiguration != null) {
-            vmFromConfiguration.getStaticData().setClusterId(getParameters().getClusterId());
+            vmFromConfiguration.setClusterId(getParameters().getClusterId());
             if (!isImagesAlreadyOnTarget()) {
                 setDisksToBeAttached(vmFromConfiguration);
             }
@@ -273,6 +273,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
         }
     }
 
+    @Override
     protected void addPermissionsToDB() {
         if (isImagesAlreadyOnTarget()) {
             drMappingHelper.addPermissions(getParameters().getDbUsers(),
