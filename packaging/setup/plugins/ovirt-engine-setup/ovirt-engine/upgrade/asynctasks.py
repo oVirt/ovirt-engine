@@ -337,6 +337,7 @@ class Plugin(plugin.PluginBase):
             '-t', 'all',
             '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
             '-i',
+            '-f',
         )
         envPwd = {
             'DBFUNC_DB_PGPASSFILE': self.environment[

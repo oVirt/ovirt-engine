@@ -238,13 +238,14 @@ TYPE=
 RECURSIVE=
 QUERY=
 IMPLICIT=
+FORCE_ACTION=
 
 DBFUNC_DB_HOST="${ENGINE_DB_HOST}"
 DBFUNC_DB_PORT="${ENGINE_DB_PORT}"
 DBFUNC_DB_USER="${ENGINE_DB_USER}"
 DBFUNC_DB_DATABASE="${ENGINE_DB_DATABASE}"
 
-while getopts hvl:t:rqic option; do
+while getopts hvl:t:rqicf option; do
 	case $option in
 		\?) usage; exit 1;;
 		h) usage; exit 0;;
@@ -255,6 +256,7 @@ while getopts hvl:t:rqic option; do
 		q) QUERY=1;;
 		i) IMPLICIT=1;;
 		c) DBFUNC_SHOW_HEADERS=1;;
+		f) FORCE_ACTION=1;;
 	esac
 done
 
@@ -279,14 +281,18 @@ dbfunc_init
 dbfunc_psql_die --file="$(dirname "$0")/unlock_entity.sql" > /dev/null
 
 print_caution_msg() {
-	    echo ""
-	    echo "##########################################"
-	    echo "CAUTION, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
-	    echo "##########################################"
-	    echo ""
-	    echo "Are you sure you want to proceed? [y/n]"
-	    read answer
-	    [ "${answer}" = "y" ] || die "Please contact support for further assistance."
+	echo ""
+	echo "##########################################"
+	echo "CAUTION, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
+	echo "##########################################"
+	echo ""
+	echo "Are you sure you want to proceed? [y/n]"
+        if [ -n "${FORCE_ACTION}" ]; then
+		answer="y"
+	else
+		read answer
+	fi
+	[ "${answer}" = "y" ] || die "Please contact support for further assistance."
 }
 # Execute
 if [ -n "${QUERY}" ]; then
