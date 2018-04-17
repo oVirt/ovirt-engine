@@ -66,7 +66,6 @@
     <suppress checks="TypeName" files="org[\\/]ovirt[\\/]engine[\\/]core[\\/]common[\\/]queries[\\/].*_CustomFieldSerializer.java"/>
 
     <!-- VDSBroker names which must match the VDSM API -->
-    <suppress checks="MethodName" files="VdsServerConnector.java"/>
     <suppress checks="MethodName" files="IVdsServer.java"/>
 
     <!-- Most of the classes in the authentication package aren't used in the
