@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.http.HttpStatus;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NetworkLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -26,13 +27,16 @@ import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.InternalImportExternalNetworkParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,11 +48,14 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.woorea.openstack.base.client.OpenStackResponseException;
+
 @NonTransactiveCommandAttribute
 public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandBase<P> {
 
     private boolean errorOccurred = false;
     private boolean internalCommandTriggered = false;
+    private boolean authenticationFailed = false;
 
     private static Logger log = LoggerFactory.getLogger(SyncNetworkProviderCommand.class);
 
@@ -121,8 +128,7 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
 
     @Override
     protected void executeCommand() {
-        NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
-        List<Network> providedNetworks = proxy.getAll();
+        List<Network> providedNetworks = getAllNetworks();
         Set<String> providedNetworkIds = externalIds(providedNetworks);
         List<Network> providerNetworksInDb = networkDao.getAllForProvider(getProvider().getId());
 
@@ -159,6 +165,30 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
             }
         }
         setSucceeded(!errorOccurred);
+    }
+
+    private List<Network> getAllNetworks() {
+        NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
+        try {
+            return proxy.getAll();
+        } catch (EngineException exception) {
+            if (exception.getCause() instanceof OpenStackResponseException) {
+                OpenStackResponseException cause = (OpenStackResponseException) exception.getCause();
+                if (cause.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
+                    setAuthenticationFailed();
+                    disableAutoSyncOnProvider();
+                }
+            }
+            throw exception;
+        }
+    }
+
+    private void disableAutoSyncOnProvider() {
+        Provider<?> provider = getProvider();
+        OpenstackNetworkProviderProperties networkProperties =
+                (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+        networkProperties.setAutoSync(false);
+        runInternalAction(ActionType.UpdateProvider, new ProviderParameters(provider));
     }
 
     private ActionReturnValue importNetwork(Guid dataCenterId, Network network) {
@@ -228,9 +258,21 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
         return internalCommandTriggered;
     }
 
+    private boolean isAuthenticationFailed() {
+        return authenticationFailed;
+    }
+
+    private void setAuthenticationFailed() {
+        this.authenticationFailed = true;
+    }
+
     @Override
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("ProviderName", getProviderName());
+
+        if (isAuthenticationFailed()) {
+            return AuditLogType.PROVIDER_SYNCHRONIZED_DISABLED;
+        }
 
         if (isInternalCommandTriggered() && getSucceeded()) {
             return AuditLogType.PROVIDER_SYNCHRONIZED_PERFORMED;
