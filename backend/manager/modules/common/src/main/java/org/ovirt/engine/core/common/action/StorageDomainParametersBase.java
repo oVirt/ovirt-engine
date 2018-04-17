@@ -5,10 +5,16 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageDomainParametersBase extends StoragePoolParametersBase {
     private static final long serialVersionUID = -3426166529161499883L;
 
+    public enum Phase {
+        PROCESS_OVF_UPDATE_FOR_STORAGE_POOL,
+        PROCESS_OVF_UPDATE_FOR_STORAGE_DOMAIN
+    }
+
     private Guid storageDomainId;
     private boolean isInternal;
     private Guid quotaId;
     private Guid diskProfileId;
+    private Phase phase = Phase.PROCESS_OVF_UPDATE_FOR_STORAGE_POOL;
 
     public StorageDomainParametersBase() {
         storageDomainId = Guid.Empty;
@@ -62,5 +68,13 @@ public class StorageDomainParametersBase extends StoragePoolParametersBase {
 
     public void setDiskProfileId(Guid diskProfileId) {
         this.diskProfileId = diskProfileId;
+    }
+
+    public Phase getPhase() {
+        return phase;
+    }
+
+    public void setPhase(Phase phase) {
+        this.phase = phase;
     }
 }

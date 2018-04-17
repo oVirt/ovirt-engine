@@ -91,7 +91,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
         StorageDomainParametersBase params = new StorageDomainParametersBase(getStorageDomainId());
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
-        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        params.setEndProcedure(EndProcedure.PARENT_MANAGED);
         return params;
     }
 
