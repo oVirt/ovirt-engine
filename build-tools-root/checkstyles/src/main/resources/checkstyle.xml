@@ -50,6 +50,7 @@
     <module name="IllegalInstantiation"/>
     <module name="LeftCurly"/>
     <module name="MethodName" />
+    <module name="MissingOverride" />
     <module name="ModifierOrder" />
     <module name="MultipleVariableDeclarations" />
     <module name="NeedBraces" />
