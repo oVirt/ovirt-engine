@@ -1749,9 +1749,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             vm.getRngSourceUrandom().setEntity(false);
         });
 
-        // TODO: This is a hack and should be handled cleanly via model property availability
-        isAutoAssignEditor.addDomHandler(event -> defaultHostEditor.setEnabled(false), ClickEvent.getType());
-
         vm.getIsAutoAssign().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (!isAutoAssignEditor.asRadioButton().getValue()) {
                     specificHost.asRadioButton().setValue(true, true);

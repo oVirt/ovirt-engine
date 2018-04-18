@@ -539,8 +539,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
         });
 
-        isAutoAssignEditor.addDomHandler(event -> defaultHostEditor.setEnabled(false), ClickEvent.getType());
-
         object.getIsAutoAssign().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (!isAutoAssignEditor.asRadioButton().getValue()) {
                 specificHost.setValue(true, true);
