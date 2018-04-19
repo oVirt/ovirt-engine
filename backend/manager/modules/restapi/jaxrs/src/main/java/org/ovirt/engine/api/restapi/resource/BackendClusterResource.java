@@ -114,7 +114,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public NetworkFiltersResource getNetworkFiltersResource() {
-        return null;
+        return inject(new BackendNetworkFiltersResource());
     }
 
     protected Guid getDataCenterId(Cluster cluster) {
