@@ -40,11 +40,6 @@ public class PerHostMessages {
 
     @NotNull
     public List<String> getMessages(Guid hostId) {
-        if (messages.containsKey(hostId)) {
-            return messages.get(hostId);
-        }
-        else {
-            return Collections.emptyList();
-        }
+        return messages.getOrDefault(hostId, Collections.emptyList());
     }
 }
