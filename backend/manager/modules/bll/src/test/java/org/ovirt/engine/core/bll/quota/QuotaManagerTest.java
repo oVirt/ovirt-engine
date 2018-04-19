@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.bll.quota;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,42 +38,16 @@ import org.ovirt.engine.core.dao.QuotaDao;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class QuotaManagerTest {
 
-    private static final Guid STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED = new Guid("00000000-0000-0000-0000-000000000011");
-    private static final Guid STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD = new Guid("00000000-0000-0000-0000-000000000012");
-    private static final Guid STORAGE_QUOTA_GLOBAL_IN_GRACE = new Guid("00000000-0000-0000-0000-000000000013");
-    private static final Guid STORAGE_QUOTA_GLOBAL_OVER_GRACE = new Guid("00000000-0000-0000-0000-000000000014");
-    private static final Guid STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED = new Guid("00000000-0000-0000-0000-000000000015");
-    private static final Guid STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD = new Guid("00000000-0000-0000-0000-000000000016");
-    private static final Guid STORAGE_QUOTA_SPECIFIC_IN_GRACE = new Guid("00000000-0000-0000-0000-000000000017");
-    private static final Guid STORAGE_QUOTA_SPECIFIC_OVER_GRACE = new Guid("00000000-0000-0000-0000-000000000018");
-
-    private static final Guid VCPU_QUOTA_GLOBAL_NOT_EXCEEDED = new Guid("00000000-0000-0000-0000-000000000021");
-    private static final Guid VCPU_QUOTA_GLOBAL_OVER_THRESHOLD = new Guid("00000000-0000-0000-0000-000000000022");
-    private static final Guid VCPU_QUOTA_GLOBAL_IN_GRACE = new Guid("00000000-0000-0000-0000-000000000023");
-    private static final Guid VCPU_QUOTA_GLOBAL_OVER_GRACE = new Guid("00000000-0000-0000-0000-000000000024");
-    private static final Guid VCPU_QUOTA_SPECIFIC_NOT_EXCEEDED = new Guid("00000000-0000-0000-0000-000000000025");
-    private static final Guid VCPU_QUOTA_SPECIFIC_OVER_THRESHOLD = new Guid("00000000-0000-0000-0000-000000000026");
-    private static final Guid VCPU_QUOTA_SPECIFIC_IN_GRACE = new Guid("00000000-0000-0000-0000-000000000027");
-    private static final Guid VCPU_QUOTA_SPECIFIC_OVER_GRACE = new Guid("00000000-0000-0000-0000-000000000028");
-
-    private static final Guid MEM_QUOTA_GLOBAL_NOT_EXCEEDED = new Guid("00000000-0000-0000-0000-000000000031");
-    private static final Guid MEM_QUOTA_GLOBAL_OVER_THRESHOLD = new Guid("00000000-0000-0000-0000-000000000032");
-    private static final Guid MEM_QUOTA_GLOBAL_IN_GRACE = new Guid("00000000-0000-0000-0000-000000000033");
-    private static final Guid MEM_QUOTA_GLOBAL_OVER_GRACE = new Guid("00000000-0000-0000-0000-000000000034");
-    private static final Guid MEM_QUOTA_SPECIFIC_NOT_EXCEEDED = new Guid("00000000-0000-0000-0000-000000000035");
-    private static final Guid MEM_QUOTA_SPECIFIC_OVER_THRESHOLD = new Guid("00000000-0000-0000-0000-000000000036");
-    private static final Guid MEM_QUOTA_SPECIFIC_IN_GRACE = new Guid("00000000-0000-0000-0000-000000000037");
     private static final Guid DESTINATION_GUID = new Guid("00000000-0000-0000-0000-000000002222");
 
-    private static final Guid MEM_QUOTA_SPECIFIC_OVER_GRACE = new Guid("00000000-0000-0000-0000-000000000038");
     private static final long UNLIMITED_STORAGE = QuotaStorage.UNLIMITED;
     private static final int UNLIMITED_VCPU = QuotaCluster.UNLIMITED_VCPU;
     private static final long UNLIMITED_MEM = QuotaCluster.UNLIMITED_MEM;
 
     private static final Guid DEFAULT_QUOTA_FOR_STORAGE_POOL = new Guid("00000000-0000-0000-0000-123456789000");
 
-    private static final String EXPECTED_EMPTY_CAN_DO_MESSAGE = "Can-Do-Action message was expected to be empty";
-    private static final String EXPECTED_CAN_DO_MESSAGE = "Can-Do-Action message was expected (result: empty)";
+    private static final String EXPECTED_EMPTY_VALIDATE_MESSAGE = "Validate message was expected to be empty";
+    private static final String EXPECTED_VALIDATE_MESSAGE = "Validate message was expected (result: empty)";
 
     @Mock
     private QuotaDao quotaDao;
@@ -89,10 +62,16 @@ public class QuotaManagerTest {
     private int dbCalls = 0;
     private static final String EXPECTED_NUMBER_OF_DB_CALLS = "%d DB calls were expected. %d invoked";
 
+    private Quota quota;
+
     @BeforeEach
     public void setUp() {
-        setStoragePool();
-        mockQuotaDao();
+        storage_pool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
+        storage_pool.setId(new Guid("00000000-0000-0000-0000-000000001111"));
+
+        when(quotaDao.getById(DEFAULT_QUOTA_FOR_STORAGE_POOL)).thenReturn(mockDefaultQuota());
+        when(quotaDao.getDefaultQuotaForStoragePool(any())).thenReturn(mockDefaultQuota());
+
         doReturn(quotaDao).when(quotaManager).getQuotaDao();
         doReturn(quotaManagerAuditLogger).when(quotaManager).getQuotaManagerAuditLogger();
 
@@ -112,52 +91,18 @@ public class QuotaManagerTest {
 
         command.setStoragePool(storage_pool);
         command.getReturnValue().setValidationMessages(validationMessages);
-    }
 
-    private void mockQuotaDao() {
-        doAnswer(i -> mockStorageQuotaGlobalNotExceeded()).when(quotaDao).getById(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED);
-        when(quotaDao.getById(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockStorageQuotaGlobalOverThreshold());
-        when(quotaDao.getById(STORAGE_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockStorageQuotaGlobalInGrace());
-        when(quotaDao.getById(STORAGE_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockStorageQuotaGlobalOverGrace());
-        doAnswer(i -> mockStorageQuotaSpecificNotExceeded()).when(quotaDao).getById(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED);
-        when(quotaDao.getById(STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD)).thenReturn(mockStorageQuotaSpecificOverThreshold());
-        when(quotaDao.getById(STORAGE_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockStorageQuotaSpecificInGrace());
-        when(quotaDao.getById(STORAGE_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockStorageQuotaSpecificOverGrace());
-
-        doAnswer(i -> mockVCPUQuotaGlobalNotExceeded()).when(quotaDao).getById(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED);
-        when(quotaDao.getById(VCPU_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockVCPUQuotaGlobalOverThreshold());
-        when(quotaDao.getById(VCPU_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockVCPUQuotaGlobalInGrace());
-        when(quotaDao.getById(VCPU_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockVCPUQuotaGlobalOverGrace());
-        when(quotaDao.getById(VCPU_QUOTA_SPECIFIC_NOT_EXCEEDED)).thenReturn(mockVCPUQuotaSpecificNotExceeded());
-        when(quotaDao.getById(VCPU_QUOTA_SPECIFIC_OVER_THRESHOLD)).thenReturn(mockVCPUQuotaSpecificOverThreshold());
-        when(quotaDao.getById(VCPU_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockVCPUQuotaSpecificInGrace());
-        when(quotaDao.getById(VCPU_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockVCPUQuotaSpecificOverGrace());
-
-        when(quotaDao.getById(MEM_QUOTA_GLOBAL_NOT_EXCEEDED)).thenReturn(mockMemQuotaGlobalNotExceeded());
-        when(quotaDao.getById(MEM_QUOTA_GLOBAL_OVER_THRESHOLD)).thenReturn(mockMemQuotaGlobalOverThreshold());
-        when(quotaDao.getById(MEM_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockMemQuotaGlobalInGrace());
-        when(quotaDao.getById(MEM_QUOTA_GLOBAL_OVER_GRACE)).thenReturn(mockMemQuotaGlobalOverGrace());
-        doAnswer(i -> mockMemQuotaSpecificNotExceeded()).when(quotaDao).getById(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED);
-        when(quotaDao.getById(MEM_QUOTA_SPECIFIC_OVER_THRESHOLD)).thenReturn(mockMemQuotaSpecificOverThreshold());
-        when(quotaDao.getById(MEM_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockMemQuotaSpecificInGrace());
-        when(quotaDao.getById(MEM_QUOTA_SPECIFIC_OVER_GRACE)).thenReturn(mockMemQuotaSpecificOverGrace());
-        when(quotaDao.getById(DEFAULT_QUOTA_FOR_STORAGE_POOL)).thenReturn(mockDefaultQuota());
-
-        when(quotaDao.getDefaultQuotaForStoragePool(any())).thenReturn(mockDefaultQuota());
-    }
-
-    private void setStoragePool() {
-        storage_pool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
-        storage_pool.setId(new Guid("00000000-0000-0000-0000-000000001111"));
+        quota = mockBasicQuota();
+        when(quotaDao.getById(quota.getId())).thenReturn(quota);
     }
 
     private void assertNotEmptyValidateMessage() {
-        assertTrue(!validationMessages.isEmpty(), EXPECTED_CAN_DO_MESSAGE);
+        assertTrue(!validationMessages.isEmpty(), EXPECTED_VALIDATE_MESSAGE);
         validationMessages.clear();
     }
 
     private void assertEmptyValidateMessage() {
-        assertTrue(validationMessages.isEmpty(), EXPECTED_EMPTY_CAN_DO_MESSAGE);
+        assertTrue(validationMessages.isEmpty(), EXPECTED_EMPTY_VALIDATE_MESSAGE);
     }
 
     private void assertAuditLogWritten() {
@@ -168,288 +113,320 @@ public class QuotaManagerTest {
         verify(quotaManagerAuditLogger).auditLog(eq(null), any());
     }
 
-    private void assertDbWasCalled(int expectedNumOfCalls) {
-        assertEquals(expectedNumOfCalls, dbCalls, String.format(EXPECTED_NUMBER_OF_DB_CALLS, expectedNumOfCalls, dbCalls));
-        dbCalls = 0;
-    }
-
-    private boolean consumeForStorageQuota(Guid quotaId) {
+    private boolean consumeForStorageQuota(double requestedStorageGB) {
         return quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
-                quotaId, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1d
+                quota.getId(), QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, requestedStorageGB
         )));
     }
 
-    private boolean consumeForVdsQuota(Guid quotaId) {
+    private boolean consumeForClusterQuota(int requestedCpu, long requestedMemory) {
         return quotaManager.consume(command, Collections.singletonList(new QuotaClusterConsumptionParameter(
-                quotaId, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 1
+                quota.getId(), QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, requestedCpu, requestedMemory
         )));
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaGlobalNotExceeded() {
-        assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED));
+    public void testConsumeStorageQuotaGlobalNotExceeded() {
+        quota.setGlobalQuotaStorage(getQuotaStorage(100, 9));
+
+        assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaGlobalOverThreshold() {
-        assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD));
+    public void testConsumeStorageQuotaGlobalOverThreshold() {
+        quota.setGlobalQuotaStorage(getQuotaStorage(100, 83));
+
+        assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaGlobalInGrace() {
-        assertTrue(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_IN_GRACE));
+    public void testConsumeStorageQuotaGlobalInGrace() {
+        quota.setGlobalQuotaStorage(getQuotaStorage(100, 104));
+
+        assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaGlobalOverGrace() {
-        assertFalse(consumeForStorageQuota(STORAGE_QUOTA_GLOBAL_OVER_GRACE));
+    public void testConsumeStorageQuotaGlobalOverGrace() {
+        quota.setGlobalQuotaStorage(getQuotaStorage(100, 140));
+
+        assertFalse(consumeForStorageQuota(1d));
         assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaSpecificNotExceeded() {
-        assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED));
+    public void testConsumeStorageQuotaSpecificNotExceeded() {
+        quota.setQuotaStorages(getQuotaStorages(100, 73));
+
+        assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaSpecificOverThreshold() {
-        assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD));
+    public void testConsumeStorageQuotaSpecificOverThreshold() {
+        quota.setQuotaStorages(getQuotaStorages(100, 92));
+
+        assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaSpecificInGrace() {
-        assertTrue(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_IN_GRACE));
+    public void testConsumeStorageQuotaSpecificInGrace() {
+        quota.setQuotaStorages(getQuotaStorages(100, 103));
+
+        assertTrue(consumeForStorageQuota(1d));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetStorageQuotaSpecificOverGrace() {
-        assertFalse(consumeForStorageQuota(STORAGE_QUOTA_SPECIFIC_OVER_GRACE));
+    public void testConsumeStorageQuotaSpecificOverGrace() {
+        quota.setQuotaStorages(getQuotaStorages(100, 126));
+
+        assertFalse(consumeForStorageQuota(1d));
         assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testDecreaseStorageQuota() throws Exception {
+    public void testDecreaseStorageQuota() {
+        Quota quota = mockBasicQuota();
+        quota.setGlobalQuotaStorage(getQuotaStorage(100, 104));
+        when(quotaDao.getById(quota.getId())).thenReturn(quota);
+
         // decrease the quota usage from 104 GB to 96 (our of 100 GB quota)
         quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
-                STORAGE_QUOTA_GLOBAL_IN_GRACE,
+                quota.getId(),
                 QuotaConsumptionParameter.QuotaAction.RELEASE,
                 DESTINATION_GUID,
                 8d)));
 
         // try to consume 1 GB from the same quota (will reach 97 GB out of 100 GB)
-        assertTrue(quotaManager.consume(command, Collections.singletonList(new QuotaStorageConsumptionParameter(
-                STORAGE_QUOTA_GLOBAL_IN_GRACE,
-                QuotaConsumptionParameter.QuotaAction.CONSUME,
-                DESTINATION_GUID,
-                1d))));
-
+        assertTrue(quotaManager.consume(command, Collections.singletonList(createStorageConsumption(quota.getId(), 1d))));
         assertEmptyValidateMessage();
         validationMessages.clear();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForVCPUGlobalNotExceeded() throws Exception {
-        assertTrue(consumeForVdsQuota(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED));
+    public void testConsumeClusterQuotaForVCPUGlobalNotExceeded() {
+        quota.setGlobalQuotaCluster(getQuotaCluster(100, 18, UNLIMITED_MEM, 0));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForVCPUGlobalOverThreshold() throws Exception {
-        assertTrue(consumeForVdsQuota(VCPU_QUOTA_GLOBAL_OVER_THRESHOLD));
+    public void testConsumeClusterQuotaForVCPUGlobalOverThreshold() {
+        quota.setGlobalQuotaCluster(getQuotaCluster(100, 92, UNLIMITED_MEM, 0));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForVCPUGlobalInGrace() throws Exception {
-        assertTrue(consumeForVdsQuota(VCPU_QUOTA_GLOBAL_IN_GRACE));
+    public void testConsumeClusterQuotaForVCPUGlobalInGrace() {
+        quota.setGlobalQuotaCluster(getQuotaCluster(100, 113, UNLIMITED_MEM, 0));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForVCPUGlobalOverGrace() throws Exception {
-        assertFalse(consumeForVdsQuota(VCPU_QUOTA_GLOBAL_OVER_GRACE));
+    public void testConsumeClusterQuotaForVCPUGlobalOverGrace() {
+        quota.setGlobalQuotaCluster(getQuotaCluster(100, 132, UNLIMITED_MEM, 0));
+
+        assertFalse(consumeForClusterQuota(1, 1));
         assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForVCPUSpecificNotExceeded() throws Exception {
-        assertTrue(consumeForVdsQuota(VCPU_QUOTA_SPECIFIC_NOT_EXCEEDED));
+    public void testConsumeClusterQuotaForVCPUSpecificNotExceeded() {
+        quota.setQuotaClusters(getQuotaClusters(100, 23, UNLIMITED_MEM, 0));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForVCPUSpecificOverThreshold() throws Exception {
-        assertTrue(consumeForVdsQuota(VCPU_QUOTA_SPECIFIC_OVER_THRESHOLD));
+    public void testConsumeClusterQuotaForVCPUSpecificOverThreshold() {
+        quota.setQuotaClusters(getQuotaClusters(100, 96, UNLIMITED_MEM, 0));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForVCPUSpecificInGrace() throws Exception {
-        assertTrue(consumeForVdsQuota(VCPU_QUOTA_SPECIFIC_IN_GRACE));
+    public void testConsumeClusterQuotaForVCPUSpecificInGrace() {
+        quota.setQuotaClusters(getQuotaClusters(100, 105, UNLIMITED_MEM, 0));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForVCPUSpecificOverGrace() throws Exception {
-        assertFalse(consumeForVdsQuota(VCPU_QUOTA_SPECIFIC_OVER_GRACE));
+    public void testConsumeClusterQuotaForVCPUSpecificOverGrace() {
+        quota.setQuotaClusters(getQuotaClusters(100, 134, UNLIMITED_MEM, 0));
+
+        assertFalse(consumeForClusterQuota(1, 1));
         assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForMemGlobalNotExceeded() throws Exception {
-        assertTrue(consumeForVdsQuota(MEM_QUOTA_GLOBAL_NOT_EXCEEDED));
+    public void testConsumeClusterQuotaForMemGlobalNotExceeded() {
+        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, 2048, 512));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForMemGlobalOverThreshold() throws Exception {
-        assertTrue(consumeForVdsQuota(MEM_QUOTA_GLOBAL_OVER_THRESHOLD));
+    public void testConsumeClusterQuotaForMemGlobalOverThreshold() {
+        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, 2048, 1900));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForMemGlobalInGrace() throws Exception {
-        assertTrue(consumeForVdsQuota(MEM_QUOTA_GLOBAL_IN_GRACE));
+    public void testConsumeClusterQuotaForMemGlobalInGrace() {
+        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, 2048, 2300));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForMemGlobalOverGrace() throws Exception {
-        assertFalse(consumeForVdsQuota(MEM_QUOTA_GLOBAL_OVER_GRACE));
+    public void testConsumeClusterQuotaForMemGlobalOverGrace() {
+        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, 2048, 3000));
+
+        assertFalse(consumeForClusterQuota(1, 1));
         assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForMemSpecificNotExceeded() throws Exception {
-        assertTrue(consumeForVdsQuota(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED));
+    public void testConsumeClusterQuotaForMemSpecificNotExceeded() {
+        quota.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 512));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForMemSpecificOverThreshold() throws Exception {
-        assertTrue(consumeForVdsQuota(MEM_QUOTA_SPECIFIC_OVER_THRESHOLD));
+    public void testConsumeClusterQuotaForMemSpecificOverThreshold() {
+        quota.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 2000));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForMemSpecificInGrace() throws Exception {
-        assertTrue(consumeForVdsQuota(MEM_QUOTA_SPECIFIC_IN_GRACE));
+    public void testConsumeClusterQuotaForMemSpecificInGrace() {
+        quota.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 2100));
+
+        assertTrue(consumeForClusterQuota(1, 1));
         assertEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testValidateAndSetClusterQuotaForMemSpecificOverGrace() throws Exception {
-        assertFalse(consumeForVdsQuota(MEM_QUOTA_SPECIFIC_OVER_GRACE));
+    public void testConsumeClusterQuotaForMemSpecificOverGrace() {
+        quota.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 5000));
+
+        assertFalse(consumeForClusterQuota(1, 1));
         assertNotEmptyValidateMessage();
         assertAuditLogWritten();
     }
 
     @Test
-    public void testRemoveFromCache() throws Exception {
+    public void testRemoveFromCache() {
+        Quota quota1 = mockBasicQuota();
+        quota1.setGlobalQuotaStorage(getQuotaStorage(100, 104));
+        when(quotaDao.getById(quota1.getId())).thenReturn(quota1);
+
+        Quota quota2 = mockBasicQuota();
+        quota2.setQuotaStorages(getQuotaStorages(100, 103));
+        when(quotaDao.getById(quota2.getId())).thenReturn(quota2);
+
         List<QuotaConsumptionParameter> parameters = new ArrayList<>();
 
-        parameters.add(new QuotaStorageConsumptionParameter(
-                STORAGE_QUOTA_GLOBAL_IN_GRACE, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
-        parameters.add(new QuotaStorageConsumptionParameter(
-                STORAGE_QUOTA_SPECIFIC_IN_GRACE, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 12d));
-        parameters.add(new QuotaClusterConsumptionParameter(
-                VCPU_QUOTA_GLOBAL_IN_GRACE, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 6, 1));
-        parameters.add(new QuotaClusterConsumptionParameter(
-                MEM_QUOTA_SPECIFIC_IN_GRACE, QuotaConsumptionParameter.QuotaAction.CONSUME, DESTINATION_GUID, 1, 300));
+        parameters.add(createStorageConsumption(quota1.getId(), 12d));
+        parameters.add(createStorageConsumption(quota2.getId(), 12d));
 
-        // ask for a valid consumption (116 out of 120 and 113 out of 120)
         quotaManager.consume(command, parameters);
 
-        // roll back the consumption
         quotaManager.removeStoragePoolFromCache(storage_pool.getId());
 
-        // reset db
-        when(quotaDao.getById(STORAGE_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockStorageQuotaGlobalInGrace());
-        when(quotaDao.getById(STORAGE_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockStorageQuotaSpecificInGrace());
-        when(quotaDao.getById(VCPU_QUOTA_GLOBAL_IN_GRACE)).thenReturn(mockVCPUQuotaGlobalInGrace());
-        when(quotaDao.getById(MEM_QUOTA_SPECIFIC_IN_GRACE)).thenReturn(mockMemQuotaSpecificInGrace());
-
-        // ask again for same consumption
         quotaManager.consume(command, parameters);
+
+        verify(quotaDao, times(2)).getById(quota1.getId());
+        verify(quotaDao, times(2)).getById(quota2.getId());
     }
 
     @Test
-    public void testRemoveQuotaFromCache() throws Exception {
+    public void testRemoveQuotaFromCache() {
+        Quota quota1 = mockBasicQuota();
+        quota1.setGlobalQuotaStorage(getQuotaStorage(100, 9));
+        when(quotaDao.getById(quota1.getId())).thenReturn(quota1);
+
+        Quota quota2 = mockBasicQuota();
+        quota2.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 512));
+        when(quotaDao.getById(quota2.getId())).thenReturn(quota2);
+
         List<QuotaConsumptionParameter> parameters = new ArrayList<>();
 
-        parameters.add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED,
-                QuotaConsumptionParameter.QuotaAction.CONSUME,
-                DESTINATION_GUID,
-                1d));
-        parameters.add(new QuotaStorageConsumptionParameter(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED,
-                QuotaConsumptionParameter.QuotaAction.CONSUME,
-                DESTINATION_GUID,
-                1d));
-        parameters.add(new QuotaClusterConsumptionParameter(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED,
-                QuotaConsumptionParameter.QuotaAction.CONSUME,
-                DESTINATION_GUID,
-                1, 1));
-        parameters.add(new QuotaClusterConsumptionParameter(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED,
-                QuotaConsumptionParameter.QuotaAction.CONSUME,
-                DESTINATION_GUID,
-                1, 1));
+        parameters.add(createStorageConsumption(quota1.getId(), 1d));
+        parameters.add(createClusterConsumption(quota2.getId(), 1, 1));
 
-        // add 6 quotas to the cache
+        // add 2 quotas to the cache
         quotaManager.consume(command, parameters);
 
-        // reset db call flag
-        dbCalls = 0;
+        // remove only 1 quota from cache
+        quotaManager.removeQuotaFromCache(storage_pool.getId(), quota1.getId());
 
-        // remove all 6 quotas from cache
-        quotaManager.removeQuotaFromCache(storage_pool.getId(), STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED);
-        quotaManager.removeQuotaFromCache(storage_pool.getId(), STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED);
-        quotaManager.removeQuotaFromCache(storage_pool.getId(), VCPU_QUOTA_GLOBAL_NOT_EXCEEDED);
-        quotaManager.removeQuotaFromCache(storage_pool.getId(), MEM_QUOTA_SPECIFIC_NOT_EXCEEDED);
-
-        // call same quotas again and make sure db was called for every one of them
+        // call same quotas again and make sure db was called for the first one
         quotaManager.consume(command, parameters);
-        assertDbWasCalled(4);
+
+        verify(quotaDao, times(2)).getById(quota1.getId());
+        verify(quotaDao, times(1)).getById(quota2.getId());
     }
 
     @Test
     public void testUseDefaultQuotaStorage() {
-        assertTrue(consumeForStorageQuota(null));
+        assertTrue(quotaManager.consume(command,
+                Collections.singletonList(createStorageConsumption(null, 1d))));
+
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
 
     @Test
-    public void testUseDefaultQuotaVds() throws CloneNotSupportedException {
-        assertTrue(consumeForVdsQuota(null));
+    public void testUseDefaultQuotaCluster() {
+        assertTrue(quotaManager.consume(command,
+                Collections.singletonList(createClusterConsumption(null, 1, 1))));
+
         assertEmptyValidateMessage();
         assertAuditLogNotWritten();
     }
@@ -460,8 +437,6 @@ public class QuotaManagerTest {
      * @return - basic quota with no limitations
      */
     private Quota mockBasicQuota() {
-        dbCalls++;
-
         // basic data
         Quota quota = new Quota();
         quota.setId(Guid.newGuid());
@@ -518,256 +493,19 @@ public class QuotaManagerTest {
         return quotaClusters;
     }
 
-    // ///////////////////// Storage global ////////////////////////////
-
-    /**
-     * Call by Guid: {@literal STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED}
-     */
-    private Quota mockStorageQuotaGlobalNotExceeded() {
-        Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED);
-        quota.setGlobalQuotaStorage(getQuotaStorage(100, 9));
-        return quota;
+    private QuotaStorageConsumptionParameter createStorageConsumption(Guid quotaId, double requestedStorageGB) {
+        return new QuotaStorageConsumptionParameter(quotaId,
+                QuotaConsumptionParameter.QuotaAction.CONSUME,
+                DESTINATION_GUID,
+                requestedStorageGB);
     }
 
-    /**
-     * Call by Guid: {@literal STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD}
-     */
-    private Quota mockStorageQuotaGlobalOverThreshold() {
-        Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_GLOBAL_OVER_THRESHOLD);
-        quota.setGlobalQuotaStorage(getQuotaStorage(100, 83));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal STORAGE_QUOTA_GLOBAL_IN_GRACE}
-     */
-    private Quota mockStorageQuotaGlobalInGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_GLOBAL_IN_GRACE);
-        quota.setGlobalQuotaStorage(getQuotaStorage(100, 104));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal STORAGE_QUOTA_GLOBAL_OVER_GRACE}
-     */
-    private Quota mockStorageQuotaGlobalOverGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_GLOBAL_OVER_GRACE);
-        quota.setGlobalQuotaStorage(getQuotaStorage(100, 140));
-        return quota;
-    }
-
-    // ///////////////////// Storage specific ////////////////////////////
-
-    /**
-     * Call by Guid: {@literal STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED}
-     */
-    private Quota mockStorageQuotaSpecificNotExceeded() {
-        Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_SPECIFIC_NOT_EXCEEDED);
-        quota.setQuotaStorages(getQuotaStorages(100, 73));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD}
-     */
-    private Quota mockStorageQuotaSpecificOverThreshold() {
-        Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_SPECIFIC_OVER_THRESHOLD);
-        quota.setQuotaStorages(getQuotaStorages(100, 92));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal STORAGE_QUOTA_SPECIFIC_IN_GRACE}
-     */
-    private Quota mockStorageQuotaSpecificInGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_SPECIFIC_IN_GRACE);
-        quota.setQuotaStorages(getQuotaStorages(100, 103));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal STORAGE_QUOTA_SPECIFIC_OVER_GRACE}
-     */
-    private Quota mockStorageQuotaSpecificOverGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(STORAGE_QUOTA_SPECIFIC_OVER_GRACE);
-        quota.setQuotaStorages(getQuotaStorages(100, 126));
-        return quota;
-    }
-
-    // ///////////////////// VCPU global ////////////////////////////
-
-    /**
-     * Call by Guid: {@literal VCPU_QUOTA_GLOBAL_NOT_EXCEEDED}
-     */
-    private Quota mockVCPUQuotaGlobalNotExceeded() {
-        Quota quota = mockBasicQuota();
-        quota.setId(VCPU_QUOTA_GLOBAL_NOT_EXCEEDED);
-        quota.setGlobalQuotaCluster(getQuotaCluster(100, 18, UNLIMITED_MEM, 0));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal VCPU_QUOTA_GLOBAL_OVER_THRESHOLD}
-     */
-    private Quota mockVCPUQuotaGlobalOverThreshold() {
-        Quota quota = mockBasicQuota();
-        quota.setId(VCPU_QUOTA_GLOBAL_OVER_THRESHOLD);
-        quota.setGlobalQuotaCluster(getQuotaCluster(100, 92, UNLIMITED_MEM, 0));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal VCPU_QUOTA_GLOBAL_IN_GRACE}
-     */
-    private Quota mockVCPUQuotaGlobalInGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(VCPU_QUOTA_GLOBAL_IN_GRACE);
-        quota.setGlobalQuotaCluster(getQuotaCluster(100, 113, UNLIMITED_MEM, 0));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal VCPU_QUOTA_GLOBAL_OVER_GRACE}
-     */
-    private Quota mockVCPUQuotaGlobalOverGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(VCPU_QUOTA_GLOBAL_OVER_GRACE);
-        quota.setGlobalQuotaCluster(getQuotaCluster(100, 132, UNLIMITED_MEM, 0));
-        return quota;
-    }
-
-    // ///////////////////// VCPU specific ////////////////////////////
-
-    /**
-     * Call by Guid: {@literal VCPU_QUOTA_SPECIFIC_NOT_EXCEEDED}
-     */
-    private Quota mockVCPUQuotaSpecificNotExceeded() {
-        Quota quota = mockBasicQuota();
-        quota.setId(VCPU_QUOTA_SPECIFIC_NOT_EXCEEDED);
-        quota.setQuotaClusters(getQuotaClusters(100, 23, UNLIMITED_MEM, 0));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal VCPU_QUOTA_SPECIFIC_OVER_THRESHOLD}
-     */
-    private Quota mockVCPUQuotaSpecificOverThreshold() {
-        Quota quota = mockBasicQuota();
-        quota.setId(VCPU_QUOTA_SPECIFIC_OVER_THRESHOLD);
-        quota.setQuotaClusters(getQuotaClusters(100, 96, UNLIMITED_MEM, 0));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal VCPU_QUOTA_SPECIFIC_IN_GRACE}
-     */
-    private Quota mockVCPUQuotaSpecificInGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(VCPU_QUOTA_SPECIFIC_IN_GRACE);
-        quota.setQuotaClusters(getQuotaClusters(100, 105, UNLIMITED_MEM, 0));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal VCPU_QUOTA_SPECIFIC_OVER_GRACE}
-     */
-    private Quota mockVCPUQuotaSpecificOverGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(VCPU_QUOTA_SPECIFIC_OVER_GRACE);
-        quota.setQuotaClusters(getQuotaClusters(100, 134, UNLIMITED_MEM, 0));
-        return quota;
-    }
-
-    // ///////////////////// Mem global ////////////////////////////
-
-    /**
-     * Call by Guid: {@literal MEM_QUOTA_GLOBAL_NOT_EXCEEDED}
-     */
-    private Quota mockMemQuotaGlobalNotExceeded() {
-        Quota quota = mockBasicQuota();
-        quota.setId(MEM_QUOTA_GLOBAL_NOT_EXCEEDED);
-        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, 2048, 512));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal MEM_QUOTA_GLOBAL_OVER_THRESHOLD}
-     */
-    private Quota mockMemQuotaGlobalOverThreshold() {
-        Quota quota = mockBasicQuota();
-        quota.setId(MEM_QUOTA_GLOBAL_OVER_THRESHOLD);
-        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, 2048, 1900));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal MEM_QUOTA_GLOBAL_IN_GRACE}
-     */
-    private Quota mockMemQuotaGlobalInGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(MEM_QUOTA_GLOBAL_IN_GRACE);
-        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, 2048, 2300));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal MEM_QUOTA_GLOBAL_OVER_GRACE}
-     */
-    private Quota mockMemQuotaGlobalOverGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(MEM_QUOTA_GLOBAL_OVER_GRACE);
-        quota.setGlobalQuotaCluster(getQuotaCluster(UNLIMITED_VCPU, 0, 2048, 3000));
-        return quota;
-    }
-
-    // ///////////////////// Mem specific ////////////////////////////
-
-    /**
-     * Call by Guid: {@literal MEM_QUOTA_SPECIFIC_NOT_EXCEEDED}
-     */
-    private Quota mockMemQuotaSpecificNotExceeded() {
-        Quota quota = mockBasicQuota();
-        quota.setId(MEM_QUOTA_SPECIFIC_NOT_EXCEEDED);
-        quota.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 512));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal MEM_QUOTA_SPECIFIC_OVER_THRESHOLD}
-     */
-    private Quota mockMemQuotaSpecificOverThreshold() {
-        Quota quota = mockBasicQuota();
-        quota.setId(MEM_QUOTA_SPECIFIC_OVER_THRESHOLD);
-        quota.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 2000));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal MEM_QUOTA_SPECIFIC_IN_GRACE}
-     */
-    private Quota mockMemQuotaSpecificInGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(MEM_QUOTA_SPECIFIC_IN_GRACE);
-        quota.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 2100));
-        return quota;
-    }
-
-    /**
-     * Call by Guid: {@literal MEM_QUOTA_SPECIFIC_OVER_GRACE}
-     */
-    private Quota mockMemQuotaSpecificOverGrace() {
-        Quota quota = mockBasicQuota();
-        quota.setId(MEM_QUOTA_SPECIFIC_OVER_GRACE);
-        quota.setQuotaClusters(getQuotaClusters(UNLIMITED_VCPU, 0, 2048, 5000));
-        return quota;
+    private QuotaClusterConsumptionParameter createClusterConsumption(Guid quotaId, int cpu, long memory) {
+        return new QuotaClusterConsumptionParameter(quotaId,
+                QuotaConsumptionParameter.QuotaAction.CONSUME,
+                DESTINATION_GUID,
+                cpu,
+                memory);
     }
 
     /**
