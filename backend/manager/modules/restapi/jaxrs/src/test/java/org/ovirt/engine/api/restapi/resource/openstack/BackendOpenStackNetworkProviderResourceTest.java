@@ -43,8 +43,7 @@ public class BackendOpenStackNetworkProviderResourceTest
         try {
             new BackendOpenStackNetworkProviderResource("foo");
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -121,8 +120,7 @@ public class BackendOpenStackNetworkProviderResourceTest
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
@@ -137,8 +135,7 @@ public class BackendOpenStackNetworkProviderResourceTest
         try {
             resource.update(model);
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
         }
     }

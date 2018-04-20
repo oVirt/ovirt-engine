@@ -247,8 +247,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             && (vds.getStatus() != VDSStatus.NonOperational
                             && (vds.getStatus() != VDSStatus.InstallFailed))) {
                         result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL);
-                    }
-                    else {
+                    } else {
                         List<VM> vms = vmDao.getAllRunningForVds(vdsId);
                         if (!vms.isEmpty()) {
                             vdsWithRunningVMs.add(vdsId);

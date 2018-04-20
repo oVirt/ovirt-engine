@@ -126,8 +126,7 @@ public class CSRFProtectionFilter implements Filter {
         // for use in future requests.
         try {
             chain.doFilter(request, response);
-        }
-        finally {
+        } finally {
             session = request.getSession(false);
             if (session != null) {
                 enabled = isProtectionRequested(request);

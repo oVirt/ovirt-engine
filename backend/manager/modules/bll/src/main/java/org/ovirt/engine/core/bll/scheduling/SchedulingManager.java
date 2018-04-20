@@ -292,8 +292,7 @@ public class SchedulingManager implements BackendService {
                 final List<String> detailMessages = details.getMessages(line.getKey());
                 if (detailMessages.isEmpty()) {
                     lines.add(EngineMessage.SCHEDULING_HOST_FILTERED_REASON.name());
-                }
-                else {
+                } else {
                     lines.addAll(detailMessages);
                     lines.add(EngineMessage.SCHEDULING_HOST_FILTERED_REASON_WITH_DETAIL.name());
                 }

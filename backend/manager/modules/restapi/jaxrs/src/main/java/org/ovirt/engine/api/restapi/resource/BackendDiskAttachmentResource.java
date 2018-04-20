@@ -60,8 +60,7 @@ public class BackendDiskAttachmentResource
         boolean detachOnly = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, DETACH_ONLY, true, true);
         if (detachOnly) {
             return performAction(ActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(new DiskVmElement(guid, vmId)));
-        }
-        else {
+        } else {
             return performAction(ActionType.RemoveDisk, new RemoveDiskParameters(guid));
         }
     }
@@ -75,8 +74,7 @@ public class BackendDiskAttachmentResource
                 VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(guid, vmId));
                 try {
                     doAction(actionType, params);
-                }
-                catch (BackendFailureException e) {
+                } catch (BackendFailureException e) {
                     return handleError(e, false);
                 }
             }

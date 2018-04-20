@@ -115,8 +115,7 @@ public class CurrentFilter implements Filter {
 
         try {
             chain.doFilter(request, response);
-        }
-        finally {
+        } finally {
             CurrentManager.remove();
         }
     }

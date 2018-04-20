@@ -55,8 +55,7 @@ public class BackendOpenStackNetworksResource
                 backendFailure(result.getExceptionString());
             }
             return result.getReturnValue();
-        }
-        catch (Exception exception) {
+        } catch(Exception exception) {
             return handleError(exception, false);
         }
     }

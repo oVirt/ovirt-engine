@@ -242,8 +242,7 @@ public class ExecutionHandler {
         // if Job is external, we had already created the Job by AddExternalJobCommand, so just get it from DB
         if (params.getJobId() != null) {
             job = jobDao.get(params.getJobId());
-        }
-        else {
+        } else {
             job = createJob(actionType, command);
             jobRepository.saveJob(job);
         }

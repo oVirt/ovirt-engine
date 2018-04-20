@@ -129,8 +129,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
             vmHandler.updateVmInitFromDB(getVmTemplate(), true);
             incrementDbGeneration();
             vmTemplateHandler.unlockVmTemplate(getVmTemplateId());
-        }
-        else {
+        } else {
             setCommandShouldBeLogged(false);
             log.warn("MoveOrCopyTemplateCommand::EndMoveOrCopyCommand: VmTemplate is null, not performing full endAction");
         }

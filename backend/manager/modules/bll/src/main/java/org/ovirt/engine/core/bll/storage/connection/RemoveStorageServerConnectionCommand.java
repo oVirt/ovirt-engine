@@ -64,8 +64,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                String domainNames = createDomainNamesListFromStorageDomains(domains);
                return prepareFailureMessageForDomains(domainNames);
            }
-        }
-        else if (storageType.equals(StorageType.ISCSI)) {
+        } else if (storageType.equals(StorageType.ISCSI)) {
            List<String> domainNames = new ArrayList<>();
            List<String> diskNames = new ArrayList<>();
            // go to luns to storage connections map table, get it from there
@@ -78,8 +77,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                         // non empty vg id indicates there's a storage domain using the lun
                         String domainName = lun.getStorageDomainName();
                         domainNames.add(domainName);
-                    }
-                    else {
+                    } else {
                         // empty vg id indicates there's a lun disk using the lun
                         String lunDiskName = lun.getDiskAlias();
                         diskNames.add(lunDiskName);
@@ -91,13 +89,11 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                     domainNamesForMessage = prepareEntityNamesForMessage(domainNames);
                     if (diskNames.isEmpty()) {
                         return prepareFailureMessageForDomains(domainNamesForMessage);
-                     }
-                     else {
+                    } else {
                         String diskNamesForMessage = prepareEntityNamesForMessage(diskNames);
                         return prepareFailureMessageForDomainsAndDisks(domainNamesForMessage, diskNamesForMessage);
                     }
-                }
-                else if (!diskNames.isEmpty()) {
+                } else if (!diskNames.isEmpty()) {
                     String diskNamesForMessage = prepareEntityNamesForMessage(diskNames);
                     return prepareFailureMessageForDisks(diskNamesForMessage);
                 }

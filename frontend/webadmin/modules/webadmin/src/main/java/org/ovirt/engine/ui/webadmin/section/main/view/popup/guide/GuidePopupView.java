@@ -135,8 +135,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
                     if (!hasAllowedActions) {
                         if (!guideModel.getNote().getIsAvailable()) {
                             infoLabel.setText(message);
-                        }
-                        else {
+                        } else {
                             infoLabel.setText(configurationCompleted);
                             noteLabel.setText(guideModel.getNote().getEntity());
                         }
@@ -214,11 +213,9 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
     private void updateCreatedLabel(GuideModel<?> object) {
         if (object instanceof DataCenterGuideModel) {
             infoLabel.setText(datacenterCreated);
-        }
-        else if (object instanceof ClusterGuideModel) {
+        } else if (object instanceof ClusterGuideModel) {
             infoLabel.setText(clusterCreated);
-        }
-        else if (object instanceof VmGuideModel) {
+        } else if (object instanceof VmGuideModel) {
             infoLabel.setText(vmCreated);
         }
     }

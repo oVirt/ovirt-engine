@@ -65,8 +65,7 @@ public class V3CapabilitiesServer {
             try (InputStream in = this.getClass().getResourceAsStream("/v3/capabilities.xml")) {
                 document = parser.parse(in);
             }
-        }
-        catch (Exception exception) {
+        } catch(Exception exception) {
             throw new WebApplicationException(exception, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
@@ -88,8 +87,7 @@ public class V3CapabilitiesServer {
             // Set the "current" flag of the last version capabilities to "true":
             Element currentElement = (Element) xpath.evaluate("current", versionElement4y, XPathConstants.NODE);
             currentElement.setTextContent("true");
-        }
-        catch (XPathExpressionException exception) {
+        } catch(XPathExpressionException exception) {
             throw new WebApplicationException(exception, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
@@ -102,8 +100,7 @@ public class V3CapabilitiesServer {
                 href = prefix + href;
                 node.setNodeValue(href);
             }
-        }
-        catch (XPathExpressionException exception) {
+        } catch(XPathExpressionException exception) {
             throw new WebApplicationException(exception, Response.Status.INTERNAL_SERVER_ERROR);
         }
 

@@ -70,8 +70,7 @@ public class VersionMapper {
             if (revision != null) {
                 version.setRevision(Integer.parseInt(revision));
             }
-        }
-        else {
+        } else {
             log.warn(
                 "The version string \"{}\" doesn't match the expected pattern, only the full version will be reported.",
                 versionString

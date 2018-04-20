@@ -80,8 +80,7 @@ public abstract class ErrataListWithDetailsPopupPresenterWidget<T extends
 
             if (erratum == null) {
                 getView().setErrataDetailPanelVisibilty(false);
-            }
-            else {
+            } else {
                 getView().updateErrataDetailFormPanel(erratum);
                 getView().setErrataDetailPanelVisibilty(true);
             }

@@ -97,8 +97,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
 
         if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

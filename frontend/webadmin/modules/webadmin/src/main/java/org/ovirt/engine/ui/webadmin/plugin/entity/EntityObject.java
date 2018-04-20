@@ -50,78 +50,38 @@ public final class EntityObject extends JsMutableObjectWithProperties {
     public static <T> EntityObject from(T businessEntity) {
         EntityObject obj = create(businessEntity);
 
-        // DataCenter
         if (businessEntity instanceof StoragePool) {
             obj.setValueAsString("name", ((StoragePool) businessEntity).getName()); //$NON-NLS-1$
-        }
-
-        // Cluster
-        else if (businessEntity instanceof Cluster) {
+        } else if (businessEntity instanceof Cluster) {
             obj.setValueAsString("name", ((Cluster) businessEntity).getName()); //$NON-NLS-1$
-        }
-
-        // Host
-        else if (businessEntity instanceof VDS) {
+        } else if (businessEntity instanceof VDS) {
             obj.setValueAsString("name", ((VDS) businessEntity).getName()); //$NON-NLS-1$
             obj.setValueAsString("hostname", ((VDS) businessEntity).getHostName()); //$NON-NLS-1$
-        }
-
-        // Network
-        else if (businessEntity instanceof Network) {
+        } else if (businessEntity instanceof Network) {
             obj.setValueAsString("name", ((Network) businessEntity).getName()); //$NON-NLS-1$
-        }
-
-        // Storage
-        else if (businessEntity instanceof StorageDomain) {
+        } else if (businessEntity instanceof StorageDomain) {
             obj.setValueAsString("name", ((StorageDomain) businessEntity).getStorageName()); //$NON-NLS-1$
-        }
-
-        // Disk
-        else if (businessEntity instanceof Disk) {
+        } else if (businessEntity instanceof Disk) {
             // No custom properties for now
-        }
-
-        // VirtualMachine
-        else if (businessEntity instanceof VM) {
+        } else if (businessEntity instanceof VM) {
             obj.setValueAsString("name", ((VM) businessEntity).getName()); //$NON-NLS-1$
             obj.setValueAsString("ipaddress", ((VM) businessEntity).getIp()); //$NON-NLS-1$
             obj.setValueAsString("status", ((VM) businessEntity).getStatus().name()); //$NON-NLS-1$
-        }
-
-        // Pool
-        else if (businessEntity instanceof VmPool) {
+        } else if (businessEntity instanceof VmPool) {
             obj.setValueAsString("name", ((VmPool) businessEntity).getName()); //$NON-NLS-1$
-        }
-
-        // Template
-        else if (businessEntity instanceof VmTemplate) {
+        } else if (businessEntity instanceof VmTemplate) {
             obj.setValueAsString("name", ((VmTemplate) businessEntity).getName()); //$NON-NLS-1$
-        }
-
-        // GlusterVolume
-        else if (businessEntity instanceof GlusterVolumeEntity) {
+        } else if (businessEntity instanceof GlusterVolumeEntity) {
             obj.setValueAsString("name", ((GlusterVolumeEntity) businessEntity).getName()); //$NON-NLS-1$
             obj.setValueAsString("clusterId", ((GlusterVolumeEntity) businessEntity).getClusterId().toString());//$NON-NLS-1$
-        }
-
-        // Provider
-        else if (businessEntity instanceof Provider) {
+        } else if (businessEntity instanceof Provider) {
             obj.setValueAsString("name", ((Provider) businessEntity).getName()); //$NON-NLS-1$
-        }
-
-        // User
-        else if (businessEntity instanceof DbUser) {
+        } else if (businessEntity instanceof DbUser) {
             obj.setValueAsString("username", ((DbUser) businessEntity).getLoginName()); //$NON-NLS-1$
             obj.setValueAsString("domain", ((DbUser) businessEntity).getDomain()); //$NON-NLS-1$
-        }
-
-        // Quota
-        else if (businessEntity instanceof Quota) {
+        } else if (businessEntity instanceof Quota) {
             obj.setValueAsString("name", ((Quota) businessEntity).getQuotaName()); //$NON-NLS-1$
-        }
-
-        // Event
-        else if (businessEntity instanceof AuditLog) {
+        } else if (businessEntity instanceof AuditLog) {
             obj.setValueAsString("correlationId", ((AuditLog) businessEntity).getCorrelationId()); //$NON-NLS-1$
             obj.setValueAsString("message", ((AuditLog) businessEntity).getMessage()); //$NON-NLS-1$
             obj.setValueAsString("callStack", ((AuditLog) businessEntity).getCallStack()); //$NON-NLS-1$

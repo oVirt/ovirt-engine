@@ -146,8 +146,7 @@ public class GlusterHookResolveConflictsModel extends Model {
         getResolveContentConflict().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (getResolveContentConflict().getEntity() == null) {
                 getServerHooksList().setIsChangeable(false);
-            }
-            else {
+            } else {
                 getServerHooksList().setIsChangeable(getResolveContentConflict().getEntity());
             }
         });
@@ -156,8 +155,7 @@ public class GlusterHookResolveConflictsModel extends Model {
             if (getResolveStatusConflict().getEntity() == null) {
                 getResolveStatusConflictEnable().setIsChangeable(false);
                 getResolveStatusConflictDisable().setIsChangeable(false);
-            }
-            else {
+            } else {
                 getResolveStatusConflictEnable().setIsChangeable(getResolveStatusConflict().getEntity());
                 getResolveStatusConflictDisable().setIsChangeable(getResolveStatusConflict().getEntity());
             }
@@ -179,8 +177,7 @@ public class GlusterHookResolveConflictsModel extends Model {
             if (getResolveMissingConflict().getEntity() == null) {
                 getResolveMissingConflictCopy().setIsChangeable(false);
                 getResolveMissingConflictRemove().setIsChangeable(false);
-            }
-            else {
+            } else {
                 getResolveMissingConflictCopy().setIsChangeable(getResolveMissingConflict().getEntity());
                 getResolveMissingConflictRemove().setIsChangeable(getResolveMissingConflict().getEntity());
             }
@@ -241,8 +238,7 @@ public class GlusterHookResolveConflictsModel extends Model {
                 getContentModel().getContent().setEntity(content);
                 stopProgress();
             }), getGlusterHookEntity().getId(), selectedServer.getServerId());
-        }
-        else {
+        } else {
             getContentModel().getContent().setEntity(null);
         }
     }

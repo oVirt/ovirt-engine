@@ -271,8 +271,7 @@ public class PmHealthCheckManager implements BackendService {
                 if (retValue!= null && retValue.getSucceeded()) {
                     log.info("Host '{}' was started successfully by PM Health Check Manager",
                             host.getName());
-                }
-                else {
+                } else {
                     log.info("PM Health Check Manager failed to start Host '{}'", host.getName());
                 }
             }

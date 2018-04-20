@@ -45,8 +45,7 @@ public class BackendOpenStackVolumeTypeResourceTest
         try {
             new BackendOpenStackImageProviderResource("foo");
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -58,8 +57,7 @@ public class BackendOpenStackVolumeTypeResourceTest
         try {
             resource.get();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }

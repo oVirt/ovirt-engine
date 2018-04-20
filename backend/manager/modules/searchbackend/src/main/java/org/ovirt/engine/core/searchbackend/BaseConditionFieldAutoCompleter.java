@@ -208,8 +208,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             new BigDecimal(value); // No assignment, we just want to create a new instance and to see if there's an
                                    // Exception
             return true;
-        }
-        catch (NumberFormatException e) {
+        } catch(NumberFormatException e) {
             return false;
         }
     };
@@ -281,8 +280,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                         result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT))));
             }
 
-        }
-        else if ("TAG".equals(fieldName)) {
+        } else if ("TAG".equals(fieldName)) {
             pair.setSecond(pair.getSecond().startsWith("N'") ? pair.getSecond().substring(2) : pair.getSecond());
             if (pair.getFirst() != null && pair.getFirst().equals("=")) {
                 pair.setFirst("IN");

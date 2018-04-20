@@ -86,8 +86,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
             getItemsChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
             storageDomainModels = null;
-        }
-        else {
+        } else {
             VmTemplate template = getEntity();
             AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery<>(
                             diskImages -> {
@@ -218,11 +217,9 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
 
         if (command == getRemoveCommand()) {
             remove();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

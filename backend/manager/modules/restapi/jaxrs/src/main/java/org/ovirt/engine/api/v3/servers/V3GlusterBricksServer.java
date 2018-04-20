@@ -72,8 +72,7 @@ public class V3GlusterBricksServer extends V3Server<GlusterBricksResource> {
     public Response remove(V3Action action) {
         try {
             return adaptResponse(getDelegate().remove(adaptIn(action)));
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }

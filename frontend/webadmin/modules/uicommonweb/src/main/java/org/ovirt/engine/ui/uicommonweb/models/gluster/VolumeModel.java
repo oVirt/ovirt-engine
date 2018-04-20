@@ -392,8 +392,7 @@ public class VolumeModel extends Model {
             cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().no());
             cancelCommand.setIsCancel(true);
             getConfirmWindow().getCommands().add(cancelCommand);
-        }
-        else {
+        } else {
             onAddBricksInternal();
         }
     }
@@ -485,15 +484,13 @@ public class VolumeModel extends Model {
                 if (returnValue) {
                     getAddBricksCommand().setIsExecutionAllowed(true);
                     setMessage(null);
-                }
-                else {
+                } else {
                     getAddBricksCommand().setIsExecutionAllowed(false);
                     setMessage(ConstantsManager.getInstance().getConstants().volumeEmptyClusterValidationMsg());
                 }
 
             }), cluster.getName());
-        }
-        else {
+        } else {
             getAddBricksCommand().setIsExecutionAllowed(false);
             setMessage(null);
         }

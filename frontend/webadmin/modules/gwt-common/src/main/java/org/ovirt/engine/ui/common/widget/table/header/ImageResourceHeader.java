@@ -45,8 +45,7 @@ public class ImageResourceHeader extends SafeHtmlHeader {
         if (isInline()) {
             return templates.tableHeaderInlineImage(SafeHtmlUtils.fromTrustedString(
                     AbstractImagePrototype.create(headerImage).getHTML()));
-        }
-        else {
+        } else {
             return templates.tableHeaderImage(SafeHtmlUtils.fromTrustedString(
                     AbstractImagePrototype.create(headerImage).getHTML()));
         }

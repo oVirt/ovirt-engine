@@ -85,8 +85,7 @@ public class InitGlusterCommandHelper {
                 return false;
             }
             saveGlusterHostUuid(vds, addedServerUuid);
-        }
-        else {
+        } else {
             setNonOperational(vds, NonOperationalReason.GLUSTER_HOST_UUID_NOT_FOUND, null);
             return false;
         }
@@ -174,8 +173,7 @@ public class InitGlusterCommandHelper {
                         customLogValues.put("Command", "gluster peer status");
                         setNonOperational(vds, NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                         return false;
-                    }
-                    else if (!glusterUtil.isHostExists(glusterServers, vds)) {
+                    } else if (!glusterUtil.isHostExists(glusterServers, vds)) {
                         if (!glusterPeerProbe(vds, upServer.getId(), vds.getHostName())) {
                             customLogValues.put("Command", "gluster peer probe " + vds.getHostName());
                             setNonOperational(vds, NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);

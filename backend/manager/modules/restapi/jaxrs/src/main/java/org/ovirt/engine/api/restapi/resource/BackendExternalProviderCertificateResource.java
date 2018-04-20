@@ -43,8 +43,7 @@ public class BackendExternalProviderCertificateResource
         int i;
         try {
             i = Integer.parseInt(id);
-        }
-        catch (NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             return notFound();
         }
 

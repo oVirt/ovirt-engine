@@ -117,8 +117,7 @@ public class StorageDeviceSyncJobTest {
             devices.add(device);
             devices.add(getStorageDevice("device-with-devuuid-but-name-changed", null));
             vdsRetValue.setReturnValue(devices);
-        }
-        else {
+        } else {
             vdsRetValue.setReturnValue(Collections.emptyList());
         }
         return vdsRetValue;

@@ -43,8 +43,7 @@ public class ExternalHostMapper {
         VDS entity = template != null? template: new VDS();
         if (model.isSetId()) {
             entity.setVdsName(hex2string(model.getId()));
-        }
-        else if (model.isSetName()) {
+        } else if (model.isSetName()) {
             entity.setVdsName(model.getName());
         }
         if (model.isSetAddress()) {

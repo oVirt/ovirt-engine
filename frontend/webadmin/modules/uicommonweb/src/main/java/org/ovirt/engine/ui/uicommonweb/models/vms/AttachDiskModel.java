@@ -79,8 +79,7 @@ public class AttachDiskModel extends NewDiskModel {
         }
         if (bootDiskFound) {
             getIsBootable().setIsChangeable(false);
-        }
-        else {
+        } else {
             addBootChangeListener();
         }
     }
@@ -161,8 +160,7 @@ public class AttachDiskModel extends NewDiskModel {
                                             boolean isBootableMarked = (Boolean) ((EntityModel) sender).getEntity();
                                             getIsBootable().setIsChangeable(!isBootableMarked);
                                         });
-                                    }
-                                    else {
+                                    } else {
                                         diskModel.getIsBootable().setIsChangeable(false);
                                         diskModel.getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
                                     }

@@ -44,8 +44,7 @@ public class BackendAffinityLabelVmsResource
         LabelActionParameters updateParams = new LabelActionParameters(updatedLabel);
         try {
             doAction(ActionType.UpdateLabel, updateParams);
-        }
-        catch (BackendFailureException exception) {
+        } catch (BackendFailureException exception) {
             handleError(exception, false);
         }
         Vm result = BackendAffinityLabelHelper.makeVmLink(entity.getId());

@@ -66,15 +66,13 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
                     "Upgrade failed, please refer to logs for further information"
                 );
             }
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             _failException = e;
             log.error("Error during upgrade: {}", e.getMessage());
             log.debug("Exception", e);
             try {
                 _control.close();
-            }
-            catch (IOException ee) {
+            } catch (IOException ee) {
                 log.error("Error during close: {}", ee.getMessage());
                 log.debug("Exception", ee);
             }
@@ -112,8 +110,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
     protected void finalize() {
         try {
             close();
-        }
-        catch (IOException e) {
+        } catch(IOException e) {
             log.error("Exception during finalize: {}", e.getMessage());
             log.debug("Exception", e);
         }
@@ -230,8 +227,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
             }
 
             _deployStatus = DeployStatus.Reboot;
-        }
-        catch (TimeLimitExceededException e){
+        } catch(TimeLimitExceededException e){
             log.error(
                 "Timeout during node '{}' upgrade: {}",
                 _vds.getHostName(),
@@ -243,15 +239,13 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
                 "Processing stopped due to timeout"
             );
             throw e;
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             log.error("Error during node '{}' upgrade: {}", _vds.getHostName(), e.getMessage());
             log.error("Exception", e);
 
             if (_failException == null) {
                 throw e;
-            }
-            else {
+            } else {
                 log.error(
                     "Error during node '{}' upgrade, prefering first exception: {}",
                     _vds.getHostName(),
@@ -300,8 +294,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
              */
             try {
                 _thread.join(THREAD_JOIN_TIMEOUT);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 log.error("interrupted", e);
             }
             if (_thread.isAlive()) {
@@ -310,8 +303,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
                     try {
                         _thread.join();
                         break;
-                    }
-                    catch (InterruptedException ignore) {}
+                    } catch (InterruptedException ignore) {}
                 }
             }
             _thread = null;

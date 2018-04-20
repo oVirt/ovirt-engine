@@ -133,8 +133,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                     getModel().getStorageDomain().setIsChangeable(true);
 
                     initDisks();
-                }
-                else {
+                } else {
                     getModel().getStorageDomain().setIsChangeable(false);
 
                     getModel().setIsDisksAvailable(false);

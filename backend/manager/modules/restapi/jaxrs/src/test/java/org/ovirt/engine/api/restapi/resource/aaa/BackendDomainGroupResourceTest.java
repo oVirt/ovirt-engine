@@ -49,8 +49,7 @@ public class BackendDomainGroupResourceTest
         try {
             resource.get();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }

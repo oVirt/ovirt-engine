@@ -57,8 +57,7 @@ public class V3VmNicsServer extends V3Server<VmNicsResource> {
         // VNIC profile, as the V4 server will detect/report/handle the issue better than we can do here):
         try {
             return adaptResponse(getDelegate().add(v4Nic));
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }

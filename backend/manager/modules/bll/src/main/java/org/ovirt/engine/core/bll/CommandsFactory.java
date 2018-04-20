@@ -98,16 +98,14 @@ public final class CommandsFactory {
             @SuppressWarnings("unchecked")
             CommandBase<P> command = (CommandBase<P>) commandConstructor.newInstance(parameters, commandContext);
             return Injector.injectMembers(command);
-        }
-        catch (InvocationTargetException ex) {
+        } catch(InvocationTargetException ex) {
             logException(ex,
                     "Error in invocating CTOR of command '{}' with parameters '{}': {}",
                     action.name(),
                     parameters,
                     ex.getMessage());
             return null;
-        }
-        catch (Exception ex) {
+        } catch(Exception ex) {
             logException(ex,
                     "An exception has occurred while trying to create a command object for command '{}' with parameters '{}': {}",
                     action.name(),

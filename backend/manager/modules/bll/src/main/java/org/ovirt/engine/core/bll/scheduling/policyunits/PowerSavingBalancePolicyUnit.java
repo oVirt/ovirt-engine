@@ -124,8 +124,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             backend.runInternalAction(ActionType.MaintenanceNumberOfVdss,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
-        }
-        else if (targetStatus == VDSStatus.Down && currentStatus == VDSStatus.Maintenance) {
+        } else if (targetStatus == VDSStatus.Down && currentStatus == VDSStatus.Maintenance) {
             logAction(vds, AuditLogType.PM_POLICY_MAINTENANCE_TO_DOWN);
 
             /* Maint -> Down */
@@ -134,8 +133,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             backend.runInternalAction(ActionType.VdsPowerDown,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
-        }
-        else if (targetStatus == VDSStatus.Up && currentStatus == VDSStatus.Maintenance) {
+        } else if (targetStatus == VDSStatus.Up && currentStatus == VDSStatus.Maintenance) {
             logAction(vds, AuditLogType.PM_POLICY_TO_UP);
 
             /* Maint -> Up */
@@ -143,8 +141,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             backend.runInternalAction(ActionType.ActivateVds,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
-        }
-        else if (targetStatus == VDSStatus.Up && currentStatus == VDSStatus.Down) {
+        } else if (targetStatus == VDSStatus.Up && currentStatus == VDSStatus.Down) {
             logAction(vds, AuditLogType.PM_POLICY_TO_UP);
 
             /* Down -> Up */
@@ -152,8 +149,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             backend.runInternalAction(ActionType.StartVds,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
-        }
-        else {
+        } else {
             /* Should not ever happen... */
             log.error("Unknown host power management transition '{}' -> '{}'",
                     currentStatus,
@@ -180,12 +176,10 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                     && vds.getVmMigrating() == 0
                     && PendingVM.collectForHost(getPendingResourceManager(), vds.getId()).size() == 0) {
                 emptyHosts.add(vds);
-            }
-            else if (vds.isPowerManagementControlledByPolicy() && !vds.isDisablePowerManagementPolicy()) {
+            } else if (vds.isPowerManagementControlledByPolicy() && !vds.isDisablePowerManagementPolicy()) {
                 if (vds.getStatus() == VDSStatus.Maintenance) {
                     maintenanceHosts.add(vds);
-                }
-                else if (vds.getStatus() == VDSStatus.Down) {
+                } else if (vds.getStatus() == VDSStatus.Down) {
                     downHosts.add(vds);
                 }
             }
@@ -227,19 +221,15 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             log.info("Cluster '{}' does not have enough spare hosts, but no additional host is available.",
                     cluster.getName());
             return null;
-        }
-
-        /* We have enough free hosts so shut some hosts in maintenance down
-           keep at least one spare in maintenance during the process.
-         */
-        else if (requiredReserve < emptyHosts.size()
-                && pmMaintenanceHosts.size() > 1) {
+        } else if (requiredReserve < emptyHosts.size() && pmMaintenanceHosts.size() > 1) {
+            /* We have enough free hosts so shut some hosts in maintenance down
+               keep at least one spare in maintenance during the process.
+             */
             log.info("Cluster '{}' does have enough spare hosts, shutting one host down.", cluster.getName());
             return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Down);
-        }
+        } else if (requiredReserve < emptyHosts.size()) {
+            /* We do have enough empty hosts to put something to maintenance */
 
-        /* We do have enough empty hosts to put something to maintenance */
-        else if (requiredReserve < emptyHosts.size()) {
             /* Find hosts with automatic PM enabled that are not the current SPM */
 
             Optional<VDS> hostsWithAutoPM = emptyHosts.stream()
@@ -255,29 +245,20 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             } else {
                 return new Pair<>(hostsWithAutoPM.get(), VDSStatus.Maintenance);
             }
-        }
-
-        /* We have the right amount of empty hosts to start shutting the
-           hosts that are resting in maintenance down.
-         */
-        else if (requiredReserve == emptyHosts.size() && !pmMaintenanceHosts.isEmpty()) {
+        } else if (requiredReserve == emptyHosts.size() && !pmMaintenanceHosts.isEmpty()) {
+            /* We have the right amount of empty hosts to start shutting the
+               hosts that are resting in maintenance down.
+             */
             log.info("Cluster '{}' does have enough spare hosts, shutting one host down.", cluster.getName());
             return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Down);
-        }
-
-        /* We do not have enough free hosts, but we still have some hosts
-           in maintenance. We can easily activate those.
-         */
-        else if (requiredReserve > emptyHosts.size() && !pmMaintenanceHosts.isEmpty()) {
+        } else if (requiredReserve > emptyHosts.size() && !pmMaintenanceHosts.isEmpty()) {
+            /* We do not have enough free hosts, but we still have some hosts
+               in maintenance. We can easily activate those.
+             */
             log.info("Cluster '{}' does not have enough spare hosts, reactivating one.", cluster.getName());
             return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Up);
-        }
-
-        /* We do not have enough free hosts and no hosts in pm maintenance,
-           so we need to start some hosts up.
-         */
-        else if (requiredReserve > emptyHosts.size()
-                && pmMaintenanceHosts.isEmpty()) {
+        } else if (requiredReserve > emptyHosts.size() && pmMaintenanceHosts.isEmpty()) {
+            /* We do not have enough free hosts and no hosts in pm maintenance, so we need to start some hosts up. */
             log.info("Cluster '{}' does not have enough spare hosts, trying to start one up.", cluster.getName());
             return new Pair<>(pmDownHosts.get(0), VDSStatus.Up);
         }

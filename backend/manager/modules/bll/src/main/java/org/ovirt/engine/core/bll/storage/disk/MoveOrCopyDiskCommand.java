@@ -507,8 +507,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         parameters.setVolumeType(getDiskImage().getVolumeType());
         if (isTemplate()) {
             parameters.setCopyVolumeType(CopyVolumeType.SharedVol);
-        }
-        else {
+        } else {
             parameters.setCopyVolumeType(CopyVolumeType.LeafVol);
         }
         parameters.setParentCommand(getActionType());
@@ -564,8 +563,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                             .collect(Collectors.toMap(p -> p.toString(),
                                     p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingMigratedMessage())));
                 }
-            }
-            else {
+            } else {
                 List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
                 if (!vmsForDisk.isEmpty()) {
                     return vmsForDisk.stream()

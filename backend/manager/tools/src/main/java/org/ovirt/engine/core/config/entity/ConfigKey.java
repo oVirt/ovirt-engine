@@ -131,8 +131,7 @@ public class ConfigKey {
         String value = "Error fetching value";
         try{
             value = getDisplayValue();
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             LoggerFactory.getLogger(ConfigKey.class).debug("Error fetching value", e);
         }
         return new StringBuilder ("ConfigKey [type=").append(type).append(", description=").append(description)

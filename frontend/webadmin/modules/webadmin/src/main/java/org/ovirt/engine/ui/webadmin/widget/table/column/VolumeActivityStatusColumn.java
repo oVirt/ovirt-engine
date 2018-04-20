@@ -56,8 +56,7 @@ public class VolumeActivityStatusColumn<T extends GlusterTaskSupport> extends Ab
             default:
                 tooltip = ""; //$NON-NLS-1$
             }
-        }
-        else if (taskType == GlusterTaskType.REMOVE_BRICK) {
+        } else if (taskType == GlusterTaskType.REMOVE_BRICK) {
             switch (value.getAsyncTask().getStatus()) {
             case STARTED:
                 tooltip = constants.removeBrickInProgress();

@@ -231,15 +231,11 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
 
         if (command == getNewCommand()) {
             newNetwork();
-        }
-        else if (command == getImportCommand()) {
+        } else if (command == getImportCommand()) {
             importNetworks();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
         }
     }

@@ -154,8 +154,7 @@ public class QueryHelper {
     public static Integer parsePageNum(String searchStr) {
         if (searchStr.toLowerCase().indexOf("page ") == -1) {
             return null;
-        }
-        else {
+        } else {
             int pos = searchStr.toLowerCase().indexOf("page ") + 5;
             StringBuilder pageNumberStr = new StringBuilder();
             char c = searchStr.charAt(pos);

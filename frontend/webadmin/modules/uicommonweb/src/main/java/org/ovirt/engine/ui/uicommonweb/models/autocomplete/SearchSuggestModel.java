@@ -159,8 +159,7 @@ public class SearchSuggestModel extends SearchableListModel {
                             SuggestItemPartType.New);
                 }
             }
-        }
-        else {
+        } else {
             addSuggestItem(pf, SuggestItemPartType.Valid, notHandled, SuggestItemPartType.Erroneous);
         }
     }

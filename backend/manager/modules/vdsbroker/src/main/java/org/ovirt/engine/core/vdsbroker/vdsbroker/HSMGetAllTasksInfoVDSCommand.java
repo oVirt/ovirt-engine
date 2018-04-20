@@ -59,9 +59,7 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
             AsyncTaskCreationInfo task = tempVar;
 
             return task;
-        }
-
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("Could not parse single task info: '{}' (possibly specific task should not be monitored): {}",
                     taskInfo, e.getMessage());
             log.debug("Exception", e);

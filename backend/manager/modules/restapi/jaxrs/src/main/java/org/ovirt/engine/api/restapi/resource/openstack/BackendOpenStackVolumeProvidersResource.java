@@ -70,8 +70,7 @@ public class BackendOpenStackVolumeProvidersResource
                 QueryType.GetAllProviders,
                 new GetAllProvidersParameters(ProviderType.OPENSTACK_VOLUME)
             );
-        }
-        else {
+        } else {
             return getBackendCollection(SearchType.Provider, getConstraint());
         }
     }

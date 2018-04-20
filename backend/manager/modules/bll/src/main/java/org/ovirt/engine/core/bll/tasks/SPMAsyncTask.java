@@ -205,9 +205,7 @@ public class SPMAsyncTask implements SPMTask {
                 clearAsyncTask();
                 break;
             }
-        }
-
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("BaseAsyncTask::PollAndUpdateTask: Handling task '{}' (State '{}', Parent Command '{}'."
                             + " Parameters Type '{}') threw an exception",
                     getVdsmTaskId(),
@@ -263,17 +261,13 @@ public class SPMAsyncTask implements SPMTask {
                     getCommandId());
             ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
             onTaskEndSuccess();
-        }
-
-        else if (hasTaskEndedInFailure()) {
+        } else if (hasTaskEndedInFailure()) {
             log.debug("Task of command {} with id '{}' has failed, executing failure logic.",
                     asyncTask.getActionType(),
                     getCommandId());
             ExecutionHandler.getInstance().endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             onTaskEndFailure();
-        }
-
-        else if (!doesTaskExist()) {
+        } else if (!doesTaskExist()) {
             log.debug("Task of command {} with id '{}' does not exist, executing cleanup logic.",
                     asyncTask.getActionType(),
                     getCommandId());
@@ -287,9 +281,7 @@ public class SPMAsyncTask implements SPMTask {
             if (coco.removeByVdsmTaskId(getVdsmTaskId()) != 0) {
                 log.info("BaseAsyncTask::removeTaskFromDB: Removed task '{}' from DataBase", getVdsmTaskId());
             }
-        }
-
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("BaseAsyncTask::removeTaskFromDB: Removing task '{}' from DataBase threw an exception: {}",
                     getVdsmTaskId(),
                     e.getMessage());
@@ -398,9 +390,7 @@ public class SPMAsyncTask implements SPMTask {
                     cachedStatusTask.getStatus() == AsyncTaskStatusEnum.finished
                             ? String.format(", result '%1$s'", cachedStatusTask.getResult())
                             : "");
-        }
-
-        else {
+        } else {
             log.info(formatString,
                     getVdsmTaskId(),
                     getParameters().getDbAsyncTask().getActionType(),
@@ -465,9 +455,7 @@ public class SPMAsyncTask implements SPMTask {
         try {
             log.info("SPMAsyncTask::ClearAsyncTask: Attempting to clear task '{}'", getVdsmTaskId());
             vdsReturnValue = coco.clearTask(getStoragePoolID(), getVdsmTaskId());
-        }
-
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("SPMAsyncTask::ClearAsyncTask: Error during clearing task '{}': {}",
                     getVdsmTaskId(),
                     e.getMessage());

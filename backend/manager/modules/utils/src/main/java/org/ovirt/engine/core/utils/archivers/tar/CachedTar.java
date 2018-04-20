@@ -37,8 +37,7 @@ public class CachedTar {
         try {
             try (OutputStream os = new FileOutputStream(temp)) {
                 Tar.doTar(os, this.dir);
-            }
-            catch(IOException e) {
+            } catch(IOException e) {
                 throw new IOException(String.format("Cannot create tarball '%1$s'", this.archive), e);
             }
 
@@ -53,12 +52,10 @@ public class CachedTar {
             }
 
             temp = null;
-        }
-        catch(IOException e) {
+        } catch(IOException e) {
             log.error("Exception", e);
             throw e;
-        }
-        finally {
+        } finally {
             if (temp != null && !temp.delete()) {
                 log.error("Cannot delete '{}'", temp.getAbsolutePath());
             }

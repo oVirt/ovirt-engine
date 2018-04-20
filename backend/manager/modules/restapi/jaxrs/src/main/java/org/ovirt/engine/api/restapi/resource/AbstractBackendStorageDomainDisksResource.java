@@ -45,8 +45,7 @@ public class AbstractBackendStorageDomainDisksResource
             Guid dataCenterId = BackendDataCenterHelper.lookupByStorageDomainId(this, storageDomainId);
             return mapCollection(getBackendCollection(QueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId, dataCenterId)));
-        }
-        else {
+        } else {
             return mapCollection(getBackendCollection(QueryType.GetAllDisksByStorageDomainId,
                     new IdQueryParameters(storageDomainId)));
         }
@@ -70,8 +69,7 @@ public class AbstractBackendStorageDomainDisksResource
                             unregisteredDisk);
             RegisterDiskParameters registerDiskParams = new RegisterDiskParameters(unregisteredDisk, storageDomainId);
             return performCreate(ActionType.RegisterDisk, registerDiskParams, ID_RESOLVER);
-        }
-        else {
+        } else {
             validateDiskForCreation(disk);
             AddDiskParameters params = new AddDiskParameters();
             params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(
@@ -89,8 +87,7 @@ public class AbstractBackendStorageDomainDisksResource
                 validateParameters(disk.getLunStorage().getLogicalUnits().getLogicalUnits().get(0), 3, "address",
                     "target", "port", "id");
             }
-        }
-        else if (disk.isSetLunStorage() && (!disk.getLunStorage().isSetLogicalUnits() || !disk.getLunStorage().getLogicalUnits().isSetLogicalUnits())) {
+        } else if (disk.isSetLunStorage() && (!disk.getLunStorage().isSetLogicalUnits() || !disk.getLunStorage().getLogicalUnits().isSetLogicalUnits())) {
             // TODO: Implement nested entity existence validation infra for validateParameters()
             throw new WebFaultException(
                 null,
@@ -98,8 +95,7 @@ public class AbstractBackendStorageDomainDisksResource
                 localize(Messages.INCOMPLETE_PARAMS_DETAIL_TEMPLATE, "LogicalUnit", "", "add"),
                 Response.Status.BAD_REQUEST
             );
-        }
-        else {
+        } else {
             validateParameters(disk, 2, "provisionedSize|size", "format"); // Non lun disks require size and format
         }
     }

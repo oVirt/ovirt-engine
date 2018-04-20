@@ -77,8 +77,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                 disableNewTemplateModel(ConstantsManager.getInstance()
                                         .getConstants()
                                         .dataCenterIsNotAccessibleMsg());
-                            }
-                            else {
+                            } else {
 
                                 AsyncDataProvider.getInstance().getClusterListByService(
                                         new AsyncQuery<>(clusters -> {
@@ -310,8 +309,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     if (activeStorageDomainList.size() > 0) {
                         getModel().getStorageDomain().setItems(activeStorageDomainList);
                         getModel().getStorageDomain().setIsChangeable(true);
-                    }
-                    else {
+                    } else {
                         disableNewTemplateModel(ConstantsManager.getInstance()
                                 .getMessages()
                                 .noActiveStorageDomain());

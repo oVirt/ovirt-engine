@@ -41,8 +41,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
         if (step.isSetParentStep()) {
             validateParameters(step, "parentStep.id");
             id = step.getParentStep().getId();
-        }
-        else {
+        } else {
             id = jobId.toString();
         }
 

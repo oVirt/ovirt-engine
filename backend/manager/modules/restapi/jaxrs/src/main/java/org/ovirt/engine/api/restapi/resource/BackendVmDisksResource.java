@@ -71,15 +71,13 @@ public class BackendVmDisksResource
 
         if (disk.isSetBootable()) {
             diskAttachment.setBootable(disk.isBootable());
-        }
-        else {
+        } else {
             diskAttachment.setBootable(false);
         }
 
         if (disk.isSetInterface()) {
             diskAttachment.setInterface(disk.getInterface());
-        }
-        else {
+        } else {
             diskAttachment.setInterface(DiskInterface.VIRTIO);
         }
 
@@ -91,8 +89,7 @@ public class BackendVmDisksResource
         if (disk.isSetId()) {
             Guid diskId = Guid.createGuidFromStringDefaultEmpty(disk.getId());
             return getAttachmentsResource().attachDiskToVm(this, diskAttachment, new OldAttachDiskResolver(diskId));
-        }
-        else {
+        } else {
             return getAttachmentsResource().createDisk(this, diskAttachment, new OldAddDiskResolver());
         }
     }

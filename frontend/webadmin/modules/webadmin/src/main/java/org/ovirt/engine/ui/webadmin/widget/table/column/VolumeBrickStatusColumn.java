@@ -35,8 +35,7 @@ public class VolumeBrickStatusColumn extends AbstractColumn<GlusterVolumeEntity,
         for (GlusterBrickEntity brick : object.getBricks()) {
             if (brick.isOnline()) {
                 upBricks++;
-            }
-            else {
+            } else {
                 downBricks++;
             }
         }

@@ -176,8 +176,7 @@ public class SpiceConsoleModel extends ConsoleModel {
                         boolean isLogonSucceeded = logonCommandReturnValue != null && logonCommandReturnValue.getSucceeded();
                         if (isLogonSucceeded) {
                             invokeClient();
-                        }
-                        else {
+                        } else {
                             if (logonCommandReturnValue != null && logonCommandReturnValue.getFault().getError() == EngineError.nonresp) {
                                 UICommand okCommand =
                                         new UICommand("SpiceWithoutAgentOK", new BaseCommandTarget() { //$NON-NLS-1$
@@ -200,8 +199,7 @@ public class SpiceConsoleModel extends ConsoleModel {
                                 });
 
                                 createConnectWithoutAgentConfirmationPopup(okCommand, cancelCommand);
-                            }
-                            else {
+                            } else {
                                 logSsoOnDesktopFailed(getLogger(),
                                         logonCommandReturnValue != null ? logonCommandReturnValue.getDescription()
                                                 : ""); //$NON-NLS-1$

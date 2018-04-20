@@ -125,8 +125,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             if (!problematicDisksForWarning.contains(diskAlias)) {
                 problematicDisksForWarning.add(diskAlias);
             }
-        }
-        else {
+        } else {
             problematicDisksForWarning.remove(diskAlias);
         }
 

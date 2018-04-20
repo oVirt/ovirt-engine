@@ -270,8 +270,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                         .collect(Collectors.toList());
                 postAttachInternal(models);
             }));
-        }
-        else {
+        } else {
 
             AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(list -> {
                 List<EntityModel> models = new ArrayList<>();
@@ -285,24 +284,20 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                     }
                     if (a.getStorageDomainType() == StorageDomainType.Volume) {
                         addToList = true;
-                    }
-                    else if (a.getStorageDomainType() == getStorageDomainType()) {
+                    } else if (a.getStorageDomainType() == getStorageDomainType()) {
                         if (getStorageDomainType() == StorageDomainType.Data) {
                             if (getEntity().getStoragePoolFormatType() == null) {
                                 addToList = true;
-                            }
-                            else if (getEntity().getStoragePoolFormatType().compareTo(a.getStorageStaticData()
+                            } else if (getEntity().getStoragePoolFormatType().compareTo(a.getStorageStaticData()
                                     .getStorageFormat()) >= 0) {
                                 addToList = true;
-                            }
-                            else {
+                            } else {
                                 if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V1
                                         || a.getStorageStaticData().getStorageFormat() == StorageFormatType.V2) {
                                     addToList = true;
                                 }
                             }
-                        }
-                        else if (getStorageDomainType() == StorageDomainType.ImportExport) {
+                        } else if (getStorageDomainType() == StorageDomainType.ImportExport) {
                             addToList = true;
                         }
                     }
@@ -332,8 +327,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             listModel.getCommands().add(tempVar);
-        }
-        else {
+        } else {
             UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnAttach", this); //$NON-NLS-1$
             listModel.getCommands().add(tempVar2);
             UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
@@ -499,8 +493,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             if (a.getStorageType() == StorageType.LOCALFS && a.getStorageDomainType() != StorageDomainType.ISO) {
                 getRemoveParams().add(new RemoveStorageDomainParameters(a.getId()));
                 localStorgaeDC = a.getStoragePoolName();
-            }
-            else {
+            } else {
                 getDetachParams().add(new DetachStorageDomainFromPoolParameters(a.getId(), getEntity().getId()));
             }
         }
@@ -516,8 +509,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
                 postDetach(getWindow());
             }), localStorgaeDC);
-        }
-        else {
+        } else {
             postDetach(confirmModel);
         }
     }
@@ -643,35 +635,25 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
         if (command == getAttachStorageCommand()) {
             attachStorage();
-        }
-        else if (command == getAttachISOCommand()) {
+        } else if (command == getAttachISOCommand()) {
             attachISO();
-        }
-        else if (command == getAttachBackupCommand()) {
+        } else if (command == getAttachBackupCommand()) {
             attachBackup();
-        }
-        else if (command == getDetachCommand()) {
+        } else if (command == getDetachCommand()) {
             detach();
-        }
-        else if (command == getActivateCommand()) {
+        } else if (command == getActivateCommand()) {
             activate();
-        }
-        else if (command == getMaintenanceCommand()) {
+        } else if (command == getMaintenanceCommand()) {
             maintenance();
-        }
-        else if ("OnAttach".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnAttach".equals(command.getName())) { //$NON-NLS-1$
             onAttach();
-        }
-        else if ("OnAttachApprove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnAttachApprove".equals(command.getName())) { //$NON-NLS-1$
             onAttachApprove();
-        }
-        else if ("OnDetach".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnDetach".equals(command.getName())) { //$NON-NLS-1$
             onDetach();
-        }
-        else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
             onMaintenance();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

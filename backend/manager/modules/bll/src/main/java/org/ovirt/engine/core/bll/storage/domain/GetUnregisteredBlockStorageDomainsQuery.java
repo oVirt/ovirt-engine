@@ -89,8 +89,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
 
             if (returnValue.getSucceeded()) {
                 connectedTargets.add(storageConnection);
-            }
-            else {
+            } else {
                 log.error("Could not connect to target IQN '{}': {}",
                         storageConnection.getIqn(), returnValue.getFault().getMessage());
             }

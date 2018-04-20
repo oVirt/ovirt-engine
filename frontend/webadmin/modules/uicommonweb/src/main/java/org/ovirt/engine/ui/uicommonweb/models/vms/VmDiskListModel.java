@@ -570,48 +570,33 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
         if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getAttachCommand()) {
+        } else if (command == getAttachCommand()) {
             attach();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if (command == getSparsifyCommand()) {
+        } else if (command == getSparsifyCommand()) {
             sparsify();
-        }
-        else if (command == getMoveCommand()) {
+        } else if (command == getMoveCommand()) {
             move();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName())) {
+        } else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName())) {
             cancel();
-        }
-        else if (RemoveDiskModel.ON_REMOVE.equals(command.getName())) {
+        } else if (RemoveDiskModel.ON_REMOVE.equals(command.getName())) {
             onRemove();
-        }
-        else if (SparsifyDiskModel.CANCEL_SPARSIFY.equals(command.getName())) {
+        } else if (SparsifyDiskModel.CANCEL_SPARSIFY.equals(command.getName())) {
             cancel();
-        }
-        else if (SparsifyDiskModel.ON_SPARSIFY.equals(command.getName())) {
+        } else if (SparsifyDiskModel.ON_SPARSIFY.equals(command.getName())) {
             onSparsify();
-        }
-        else if (command == getPlugCommand()) {
+        } else if (command == getPlugCommand()) {
             plug();
-        }
-        else if (command == getUnPlugCommand()) {
+        } else if (command == getUnPlugCommand()) {
             confirmUnplug();
-        }
-        else if ("OnUnplug".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnUnplug".equals(command.getName())) { //$NON-NLS-1$
             unplug();
-        }
-
-        else if (command == getChangeQuotaCommand()) {
+        } else if (command == getChangeQuotaCommand()) {
             changeQuota();
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
             onChangeQuota();

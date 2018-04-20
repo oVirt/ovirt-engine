@@ -406,8 +406,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         }
         if (cluster.supportsVirtService()&& !cluster.supportsGlusterService()) {
             clusterModel.getEnableTrustedService().setIsChangeable(true);
-        }
-        else {
+        } else {
             clusterModel.getEnableTrustedService().setIsChangeable(false);
         }
 
@@ -562,8 +561,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         if (model.getIsNew()) {
             onPreSaveInternal(model);
-        }
-        else {
+        } else {
             onSaveConfirmCV(model);
         }
     }
@@ -651,8 +649,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     public void onPreSaveInternal(ClusterModel model) {
         if (model.getIsImportGlusterConfiguration().getEntity()) {
             fetchAndImportClusterHosts(model);
-        }
-        else {
+        } else {
             onSaveInternal();
         }
     }
@@ -794,8 +791,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             if (returnValue == null) {
                 onEmptyGlusterHosts(clusterModel);
                 return;
-            }
-            else if (!returnValue.getSucceeded()) {
+            } else if (!returnValue.getSucceeded()) {
                 clusterModel.setMessage(Frontend.getInstance().getAppErrorsTranslator()
                         .translateErrorTextSingle(returnValue.getExceptionString()));
                 return;
@@ -870,8 +866,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         }
         if (hostsModel.getClusterModel().getClusterId() != null) {
             addHosts(hostsModel);
-        }
-        else {
+        } else {
             onSaveInternalWithModel(hostsModel.getClusterModel());
         }
     }
@@ -1001,44 +996,31 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if (command == getGuideCommand()) {
+        } else if (command == getGuideCommand()) {
             guide();
-        }
-        else if (command == getResetEmulatedMachineCommand()) {
+        } else if (command == getResetEmulatedMachineCommand()) {
             resetEmulatedMachine();
-        }
-        else if ("OnResetClusterEmulatedMachine".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnResetClusterEmulatedMachine".equals(command.getName())) { //$NON-NLS-1$
             onResetClusterEmulatedMachine();
-        }
-        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("OnSaveConfirmCpuThreads".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveConfirmCpuThreads".equals(command.getName())) { //$NON-NLS-1$
             onSaveConfirmCpuThreads();
-        }
-        else if ("OnSaveConfirmGenericWarnings".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveConfirmGenericWarnings".equals(command.getName())) { //$NON-NLS-1$
             onSaveConfirmGenericWarnings();
-        }
-        else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternal();
-        }
-        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
-        }
-        else if ("OnSaveHosts".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveHosts".equals(command.getName())) { //$NON-NLS-1$
             onSaveHosts();
         }
     }

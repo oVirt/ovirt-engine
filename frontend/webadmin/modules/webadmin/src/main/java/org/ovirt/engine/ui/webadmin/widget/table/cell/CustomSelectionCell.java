@@ -102,8 +102,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
         if (isEnabled) {
             sb.append(template.selectEnabled(id, style));
-        }
-        else {
+        } else {
             sb.append(template.selectDisabled(id, style));
         }
 

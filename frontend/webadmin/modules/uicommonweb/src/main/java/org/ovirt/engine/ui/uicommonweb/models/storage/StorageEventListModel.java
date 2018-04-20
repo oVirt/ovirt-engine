@@ -12,8 +12,7 @@ public class StorageEventListModel extends SubTabEventListModel<StorageDomain> {
 
         if (getEntity() != null) {
             getSearchCommand().execute();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

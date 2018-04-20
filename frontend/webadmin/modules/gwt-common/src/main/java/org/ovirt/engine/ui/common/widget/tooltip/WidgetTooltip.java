@@ -59,10 +59,8 @@ public class WidgetTooltip extends WidgetDecorator implements HasCleanup {
         // Apply tooltip if the widget is attached to live DOM.
         if (widgetAttached && tooltip != null) {
             ElementTooltipUtils.setTooltipOnElement(getWidget().getElement(), tooltip, tooltipConfig);
-        }
-
-        // Destroy tooltip if the widget is detached from live DOM.
-        else if (!widgetAttached) {
+        } else if (!widgetAttached) {
+            // Destroy tooltip if the widget is detached from live DOM.
             ElementTooltipUtils.destroyTooltip(getWidget().getElement());
         }
     }

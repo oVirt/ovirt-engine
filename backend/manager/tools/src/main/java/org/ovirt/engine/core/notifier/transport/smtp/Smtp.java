@@ -115,8 +115,7 @@ public class Smtp extends Transport {
             mailSessionProps.put("mail.smtp.auth", "true");
             mailSessionProps.put("mail.smtp.starttls.enable", "true");
             mailSessionProps.put("mail.smtp.starttls.required", "true");
-        }
-        else {
+        } else {
             throw new IllegalArgumentException(
                 String.format(
                     "Illegal encryption method for %s",
@@ -153,8 +152,7 @@ public class Smtp extends Transport {
     public void dispatchEvent(AuditLogEvent event, String address) {
         if (StringUtils.isEmpty(address)) {
             log.error("Address is empty, cannot distribute message. {}", event.getName());
-        }
-        else {
+        } else {
             sendQueue.add(new DispatchAttempt(event, address));
         }
     }

@@ -269,8 +269,7 @@ public class BackendStorageDomainsResource
             if (cnx.getStorageType().isFileDomain()) {
                 validateParameters(storageConnectionFromUser, "path");
             }
-        }
-        else {
+        } else {
             cnx = getStorageServerConnection(storageConnectionFromUser.getId());
             storageDomain.getStorage().setType(mapType(cnx.getStorageType()));
         }

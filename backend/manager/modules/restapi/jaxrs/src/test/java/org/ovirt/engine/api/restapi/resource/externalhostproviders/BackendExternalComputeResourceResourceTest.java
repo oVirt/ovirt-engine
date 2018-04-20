@@ -48,8 +48,7 @@ public class BackendExternalComputeResourceResourceTest
         try {
             new BackendExternalHostProviderResource("foo");
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -61,8 +60,7 @@ public class BackendExternalComputeResourceResourceTest
         try {
             resource.get();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }

@@ -1005,8 +1005,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
         if (getVm().isTrustedService() && !getVmTemplate().isTrustedService()) {
             auditLogDirector.log(this, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
-        }
-        else if (!getVm().isTrustedService() && getVmTemplate().isTrustedService()) {
+        } else if (!getVm().isTrustedService() && getVmTemplate().isTrustedService()) {
             auditLogDirector.log(this, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }

@@ -48,8 +48,7 @@ public class DocsServlet extends FileServlet {
             String defaultPath = getBookIndexPath(bookPath, locale);
             String backupPath = getBookIndexPath(bookPath, DEFAULT_US_LOCALE);
             file = getFile(request, response, defaultPath, backupPath, locale);
-        }
-        else {
+        } else {
             m = bookHtmlContentPattern.matcher(url);
             if (m.matches()) {
                 // book content page
@@ -58,8 +57,7 @@ public class DocsServlet extends FileServlet {
                 String defaultPath = getBookContentPath(bookPath, contentPath, locale);
                 String backupPath = getBookContentPath(bookPath, contentPath, DEFAULT_US_LOCALE);
                 file = getFile(request, response, defaultPath, backupPath, locale);
-            }
-            else {
+            } else {
                 m = bookPdfPattern.matcher(url);
                 if (m.matches()) {
                     // book pdf
@@ -73,8 +71,7 @@ public class DocsServlet extends FileServlet {
 
         if (file == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-        else {
+        } else {
             ServletUtils.sendFile(request, response, file, type);
         }
     }

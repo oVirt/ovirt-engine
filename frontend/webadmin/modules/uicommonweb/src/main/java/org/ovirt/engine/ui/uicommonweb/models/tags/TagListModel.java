@@ -204,8 +204,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     public void recursiveSetSelection(TagModel tagModel, Map<Guid, Boolean> attachedEntities) {
         if (attachedEntities.containsKey(tagModel.getId()) && attachedEntities.get(tagModel.getId())) {
             tagModel.setSelection(true);
-        }
-        else {
+        } else {
             tagModel.setSelection(false);
         }
         if (tagModel.getChildren() != null) {
@@ -326,8 +325,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
 
         if (model.getSelection() == null ? false : model.getSelection()) {
             list.add(model);
-        }
-        else {
+        } else {
             list.remove(model);
         }
 
@@ -505,23 +503,17 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
 
         if (command == getResetCommand()) {
             reset();
-        }
-        else if (command == getNewCommand()) {
+        } else if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

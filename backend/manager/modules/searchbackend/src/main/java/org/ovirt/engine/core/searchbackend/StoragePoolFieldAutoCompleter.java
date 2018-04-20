@@ -52,8 +52,7 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
         IConditionValueAutoCompleter retval = null;
         if (STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StoragePoolStatus.class);
-        }
-        else if (LOCAL.equals(fieldName)) {
+        } else if (LOCAL.equals(fieldName)) {
             retval = new BitValueAutoCompleter();
         }
         return retval;

@@ -134,7 +134,8 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     public void setNumberOfSockets(Integer value) {
         if (numberOfSockets == null && value == null) {
             return;
-        } if (numberOfSockets == null || !numberOfSockets.equals(value)) {
+        }
+        if (numberOfSockets == null || !numberOfSockets.equals(value)) {
             numberOfSockets = value;
             onPropertyChanged(new PropertyChangedEventArgs("NumberOfSockets")); //$NON-NLS-1$
         }
@@ -149,7 +150,8 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     public void setCoresPerSocket(String value) {
         if (coresPerSocket == null && value == null) {
             return;
-        } if (coresPerSocket == null || !coresPerSocket.equals(value)) {
+        }
+        if (coresPerSocket == null || !coresPerSocket.equals(value)) {
             coresPerSocket = value;
             onPropertyChanged(new PropertyChangedEventArgs("CoresPerSocket")); //$NON-NLS-1$
         }
@@ -164,7 +166,8 @@ public class HostHardwareGeneralModel extends EntityModel<VDS> {
     public void setThreadsPerCore(String value) {
         if (threadsPerCore == null && value == null) {
             return;
-        } if (threadsPerCore == null || !threadsPerCore.equals(value)) {
+        }
+        if (threadsPerCore == null || !threadsPerCore.equals(value)) {
             threadsPerCore = value;
             onPropertyChanged(new PropertyChangedEventArgs("ThreadsPerCore")); //$NON-NLS-1$
         }

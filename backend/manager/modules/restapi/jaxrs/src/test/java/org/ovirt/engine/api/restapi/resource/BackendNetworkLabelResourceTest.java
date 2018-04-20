@@ -76,8 +76,7 @@ public class BackendNetworkLabelResourceTest
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }
@@ -109,8 +108,7 @@ public class BackendNetworkLabelResourceTest
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }

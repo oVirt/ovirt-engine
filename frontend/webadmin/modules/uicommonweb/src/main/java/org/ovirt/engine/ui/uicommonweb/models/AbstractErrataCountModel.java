@@ -107,8 +107,7 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
             setMessage(null);
             if (resultEntity != null && returnValue.getSucceeded()) {
                 setErrataCounts(resultEntity);
-            }
-            else {
+            } else {
                 setMessage(
                         constants.katelloProblemRetrievingErrata()  + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
             }

@@ -240,8 +240,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             }
 
             return null;
-        }
-        else {
+        } else {
             List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
                     getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                             QueryType.GetAllStorageDomains,

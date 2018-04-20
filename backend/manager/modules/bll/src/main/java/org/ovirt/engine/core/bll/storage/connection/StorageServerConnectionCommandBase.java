@@ -76,12 +76,10 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
                     storageServerConnectionDao.getAllConnectableStorageSeverConnection(storagePoolId);
             List<StorageServerConnections> connectionsForPath = storageServerConnectionDao.getAllForStorage(connection.getConnection());
             connections = (List<StorageServerConnections>) CollectionUtils.intersection(connectionsForPool, connectionsForPath);
-        }
-        else if (connection.getStorageType().isFileDomain()) {
+        } else if (connection.getStorageType().isFileDomain()) {
             String connectionField = connection.getConnection();
             connections = storageServerConnectionDao.getAllForStorage(connectionField);
-        }
-        else {
+        } else {
             StorageServerConnections sameConnection = iscsiStorageHelper.findConnectionWithSameDetails(connection);
             connections =
                     sameConnection != null ? Collections.singletonList(sameConnection)

@@ -431,8 +431,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         if (storageType == StorageType.ISCSI) {
             storageView = iscsiStorageView;
             sanStorageModelBase = iscsiStorageModel;
-        }
-        else if (storageType == StorageType.FCP) {
+        } else if (storageType == StorageType.FCP) {
             storageView = fcpStorageView;
             sanStorageModelBase = fcpStorageModel;
         }

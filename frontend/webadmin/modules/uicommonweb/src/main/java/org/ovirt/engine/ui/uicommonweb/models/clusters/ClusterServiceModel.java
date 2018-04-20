@@ -111,8 +111,7 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
                     break;
                 }
             }
-        }
-        else {
+        } else {
             refreshNeeded = true;
         }
 
@@ -140,8 +139,7 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
         AsyncDataProvider.getInstance().getClusterGlusterServices(new AsyncQuery<>(details -> {
             if (details.getServiceInfo() != null) {
                 setActualServiceList(details.getServiceInfo());
-            }
-            else {
+            } else {
                 setActualServiceList(new ArrayList<GlusterServerService>());
             }
             filterServices();
@@ -177,8 +175,7 @@ public class ClusterServiceModel extends EntityModel<Cluster> {
 
         if (command == getFilterServicesCommand()) {
             filterServices();
-        }
-        else if (command == getClearFilterServicesCommand()) {
+        } else if (command == getClearFilterServicesCommand()) {
             clearFilters();
         }
     }

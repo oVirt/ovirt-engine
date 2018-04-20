@@ -20,8 +20,7 @@ public class AuditLogTypeTest {
         for (AuditLogType alt : AuditLogType.values()) {
             if (bitset.get(alt.getValue())) {
                 nonUniqueValues.add(alt.getValue());
-            }
-            else {
+            } else {
                 bitset.set(alt.getValue());
             }
         }

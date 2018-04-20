@@ -47,8 +47,7 @@ public class V3UsageFinder {
     static {
         try {
             rsdl = RsdlLoader.loadRsdl(V3RSDL.class);
-        }
-        catch (IOException exception) {
+        } catch(IOException exception) {
             log.error("Can't load RSDL for version 3 of the API.", exception);
         }
     }

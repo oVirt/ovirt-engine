@@ -137,8 +137,7 @@ public class SystemPermissionListModel extends SearchableListModel {
                 tempVar2.setPermission(perm);
                 tempVar2.setGroup(group);
                 list.add(tempVar2);
-            }
-            else {
+            } else {
                 PermissionsOperationsParameters tempVar3 = new PermissionsOperationsParameters();
                 tempVar3.setPermission(perm);
                 tempVar3.setUser(user);
@@ -217,21 +216,16 @@ public class SystemPermissionListModel extends SearchableListModel {
 
         if (command == getAddCommand()) {
             add();
-        }
-        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
-        }
-        else if ("OnAttach".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnAttach".equals(command.getName())) { //$NON-NLS-1$
             onAttach();
             getForceRefreshCommand().execute();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

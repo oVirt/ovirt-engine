@@ -595,8 +595,7 @@ public class BackendTemplatesResourceTest
            when(entity.getTemplateVersionNumber()).thenReturn(2);
            when(entity.getBaseTemplateId()).thenReturn(GUIDS[1]);
            when(entity.isBaseTemplate()).thenReturn(false);
-        }
-        else {
+        } else {
             when(entity.getTemplateVersionNumber()).thenReturn(1);
             // same base template id as the template itself
             when(entity.getBaseTemplateId()).thenReturn(GUIDS[index]);

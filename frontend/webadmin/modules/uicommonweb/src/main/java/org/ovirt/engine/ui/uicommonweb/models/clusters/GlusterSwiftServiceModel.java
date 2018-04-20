@@ -41,8 +41,7 @@ public class GlusterSwiftServiceModel extends EntityModel<GlusterServerService> 
             getStartSwift().setIsChangeable(false);
             getStopSwift().setIsChangeable(false);
             getRestartSwift().setIsChangeable(false);
-        }
-        else {
+        } else {
             getStartSwift().setIsChangeable(service.getStatus() != GlusterServiceStatus.RUNNING);
             getStopSwift().setIsChangeable(service.getStatus() != GlusterServiceStatus.STOPPED);
             getRestartSwift().setIsChangeable(true);

@@ -178,17 +178,13 @@ public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> ext
 
         if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

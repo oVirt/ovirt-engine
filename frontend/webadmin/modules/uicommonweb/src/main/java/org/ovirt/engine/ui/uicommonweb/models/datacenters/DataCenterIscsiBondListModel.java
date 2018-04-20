@@ -75,17 +75,13 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
 
         if (command == getAddCommand()) {
             add();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if ("Cancel".equalsIgnoreCase(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equalsIgnoreCase(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnRemove".equalsIgnoreCase(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equalsIgnoreCase(command.getName())) { //$NON-NLS-1$
             onRemove();
         }
     }

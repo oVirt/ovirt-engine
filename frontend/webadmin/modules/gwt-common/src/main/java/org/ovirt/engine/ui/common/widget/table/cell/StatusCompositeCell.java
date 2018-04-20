@@ -69,8 +69,7 @@ public class StatusCompositeCell<C> extends CompositeCell<C> {
                 ((HasStyleClass) cell).setStyleClass(style.divInlineBlock());
             }
             cell.render(context, hasCell.getValue(value), sb, id);
-        }
-        else {
+        } else {
             throw new IllegalStateException("StatusCompositeCell cannot render Cells that do not implement " //$NON-NLS-1$
                     + Cell.class.getName());
         }

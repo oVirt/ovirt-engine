@@ -111,11 +111,9 @@ public class StorageRegisterDiskListModel extends SearchableListModel<StorageDom
 
         if (command == getRegisterCommand()) {
             register();
-        }
-        else if ("OnRegister".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRegister".equals(command.getName())) { //$NON-NLS-1$
             onRegister();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

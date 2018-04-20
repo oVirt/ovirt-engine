@@ -819,8 +819,7 @@ public class LinkHelper {
         String path = pathCache.get(key);
         if (path!=null) {
             return path;
-        }
-        else {
+        } else {
             for (Method method : parentService.getMethods()) {
                 if (method.getName().startsWith("get") && method.getReturnType() == service) {
                     Path pathAnnotation = method.getAnnotation(Path.class);
@@ -860,8 +859,7 @@ public class LinkHelper {
             if (inline != null) {
                 if (inline instanceof BaseResource) {
                     ret.add((BaseResource) inline);
-                }
-                else if (inline instanceof BaseResources) {
+                } else if (inline instanceof BaseResources) {
                     BaseResources entities = (BaseResources)inline;
                     Method getter = EntityHelper.getCollectionGetter(entities);
                     try {
@@ -877,8 +875,7 @@ public class LinkHelper {
                         );
                         log.error("Exception", e);
                     }
-                }
-                else {
+                } else {
                     ret.addAll(getInlineResources(inline));
                 }
             }

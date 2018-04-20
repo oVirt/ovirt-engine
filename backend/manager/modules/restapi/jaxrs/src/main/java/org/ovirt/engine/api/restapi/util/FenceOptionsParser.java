@@ -113,8 +113,7 @@ public class FenceOptionsParser {
 
         if (types.containsKey(parts[0])) {
             ret.setType(types.get(parts[0]));
-        }
-        else {
+        } else {
             log.error("No type specified for fencing option \"{}\".", parts[0]);
             return null;
         }

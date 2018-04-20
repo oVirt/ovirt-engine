@@ -47,8 +47,7 @@ public class VdsDeploy extends VdsDeployBase {
                     );
                     event.reply = true;
                     unknown = false;
-                }
-                else if (org.ovirt.ovirt_host_deploy.constants.Confirms.DEPLOY_PROCEED.equals(event.what)) {
+                } else if (org.ovirt.ovirt_host_deploy.constants.Confirms.DEPLOY_PROCEED.equals(event.what)) {
                     event.reply = true;
                     unknown = false;
                 }

@@ -297,8 +297,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         parameters.setPoolId(getVmPool().getVmPoolId());
         if (getVmPool().isAutoStorageSelect()) {
             parameters.setDiskInfoDestinationMap(autoSelectTargetDomainAndVolumeFormat());
-        }
-        else {
+        } else {
             parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         }
         if (StringUtils.isEmpty(getParameters().getSessionId())) {

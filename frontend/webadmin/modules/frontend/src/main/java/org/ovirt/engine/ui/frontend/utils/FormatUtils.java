@@ -29,8 +29,7 @@ public class FormatUtils {
         }
         if (directoryName != null && directoryName.length() > 0) {
             return loginName + "@" + directoryName; //$NON-NLS-1$
-        }
-        else {
+        } else {
             return loginName;
         }
     }

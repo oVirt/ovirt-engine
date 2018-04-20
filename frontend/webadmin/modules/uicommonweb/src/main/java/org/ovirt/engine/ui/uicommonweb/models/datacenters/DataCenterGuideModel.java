@@ -228,8 +228,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         for (StorageDomain sd : attachedStorageDomains) {
             if (sd.getStorageDomainType().isDataDomain()) {
                 attachedDataStorages.add(sd);
-            }
-            else if (sd.getStorageDomainType() == StorageDomainType.ISO) {
+            } else if (sd.getStorageDomainType() == StorageDomainType.ISO) {
                 attachedIsoStorages.add(sd);
             }
         }
@@ -264,8 +263,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
             if (hosts.isEmpty()) {
                 selectHostAction.setTitle(DataCenterSelectHostsAction);
                 getCompulsoryActions().add(selectHostAction);
-            }
-            else {
+            } else {
                 selectHostAction.setTitle(DataCenterSelectHostsAction);
                 getOptionalActions().add(selectHostAction);
             }
@@ -292,8 +290,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         if (clusters.isEmpty()) {
             addClusterAction.setTitle(DataCenterConfigureClustersAction);
             getCompulsoryActions().add(addClusterAction);
-        }
-        else {
+        } else {
             addClusterAction.setTitle(DataCenterAddAnotherClusterAction);
             getOptionalActions().add(addClusterAction);
         }
@@ -344,8 +341,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         if (unattachedStorage.isEmpty() && attachedDataStorages.isEmpty()) {
             addDataStorageAction.setTitle(DataCenterConfigureStorageAction);
             getCompulsoryActions().add(addDataStorageAction);
-        }
-        else {
+        } else {
             addDataStorageAction.setTitle(DataCenterAddMoreStorageAction);
             getOptionalActions().add(addDataStorageAction);
         }
@@ -360,8 +356,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         if (attachedDataStorages.isEmpty()) {
             attachDataStorageAction.setTitle(DataCenterAttachStorageAction);
             getCompulsoryActions().add(attachDataStorageAction);
-        }
-        else {
+        } else {
             attachDataStorageAction.setTitle(DataCenterAttachMoreStorageAction);
             getOptionalActions().add(attachDataStorageAction);
         }
@@ -385,8 +380,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         if (clusters.isEmpty()) {
             addClusterAction.setTitle(DataCenterConfigureClustersAction);
             getCompulsoryActions().add(addClusterAction);
-        }
-        else {
+        } else {
             UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
             addHostAction.setTitle(DataCenterConfigureHostsAction);
             UICommand selectHost = new UICommand("SelectHost", this); //$NON-NLS-1$
@@ -407,8 +401,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
                 getNote().setIsAvailable(true);
                 getNote().setEntity(ConstantsManager.getInstance().getConstants().attachLocalStorageDomainToFullyConfigure());
-            }
-            else if (getEntity().getStatus() != StoragePoolStatus.Uninitialized) {
+            } else if (getEntity().getStatus() != StoragePoolStatus.Uninitialized) {
                 String dataCenterInitializeReason =
                         ConstantsManager.getInstance().getConstants().dataCenterWasAlreadyInitializedDcGuide();
                 addHostAction.getExecuteProhibitionReasons().add(dataCenterInitializeReason);
@@ -433,8 +426,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
             if (!getEntity().isLocal()) {
                 updateOptionsNonLocalFSData();
-            }
-            else {
+            } else {
                 updateOptionsLocalFSData();
             }
         }
@@ -508,8 +500,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         if (type == StorageDomainType.Data) {
             items = AsyncDataProvider.getInstance().getDataStorageModels();
-        }
-        else if (type == StorageDomainType.ISO) {
+        } else if (type == StorageDomainType.ISO) {
             items = AsyncDataProvider.getInstance().getIsoStorageModels();
         }
 
@@ -567,14 +558,11 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         // Save changes.
         if (model.getCurrentStorageItem() instanceof NfsStorageModel) {
             saveNfsStorage();
-        }
-        else if (model.getCurrentStorageItem() instanceof LocalStorageModel) {
+        } else if (model.getCurrentStorageItem() instanceof LocalStorageModel) {
             saveLocalStorage();
-        }
-        else if (model.getCurrentStorageItem() instanceof PosixStorageModel) {
+        } else if (model.getCurrentStorageItem() instanceof PosixStorageModel) {
             savePosixStorage();
-        }
-        else {
+        } else {
             saveSanStorage();
         }
     }
@@ -612,8 +600,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                                         ConstantsManager.getInstance()
                                                 .getMessages()
                                                 .createOperationFailedDcGuideMsg(storageName));
-                            }
-                            else {
+                            } else {
                                 saveNewLocalStorage();
                             }
 
@@ -730,8 +717,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                                         ConstantsManager.getInstance()
                                                 .getMessages()
                                                 .createOperationFailedDcGuideMsg(storageName));
-                            }
-                            else {
+                            } else {
                                 saveNewNfsStorage();
                             }
 
@@ -838,8 +824,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                                         ConstantsManager.getInstance()
                                                 .getMessages()
                                                 .createOperationFailedDcGuideMsg(storageName));
-                            }
-                            else {
+                            } else {
                                 saveNewSanStorage();
                             }
 
@@ -882,8 +867,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         if (usedLunsMessages.isEmpty()) {
             onSaveSanStorage();
-        }
-        else {
+        } else {
             forceCreationWarning(usedLunsMessages);
         }
     }
@@ -1251,8 +1235,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
             confirmModel.getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmWithFocus", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
-        }
-        else {
+        } else {
             onAddHost();
         }
     }
@@ -1336,8 +1319,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                                         ConstantsManager.getInstance()
                                                 .getMessages()
                                                 .createOperationFailedDcGuideMsg(storageName));
-                            }
-                            else {
+                            } else {
                                 saveNewPosixStorage();
                             }
 
@@ -1520,26 +1502,21 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         if ("SaveNfs".equals(key)) { //$NON-NLS-1$
             saveNfsStorage(context);
 
-        }
-        else if ("SaveLocal".equals(key)) { //$NON-NLS-1$
+        } else if ("SaveLocal".equals(key)) { //$NON-NLS-1$
             saveLocalStorage(context);
 
-        }
-        else if ("SavePosix".equals(key)) { //$NON-NLS-1$
+        } else if ("SavePosix".equals(key)) { //$NON-NLS-1$
             savePosixStorage(context);
-        }
-        else if ("SaveSan".equals(key)) { //$NON-NLS-1$
+        } else if ("SaveSan".equals(key)) { //$NON-NLS-1$
             saveSanStorage(context);
 
-        }
-        else if ("Finish".equals(key)) { //$NON-NLS-1$
+        } else if ("Finish".equals(key)) { //$NON-NLS-1$
             getWindow().stopProgress();
 
             if ((Boolean) data.get(1)) {
                 cancel();
                 postAction();
-            }
-            else {
+            } else {
                 ((Model) data.get(2)).setMessage((String) data.get(3));
             }
         }

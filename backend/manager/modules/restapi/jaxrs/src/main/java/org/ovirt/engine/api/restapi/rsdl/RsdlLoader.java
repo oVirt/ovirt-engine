@@ -71,14 +71,12 @@ public class RsdlLoader {
                 String href = node.getNodeValue();
                 if (href.startsWith("?")) {
                     href = prefix + href;
-                }
-                else {
+                } else {
                     href = prefix + "/" + href;
                 }
                 node.setNodeValue(href);
             }
-        }
-        catch (Exception exception) {
+        } catch(Exception exception) {
             throw new IOException(exception);
         }
 

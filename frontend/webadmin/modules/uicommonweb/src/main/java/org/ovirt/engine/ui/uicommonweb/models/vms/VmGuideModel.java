@@ -87,11 +87,9 @@ public class VmGuideModel extends GuideModel<VM> {
 
         if ("NewDisk".equals(command.getName())) { //$NON-NLS-1$
             newDisk();
-        }
-        else if ("AttachDisk".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("AttachDisk".equals(command.getName())) { //$NON-NLS-1$
             attachDisk();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

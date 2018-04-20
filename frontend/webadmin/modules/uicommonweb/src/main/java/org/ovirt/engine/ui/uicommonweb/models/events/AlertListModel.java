@@ -58,11 +58,9 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         super.executeCommand(command);
         if (command == getDismissCommand()) {
             dismissAlert();
-        }
-        else if (command == getDisplayAllCommand()) {
+        } else if (command == getDisplayAllCommand()) {
              displayAllAlerts();
-        }
-        else if (command == getClearAllCommand()) {
+        } else if (command == getClearAllCommand()) {
             clearAllAlerts();
         }
     }

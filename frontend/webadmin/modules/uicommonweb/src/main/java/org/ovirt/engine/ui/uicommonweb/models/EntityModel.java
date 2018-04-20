@@ -63,8 +63,7 @@ public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
     public void setEntity(T value, boolean fireEvents) {
         if (fireEvents) {
             setEntity(value);
-        }
-        else {
+        } else {
             entity = value;
         }
     }
@@ -114,8 +113,7 @@ public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
 
         if (ev.matchesDefinition(entityChangedEventDefinition)) {
             onEntityChanged();
-        }
-        else if (ev.matchesDefinition(ProvidePropertyChangedEvent.definition)) {
+        } else if (ev.matchesDefinition(ProvidePropertyChangedEvent.definition)) {
             entityPropertyChanged(sender, (PropertyChangedEventArgs) args);
         }
     }

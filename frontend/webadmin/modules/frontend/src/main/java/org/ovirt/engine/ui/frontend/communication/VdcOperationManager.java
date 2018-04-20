@@ -100,10 +100,8 @@ public class VdcOperationManager {
         // Actions always refresh the Engine session
         if (operation.isAction()) {
             return true;
-        }
-
-        // Queries optionally refresh the Engine session
-        else if (((QueryParametersBase) operation.getParameter()).getRefresh()) {
+        } else if (((QueryParametersBase) operation.getParameter()).getRefresh()) {
+            // Queries optionally refresh the Engine session
             return true;
         }
 

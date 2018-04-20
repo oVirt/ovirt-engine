@@ -527,9 +527,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         }
         if (getEntitySearchInfo(obj) != null) {
             return getEntitySearchInfo(obj).crossRefAutoCompleter;
-        }
-
-        else {
+        } else {
             return null;
         }
     }
@@ -596,8 +594,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             return null;
         } else if (getEntitySearchInfo(obj) != null && getEntitySearchInfo(obj).relatedTableNameWithOutTags != null) {
             return getEntitySearchInfo(obj).relatedTableNameWithOutTags;
-        }
-        else {
+        } else {
             return getRelatedTableName(obj);
         }
     }

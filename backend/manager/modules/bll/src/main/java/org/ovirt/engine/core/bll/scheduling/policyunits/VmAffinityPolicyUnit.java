@@ -132,8 +132,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
         // No hosts associated with positive affinity, all hosts are applicable.
         if (acceptableHosts.isEmpty()) {
             acceptableHosts = hosts.stream().collect(Collectors.toMap(h -> h.getId(), h -> 0));
-        }
-        else if (acceptableHosts.size() > 1) {
+        } else if (acceptableHosts.size() > 1) {
             log.warn("Invalid affinity situation was detected while scheduling VM '{}' ({})." +
                             " VMs belonging to the same affinity groups are running on more than one host.",
                     vm.getName(), vm.getId());

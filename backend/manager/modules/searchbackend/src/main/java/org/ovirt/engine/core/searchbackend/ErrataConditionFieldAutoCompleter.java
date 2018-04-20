@@ -41,8 +41,7 @@ public class ErrataConditionFieldAutoCompleter extends BaseConditionFieldAutoCom
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         if (TYPE.equals(fieldName)) {
             return new EnumNameAutoCompleter(ErrataType.class);
-        }
-        else if (SEVERITY.equals(fieldName)) {
+        } else if (SEVERITY.equals(fieldName)) {
             return new EnumNameAutoCompleter(ErrataSeverity.class);
         }
         return null;

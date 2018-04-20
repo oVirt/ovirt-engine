@@ -236,8 +236,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
 
         if (isValidateByVmSnapshots()) {
             initVmSnapshots();
-        }
-        else {
+        } else {
             initVmDisks();
         }
     }
@@ -249,8 +248,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
                         .setTitle(ConstantsManager.getInstance().getConstants().close());
                 getCommands().add(closeCommand);
                 stopProgress();
-            }
-            else {
+            } else {
                 initVmDisks();
             }
         }), vm.getId());

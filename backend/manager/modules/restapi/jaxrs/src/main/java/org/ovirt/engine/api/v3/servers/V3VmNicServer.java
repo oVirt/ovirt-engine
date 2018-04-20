@@ -84,8 +84,7 @@ public class V3VmNicServer extends V3Server<VmNicResource> {
         // Pass the modified request to the V4 server:
         try {
             return adaptOut(getDelegate().update(v4Nic));
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }

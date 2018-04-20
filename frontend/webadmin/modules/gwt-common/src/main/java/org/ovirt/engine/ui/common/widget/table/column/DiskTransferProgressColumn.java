@@ -63,25 +63,21 @@ public class DiskTransferProgressColumn extends AbstractProgressBarColumn<Disk> 
                 if (disk.getImageTransferBytesTotal() != 0
                         && disk.getImageTransferBytesSent() == 0) {
                     return constants.imageTransferringViaBrowser();
-                }
-                else if (disk.getImageTransferBytesTotal() == 0) {
+                } else if (disk.getImageTransferBytesTotal() == 0) {
                     return disk.getTransferType() == TransferType.Upload ?
                             constants.uploadingImageViaAPI() :
                             constants.downloadingImageViaAPI();
-                }
-                else if (disk.getImageTransferBytesSent() == null) {
+                } else if (disk.getImageTransferBytesSent() == null) {
                     return disk.getTransferType() == TransferType.Upload ?
                             constants.imageUploadTransferring() :
                             constants.imageDownloadTransferring();
-                }
-                else if (disk.getImageTransferBytesTotal() == null
+                } else if (disk.getImageTransferBytesTotal() == null
                         || disk.getImageTransferBytesTotal() == 0) {
                     int bytesSent = (int) (disk.getImageTransferBytesSent() / SizeConverter.BYTES_IN_MB);
                     return disk.getTransferType() == TransferType.Upload ?
                             messages.imageUploadProgress(bytesSent) :
                             messages.imageDownloadProgress(bytesSent);
-                }
-                else {
+                } else {
                     int bytesSent = (int) (disk.getImageTransferBytesSent() / SizeConverter.BYTES_IN_MB);
                     int bytesTotal = (int) (disk.getImageTransferBytesTotal() / SizeConverter.BYTES_IN_MB);
                     return disk.getTransferType() == TransferType.Upload ?

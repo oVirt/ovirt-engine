@@ -27,8 +27,7 @@ public class StorageLeaseListModel extends SearchableListModel<StorageDomain, Vm
     public void search() {
         if (getEntity() != null) {
             super.search();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

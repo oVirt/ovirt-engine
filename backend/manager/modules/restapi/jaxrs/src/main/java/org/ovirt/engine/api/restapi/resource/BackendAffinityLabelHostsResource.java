@@ -44,8 +44,7 @@ public class BackendAffinityLabelHostsResource
         LabelActionParameters updateParams = new LabelActionParameters(updatedLabel);
         try {
             doAction(ActionType.UpdateLabel, updateParams);
-        }
-        catch (BackendFailureException exception) {
+        } catch (BackendFailureException exception) {
             handleError(exception, false);
         }
         Host result = BackendAffinityLabelHelper.makeHostLink(entity.getId());

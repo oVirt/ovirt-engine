@@ -1671,8 +1671,7 @@ public enum EngineMessage {
     public static boolean contains(String str) {
         try {
             valueOf(str);
-        }
-        catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return false;
         }
         return true;

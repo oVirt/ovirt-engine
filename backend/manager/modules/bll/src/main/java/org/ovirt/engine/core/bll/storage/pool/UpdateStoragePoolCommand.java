@@ -298,9 +298,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 .getCompatibilityVersion())) {
             if (!isStoragePoolVersionSupported()) {
                 return failValidation(VersionSupport.getUnsupportedVersionMessage());
-            }
-            // decreasing of compatibility version is allowed under conditions
-            else if (getStoragePool().getCompatibilityVersion().compareTo(getOldStoragePool().getCompatibilityVersion()) < 0) {
+            } else if (getStoragePool().getCompatibilityVersion().compareTo(getOldStoragePool().getCompatibilityVersion()) < 0) {
+                // decreasing of compatibility version is allowed under conditions
                 if (!poolDomains.isEmpty() && !isCompatibilityVersionChangeAllowedForDomains(poolDomains)) {
                     return false;
                 }

@@ -140,8 +140,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             public void render(Context context, SnapshotModel snapshotModel, SafeHtmlBuilder sb) {
                 if (!snapshotModel.getEntity().isVmConfigurationBroken()) {
                     super.render(context, snapshotModel, sb);
-                }
-                else {
+                } else {
                     sb.appendEscaped(constants.notAvailableLabel());
                 }
             }
@@ -155,8 +154,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
             if (snapshotModel.getVm() == null) {
                 snapshotModel.updateVmConfiguration(returnValue -> updateInfoPanel());
-            }
-            else {
+            } else {
                 updateInfoPanel();
             }
         });
@@ -188,8 +186,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             public void render(Context context, SnapshotModel snapshotModel, SafeHtmlBuilder sb) {
                 if (snapshotModel.getEntity().containsMemory()) {
                     super.render(context, snapshotModel, sb);
-                }
-                else {
+                } else {
                     sb.appendEscaped(constants.notAvailableLabel());
                 }
             }
@@ -234,8 +231,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             public void render(Context context, SnapshotModel snapshotModel, SafeHtmlBuilder sb) {
                 if (snapshotModel.getLeaseExists().getEntity() != null) {
                     super.render(context, snapshotModel, sb);
-                }
-                else {
+                } else {
                     sb.appendEscaped(constants.notAvailableLabel());
                 }
             }
@@ -274,11 +270,9 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                     DiskImage image = snapshotModel.getImageByDiskId(disk.getId());
                     if (image == null) {
                         sb.appendEscaped(constants.notAvailableLabel());
-                    }
-                    else if (image.getImageStatus() == ImageStatus.ILLEGAL) {
+                    } else if (image.getImageStatus() == ImageStatus.ILLEGAL) {
                         sb.append(templates.text(constants.notAvailableLabel()));
-                    }
-                    else {
+                    } else {
                         super.render(context, snapshotModel, sb);
                     }
                 }

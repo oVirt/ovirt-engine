@@ -128,8 +128,7 @@ public class BackendSnapshotsResource
         if (entity.isVmConfigurationAvailable()) {
             snapshot.setVm(new Vm());
             getMapper(org.ovirt.engine.core.common.businessentities.VM.class, Vm.class).map(getVmPreview(snapshot), snapshot.getVm());
-        }
-        else {
+        } else {
             snapshot.setVm(null);
             snapshot.getLinks().clear();
         }

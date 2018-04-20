@@ -36,8 +36,7 @@ public class GetVmTemplateQuery<P extends GetVmTemplateParameters> extends Queri
             Guid storagePoolId = getStoragePoolId(); // If no DC info available, the query will return the first
                                                      // Template with the given name found.
             vmt = vmTemplateDao.getByName(params.getName(), storagePoolId, getUserID(), params.isFiltered());
-        }
-        else {
+        } else {
             vmt = vmTemplateDao.get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         }
         if (vmt != null) {

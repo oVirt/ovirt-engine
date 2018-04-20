@@ -291,8 +291,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         if (ev.matchesDefinition(SanTargetModel.loggedInEventDefinition)) {
             sanTargetModel_LoggedIn(sender);
-        }
-        else if (ev.matchesDefinition(entityChangedEventDefinition)) {
+        } else if (ev.matchesDefinition(entityChangedEventDefinition)) {
             updateUserAuthFields();
         }
     }
@@ -473,11 +472,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         if (command == getUpdateCommand()) {
             update();
-        }
-        else if (command == getLoginCommand()) {
+        } else if (command == getLoginCommand()) {
             login();
-        }
-        else if (command == getDiscoverTargetsCommand()) {
+        } else if (command == getDiscoverTargetsCommand()) {
             discoverTargets();
         }
     }
@@ -513,8 +510,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 model.initLunSelection();
                 model.setGetLUNsFailure(""); //$NON-NLS-1$
                 model.stopProgress();
-            }
-            else {
+            } else {
                 model.setGetLUNsFailure(
                         ConstantsManager.getInstance().getConstants().couldNotRetrieveLUNsLunsFailure());
             }
@@ -614,8 +610,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 // Ensure remove targets that are not in last discovered targets list.
                 if (Linq.firstOrNull(lastDiscoveredTargets, new Linq.TargetPredicate(target)) != null) {
                     found = true;
-                }
-                else {
+                } else {
                     // Ensure remove targets that are not contain already included LUNs.
                     for (LunModel lun : target.getLuns()) {
                         LunModel foundItem = Linq.firstOrNull(includedLUNs, new Linq.LunPredicate(lun));
@@ -628,8 +623,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
                 return !found;
             });
-        }
-        else {
+        } else {
             List<LunModel> items = (List<LunModel>) getItems();
             items.removeIf(lun -> Linq.firstOrNull(includedLUNs, new Linq.LunPredicate(lun)) == null);
         }
@@ -746,16 +740,13 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (lun.getDiskId() != null) {
             lunModel.getGrayedOutReasons().add(
                     messages.lunUsedByDiskWarning(lun.getDiskAlias()));
-        }
-        else if (lun.getStorageDomainId() != null && !isInMaintenance) {
+        } else if (lun.getStorageDomainId() != null && !isInMaintenance) {
             lunModel.getGrayedOutReasons().add(
                     messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName()));
-        }
-        else if (isInMaintenance && metadataDevices.contains(lun.getId())) {
+        } else if (isInMaintenance && metadataDevices.contains(lun.getId())) {
             lunModel.getGrayedOutReasons().add(
                     messages.lunIsMetadataDevice(lun.getStorageDomainName()));
-        }
-        else if (lun.getStatus() == LunStatus.Unusable) {
+        } else if (lun.getStatus() == LunStatus.Unusable) {
             lunModel.getGrayedOutReasons().add(
                     constants.lunUnusable());
         }
@@ -774,8 +765,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             if (getItems() == null) {
                 setItems(new ObservableCollection<SanTargetModel>());
                 isTargetModelList = true;
-            }
-            else {
+            } else {
                 // Convert to list of another type as necessary.
                 if (!isTargetModelList) {
                     setItems(toTargetModelList((List<LunModel>) getItems()));
@@ -802,13 +792,11 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             setItems(items);
 
             updateLoginAvailability();
-        }
-        else {
+        } else {
             if (getItems() == null) {
                 setItems(new ObservableCollection<LunModel>());
                 isTargetModelList = false;
-            }
-            else {
+            } else {
                 // Convert to list of another type as necessary.
                 if (isTargetModelList) {
                     setItems(toLunModelList((List<SanTargetModel>) getItems()));
@@ -824,8 +812,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                     LunModel existingItem = Linq.firstOrNull(items, new Linq.LunPredicate(newItem));
                     if (existingItem == null) {
                         items.add(newItem);
-                    }
-                    else {
+                    } else {
                         existingItem.setIsIncluded(existingItem.getIsIncluded() || newItem.getIsIncluded());
                     }
                 }
@@ -905,16 +892,14 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                         if (!lunModel.equals(selectedLunModel)) {
                             lunModel.setIsSelected(false);
                         }
-                    }
-                    else {
+                    } else {
                         SanTargetModel sanTargetModel = (SanTargetModel) model;
                         boolean isIncludeSelected = false;
 
                         for (LunModel lunModel : sanTargetModel.getLuns()) {
                             if (!lunModel.equals(selectedLunModel)) {
                                 lunModel.setIsSelected(false);
-                            }
-                            else {
+                            } else {
                                 isIncludeSelected = true;
                             }
                         }
@@ -1131,8 +1116,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (isEditable(storage)) {
             final SanStorageModelBase thisModel = this;
             getContainer().getHost().getSelectedItemChangedEvent().addListener((ev, sender, args) -> postPrepareSanStorageForEdit(thisModel, true, storage));
-        }
-        else {
+        } else {
             postPrepareSanStorageForEdit(this, false, storage);
         }
     }

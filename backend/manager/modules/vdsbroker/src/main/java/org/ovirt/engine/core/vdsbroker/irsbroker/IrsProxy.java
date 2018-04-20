@@ -460,9 +460,8 @@ public class IrsProxy {
                             MessageFormat.format("Master domain is not in sync between DB and VDSM. "
                                     + "Domain {0} marked as master in DB and not in the storage",
                                     domainFromDb.getStorageName()));
-                } // or master in DB and VDSM but there is a version
-                  // mismatch
-                else if (dataMasterVersion != storagePool.getMasterDomainVersion()) {
+                // or master in DB and VDSM but there is a version mismatch
+                } else if (dataMasterVersion != storagePool.getMasterDomainVersion()) {
                     reconstructMasterDomainNotInSync(domainFromVdsm.getStoragePoolId(),
                             domainFromDb,
                             "Mismatch between master version in DB and VDSM",
@@ -859,8 +858,7 @@ public class IrsProxy {
             if (!triedVdssList.contains(vds.getId()) && !vds.getId().equals(curVdsId)) {
                 if (vds.getId().equals(preferredHost)) {
                     vdsRelevantForSpmSelection.add(0, vds);
-                }
-                else {
+                } else {
                     vdsRelevantForSpmSelection.add(vds);
                 }
             }
@@ -1016,19 +1014,17 @@ public class IrsProxy {
                                 startSpm = false;
                                 log.info("Using old spm server: '{}', no start needed", spmVds.getName());
                                 return destSpmStatus;
-                            }
                             // VDS is non-operational and SPM
-                            else {
+                            } else {
                                 log.warn("Host reports to be SPM '{}', but is not up.", spmVdsId);
                                 vdsSpmIdToFence = spmStatus.getSpmId();
                             }
-                        }
                         // if the host which is marked as SPM in the storage
                         // replies
                         // to SPMStatus with Unknown_Pool we don't need to
                         // fence it simply assume
                         // it is not SPM and continue.
-                        else if (destSpmStatus == null
+                        } else if (destSpmStatus == null
                                 || (destSpmStatus.getSpmStatus() != SpmStatus.Free && destSpmStatus.getSpmStatus() != SpmStatus.Unknown_Pool)) {
                             vdsSpmIdToFence = spmStatus.getSpmId();
                         }
@@ -1061,10 +1057,8 @@ public class IrsProxy {
                             // continue with spm selection
                             if (spmStopReturnValue != null && spmStopReturnValue.getSucceeded()) {
                                 log.info("spm stop succeeded, continuing with spm selection");
-                            }
-                            // if spm stop failed for any reason we stop spm
-                            // selection
-                            else {
+                            // if spm stop failed for any reason we stop spm selection
+                            } else {
                                 log.warn("spm stop on spm failed, stopping spm selection!");
                                 selectedVds.argvalue = null;
                                 return spmStatus;
@@ -1276,9 +1270,7 @@ public class IrsProxy {
                 } else if (domainMonitoringResult.actual() && tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
                     logDelayedDomain(vdsName, storageDomain.getName(), tempData.getDelay());
                 }
-            }
-
-            else if (inActiveDomainsInPool.contains(tempData.getDomainId())
+            } else if (inActiveDomainsInPool.contains(tempData.getDomainId())
                     && analyzeDomainReport(tempData, false).validAndActual()) {
                 log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
                         getDomainIdTuple(tempData.getDomainId()),

@@ -108,15 +108,13 @@ public class MultipleHostsModel extends Model {
                 setMessage(ConstantsManager.getInstance().getMessages().importClusterHostNameEmpty(host.getAddress()));
                 isValid = false;
                 break;
-            }
-            else if (host.getPassword().trim().length() == 0) {
+            } else if (host.getPassword().trim().length() == 0) {
                 setMessage(ConstantsManager.getInstance()
                         .getMessages()
                         .importClusterHostPasswordEmpty(host.getAddress()));
                 isValid = false;
                 break;
-            }
-            else if (host.getFingerprint().trim().length() == 0) {
+            } else if (host.getFingerprint().trim().length() == 0) {
                 setMessage(ConstantsManager.getInstance()
                         .getMessages()
                         .importClusterHostFingerprintEmpty(host.getAddress()));

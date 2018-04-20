@@ -76,8 +76,7 @@ public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
         storageQos.setMaxWriteIops(null);
         if (getIops().getChoiceGroupTotal().getEntity()) {
             storageQos.setMaxIops(getIops().getTotal().getEntity());
-        }
-        else if (getIops().getChoiceGroupReadWrite().getEntity()) {
+        } else if (getIops().getChoiceGroupReadWrite().getEntity()) {
             storageQos.setMaxReadIops(getIops().getRead().getEntity());
             storageQos.setMaxWriteIops(getIops().getWrite().getEntity());
         }

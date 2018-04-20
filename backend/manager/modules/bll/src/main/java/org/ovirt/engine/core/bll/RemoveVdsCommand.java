@@ -314,8 +314,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                 new VdsIdVDSCommandParametersBase(upServer.getId()));
         if (returnValue.getSucceeded()) {
             return (List<GlusterServerInfo>) returnValue.getReturnValue();
-        }
-        else {
+        } else {
             return null;
         }
     }

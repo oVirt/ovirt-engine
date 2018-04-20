@@ -67,8 +67,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
     public void search() {
         if (getEntity() != null) {
             super.search();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }
@@ -165,8 +164,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
             List<Guid> images = diskImagesMap.get(diskImage.getId());
             if (images != null) {
                 images.add(diskImage.getImageId());
-            }
-            else {
+            } else {
                 diskImagesMap.put(diskImage.getId(), new ArrayList(Arrays.asList(diskImage.getImageId())));
             }
         }
@@ -179,11 +177,9 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
 
         if (command == getRemoveCommand()) {
             remove();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

@@ -26,11 +26,9 @@ public class StorageDomainsColumn extends AbstractTextColumn<Disk> implements Co
                 diskImage.getStoragesNames().size() : 0;
         if (numOfStorageDomains == 0) {
             return constants.empty();
-        }
-        else if (numOfStorageDomains == 1) {
+        } else if (numOfStorageDomains == 1) {
             return diskImage.getStoragesNames().get(0);
-        }
-        else {
+        } else {
             return numOfStorageDomains + constants.space() + constants.storageDomainsLabelDisk();
         }
     }

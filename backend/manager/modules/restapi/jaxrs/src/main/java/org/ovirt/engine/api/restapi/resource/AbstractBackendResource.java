@@ -274,8 +274,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
                         String href = String.join("/", path, relation);
                         addOrUpdateLink(model, relation, href);
                     }
-                }
-                else {
+                } else {
                     removeIfExist(model, relation);
                 }
             }

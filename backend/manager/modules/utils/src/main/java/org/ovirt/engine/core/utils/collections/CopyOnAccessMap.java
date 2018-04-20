@@ -67,16 +67,13 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
             objectOut = new ObjectOutputStream(bufferOut);
             objectOut.writeObject(originalKey);
             buffer = bufferOut.toByteArray();
-        }
-        catch (IOException exception) {
+        } catch(IOException exception) {
             throw new RuntimeException(exception);
-        }
-        finally {
+        } finally {
             if (objectOut != null) {
                 try {
                     objectOut.close();
-                }
-                catch (IOException exception) {
+                } catch (IOException exception) {
                     // Ignored.
                 }
             }
@@ -95,22 +92,19 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
                     // then just call the overridden method:
                     try {
                         return Class.forName(description.getName(), false, Thread.currentThread().getContextClassLoader());
-                    }
-                    catch (ClassNotFoundException exception) {
+                    } catch (ClassNotFoundException exception) {
                         return super.resolveClass(description);
                     }
                 }
             };
             return (O) objectIn.readObject();
-        }
-        catch (IOException | ClassNotFoundException exception) {
+        } catch(IOException | ClassNotFoundException exception) {
             throw new RuntimeException(exception);
         } finally {
             if (objectIn != null) {
                 try {
                     objectIn.close();
-                }
-                catch (IOException exception) {
+                } catch (IOException exception) {
                     // Ignored.
                 }
             }

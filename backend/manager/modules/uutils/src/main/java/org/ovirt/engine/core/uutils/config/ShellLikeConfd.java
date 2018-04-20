@@ -98,8 +98,7 @@ public class ShellLikeConfd {
         for (File configFile : configFiles) {
             try {
                 loadProperties(configFile);
-            }
-            catch (IOException exception) {
+            } catch (IOException exception) {
                 String message = "Can't load configuration file.";
                 log.error(message, exception);
                 throw new IllegalStateException(message, exception);
@@ -156,8 +155,7 @@ public class ShellLikeConfd {
                 loadLine(line);
             }
             log.info("Loaded file '{}'.", file.getAbsolutePath());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String msg = String.format(
                 "Can't load file '%s' line %d: %s",
                 file.getAbsolutePath(),
@@ -186,8 +184,7 @@ public class ShellLikeConfd {
             if (escape) {
                 escape = false;
                 ret.append(c);
-            }
-            else {
+            } else {
                 switch(c) {
                     case '\\':
                         escape = true;
@@ -205,8 +202,7 @@ public class ShellLikeConfd {
                         String v = values.get(name);
                         if (v != null) {
                             ret.append(v);
-                        }
-                        else {
+                        } else {
                             v = System.getProperty(name);
                             if (v != null) {
                                 ret.append(v);
@@ -220,8 +216,7 @@ public class ShellLikeConfd {
                     case '#':
                         if (inQuotes) {
                             ret.append(c);
-                        }
-                        else {
+                        } else {
                             index = value.length();
                         }
                     break;
@@ -345,19 +340,16 @@ public class ShellLikeConfd {
         String value = getProperty(key, defaultValue != null);
         if (StringUtils.isEmpty(value)) {
             ret = defaultValue.booleanValue();
-        }
-        else {
+        } else {
             value = value.trim().toLowerCase();
 
             // Check if it is one of the true values:
             if (Arrays.binarySearch(TRUE_VALUES, value) >= 0) {
                 ret = true;
-            }
             // Check if it is one of the false values:
-            else if (Arrays.binarySearch(FALSE_VALUES, value) >= 0) {
+            } else if (Arrays.binarySearch(FALSE_VALUES, value) >= 0) {
                 ret = false;
-            }
-            else {
+            } else {
                 // No luck, will alert in the log that the text is not valid and throw
                 // an exception:
                 String message = "The value \"" + value + "\" for property \"" + key + "\" is not a valid boolean.";
@@ -402,12 +394,10 @@ public class ShellLikeConfd {
         String value = getProperty(key, defaultValue != null);
         if (StringUtils.isEmpty(value)) {
             ret = defaultValue.intValue();
-        }
-        else {
+        } else {
             try {
                 ret = Integer.parseInt(value);
-            }
-            catch (NumberFormatException exception) {
+            } catch (NumberFormatException exception) {
                 String message = "The value \"" + value + "\" for property \"" + key + "\" is not a valid integer.";
                 log.error(message, exception);
                 throw new IllegalArgumentException(message, exception);
@@ -448,12 +438,10 @@ public class ShellLikeConfd {
         String value = getProperty(key, defaultValue != null);
         if (StringUtils.isEmpty(value)) {
             ret = defaultValue.intValue();
-        }
-        else {
+        } else {
             try {
                 ret = Long.parseLong(value);
-            }
-            catch (NumberFormatException exception) {
+            } catch (NumberFormatException exception) {
                 String message = "The value \"" + value + "\" for property \"" + key + "\" is not a valid long integer.";
                 log.error(message, exception);
                 throw new IllegalArgumentException(message, exception);
@@ -492,8 +480,7 @@ public class ShellLikeConfd {
         String sensitiveKeys = values.get(SENSITIVE_KEYS);
         if (sensitiveKeys == null) {
             return new String[] {};
-        }
-        else {
+        } else {
             return sensitiveKeys.split(",");
         }
     }

@@ -101,14 +101,12 @@ public class BackendInstanceTypeWatchdogResource
             WatchdogParameters parameters = new WatchdogParameters();
             if (model.isSetAction()) {
                 parameters.setAction(WatchdogMapper.map(model.getAction()));
-            }
-            else {
+            } else {
                 parameters.setAction(entity.getAction());
             }
             if (model.isSetModel()) {
                 parameters.setModel(WatchdogMapper.map(model.getModel()));
-            }
-            else {
+            } else {
                 parameters.setModel(entity.getModel());
             }
             parameters.setId(instanceTypeId);

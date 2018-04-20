@@ -122,8 +122,7 @@ public class BootSequenceModel extends ListModel<EntityModel<BootSequence>> {
 
         if (command == getMoveItemUpCommand()) {
             moveItemUp();
-        }
-        else if (command == getMoveItemDownCommand()) {
+        } else if (command == getMoveItemDownCommand()) {
             moveItemDown();
         }
     }

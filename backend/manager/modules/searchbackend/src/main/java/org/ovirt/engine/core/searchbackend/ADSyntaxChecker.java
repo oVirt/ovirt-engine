@@ -287,8 +287,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                     if ("ALLNAMES".equals(so.getBody())) {
                         if (searchingUsers) {
                             phrase.append(" (|($GIVENNAME={value})(sn={value})($USER_ACCOUNT_NAME={value})($PRINCIPAL_NAME={value}))");
-                        }
-                        else {
+                        } else {
                             phrase.append(" (|($CN={value}))");
                         }
                         /**

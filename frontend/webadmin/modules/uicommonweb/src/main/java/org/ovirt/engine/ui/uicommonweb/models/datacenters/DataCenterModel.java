@@ -189,8 +189,7 @@ public class DataCenterModel extends Model implements HasValidatedTabs {
                 if (getEntity() != null) {
                     initVersion();
                 }
-            }
-            else {
+            } else {
                 getVersion().setSelectedItem(selectedVersion);
             }
 

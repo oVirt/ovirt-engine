@@ -75,8 +75,7 @@ public class BackendGroupsResourceTest
         try {
             getCollection();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             assertTrue(wae.getResponse().getEntity() instanceof Fault);
             assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
         }
@@ -91,8 +90,7 @@ public class BackendGroupsResourceTest
         try {
             getCollection();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
         }
     }
@@ -107,11 +105,9 @@ public class BackendGroupsResourceTest
         try {
             getCollection();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
-        finally {
+        } finally {
             locales.clear();
         }
     }
@@ -236,8 +232,7 @@ public class BackendGroupsResourceTest
         try {
            collection.add(model);
            fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(400, wae.getResponse().getStatus());
         }
@@ -312,8 +307,7 @@ public class BackendGroupsResourceTest
         try {
             collection.add(model);
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }

@@ -614,8 +614,7 @@ public class VmInitModel extends Model {
             if (sender == getNetworkList()) {
                 networkList_SelectedItemChanged();
             }
-        }
-        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
+        } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getNetworkSelectedName()) {
                 networkSelectedName_SelectionChanged();
             } else if (sender == getCloudInitPasswordSet()) {
@@ -647,8 +646,7 @@ public class VmInitModel extends Model {
         super.executeCommand(command);
         if (command.equals(getAddNetworkCommand())) {
             addNetwork();
-        }
-        else if (command.equals(getRemoveNetworkCommand())) {
+        } else if (command.equals(getRemoveNetworkCommand())) {
             removeNetwork();
         }
     }
@@ -659,8 +657,7 @@ public class VmInitModel extends Model {
     private void hardCodeStartOnBoot() {
         if (getNetworkStartOnBoot() == null) {
             setNetworkStartOnBoot(new EntityModel<>(true));
-        }
-        else {
+        } else {
             getNetworkStartOnBoot().setEntity(true);
         }
         getNetworkStartOnBoot().setIsChangeable(false);

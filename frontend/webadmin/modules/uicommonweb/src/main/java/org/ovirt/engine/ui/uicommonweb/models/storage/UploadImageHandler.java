@@ -405,14 +405,12 @@ public class UploadImageHandler {
             setProgressStr("Finalizing success..."); //$NON-NLS-1$
             statusParameters.getUpdates().setPhase(ImageTransferPhase.FINALIZING_SUCCESS);
             raiseUploadFinishedEvent(ImageTransferPhase.FINALIZING_SUCCESS);
-        }
-        else if (getUploadState() == UploadState.CLIENT_ERROR) {
+        } else if (getUploadState() == UploadState.CLIENT_ERROR) {
             setProgressStr("Pausing due to client error"); //$NON-NLS-1$
             statusParameters.getUpdates().setPhase(ImageTransferPhase.PAUSED_SYSTEM);
             statusParameters.setDiskId(getDiskId());
             statusParameters.setAuditLogType(auditLogType);
-        }
-        else {
+        } else {
             setProgressStr("Finalizing failure..."); //$NON-NLS-1$
             statusParameters.getUpdates().setPhase(ImageTransferPhase.FINALIZING_FAILURE);
             raiseUploadFinishedEvent(ImageTransferPhase.FINALIZING_FAILURE);

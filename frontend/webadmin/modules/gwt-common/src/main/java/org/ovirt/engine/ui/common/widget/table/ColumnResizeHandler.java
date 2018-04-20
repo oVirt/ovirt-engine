@@ -58,9 +58,7 @@ public class ColumnResizeHandler<T> implements NativePreviewHandler {
 
             // Resize the column
             table.resizeColumn(column, displayColumnWidth);
-        }
-
-        else if (BrowserEvents.MOUSEUP.equals(nativeEvent.getType())) {
+        } else if (BrowserEvents.MOUSEUP.equals(nativeEvent.getType())) {
             // Release native event handler
             eventHandler.removeHandler();
 

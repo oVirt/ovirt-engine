@@ -34,8 +34,7 @@ public class TemplateImportDiskListModel extends SearchableListModel {
                     return;
                 }
             }
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

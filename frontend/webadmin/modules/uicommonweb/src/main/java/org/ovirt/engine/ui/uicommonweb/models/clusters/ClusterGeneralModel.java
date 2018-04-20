@@ -330,15 +330,13 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                             updateGlusterDetails();
                         },
                         glusterSwiftModel);
-            }
-            else {
+            } else {
                 glusterSwiftModel.stopProgress();
                 glusterSwiftModel.setMessage(ConstantsManager.getInstance()
                         .getConstants()
                         .noActionSelectedManageGlusterSwift());
             }
-        }
-        else {
+        } else {
             GlusterSwiftAction action =
                     getGlusterSwiftAction(glusterSwiftModel.getStartSwift().getEntity(),
                             glusterSwiftModel.getStopSwift().getEntity(),
@@ -357,8 +355,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                         updateGlusterDetails();
                     }
                 }, glusterSwiftModel);
-            }
-            else {
+            } else {
                 glusterSwiftModel.stopProgress();
                 glusterSwiftModel.setMessage(ConstantsManager.getInstance()
                         .getConstants()
@@ -371,11 +368,9 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         GlusterSwiftAction action = null;
         if (isStart) {
             action = GlusterSwiftAction.START;
-        }
-        else if (isStop) {
+        } else if (isStop) {
             action = GlusterSwiftAction.STOP;
-        }
-        else if (isRestart) {
+        } else if (isRestart) {
             action = GlusterSwiftAction.RESTART;
         }
         return action;
@@ -403,8 +398,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(new AsyncQuery<>(hostMap -> {
             if (hostMap == null || hostMap.isEmpty()) {
                 hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
-            }
-            else {
+            } else {
                 ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<>();
                 for (Map.Entry<String, String> host : hostMap.entrySet()) {
                     HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
@@ -497,8 +491,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(new AsyncQuery<>(hostMap -> {
             if (hostMap == null || hostMap.isEmpty()) {
                 hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
-            }
-            else {
+            } else {
                 ArrayList<EntityModel<String>> hostList = new ArrayList<>();
                 for (String host : hostMap.keySet()) {
                     hostList.add(new EntityModel<>(host));
@@ -540,8 +533,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
             for (GlusterVolumeEntity volumeEntity : volumeList) {
                 if (volumeEntity.getStatus() == GlusterStatus.UP) {
                     volumesUp++;
-                }
-                else {
+                } else {
                     volumesDown++;
                 }
             }
@@ -555,8 +547,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         AsyncDataProvider.getInstance().getClusterGlusterSwiftService(new AsyncQuery<>(swiftService -> {
             if(swiftService != null) {
                 setGlusterSwiftStatus(swiftService.getStatus());
-            }
-            else {
+            } else {
                 setGlusterSwiftStatus(GlusterServiceStatus.UNKNOWN);
             }
         }), getEntity().getId());
@@ -568,14 +559,12 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                 if (!serverMap.isEmpty()) {
                     setHasNewGlusterHostsAlert(true);
                     setHasAnyAlert(true);
-                }
-                else {
+                } else {
                     setHasNewGlusterHostsAlert(false);
                     setHasAnyAlert(false);
                 }
             }), getEntity().getId(), false);
-        }
-        else {
+        } else {
             setHasNewGlusterHostsAlert(false);
             setHasAnyAlert(false);
         }
@@ -587,23 +576,17 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
         if (command == getManageGlusterSwiftCommand()) {
             manageGlusterSwiftServices();
-        }
-        else if (command == getImportNewGlusterHostsCommand()) {
+        } else if (command == getImportNewGlusterHostsCommand()) {
             fetchAndImportNewGlusterHosts();
-        }
-        else if (command == getDetachNewGlusterHostsCommand()) {
+        } else if (command == getDetachNewGlusterHostsCommand()) {
             detachNewGlusterHosts();
-        }
-        else if ("OnSaveHosts".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveHosts".equals(command.getName())) { //$NON-NLS-1$
             onSaveHosts();
-        }
-        else if ("OnDetachGlusterHosts".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnDetachGlusterHosts".equals(command.getName())) { //$NON-NLS-1$
             onDetachNewGlusterHosts();
-        }
-        else if ("OnManageGlusterSwift".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnManageGlusterSwift".equals(command.getName())) { //$NON-NLS-1$
             onManageGlusterSwiftServices();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

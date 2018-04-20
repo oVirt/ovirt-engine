@@ -71,8 +71,7 @@ public class BackendVmNicResourceTest
         try {
             resource.get();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -120,8 +119,7 @@ public class BackendVmNicResourceTest
         try {
             resource.update(getNic(false));
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -202,8 +200,7 @@ public class BackendVmNicResourceTest
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }

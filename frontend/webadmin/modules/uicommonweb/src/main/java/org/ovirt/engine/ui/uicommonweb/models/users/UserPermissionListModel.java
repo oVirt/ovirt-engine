@@ -129,8 +129,7 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
                         cancel();
 
                     }, model);
-        }
-        else {
+        } else {
             cancel();
         }
     }
@@ -207,8 +206,7 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
                 group.setNamespace(user.getNamespace());
                 permissionParams.setPermission(perm);
                 permissionParams.setGroup(group);
-            }
-            else {
+            } else {
                 permissionParams.setPermission(perm);
                 permissionParams.setUser(user);
             }

@@ -87,8 +87,7 @@ public class V3StorageDomainServer extends V3Server<StorageDomainResource> {
             if (host != null) {
                 if (host.isSetId()) {
                     parameters.put("host", host.getId());
-                }
-                else if (host.isSetName()) {
+                } else if (host.isSetName()) {
                     parameters.put("host", host.getName());
                 }
             }

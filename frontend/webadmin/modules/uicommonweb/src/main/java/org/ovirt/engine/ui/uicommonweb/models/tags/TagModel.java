@@ -36,8 +36,7 @@ public class TagModel extends Model implements TreeNodeInfo {
         if (tagModel.getSelection() != null && tagModel.getSelection()
                 && (!attachedEntities.containsKey(tagModel.getId()) || !attachedEntities.get(tagModel.getId()))) {
             tagsToAttach.add(tagModel.getId());
-        }
-        else if (tagModel.getSelection() != null && !tagModel.getSelection()
+        } else if (tagModel.getSelection() != null && !tagModel.getSelection()
                 && attachedEntities.containsKey(tagModel.getId())) {
             tagsToDetach.add(tagModel.getId());
         }

@@ -258,8 +258,7 @@ public class BackendApiResource
         Api api;
         if(appMode == ApplicationMode.GlusterOnly) {
             api = getGlusterApi();
-        }
-        else {
+        } else {
             api = getApi();
         }
         return getResponseBuilder(api).build();
@@ -275,18 +274,15 @@ public class BackendApiResource
             } catch (Exception e) {
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
             }
-        }
-        else if (ParametersHelper.getParameter(httpHeaders, uriInfo, SCHEMA_CONSTRAINT_PARAMETER) != null) {
+        } else if (ParametersHelper.getParameter(httpHeaders, uriInfo, SCHEMA_CONSTRAINT_PARAMETER) != null) {
             return getSchema();
-        }
-        else {
+        } else {
             BaseResource response;
             Api api;
             if (appMode == ApplicationMode.GlusterOnly) {
                 api = getGlusterApi();
                 response = addGlusterSummary(addSystemVersion(api));
-            }
-            else {
+            } else {
                 api = getApi();
                 response = addSummary(addSystemVersion(api));
             }

@@ -118,8 +118,7 @@ public class BackendHostNicsResource
     protected HostNic addLinks(HostNic hostNic, String... subCollectionsToExclude) {
         if (hostNic.isSetVirtualFunctionsConfiguration()) {
             return super.addLinks(hostNic, subCollectionsToExclude);
-        }
-        else {
+        } else {
             final HostNic resultHostNic = super.addLinks(hostNic,
                     ArrayUtils.concat(PF_SUB_COLLECTIONS, subCollectionsToExclude));
             final Iterator<Link> linkIterator = resultHostNic.getActions().getLinks().iterator();

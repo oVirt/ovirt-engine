@@ -68,13 +68,11 @@ public class MappingTestHelper {
                     random(method, model);
                 } else if (takesEnum(method)) {
                     shuffle(method, model);
-                }
-                else if(takesBigDecimal(method)) {
+                } else if(takesBigDecimal(method)) {
                     populateBigDecimal(method, model);
                 } else if (takesXmlGregorianCalendar(method)) {
                     populateXmlGregorianCalendar(method, model);
-                }
-                else {
+                } else {
                     descend(method, model, scope(seen), level);
                 }
             } else if (isGetter(method) && returnsList(method)) {
@@ -113,20 +111,15 @@ public class MappingTestHelper {
         Object value = null;
         if (takesString(m)) {
             value = garble(m);
-        }
-        else if (takesShort(m)) {
+        } else if (takesShort(m)) {
             value = (short) rand(100);
-        }
-        else if (takesInteger(m)) {
+        } else if (takesInteger(m)) {
             value = rand(100);
-        }
-        else if (takesLong(m)) {
+        } else if (takesLong(m)) {
             value = (long) rand(1000000000);
-        }
-        else if (takesBoolean(m)) {
+        } else if (takesBoolean(m)) {
             value = Math.random() < 0.5D;
-        }
-        else if (takesDouble(m)) {
+        } else if (takesDouble(m)) {
             value = Math.random();
         }
         if (value != null) {

@@ -91,8 +91,7 @@ public abstract class AbstractUiCommandButton extends Composite
 
         if (command.getTitle() == null) {
             setLabel(""); //$NON-NLS-1$
-        }
-        else if (label != null && label.equals("")) { //$NON-NLS-1$
+        } else if (label != null && label.equals("")) { //$NON-NLS-1$
             setLabel(command.getTitle());
         }
     }

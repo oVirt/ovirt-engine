@@ -175,46 +175,33 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         }
         if (SearchObjects.AD_USER_OBJ_NAME.equals(obj) || SearchObjects.AD_USER_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.AD_USER_OBJ_NAME;
-        }
-        else if (SearchObjects.AUDIT_OBJ_NAME.equals(obj) || SearchObjects.AUDIT_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.AUDIT_OBJ_NAME.equals(obj) || SearchObjects.AUDIT_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.AUDIT_OBJ_NAME;
-        }
-        else if (SearchObjects.TEMPLATE_OBJ_NAME.equals(obj) || SearchObjects.TEMPLATE_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.TEMPLATE_OBJ_NAME.equals(obj) || SearchObjects.TEMPLATE_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.TEMPLATE_OBJ_NAME;
-        }
-        else if (SearchObjects.VDC_USER_OBJ_NAME.equals(obj) || SearchObjects.VDC_USER_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.VDC_USER_OBJ_NAME.equals(obj) || SearchObjects.VDC_USER_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_USER_OBJ_NAME;
-        }
-        else if (SearchObjects.VDC_GROUP_OBJ_NAME.equals(obj) || SearchObjects.VDC_GROUP_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.VDC_GROUP_OBJ_NAME.equals(obj) || SearchObjects.VDC_GROUP_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_GROUP_OBJ_NAME;
-        }
-        else if (SearchObjects.VDS_OBJ_NAME.equals(obj) || SearchObjects.VDS_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.VDS_OBJ_NAME.equals(obj) || SearchObjects.VDS_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDS_OBJ_NAME;
-        }
-        else if (SearchObjects.VM_OBJ_NAME.equals(obj) || SearchObjects.VM_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.VM_OBJ_NAME.equals(obj) || SearchObjects.VM_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VM_OBJ_NAME;
-        }
-        else if (SearchObjects.DISK_OBJ_NAME.equals(obj) || SearchObjects.DISK_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.DISK_OBJ_NAME.equals(obj) || SearchObjects.DISK_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.DISK_OBJ_NAME;
-        }
-        else if (SearchObjects.QUOTA_OBJ_NAME.equals(obj) || SearchObjects.QUOTA_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.QUOTA_OBJ_NAME.equals(obj) || SearchObjects.QUOTA_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.QUOTA_OBJ_NAME;
-        }
-        else if (SearchObjects.VDC_POOL_OBJ_NAME.equals(obj) || SearchObjects.VDC_POOL_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.VDC_POOL_OBJ_NAME.equals(obj) || SearchObjects.VDC_POOL_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_POOL_OBJ_NAME;
-        }
-        else if (SearchObjects.VDC_CLUSTER_OBJ_NAME.equals(obj) || SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.VDC_CLUSTER_OBJ_NAME.equals(obj) || SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_CLUSTER_OBJ_NAME;
-        }
-        else if (SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME.equals(obj)
+        } else if (SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME.equals(obj)
                 || SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME;
-        }
-        else if (SearchObjects.GLUSTER_VOLUME_OBJ_NAME.equals(obj)
+        } else if (SearchObjects.GLUSTER_VOLUME_OBJ_NAME.equals(obj)
                 || SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.GLUSTER_VOLUME_OBJ_NAME;
-        }
-        else if (SearchObjects.NETWORK_OBJ_NAME.equals(obj) || SearchObjects.NETWORK_PLU_OBJ_NAME.equals(obj)) {
+        } else if (SearchObjects.NETWORK_OBJ_NAME.equals(obj) || SearchObjects.NETWORK_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.NETWORK_OBJ_NAME;
         } else if (SearchObjects.PROVIDER_OBJ_NAME.equals(obj) || SearchObjects.PROVIDER_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.PROVIDER_OBJ_NAME;

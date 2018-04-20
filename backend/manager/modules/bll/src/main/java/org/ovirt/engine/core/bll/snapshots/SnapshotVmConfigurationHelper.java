@@ -127,8 +127,7 @@ public class SnapshotVmConfigurationHelper {
                         fromConfigImg.getImageId(),
                         fromConfigImg.getId());
                 fromConfigImg.setImageStatus(ImageStatus.ILLEGAL);
-            }
-            else {
+            } else {
                 // Return image status as appears in DB (needed in case status is ILLEGAL in DB)
                 DiskImage imageInDb = imagesInDbMap.get(fromConfigImg.getImageId());
                 fromConfigImg.setImageStatus(imageInDb.getImageStatus());

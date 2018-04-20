@@ -216,8 +216,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             tmfactory.init(truststore);
             SSLContext sslcontext = createSSLContext(null, tmfactory.getTrustManagers());
             this.socketFactory = sslcontext.getSocketFactory();
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             throw new RuntimeException("Cannot load truststore", e);
         }
     }

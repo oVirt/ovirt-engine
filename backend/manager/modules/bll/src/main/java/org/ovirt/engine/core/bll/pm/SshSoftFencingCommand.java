@@ -49,8 +49,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
         if (new HostFenceActionExecutor(getVds()).isHostPoweredOff()) {
             // do not try to soft-fence if Host is reported as Down via PM
             getReturnValue().setSucceeded(false);
-        }
-        else {
+        } else {
             if (getVds().shouldVdsBeFenced()) {
                 boolean result = executeSshSoftFencingCommand(getVds().getClusterCompatibilityVersion().toString());
                 if (result) {
@@ -105,8 +104,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
                         cmdErr);
                 log.debug("Exception", ex);
             }
-        }
-        catch(IOException e) {
+        } catch(IOException e) {
             log.error("IOException", e);
         }
         return ret;

@@ -45,8 +45,7 @@ public class TarTest {
             for (String f : files) {
                 digestDirectory(md, base, new File(file, f));
             }
-        }
-        else {
+        } else {
             MessageDigest fmd = MessageDigest.getInstance(md.getAlgorithm());
             try (InputStream fis = new FileInputStream(fullFile);
                  InputStream is = new DigestInputStream(fis, fmd)) {
@@ -106,8 +105,7 @@ public class TarTest {
             assertArrayEquals(md1.digest(), md2.digest());
             assertTrue(new File(tmpDir2, "script1").canExecute());
             assertFalse(new File(tmpDir2, "file1").canExecute());
-        }
-        finally {
+        } finally {
             for (File file : new File[] {tmpDir1, tmpDir2, tmpTar}) {
                 if (file != null) {
                     if (!file.delete()) {

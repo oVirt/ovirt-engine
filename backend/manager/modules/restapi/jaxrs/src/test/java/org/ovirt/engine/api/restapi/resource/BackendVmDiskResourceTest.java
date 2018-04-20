@@ -85,8 +85,7 @@ public class BackendVmDiskResourceTest
         try {
             resource.get();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -130,8 +129,7 @@ public class BackendVmDiskResourceTest
         try {
             resource.update(getUpdate());
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -244,8 +242,7 @@ public class BackendVmDiskResourceTest
         try {
             new BackendStorageDomainVmResource(null, "foo");
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -256,8 +253,7 @@ public class BackendVmDiskResourceTest
         try {
             resource.export(new Action());
             fail("expected WebApplicationException on incomplete parameters");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyIncompleteException(wae, "Action", "export", "storageDomain.id|name");
         }
     }
@@ -305,8 +301,7 @@ public class BackendVmDiskResourceTest
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
@@ -448,8 +443,7 @@ public class BackendVmDiskResourceTest
                 new Object[] {},
                 Collections.singletonList(getStorageDomain(2))
             );
-        }
-        else {
+        } else {
             setUpEntityQueryExpectations(
                 QueryType.GetStorageDomainByName,
                 NameQueryParameters.class,
@@ -506,8 +500,7 @@ public class BackendVmDiskResourceTest
         try {
             resource.move(new Action());
             fail("expected WebApplicationException on incomplete parameters");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyIncompleteException(wae, "Action", "move", "storageDomain.id|name");
         }
     }
@@ -521,8 +514,7 @@ public class BackendVmDiskResourceTest
         StorageDomain sd = new StorageDomain();
         if (byName) {
             sd.setName(NAMES[2]);
-        }
-        else {
+        } else {
             sd.setId(GUIDS[3].toString());
         }
         action.setStorageDomain(sd);

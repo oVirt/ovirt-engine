@@ -297,8 +297,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                     sortedLeafModel.setSelectedItem(selectedLunModel);
                 }
             });
-        }
-        else {
+        } else {
             for (LunModel lunModel : items) {
                 table.getSelectionModel().setSelected(lunModel, lunModel.getIsSelected());
             }

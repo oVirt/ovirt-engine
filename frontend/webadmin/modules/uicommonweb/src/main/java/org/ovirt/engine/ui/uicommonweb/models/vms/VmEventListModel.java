@@ -11,8 +11,7 @@ public class VmEventListModel extends SubTabEventListModel<VM> {
 
         if (getEntity() != null) {
             getSearchCommand().execute();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

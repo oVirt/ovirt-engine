@@ -439,8 +439,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     private void checkTrustedService() {
         if (getVmTemplate().isTrustedService() && !getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
-        }
-        else if (!getVmTemplate().isTrustedService() && getCluster().supportsTrustedService()) {
+        } else if (!getVmTemplate().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }

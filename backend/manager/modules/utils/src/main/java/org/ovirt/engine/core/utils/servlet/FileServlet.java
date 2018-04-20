@@ -80,8 +80,7 @@ public class FileServlet extends HttpServlet {
         final String cacheString = config.getInitParameter(CACHE);
         if (cacheString == null) {
             cache = true;
-        }
-        else {
+        } else {
             cache = Boolean.parseBoolean(cacheString);
         }
 
@@ -135,14 +134,12 @@ public class FileServlet extends HttpServlet {
                 String redirect = null;
                 if (path == null) {
                     redirect = request.getServletPath() + "/" + INDEX;
-                }
-                else {
+                } else {
                     redirect = request.getServletPath() + path + "/" + INDEX;
                 }
                 response.sendRedirect(redirect);
                 file = new File(file, INDEX);
-            }
-            else {
+            } else {
                 log.info("There is no index page for directory '{}' -- 404", file.getAbsolutePath());
                 file = null;
             }

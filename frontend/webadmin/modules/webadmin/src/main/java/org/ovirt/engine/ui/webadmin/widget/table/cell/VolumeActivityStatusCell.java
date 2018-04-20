@@ -52,8 +52,7 @@ public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends Abst
             default:
                 taskImage = null;
             }
-        }
-        else if (taskType == GlusterTaskType.REMOVE_BRICK) {
+        } else if (taskType == GlusterTaskType.REMOVE_BRICK) {
             switch (value.getAsyncTask().getStatus()) {
             case STARTED:
                 taskImage = resources.removeBrickRunning();

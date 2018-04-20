@@ -59,8 +59,7 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
             }
             Collections.sort(vms, Comparator.comparingDouble(VM::getActualDiskWithSnapshotsSize).reversed());
             getQueryReturnValue().setReturnValue(vms);
-        }
-        else {
+        } else {
             log.error("Failed to retrieve disks by storage domain id '{}': {}",
                     domainId,
                     queryReturnValue.getExceptionString());

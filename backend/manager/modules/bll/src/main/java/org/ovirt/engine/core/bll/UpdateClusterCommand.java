@@ -211,8 +211,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             } else {
                 getParameters().getCluster().setEmulatedMachine(emulatedMachine);
             }
-        }
-        else if (oldCluster.getArchitecture() != getCluster().getArchitecture()) {
+        } else if (oldCluster.getArchitecture() != getCluster().getArchitecture()) {
             // if architecture was changed, emulated machines must be updated when adding new host.
             // At this point the cluster is empty and have changed CPU name
             getParameters().getCluster().setDetectEmulatedMachine(true);
@@ -690,8 +689,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                             .add(EngineMessage.CLUSTER_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
                                     .toString());
                     result = false;
-                }
-                else if (Config.getValue(ConfigValues.AutoRegistrationDefaultClusterID).equals(getCluster().getId())) {
+                } else if (Config.getValue(ConfigValues.AutoRegistrationDefaultClusterID).equals(getCluster().getId())) {
                     addValidationMessage(EngineMessage.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
                     result = false;
                 }
@@ -702,8 +700,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             if (!(getCluster().supportsGlusterService() || getCluster().supportsVirtService())) {
                 addValidationMessage(EngineMessage.CLUSTER_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
                 result = false;
-            }
-            else if (getCluster().supportsGlusterService() && getCluster().supportsVirtService()
+            } else if (getCluster().supportsGlusterService() && getCluster().supportsVirtService()
                     && !isAllowClusterWithVirtGluster()) {
                 addValidationMessage(EngineMessage.CLUSTER_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
                 result = false;

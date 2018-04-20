@@ -100,20 +100,11 @@ public class UiCommonEditorVisitor extends EditorVisitor {
                     // IsValid
                     if ("IsValid".equals(propName)) { //$NON-NLS-1$
                         onIsValidPropertyChange(functionalEditor, owner);
-                    }
-
-                    // IsChangable
-                    else if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                    } else if ("IsChangable".equals(propName)) { //$NON-NLS-1$
                         onIsChangablePropertyChange(functionalEditor, owner);
-                    }
-
-                    // ChangeProhibitionReason
-                    else if ("ChangeProhibitionReason".equals(propName)) { //$NON-NLS-1$
+                    } else if ("ChangeProhibitionReason".equals(propName)) { //$NON-NLS-1$
                         onChangeProhibitionReasonChange(functionalEditor, owner);
-                    }
-
-                    // IsAvailable
-                    else if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
+                    } else if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
                         onIsAvailablePropertyChange(functionalEditor, owner);
                     }
                 });

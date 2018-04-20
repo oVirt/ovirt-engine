@@ -72,8 +72,7 @@ public class PopupUtils {
         if (distanceToWindowBottom >= popup.getOffsetHeight()) {
             // Position above the relative object
             top += relativeHeight;
-        }
-        else if (distanceFromWindowTop >= popup.getOffsetHeight()) {
+        } else if (distanceFromWindowTop >= popup.getOffsetHeight()) {
             top -= popup.getOffsetHeight() - itemHeight;
         } else {// Position above the relative object and add scroll
             top += relativeHeight;

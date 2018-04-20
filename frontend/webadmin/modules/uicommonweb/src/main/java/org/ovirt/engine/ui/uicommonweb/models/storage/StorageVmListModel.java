@@ -41,8 +41,7 @@ public class StorageVmListModel extends SearchableListModel<StorageDomain, VM> {
     public void search() {
         if (getEntity() != null) {
             super.search();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

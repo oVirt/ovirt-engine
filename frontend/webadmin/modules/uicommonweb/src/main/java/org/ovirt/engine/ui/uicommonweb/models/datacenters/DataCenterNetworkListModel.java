@@ -156,11 +156,9 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
 
         if (command == getNewCommand()) {
             newNetwork();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
         }
     }

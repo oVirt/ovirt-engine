@@ -361,8 +361,7 @@ public class BrandingTheme {
                 }
             }
 
-        }
-        catch (IOException ioe) {
+        } catch(IOException ioe) {
             log.error("Exception loading docs template", ioe); //$NON-NLS-1$
         }
 

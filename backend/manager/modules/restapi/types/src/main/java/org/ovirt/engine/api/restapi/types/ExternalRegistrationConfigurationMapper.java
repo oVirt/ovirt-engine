@@ -92,8 +92,7 @@ public class ExternalRegistrationConfigurationMapper {
             try {
                 Guid targetId = asGuid(regMapping.getTo().getId());
                 m.setTargetProfileId(targetId);
-            }
-            catch (Exception e){
+            } catch (Exception e){
                 //bad id - ignore
             }
         }

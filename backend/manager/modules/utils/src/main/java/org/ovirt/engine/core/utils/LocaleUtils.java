@@ -33,15 +33,13 @@ public class LocaleUtils {
         try {
             if (localeString != null) {
                 result = org.apache.commons.lang.LocaleUtils.toLocale(localeString.replaceAll("\\-", "_"));
-            }
-            else {
+            } else {
                 result = null;
             }
             if(result == null && returnDefaultLocale) {
                 result = LocaleFilter.DEFAULT_LOCALE;
             }
-        }
-        catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             result = returnDefaultLocale ? LocaleFilter.DEFAULT_LOCALE : null;
         }
         return result;

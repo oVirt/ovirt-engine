@@ -12,8 +12,7 @@ public class VolumeEventListModel extends SubTabEventListModel<GlusterVolumeEnti
 
         if (getEntity() != null) {
             getSearchCommand().execute();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

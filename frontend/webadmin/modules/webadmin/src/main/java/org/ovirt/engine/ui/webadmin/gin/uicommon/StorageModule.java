@@ -153,8 +153,7 @@ public class StorageModule extends AbstractGinModule {
                         if (lastExecutedCommand == getModel().getDetachCommand() ||
                                 lastExecutedCommand.getName().equals("OnAttach")) { //$NON-NLS-1$) {
                             return removeConfirmPopupProvider.get();
-                        }
-                        else if (lastExecutedCommand == getModel().getMaintenanceCommand() ||
+                        } else if (lastExecutedCommand == getModel().getMaintenanceCommand() ||
                                 lastExecutedCommand.getName().equals("OnMaintenance")) { //$NON-NLS-1$) {
                             return removeConfirmPopupProvider.get();
                         } else {

@@ -22,8 +22,7 @@ public class GetInstanceTypeQuery<P extends GetVmTemplateParameters> extends Que
         GetVmTemplateParameters params = getParameters();
         if (params.getName() != null) {
             instance = vmTemplateDao.getInstanceTypeByName(params.getName(), getUserID(), getParameters().isFiltered());
-        }
-        else {
+        } else {
             instance = vmTemplateDao.getInstanceType(getParameters().getId(), getUserID(), getParameters().isFiltered());
         }
         getQueryReturnValue().setReturnValue(instance);

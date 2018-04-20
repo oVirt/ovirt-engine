@@ -202,8 +202,7 @@ public class EngineConfigLogic {
         String prompt = null;
         if (user != null) {
             prompt = msg + " for " + user + ": ";
-        }
-        else {
+        } else {
             prompt = msg + ": ";
         }
         return console.readPassword(prompt);
@@ -224,8 +223,7 @@ public class EngineConfigLogic {
             console.write(": ");
             if (!configKey.isPasswordKey()) {
                 console.write(configKey.getDisplayValue());
-            }
-            else {
+            } else {
                 char[] value = configKey.getDisplayValue().toCharArray();
                 console.writePassword(value);
                 Arrays.fill(value, '\0');
@@ -247,8 +245,7 @@ public class EngineConfigLogic {
             // TODO - move to one statement for all - time permitting;
             try {
                 printAllValuesForKey(key.getKey());
-            }
-            catch (Exception exception) {
+            } catch (Exception exception) {
                 log.error("Error while retrieving value for key \"{}\".", key.getKey(), exception);
             }
         }
@@ -332,8 +329,7 @@ public class EngineConfigLogic {
         }
         if (configKey.isPasswordKey()) {
             console.writePassword(configKey.getDisplayValue().toCharArray());
-        }
-        else {
+        } else {
             console.write(configKey.getDisplayValue());
         }
         console.writeLine();

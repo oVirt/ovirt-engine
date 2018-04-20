@@ -51,16 +51,14 @@ public class TestHelper {
             if (matches) {
                 matches = count == llhs.size();
             }
-        }
-        else if (lhs instanceof byte[] && rhs instanceof byte[]) {
+        } else if (lhs instanceof byte[] && rhs instanceof byte[]) {
             byte[] lhsBytes = (byte[]) lhs;
             byte[] rhsBytes = (byte[]) rhs;
             matches = lhsBytes.length == rhsBytes.length;
             if (matches) {
                 matches = matches && Arrays.equals(lhsBytes, rhsBytes);
             }
-        }
-        else {
+        } else {
             matches = Objects.equals(lhs, rhs);
         }
         return matches;

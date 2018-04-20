@@ -136,8 +136,7 @@ public class SelectionTreeNodeModel extends EntityModel {
         for (SelectionTreeNodeModel a : getParent().getChildren()) {
             if (a.getIsSelectedNullable() != null && a.getIsSelectedNullable().equals(true)) {
                 selCount += 1;
-            }
-            else if (a.isSelectedNullable == null) {
+            } else if (a.isSelectedNullable == null) {
                 nullCount++;
             }
 
@@ -146,13 +145,11 @@ public class SelectionTreeNodeModel extends EntityModel {
         getParent().setIsSelectedNotificationPrevent(true);
         if (selCount == 0 && nullCount == 0) {
             getParent().setIsSelectedNullable(false);
-        }
-        else {
+        } else {
             // if (Parent.Children.Count() == selCount)
             if (getParent().getChildren().size() == selCount) {
                 getParent().setIsSelectedNullable(true);
-            }
-            else {
+            } else {
                 getParent().setIsSelectedNullable(null);
             }
         }

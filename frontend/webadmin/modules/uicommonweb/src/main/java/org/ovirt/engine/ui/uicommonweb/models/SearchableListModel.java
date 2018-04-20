@@ -419,8 +419,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         // Defer search if there max result limit was not yet retrieved.
         if (getSearchPageSize() == UnknownInteger) {
             asyncCallback.requestSearch();
-        }
-        else {
+        } else {
             stopRefresh();
 
             if (getIsQueryFirstTime()) {
@@ -434,8 +433,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 syncSearch();
                 setIsQueryFirstTime(false);
                 startGridTimer();
-            }
-            else {
+            } else {
                 syncSearch();
             }
         }
@@ -490,8 +488,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         if (getItems() != null) {
             Iterator<T> enumerator = getItems().iterator();
             setIsEmpty(enumerator.hasNext() ? false : true);
-        }
-        else {
+        } else {
             setIsEmpty(true);
         }
     }
@@ -822,14 +819,11 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
         if (command == getSearchCommand()) {
             search();
-        }
-        else if (command == getSearchNextPageCommand()) {
+        } else if (command == getSearchNextPageCommand()) {
             searchNextPage();
-        }
-        else if (command == getSearchPreviousPageCommand()) {
+        } else if (command == getSearchPreviousPageCommand()) {
             searchPreviousPage();
-        }
-        else if (command == getForceRefreshCommand()) {
+        } else if (command == getForceRefreshCommand()) {
             forceRefresh();
         }
 

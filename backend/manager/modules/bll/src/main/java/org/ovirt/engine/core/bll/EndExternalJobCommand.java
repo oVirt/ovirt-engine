@@ -39,13 +39,11 @@ public class EndExternalJobCommand <T extends EndExternalJobParameters> extends 
             if (job == null) {
                 retValue = false;
                 addValidationMessage(EngineMessage.ACTION_TYPE_NO_JOB);
-            }
-            else if (! job.isExternal()) {
+            } else if (! job.isExternal()) {
                 retValue = false;
                 addValidationMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
             }
-        }
-        else {
+        } else {
             retValue = false;
             addValidationMessage(EngineMessage.ACTION_TYPE_NO_JOB);
         }

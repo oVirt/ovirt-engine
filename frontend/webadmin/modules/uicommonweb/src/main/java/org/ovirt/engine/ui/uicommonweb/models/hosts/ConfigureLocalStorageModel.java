@@ -258,9 +258,8 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                 }
 
                 setCandidateCluster(cluster);
-            }
-            // Use different cluster
-            else {
+            } else {
+                // Use different cluster
 
                 // Check the DC cluster list (for re-use)
                 clusters = context.clusterListByDataCenterMap.get(candidate);

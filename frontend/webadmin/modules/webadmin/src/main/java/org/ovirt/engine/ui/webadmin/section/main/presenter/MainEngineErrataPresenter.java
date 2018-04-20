@@ -78,8 +78,7 @@ public class MainEngineErrataPresenter extends AbstractMainWithDetailsPresenter<
             if (getModel().getMessage() != null && !getModel().getMessage().isEmpty()) {
                 // bus published message that an error occurred communicating with Katello. Show the alert panel.
                 getView().showErrorMessage(SafeHtmlUtils.fromString(getModel().getMessage()));
-            }
-            else if (getModel().getMessage() == null || getModel().getMessage().isEmpty()) {
+            } else if (getModel().getMessage() == null || getModel().getMessage().isEmpty()) {
                 getView().clearErrorMessage();
             }
         });

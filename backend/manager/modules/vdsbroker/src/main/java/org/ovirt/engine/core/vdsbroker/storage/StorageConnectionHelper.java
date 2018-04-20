@@ -50,8 +50,7 @@ public class StorageConnectionHelper {
         StorageServerConnectionExtension connExt = storageServerConnectionExtensionDao.getByHostIdAndTarget(hostId, connection.getIqn());
         if (connExt == null) {
             credentials = new Pair<>(connection.getUserName(), connection.getPassword());
-        }
-        else {
+        } else {
             credentials = new Pair<>(connExt.getUserName(), connExt.getPassword());
         }
         return credentials;

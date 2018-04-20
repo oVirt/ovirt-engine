@@ -20,8 +20,7 @@ public class FenceConfigValueHelper extends StringValueHelper{
             if (! value.matches(validator)) {
                 return new ValidationResult(false,
                         String.format("The entered key value is invalid. Value should match expression '%s'. Example: %s", validator, FenceConfigHelper.getValidatorExample(key)));
-            }
-            else {
+            } else {
                 return new ValidationResult(true);
             }
         }

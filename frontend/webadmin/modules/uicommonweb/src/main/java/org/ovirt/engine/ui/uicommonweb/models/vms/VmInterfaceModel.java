@@ -267,9 +267,7 @@ public abstract class VmInterfaceModel extends Model {
 
         if (sender == getMAC()) {
             mAC_PropertyChanged((PropertyChangedEventArgs) args);
-        }
-
-        else if (sender == getPlugged()) {
+        } else if (sender == getPlugged()) {
             PropertyChangedEventArgs propArgs = (PropertyChangedEventArgs) args;
             if (propArgs.propertyName.equals("Entity")) { //$NON-NLS-1$
                 boolean plugged = getPlugged().getEntity();
@@ -289,19 +287,15 @@ public abstract class VmInterfaceModel extends Model {
                 getPlugged_IsSelected().setIsAvailable(isPlugAvailable);
                 getUnplugged_IsSelected().setIsAvailable(isPlugAvailable);
             }
-        }
-        else if (sender == getPlugged_IsSelected()) {
+        } else if (sender == getPlugged_IsSelected()) {
             if (getPlugged_IsSelected().getEntity()) {
                 getPlugged().setEntity(true);
             }
-        }
-        else if (sender == getUnplugged_IsSelected()) {
+        } else if (sender == getUnplugged_IsSelected()) {
             if (getUnplugged_IsSelected().getEntity()) {
                 getPlugged().setEntity(false);
             }
-        }
-
-        else if (sender == getLinked()) {
+        } else if (sender == getLinked()) {
             PropertyChangedEventArgs propArgs = (PropertyChangedEventArgs) args;
             if (propArgs.propertyName.equals("Entity")) { //$NON-NLS-1$
                 boolean linked = getLinked().getEntity();
@@ -320,13 +314,11 @@ public abstract class VmInterfaceModel extends Model {
                 getLinked_IsSelected().setIsAvailable(isLinkedAvailable);
                 getUnlinked_IsSelected().setIsAvailable(isLinkedAvailable);
             }
-        }
-        else if (sender == getLinked_IsSelected()) {
+        } else if (sender == getLinked_IsSelected()) {
             if (getLinked_IsSelected().getEntity()) {
                 getLinked().setEntity(true);
             }
-        }
-        else if (sender == getUnlinked_IsSelected()) {
+        } else if (sender == getUnlinked_IsSelected()) {
             if (getUnlinked_IsSelected().getEntity()) {
                 getLinked().setEntity(false);
             }
@@ -388,8 +380,7 @@ public abstract class VmInterfaceModel extends Model {
         nic.setLinked(getLinked().getEntity());
         if (getNicType().getSelectedItem() == null) {
             nic.setType(null);
-        }
-        else {
+        } else {
             nic.setType(getNicType().getSelectedItem().getValue());
         }
         onSaveMAC(nic);
@@ -455,8 +446,7 @@ public abstract class VmInterfaceModel extends Model {
 
         if (ON_SAVE_COMMAND.equals(command.getName())) {
             onSave();
-        }
-        else if (CANCEL_COMMAND.equals(command.getName())) {
+        } else if (CANCEL_COMMAND.equals(command.getName())) {
             cancel();
         }
     }

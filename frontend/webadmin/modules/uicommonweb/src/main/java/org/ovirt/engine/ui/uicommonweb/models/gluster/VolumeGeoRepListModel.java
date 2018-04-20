@@ -583,8 +583,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         Frontend.getInstance().runAction(actionType, sessionParamters, result -> {
             if (cModel == null) {
                 return;
-            }
-            else {
+            } else {
                 cModel.stopProgress();
                 if (!result.getReturnValue().getSucceeded()) {
                     //cModel.setActionConfirmationMessage(result.getReturnValue().getFault().getMessage());

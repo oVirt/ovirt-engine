@@ -628,11 +628,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     public MigrateOnErrorOptions getMigrateOnErrorOption() {
         if (getMigrateOnErrorOption_NO().getEntity()) {
             return MigrateOnErrorOptions.NO;
-        }
-        else if (getMigrateOnErrorOption_YES().getEntity()) {
+        } else if (getMigrateOnErrorOption_YES().getEntity()) {
             return MigrateOnErrorOptions.YES;
-        }
-        else if (getMigrateOnErrorOption_HA_ONLY().getEntity()) {
+        } else if (getMigrateOnErrorOption_HA_ONLY().getEntity()) {
             return MigrateOnErrorOptions.HA_ONLY;
         }
         return MigrateOnErrorOptions.YES;
@@ -1042,13 +1040,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 if (getEnableGlusterService().getEntity() != null
                         && !getEnableGlusterService().getEntity()) {
                     getEnableTrustedService().setIsChangeable(true);
-                }
-                else {
+                } else {
                     getEnableTrustedService().setIsChangeable(false);
                 }
 
-            }
-            else {
+            } else {
                 getEnableTrustedService().setIsChangeable(false);
             }
         });
@@ -1074,8 +1070,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 getGlusterHostAddress().setIsAvailable(true);
                 getGlusterHostFingerprint().setIsAvailable(true);
                 getGlusterHostPassword().setIsAvailable(true);
-            }
-            else {
+            } else {
                 getIsImportGlusterConfiguration().setIsAvailable(false);
                 getIsImportGlusterConfiguration().setEntity(false);
 
@@ -1087,13 +1082,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     && getEnableGlusterService().getEntity()) {
                 getEnableTrustedService().setEntity(false);
                 getEnableTrustedService().setIsChangeable(false);
-            }
-            else {
+            } else {
                 if (getEnableOvirtService().getEntity() != null
                         && getEnableOvirtService().getEntity()) {
                     getEnableTrustedService().setIsChangeable(true);
-                }
-                else {
+                } else {
                     getEnableTrustedService().setIsChangeable(false);
                 }
             }
@@ -1110,8 +1103,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     && getEnableTrustedService().getEntity()) {
                 getEnableGlusterService().setEntity(false);
                 getEnableGlusterService().setIsChangeable(false);
-            }
-            else {
+            } else {
                 getEnableGlusterService().setIsChangeable(true);
             }
         });
@@ -1505,8 +1497,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     && getIsImportGlusterConfiguration().getEntity()) {
                 getGlusterHostAddress().setIsChangeable(true);
                 getGlusterHostPassword().setIsChangeable(true);
-            }
-            else {
+            } else {
                 getGlusterHostAddress().setIsChangeable(false);
                 getGlusterHostPassword().setIsChangeable(false);
             }
@@ -1525,8 +1516,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             if (fingerprint != null && fingerprint.length() > 0) {
                 getGlusterHostFingerprint().setEntity(fingerprint);
                 setIsFingerprintVerified(true);
-            }
-            else {
+            } else {
                 getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance()
                         .getConstants()
                         .errorLoadingFingerprint());
@@ -1644,31 +1634,25 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 getOptimizationForServer_IsSelected().setEntity(false);
                 getOptimizationForDesktop_IsSelected().setEntity(false);
                 getOptimizationCustom_IsSelected().setEntity(false);
-            }
-            else if (senderEntityModel == getOptimizationForServer_IsSelected()) {
+            } else if (senderEntityModel == getOptimizationForServer_IsSelected()) {
                 getOptimizationNone_IsSelected().setEntity(false);
                 getOptimizationForDesktop_IsSelected().setEntity(false);
                 getOptimizationCustom_IsSelected().setEntity(false);
-            }
-            else if (senderEntityModel == getOptimizationForDesktop_IsSelected()) {
+            } else if (senderEntityModel == getOptimizationForDesktop_IsSelected()) {
                 getOptimizationNone_IsSelected().setEntity(false);
                 getOptimizationForServer_IsSelected().setEntity(false);
                 getOptimizationCustom_IsSelected().setEntity(false);
-            }
-            else if (senderEntityModel == getOptimizationCustom_IsSelected()) {
+            } else if (senderEntityModel == getOptimizationCustom_IsSelected()) {
                 getOptimizationNone_IsSelected().setEntity(false);
                 getOptimizationForServer_IsSelected().setEntity(false);
                 getOptimizationForDesktop_IsSelected().setEntity(false);
-            }
-            else if (senderEntityModel == getMigrateOnErrorOption_YES()) {
+            } else if (senderEntityModel == getMigrateOnErrorOption_YES()) {
                 getMigrateOnErrorOption_NO().setEntity(false);
                 getMigrateOnErrorOption_HA_ONLY().setEntity(false);
-            }
-            else if (senderEntityModel == getMigrateOnErrorOption_NO()) {
+            } else if (senderEntityModel == getMigrateOnErrorOption_NO()) {
                 getMigrateOnErrorOption_YES().setEntity(false);
                 getMigrateOnErrorOption_HA_ONLY().setEntity(false);
-            }
-            else if (senderEntityModel == getMigrateOnErrorOption_HA_ONLY()) {
+            } else if (senderEntityModel == getMigrateOnErrorOption_HA_ONLY()) {
                 getMigrateOnErrorOption_YES().setEntity(false);
                 getMigrateOnErrorOption_NO().setEntity(false);
             } else if (senderEntityModel == getOptimizeForUtilization()) {
@@ -1981,8 +1965,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
         if (selectedDataCenter.isLocal()) {
             setMigrationTabAvailable(false);
-        }
-        else {
+        } else {
             setMigrationTabAvailable(true);
         }
 
@@ -2090,13 +2073,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         if (!validService) {
             setMessage(ConstantsManager.getInstance().getConstants().clusterServiceValidationMsg());
-        }
-        else if (getIsImportGlusterConfiguration().getEntity() && getGlusterHostAddress().getIsValid()
+        } else if (getIsImportGlusterConfiguration().getEntity() && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && !isFingerprintVerified()) {
             setMessage(ConstantsManager.getInstance().getConstants().fingerprintNotVerified());
-        }
-        else {
+        } else {
             setMessage(null);
         }
 

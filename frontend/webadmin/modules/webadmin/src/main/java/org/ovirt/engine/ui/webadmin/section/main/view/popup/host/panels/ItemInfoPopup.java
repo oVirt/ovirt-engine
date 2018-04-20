@@ -116,8 +116,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             addRow(templates.imageWithText(unknownImage, constants.unmanagedNetworkItemInfo()));
             addRow(SafeHtmlUtils.fromString(constants.unmanagedNetworkDescriptionItemInfo()));
             descriptionSectionHasValues = true;
-        }
-        else {
+        } else {
             if (networkModel.getErrorMessage() != null) {
                 addRow(templates.imageTextSetupNetwork(alertImage, templates.maxWidthNteworkItemPopup(networkModel.getErrorMessage())));
                 descriptionSectionHasValues = true;

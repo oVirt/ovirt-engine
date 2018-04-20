@@ -29,8 +29,7 @@ public class EngineEncryptionUtilsTest {
                 new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_PASSWORD", "NoSoup4U"),
                 new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_ALIAS", "1")
             );
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch(UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }

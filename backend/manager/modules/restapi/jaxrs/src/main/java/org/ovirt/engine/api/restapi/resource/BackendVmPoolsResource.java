@@ -49,8 +49,7 @@ public class BackendVmPoolsResource
         if (isFiltered()) {
             if (isSortedAndMaxResults()) { //Specific use-case of User-Portal
                 return getVmPoolsFilteredAndSorted();
-            }
-            else {
+            } else {
                 return mapCollection(getBackendCollection(QueryType.GetAllVmPoolsAttachedToUser,
                         new QueryParametersBase(), SearchType.VmPools));
             }

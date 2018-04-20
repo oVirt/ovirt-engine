@@ -99,8 +99,7 @@ public class HostGlusterSwiftListModel extends SearchableListModel<VDS, GlusterS
             enableStart = false;
             enableStop = false;
             enableRestart = false;
-        }
-        else {
+        } else {
             for (GlusterServerService service : serviceList) {
                 if (service.getStatus() != GlusterServiceStatus.NOT_AVAILABLE) {
                     if (service.getStatus() != GlusterServiceStatus.RUNNING) {
@@ -150,11 +149,9 @@ public class HostGlusterSwiftListModel extends SearchableListModel<VDS, GlusterS
 
         if (command.equals(getStartSwiftCommand())) {
             startSwift();
-        }
-        else if (command.equals(getStopSwiftCommand())) {
+        } else if (command.equals(getStopSwiftCommand())) {
             stopSwift();
-        }
-        else if (command.equals(getRestartSwiftCommand())) {
+        } else if (command.equals(getRestartSwiftCommand())) {
             restartSwift();
         }
     }

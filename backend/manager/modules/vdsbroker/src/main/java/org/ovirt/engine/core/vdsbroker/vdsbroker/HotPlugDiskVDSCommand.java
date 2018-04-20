@@ -113,12 +113,10 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
                     if (isScsiPassthrough) {
                         drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
                         drive.put(VdsProperties.Sgio, getParameters().getDisk().getSgio().toString().toLowerCase());
-                    }
-                    else {
+                    } else {
                         drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
                     }
-                }
-                else {
+                } else {
                     drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
                 }
 

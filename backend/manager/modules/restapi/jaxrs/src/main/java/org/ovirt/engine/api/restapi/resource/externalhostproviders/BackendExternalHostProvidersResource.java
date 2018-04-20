@@ -64,8 +64,7 @@ public class BackendExternalHostProvidersResource
                 QueryType.GetAllProviders,
                 new GetAllProvidersParameters(ProviderType.FOREMAN), SearchType.Provider
             );
-        }
-        else {
+        } else {
             return getBackendCollection(SearchType.Provider, getConstraint());
         }
     }

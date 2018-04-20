@@ -268,8 +268,7 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             for (String typeStr : splitTypes) {
                 try {
                     types.add(StorageType.forValue(Integer.parseInt(typeStr)));
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throw new SQLException("Could not parse disk image storage domain type " + typeStr, e);
                 }
             }

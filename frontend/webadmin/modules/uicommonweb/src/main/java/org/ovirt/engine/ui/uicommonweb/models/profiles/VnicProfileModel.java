@@ -334,8 +334,7 @@ public abstract class VnicProfileModel extends Model {
 
         if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

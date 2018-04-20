@@ -116,8 +116,7 @@ public class V3Server<DELEGATE> {
     public static Response adaptResponse(Supplier<Response> method) {
         try {
             return adaptResponse(method.get());
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }
@@ -132,8 +131,7 @@ public class V3Server<DELEGATE> {
     public static <V3, V4> V3 adaptGet(Supplier<V4> method) {
         try {
             return adaptOut(method.get());
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }
@@ -148,8 +146,7 @@ public class V3Server<DELEGATE> {
     public static <V3, V4> V3 adaptList(Supplier<V4> method) {
         try {
             return adaptOut(method.get());
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }
@@ -165,8 +162,7 @@ public class V3Server<DELEGATE> {
     public static <V3, V4> Response adaptAdd(Function<V4, Response> method, V3 object) {
         try {
             return adaptResponse(method.apply(adaptIn(object)));
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }
@@ -182,8 +178,7 @@ public class V3Server<DELEGATE> {
     public static <V3, V4> V3 adaptUpdate(Function<V4, V4> method, V3 object) {
         try {
             return adaptOut(method.apply(adaptIn(object)));
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }
@@ -198,8 +193,7 @@ public class V3Server<DELEGATE> {
     public static Response adaptRemove(Supplier<Response> method) {
         try {
             return adaptResponse(method.get());
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }
@@ -215,8 +209,7 @@ public class V3Server<DELEGATE> {
     public static Response adaptAction(Function<Action, Response> method, V3Action action) {
         try {
             return adaptResponse(method.apply(adaptIn(action)));
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }

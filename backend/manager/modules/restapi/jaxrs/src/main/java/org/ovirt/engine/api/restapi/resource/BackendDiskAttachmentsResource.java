@@ -64,8 +64,7 @@ public class BackendDiskAttachmentsResource
         if (attachment.isSetDisk() && attachment.getDisk().isSetId()) {
             Guid diskId = Guid.createGuidFromStringDefaultEmpty(attachment.getDisk().getId());
             return attachDiskToVm(this, attachment, new AttachDiskResolver(diskId, vmId));
-        }
-        else {
+        } else {
             return createDisk(this, attachment, new AddDiskResolver());
         }
     }

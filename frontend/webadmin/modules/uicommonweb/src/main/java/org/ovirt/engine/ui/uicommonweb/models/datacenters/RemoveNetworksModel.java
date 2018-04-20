@@ -171,8 +171,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
         super.executeCommand(command);
         if ("onRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

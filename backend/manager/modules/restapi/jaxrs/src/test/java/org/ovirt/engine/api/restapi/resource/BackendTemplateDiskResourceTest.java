@@ -251,8 +251,7 @@ public class BackendTemplateDiskResourceTest
                     new String[] {},
                     new Object[] {},
                     Collections.singletonList(getStorageDomainEntity()));
-        }
-        else {
+        } else {
             setUpEntityQueryExpectations(QueryType.GetStorageDomainByName,
                     NameQueryParameters.class,
                     new String[] { "Name" },

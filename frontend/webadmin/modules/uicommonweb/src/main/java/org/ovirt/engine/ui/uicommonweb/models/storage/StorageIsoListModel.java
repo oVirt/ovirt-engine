@@ -64,8 +64,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
     public void search() {
         if (getEntity() != null) {
             super.search();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }
@@ -164,11 +163,9 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
 
         if (getImportImagesCommand().equals(command)) {
             importImages();
-        }
-        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+        } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
-        }
-        else if (command.getName().equals("CancelConfirm")) { //$NON-NLS-1$
+        } else if (command.getName().equals("CancelConfirm")) { //$NON-NLS-1$
             setConfirmWindow(null);
         }
     }

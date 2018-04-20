@@ -27,8 +27,7 @@ public class SsoLocalConfig extends ShellLikeConfd {
     public static SsoLocalConfig getInstance(Map<String, String> values) {
         if (values != null) {
             instance = new SsoLocalConfig(values);
-        }
-        else {
+        } else {
             if (instance == null) {
                 synchronized(SsoLocalConfig.class) {
                     if (instance == null) {

@@ -91,8 +91,7 @@ public class VdsDeployVdsmUnit implements VdsDeployUnit {
                 String minimal = Config.getValue(ConfigValues.BootstrapMinimalVdsmVersion);
                 if (minimal.trim().length() == 0) {
                     _deploy.getParser().cliNoop();
-            }
-            else {
+            } else {
                 _deploy.getParser().cliEnvironmentSet(
                     VdsmEnv.VDSM_MINIMUM_VERSION,
                     minimal

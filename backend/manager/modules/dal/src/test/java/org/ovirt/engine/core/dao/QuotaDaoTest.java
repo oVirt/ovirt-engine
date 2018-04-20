@@ -190,8 +190,7 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
                     .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2388"))) {
                 assertEquals(Integer.valueOf(10), quotaCluster.getVirtualCpu());
                 assertEquals(unlimited, quotaCluster.getMemSizeMB());
-            }
-            else if (quotaCluster.getQuotaClusterId()
+            } else if (quotaCluster.getQuotaClusterId()
                     .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2389"))) {
                 assertEquals(Integer.valueOf(1000), quotaCluster.getVirtualCpu());
                 assertEquals(unlimited, quotaCluster.getMemSizeMB());

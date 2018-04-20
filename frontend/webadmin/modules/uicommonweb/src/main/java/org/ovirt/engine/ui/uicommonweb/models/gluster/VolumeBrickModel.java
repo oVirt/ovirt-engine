@@ -100,8 +100,7 @@ public class VolumeBrickModel extends Model {
         getBricks().getItemsChangedEvent().addListener((ev, sender, args) -> {
             if (bricks.getItems() != null && bricks.getItems().iterator().hasNext()) {
                 getRemoveAllBricksCommand().setIsExecutionAllowed(true);
-            }
-            else {
+            } else {
                 getRemoveAllBricksCommand().setIsExecutionAllowed(false);
             }
         });
@@ -140,8 +139,7 @@ public class VolumeBrickModel extends Model {
     private void updateSelectedBricksActions() {
         if (bricks.getSelectedItems() == null || bricks.getSelectedItems().size() == 0) {
             getRemoveBricksCommand().setIsExecutionAllowed(false);
-        }
-        else {
+        } else {
             getRemoveBricksCommand().setIsExecutionAllowed(true);
         }
 
@@ -149,22 +147,19 @@ public class VolumeBrickModel extends Model {
                 || bricks.getSelectedItems().size() != 1) {
             getMoveBricksUpCommand().setIsExecutionAllowed(false);
             getMoveBricksDownCommand().setIsExecutionAllowed(false);
-        }
-        else {
+        } else {
             EntityModel<GlusterBrickEntity> selectedItem = bricks.getSelectedItems().get(0);
             List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
             int position = items.indexOf(selectedItem);
             if (position == 0) {
                 getMoveBricksUpCommand().setIsExecutionAllowed(false);
-            }
-            else {
+            } else {
                 getMoveBricksUpCommand().setIsExecutionAllowed(true);
             }
 
             if (position == (items.size() - 1)) {
                 getMoveBricksDownCommand().setIsExecutionAllowed(false);
-            }
-            else {
+            } else {
                 getMoveBricksDownCommand().setIsExecutionAllowed(true);
             }
         }
@@ -406,8 +401,7 @@ public class VolumeBrickModel extends Model {
                     items.remove(position);
                     items.add(position - 1, selectedItem);
                 }
-            }
-            else {
+            } else {
                 if (position < items.size() - 1) {
                     items.remove(position);
                     items.add(position + 1, selectedItem);
@@ -462,8 +456,7 @@ public class VolumeBrickModel extends Model {
         if (!isCreateVolume) {
             if (selectedVolumeType == GlusterVolumeType.REPLICATE) {
                 selectedVolumeType = GlusterVolumeType.DISTRIBUTED_REPLICATE;
-            }
-            else if (selectedVolumeType == GlusterVolumeType.STRIPE) {
+            } else if (selectedVolumeType == GlusterVolumeType.STRIPE) {
                 selectedVolumeType = GlusterVolumeType.DISTRIBUTED_STRIPE;
             }
         }
@@ -516,8 +509,7 @@ public class VolumeBrickModel extends Model {
         if (!isCreateVolume) {
             if (selectedVolumeType == GlusterVolumeType.REPLICATE) {
                 selectedVolumeType = GlusterVolumeType.DISTRIBUTED_REPLICATE;
-            }
-            else if (selectedVolumeType == GlusterVolumeType.STRIPE) {
+            } else if (selectedVolumeType == GlusterVolumeType.STRIPE) {
                 selectedVolumeType = GlusterVolumeType.DISTRIBUTED_STRIPE;
             }
         }
@@ -600,14 +592,12 @@ public class VolumeBrickModel extends Model {
                 GlusterBrickEntity brick = (GlusterBrickEntity) ((EntityModel) model).getEntity();
                 if (servers.contains(brick.getServerName())) {
                     return false;
-                }
-                else {
+                } else {
                     servers.add(brick.getServerName());
                 }
                 count++;
             }
-        }
-        else {
+        } else {
 
             int count = 0;
             for (Object model : bricks.getItems()) {
@@ -615,8 +605,7 @@ public class VolumeBrickModel extends Model {
                 GlusterBrickEntity brick = (GlusterBrickEntity) ((EntityModel) model).getEntity();
                 if (servers.contains(brick.getServerName())) {
                     return false;
-                }
-                else {
+                } else {
                     servers.add(brick.getServerName());
                 }
                 if (count % replicaCount == 0) {
@@ -639,17 +628,13 @@ public class VolumeBrickModel extends Model {
 
         if (command == getAddBrickCommand()) {
             addBrick();
-        }
-        else if (command == getRemoveBricksCommand()) {
+        } else if (command == getRemoveBricksCommand()) {
             removeBricks();
-        }
-        else if (command == getRemoveAllBricksCommand()) {
+        } else if (command == getRemoveAllBricksCommand()) {
             removeAllBricks();
-        }
-        else if (command == getMoveBricksUpCommand()) {
+        } else if (command == getMoveBricksUpCommand()) {
             moveItemsUpDown(true);
-        }
-        else if (command == getMoveBricksDownCommand()) {
+        } else if (command == getMoveBricksDownCommand()) {
             moveItemsUpDown(false);
         }
     }

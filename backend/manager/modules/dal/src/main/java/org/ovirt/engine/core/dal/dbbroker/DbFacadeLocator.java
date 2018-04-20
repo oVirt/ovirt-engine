@@ -74,8 +74,7 @@ public class DbFacadeLocator {
         final Properties props;
         try {
             props = ResourceUtils.loadProperties(DbFacadeLocator.class, ENGINE_DB_ENGINE_PROPERTIES);
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             throw new IllegalStateException(
                 "Can't load properties from resource \"" +
                 ENGINE_DB_ENGINE_PROPERTIES + "\".", exception
@@ -90,8 +89,7 @@ public class DbFacadeLocator {
         }
         try {
             return (DbEngineDialect) Class.forName(dialect).newInstance();
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             throw new IllegalStateException(
                 "Can't create instance of dialect class \"" + dialect + "\".",
                 exception
@@ -104,8 +102,7 @@ public class DbFacadeLocator {
         try {
             connectionTimeout = config.getInteger("ENGINE_DB_CONNECTION_TIMEOUT");
             checkInterval = config.getInteger("ENGINE_DB_CHECK_INTERVAL");
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             log.warn("Can't load connection checking parameters of DB facade, "
                             + "will continue using the default values. Error: {}",
                 exception.getMessage());

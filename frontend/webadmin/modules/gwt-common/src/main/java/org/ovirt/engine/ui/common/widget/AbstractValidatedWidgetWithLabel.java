@@ -176,8 +176,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
                 sizeContainer.setWidget(contentWidgetContainer);
                 wrapperPanel.insert(sizeContainer, 1);
             }
-        }
-        else {
+        } else {
             addContentWidgetStyleName(style.maxWidth());
             addContentWidgetContainerStyleName(style.contentWidgetContainer_legacy());
             addContentWidgetContainerStyleName("avw_contentWidgetContainer_pfly_fix"); //$NON-NLS-1$

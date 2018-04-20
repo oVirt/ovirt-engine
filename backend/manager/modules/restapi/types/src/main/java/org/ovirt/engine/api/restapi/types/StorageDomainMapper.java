@@ -173,8 +173,7 @@ public class StorageDomainMapper {
         org.ovirt.engine.core.common.businessentities.storage.StorageType storageType = null;
         if (model.getType() != null) {
            storageType = map(model.getType(), null);
-        }
-        else if (template != null) {
+        } else if (template != null) {
            storageType = template.getStorageType();
         }
         if (storageType != null) {
@@ -211,14 +210,12 @@ public class StorageDomainMapper {
                 String path = null;
                 if (model.isSetAddress()) {
                     address = model.getAddress();
-                }
-                else {
+                } else {
                     address = parts != null ? parts[0] : "";
                 }
                 if (model.isSetPath()) {
                     path = model.getPath();
-                }
-                else {
+                } else {
                     path = parts != null ? parts[1] : "";
                 }
                 entity.setConnection(address + ":" + path);
@@ -290,8 +287,7 @@ public class StorageDomainMapper {
             if (entity.getMountOptions() != null) {
                 model.setMountOptions(entity.getMountOptions());
             }
-        }
-        else if (entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS)
+        } else if (entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS)
                 || entity.getStorageType().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.GLUSTERFS)) {
             model.setMountOptions(entity.getMountOptions());
             model.setVfsType(entity.getVfsType());
@@ -304,8 +300,7 @@ public class StorageDomainMapper {
             String[] parts = entity.getConnection().split(":");
             model.setAddress(parts[0]);
             model.setPath(parts[1]);
-        }
-        else {
+        } else {
             model.setPath(entity.getConnection());
         }
     }

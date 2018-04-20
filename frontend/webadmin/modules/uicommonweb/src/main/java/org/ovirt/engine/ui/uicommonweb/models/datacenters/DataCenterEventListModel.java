@@ -12,8 +12,7 @@ public class DataCenterEventListModel extends SubTabEventListModel<StoragePool> 
 
         if (getEntity() != null) {
             getSearchCommand().execute();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

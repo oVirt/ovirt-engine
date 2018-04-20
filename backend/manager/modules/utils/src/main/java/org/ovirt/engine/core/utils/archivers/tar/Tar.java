@@ -40,12 +40,10 @@ public class Tar {
                     );
                 }
             }
-        }
-        else if (entry.getFile().isFile()) {
+        } else if (entry.getFile().isFile()) {
             if (entry.getFile().canExecute()) {
                 entry.setMode(0700);
-            }
-            else {
+            } else {
                 entry.setMode(0600);
             }
             archive.putArchiveEntry(entry);

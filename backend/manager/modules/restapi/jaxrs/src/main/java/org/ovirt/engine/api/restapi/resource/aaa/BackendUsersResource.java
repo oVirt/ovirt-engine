@@ -77,8 +77,7 @@ public class BackendUsersResource
     protected String getAuthzProviderName(User user, Collection<String> authzProvidersNames) {
         if (user.isSetDomain() && user.getDomain().isSetName()) {
             return user.getDomain().getName();
-        }
-        else if (user.isSetDomain() && user.getDomain().isSetId()) {
+        } else if (user.isSetDomain() && user.getDomain().isSetId()) {
             for (String domain : authzProvidersNames) {
                 Guid domainId = asGuid(domain.getBytes(StandardCharsets.UTF_8));
                 if (domainId.toString().equals(user.getDomain().getId())) {
@@ -145,8 +144,7 @@ public class BackendUsersResource
     public Users list() {
         if (isFiltered()) {
             return mapDbUserCollection(getBackendCollection(QueryType.GetAllDbUsers, new QueryParametersBase(), SearchType.DBUser));
-        }
-        else {
+        } else {
           return mapDbUserCollection(getBackendCollection(SearchType.DBUser, getSearchPattern()));
         }
     }
@@ -206,8 +204,7 @@ public class BackendUsersResource
         DirectoryUser result;
         try {
             userId = DirectoryEntryIdUtils.decode(userId);
-        }
-        catch (IllegalArgumentException exception) {
+        } catch(IllegalArgumentException exception) {
             return null;
         }
         result = getEntity(

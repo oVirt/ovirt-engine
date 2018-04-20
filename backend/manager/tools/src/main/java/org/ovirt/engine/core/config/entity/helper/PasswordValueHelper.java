@@ -46,8 +46,7 @@ public class PasswordValueHelper implements ValueHelper {
             try {
                 decrypt(value);
                 returnedValue = "Set";
-            }
-            catch (Exception exception) {
+            } catch (Exception exception) {
                 String msg = "Failed to decrypt the current value.";
                 console.writeLine(msg);
                 log.error("Exception", exception);
@@ -75,8 +74,7 @@ public class PasswordValueHelper implements ValueHelper {
                 return StringUtils.EMPTY;
             }
             returnedValue = encrypt(password);
-        }
-        catch (Throwable exception) {
+        } catch(Throwable exception) {
             String msg = "Failed to encrypt the current value.";
             console.writeLine(msg);
             log.error(msg, exception);

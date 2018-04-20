@@ -69,8 +69,7 @@ public class PKIResources {
                     cert.getEncoded()
                 )
             );
-        }
-        catch (CertificateEncodingException e) {
+        } catch(CertificateEncodingException e) {
             throw new RuntimeException(e);
         }
     };
@@ -114,8 +113,7 @@ public class PKIResources {
                 this.cert = CertificateFactory.getInstance("X.509").generateCertificate(in);
                 this.defaultFormat = defaultFormat;
                 this.defaultAlias = defaultAlias;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

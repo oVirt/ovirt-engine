@@ -39,8 +39,7 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
                     && roleDao.getByName(getRole().getName()) != null) {
                 addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 returnValue = false;
-            } // changing role type isn't allowed
-            else if (getRole().getType() != oldRole.getType()) {
+            } else if (getRole().getType() != oldRole.getType()) { // changing role type isn't allowed
                 addValidationMessage(EngineMessage.ERROR_CANNOT_UPDATE_ROLE_TYPE);
                 returnValue = false;
             }

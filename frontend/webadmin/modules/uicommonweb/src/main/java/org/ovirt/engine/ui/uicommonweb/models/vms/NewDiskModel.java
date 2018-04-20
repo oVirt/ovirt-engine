@@ -51,8 +51,7 @@ public class NewDiskModel extends AbstractDiskModel {
                     String newDescription;
                     if (numOfChars <= -1 || numOfChars >= selectedLunModel.getLunId().length()) {
                         newDescription = selectedLunModel.getLunId();
-                    }
-                    else {
+                    } else {
                         newDescription = selectedLunModel.getLunId().substring(selectedLunModel.getLunId().length() - numOfChars);
                     }
                     getDescription().setEntity(newDescription);

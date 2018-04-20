@@ -16,8 +16,7 @@ public class FencingPolicyMapper {
             entity.setSkipFencingIfConnectivityBroken(model.getSkipIfConnectivityBroken().isEnabled());
             if (model.getSkipIfConnectivityBroken().getThreshold() != null) {
                 entity.setHostsWithBrokenConnectivityThreshold(model.getSkipIfConnectivityBroken().getThreshold());
-            }
-            else {
+            } else {
                 entity.setHostsWithBrokenConnectivityThreshold(50);
             }
         }

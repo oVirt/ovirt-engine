@@ -287,11 +287,9 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         // build resizable headers, if necessary
         if (columnResizingEnabled && header instanceof AbstractCheckboxHeader) {
             header = createResizableCheckboxHeader(header, column);
-        }
-        else if (columnResizingEnabled) {
+        } else if (columnResizingEnabled) {
             header = createResizableHeader(column, header);
-        }
-        else if (applyHeaderStyle && header instanceof SafeHtmlHeader) {
+        } else if (applyHeaderStyle && header instanceof SafeHtmlHeader) {
             SafeHtmlHeader safeHtmlHeader = (SafeHtmlHeader) header;
             // not using Resizeable header, but still want it to look that way.
             // nonResizeableColumnHeader does that.
@@ -843,11 +841,9 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         if (supportsServerSideSorting && realComparator != null) {
             sortedModel.setComparator(realComparator, event.isSortAscending());
             sortApplied = true;
-        }
-
-        // Otherwise, if server-side sorting is supported by the model,
-        // update model's sort options and reload its items via search query
-        else if (supportsServerSideSorting) {
+        } else if (supportsServerSideSorting) {
+            // Otherwise, if server-side sorting is supported by the model,
+            // update model's sort options and reload its items via search query
             sortedModel.setComparator(null);
             if (searchableModel.isSearchValidForServerSideSorting()) {
                 searchableModel.updateSortOptions(sortableColumn.getSortBy(), event.isSortAscending());
@@ -856,10 +852,8 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
                 // Search string not valid, cannot perform search query
                 searchableModel.clearSortOptions();
             }
-        }
-
-        // Otherwise, fall back to client-side sorting
-        else if (realComparator != null) {
+        } else if (realComparator != null) {
+            // Otherwise, fall back to client-side sorting
             sortedModel.setComparator(realComparator, event.isSortAscending());
             sortApplied = true;
 

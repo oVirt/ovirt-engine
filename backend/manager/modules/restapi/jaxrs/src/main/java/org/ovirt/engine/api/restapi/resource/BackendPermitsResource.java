@@ -58,8 +58,7 @@ public class BackendPermitsResource
     public ActionGroup lookupId(String id) {
         try {
             return ActionGroup.forValue(Integer.parseInt(id));
-        }
-        catch (NumberFormatException exception) {
+        } catch (NumberFormatException exception) {
             return null;
         }
     }

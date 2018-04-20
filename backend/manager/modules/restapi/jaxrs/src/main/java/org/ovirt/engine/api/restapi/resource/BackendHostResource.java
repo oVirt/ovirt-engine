@@ -199,8 +199,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (action.isSetRootPassword()) {
             params.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.Password);
             params.setRootPassword(action.getRootPassword());
-        }
-        else if (action.isSetSsh() && action.getSsh().isSetAuthenticationMethod()) {
+        } else if (action.isSetSsh() && action.getSsh().isSetAuthenticationMethod()) {
             if (action.getSsh().getAuthenticationMethod() == SshAuthenticationMethod.PASSWORD) {
                 params.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.Password);
                 if (action.getSsh().isSetUser() && action.getSsh().getUser().isSetPassword()) {

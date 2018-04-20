@@ -406,8 +406,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
         if (getVmTemplate().isTrustedService() && !getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
-        }
-        else if (!getVmTemplate().isTrustedService() && getCluster().supportsTrustedService()) {
+        } else if (!getVmTemplate().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }

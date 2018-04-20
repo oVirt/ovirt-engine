@@ -85,14 +85,12 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
                 sb.append(template.textContainer(getStyleClass(),
                         getRenderElementId(context),
                         renderedValue));
-            }
-            else if (useOverflowTruncation) {
+            } else if (useOverflowTruncation) {
                 // using overflow truncation
                 sb.append(template.textContainerWithDetection(getStyleClass(),
                         getRenderElementId(context),
                         safeHtmlValue));
-            }
-            else {
+            } else {
                 // no truncation at all
                 sb.append(template.textContainer(getStyleClass(),
                         getRenderElementId(context),
@@ -115,9 +113,8 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
                 if (!safeHtmlValue.equals(renderedValue)) {
                     return safeHtmlValue;
                 }
-            }
-            // render a value if there was overflow detected
-            else if (contentOverflows(parent.getFirstChildElement())) {
+            } else if (contentOverflows(parent.getFirstChildElement())) {
+                // render a value if there was overflow detected
                 return safeHtmlValue;
             }
         }

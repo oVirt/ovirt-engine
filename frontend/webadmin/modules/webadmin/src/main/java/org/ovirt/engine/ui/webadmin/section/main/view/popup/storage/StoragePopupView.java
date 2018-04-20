@@ -183,8 +183,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                         formattedString = " ("; //$NON-NLS-1$
                         if (storage.isLocal()) {
                             formattedString += storageType;
-                        }
-                        else {
+                        } else {
                             formattedString += storageFormatType;
                         }
                         formattedString += ")"; //$NON-NLS-1$

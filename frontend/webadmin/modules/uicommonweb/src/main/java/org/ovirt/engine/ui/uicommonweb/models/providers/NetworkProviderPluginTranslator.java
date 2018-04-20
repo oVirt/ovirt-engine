@@ -73,8 +73,7 @@ public enum NetworkProviderPluginTranslator {
     public IValidation getPluginValidator() {
         if (this == EXTERNAL) {
             return value -> ValidationResult.ok();
-        }
-        else{
+        } else {
             return new NotEmptyValidation();
         }
     }

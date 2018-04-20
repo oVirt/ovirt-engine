@@ -33,11 +33,9 @@ public class PollVDSCommand<P extends TimeBoundPollVDSCommandParameters> extends
     protected void executeVdsBrokerCommand() {
         if (getParameters().getPollTechnique().equals(POLL)) {
             httpTask = getBroker().poll();
-        }
-        else if (getParameters().getPollTechnique().equals(POLL2)) {
+        } else if (getParameters().getPollTechnique().equals(POLL2)) {
             httpTask = getBroker().timeBoundPoll2(TIMEOUT, TimeUnit.SECONDS);
-        }
-        else if (getParameters().getPollTechnique().equals(CONFIRM_CONNECTIVITY)) {
+        } else if (getParameters().getPollTechnique().equals(CONFIRM_CONNECTIVITY)) {
             httpTask = getBroker().timeBoundPollConfirmConnectivity(TIMEOUT, TimeUnit.SECONDS);
         }
     }

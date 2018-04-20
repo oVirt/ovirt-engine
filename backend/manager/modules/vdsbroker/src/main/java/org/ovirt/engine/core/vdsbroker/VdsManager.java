@@ -538,8 +538,7 @@ public class VdsManager {
                 node.setId(searchNode.getId());
                 numaNodesToUpdate.add(node);
                 dbVdsNumaNodes.remove(searchNode);
-            }
-            else {
+            } else {
                 node.setId(Guid.newGuid());
                 numaNodesToSave.add(node);
             }

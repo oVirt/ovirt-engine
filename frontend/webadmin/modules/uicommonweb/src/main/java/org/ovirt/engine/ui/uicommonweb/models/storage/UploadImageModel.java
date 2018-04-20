@@ -229,8 +229,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 getDiskModel().getDescription().setEntity(imageInfoModel.getFileName());
                 getDiskModel().getSize().setEntity(imageInfoModel.getActualSize());
                 getDiskModel().getSize().setIsChangeable(false);
-            }
-            else {
+            } else {
                 getDiskModel().getAlias().setEntity(null);
                 getDiskModel().getDescription().setEntity(null);
                 getDiskModel().getSize().setEntity(null);

@@ -235,8 +235,7 @@ public class BackendDataCenterClusterResourceTest
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }
@@ -282,8 +281,7 @@ public class BackendDataCenterClusterResourceTest
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }

@@ -55,8 +55,7 @@ public class BackendVmCdromResourceTest
         try {
             resource.get();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -110,8 +109,7 @@ public class BackendVmCdromResourceTest
         try {
             resource.update(getCdrom(B_ISO));
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -188,8 +186,7 @@ public class BackendVmCdromResourceTest
             Cdrom cdrom = getCdrom(A_ISO);
             resource.update(cdrom);
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -221,8 +218,7 @@ public class BackendVmCdromResourceTest
         try {
             resource.update(cdrom);
             fail("expected WebApplicationException on incomplete parameters");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
              verifyIncompleteException(wae, "Cdrom", "update", "file");
         }
     }
@@ -262,8 +258,7 @@ public class BackendVmCdromResourceTest
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }
@@ -300,8 +295,7 @@ public class BackendVmCdromResourceTest
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }

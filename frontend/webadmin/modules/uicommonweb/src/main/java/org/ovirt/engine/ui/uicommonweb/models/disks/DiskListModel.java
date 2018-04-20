@@ -667,54 +667,39 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
 
         if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if (command == getMoveCommand()) {
+        } else if (command == getMoveCommand()) {
             move();
-        }
-        else if (command == getCopyCommand()) {
+        } else if (command == getCopyCommand()) {
             copy();
-        }
-        else if (command == getExportCommand()) {
+        } else if (command == getExportCommand()) {
             export();
-        }
-        else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName()) || "Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName()) || "Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirm();
-        }
-        else if (RemoveDiskModel.ON_REMOVE.equals(command.getName())) {
+        } else if (RemoveDiskModel.ON_REMOVE.equals(command.getName())) {
             onRemove();
         } else if (command == getChangeQuotaCommand()) {
             changeQuota();
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
             onChangeQuota();
-        }
-        else if (command == getUploadCommand()) {
+        } else if (command == getUploadCommand()) {
             upload();
-        }
-        else if (command == getCancelUploadCommand()) {
+        } else if (command == getCancelUploadCommand()) {
             cancelUpload();
-        }
-        else if ("OnCancelUpload".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnCancelUpload".equals(command.getName())) { //$NON-NLS-1$
             onCancelUpload();
-        }
-        else if (command == getPauseUploadCommand()) {
+        } else if (command == getPauseUploadCommand()) {
             pauseUpload();
-        }
-        else if (command == getResumeUploadCommand()) {
+        } else if (command == getResumeUploadCommand()) {
             resumeUpload();
-        }
-        else if (command == getDownloadCommand()) {
+        } else if (command == getDownloadCommand()) {
             download();
-        }
-        else if (command == getStopDownloadCommand()) {
+        } else if (command == getStopDownloadCommand()) {
             stopDownload();
         }
     }

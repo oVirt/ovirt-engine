@@ -18,8 +18,7 @@ public interface TagAssigningModel<T> {
                             getAttachedTagsToEntities().put(id, count.intValue() == getSelectedItems().size()));
 
             tagListModel.setAttachedTagsToEntities(getAttachedTagsToEntities());
-        }
-        else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
+        } else if ("OnAssignTags".equals(getLastExecutedCommand().getName())) { //$NON-NLS-1$
             postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }

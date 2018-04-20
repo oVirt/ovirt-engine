@@ -59,8 +59,7 @@ public class VdsDeployPKIUnit implements VdsDeployUnit {
                 ).split("\n");
                 unknown = false;
             }
-        }
-        else if (bevent instanceof Event.DisplayMultiString) {
+        } else if (bevent instanceof Event.DisplayMultiString) {
             Event.DisplayMultiString event = (Event.DisplayMultiString)bevent;
 
             if (Displays.CERTIFICATE_REQUEST.equals(event.name)) {

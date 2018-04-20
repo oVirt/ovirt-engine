@@ -39,8 +39,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
 
         if (appMode == ApplicationMode.VirtOnly) {
             return listVirtOnly();
-        }
-        else {
+        } else {
             return listAll();
         }
     }
@@ -49,8 +48,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
         if (isFiltered()) {
             return mapVirtOnlyCollection(getBackendCollection(QueryType.GetAllClusters,
                     new QueryParametersBase()));
-        }
-        else {
+        } else {
             return mapVirtOnlyCollection(getBackendCollection(SearchType.Cluster));
         }
     }
@@ -59,8 +57,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllClusters,
                     new QueryParametersBase()));
-        }
-        else {
+        } else {
             return mapCollection(getBackendCollection(SearchType.Cluster));
         }
     }

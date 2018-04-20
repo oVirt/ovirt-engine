@@ -85,8 +85,7 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
 
                     appCsh.put(locale, destination);
                 }
-            }
-            else {
+            } else {
                 log.error("couldn't get csh directory: " + cshConfigDir); //$NON-NLS-1$
             }
         }
@@ -113,8 +112,7 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
             if (file.exists() && file.canRead()) {
                 try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
                     nodes.add(mapper.readTree(reader));
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     log.error("Exception parsing documentation mapping file '{}': {}", //$NON-NLS-1$
                             file.getAbsolutePath(), e.getMessage());
                     log.error("Exception: ", e); //$NON-NLS-1$
@@ -212,10 +210,8 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
             // if field is an embedded object, recurse
             if (jsonNode != null && jsonNode.isObject()) {
                 merge(jsonNode, source.get(fieldName));
-            }
-            // else it's a plain field
-            else if (destination instanceof ObjectNode) {
-                // overwrite field
+            } else if (destination instanceof ObjectNode) {
+                // else it's a plain field, overwrite
                 JsonNode value = source.get(fieldName);
                 ((ObjectNode) destination).put(fieldName, value);
             }

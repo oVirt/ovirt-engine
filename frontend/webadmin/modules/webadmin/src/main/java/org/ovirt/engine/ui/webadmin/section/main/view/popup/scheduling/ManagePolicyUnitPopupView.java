@@ -74,8 +74,7 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
                 String tooltipContent = null;
                 if (object.isInternal()) {
                     tooltipContent = constants.internalPolicyUnit();
-                }
-                else {
+                } else {
                     tooltipContent = constants.externalPolicyUnit();
                 }
                 return SafeHtmlUtils.fromSafeConstant(tooltipContent);

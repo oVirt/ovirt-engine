@@ -70,8 +70,7 @@ public class BackendGroupsResource
     private String getAuthzProviderName(Group group, Collection<String> authzProvidersNames) {
         if (group.isSetDomain() && group.getDomain().isSetName()) {
             return group.getDomain().getName();
-        }
-        else if (group.isSetDomain() && group.getDomain().isSetId()) {
+        } else if (group.isSetDomain() && group.getDomain().isSetId()) {
             for (String domain : authzProvidersNames) {
                 Guid domainId = new Guid(domain.getBytes(StandardCharsets.UTF_8));
                 if (domainId.toString().equals(group.getDomain().getId())) {
@@ -129,8 +128,7 @@ public class BackendGroupsResource
     public Groups list() {
         if (isFiltered()) {
             return mapDbGroupCollection(getBackendCollection(QueryType.GetAllDbGroups, new QueryParametersBase(), SearchType.DBGroup));
-        }
-        else {
+        } else {
             return mapDbGroupCollection(getBackendCollection(SearchType.DBGroup, getSearchPattern()));
         }
     }
@@ -186,8 +184,7 @@ public class BackendGroupsResource
     private DirectoryGroup getGroupById(String directoryName, String namespace, String groupId) {
         try {
             groupId = DirectoryEntryIdUtils.decode(groupId);
-        }
-        catch (IllegalArgumentException exception) {
+        } catch(IllegalArgumentException exception) {
             return null;
         }
         return getEntity(

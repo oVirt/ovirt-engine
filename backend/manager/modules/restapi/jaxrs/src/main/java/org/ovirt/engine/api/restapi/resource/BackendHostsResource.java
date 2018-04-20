@@ -39,8 +39,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         ApplicationMode appMode = getCurrent().getApplicationMode();
         if (appMode == ApplicationMode.GlusterOnly) {
             return listGlusterOnly();
-        }
-        else {
+        } else {
             return listAll();
         }
     }
@@ -49,8 +48,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (isFiltered()) {
             return mapGlusterOnlyCollection(getBackendCollection(QueryType.GetAllHosts,
                     new QueryParametersBase()));
-        }
-        else {
+        } else {
             return mapGlusterOnlyCollection(getBackendCollection(SearchType.VDS));
         }
     }
@@ -59,8 +57,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllHosts,
                     new QueryParametersBase()));
-        }
-        else {
+        } else {
             return mapCollection(getBackendCollection(SearchType.VDS));
         }
     }

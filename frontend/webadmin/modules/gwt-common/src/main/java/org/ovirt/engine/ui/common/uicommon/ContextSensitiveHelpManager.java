@@ -93,12 +93,10 @@ public class ContextSensitiveHelpManager {
         if (detectedMappings.keySet().contains(currentLocale)) {
             logger.info("Context-sensitive help for your locale, " + currentLocale + ", is installed and loaded."); //$NON-NLS-1$ //$NON-NLS-2$
             cshMappings = detectedMappings.get(currentLocale);
-        }
-        else if (!currentLocale.equals(ENGLISH) && detectedMappings.keySet().contains(ENGLISH)) {
+        } else if (!currentLocale.equals(ENGLISH) && detectedMappings.keySet().contains(ENGLISH)) {
             logger.info("Context-sensitive help wasn't found for your locale, " + currentLocale + ". Using English as a fallback."); //$NON-NLS-1$ //$NON-NLS-2$
             cshMappings = detectedMappings.get(ENGLISH);
-        }
-        else {
+        } else {
             logger.info("Context-sensitive help wasn't found for your locale, " + currentLocale + ", or the fallback locale, English. " //$NON-NLS-1$ //$NON-NLS-2$
                     + "Context-sensitive help will not be available for this session."); //$NON-NLS-1$
             cshMappings = null;

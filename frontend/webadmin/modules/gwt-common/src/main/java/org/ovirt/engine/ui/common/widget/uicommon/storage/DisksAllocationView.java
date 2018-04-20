@@ -180,8 +180,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("Disks".equals(args.propertyName)) { //$NON-NLS-1$
                 addDiskList(model);
-            }
-            else if ("QuotaEnforcmentType".equals(args.propertyName)) { //$NON-NLS-1$
+            } else if ("QuotaEnforcmentType".equals(args.propertyName)) { //$NON-NLS-1$
                 updateColumnsAvailability(model);
                 updateListHeader();
             }

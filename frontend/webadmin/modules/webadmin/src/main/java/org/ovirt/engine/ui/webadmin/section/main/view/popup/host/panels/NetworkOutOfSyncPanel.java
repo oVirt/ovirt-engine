@@ -64,8 +64,7 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
             if (firstTime) {
                 subColumn = new Column(PROPERTY_COLUMN_SIZE);
                 firstTime = false;
-            }
-            else {
+            } else {
                 subColumn = new Column(COLUMN_SIZE);
                 subColumn.getElement().getStyle().setTextAlign(textAlign);
             }
@@ -82,8 +81,7 @@ public class NetworkOutOfSyncPanel extends FlowPanel {
             container.getElement().getStyle().setProperty("borderBottomStyle", "solid");//$NON-NLS-1$ //$NON-NLS-2$
             container.getElement().getStyle().setProperty("borderWidth", "1px");//$NON-NLS-1$ //$NON-NLS-2$
             flowPanel.add(container);
-        }
-        else {
+        } else {
             flowPanel.add(row);
         }
     }

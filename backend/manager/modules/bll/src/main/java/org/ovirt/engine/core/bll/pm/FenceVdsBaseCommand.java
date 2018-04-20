@@ -122,8 +122,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     alertIfPowerManagementOperationFailed();
                 }
                 throw new EngineException(EngineError.VDS_FENCE_OPERATION_FAILED);
-            }
-            else {
+            } else {
                 teardown();
             }
         }

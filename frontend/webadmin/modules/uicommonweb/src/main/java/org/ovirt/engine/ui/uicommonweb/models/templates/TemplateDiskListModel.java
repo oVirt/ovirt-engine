@@ -106,8 +106,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     public void setItems(final Collection value) {
         if (ignoreStorageDomains) {
             setDisks(value);
-        }
-        else {
+        } else {
             AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(
                     storageDomains -> {
                         Collections.sort(storageDomains, new NameableComparator());
@@ -170,8 +169,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
 
         if (command == getCopyCommand()) {
             copy();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if (command == getChangeQuotaCommand()) {
             changeQuota();

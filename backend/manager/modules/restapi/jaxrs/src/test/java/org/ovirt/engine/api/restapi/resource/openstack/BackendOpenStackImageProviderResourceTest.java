@@ -41,8 +41,7 @@ public class BackendOpenStackImageProviderResourceTest
         try {
             new BackendOpenStackImageProviderResource("foo");
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -132,8 +131,7 @@ public class BackendOpenStackImageProviderResourceTest
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
@@ -148,8 +146,7 @@ public class BackendOpenStackImageProviderResourceTest
         try {
             resource.update(model);
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
         }
     }

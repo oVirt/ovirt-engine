@@ -26,8 +26,7 @@ public abstract class AbstractLunActionsColumn extends AbstractColumn<LunModel, 
             public void onClickEvent(LunModel lunModel) {
                 if (lunModel != null && !lunModel.getIsGrayedOut()) {
                     lunModel.setIsSelected(!lunModel.getIsSelected());
-                }
-                else if (lunModel != null && lunModel.getAdditionalAvailableSize() != 0) {
+                } else if (lunModel != null && lunModel.getAdditionalAvailableSize() != 0) {
                     lunModel.setAdditionalAvailableSizeSelected(!lunModel.isAdditionalAvailableSizeSelected());
                 }
             }
@@ -44,20 +43,15 @@ public abstract class AbstractLunActionsColumn extends AbstractColumn<LunModel, 
 
                 if (!isGrayedOut && !value.getIsSelected()) {
                     input = templates.toggledUp(inputId, constants.addSanStorage());
-                }
-                else if (!isGrayedOut) {
+                } else if (!isGrayedOut) {
                     input = templates.toggledDown(inputId, constants.addSanStorage());
-                }
-                else if (!value.getIsIncluded()) {
+                } else if (!value.getIsIncluded()) {
                     input = templates.noButton(uiConstants.notAvailableLabel(), SafeStylesUtils.forTrustedColor("gray"), inputId); //$NON-NLS-1$
-                }
-                else if (availableSizeToAdd == 0){
+                } else if (availableSizeToAdd == 0){
                     input = templates.noButton(constants.cannotExtendSanStorage(), SafeStylesUtils.forTrustedColor("gray"), inputId); //$NON-NLS-1$
-                }
-                else if (value.isAdditionalAvailableSizeSelected()) {
+                } else if (value.isAdditionalAvailableSizeSelected()) {
                     input = templates.toggledDown(inputId, availableSizeToAddString);
-                }
-                else {
+                } else {
                     input = templates.toggledUp(inputId, availableSizeToAddString);
                 }
 

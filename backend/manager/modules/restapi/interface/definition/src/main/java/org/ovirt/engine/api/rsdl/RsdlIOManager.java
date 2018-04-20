@@ -74,8 +74,7 @@ public class RsdlIOManager {
         CommandLine line = null;
         try {
             line = parser.parse(options, args);
-        }
-        catch (ParseException exception) {
+        } catch (ParseException exception) {
             System.err.println(exception.getMessage());
             HelpFormatter formatter = new HelpFormatter();
             formatter.setSyntaxPrefix("Usage: ");

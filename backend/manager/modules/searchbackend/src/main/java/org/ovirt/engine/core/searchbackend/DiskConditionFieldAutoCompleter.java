@@ -96,8 +96,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
                 || ACTUAL_SIZE.equals(fieldName)
                 || PROVISIONED_SIZE.equals(fieldName)) {
             return BiggerOrSmallerRelationAutoCompleter.INSTANCE;
-        }
-        else if (NUMBER_OF_VMS.equals(fieldName)) {
+        } else if (NUMBER_OF_VMS.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;

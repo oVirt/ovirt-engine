@@ -64,8 +64,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
             setActionReturnValue(runVdsCommand(VDSCommandType.DestroyVm,
                             new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), getParameters().getStopReason(), true, secondsToWait))
                     .getReturnValue());
-        }
-        else {
+        } else {
             // cannot shutdown -> send a StopVm command instead ('destroy'):
             // don't log -> log will appear for the StopVmCommand we are about to run:
             setCommandShouldBeLogged(false);

@@ -594,9 +594,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 unLockImage();
                 updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
                 setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
-            }
-            // We want to use the transferring vds for image actions for having a coherent log when transferring.
-            else if (verifyImage(transferingVdsId)) {
+            } else if (verifyImage(transferingVdsId)) {
+                // We want to use the transferring vds for image actions for having a coherent log when transferring.
                 setVolumeLegalityInStorage(LEGAL_IMAGE);
                 if (getDiskImage().getVolumeFormat().equals(VolumeFormat.COW)) {
                     setQcowCompat(getDiskImage().getImage(),

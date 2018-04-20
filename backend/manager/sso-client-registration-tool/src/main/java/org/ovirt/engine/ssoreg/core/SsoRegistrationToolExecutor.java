@@ -129,8 +129,7 @@ public class SsoRegistrationToolExecutor {
             int character;
             try {
                 character = System.in.read();
-            }
-            catch (IOException exception) {
+            } catch (IOException exception) {
                 log.error(
                         "Error while reading line from standard input. Will " +
                                 "consider it the end of the line and continue.",

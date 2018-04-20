@@ -78,8 +78,7 @@ public class BackendTemplateCdromsResourceTest
         try {
             collection.getCdromResource("foo");
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }

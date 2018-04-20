@@ -175,8 +175,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             DbUser user = (DbUser) item;
             if (!user.isGroup()) {
                 userIds.add(user.getId());
-            }
-            else {
+            } else {
                 grpIds.add(user.getId());
             }
         }
@@ -224,8 +223,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             DbUser user = (DbUser) item;
             if (user.isGroup()) {
                 grpIds.add(user.getId());
-            }
-            else {
+            } else {
                 userIds.add(user.getId());
             }
         }
@@ -408,8 +406,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
                 grp.setId(item.getEntity().getId());
                 grp.setDomain(item.getEntity().getDomain());
                 parameters = new AddGroupParameters(grp);
-            }
-            else {
+            } else {
                 actionsList.add(ActionType.AddUser);
                 parameters = new AddUserParameters(item.getEntity());
             }
@@ -451,8 +448,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         for (DbUser item : selectedItems) {
             if (!item.isGroup()) {
                 userPrms.add(new IdParameters(item.getId()));
-            }
-            else {
+            } else {
                 groupPrms.add(new IdParameters(item.getId()));
             }
         }

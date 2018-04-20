@@ -254,12 +254,10 @@ public class MigrateModel extends Model {
                 }
             }
             setIsSameVdsMessageVisible(gethasSameVdsMessage());
-        }
-        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
+        } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getSelectHostAutomatically_IsSelected()) {
                 setIsAutoSelect(getSelectHostAutomatically_IsSelected().getEntity());
-            }
-            else if (sender == getSelectDestinationHost_IsSelected()) {
+            } else if (sender == getSelectDestinationHost_IsSelected()) {
                 setIsAutoSelect(!getSelectDestinationHost_IsSelected().getEntity());
             }
         }

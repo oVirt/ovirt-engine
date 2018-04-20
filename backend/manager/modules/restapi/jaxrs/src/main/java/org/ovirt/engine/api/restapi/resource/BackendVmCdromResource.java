@@ -62,8 +62,7 @@ public class BackendVmCdromResource
         if (current) {
             ChangeDiskCommandParameters parameters = new ChangeDiskCommandParameters(vmId, cdrom.getFile().getId());
             performAction(ActionType.ChangeDisk, parameters);
-        }
-        else {
+        } else {
             VM vm = getVm();
             vm = map(cdrom, vm);
             VmManagementParametersBase parameters = new VmManagementParametersBase(vm);

@@ -12,8 +12,7 @@ public class TemplateEventListModel extends SubTabEventListModel<VmTemplate> {
 
         if (getEntity() != null) {
             getSearchCommand().execute();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

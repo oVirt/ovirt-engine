@@ -47,8 +47,7 @@ public abstract class FenceAgentCommandBase extends CommandBase<FenceAgentComman
                 String portStr = optionsMap.get(PORT);
                 if (StringUtils.isNumeric(portStr)) {
                     port = Integer.valueOf(portStr);
-                }
-                else {
+                } else {
                     return false;
                 }
             } else {

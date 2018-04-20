@@ -29,8 +29,7 @@ public class UserGroupListModel extends SearchableListModel<DbUser, UserGroup> {
                 }
                 setItems(items);
             }), getEntity().getId());
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

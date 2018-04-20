@@ -119,8 +119,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
     private void setCliEnvironmentIfNecessary(String name, Object value) throws IOException {
         if (value == null) {
             _deploy.getParser().cliNoop();
-        }
-        else {
+        } else {
             _deploy.getParser().cliEnvironmentSet(name, value);
         }
     }
@@ -142,8 +141,7 @@ public class VdsDeployOpenStackUnit implements VdsDeployUnit {
         _messagingConfiguration = _openStackAgentProperties.getAgentConfiguration().getMessagingConfiguration();
         if (_openStackAgentProperties.isLinuxBridge()) {
             _deploy.addCustomizationCondition(COND_NEUTRON_LINUX_BRIDGE_SETUP);
-        }
-        else if (_openStackAgentProperties.isOpenVSwitch()) {
+        } else if (_openStackAgentProperties.isOpenVSwitch()) {
             _deploy.addCustomizationCondition(COND_NEUTRON_OPEN_VSWITCH_SETUP);
         }
     }

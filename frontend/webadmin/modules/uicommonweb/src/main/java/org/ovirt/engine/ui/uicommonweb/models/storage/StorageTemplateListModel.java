@@ -34,8 +34,7 @@ public class StorageTemplateListModel extends SearchableListModel<StorageDomain,
     public void search() {
         if (getEntity() != null) {
             super.search();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

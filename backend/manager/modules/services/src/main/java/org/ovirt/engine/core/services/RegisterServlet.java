@@ -183,21 +183,16 @@ public class RegisterServlet extends HttpServlet {
 
             if (cmd.equals("get-version")) {
                 getVersionV1(request, response);
-            }
-            else if (cmd.equals("get-pki-trust")) {
+            } else if (cmd.equals("get-pki-trust")) {
                 getPKITrustV1(request, response);
-            }
-            else if (cmd.equals("get-ssh-trust")) {
+            } else if (cmd.equals("get-ssh-trust")) {
                 getSSHTrustV1(request, response);
-            }
-            else if (cmd.equals("register")) {
+            } else if (cmd.equals("register")) {
                 registerV1(request, response);
-            }
-            else {
+            } else {
                 throw new RuntimeException("Invalid command");
             }
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             log.error("Registration failed: {}", e.getMessage());
             log.debug("Exception", e);
             response.sendError(response.SC_BAD_REQUEST, e.getMessage());
@@ -211,8 +206,7 @@ public class RegisterServlet extends HttpServlet {
         if (versionString != null) {
             try {
                 version = Integer.parseInt(versionString);
-            }
-            catch(NumberFormatException ignore) {}
+            } catch(NumberFormatException ignore) {}
         }
 
         switch(version) {

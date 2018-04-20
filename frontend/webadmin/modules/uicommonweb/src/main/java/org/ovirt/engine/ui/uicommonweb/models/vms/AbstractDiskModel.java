@@ -441,8 +441,7 @@ public abstract class AbstractDiskModel extends DiskModel {
                 }
             }), getVm().getStoragePoolId());
             updateBootableDiskAvailable();
-        }
-        else {
+        } else {
             AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
                 ArrayList<StoragePool> filteredDataCenters = new ArrayList<>();
 
@@ -518,8 +517,7 @@ public abstract class AbstractDiskModel extends DiskModel {
             getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupportedByConfiguration());
             getIsShareable().setIsChangeable(false);
             getIsShareable().setEntity(false);
-        }
-        else {
+        } else {
             getIsShareable().setIsChangeable(isEditEnabled());
         }
     }
@@ -892,14 +890,12 @@ public abstract class AbstractDiskModel extends DiskModel {
             getIsPlugged().setChangeProhibitionReason(constants.cannotHotPlugDiskWithIdeInterface());
             getIsPlugged().setIsChangeable(false);
             getIsPlugged().setEntity(false);
-        }
-        else {
+        } else {
             if (!canDiskBePlugged(getVm())) {
                 getIsPlugged().setChangeProhibitionReason(constants.cannotPlugDiskIncorrectVmStatus());
                 getIsPlugged().setIsChangeable(false);
                 getIsPlugged().setEntity(false);
-            }
-            else {
+            } else {
                 getIsPlugged().setIsChangeable(isEditEnabled());
                 getIsPlugged().setEntity(true);
             }
@@ -1114,8 +1110,7 @@ public abstract class AbstractDiskModel extends DiskModel {
         }
         if ("OnForceSave".equals(command.getName())) { //$NON-NLS-1$
             onForceSave();
-        }
-        else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirm();
         }
     }
@@ -1141,8 +1136,7 @@ public abstract class AbstractDiskModel extends DiskModel {
             } else if (sender == getPassDiscard()) {
                 updateWipeAfterDeleteChangeability();
             }
-        }
-        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
+        } else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
             if (sender == getVolumeType()) {
                 volumeType_SelectedItemChanged();
             } else if (sender == getDiskInterface()) {

@@ -43,8 +43,7 @@ public class LabelActionParametersTest {
 
         if(isValidLabelName){
             Assertions.assertThat(validationMessages).isEmpty();
-        }
-        else {
+        } else {
             Assertions.assertThat(validationMessages)
                     .contains(EngineMessage.AFFINITY_LABEL_NAME_SIZE_INVALID.name())
                     .contains("$min 1")

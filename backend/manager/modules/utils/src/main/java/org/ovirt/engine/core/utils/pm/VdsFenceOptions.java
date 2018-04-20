@@ -191,8 +191,7 @@ public class VdsFenceOptions implements Serializable {
         if (value.equalsIgnoreCase(TRUE_STRING) || value.equalsIgnoreCase(FALSE_STRING)) {
             if (Boolean.parseBoolean(value)) {
                 result = YES;
-            }
-            else {
+            } else {
                 result = NO;
             }
         } else {
@@ -408,21 +407,18 @@ public class VdsFenceOptions implements Serializable {
                     // Convert to the suitable type according to metadata.
                     if (type.equalsIgnoreCase(BOOL)) {
                         result = Boolean.parseBoolean(fenceAgentInstanceOptions.get(key));
-                    }
-                    else if (type.equalsIgnoreCase(INT)) {
+                    } else if (type.equalsIgnoreCase(INT)) {
                         Integer intVal = IntegerCompat.tryParse(fenceAgentInstanceOptions
                                 .get(key));
                         if (intVal != null) {
                             result = intVal;
                         }
-                    }
-                    else if (type.equalsIgnoreCase(LONG)) {
+                    } else if (type.equalsIgnoreCase(LONG)) {
                         try {
                             result = Long.parseLong(fenceAgentInstanceOptions.get(key));
                         } catch (NumberFormatException ignore) {
                         }
-                    }
-                    else if (type.equalsIgnoreCase(DOUBLE)) {
+                    } else if (type.equalsIgnoreCase(DOUBLE)) {
                         try {
                             result = Double.parseDouble(fenceAgentInstanceOptions.get(key));
                         } catch (NumberFormatException ignore) {

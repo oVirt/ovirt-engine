@@ -87,8 +87,7 @@ public class CloudInitHandlerMetadataProtocolTest {
             Map<String, byte[]> actual = underTest.getFileData();
             if (actual.get("openstack/latest/network_data.json") == null) {
                 assertNull(expected);
-            }
-            else {
+            } else {
                 Map<String, Object> actualNetworkData = parseResult(actual);
                 Map<String, Object> expectedNetworkData = JsonHelper.jsonToMap((String) expected);
                 assertEquals(expectedNetworkData, actualNetworkData);

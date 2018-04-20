@@ -199,8 +199,7 @@ public class BackendUsersResourceTest
         try {
             getCollection();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             assertTrue(wae.getResponse().getEntity() instanceof Fault);
             assertEquals(mockl10n(FAILURE), ((Fault) wae.getResponse().getEntity()).getDetail());
         }
@@ -216,8 +215,7 @@ public class BackendUsersResourceTest
         try {
             getCollection();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, t);
         }
     }
@@ -233,11 +231,9 @@ public class BackendUsersResourceTest
         try {
             getCollection();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, BACKEND_FAILED_CLIENT_LOCALE, t);
-        }
-        finally {
+        } finally {
             locales.clear();
         }
     }

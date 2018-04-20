@@ -66,21 +66,18 @@ public class VolumeParameterModel extends EntityModel {
         if (selectedOption != null) {
             if (selectedOption.getDescription() == null || selectedOption.getDescription().equals(NULL_CONST)) {
                 getDescription().setEntity(null);
-            }
-            else {
+            } else {
                 getDescription().setEntity(selectedOption.getDescription());
             }
 
             if (getIsNew()) {
                 if (selectedOption.getDefaultValue() == null || selectedOption.getDefaultValue().equals(NULL_CONST)) {
                     getValue().setEntity(null);
-                }
-                else {
+                } else {
                     getValue().setEntity(selectedOption.getDefaultValue());
                 }
             }
-        }
-        else if (getIsNew()) {
+        } else if (getIsNew()) {
             getDescription().setEntity(null);
             getValue().setEntity(null);
         }

@@ -147,8 +147,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
             setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
                     + (vm.getGuestMemoryBuffered() / 1024L)  + " / " // $NON-NLS-1$
                     + (vm.getGuestMemoryCached() / 1024L) + " MB"); //$NON-NLS-1$
-        }
-        else {
+        } else {
             setGuestFreeCachedBufferedMemInfo(null); // Handled in form
         }
 
@@ -193,8 +192,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert()) {
             setAlert(translator.translate(vm.getVmPauseStatus()));
-        }
-        else {
+        } else {
             setAlert(null);
         }
 
@@ -215,8 +213,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
                         }
 
                     }));
-        }
-        else {
+        } else {
             setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
 

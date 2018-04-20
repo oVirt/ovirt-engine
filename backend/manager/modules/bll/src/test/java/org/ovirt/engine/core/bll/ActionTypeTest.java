@@ -20,8 +20,7 @@ public class ActionTypeTest {
         for (ActionType at : ActionType.values()) {
             if (bitset.get(at.getValue())) {
                 nonUniqueValues.add(at.getValue());
-            }
-            else {
+            } else {
                 bitset.set(at.getValue());
             }
         }

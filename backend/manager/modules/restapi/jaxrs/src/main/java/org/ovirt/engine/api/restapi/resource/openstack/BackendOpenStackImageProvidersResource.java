@@ -64,8 +64,7 @@ public class BackendOpenStackImageProvidersResource
                 QueryType.GetAllProviders,
                 new GetAllProvidersParameters(ProviderType.OPENSTACK_IMAGE)
             );
-        }
-        else {
+        } else {
             return getBackendCollection(SearchType.Provider, getConstraint());
         }
     }

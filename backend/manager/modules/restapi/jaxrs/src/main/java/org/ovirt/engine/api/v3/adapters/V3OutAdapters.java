@@ -55,8 +55,7 @@ public class V3OutAdapters {
             Class<?> adapterClass;
             try {
                 adapterClass = Class.forName(adapterClassName);
-            }
-            catch (ClassNotFoundException exception) {
+            } catch (ClassNotFoundException exception) {
                 throw new RuntimeException(
                     "Can't find V3 output adapter of class \"" + adapterClassName + "\" for object of " +
                     "class \"" + objectClass.getName() + "\"",
@@ -65,8 +64,7 @@ public class V3OutAdapters {
             }
             try {
                 adapterInstance = (V3Adapter<FROM, TO>) adapterClass.newInstance();
-            }
-            catch (InstantiationException | IllegalAccessException exception) {
+            } catch (InstantiationException | IllegalAccessException exception) {
                 throw new RuntimeException(
                     "Can't create V3 input adapter of class \"" + adapterClassName + "\" for object of " +
                     "class \"" + objectClass.getName() + "\"",

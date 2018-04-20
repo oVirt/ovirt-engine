@@ -155,8 +155,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                     return image.getEntity().getSize();
                 }
             }, constants.size(), "75px"); //$NON-NLS-1$
-        }
-        else {
+        } else {
             imageList.addColumn(new AbstractEntityModelTextColumn<DiskImage>() {
                 @Override
                 public String getText(DiskImage image) {

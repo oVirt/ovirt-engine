@@ -37,9 +37,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
 
             try {
                 proceedProxyReturnValue();
-            }
-
-            catch (RuntimeException ex) {
+            } catch (RuntimeException ex) {
                 task.setException(ex);
             }
 

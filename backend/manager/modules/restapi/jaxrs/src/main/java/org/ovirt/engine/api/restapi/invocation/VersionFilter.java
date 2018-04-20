@@ -159,8 +159,7 @@ public class VersionFilter implements Filter {
         // modified request.
         if (source == VersionSource.URL) {
             chain.doFilter(request, response);
-        }
-        else {
+        } else {
             String prefix = current.getPrefix();
             String uri = request.getRequestURI();
             StringBuilder buffer = new StringBuilder(2 + version.length() + (uri.length() - prefix.length()));
@@ -175,8 +174,7 @@ public class VersionFilter implements Filter {
                     path, remoteAddress
                 );
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            }
-            else {
+            } else {
                 dispatcher.forward(request, response);
             }
         }

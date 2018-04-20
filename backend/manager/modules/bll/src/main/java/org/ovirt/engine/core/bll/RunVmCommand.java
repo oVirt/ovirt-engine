@@ -283,9 +283,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 setSucceeded(true);
                 rerun();
             }
-        }
-
-        else {
+        } else {
             runningFailed();
         }
     }
@@ -580,8 +578,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (FeatureSupported.isMemoryDisksOnDifferentDomainsSupported(getVm().getCompatibilityVersion())) {
                 parameters.setMemoryDumpImage(memoryDump);
                 parameters.setMemoryConfImage(memoryConf);
-            }
-            else {
+            } else {
                 parameters.setHibernationVolHandle(MemoryUtils.createHibernationVolumeString(memoryDump, memoryConf));
             }
 
@@ -781,8 +778,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     if (!isPayloadExists(VmDeviceType.FLOPPY)) {
                         initializationType = InitializationType.Sysprep;
                     }
-                }
-                else {
+                } else {
                     if (!isPayloadExists(VmDeviceType.CDROM)) {
                         initializationType = InitializationType.CloudInit;
                     }
@@ -1106,10 +1102,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 // could not run the vm don't try to run the end action again
                 getReturnValue().setEndActionTryAgain(false);
             }
-        }
-
-        // Hibernation (VMStatus.Suspended) treatment:
-        else {
+        } else {
+            // Hibernation (VMStatus.Suspended) treatment:
             super.endSuccessfully();
         }
     }
@@ -1157,9 +1151,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             setSucceeded(actionReturnValue.getSucceeded());
             // we are not running the VM, of course,
             // since we couldn't create a snapshot.
-        }
-
-        else {
+        } else {
             super.endWithFailure();
         }
     }

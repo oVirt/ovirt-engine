@@ -21,8 +21,7 @@ public class NameForVmInPoolGenerator {
         if (matcher.find()) {
             String numberPart = matcher.group(1);
             return String.format(poolName.replace(numberPart, "%0" + numberPart.length() + "d"), ++lastUsedIndex);
-        }
-        else {
+        } else {
             return String.format("%1$s-%2$s", poolName, ++lastUsedIndex);
         }
     }

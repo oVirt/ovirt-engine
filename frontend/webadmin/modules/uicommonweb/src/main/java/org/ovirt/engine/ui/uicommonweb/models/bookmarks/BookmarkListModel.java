@@ -309,22 +309,15 @@ public class BookmarkListModel extends SearchableListModel<Bookmark, Bookmark> {
 
         if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-
-        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

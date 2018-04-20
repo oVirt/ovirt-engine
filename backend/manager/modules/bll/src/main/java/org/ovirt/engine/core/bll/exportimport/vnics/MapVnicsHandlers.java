@@ -65,8 +65,7 @@ public class MapVnicsHandlers {
                 // no user mappings so subsequent handlers should use the
                 // vnic profile from the OVF as the 'source' profile
                 ctx.getOvfVnics().forEach(vnic -> ctx.getMatched().put(vnic, null));
-            }
-            else {
+            } else {
                 ctx.getOvfVnics().forEach(vnic -> {
                     ExternalVnicProfileMapping matchingMapping =
                         ctx.getUserMappings()
@@ -93,17 +92,14 @@ public class MapVnicsHandlers {
         public HandlerOutcome handle(MapVnicsContext vnicsContext) {
             if (!vnicsContext.hasContexts() && vnicsContext.hasTrace()) {
                 logger.debug(auditName(vnicsContext), "No vnics found on the VM");
-            }
-            else {
+            } else {
                 vnicsContext.getContexts().forEach(ctx -> {
                     if (ctx.isSuccessful()) {
                         logger.info(formatTrace(ctx));
-                    }
-                    else if (ctx.getException() != null) {
+                    } else if (ctx.getException() != null) {
                         vnicsContext.addNonAssociableVnic(formatVnic(ctx.getOvfVnic()));
                         logger.error(formatTrace(ctx), ctx.getException());
-                    }
-                    else {
+                    } else {
                         vnicsContext.addNonAssociableVnic(formatVnic(ctx.getOvfVnic()));
                         logger.warn(formatTrace(ctx));
                     }

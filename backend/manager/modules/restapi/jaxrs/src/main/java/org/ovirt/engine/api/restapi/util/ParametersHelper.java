@@ -183,8 +183,7 @@ public class ParametersHelper {
         }
         try {
             return Integer.parseInt(text);
-        }
-        catch (NumberFormatException exception) {
+        } catch(NumberFormatException exception) {
             log.error("The value \"{}\" of parameter \"{}\" isn't a valid integer, it will be ignored.", text, name);
             return missing;
         }

@@ -441,11 +441,9 @@ public class BackendVmResource
         }
         if (useSysprep) {
             params.setInitializationType(InitializationType.Sysprep);
-        }
-        else if (useCloudInit) {
+        } else if (useCloudInit) {
             params.setInitializationType(InitializationType.CloudInit);
-        }
-        else {
+        } else {
             params.setInitializationType(InitializationType.None);
         }
         return doAction(actionType, params, action);

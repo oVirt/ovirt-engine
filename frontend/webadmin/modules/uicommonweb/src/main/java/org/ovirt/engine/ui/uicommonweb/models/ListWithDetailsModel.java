@@ -105,8 +105,7 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
                     setActiveDetailModel(model);
                 }
             }
-        }
-        else {
+        } else {
             // If selected item become null, make sure we stop all activity on an active detail model.
             if (getActiveDetailModel() != null && getActiveDetailModel() instanceof SearchableListModel) {
                 ((SearchableListModel) getActiveDetailModel()).stopRefresh();
@@ -118,8 +117,7 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
         if (getSelectedItem() != null && activeDetailModel != null) {
             if (activeDetailModel instanceof HostInterfaceListModel) {
                 ((HostInterfaceListModel) activeDetailModel).setEntity((VDS) provideDetailModelEntity(getSelectedItem()));
-            }
-            else {
+            } else {
                 activeDetailModel.setEntity(provideDetailModelEntity(getSelectedItem()));
             }
         }

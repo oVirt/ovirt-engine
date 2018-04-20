@@ -93,9 +93,7 @@ public final class AsyncTaskFactory {
                                 duringInit);
             }
             return result;
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("AsyncTaskFactory: Failed to get type information using reflection for AsyncTask type '{}': {}",
                     taskType,
                     e.getMessage());

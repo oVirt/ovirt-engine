@@ -16,8 +16,7 @@ public class QuotaEventListModel extends SubTabEventListModel<Quota> {
 
         if (getEntity() != null) {
             getSearchCommand().execute();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

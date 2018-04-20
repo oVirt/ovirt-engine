@@ -2179,10 +2179,9 @@ public class AsyncDataProvider {
         if (cachedConfigValues.containsKey(config_key)) {
             // cache hit
             returnValue = (T) cachedConfigValues.get(config_key);
-        }
-        // cache miss: convert configuration value using query's converter
-        // and call asyncCallback's onSuccess
-        else if (cachedConfigValuesPreConvert.containsKey(config_key)) {
+        } else if (cachedConfigValuesPreConvert.containsKey(config_key)) {
+            // cache miss: convert configuration value using query's converter
+            // and call asyncCallback's onSuccess
             returnValue = (T) cachedConfigValuesPreConvert.get(config_key);
 
             // run converter

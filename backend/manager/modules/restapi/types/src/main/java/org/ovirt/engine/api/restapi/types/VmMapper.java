@@ -1113,8 +1113,7 @@ public class VmMapper extends VmBaseMapper {
     public static UsbPolicy getUsbPolicyOnCreate(Usb usb) {
         if (usb == null || !usb.isSetEnabled() || !usb.isEnabled()) {
             return UsbPolicy.DISABLED;
-        }
-        else {
+        } else {
             UsbType usbType = getUsbType(usb);
             if (usbType == null) {
                 return null;
@@ -1136,13 +1135,11 @@ public class VmMapper extends VmBaseMapper {
                 UsbType usbType = getUsbType(usb);
                 if (usbType != null) {
                     return getUsbPolicyAccordingToUsbType(usbType);
-                }
-                else {
+                } else {
                     return null;
                 }
             }
-        }
-        else {
+        } else {
             if (currentPolicy == UsbPolicy.DISABLED) {
                 return UsbPolicy.DISABLED;
             }
@@ -1150,8 +1147,7 @@ public class VmMapper extends VmBaseMapper {
             UsbType usbType = getUsbType(usb);
             if (usbType != null) {
                 return getUsbPolicyAccordingToUsbType(usb.getType());
-            }
-            else {
+            } else {
                 return currentPolicy;
             }
         }

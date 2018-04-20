@@ -29,8 +29,7 @@ public class GetGlusterHookContentQuery<P extends GlusterHookContentQueryParamet
             if (hook.getContentType().equals(GlusterHookContentType.TEXT)) {
                 content = glusterHooksDao.getGlusterHookContent(getParameters().getGlusterHookId());
             }
-        }
-        else {
+        } else {
             GlusterServerHook serverHook =
                     glusterHooksDao.getGlusterServerHook(hook.getId(), getParameters().getGlusterServerId());
 

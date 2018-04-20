@@ -157,12 +157,10 @@ public class ErrataTableView extends ResizeComposite {
                 if (erratum.getType() == ErrataType.BUGFIX) {
                     getCell().setColor(SafeHtmlUtils.fromTrustedString(ErrataType.BUGFIX.getColor()));
                     return IconType.BUG;
-                }
-                else if (erratum.getType() == ErrataType.ENHANCEMENT) {
+                } else if (erratum.getType() == ErrataType.ENHANCEMENT) {
                     getCell().setColor(SafeHtmlUtils.fromTrustedString(ErrataType.ENHANCEMENT.getColor()));
                     return IconType.PLUS_SQUARE;
-                }
-                else if (erratum.getType() == ErrataType.SECURITY) {
+                } else if (erratum.getType() == ErrataType.SECURITY) {
                     getCell().setColor(SafeHtmlUtils.fromTrustedString(ErrataType.SECURITY.getColor()));
                     return IconType.WARNING;
                 }
@@ -177,11 +175,9 @@ public class ErrataTableView extends ResizeComposite {
             public String getValue(Erratum erratum) {
                 if (erratum.getType() == ErrataType.BUGFIX) {
                     return constants.bug();
-                }
-                else if (erratum.getType() == ErrataType.ENHANCEMENT) {
+                } else if (erratum.getType() == ErrataType.ENHANCEMENT) {
                     return constants.enhancement();
-                }
-                else if (erratum.getType() == ErrataType.SECURITY) {
+                } else if (erratum.getType() == ErrataType.SECURITY) {
                     return constants.security();
                 }
                 return constants.unknown();
@@ -195,11 +191,9 @@ public class ErrataTableView extends ResizeComposite {
             public String getValue(Erratum erratum) {
                 if (erratum.getSeverity() == ErrataSeverity.CRITICAL) {
                     return constants.critical();
-                }
-                else if (erratum.getSeverity() == ErrataSeverity.IMPORTANT) {
+                } else if (erratum.getSeverity() == ErrataSeverity.IMPORTANT) {
                     return constants.important();
-                }
-                else if (erratum.getSeverity() == ErrataSeverity.MODERATE) {
+                } else if (erratum.getSeverity() == ErrataSeverity.MODERATE) {
                     return constants.moderate();
                 }
                 return constants.unknown();

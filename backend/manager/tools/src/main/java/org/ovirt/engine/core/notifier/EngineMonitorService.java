@@ -183,13 +183,11 @@ public class EngineMonitorService implements Runnable {
         try {
             if (isHttpsProtocol) {
                 serverUrl = config.getExternalHttpsUrl(HEALTH_SERVLET_PATH);
-            }
-            else {
+            } else {
                 serverUrl = config.getExternalHttpUrl(HEALTH_SERVLET_PATH);
             }
             log.info("Engine health servlet URL is \"{}\".", serverUrl);
-        }
-        catch (MalformedURLException exception) {
+        } catch(MalformedURLException exception) {
             throw new NotificationServiceException("Can't get engine health servlet URL.", exception);
         }
     }
@@ -395,8 +393,7 @@ public class EngineMonitorService implements Runnable {
     private void initConnectivity() throws NotificationServiceException {
         try {
             ds = new StandaloneDataSource();
-        }
-        catch (SQLException exception) {
+        } catch(SQLException exception) {
             throw new NotificationServiceException("Failed to obtain database connectivity", exception);
         }
     }

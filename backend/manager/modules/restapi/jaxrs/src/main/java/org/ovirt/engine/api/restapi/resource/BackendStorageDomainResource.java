@@ -149,8 +149,7 @@ public class BackendStorageDomainResource
     private Guid getHostId(String host) {
         try {
             return Guid.createGuidFromString(host);
-        }
-        catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             VdsStatic entity = getEntity(
                 VdsStatic.class,
                 QueryType.GetVdsStaticByName,
@@ -199,8 +198,7 @@ public class BackendStorageDomainResource
         List<LogicalUnit> incomingLuns;
         if (action.isSetLogicalUnits()) {
             incomingLuns = action.getLogicalUnits().getLogicalUnits();
-        }
-        else {
+        } else {
             incomingLuns = Collections.emptyList();
         }
         ExtendSANStorageDomainParameters params = createParameters(guid, incomingLuns, false);
@@ -253,8 +251,7 @@ public class BackendStorageDomainResource
         if (storageDomain.isSetStorage() && storageDomain.getStorage().isSetVolumeGroup() &&
                 storageDomain.getStorage().getVolumeGroup().isSetLogicalUnits()) {
             existingLuns = storageDomain.getStorage().getVolumeGroup().getLogicalUnits().getLogicalUnits();
-        }
-        else {
+        } else {
             existingLuns = Collections.emptyList();
         }
         List<LogicalUnit> incomingLuns = getIncomingLuns(incoming.getStorage());
@@ -307,12 +304,10 @@ public class BackendStorageDomainResource
             if (storage.isSetVolumeGroup() && storage.getVolumeGroup().isSetLogicalUnits()
                     && storage.getVolumeGroup().getLogicalUnits().isSetLogicalUnits()) {
                 return storage.getVolumeGroup().getLogicalUnits().getLogicalUnits();
-            }
-            else {
+            } else {
                 return new ArrayList<>();
             }
-        }
-        else {
+        } else {
             return storage.getLogicalUnits().getLogicalUnits();
         }
     }

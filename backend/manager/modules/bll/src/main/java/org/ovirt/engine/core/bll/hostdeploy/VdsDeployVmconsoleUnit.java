@@ -102,8 +102,7 @@ public class VdsDeployVmconsoleUnit implements VdsDeployUnit {
                 event.value = _sercon_certificate.replace("\n", "");
                 unknown = false;
             }
-        }
-        else if (bevent instanceof Event.DisplayMultiString) {
+        } else if (bevent instanceof Event.DisplayMultiString) {
             Event.DisplayMultiString event = (Event.DisplayMultiString)bevent;
 
             if (Displays.VMCONSOLE_CERTIFICATE_REQUEST.equals(event.name)) {

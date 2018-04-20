@@ -101,8 +101,7 @@ public class AddUnmanagedVmsCommandTest {
                            vmStatic.getDefaultDisplayType() != DisplayType.vga) {
                        return false;
                    }
-                }
-                else{
+                } else {
                     if (vmDevice.getType() != VmDeviceGeneralType.CONSOLE) {
                         return false;
                     }

@@ -398,8 +398,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
         if (isClone) {
             qModel.setHelpTag(HelpTag.clone_quota);
             qModel.setHashName("clone_quota"); //$NON-NLS-1$
-        }
-        else {
+        } else {
             qModel.setHelpTag(HelpTag.edit_quota);
             qModel.setHashName("edit_quota"); //$NON-NLS-1$
         }
@@ -626,33 +625,24 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
         super.executeCommand(command);
         if (command.equals(getCreateCommand())) {
             createQuota();
-        }
-        else if (command.equals(getEditCommand())) {
+        } else if (command.equals(getEditCommand())) {
             editQuota(false);
-        }
-        else if (command.getName().equals("OnCreateQuota")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnCreateQuota")) { //$NON-NLS-1$
             onCreateQuota();
-        }
-        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+        } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
-        }
-        else if (command.equals(getRemoveCommand())) {
+        } else if (command.equals(getRemoveCommand())) {
             remove();
-        }
-        else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             onRemove();
-        }
-        else if (command.equals(getCloneCommand())) {
+        } else if (command.equals(getCloneCommand())) {
             editQuota(true);
-        }
-        else if (command.getName().equals("onCloneQuota")) { //$NON-NLS-1$
+        } else if (command.getName().equals("onCloneQuota")) { //$NON-NLS-1$
             onCreateQuotaInternal(true);
-        }
-        else if (command.getName().equals("OnCreateQuotaInternal")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnCreateQuotaInternal")) { //$NON-NLS-1$
             setConfirmWindow(null);
             onCreateQuotaInternal(false);
-        }
-        else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
+        } else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
             cancelConfirmation();
         }
     }

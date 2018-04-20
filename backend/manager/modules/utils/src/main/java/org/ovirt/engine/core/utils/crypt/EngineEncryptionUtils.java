@@ -95,8 +95,7 @@ public class EngineEncryptionUtils {
                 throw new RuntimeException("Alias was not found");
             }
             return entry;
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             throw new RuntimeException(
                 String.format(
                     "Failed to locate key '%1$s'",
@@ -151,8 +150,7 @@ public class EngineEncryptionUtils {
     public static String encrypt(String source) throws GeneralSecurityException {
         if (source == null || source.length() == 0) {
             return source;
-        }
-        else {
+        } else {
             Cipher rsa = Cipher.getInstance("RSA");
             rsa.init(Cipher.ENCRYPT_MODE, getCertificate().getPublicKey());
             return new Base64(0).encodeToString(
@@ -171,8 +169,7 @@ public class EngineEncryptionUtils {
     public static String decrypt(String source) throws GeneralSecurityException {
         if (source == null || source.length() == 0) {
             return source;
-        }
-        else {
+        } else {
             Cipher rsa = Cipher.getInstance("RSA");
             rsa.init(Cipher.DECRYPT_MODE, getPrivateKeyEntry().getPrivateKey());
             return new String(
@@ -211,8 +208,7 @@ public class EngineEncryptionUtils {
         try {
             getPrivateKeyEntry();
             return true;
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             return false;
         }
     }

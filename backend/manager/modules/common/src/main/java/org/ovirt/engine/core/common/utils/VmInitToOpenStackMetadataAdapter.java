@@ -95,8 +95,7 @@ public class VmInitToOpenStackMetadataAdapter {
 
         if (vmInitNetwork.getBootProtocol() == Ipv4BootProtocol.DHCP) {
             networkIPv4.put("type", "ipv4_dhcp");
-        }
-        else if (vmInitNetwork.getBootProtocol() == Ipv4BootProtocol.STATIC_IP) {
+        } else if (vmInitNetwork.getBootProtocol() == Ipv4BootProtocol.STATIC_IP) {
             networkIPv4.put("type", "ipv4");
             networkIPv4.put("ip_address", vmInitNetwork.getIp());
             if (isNotNullOrEmpty(vmInitNetwork.getNetmask())) {
@@ -113,11 +112,9 @@ public class VmInitToOpenStackMetadataAdapter {
     private Map<String, Object> mapIPv6(VmInitNetwork vmInitNetwork) {
         if (vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.NONE) {
             return null;
-        }
-        else if (isAutoConfIPv6(vmInitNetwork)) {
+        } else if (isAutoConfIPv6(vmInitNetwork)) {
             throw new IllegalArgumentException("'Stateless address autoconfiguration' (auto conf) is not supported for virtual machines");
-        }
-        else if (isStaticIPv6AndAddressMissing(vmInitNetwork)) {
+        } else if (isStaticIPv6AndAddressMissing(vmInitNetwork)) {
             throw new IllegalArgumentException("IPv6 address must be supplied for a static IPv6 configuration");
         }
 
@@ -127,8 +124,7 @@ public class VmInitToOpenStackMetadataAdapter {
 
         if (vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.DHCP) {
             networkIPv6.put("type", "ipv6_dhcp");
-        }
-        else if (vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.STATIC_IP) {
+        } else if (vmInitNetwork.getIpv6BootProtocol() == Ipv6BootProtocol.STATIC_IP) {
             networkIPv6.put("type", "ipv6");
             networkIPv6.put("ip_address", vmInitNetwork.getIpv6Address());
             if (vmInitNetwork.getIpv6Prefix() != null) {

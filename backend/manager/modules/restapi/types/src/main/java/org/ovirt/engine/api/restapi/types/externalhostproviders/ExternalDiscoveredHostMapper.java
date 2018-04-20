@@ -58,8 +58,7 @@ public class ExternalDiscoveredHostMapper {
                 template != null? template: new org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost();
         if (model.isSetId()) {
             entity.setName(hex2string(model.getId()));
-        }
-        else if (model.isSetName()) {
+        } else if (model.isSetName()) {
             entity.setName(model.getName());
         }
         if (model.isSetMac()) {

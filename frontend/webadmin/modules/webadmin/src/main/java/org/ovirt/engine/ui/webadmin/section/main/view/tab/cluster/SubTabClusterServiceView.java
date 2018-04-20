@@ -96,8 +96,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, Cl
             public String renderNullSafe(Object object) {
                 if (object != null) {
                     return ((VDS) object).getHostName();
-                }
-                else {
+                } else {
                     return ""; //$NON-NLS-1$
                 }
             }
@@ -107,8 +106,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, Cl
             public String render(Enum object) {
                 if (object != null) {
                     return super.render(object);
-                }
-                else {
+                } else {
                     return ""; //$NON-NLS-1$
                 }
             }
@@ -150,8 +148,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, Cl
             public String getText(GlusterServerService entity) {
                 if (entity.getPort() != null && entity.getPort() > 0) {
                     return String.valueOf(entity.getPort());
-                }
-                else {
+                } else {
                     return constants.notAvailableLabel();
                 }
             }
@@ -162,8 +159,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, Cl
             public String getText(GlusterServerService entity) {
                 if (entity.getRdmaPort() != null && entity.getRdmaPort() > 0) {
                     return String.valueOf(entity.getRdmaPort());
-                }
-                else {
+                } else {
                     return constants.notAvailableLabel();
                 }
             }

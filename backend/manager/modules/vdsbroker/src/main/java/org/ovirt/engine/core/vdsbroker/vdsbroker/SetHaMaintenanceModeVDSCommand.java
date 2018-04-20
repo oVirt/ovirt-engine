@@ -28,8 +28,7 @@ public class SetHaMaintenanceModeVDSCommand extends VdsBrokerCommand<SetHaMainte
             try {
                 status = getBroker().setHaMaintenanceMode(getParameters().getMode().name(), getParameters().isEnabled());
                 proceedProxyReturnValue();
-            }
-            catch (RuntimeException e) {
+            } catch (RuntimeException e) {
                 setVdsRuntimeErrorAndReport(e);
                 // prevent exception handler from rethrowing an exception
                 getVDSReturnValue().setExceptionString(null);

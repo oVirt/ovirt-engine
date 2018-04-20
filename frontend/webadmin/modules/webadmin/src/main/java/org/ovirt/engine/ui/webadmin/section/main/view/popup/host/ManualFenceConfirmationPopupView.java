@@ -91,11 +91,9 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
             VdsSpmStatus spmStatus = vds.getSpmStatus();
             if (spmStatus == VdsSpmStatus.None) {
                 spmWarningLabel.setText(constants.manaulFencePopupNoneSpmWarningLabel());
-            }
-            else if (spmStatus == VdsSpmStatus.SPM) {
+            } else if (spmStatus == VdsSpmStatus.SPM) {
                 spmWarningLabel.setText(constants.manaulFencePopupSpmWarningLabel());
-            }
-            else if (spmStatus == VdsSpmStatus.Contending) {
+            } else if (spmStatus == VdsSpmStatus.Contending) {
                 spmWarningLabel.setText(constants.manaulFencePopupContendingSpmWarningLabel());
 
             }

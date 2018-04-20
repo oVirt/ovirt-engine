@@ -153,8 +153,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 }
 
                 getCompensationContext().stateChanged();
-            }
-            else {
+            } else {
                 for (DiskImage image : diskImages) {
                     imageDao.updateImageVmSnapshotId(image.getImageId(), null);
                 }

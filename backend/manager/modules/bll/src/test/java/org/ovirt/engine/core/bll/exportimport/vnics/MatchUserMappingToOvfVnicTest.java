@@ -63,8 +63,7 @@ public class MatchUserMappingToOvfVnicTest {
         ExternalVnicProfileMapping matched = ctx.getMatched().get(ovfVnicUnderTest);
         if (matched != null) {
             System.out.println("matched:" + matched.getSourceProfileName() + " " + matched.getSourceNetworkName());
-        }
-        else {
+        } else {
             System.out.println("matched is null");
         }
     }

@@ -71,8 +71,7 @@ public class FenceConfigHelper {
             if (isValid(key, customValue)) {
                 sb.append(keySeparatorMap.get(key));
                 sb.append(customValue);
-            }
-            else {
+            } else {
                 log.error("Configuration key '{}' has illegal value '{}'. Expression should match '{}'",
                         key, customValue, keyValidatorMap.get(key));
             }

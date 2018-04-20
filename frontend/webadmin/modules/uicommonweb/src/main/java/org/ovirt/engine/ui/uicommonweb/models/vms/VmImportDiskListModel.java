@@ -23,8 +23,7 @@ public class VmImportDiskListModel extends SearchableListModel {
                 Collections.sort(disks, new DiskByDiskAliasComparator());
                 setItems(disks);
             }
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

@@ -70,14 +70,11 @@ public class LunSelectionCell extends AbstractCell<LunModel> {
 
             if (checked && !disabled) {
                 input = templates.inputChecked(inputId, type);
-            }
-            else if (checked && disabled) {
+            } else if (checked && disabled) {
                 input = templates.inputCheckedDisabled(inputId, type);
-            }
-            else if (!checked && !disabled) {
+            } else if (!checked && !disabled) {
                 input = templates.inputUnchecked(inputId, type);
-            }
-            else {
+            } else {
                 input = templates.inputUncheckedDisabled(inputId, type);
             }
 

@@ -51,21 +51,18 @@ public class IntegerValidation implements IValidation {
                                 .getMessages()
                                 .integerValidationNumberBetweenInvalidReason(prefixMsg, getMinimum(), getMaximum());
                 result.getReasons().add(msg);
-            }
-            else if (intValue < getMinimum() || intValue > getMaximum()) {
+            } else if (intValue < getMinimum() || intValue > getMaximum()) {
                 if (getMinimum() != Integer.MIN_VALUE && getMaximum() != Integer.MAX_VALUE) {
                     msg =
                             ConstantsManager.getInstance()
                                     .getMessages()
                                     .integerValidationNumberBetweenInvalidReason(prefixMsg, getMinimum(), getMaximum());
-                }
-                else if (getMinimum() != Integer.MIN_VALUE) {
+                } else if (getMinimum() != Integer.MIN_VALUE) {
                     msg =
                             ConstantsManager.getInstance()
                                     .getMessages()
                                     .integerValidationNumberGreaterInvalidReason(prefixMsg, getMinimum());
-                }
-                else if (getMaximum() != Integer.MAX_VALUE) {
+                } else if (getMaximum() != Integer.MAX_VALUE) {
                     msg =
                             ConstantsManager.getInstance()
                                     .getMessages()

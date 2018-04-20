@@ -30,11 +30,9 @@ public class ErrorMessageHelper {
             List<Status> statuses = getStatuses(errors);
             if (statuses.contains(Status.BAD_REQUEST)) {
                 // stay with the default - BAD_REQUEST.
-            }
-            else if (statuses.contains(Status.CONFLICT)) {
+            } else if (statuses.contains(Status.CONFLICT)) {
                 status = Status.CONFLICT;
-            }
-            else if (statuses.contains(Status.INTERNAL_SERVER_ERROR)) {
+            } else if (statuses.contains(Status.INTERNAL_SERVER_ERROR)) {
                 status = Status.INTERNAL_SERVER_ERROR;
             }
         }

@@ -142,8 +142,7 @@ public class LinkFollower {
         List<ActionableResource> nextStepEntities = new LinkedList<>();
         if (EntityHelper.isCollection(entity)) {
             nextStepEntities.addAll(fetchData((BaseResources)entity, node));
-        }
-        else {
+        } else {
             nextStepEntities.add(fetchData((BaseResource)entity, node));
         }
         for (LinksTreeNode child : node.getChildren()) {
@@ -206,8 +205,7 @@ public class LinkFollower {
             if (link.isFollowed()) {
                 Method getter = ReflectionHelper.getGetter(entity, element);
                 return (ActionableResource)getter.invoke(entity);
-            }
-            else {
+            } else {
                 String href = getHref((BaseResource)entity, link.getElement());
                 ActionableResource result = fetch(href);
                 Method setter = ReflectionHelper.getSetter(entity, element);
@@ -243,8 +241,7 @@ public class LinkFollower {
         Optional<Link> optional = entity.getLinks().stream().filter(x -> x.getRel().equals(toRelFormat(link))).findFirst();
         if (optional.isPresent()) {
             return optional.get().getHref();
-        }
-        else {//assume this is not a sub-collection, since it wasn't found among links.
+        } else {//assume this is not a sub-collection, since it wasn't found among links.
             Method getter = ReflectionHelper.getGetter(entity, underscoreToCamelCase(link));
             BaseResource member = (BaseResource)getter.invoke(entity);
             return member.getHref();

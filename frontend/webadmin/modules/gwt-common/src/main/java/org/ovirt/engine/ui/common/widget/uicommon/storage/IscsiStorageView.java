@@ -109,8 +109,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
             String propName = args.propertyName;
             if (propName.equals("IsValid")) { //$NON-NLS-1$
                 onIsValidPropertyChange(object);
-            }
-            else if (propName.equals("IsGroupedByTarget")) { //$NON-NLS-1$
+            } else if (propName.equals("IsGroupedByTarget")) { //$NON-NLS-1$
                 updateListByGrouping(object);
             }
         });
@@ -166,8 +165,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         // Update view by 'IsGroupedByTarget' flag
         if (object.getIsGroupedByTarget()) {
             iscsiTargetToLunView.activateItemsUpdate();
-        }
-        else {
+        } else {
             iscsiLunToTargetView.activateItemsUpdate();
         }
 

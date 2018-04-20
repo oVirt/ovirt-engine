@@ -304,23 +304,18 @@ public class StorageModel extends Model {
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
             if (sender == getDataCenter()) {
                 dataCenter_SelectedItemChanged();
-            }
-            else if (sender == getHost()) {
+            } else if (sender == getHost()) {
                 host_SelectedItemChanged();
-            }
-            else if (sender == getAvailableStorageTypeItems()) {
+            } else if (sender == getAvailableStorageTypeItems()) {
                 storageType_SelectedItemChanged();
-            }
-            else if (sender == getAvailableStorageDomainTypeItems()) {
+            } else if (sender == getAvailableStorageDomainTypeItems()) {
                 behavior.setStorageTypeItems();
             }
-        }
-        else if (ev.matchesDefinition(ListModel.itemsChangedEventDefinition)) {
+        } else if (ev.matchesDefinition(ListModel.itemsChangedEventDefinition)) {
             if (sender == getAvailableStorageTypeItems()) {
                 storageItemsChanged();
             }
-        }
-        else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition)) {
+        } else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition)) {
             nfsStorageModel_PathChanged(sender);
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getDiscardAfterDelete()) {
@@ -431,17 +426,14 @@ public class StorageModel extends Model {
                         }
 
                     }));
-        }
-
-        else { // "Edit Storage" mode:
+        } else { // "Edit Storage" mode:
             AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
                             dataCentersWithStorage -> {
 
                                 List<StoragePool> dataCenters = new ArrayList<>();
                                 if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null) {
                                     addEmptyDataCenterToList(dataCenters);
-                                }
-                                else {
+                                } else {
                                     dataCenters =
                                             new ArrayList<>(Collections.singletonList(dataCentersWithStorage.get(0)));
                                 }
@@ -533,18 +525,15 @@ public class StorageModel extends Model {
                 if (getCurrentStorageItem().getRole().isDataDomain()) {
                     formats.add(dataCenter.getStoragePoolFormatType());
                     selectItem = dataCenter.getStoragePoolFormatType();
-                }
-                // If selected-item role is ISO or Export, add only the 'V1' option.
-                // (*** Note that currently both ISO and Export can be only NFS, so theoretically they are covered by
-                // the next "else if..." condition; however, just in case we will support non-NFS ISO/Export in the
-                // future
-                // and in order to make the code more explicit, it is here. ***)
-                else if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
+                } else if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
                         || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
+                    // If selected-item role is ISO or Export, add only the 'V1' option.
+                    // (*** Note that currently both ISO and Export can be only NFS, so theoretically they are covered
+                    // by the next "else if..." condition; however, just in case we will support non-NFS ISO/Export in
+                    // the future and in order to make the code more explicit, it is here. ***)
                     formats.add(StorageFormatType.V1);
                 }
-            }
-            else { // Unassigned DC:
+            } else { // Unassigned DC:
                 if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
                         || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
                     // ISO/Export domains should not be available for '(none)' DC
@@ -587,8 +576,7 @@ public class StorageModel extends Model {
         if (isNewStorage()) {
             AsyncDataProvider.getInstance().getStorageDomainDefaultWipeAfterDelete(new AsyncQuery<>(
                     returnValue -> getWipeAfterDelete().setEntity(returnValue)), storageType);
-        }
-        else {
+        } else {
             getWipeAfterDelete().setEntity(getStorage().getWipeAfterDelete());
         }
     }

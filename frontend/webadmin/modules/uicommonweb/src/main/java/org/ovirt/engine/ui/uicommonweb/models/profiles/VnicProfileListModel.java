@@ -155,12 +155,9 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
         if (command == getNewCommand()) {
             newProfile();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
         }
     }

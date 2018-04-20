@@ -28,8 +28,7 @@ public class ImportVmData extends ImportEntityData<VM> {
                             .getConstants()
                             .importCloneVMMustCollapseSnapshots());
                     getCollapseSnapshots().setIsChangeable(false);
-                }
-                else {
+                } else {
                     getCollapseSnapshots().setIsChangeable(true);
                 }
             }

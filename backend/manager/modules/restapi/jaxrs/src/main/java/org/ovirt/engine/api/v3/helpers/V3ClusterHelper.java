@@ -54,8 +54,7 @@ public class V3ClusterHelper {
                 v4Policy = new SchedulingPolicy();
                 v4Policy.setId(v4CompatiblePolicy.getId());
                 v4Cluster.setSchedulingPolicy(v4Policy);
-            }
-            else {
+            } else {
                 V3Fault fault = new V3Fault();
                 fault.setReason("Operation Failed");
                 fault.setDetail("Can't find a compatible scheduling policy.");

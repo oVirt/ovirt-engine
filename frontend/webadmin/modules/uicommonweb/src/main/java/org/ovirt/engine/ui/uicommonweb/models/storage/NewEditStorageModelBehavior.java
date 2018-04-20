@@ -25,8 +25,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
                             postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                         }), dataCenter.getId());
-            }
-            else if (item.getRole() == StorageDomainType.ImportExport) {
+            } else if (item.getRole() == StorageDomainType.ImportExport) {
                 AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery<>(
                         returnValue -> {
 
@@ -34,8 +33,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
                             postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                         }), dataCenter.getId());
-            }
-            else {
+            } else {
                 postUpdateItemsAvailability(item, false);
             }
         }

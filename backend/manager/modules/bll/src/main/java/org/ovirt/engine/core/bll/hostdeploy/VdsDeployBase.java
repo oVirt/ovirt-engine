@@ -132,8 +132,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
         new Callable<Boolean>() { public Boolean call() throws Exception {
             if (_resultError || !_installIncomplete) {
                 _parser.cliNoop();
-            }
-            else {
+            } else {
                 String[] msgs = (String[])_parser.cliEnvironmentGet(
                     org.ovirt.ovirt_host_deploy.constants.CoreEnv.INSTALL_INCOMPLETE_REASONS
                 );
@@ -174,11 +173,9 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             );
             try (final OutputStream os = new FileOutputStream(logFile)) {
                 _parser.cliDownloadLog(os);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw e;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.error("Unexpected exception", ExceptionUtils.getRootCauseMessage(e));
                 log.debug("Exception", e);
                 throw new RuntimeException(e);
@@ -239,8 +236,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
         try {
             if (_customizationShouldAbort) {
                 _parser.cliAbort();
-            }
-            else {
+            } else {
                 boolean skip = false;
                 Callable<Boolean> customizationStep = _customizationDialog.get(_customizationIndex);
                 Method callMethod = customizationStep.getClass().getDeclaredMethod("call");
@@ -252,18 +248,15 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 if (skip) {
                     _customizationIndex++;
                     _parser.cliNoop();
-                }
-                else {
+                } else {
                     if (customizationStep.call()) {
                         _customizationIndex++;
                     }
                 }
             }
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch(ArrayIndexOutOfBoundsException e) {
             throw new RuntimeException("Protocol violation", e);
-        }
-        catch (SoftError e) {
+        } catch(SoftError e) {
             log.error(
                 "Soft error during host {} customization dialog: {}",
                 _vds.getHostName(),
@@ -292,8 +285,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             if (_terminationDialog.get(_terminationIndex).call()) {
                 _terminationIndex++;
             }
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch(ArrayIndexOutOfBoundsException e) {
             throw new RuntimeException("Protocol violation", e);
         }
     }
@@ -336,15 +328,13 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                         );
                     }
                     _parser.sendResponse(event);
-                }
-                else if (bevent instanceof Event.QueryValue) {
+                } else if (bevent instanceof Event.QueryValue) {
                     Event.QueryValue event = (Event.QueryValue)bevent;
                     if (unknown) {
                         event.abort = true;
                     }
                     _parser.sendResponse(event);
-                }
-                else if (bevent instanceof Event.QueryMultiString) {
+                } else if (bevent instanceof Event.QueryMultiString) {
                     Event.QueryMultiString event = (Event.QueryMultiString)bevent;
                     if (unknown) {
                         event.abort = true;
@@ -361,15 +351,13 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                     );
                 }
             }
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             _failException = e;
             log.error("Error during deploy dialog", ExceptionUtils.getRootCauseMessage(e));
             log.debug("Exception", e);
             try {
                 _control.close();
-            }
-            catch (IOException ee) {
+            } catch (IOException ee) {
                 log.error("Error during close", ExceptionUtils.getRootCauseMessage(e));
                 log.debug("Exception", e);
             }
@@ -417,8 +405,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
     protected void finalize() {
         try {
             close();
-        }
-        catch (IOException e) {
+        } catch(IOException e) {
             log.error("Exception during finalize", ExceptionUtils.getRootCauseMessage(e));
             log.debug("Exception", e);
         }
@@ -518,8 +505,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
     public DeployStatus getDeployStatus() {
         if (_goingToReboot) {
             return DeployStatus.Reboot;
-        }
-        else if (_installIncomplete) {
+        } else if (_installIncomplete) {
             return DeployStatus.Incomplete;
         } else {
             return DeployStatus.Complete;
@@ -585,8 +571,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                     "Installation failed, please refer to installation logs"
                 );
             }
-        }
-        catch (TimeLimitExceededException e){
+        } catch(TimeLimitExceededException e){
             log.error(
                 "Timeout during host {} install: {}",
                 _vds.getHostName(),
@@ -598,8 +583,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 "Processing stopped due to timeout"
             );
             throw e;
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             log.error(
                 "Error during host {} install",
                 _vds.getHostName(),
@@ -608,8 +592,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             log.debug("Exception", e);
             if (_failException == null) {
                 throw e;
-            }
-            else {
+            } else {
                 userVisibleLog(
                     Level.SEVERE,
                     e.getMessage()
@@ -637,20 +620,17 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             }
             userVisibleLog(level, event.record);
             unknown = false;
-        }
-        else if (bevent instanceof Event.QueryString) {
+        } else if (bevent instanceof Event.QueryString) {
             Event.QueryString event = (Event.QueryString)bevent;
 
             if (Queries.CUSTOMIZATION_COMMAND.equals(event.name)) {
                 nextCustomizationEntry();
                 unknown = false;
-            }
-            else if (Queries.TERMINATION_COMMAND.equals(event.name)) {
+            } else if (Queries.TERMINATION_COMMAND.equals(event.name)) {
                 nextTerminationEntry();
                 unknown = false;
             }
-        }
-        else if (bevent instanceof Event.QueryValue) {
+        } else if (bevent instanceof Event.QueryValue) {
             Event.QueryValue event = (Event.QueryValue)bevent;
 
             if (Queries.TIME.equals(event.name)) {
@@ -709,8 +689,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
              */
             try {
                 _thread.join(THREAD_JOIN_TIMEOUT);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 log.error("interrupted", ExceptionUtils.getRootCauseMessage(e));
                 log.debug("Exception", e);
             }
@@ -720,8 +699,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                     try {
                         _thread.join();
                         break;
-                    }
-                    catch (InterruptedException ignore) {}
+                    } catch (InterruptedException ignore) {}
                 }
             }
             _thread = null;

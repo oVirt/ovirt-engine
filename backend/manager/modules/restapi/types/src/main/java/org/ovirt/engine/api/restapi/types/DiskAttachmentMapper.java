@@ -30,8 +30,7 @@ public class DiskAttachmentMapper {
         org.ovirt.engine.core.common.businessentities.storage.DiskVmElement entity = template != null ? template : new DiskVmElement();
         if (model.isSetId()) {
             entity.setId(new VmDeviceId(GuidUtils.asGuid(model.getId()), null));
-        }
-        else {
+        } else {
             entity.setId(new VmDeviceId());
         }
         if (model.isSetBootable()) {

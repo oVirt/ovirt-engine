@@ -182,8 +182,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             if (!validate(diskVmElementValidator.isReadOnlyPropertyCompatibleWithInterface())) {
                 return false;
             }
-        }
-        else if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm())) {
+        } else if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm())) {
             return failValidation(EngineMessage.CANNOT_ADD_FLOATING_DISK_WITH_PLUG_VM_SET);
         }
 

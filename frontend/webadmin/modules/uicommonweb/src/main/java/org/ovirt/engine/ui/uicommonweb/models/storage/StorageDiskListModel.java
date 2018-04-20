@@ -131,8 +131,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
     public void search() {
         if (getEntity() != null) {
             super.search();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }
@@ -281,32 +280,23 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
 
         if (command == getRemoveCommand()) {
             remove();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("Upload".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Upload".equals(command.getName())) { //$NON-NLS-1$
             upload();
-        }
-        else if ("CancelUpload".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelUpload".equals(command.getName())) { //$NON-NLS-1$
             cancelUpload();
-        }
-        else if ("OnCancelUpload".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnCancelUpload".equals(command.getName())) { //$NON-NLS-1$
             onCancelUpload();
-        }
-        else if ("PauseUpload".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("PauseUpload".equals(command.getName())) { //$NON-NLS-1$
             pauseUpload();
-        }
-        else if ("ResumeUpload".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("ResumeUpload".equals(command.getName())) { //$NON-NLS-1$
             resumeUpload();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if (command == getDownloadCommand()) {
+        } else if (command == getDownloadCommand()) {
             download();
-        }
-        else if (command == getStopDownloadCommand()) {
+        } else if (command == getStopDownloadCommand()) {
             stopDownload();
         }
     }

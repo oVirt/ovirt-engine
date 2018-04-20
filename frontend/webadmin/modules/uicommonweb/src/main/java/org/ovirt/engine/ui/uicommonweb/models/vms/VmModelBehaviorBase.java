@@ -172,8 +172,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         boolean vmLeasesSupported = AsyncDataProvider.getInstance().isVmLeasesFeatureSupported(compVer);
         if (!vmLeasesSupported) {
             model.getLease().setIsChangeable(false, constants.vmLeasesSupported());
-        }
-        else {
+        } else {
             StorageDomain leaseStorageDomain = model.getLease().getSelectedItem();
             if (!model.getIsHighlyAvailable().getEntity()) {
                 model.getLease().setIsChangeable(false);
@@ -634,8 +633,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (templateWithVersion != null && !templateWithVersion.getTemplateVersion().getId().equals(Guid.Empty)) {
             postInitStorageDomains();
-        }
-        else {
+        } else {
             getModel().getStorageDomain().setItems(new ArrayList<>());
             getModel().getStorageDomain().setSelectedItem(null);
             getModel().getStorageDomain().setIsChangeable(false);

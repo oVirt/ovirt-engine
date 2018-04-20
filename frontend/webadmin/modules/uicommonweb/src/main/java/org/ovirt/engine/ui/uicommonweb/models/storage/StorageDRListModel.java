@@ -83,8 +83,7 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
     public void search() {
         if (getEntity() != null) {
             super.search();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

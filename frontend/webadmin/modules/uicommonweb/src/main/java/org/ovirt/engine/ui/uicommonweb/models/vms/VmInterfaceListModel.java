@@ -250,11 +250,9 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
 
         if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
         }
     }

@@ -225,12 +225,10 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         if (volumeType == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
             info.setVisible(true);
             info.setText(constants.distributedReplicateVolumeBrickInfoLabel());
-        }
-        else if (volumeType == GlusterVolumeType.DISTRIBUTED_STRIPE) {
+        } else if (volumeType == GlusterVolumeType.DISTRIBUTED_STRIPE) {
             info.setVisible(true);
             info.setText(constants.distributedStripeVolumeBrickInfoLabel());
-        }
-        else {
+        } else {
             info.setVisible(false);
             info.setText(null);
         }

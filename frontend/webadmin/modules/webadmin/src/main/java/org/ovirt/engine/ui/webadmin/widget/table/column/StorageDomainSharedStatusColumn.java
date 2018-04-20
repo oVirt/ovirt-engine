@@ -35,8 +35,7 @@ public class StorageDomainSharedStatusColumn extends AbstractImageResourceColumn
                 default:
                     return resources.downImage();
             }
-        }
-        else {
+        } else {
             return new StorageDomainStatusColumn().getValue(sp);
         }
     }

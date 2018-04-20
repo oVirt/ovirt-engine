@@ -182,8 +182,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
                 // the VM reached WaitForLunch, so from now on this job is not responsible
                 // to auto start it, future failures will be detected by the monitoring
                 vmsToRemove.add(autoStartVmToRestart);
-            }
-            else {
+            } else {
                 logFailedAttemptToRestartVm(vmId);
 
                 if (!autoStartVmToRestart.scheduleNextTimeToRun(nextTimeOfRetryToRun)) {

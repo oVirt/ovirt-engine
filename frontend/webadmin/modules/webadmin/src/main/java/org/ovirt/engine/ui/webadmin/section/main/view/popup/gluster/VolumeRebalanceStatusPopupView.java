@@ -206,8 +206,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         object.getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (args.propertyName.equals("STATUS_UPDATED")) {//$NON-NLS-1$
                 status.setVisible(object.isStatusAvailable());
-            }
-            else if (args.propertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
+            } else if (args.propertyName.equals("STOP_TIME_UPDATED")) {//$NON-NLS-1$
                 stopTimeColumn.setVisible(object.isStopTimeVisible());
             }
         });

@@ -48,8 +48,7 @@ public class RemoveStorageServerConnectionExtensionCommand<T extends IdParameter
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (connExt != null) {
             return createIdAndHostTargetLockMap(connExt);
-        }
-        else { // No point in locking, command will fail in CDA
+        } else { // No point in locking, command will fail in CDA
             return null;
         }
     }

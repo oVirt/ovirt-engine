@@ -101,17 +101,13 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         IConditionValueAutoCompleter retval = null;
         if (TYPE.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageType.class);
-        }
-        else if (STATUS.equals(fieldName)) {
+        } else if (STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageDomainStatus.class);
-        }
-        else if (SHARED_STATUS.equals(fieldName)) {
+        } else if (SHARED_STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageDomainSharedStatus.class);
-        }
-        else if (EXTERNAL_STATUS.equals(fieldName)) {
+        } else if (EXTERNAL_STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ExternalStatus.class);
-        }
-        else if (Stream.of(WIPE_AFTER_DELETE, DISCARD_AFTER_DELETE, BACKUP)
+        } else if (Stream.of(WIPE_AFTER_DELETE, DISCARD_AFTER_DELETE, BACKUP)
                 .anyMatch(s -> s.equals(fieldName))) {
             retval = new BitValueAutoCompleter();
         }

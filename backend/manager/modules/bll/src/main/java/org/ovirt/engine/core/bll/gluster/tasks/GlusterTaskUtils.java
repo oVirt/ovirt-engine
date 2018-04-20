@@ -214,8 +214,7 @@ public class GlusterTaskUtils {
             if(task.getTaskParameters() != null) {
                 String volName = task.getTaskParameters().getVolumeName();
                 volume = volumeDao.getByName(cluster.getId(), volName);
-            }
-            else {
+            } else {
                 return;
             }
         }

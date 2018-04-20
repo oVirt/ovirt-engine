@@ -150,8 +150,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         // Adding 'GrayedOutReasons'
         if (lun.getStorageDomainId() != null) {
             warning = messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName());
-        }
-        else if (lun.getDiskId() != null) {
+        } else if (lun.getDiskId() != null) {
             warning = messages.lunUsedByDiskWarning(lun.getDiskAlias());
         }
 

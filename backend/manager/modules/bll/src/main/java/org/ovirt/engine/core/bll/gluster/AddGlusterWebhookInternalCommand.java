@@ -81,13 +81,11 @@ public class AddGlusterWebhookInternalCommand<T extends VdsActionParameters> ext
         try {
             if (config.isHttpsEnabled()) {
                 servletUrl = config.getExternalHttpsUrl(WEBHOOK_SERVLET_PATH);
-            }
-            else {
+            } else {
                 servletUrl = config.getExternalHttpUrl(WEBHOOK_SERVLET_PATH);
             }
             return servletUrl.toExternalForm();
-        }
-        catch (MalformedURLException exception) {
+        } catch(MalformedURLException exception) {
             log.debug("Failed to get engine webhook url", exception);
             return null;
         }

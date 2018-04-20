@@ -61,6 +61,7 @@
     <module name="OneStatementPerLine"/>
     <module name="PackageDeclaration"/>
     <module name="RedundantImport"/>
+    <module name="RightCurly" />
     <module name="SimplifyBooleanExpression"/>
     <module name="StringLiteralEquality"/>
     <module name="TypeName" />

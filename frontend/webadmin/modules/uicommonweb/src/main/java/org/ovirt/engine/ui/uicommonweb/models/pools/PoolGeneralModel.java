@@ -413,8 +413,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                                             }
                                             setDefaultHost(defaultHost1);
                                         }));
-                            }
-                            else {
+                            } else {
                                 setDefaultHost(ConstantsManager.getInstance()
                                         .getConstants()
                                         .anyHostInCluster());
@@ -422,8 +421,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                             if (getvm() != null) {
                                 PoolGeneralModel.super.updateProperties(getvm().getId());
                             }
-                        }
-                        else {
+                        } else {
                             setTemplate(null);
                             setCpuCount(0);
                             setMonitorCount(0);

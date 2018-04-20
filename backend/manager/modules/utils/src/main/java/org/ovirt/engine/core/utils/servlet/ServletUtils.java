@@ -29,8 +29,7 @@ public class ServletUtils {
         // Load the system wide MIME types map:
         try {
             mimeMap = new MimetypesFileTypeMap(System.getProperty("org.ovirt.engine.mime.types", "/etc/mime.types"));
-        }
-        catch (IOException exception) {
+        } catch(IOException exception) {
             log.error("Can't load system mime types file.", exception);
             mimeMap = new MimetypesFileTypeMap();
         }
@@ -94,8 +93,7 @@ public class ServletUtils {
                         request.getRequestURI());
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-        else {
+        } else {
             boolean send = true;
 
             if (cache) {
@@ -108,8 +106,7 @@ public class ServletUtils {
                 if ("*".equals(IfNoneMatch)) {
                     response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
                     send = false;
-                }
-                else if (eTag.equals(IfNoneMatch)) {
+                } else if (eTag.equals(IfNoneMatch)) {
                     response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                     send = false;
                 }
@@ -151,8 +148,7 @@ public class ServletUtils {
             while ((count = in.read(buffer)) != -1) {
                 out.write(buffer, 0, count);
             }
-        }
-        catch (IOException exception) {
+        } catch(IOException exception) {
             final String message = "Error sending file '" + file.getAbsolutePath() + "'.";
             log.error(message, exception);
             throw new IOException(message, exception);
@@ -221,11 +217,9 @@ public class ServletUtils {
 
         if (path == null) {
             file = base;
-        }
-        else if (!isSane(path)) {
+        } else if (!isSane(path)) {
             log.info("The path '{}' is not sane, will return null.", path);
-        }
-        else {
+        } else {
             file = new File(base, path);
         }
         return file;

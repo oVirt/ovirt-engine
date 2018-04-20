@@ -39,14 +39,12 @@ public class AbstractBackendStorageDomainDiskResource
                     QueryType.GetUnregisteredDisk,
                     new GetUnregisteredDiskQueryParameters(guid, storageDomainId, dataCenterId)
                 );
-            }
-            else {
+            } else {
                 // The disk was found in the first get which means it is already registered. We must return nothing
                 // since the unregistered parameter was passed.
                 return notFound();
             }
-        }
-        else {
+        } else {
             disk = getDelegate().get();
         }
         if (disk.isSetStorageDomains() && !disk.getStorageDomains().getStorageDomains().isEmpty()) {

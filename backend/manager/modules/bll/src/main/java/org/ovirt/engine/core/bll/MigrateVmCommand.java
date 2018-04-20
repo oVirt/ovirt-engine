@@ -525,8 +525,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             updateVmAfterMigrationToDifferentCluster();
             plugPassthroughNics();
             initParametersForExternalNetworks(destinationVds, true);
-        }
-        finally {
+        } finally {
             super.runningSucceded();
         }
     }

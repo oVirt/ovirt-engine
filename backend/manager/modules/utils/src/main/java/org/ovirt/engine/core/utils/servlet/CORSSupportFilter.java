@@ -279,8 +279,7 @@ public class CORSSupportFilter implements Filter {
         // Do the filtering if needed:
         if (delegate != null) {
             delegate.doFilter(request, response, chain);
-        }
-        else {
+        } else {
             chain.doFilter(request, response);
         }
     }

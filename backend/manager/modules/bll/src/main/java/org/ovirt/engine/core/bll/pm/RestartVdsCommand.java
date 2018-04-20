@@ -124,8 +124,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         // do not try to stop Host if Host is reported as Down via PM
         if (new HostFenceActionExecutor(getVds()).isHostPoweredOff()) {
             returnValue.setSucceeded(true);
-        }
-        else {
+        } else {
             // execute StopVds action
             returnValue = executeVdsFenceAction(vdsId, sessionId, ActionType.StopVds);
             if (getParameters().getParentCommand() == ActionType.VdsNotRespondingTreatment) {

@@ -312,8 +312,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId(), false)) {
                 return false;
             }
-        }
-        else if (isHotSetEnabled()) {
+        } else if (isHotSetEnabled()) {
             if (oldVm.getLeaseStorageDomainId() == null) {
                 return addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId(), true);
             }
@@ -655,8 +654,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void checkTrustedService() {
         if (getParameters().getVm().isTrustedService() && !getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED);
-        }
-        else if (!getParameters().getVm().isTrustedService() && getCluster().supportsTrustedService()) {
+        } else if (!getParameters().getVm().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }

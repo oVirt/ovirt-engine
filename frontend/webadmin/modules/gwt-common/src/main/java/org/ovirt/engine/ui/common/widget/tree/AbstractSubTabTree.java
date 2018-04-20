@@ -169,8 +169,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
                 boolean isOpen = getItemOldState(rootItem.getUserObject());
                 if (isOpen) {
                     rootItem = oldRootItemsMap.get(rootItem.getUserObject());
-                }
-                else {
+                } else {
                     if (getEmptyRoot() != null) {
                         rootItem.addItem(getEmptyRoot());
                     }
@@ -289,13 +288,11 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
             Label label = (Label) item.getWidget();
             label.setText(text);
             addItemToPanel(panel, item, width);
-        }
-        else if (w instanceof StringValueLabel) {
+        } else if (w instanceof StringValueLabel) {
             StringValueLabel label = (StringValueLabel) item.getWidget();
             label.setValue(text);
             addItemToPanel(panel, item, width);
-        }
-        else {
+        } else {
             throw new ClassCastException("tooltipped label contains unknown Widget: " + w.getClass()); //$NON-NLS-1$
         }
     }
@@ -359,8 +356,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         if (!selectedItems.contains(entity)) {
             selectedItems.add(entity);
             onItemsSelection();
-        }
-        else if (!enforceSelection) {
+        } else if (!enforceSelection) {
             selectedItems.remove(entity);
             onItemsSelection();
         }

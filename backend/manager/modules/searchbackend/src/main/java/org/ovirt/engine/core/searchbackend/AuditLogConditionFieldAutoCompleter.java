@@ -117,11 +117,9 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     public IAutoCompleter getFieldRelationshipAutoCompleter(final String fieldName) {
         if (SEVERITY.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
-        }
-        else if (TIME.equals(fieldName)) {
+        } else if (TIME.equals(fieldName)) {
             return TimeConditionRelationAutoCompleter.INSTANCE;
-        }
-        else if (TYPE.equals(fieldName) || MESSAGE.equals(fieldName)
+        } else if (TYPE.equals(fieldName) || MESSAGE.equals(fieldName)
                 || USER_NAME.equals(fieldName) || EVENT_HOST.equals(fieldName)
                 || EVENT_HOST_ID.equals(fieldName)
                 || EVENT_VM.equals(fieldName) || EVENT_VM_ID.equals(fieldName)
@@ -142,8 +140,7 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         if (SEVERITY.equals(fieldName)) {
             return new EnumValueAutoCompleter(AuditLogSeverity.class);
-        }
-        else if (TIME.equals(fieldName)) {
+        } else if (TIME.equals(fieldName)) {
             return new DateEnumValueAutoCompleter(DateEnumForSearch.class);
         } else if (DELETED.equals(fieldName)) {
             return new BitValueAutoCompleter();

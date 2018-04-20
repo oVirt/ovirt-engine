@@ -187,8 +187,7 @@ public class DiskGeneralModel extends EntityModel<Disk> {
             setDiskProfileName(StringHelper.nullSafeJoin(",", diskImage.getDiskProfileNames())); //$NON-NLS-1$
             setQuotaName(StringHelper.nullSafeJoin(",", diskImage.getQuotaNames())); //$NON-NLS-1$
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
-        }
-        else if (isLun()) {
+        } else if (isLun()) {
             LunDisk lunDisk = (LunDisk) disk;
             setLunId(lunDisk.getLun().getLUNId());
         }

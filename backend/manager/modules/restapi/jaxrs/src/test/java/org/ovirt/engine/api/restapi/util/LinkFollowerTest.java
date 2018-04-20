@@ -38,20 +38,15 @@ public class LinkFollowerTest extends Assert {
             protected ActionableResource fetch(String href) {
                 if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/nics")){
                     return createNics();
-                }
-                else if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/diskattachments")) {
+                } else if (href.equals("/ovirt-engine/api/vms/63978315-2d17-4e67-b393-2ea60a8aeacb/diskattachments")) {
                     return createDiskAttachments();
-                }
-                else if (href.equals("/ovirt-engine/api/disks/aaa")) {
+                } else if (href.equals("/ovirt-engine/api/disks/aaa")) {
                     return new Disk();
-                }
-                else if (href.equals("/ovirt-engine/api/disks/bbb")) {
+                } else if (href.equals("/ovirt-engine/api/disks/bbb")) {
                     return new Disk();
-                }
-                else if (href.equals("/ovirt-engine/api/disks/ccc")) {
+                } else if (href.equals("/ovirt-engine/api/disks/ccc")) {
                     return new Disk();
-                }
-                else {
+                } else {
                     return null;
                 }
             }

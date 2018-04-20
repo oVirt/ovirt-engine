@@ -140,8 +140,7 @@ public class V3VmHelper {
                     }
                     ips.getIPs().addAll(adaptOut(fromIps));
                 }
-            }
-            catch (WebApplicationException exception) {
+            } catch (WebApplicationException exception) {
                 // If an application exception is generated while retrieving the details of the NICs is safe to ignore
                 // it, as it may be that the user just doesn't have permission to see the NICs, but she may still have
                 // permissions to see the other details of the virtual machine.
@@ -166,8 +165,7 @@ public class V3VmHelper {
                 try {
                     DiskAttachment attachment = attachmentResource.get();
                     addDiskAttachmentDetails(attachment, disk);
-                }
-                catch (WebApplicationException exception) {
+                } catch (WebApplicationException exception) {
                     // If an application exception is generated while retrieving the details of the disk attachment
                     // it is safe to ignore it, as it may be that the user just doesn't have permission to see
                     // attachment, but she may still have permissions to see the other details of the disk.

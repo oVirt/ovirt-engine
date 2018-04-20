@@ -142,8 +142,7 @@ public class V3ClusterOutAdapter implements V3Adapter<Cluster, V3Cluster> {
             SchedulingPolicyResource policyResource = policiesResource.getPolicyResource(fromPolicy.getId());
             try {
                 fromPolicy = policyResource.get();
-            }
-            catch (WebApplicationException exception) {
+            } catch (WebApplicationException exception) {
                 // If an application exception is generated while retrieving the details of the scheduling policy it
                 // is safe to ignore it, as it may be that the user just doesn't have permission to see the policy, but
                 // she may still have permissions to see the other details of the cluster.

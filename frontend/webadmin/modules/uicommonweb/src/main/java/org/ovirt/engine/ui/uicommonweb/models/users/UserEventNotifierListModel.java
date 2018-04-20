@@ -134,8 +134,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
         model.setEventGroupModels(list);
         if (!StringHelper.isNullOrEmpty(getEntity().getEmail())) {
             model.getEmail().setEntity(getEntity().getEmail());
-        }
-        else if (items.size() > 0) {
+        } else if (items.size() > 0) {
             model.getEmail().setEntity(items.iterator().next().getMethodAddress());
         }
 
@@ -214,8 +213,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
                         model.getEmail().getEntity(),
                         getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
-        }
-        else {
+        } else {
             for (SelectionTreeNodeModel a : added) {
                 toAddList.add(new EventSubscriptionParametesBase(new EventSubscriber(a.getTitle(),
                         EventNotificationMethod.SMTP,
@@ -279,8 +277,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
     private void updateActionAvailability() {
         if (getEntity() == null || getEntity().isGroup()) {
             getManageEventsCommand().setIsExecutionAllowed(false);
-        }
-        else {
+        } else {
             getManageEventsCommand().setIsExecutionAllowed(true);
         }
     }

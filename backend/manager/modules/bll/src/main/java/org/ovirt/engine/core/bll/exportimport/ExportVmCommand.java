@@ -260,8 +260,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         if (getParameters().getCopyCollapse()) {
             Snapshot activeSnapshot = snapshotDao.get(getVmId(), SnapshotType.ACTIVE);
             return activeSnapshot.containsMemory() ? Collections.singleton(activeSnapshot) : Collections.emptyList();
-        }
-        else {
+        } else {
             return snapshotDao.getAll(getVmId()).stream().filter(Snapshot::containsMemory).collect(Collectors.toList());
         }
     }
@@ -555,8 +554,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             updateCopyVmInSpm(getVm().getStoragePoolId(),
                     vm, getParameters()
                             .getStorageDomainId());
-        }
-        catch (EngineException e) {
+        } catch(EngineException e) {
             log.error("Updating VM OVF in export domain failed.", e);
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED_UPDATING_OVF);
         }

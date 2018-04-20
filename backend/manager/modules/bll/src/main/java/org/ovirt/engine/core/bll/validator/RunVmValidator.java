@@ -426,11 +426,9 @@ public class RunVmValidator {
                 if (spim == null || spim.getStatus() != StorageDomainStatus.Active) {
                     return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
                 }
-            }
-            else if (activeIsoDomainId == null) {
+            } else if (activeIsoDomainId == null) {
                 return new ValidationResult(EngineMessage.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
-            }
-            else if (!isRepoImageExists(effectiveIsoPath, activeIsoDomainId, ImageFileType.ISO)) {
+            } else if (!isRepoImageExists(effectiveIsoPath, activeIsoDomainId, ImageFileType.ISO)) {
                 return new ValidationResult(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
             }
 

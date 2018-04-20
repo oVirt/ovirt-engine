@@ -198,8 +198,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
-        }
-        else {
+        } else {
             for (Object item : model.getItems()) {
                 EntityModel entityModel = (EntityModel) item;
                 if (entityModel.getIsSelected()) {
@@ -227,8 +226,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
                 group.setName(user.getFirstName());
                 group.setDomain(user.getDomain());
                 permissionParams.setGroup(group);
-            }
-            else {
+            } else {
                 permissionParams.setUser(user);
             }
             permissionParams.setPermission(perm);

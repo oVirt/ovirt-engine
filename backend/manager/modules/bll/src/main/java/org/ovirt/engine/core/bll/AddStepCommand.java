@@ -60,8 +60,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
                 Step step = executionHandler.addStep(context, getParameters().getStepType(), getParameters().getDescription(), true);
                 setActionReturnValue(step.getId());
                 setSucceeded(true);
-        }
-        else {// this is a sub-step
+        } else { // this is a sub-step
                 context.setStep(parentStep);
                 context.setExecutionMethod(ExecutionMethod.AsStep);
                 jobRepository.loadParentStepSteps(parentStep);

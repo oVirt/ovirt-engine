@@ -240,8 +240,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         if (errorMessage == null || errorMessage.isEmpty()) {
             testResultMessage.setType(AlertPanel.Type.SUCCESS);
             testResultMessage.addMessage(SafeHtmlUtils.fromSafeConstant(constants.testSuccessMessage()));
-        }
-        else {
+        } else {
             testResultMessage.setType(AlertPanel.Type.DANGER);
             testResultMessage.addMessage(SafeHtmlUtils.fromString(errorMessage));
 

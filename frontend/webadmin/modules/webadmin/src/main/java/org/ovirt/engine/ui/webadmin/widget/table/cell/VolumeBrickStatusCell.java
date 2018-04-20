@@ -30,8 +30,7 @@ public class VolumeBrickStatusCell extends AbstractCell<GlusterVolumeEntity> {
         for (GlusterBrickEntity brick : volume.getBricks()) {
             if (brick.isOnline()) {
                 upBricks++;
-            }
-            else {
+            } else {
                 downBricks++;
             }
         }

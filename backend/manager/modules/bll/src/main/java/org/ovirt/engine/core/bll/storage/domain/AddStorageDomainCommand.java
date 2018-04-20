@@ -129,8 +129,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             fault.setError(EngineError.forValue(connectReturnValue.getSecond()));
             getReturnValue().setFault(fault);
             setSucceeded(false);
-        }
-        else if (addStorageDomainInIrs()) {
+        } else if (addStorageDomainInIrs()) {
             updateStorageDomainDynamicFromIrs();
             setSucceeded(true);
         }

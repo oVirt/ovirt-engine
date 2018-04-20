@@ -168,8 +168,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
             model.stopProgress();
-        }
-        else if (storageDomains.isEmpty()) {
+        } else if (storageDomains.isEmpty()) {
             model.getCollapseSnapshots().setIsChangeable(false);
             model.getForceOverride().setIsChangeable(false);
 
@@ -181,8 +180,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             tempVar2.setIsCancel(true);
             model.getCommands().add(tempVar2);
             model.stopProgress();
-        }
-        else if (noActiveStorage) {
+        } else if (noActiveStorage) {
             model.getCollapseSnapshots().setIsChangeable(false);
             model.getForceOverride().setIsChangeable(false);
 
@@ -196,8 +194,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
             model.stopProgress();
-        }
-        else {
+        } else {
             showWarningOnExistingEntities(model, getEntityExportDomain());
 
             UICommand tempVar4 = UICommand.createDefaultOkUiCommand("OnExport", this); //$NON-NLS-1$

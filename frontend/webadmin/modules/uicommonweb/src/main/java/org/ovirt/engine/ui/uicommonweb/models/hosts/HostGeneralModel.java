@@ -273,8 +273,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
 
             if (spmMaxPriorityValue == null || spmDefaultPriorityValue == null) {
                 retrieveMaxSpmPriority();
-            }
-            else {
+            } else {
                 updateSpmPriority();
             }
         }
@@ -303,20 +302,15 @@ public class HostGeneralModel extends EntityModel<VDS> {
     private void updateSpmPriority() {
         if (spmPriorityValue == null) {
             setSpmPriority(null);
-        }
-        else if (spmPriorityValue == spmLowPriorityValue) {
+        } else if (spmPriorityValue == spmLowPriorityValue) {
             setSpmPriority(constants.lowTitle());
-        }
-        else if (spmPriorityValue.equals(spmDefaultPriorityValue)) {
+        } else if (spmPriorityValue.equals(spmDefaultPriorityValue)) {
             setSpmPriority(constants.mediumTitle());
-        }
-        else if (spmPriorityValue == spmHighPriorityValue) {
+        } else if (spmPriorityValue == spmHighPriorityValue) {
             setSpmPriority(constants.highTitle());
-        }
-        else if (spmPriorityValue == spmNeverPriorityValue) {
+        } else if (spmPriorityValue == spmNeverPriorityValue) {
             setSpmPriority(constants.neverTitle());
-        }
-        else {
+        } else {
             setSpmPriority(messages.customSpmPriority(spmPriorityValue));
         }
     }
@@ -751,7 +745,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
     public void setLogicalCores(Integer value) {
         if (logicalCores == null && value == null) {
             return;
-        } if (logicalCores == null || !logicalCores.equals(value)) {
+        }
+        if (logicalCores == null || !logicalCores.equals(value)) {
             logicalCores = value;
             onPropertyChanged(new PropertyChangedEventArgs("logicalCores")); //$NON-NLS-1$
         }
@@ -766,7 +761,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
     public void setOnlineCores(String value) {
         if (onlineCores == null && value == null) {
             return;
-        } if (onlineCores == null || !onlineCores.equals(value)) {
+        }
+        if (onlineCores == null || !onlineCores.equals(value)) {
             onlineCores = value;
             onPropertyChanged(new PropertyChangedEventArgs("onlineCores")); //$NON-NLS-1$
         }
@@ -1033,8 +1029,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
                 && !getEntity().isPmEnabled()
                 && ((getEntity().getVmActive() == null ? 0 : getEntity().getVmActive()) > 0 || getEntity().getSpmStatus() == VdsSpmStatus.SPM)) {
             setHasManualFenceAlert(true);
-        }
-        else if (!getEntity().isPmEnabled()) {
+        } else if (!getEntity().isPmEnabled()) {
             setHasNoPowerManagementAlert(true);
         }
 
@@ -1045,11 +1040,9 @@ public class HostGeneralModel extends EntityModel<VDS> {
         // Check the reinstall alert presence.
         if (getEntity().getStatus() == VDSStatus.NonResponsive) {
             setHasReinstallAlertNonResponsive(true);
-        }
-        else if (getEntity().getStatus() == VDSStatus.InstallFailed) {
+        } else if (getEntity().getStatus() == VDSStatus.InstallFailed) {
             setHasReinstallAlertInstallFailed(true);
-        }
-        else if (getEntity().getStatus() == VDSStatus.Maintenance) {
+        } else if (getEntity().getStatus() == VDSStatus.Maintenance) {
             setHasReinstallAlertMaintenance(true);
         }
         if (getEntity().getClusterSupportsGlusterService()
@@ -1112,14 +1105,11 @@ public class HostGeneralModel extends EntityModel<VDS> {
 
         if (command == getSaveNICsConfigCommand()) {
             saveNICsConfig();
-        }
-        else if (command == getEditHostCommand()) {
+        } else if (command == getEditHostCommand()) {
             editHost();
-        }
-        else if (command == getGoToEventsCommand()) {
+        } else if (command == getGoToEventsCommand()) {
             goToEvents();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if (command == getUpgradeHostCommand()) {
             upgrade();

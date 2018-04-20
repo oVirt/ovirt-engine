@@ -121,8 +121,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     protected Object[] getSelectedKeys() {
         if (getSelectedItems() == null) {
             return new Object[0];
-        }
-        else {
+        } else {
             ArrayList<Object> objL = new ArrayList<>();
             for (StoragePool a : getSelectedItems()) {
                 objL.add(a.getId());
@@ -449,8 +448,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                             cancel();
 
                         }, windowModel);
-            }
-            else {
+            } else {
                 cancel();
             }
         }),
@@ -514,8 +512,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         if ((dcModel.getIsNew() || dcModel.getEntity() == null)
                 && dcModel.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             promptNoQuotaInDCMessage();
-        }
-        else if (!dcModel.getIsNew()
+        } else if (!dcModel.getIsNew()
                 && getSelectedItem() != null
                 && !dcModel.getVersion().getSelectedItem().equals(getSelectedItem().getCompatibilityVersion())) {
             final ConfirmationModel confirmModel = new ConfirmationModel();
@@ -777,41 +774,29 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
 
         if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if (command == getForceRemoveCommand()) {
+        } else if (command == getForceRemoveCommand()) {
             forceRemove();
-        }
-        else if (command == getGuideCommand()) {
+        } else if (command == getGuideCommand()) {
             guide();
-        }
-        else if (command == getRecoveryStorageCommand()) {
+        } else if (command == getRecoveryStorageCommand()) {
             recoveryStorage();
-        }
-        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("OnForceRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnForceRemove".equals(command.getName())) { //$NON-NLS-1$
             onForceRemove();
-        }
-        else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternal();
-        }
-        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
-        }
-        else if ("OnRecover".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRecover".equals(command.getName())) { //$NON-NLS-1$
             onRecover();
         }
     }

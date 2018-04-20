@@ -78,18 +78,15 @@ public abstract class SqlInjectionChecker {
                 if(singleQuoteFound){
                 singleQuoteFound = false; // closing '
                 continue;
-                }
-                else if (!doubleQuoteFound){ // ignore single quote inside double quotes
+                } else if (!doubleQuoteFound){ // ignore single quote inside double quotes
                     singleQuoteFound = true; // opening '
                     continue;
                 }
-            }
-            else if (token.equals(DOUBLE_QUOTE_STR)) {
+            } else if (token.equals(DOUBLE_QUOTE_STR)) {
                 if(doubleQuoteFound){
                     doubleQuoteFound = false; // closing ""
                     continue;
-                }
-                else if (!singleQuoteFound){ // ignore double quote inside single quotes
+                } else if (!singleQuoteFound){ // ignore double quote inside single quotes
                     doubleQuoteFound = true; // opening "
                     continue;
                 }

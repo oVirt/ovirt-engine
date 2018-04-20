@@ -307,8 +307,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
-        }
-        else {
+        } else {
             model.setItems(datacenters);
             List<EntityModel> initialSelection = new ArrayList<>();
             initialSelection.add(datacenters.get(0));
@@ -491,8 +490,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                 }
 
                 getdetachPrms().add(param);
-            }
-            else {
+            } else {
                 AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery<>(
                                 locaVds -> {
 
@@ -636,29 +634,21 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
 
         if (command == getAttachCommand()) {
             attach();
-        }
-        else if (command == getDetachCommand()) {
+        } else if (command == getDetachCommand()) {
             detach();
-        }
-        else if (command == getActivateCommand()) {
+        } else if (command == getActivateCommand()) {
             activate();
-        }
-        else if (command == getMaintenanceCommand()) {
+        } else if (command == getMaintenanceCommand()) {
             maintenance();
-        }
-        else if ("OnAttach".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnAttach".equals(command.getName())) { //$NON-NLS-1$
             onAttach();
-        }
-        else if ("OnAttachApprove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnAttachApprove".equals(command.getName())) { //$NON-NLS-1$
             onAttachApprove();
-        }
-        else if ("OnDetach".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnDetach".equals(command.getName())) { //$NON-NLS-1$
             onDetach();
-        }
-        else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
             onMaintenance();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

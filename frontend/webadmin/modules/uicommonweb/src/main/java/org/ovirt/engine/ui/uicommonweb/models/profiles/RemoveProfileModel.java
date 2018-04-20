@@ -71,8 +71,7 @@ public abstract class RemoveProfileModel<P extends ProfileBase> extends Confirma
 
         if ("Cancel".equals(command.getName())) {//$NON-NLS-1$
             cancel();
-        }
-        else if ("OnRemove".equals(command.getName())) {//$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) {//$NON-NLS-1$
             onRemove();
         }
     }

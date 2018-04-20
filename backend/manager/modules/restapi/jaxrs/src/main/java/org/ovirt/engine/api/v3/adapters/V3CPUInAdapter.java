@@ -46,8 +46,7 @@ public class V3CPUInAdapter implements V3Adapter<V3CPU, Cpu> {
         if (from.isSetMode()) {
             try {
                 to.setMode(CpuMode.fromValue(from.getMode()));
-            }
-            catch (InvalidEnumValueException exception) {
+            } catch (InvalidEnumValueException exception) {
                 // In version 3 of the API invalid values were accepted, and they meant "disable passthrough". We need
                 // to preserve that, but we also need to pass to version 4 a valid value, as otherwise it won't do any
                 // update to the attribute. As both "custom" and "host_model" mean exactly the same we can use any of

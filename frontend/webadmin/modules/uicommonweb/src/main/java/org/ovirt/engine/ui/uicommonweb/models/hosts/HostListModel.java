@@ -831,17 +831,14 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().configurePowerManagement());
                 cancelCommand.setIsCancel(true);
                 confirmModel.getCommands().add(cancelCommand);
-            }
-            else {
+            } else {
                 if (approveInitiated) {
                     onSaveInternalFromApprove();
-                }
-                else {
+                } else {
                     onSaveInternalNotFromApprove();
                 }
             }
-        }
-        else {
+        } else {
             onSaveInternal(approveInitiated);
         }
 
@@ -954,8 +951,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                         localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
                     }, new Object[] { this, approveInitiated });
-        }
-        else { // Update VDS -> consists of changing VDS cluster first and then updating rest of VDS properties:
+        } else { // Update VDS -> consists of changing VDS cluster first and then updating rest of VDS properties:
             UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
             parameters.setvds(host);
             parameters.setVdsId(host.getId());
@@ -980,15 +976,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                             ActionReturnValue localReturnValue = result.getReturnValue();
                             if (localReturnValue != null && localReturnValue.getSucceeded()) {
                                 localModel.postOnSaveInternalChangeCluster(localParameters, localApproveInitiated);
-                            }
-                            else {
+                            } else {
                                 localModel.getWindow().stopProgress();
                             }
 
                         },
                         new Object[] { this, parameters, approveInitiated });
-            }
-            else {
+            } else {
                 postOnSaveInternalChangeCluster(parameters, approveInitiated);
             }
         }
@@ -1962,131 +1956,89 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         if (command == getNewCommand()) {
             newEntity();
-        }
-        else if (command == getEditCommand()) {
+        } else if (command == getEditCommand()) {
             edit(false);
-        }
-        else if (command == getEditWithPMemphasisCommand()) {
+        } else if (command == getEditWithPMemphasisCommand()) {
             edit(true);
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if (command == getSelectAsSpmCommand()) {
+        } else if (command == getSelectAsSpmCommand()) {
             selectAsSPM();
-        }
-        else if (command == getActivateCommand()) {
+        } else if (command == getActivateCommand()) {
             activate();
-        }
-        else if (command == getMaintenanceCommand()) {
+        } else if (command == getMaintenanceCommand()) {
             maintenance();
-        }
-        else if (command == getApproveCommand()) {
+        } else if (command == getApproveCommand()) {
             approve();
-        }
-        else if (command == getInstallCommand()) {
+        } else if (command == getInstallCommand()) {
             install();
-        }
-        else if (command == getCheckForUpgradeCommand()) {
+        } else if (command == getCheckForUpgradeCommand()) {
             checkForUpgrade();
-        }
-        else if (command == getUpgradeCommand()) {
+        } else if (command == getUpgradeCommand()) {
             upgrade();
-        }
-        else if (command == getSshRestartCommand()) {
+        } else if (command == getSshRestartCommand()) {
             sshRestart();
-        }
-        else if (command == getSshStopCommand()) {
+        } else if (command == getSshStopCommand()) {
             sshStop();
-        }
-        else if (command == getRestartCommand()) {
+        } else if (command == getRestartCommand()) {
             restart();
-        }
-        else if (command == getStartCommand()) {
+        } else if (command == getStartCommand()) {
             start();
-        }
-        else if (command == getStopCommand()) {
+        } else if (command == getStopCommand()) {
             stop();
-        }
-        else if (command == getManualFenceCommand()) {
+        } else if (command == getManualFenceCommand()) {
             manualFence();
-        }
-        else if (command == getAssignTagsCommand()) {
+        } else if (command == getAssignTagsCommand()) {
             assignTags();
-        }
-        else if (command == getConfigureLocalStorageCommand()) {
+        } else if (command == getConfigureLocalStorageCommand()) {
             configureLocalStorage();
-        }
-        else if (command == getRefreshCapabilitiesCommand()) {
+        } else if (command == getRefreshCapabilitiesCommand()) {
             refreshCapabilities();
-        }
-        else if (command == getEnrollCertificateCommand()) {
+        } else if (command == getEnrollCertificateCommand()) {
             enrollCertificate();
-        }
-        else if (command == getNumaSupportCommand()) {
+        } else if (command == getNumaSupportCommand()) {
             numaSupport();
-        }
-        else if (command == getEnableGlobalHaMaintenanceCommand()) {
+        } else if (command == getEnableGlobalHaMaintenanceCommand()) {
             setGlobalHaMaintenance(true);
-        }
-        else if (command == getDisableGlobalHaMaintenanceCommand()) {
+        } else if (command == getDisableGlobalHaMaintenanceCommand()) {
             setGlobalHaMaintenance(false);
-        }
-        else if (command == getHostConsoleCommand()) {
+        } else if (command == getHostConsoleCommand()) {
             onHostConsole();
-        }
-        else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();
-        }
-        else if ("OnManualFence".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnManualFence".equals(command.getName())) { //$NON-NLS-1$
             onManualFence();
-        }
-        else if ("OnSaveFalse".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveFalse".equals(command.getName())) { //$NON-NLS-1$
             onSaveFalse();
-        }
-        else if ("OnSaveInternalFromApprove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveInternalFromApprove".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternalFromApprove();
-        }
-        else if ("OnSaveInternalNotFromApprove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveInternalNotFromApprove".equals(command.getName())) { //$NON-NLS-1$
             onSaveInternalNotFromApprove();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelConfirm".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirm();
-        }
-        else if ("CancelConfirmFocusPM".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelConfirmFocusPM".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmFocusPM();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnMaintenance".equals(command.getName())) { //$NON-NLS-1$
             onMaintenance();
-        }
-        else if ("OnApprove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnApprove".equals(command.getName())) { //$NON-NLS-1$
             onApprove();
-        }
-        else if ("OnInstall".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnInstall".equals(command.getName())) { //$NON-NLS-1$
             onInstall();
-        }
-        else if ("OnSshRestart".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSshRestart".equals(command.getName())) { //$NON-NLS-1$
             onSshRestart();
-        }
-        else if ("OnSshStop".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSshStop".equals(command.getName())) { //$NON-NLS-1$
             onSshStop();
-        }
-        else if ("OnRestart".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRestart".equals(command.getName())) { //$NON-NLS-1$
             onRestart();
-        }
-        else if ("OnStop".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnStop".equals(command.getName())) { //$NON-NLS-1$
             onStop();
-        }
-        else if ("OnConfigureLocalStorage".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnConfigureLocalStorage".equals(command.getName())) { //$NON-NLS-1$
             onConfigureLocalStorage();
-        }
-        else if (NumaSupportModel.SUBMIT_NUMA_SUPPORT.equals(command.getName())) {
+        } else if (NumaSupportModel.SUBMIT_NUMA_SUPPORT.equals(command.getName())) {
             onNumaSupport();
         }
     }

@@ -361,26 +361,19 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         super.executeCommand(command);
         if (command.equals(getAddParameterCommand())) {
             addParameter();
-        }
-        else if (command.getName().equals("OnSetParameter")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnSetParameter")) { //$NON-NLS-1$
             onSetParameter();
-        }
-        else if (command.getName().equals("OnCancel")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnCancel")) { //$NON-NLS-1$
             cancel();
-        }
-        else if (command.equals(getEditParameterCommand())) {
+        } else if (command.equals(getEditParameterCommand())) {
             editParameter();
-        }
-        else if (command.equals(getResetParameterCommand())) {
+        } else if (command.equals(getResetParameterCommand())) {
             resetParameter();
-        }
-        else if (command.getName().equals("OnResetParameter")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnResetParameter")) { //$NON-NLS-1$
             onResetParameter();
-        }
-        else if (command.equals(getResetAllParameterCommand())) {
+        } else if (command.equals(getResetAllParameterCommand())) {
             resetAllParameters();
-        }
-        else if (command.getName().equals("OnResetAllParameters")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnResetAllParameters")) { //$NON-NLS-1$
             onResetAllParameters();
         }
     }

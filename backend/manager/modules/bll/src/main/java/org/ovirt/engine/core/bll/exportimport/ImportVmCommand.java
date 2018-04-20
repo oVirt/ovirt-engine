@@ -1364,8 +1364,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     private void checkTrustedService() {
         if (getVm().isTrustedService() && !getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED);
-        }
-        else if (!getVm().isTrustedService() && getCluster().supportsTrustedService()) {
+        } else if (!getVm().isTrustedService() && getCluster().supportsTrustedService()) {
             auditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }

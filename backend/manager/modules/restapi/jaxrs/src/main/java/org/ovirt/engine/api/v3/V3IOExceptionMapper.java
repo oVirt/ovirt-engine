@@ -68,8 +68,7 @@ public class V3IOExceptionMapper implements ExceptionMapper<IOException> {
             V3UsageFinder finder = new V3UsageFinder();
             V3UsageMessage usage = finder.getUsageMessage(uriInfo, request);
             return Response.status(Status.BAD_REQUEST).entity(usage).build();
-        }
-        catch (Exception error) {
+        } catch(Exception error) {
             throw new WebApplicationException(error, Response.status(Status.INTERNAL_SERVER_ERROR).build());
         }
     }

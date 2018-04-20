@@ -97,9 +97,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     getVdsmTaskId());
 
             clearAsyncTask();
-        }
-
-        else if (entityInfo.shouldEndAction() && !hasRunningChildCommands()) {
+        } else if (entityInfo.shouldEndAction() && !hasRunningChildCommands()) {
             log.info(
                     "CommandAsyncTask::endActionIfNecessary: All tasks of command '{}' has ended -> executing 'endAction'",
                     getCommandId());
@@ -165,16 +163,12 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 log.error(getErrorMessage(), ex);
                 endActionRuntimeException = true;
             }
-        }
-
-        catch (RuntimeException Ex2) {
+        } catch (RuntimeException Ex2) {
             log.error("CommandAsyncTask::endCommandAction [within thread]: An exception has been thrown (not"
                             + " related to 'endAction' itself)",
                     Ex2);
             endActionRuntimeException = true;
-        }
-
-        finally {
+        } finally {
             // if a RuntimeExcpetion occurs we clear the task from db and perform no other action
             if (endActionRuntimeException) {
                 handleEndActionRuntimeException(entityInfo, dbAsyncTask);
@@ -206,9 +200,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     _multiTasksByCommandIds.remove(commandInfo.getCommandId());
                 }
             }
-        }
-
-        catch (RuntimeException ex) {
+        } catch (RuntimeException ex) {
             log.error("CommandAsyncTask::HandleEndActionResult [within thread]: an exception has been thrown", ex);
         }
     }
@@ -228,9 +220,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                         actionType);
 
                     commandInfo.repoll();
-                }
-
-                else {
+                } else {
                     log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
                                     + " '{}' {}succeeded, clearing tasks.",
                         actionType,
@@ -247,9 +237,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                         }
                     }
                 }
-        }
-
-        catch (RuntimeException ex) {
+        } catch (RuntimeException ex) {
             log.error("CommandAsyncTask::HandleEndActionResult [within thread]: an exception has been thrown", ex);
         }
     }

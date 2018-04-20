@@ -36,9 +36,7 @@ public class DiskContainersColumn extends AbstractTextColumn<Disk> implements Co
             }
 
             return entityName;
-        }
-
-        else {
+        } else {
             return object.getNumberOfVms() + " " + entityType + "s"; //$NON-NLS-1$ //$NON-NLS-2$
         }
     }

@@ -201,8 +201,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
                 contentModel.setMessage(ConstantsManager.getInstance()
                         .getConstants()
                         .viewContentErrorGlusterHook());
-            }
-            else if (content.length() == 0) {
+            } else if (content.length() == 0) {
                 contentModel.getContent().setIsAvailable(false);
                 contentModel.setMessage(ConstantsManager.getInstance()
                         .getConstants()
@@ -391,14 +390,12 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
             allowDisable = false;
             allowViewContent = false;
             allowResolveConflict = false;
-        }
-        else {
+        } else {
             for (Object item : getSelectedItems()) {
                 GlusterHookEntity hook = (GlusterHookEntity) item;
                 if (hook.getStatus() == GlusterHookStatus.ENABLED) {
                     allowEnable = false;
-                }
-                else if (hook.getStatus() == GlusterHookStatus.DISABLED) {
+                } else if (hook.getStatus() == GlusterHookStatus.DISABLED) {
                     allowDisable = false;
                 }
                 if (!allowEnable && !allowDisable) {
@@ -448,29 +445,21 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
         super.executeCommand(command);
         if (command.equals(getEnableHookCommand())) {
             enableHook();
-        }
-        else if (command.equals(getDisableHookCommand())) {
+        } else if (command.equals(getDisableHookCommand())) {
             disableHook();
-        }
-        else if (command.getName().equals("OnDisableHook")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnDisableHook")) { //$NON-NLS-1$
             onDisableHook();
-        }
-        else if (command.getName().equals("OnCancelConfirmation")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnCancelConfirmation")) { //$NON-NLS-1$
             cancelConfirmation();
-        }
-        else if (command.equals(getViewHookCommand())) {
+        } else if (command.equals(getViewHookCommand())) {
             viewHook();
-        }
-        else if (command.equals(getResolveConflictsCommand())) {
+        } else if (command.equals(getResolveConflictsCommand())) {
             resolveConflicts();
-        }
-        else if (command.getName().equals("OnResolveConflicts")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnResolveConflicts")) { //$NON-NLS-1$
             onResolveConflicts();
-        }
-        else if (command.equals(getSyncWithServersCommand())) {
+        } else if (command.equals(getSyncWithServersCommand())) {
             syncWithServers();
-        }
-        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+        } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
         }
     }

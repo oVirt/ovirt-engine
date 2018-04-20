@@ -81,8 +81,7 @@ public class MappingLocator {
                             new MethodInvokerMapper(method, mapping.to()));
                     }
                 }
-            }
-            catch (ClassNotFoundException exception) {
+            } catch (ClassNotFoundException exception) {
                 log.error(
                     "Error while trying to load mapper class \"{}\".",
                     className,

@@ -52,8 +52,7 @@ public class BackendOpenStackVolumeProviderResourceTest
         try {
             new BackendOpenStackVolumeProviderResource("foo", resource.getParent());
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }
@@ -131,8 +130,7 @@ public class BackendOpenStackVolumeProviderResourceTest
         try {
             resource.update(getModel(0));
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
@@ -147,8 +145,7 @@ public class BackendOpenStackVolumeProviderResourceTest
         try {
             resource.update(model);
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyImmutabilityConstraint(wae);
         }
     }

@@ -205,8 +205,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             processVmOnDown();
             ExecutionHandler.setAsyncJob(getExecutionContext(), false);
             executionHandler.endJob(getExecutionContext(), false);
-        }
-        finally {
+        } finally {
             freeLock();
         }
     }
@@ -231,8 +230,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             log();
             ExecutionHandler.setAsyncJob(getExecutionContext(), false);
             executionHandler.endJob(getExecutionContext(), true);
-        }
-        finally {
+        } finally {
             freeLock();
         }
     }
@@ -248,8 +246,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                     && !executionContext.isCompleted()) {
                 endExecutionMonitoring();
             }
-        }
-        finally {
+        } finally {
             freeLock();
         }
     }

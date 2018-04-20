@@ -67,8 +67,7 @@ public class BackendVmTagResourceTest extends AbstractBackendSubResourceTest<Tag
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
@@ -79,8 +78,7 @@ public class BackendVmTagResourceTest extends AbstractBackendSubResourceTest<Tag
         try {
             resource.remove();
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(404, wae.getResponse().getStatus());
         }

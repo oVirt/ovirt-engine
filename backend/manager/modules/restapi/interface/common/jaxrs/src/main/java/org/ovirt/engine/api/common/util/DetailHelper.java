@@ -182,14 +182,12 @@ public class DetailHelper {
                                 if (StringUtils.isNotEmpty(chunk)) {
                                     details.add(chunk);
                                 }
-                            }
-                            else if (chunk.startsWith("-")) {
+                            } else if (chunk.startsWith("-")) {
                                 chunk = chunk.substring(1).trim();
                                 if (StringUtils.isNotEmpty(chunk)) {
                                     details.remove(chunk);
                                 }
-                            }
-                            else {
+                            } else {
                                 details.add(chunk);
                             }
                         }

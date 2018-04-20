@@ -193,8 +193,7 @@ public class PreviewSnapshotModel extends Model {
                 if (diskSnapshotsMap.containsKey(diskImage.getId())) {
                     disksListModel = diskSnapshotsMap.get(diskImage.getId());
                     ((ArrayList<DiskImage>) disksListModel.getItems()).add(diskImage);
-                }
-                else {
+                } else {
                     disksListModel = new ListModel();
                     disksListModel.setItems(new ArrayList<>(Arrays.asList(diskImage)));
                 }

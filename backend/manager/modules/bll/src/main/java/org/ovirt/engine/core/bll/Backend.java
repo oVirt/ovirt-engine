@@ -395,8 +395,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                         ConfigCommon.defaultConfigurationVersion).getOptionValue();
         if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
             return getErrorCommandReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
-        }
-        else if (EngineWorkingMode.PREPARE.name().equalsIgnoreCase(mode)) {
+        } else if (EngineWorkingMode.PREPARE.name().equalsIgnoreCase(mode)) {
             return notAllowedInPrepForMaintMode(actionType);
         }
         return null;
@@ -425,8 +424,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             result.getValidationMessages().add(EngineMessage.ACTION_TYPE_NON_MONITORED.toString());
             result.setValid(false);
             result.setSucceeded(false);
-        }
-        else {
+        } else {
             if (!runAsInternal) {
                 logExecution(parameters.getSessionId(), String.format("command %s", actionType));
             }

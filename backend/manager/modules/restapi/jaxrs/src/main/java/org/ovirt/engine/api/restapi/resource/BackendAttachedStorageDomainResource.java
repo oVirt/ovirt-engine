@@ -87,8 +87,7 @@ public class BackendAttachedStorageDomainResource
             RemoveStorageDomainParameters params = new RemoveStorageDomainParameters(guid);
             params.setDoFormat(true);
             return performAction(ActionType.RemoveStorageDomain, params);
-        }
-        else {
+        } else {
             DetachStorageDomainFromPoolParameters params = new DetachStorageDomainFromPoolParameters(guid, dataCenterId);
             return performAction(ActionType.DetachStorageDomainFromPool, params);
         }

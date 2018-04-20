@@ -84,8 +84,7 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
                 // manual client-side filter
                 // TODO: Use filtering and pagination options by GetErrataCountsParameters.setErrataFilter(filter)
                 setItems(filter(unfilteredResultList));
-            }
-            else {
+            } else {
                 setMessage(constants.katelloProblemRetrievingErrata() + " " + returnValue.getExceptionMessage()); //$NON-NLS-1$
             }
         });

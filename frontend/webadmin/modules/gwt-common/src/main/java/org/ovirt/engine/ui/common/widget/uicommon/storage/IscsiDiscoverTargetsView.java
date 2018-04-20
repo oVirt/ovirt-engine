@@ -163,8 +163,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
             String propName = args.propertyName;
             if (propName.equals("ProposeDiscoverTargets")) { //$NON-NLS-1$
                 setProposeDiscover(object.getProposeDiscoverTargets());
-            }
-            else if (propName.equals("Message")) { //$NON-NLS-1$
+            } else if (propName.equals("Message")) { //$NON-NLS-1$
                 messageLabel.setText(object.getMessage());
             }
         });

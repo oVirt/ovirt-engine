@@ -76,8 +76,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
             reportNonOperationReason(NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER,
                                      Config.<HashSet<Version>> getValue(ConfigValues.SupportedVDSMVersions).toString(),
                                      vdsmVersion.toString());
-        }
-        else if (!VersionSupport.checkClusterVersionSupported(cluster.getCompatibilityVersion(), vds)) {
+        } else if (!VersionSupport.checkClusterVersionSupported(cluster.getCompatibilityVersion(), vds)) {
             reportNonOperationReason(NonOperationalReason.CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER,
                                      cluster.getCompatibilityVersion().toString(),
                                      vds.getSupportedClusterLevels());

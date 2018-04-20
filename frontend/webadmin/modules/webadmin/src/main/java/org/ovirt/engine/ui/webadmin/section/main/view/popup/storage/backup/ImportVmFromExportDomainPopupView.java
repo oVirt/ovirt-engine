@@ -667,8 +667,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             } else if (args.propertyName.equals("Message")) { //$NON-NLS-1$
                 message.setText(object.getMessage());
                 message.setVisible(StringHelper.isNotNullOrEmpty(object.getMessage()));
-            }
-            else if (args.propertyName.equals("InvalidVm")) { //$NON-NLS-1$
+            } else if (args.propertyName.equals("InvalidVm")) { //$NON-NLS-1$
                 table.redraw();
             }
         });

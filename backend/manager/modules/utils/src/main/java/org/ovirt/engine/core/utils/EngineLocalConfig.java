@@ -33,8 +33,7 @@ public class EngineLocalConfig extends ShellLikeConfd {
     public static EngineLocalConfig getInstance(Map<String, String> values) {
         if (values != null) {
             instance = new EngineLocalConfig(values);
-        }
-        else {
+        } else {
             if (instance == null) {
                 synchronized(EngineLocalConfig.class) {
                     if (instance == null) {

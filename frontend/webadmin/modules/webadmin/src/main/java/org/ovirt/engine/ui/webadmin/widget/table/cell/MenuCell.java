@@ -74,13 +74,11 @@ public class MenuCell<T> extends AbstractCell<T> {
             if (parent.getFirstChildElement().isOrHasChild(Element.as(eventTarget))) {
                 menuPanelPopup.asPopupPanel().showAndFitToScreen(eventX, eventY);
             }
-        }
-        else if(BrowserEvents.MOUSEOVER.equals(event.getType())) {
+        } else if (BrowserEvents.MOUSEOVER.equals(event.getType())) {
             if (isVisible(value)) {
                 parent.getFirstChildElement().getStyle().setBorderColor("#96B7D6"); //$NON-NLS-1$
             }
-        }
-        else {
+        } else {
             parent.getFirstChildElement().getStyle().setBorderColor("transparent"); //$NON-NLS-1$
         }
     }

@@ -76,8 +76,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 roleName = role.getName();
                 perm.setRoleName(roleName);
             }
-        }
-        else if (roleName != null) {
+        } else if (roleName != null) {
             role = roleDao.getByName(roleName);
             if (role != null) {
                 roleId = role.getId();
@@ -137,8 +136,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             DbUser existing = dbUserDao.getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 user = existing;
-            }
-            else {
+            } else {
                 user = addUser(user);
                 if (user == null) {
                     setSucceeded(false);
@@ -154,8 +152,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             DbGroup existing = dbGroupDao.getByIdOrExternalId(id, directory, externalId);
             if (existing != null) {
                 group = existing;
-            }
-            else {
+            } else {
                 group = addGroup(group);
                 if (group == null) {
                     setSucceeded(false);
@@ -169,11 +166,9 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         Guid principalId;
         if (user != null) {
             principalId = user.getId();
-        }
-        else if (group != null) {
+        } else if (group != null) {
             principalId = group.getId();
-        }
-        else {
+        } else {
             principalId = parameters.getPermission().getAdElementId();
         }
 

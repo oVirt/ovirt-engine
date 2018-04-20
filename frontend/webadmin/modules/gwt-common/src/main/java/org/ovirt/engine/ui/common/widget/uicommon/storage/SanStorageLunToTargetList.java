@@ -159,8 +159,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                     updateSelectedLunWarning(selectedLunModel);
                 }
             });
-        }
-        else {
+        } else {
             table.getSelectionModel().setSelected(rootModel, rootModel.getIsSelected());
             table.getSelectionModel().addSelectionChangeHandler(event -> model.updateLunWarningForDiscardAfterDelete());
         }

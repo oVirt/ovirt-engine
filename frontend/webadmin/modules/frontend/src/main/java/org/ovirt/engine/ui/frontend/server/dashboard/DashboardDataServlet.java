@@ -196,8 +196,7 @@ public class DashboardDataServlet extends HttpServlet {
         } else {
             try (Connection c = dwhDataSource.getConnection()) {
                 isOk = true;
-            }
-            catch (SQLException e) {
+            } catch (SQLException e) {
                 log.warn("Could not establish a connection to the DWH via the DWH DataSource: {}", e.getMessage()); //$NON-NLS-1$
                 isOk = false;
             }

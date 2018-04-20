@@ -113,8 +113,7 @@ public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> e
             // Get disks from the specified parameters or according to the VM
             if (getParameters().getDiskIds() == null) {
                 cachedSelectedActiveDisks = imagesAndCinderForVm;
-            }
-            else {
+            } else {
                 // Get selected images from 'DiskImagesForVm' to ensure disks entities integrity
                 // (i.e. only images' IDs and Cinders' IDs are relevant).
                 cachedSelectedActiveDisks = getDiskImagesForVm().stream()

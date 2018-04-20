@@ -207,8 +207,7 @@ public class VmValidatorTest extends BaseCommandTest {
             // If the VM has plugged disks using ISCSI reservation the validation should fail
             assertThat(validator.isVmPluggedDiskNotUsingScsiReservation(),
                     failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION));
-        }
-        else {
+        } else {
             assertThat(validator.isVmPluggedDiskNotUsingScsiReservation(), isValid());
         }
     }

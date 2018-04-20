@@ -517,8 +517,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     // ADUSER/ADGROUP<profile>::<query>
                     if (searchText.startsWith(COLON)) {
                         searchText = prefix + searchText;
-                    }
-                    else {
+                    } else {
                         searchText = prefix + COLON + searchText;
                     }
                     curSyntaxChecker = SyntaxCheckerFactory.createADSyntaxChecker(LDAP);

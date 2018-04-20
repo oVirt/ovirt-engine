@@ -313,8 +313,7 @@ public class CloudInitHandler {
             @SuppressWarnings("unchecked")
             List<Map<String, String>> mdFiles = (ArrayList<Map<String, String>>) metaData.get("files");
             mdFiles.add(mdEntry);
-        }
-        else {
+        } else {
             metaData.put("network_config", mdEntry);
         }
 

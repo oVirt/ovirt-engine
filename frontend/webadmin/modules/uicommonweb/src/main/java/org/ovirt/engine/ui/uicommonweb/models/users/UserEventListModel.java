@@ -12,8 +12,7 @@ public class UserEventListModel extends SubTabEventListModel<DbUser> {
 
         if (getEntity() != null) {
             getSearchCommand().execute();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

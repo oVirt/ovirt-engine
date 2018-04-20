@@ -108,8 +108,7 @@ public class V3HostServer extends V3Server<HostResource> {
         if (force) {
             try {
                 getDelegate().refresh(new Action());
-            }
-            catch (WebApplicationException exception) {
+            } catch (WebApplicationException exception) {
                 throw adaptException(exception);
             }
         }

@@ -94,8 +94,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
                 caseSensitive
             );
             return "(" + loginSql + " AND " + directorySql + ")";
-        }
-        else {
+        } else {
             return super.buildConditionSql(
                 objName,
                 fieldName,

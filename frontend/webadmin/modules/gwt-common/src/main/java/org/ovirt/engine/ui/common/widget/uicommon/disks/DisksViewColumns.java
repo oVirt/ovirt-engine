@@ -207,8 +207,7 @@ public class DisksViewColumns {
         public SafeHtml getTooltip(Disk object) {
             if (object.getVmEntityType() == null) {
                 return SafeHtmlUtils.fromSafeConstant(constants.unattachedDisk());
-            }
-            else {
+            } else {
                 String status = EnumTranslator.getInstance().translate(object.getVmEntityType());
                 return SafeHtmlUtils.fromString(status);
             }
@@ -507,8 +506,7 @@ public class DisksViewColumns {
         if (sortBy == null ) {
             // Client sorting
             column.makeSortable();
-        }
-        else if (!sortBy.equals(constants.empty())) {
+        } else if (!sortBy.equals(constants.empty())) {
             // Server sorting
             column.makeSortable(sortBy);
         }

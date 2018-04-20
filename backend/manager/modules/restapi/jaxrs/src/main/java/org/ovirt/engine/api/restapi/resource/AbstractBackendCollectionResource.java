@@ -82,8 +82,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             // sure that the order of the search list is preserved, as the user my have specified 'sort by ...' as one
             // of the search criteria.
             return safeIntersection(searchList, filteredList);
-        }
-        else {
+        } else {
             return filteredList;
         }
     }

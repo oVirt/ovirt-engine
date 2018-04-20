@@ -44,12 +44,10 @@ public class EndExternalStepCommand <T extends EndExternalStepParameters> extend
         if (step == null) {
             retValue = false;
             addValidationMessage(EngineMessage.ACTION_TYPE_NO_STEP);
-        }
-        else if (!step.isExternal()) {
+        } else if (!step.isExternal()) {
             retValue = false;
             addValidationMessage(EngineMessage.ACTION_TYPE_NOT_EXTERNAL);
-        }
-        else {
+        } else {
             job = jobDao.get(step.getJobId());
             if (job == null) {
                 retValue = false;

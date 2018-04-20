@@ -62,8 +62,7 @@ public class ConnectStorageToVdsCommandTest extends BaseCommandTest {
         ValidationResult result = command.validateMountOptions();
         if (shouldSucceed) {
             assertTrue(result.isValid());
-        }
-        else {
+        } else {
             assertThat(result, failsWith(EngineMessage.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY));
         }
     }

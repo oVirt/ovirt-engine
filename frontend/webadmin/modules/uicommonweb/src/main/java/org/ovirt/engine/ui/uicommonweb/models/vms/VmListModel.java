@@ -1092,8 +1092,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 confirmModel.getCommands().add(tempVar);
                 UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
                 confirmModel.getCommands().add(tempVar2);
-            }
-            else {
+            } else {
                 if (model.getProgress() != null) {
                     return;
                 }
@@ -1107,8 +1106,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                             cancel();
                         }, model);
             }
-        }
-        else {
+        } else {
             if (model.getProgress() != null) {
                 return;
             }
@@ -1286,11 +1284,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         if (!model.validate(false)) {
             model.setIsValid(false);
-        }
-        else  if (model.getIsSubTemplate().getEntity()) {
+        } else  if (model.getIsSubTemplate().getEntity()) {
             postNameUniqueCheck();
-        }
-        else {
+        } else {
             String name = model.getName().getEntity();
 
             // Check name unicitate.
@@ -1308,8 +1304,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                                     VmModel.getName().setIsValid(false);
                                     VmModel.setIsValid(false);
                                     VmModel.fireValidationCompleteEvent();
-                                }
-                                else {
+                                } else {
                                     postNameUniqueCheck();
                                 }
 
@@ -1415,8 +1410,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                         cancel();
 
                     }, model);
-        }
-        else {
+        } else {
             ArrayList<ActionParametersBase> list = new ArrayList<>();
             for (Object item : getSelectedItems()) {
                 VM vm = (VM) item;
@@ -1480,12 +1474,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         if (actionName.equals(SHUTDOWN)) {
             model.setHelpTag(HelpTag.shutdown_virtual_machine);
             model.setHashName("shutdown_virtual_machine"); //$NON-NLS-1$
-        }
-        else if (actionName.equals(STOP)) {
+        } else if (actionName.equals(STOP)) {
             model.setHelpTag(HelpTag.stop_virtual_machine);
             model.setHashName("stop_virtual_machine"); //$NON-NLS-1$
-        }
-        else if (actionName.equals(REBOOT)) {
+        } else if (actionName.equals(REBOOT)) {
             model.setHelpTag(HelpTag.reboot_virtual_machine);
             model.setHashName("reboot_virtual_machine"); //$NON-NLS-1$
         }
@@ -1819,8 +1811,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                         confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
 
                         setConfirmWindow(confirmModel);
-                    }
-                    else {
+                    } else {
                         updateExistingVm(false);
                     }
                 }
@@ -1835,8 +1826,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                     return false;
                 }
             }));
-        }
-        else {
+        } else {
             updateExistingVm(false);
         }
     }
@@ -1878,15 +1868,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                             VmManagementParametersBase updateVmParams = vmListModel.getUpdateVmParameters(applyCpuChangesLater);
                             Frontend.getInstance().runAction(ActionType.UpdateVm,
                                     updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
-                        }
-                        else {
+                        } else {
                             vmListModel.getWindow().stopProgress();
                         }
 
                     },
                     this);
-        }
-        else {
+        } else {
             model.startProgress();
             VmManagementParametersBase updateVmParams = getUpdateVmParameters(applyCpuChangesLater);
             Frontend.getInstance().runAction(ActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
@@ -2117,32 +2105,25 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             cloneVm();
         } else if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getEditConsoleCommand()) {
+        } else if (command == getEditConsoleCommand()) {
             editConsole();
-        }
-        else if (command == getConsoleConnectCommand()) {
+        } else if (command == getConsoleConnectCommand()) {
             connectToConsoles();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if (command == getRunCommand()) {
+        } else if (command == getRunCommand()) {
             run();
-        }
-        else if (command == getPauseCommand()) {
+        } else if (command == getPauseCommand()) {
             pause();
         } else if (command == getStopCommand()) {
             stop();
         } else if (command == getShutdownCommand()) {
             shutdown();
-        }
-        else if (command == getRebootCommand()) {
+        } else if (command == getRebootCommand()) {
             reboot();
         } else if (command == getMigrateCommand()) {
             migrate();
-        }
-        else if (command == getNewTemplateCommand()) {
+        } else if (command == getNewTemplateCommand()) {
             newTemplate();
         } else if (command == getRunOnceCommand()) {
             runOnce();
@@ -2150,89 +2131,62 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             export();
         } else if (command == getExportOvaCommand()) {
             exportOva();
-        }
-        else if (command == getCreateSnapshotCommand()) {
+        } else if (command == getCreateSnapshotCommand()) {
             createSnapshot();
-        }
-        else if (command == getGuideCommand()) {
+        } else if (command == getGuideCommand()) {
             guide();
-        }
-        else if (command == getRetrieveIsoImagesCommand()) {
+        } else if (command == getRetrieveIsoImagesCommand()) {
             retrieveIsoImages();
-        }
-        else if (command == getChangeCdCommand()) {
+        } else if (command == getChangeCdCommand()) {
             changeCD();
-        }
-        else if (command == getAssignTagsCommand()) {
+        } else if (command == getAssignTagsCommand()) {
             assignTags();
-        }
-        else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             preSave();
-        }
-        else if ("PreSavePhase2".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("PreSavePhase2".equals(command.getName())) { //$NON-NLS-1$
             preSavePhase2();
-        }
-        else if ("PreSavePhase3".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("PreSavePhase3".equals(command.getName())) { //$NON-NLS-1$
             preSavePhase3();
             cancelConfirmation();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("OnClone".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnClone".equals(command.getName())) { //$NON-NLS-1$
             onClone();
-        }
-        else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
             onExport();
-        }
-        else if ("OnExportOva".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnExportOva".equals(command.getName())) { //$NON-NLS-1$
             onExportOva();
-        }
-        else if ("OnExportNoTemplates".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnExportNoTemplates".equals(command.getName())) { //$NON-NLS-1$
             onExportNoTemplates();
-        }
-        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
-        }
-        else if ("OnRunOnce".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRunOnce".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnNewTemplate".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnNewTemplate".equals(command.getName())) { //$NON-NLS-1$
 
             onNewTemplate();
-        }
-        else if ("OnMigrate".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnMigrate".equals(command.getName())) { //$NON-NLS-1$
             onMigrate();
-        }
-        else if (command == getCancelMigrateCommand()) {
+        } else if (command == getCancelMigrateCommand()) {
             cancelMigration();
-        }
-        else if (command == getCancelConvertCommand()) {
+        } else if (command == getCancelConvertCommand()) {
             cancelConversion();
-        }
-        else if ("OnShutdown".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnShutdown".equals(command.getName())) { //$NON-NLS-1$
             onShutdown();
-        }
-        else if ("OnStop".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnStop".equals(command.getName())) { //$NON-NLS-1$
             onStop();
-        }
-        else if ("OnReboot".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnReboot".equals(command.getName())) { //$NON-NLS-1$
             onReboot();
-        }
-        else if ("OnChangeCD".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnChangeCD".equals(command.getName())) { //$NON-NLS-1$
             onChangeCD();
-        }
-        else if (command.getName().equals("closeVncInfo") || // $NON-NLS-1$
+        } else if (command.getName().equals("closeVncInfo") || // $NON-NLS-1$
                 "OnEditConsoleSave".equals(command.getName())) { //$NON-NLS-1$
             setWindow(null);
-        }
-        else if ("updateExistingVm".equals(command.getName())) { // $NON-NLS-1$
+        } else if ("updateExistingVm".equals(command.getName())) { // $NON-NLS-1$
             VmNextRunConfigurationModel model = (VmNextRunConfigurationModel) getConfirmWindow();
             if (!model.validate()) {
                 return;
@@ -2240,14 +2194,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
             updateExistingVm(model.getApplyLater().getEntity());
             cancelConfirmation();
-        }
-        else if ("ClearCpuPinning".equals(command.getName())) { // $NON-NLS-1$
+        } else if ("ClearCpuPinning".equals(command.getName())) { // $NON-NLS-1$
             clearCpuPinning();
-        }
-        else if (CMD_CONFIGURE_VMS_TO_IMPORT.equals(command.getName())) {
+        } else if (CMD_CONFIGURE_VMS_TO_IMPORT.equals(command.getName())) {
             onConfigureVmsToImport();
-        }
-        else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
+        } else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
             UnitVmModel model = (UnitVmModel) getWindow();
             if (!model.validate()) {
                 return;
@@ -2401,8 +2352,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             if (returnValue instanceof QueryReturnValue) {
                 importVmsModel.setError(messages.providerFailure());
                 importVmsModel.stopProgress();
-            }
-            else {
+            } else {
                 List<VM> remoteVms = (List<VM>) returnValue;
                 List<VM> remoteDownVms = new ArrayList<>();
                 List<VM> nonRetrievedVms = new ArrayList<>();

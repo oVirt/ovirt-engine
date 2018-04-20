@@ -130,8 +130,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
                 || ACTIVE_VMS.equals(fieldName) || NETWORK_USAGE.equals(fieldName)
                 || COMMITTED_MEM.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
-        }
-        else {
+        } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
         }
     }
@@ -141,16 +140,13 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         IConditionValueAutoCompleter retval = null;
         if (STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VDSStatus.class);
-        }
-        else if (EXTERNAL_STATUS.equals(fieldName)) {
+        } else if (EXTERNAL_STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ExternalStatus.class);
-        }
-        else if (TYPE.equals(fieldName)) {
+        } else if (TYPE.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VDSNiceType.class);
         } else if (ARCHITECTURE.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(ArchitectureType.class);
-        }
-        else if (UPDATE_AVAILABLE.equals(fieldName)) {
+        } else if (UPDATE_AVAILABLE.equals(fieldName)) {
             retval = new BitValueAutoCompleter();
         }
         return retval;

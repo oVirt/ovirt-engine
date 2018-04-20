@@ -128,8 +128,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                 setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                 postInitStorageDomains();
             }), storages.get(0).getStoragePoolId());
-        }
-        else {
+        } else {
             postInitStorageDomains();
         }
     }
@@ -258,8 +257,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             closeCommand.setIsDefault(true);
             closeCommand.setIsCancel(true);
             getCommands().add(closeCommand);
-        }
-        else {
+        } else {
             if (!problematicDisks.isEmpty()) {
                 setMessage(getWarning(problematicDisks));
             }

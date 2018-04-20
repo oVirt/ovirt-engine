@@ -470,8 +470,7 @@ public class RsdlBuilder {
         if (parametersSets.isEmpty()) {
             parametersSet = new ParametersSet();
             parametersSets.add(parametersSet);
-        }
-        else {
+        } else {
             parametersSet = parametersSets.get(0);
         }
         parametersSet.getParameters().add(parameter);

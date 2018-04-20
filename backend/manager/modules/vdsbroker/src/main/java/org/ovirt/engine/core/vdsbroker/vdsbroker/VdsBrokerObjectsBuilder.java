@@ -560,8 +560,7 @@ public class VdsBrokerObjectsBuilder {
             String fqdn = vm.getFqdn().trim();
             if ("localhost".equalsIgnoreCase(fqdn) || "localhost.localdomain".equalsIgnoreCase(fqdn)) {
                 vm.setFqdn(null);
-            }
-            else {
+            } else {
                 vm.setFqdn(fqdn);
             }
         }

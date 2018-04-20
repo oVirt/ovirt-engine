@@ -177,8 +177,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         // GWT lacks support of reflection.
         if (((String) Config.getValue(ConfigValues.DBEngine)).equalsIgnoreCase("postgres")) {
             return new PostgresSqlInjectionChecker();
-        }
-        else {
+        } else {
             throw new IllegalStateException("Failed to get correct sql injection checker instance name :"
                     + SqlInjectionChecker.class);
         }
@@ -433,9 +432,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     } else if (orAC.validate(nextObject)) {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.OR, nextObject, curStartPos, idx + 1);
                         curStartPos = idx + 1;
-                    }
-
-                    else if (!curConditionFieldAC.validateCompletion(nextObject)
+                    } else if (!curConditionFieldAC.validateCompletion(nextObject)
                             && !sortbyAC.validateCompletion(nextObject)
                             && !searchObjectAC.validateCompletion(nextObject)
                             && !andAC.validateCompletion(nextObject) && !orAC.validateCompletion(nextObject)) {
@@ -714,8 +711,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                             SearchObjects.AUDIT_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.AUDIT_OBJ_NAME);
                 }
-            }
-            else if (SearchObjects.VDS_OBJ_NAME.equals(searchObjStr)) {
+            } else if (SearchObjects.VDS_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.VDS_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME, useTags));
@@ -733,8 +729,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                             SearchObjects.TEMPLATE_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
-            }
-            else if (SearchObjects.VDC_USER_OBJ_NAME.equals(searchObjStr)) {
+            } else if (SearchObjects.VDC_USER_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.VDS_OBJ_NAME)) {
                     innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.VDC_USER_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME, useTags));
@@ -752,8 +747,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                             SearchObjects.TEMPLATE_OBJ_NAME, useTags));
                     refObjList.remove(SearchObjects.TEMPLATE_OBJ_NAME);
                 }
-            }
-            else if (SearchObjects.AUDIT_OBJ_NAME.equals(searchObjStr)) {
+            } else if (SearchObjects.AUDIT_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.TEMPLATE_OBJ_NAME)) {
                     innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.AUDIT_OBJ_NAME,
                             SearchObjects.VM_OBJ_NAME, useTags));
@@ -764,8 +758,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                         refObjList.remove(SearchObjects.VM_OBJ_NAME);
                     }
                 }
-            }
-            else if (SearchObjects.DISK_OBJ_NAME.equals(searchObjStr)) {
+            } else if (SearchObjects.DISK_OBJ_NAME.equals(searchObjStr)) {
                 if (refObjList.contains(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)) {
                     innerJoins.addFirst(searchObjectAC.getInnerJoin(SearchObjects.DISK_OBJ_NAME,
                             SearchObjects.VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME, useTags));
@@ -958,8 +951,7 @@ public class SyntaxChecker implements ISyntaxChecker {
 
         if (sortExpr.indexOf("(") > 0) {
             return StringFormat.format("SELECT %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement, wherePhrase);
-        }
-        else {
+        } else {
             return StringFormat.format("SELECT %5$s %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement, wherePhrase, useDistinct ? "distinct" : "");
         }
     }

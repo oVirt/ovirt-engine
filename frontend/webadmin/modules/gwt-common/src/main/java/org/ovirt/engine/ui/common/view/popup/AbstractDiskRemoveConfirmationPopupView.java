@@ -45,8 +45,7 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
 
         if (isInVm && disk.getNumberOfVms() > 1) {
             notes.add(messages.diskAttachedToOtherVMs(disk.getNumberOfVms() - 1, disk.getVmNames().get(0)));
-        }
-        else if (!isInVm && disk.getNumberOfVms() > 0) {
+        } else if (!isInVm && disk.getNumberOfVms() > 0) {
             notes.add(messages.diskAttachedToVMs(disk.getNumberOfVms()));
         }
 

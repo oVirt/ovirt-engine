@@ -388,8 +388,7 @@ public class BaseBackendResource {
             if (!user.isAdmin()) {
                 LocalConfig config = LocalConfig.getInstance();
                 result = config.getFilterByDefault();
-            }
-            else {
+            } else {
                 result = Boolean.FALSE;
             }
         }

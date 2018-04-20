@@ -138,10 +138,8 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
                 networkError.fire(networkException);
             }
             throw networkException;
-        }
-
-        // TODO: look for invalid certificates error handling
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
+            // TODO: look for invalid certificates error handling
             printReturnValue();
             if (getAndSetVdsStatic() == null) {
                 log.error("Failed in '{}' method, for vds id: '{}': {}",

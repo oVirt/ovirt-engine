@@ -59,8 +59,7 @@ public class V3SystemServer extends V3Server<SystemResource> {
             try {
                 V3RSDL rsdl = getRSDL();
                 return Response.ok().entity(rsdl).build();
-            }
-            catch (Exception exception) {
+            } catch (Exception exception) {
                 throw new WebApplicationException(
                     exception,
                     Response.status(Response.Status.INTERNAL_SERVER_ERROR).build()

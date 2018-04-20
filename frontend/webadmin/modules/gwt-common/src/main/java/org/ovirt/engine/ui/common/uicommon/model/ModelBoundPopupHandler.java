@@ -153,10 +153,8 @@ public class ModelBoundPopupHandler<M extends IModel> {
                     sourceModel.setWindowProperty(propertyName, null);
                 }
             }
-        }
-
-        // Close existing popup
-        else if (windowModel == null && currentPopup != null) {
+        } else if (windowModel == null && currentPopup != null) {
+            // Close existing popup
             hideAndClearPopup(propertyName, currentPopup, isConfirmation);
         }
     }

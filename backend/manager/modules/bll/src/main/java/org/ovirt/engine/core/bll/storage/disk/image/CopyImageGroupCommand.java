@@ -249,8 +249,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         StorageDomainStatic destDomain = storageDomainStaticDao.get(getParameters().getStorageDomainId());
         if (destDomain.getStorageType().isBlockDomain() && getParameters().getVolumeType() == VolumeType.Sparse) {
             return VolumeFormat.COW;
-        }
-        else {
+        } else {
             return VolumeFormat.RAW;
         }
     }

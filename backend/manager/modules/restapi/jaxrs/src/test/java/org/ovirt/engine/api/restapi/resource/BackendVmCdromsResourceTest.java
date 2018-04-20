@@ -153,8 +153,7 @@ public class BackendVmCdromsResourceTest
         try {
             collection.add(cdrom);
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyFault(wae, detail);
         }
     }
@@ -168,8 +167,7 @@ public class BackendVmCdromsResourceTest
         try {
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
              verifyIncompleteException(wae, "Cdrom", "add", "file.id");
         }
     }
@@ -180,8 +178,7 @@ public class BackendVmCdromsResourceTest
         try {
             collection.getCdromResource("foo");
             fail("expected WebApplicationException");
-        }
-        catch (WebApplicationException wae) {
+        } catch(WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
     }

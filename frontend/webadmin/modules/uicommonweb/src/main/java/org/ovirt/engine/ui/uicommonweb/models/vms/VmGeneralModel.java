@@ -546,8 +546,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
             setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
                                             + (vm.getGuestMemoryBuffered() / 1024L)  + " / " // $NON-NLS-1$
                                             + (vm.getGuestMemoryCached() / 1024L) + " MB"); //$NON-NLS-1$
-        }
-        else {
+        } else {
             setGuestFreeCachedBufferedMemInfo(null); // Handled in form
         }
 
@@ -597,8 +596,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert()) {
             setAlert(translator.translate(vm.getVmPauseStatus()));
-        }
-        else {
+        } else {
             setAlert(null);
         }
 
@@ -654,8 +652,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
                         }
 
                     }));
-        }
-        else {
+        } else {
             setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
 

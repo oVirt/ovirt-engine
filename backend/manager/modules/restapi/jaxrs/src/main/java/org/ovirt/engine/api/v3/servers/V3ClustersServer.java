@@ -47,8 +47,7 @@ public class V3ClustersServer extends V3Server<ClustersResource> {
         assignCompatiblePolicy(v3Cluster, v4Cluster);
         try {
             return adaptResponse(getDelegate().add(v4Cluster));
-        }
-        catch (WebApplicationException exception) {
+        } catch(WebApplicationException exception) {
             throw adaptException(exception);
         }
     }

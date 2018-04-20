@@ -299,11 +299,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // TODO: oVirt type - here oVirt behaves like power client?
         if (getParameters().isPending()) {
             vdsDynamic.setStatus(VDSStatus.PendingApproval);
-        }
-        else if (getParameters().isProvisioned()) {
+        } else if (getParameters().isProvisioned()) {
             vdsDynamic.setStatus(VDSStatus.InstallingOS);
-        }
-        else if (Config.<Boolean> getValue(ConfigValues.InstallVds)) {
+        } else if (Config.<Boolean> getValue(ConfigValues.InstallVds)) {
             vdsDynamic.setStatus(VDSStatus.Installing);
         }
         vdsDynamicDao.save(vdsDynamic);
@@ -435,8 +433,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
             client.executeCommand(Config.getValue(ConfigValues.GetVdsmIdByVdsmToolCommand), null, out, null);
             return new String(out.toByteArray(), StandardCharsets.UTF_8);
-        }
-        catch (Exception e) {
+        } catch(Exception e) {
             log.warn(
                     "Failed to initiate vdsm-id request on host: {}",
                     e.getMessage()

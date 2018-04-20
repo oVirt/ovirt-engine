@@ -12,8 +12,7 @@ public class HostEventListModel extends SubTabEventListModel<VDS> {
 
         if (getEntity() != null) {
             getSearchCommand().execute();
-        }
-        else {
+        } else {
             setItems(null);
         }
     }

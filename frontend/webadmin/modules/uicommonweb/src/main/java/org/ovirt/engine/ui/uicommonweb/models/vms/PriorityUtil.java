@@ -44,8 +44,7 @@ public class PriorityUtil {
                         postUpdatePriority(callbacks);
 
                     }));
-        }
-        else {
+        } else {
             postUpdatePriority(callbacks);
         }
     }
@@ -80,8 +79,7 @@ public class PriorityUtil {
                     break;
                 }
             }
-        }
-        else {
+        } else {
             model.getPriority().setSelectedItem(Linq.firstOrNull(items));
         }
 

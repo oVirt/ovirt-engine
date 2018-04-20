@@ -644,8 +644,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             if (returnValue instanceof QueryReturnValue) {
                 setError(messages.providerFailure());
                 stopProgress();
-            }
-            else {
+            } else {
                 List<VM> remoteVms = (List<VM>) returnValue;
                 List<VM> remoteDownVms = new ArrayList<>();
                 for (VM vm : remoteVms) {

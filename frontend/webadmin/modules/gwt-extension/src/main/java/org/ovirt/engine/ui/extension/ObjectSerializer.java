@@ -94,14 +94,12 @@ public final class ObjectSerializer {
         } else if (instance instanceof Byte) {
             streamWriter.writeString(TYPE_BYTE);
             streamWriter.writeByte((Byte) instance);
-        }
-        // Handle special (GWT RPC incompatible) classes.
-        else if (SPECIAL_LIST_CLASSES.contains(className)) {
+        } else if (SPECIAL_LIST_CLASSES.contains(className)) {
+            // Handle special (GWT RPC incompatible) classes.
             streamWriter.writeString(TYPE_OBJECT);
             streamWriter.writeObject(new ArrayList((List) instance));
-        }
-        // Fall through to default Object serialization.
-        else {
+        } else {
+            // Fall through to default Object serialization.
             streamWriter.writeString(TYPE_OBJECT);
             streamWriter.writeObject(instance);
         }
@@ -136,9 +134,8 @@ public final class ObjectSerializer {
             return streamReader.readShort();
         } else if (TYPE_BYTE.equals(serializedAsType)) {
             return streamReader.readByte();
-        }
-        // Fall through to default Object deserialization.
-        else {
+        } else {
+            // Fall through to default Object deserialization.
             return streamReader.readObject();
         }
     }

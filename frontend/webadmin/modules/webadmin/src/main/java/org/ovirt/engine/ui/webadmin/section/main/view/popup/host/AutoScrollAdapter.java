@@ -59,8 +59,7 @@ public class AutoScrollAdapter implements
                     int newPosition = Math.max(minPos, currPosition - SCROLL_STEP);
                     sp.setVerticalScrollPosition(newPosition);
                 }
-            }
-            else if (bottomEdgeDelta > -1 && bottomEdgeDelta < EDGE_DELTA_FOR_SCROLLING) {
+            } else if (bottomEdgeDelta > -1 && bottomEdgeDelta < EDGE_DELTA_FOR_SCROLLING) {
                 log.finer("inside the EDGE_DELTA_FOR_SCROLLING on the bottom"); //$NON-NLS-1$
 
                 int maxPos = sp.getMaximumVerticalScrollPosition();

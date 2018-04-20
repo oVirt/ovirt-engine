@@ -221,8 +221,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
                             model.getTemplateWithVersion().setIsChangeable(false);
                             cdImage = vm.getIsoPath();
                             model.getVmType().setSelectedItem(vm.getVmType());
-                        }
-                        else {
+                        } else {
                             model.getDataCenterWithClustersList()
                                     .setSelectedItem(Linq.firstOrNull(model.getDataCenterWithClustersList().getItems()));
                         }
@@ -468,8 +467,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
                         stopProgress();
                     },
                     this);
-        }
-        else {
+        } else {
             Frontend.getInstance().runAction(ActionType.UpdateVmPool, param,
                     result -> {
                         cancel();

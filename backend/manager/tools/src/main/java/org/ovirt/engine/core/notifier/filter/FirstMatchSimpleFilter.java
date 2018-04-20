@@ -93,8 +93,7 @@ public class FirstMatchSimpleFilter {
                         Transport transport = transports.get(recipient.getTransport());
                         if (transport == null) {
                             log.debug("Ignoring recipient '{}' as transport not registered", recipient);
-                        }
-                        else {
+                        } else {
                             transport.dispatchEvent(event, recipient.getName());
                         }
                     }

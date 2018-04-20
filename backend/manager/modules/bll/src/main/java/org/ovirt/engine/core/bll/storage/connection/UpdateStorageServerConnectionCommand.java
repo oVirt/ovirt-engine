@@ -176,8 +176,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                                 domains.add(domain);
                             }
                         }
-                    }
-                    else { //unattached domain, edit allowed
+                    } else { //unattached domain, edit allowed
                         domains.add(domain);
                     }
 
@@ -355,8 +354,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
            locks.put(getConnection().getConnection(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        }
-        else {
+        } else {
           // for block domains, locking the target details
           locks.put(getConnection().getConnection() + ";" + getConnection().getIqn() + ";" + getConnection().getPort() + ";" + getConnection().getUserName(),
           LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,

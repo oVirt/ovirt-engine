@@ -196,17 +196,14 @@ public class ListModel<T> extends Model {
 
                 if (anyOfSelectedItem) {
                     selectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
-                }
-                else {
+                } else {
                     itemPropertyChanged(sender, (PropertyChangedEventArgs) args);
                 }
-            }
-            else {
+            } else {
                 // In this case a sender always will be a one of selected item.
                 selectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
             }
-        }
-        else if (ev.matchesDefinition(ProvideCollectionChangedEvent.Definition)) {
+        } else if (ev.matchesDefinition(ProvideCollectionChangedEvent.Definition)) {
             itemsCollectionChanged(sender, (NotifyCollectionChangedEventArgs<T>) args);
         }
     }

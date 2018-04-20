@@ -115,8 +115,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             return Collections.singletonMap(getParameters().getStorageServerConnection().getConnection(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        }
-        else { // lock target details
+        } else { // lock target details
             return Collections.singletonMap(getConnection().getConnection() + ";" + getConnection().getIqn() + ";"
                     + getConnection().getPort() + ";" + getConnection().getUserName(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,

@@ -68,10 +68,8 @@ public class AddOnlyRingBuffer<T> {
             int index = head + size;
             size += 1;
             delegate.write(index, element);
-        }
-
-        // Buffer is full, need to move the head
-        else {
+        } else {
+            // Buffer is full, need to move the head
             int index = head;
             head = (head + 1) % capacity;
             old = delegate.read(index);
@@ -132,10 +130,8 @@ public class AddOnlyRingBuffer<T> {
         // 0 <= newHead < capacity
         if (newHead < 0 || newHead >= capacity) {
             throw new IllegalArgumentException("newHead out of bounds"); //$NON-NLS-1$
-        }
-
-        // 0 <= newSize <= capacity
-        else if (newSize < 0 || newSize > capacity) {
+        } else if (newSize < 0 || newSize > capacity) {
+            // 0 <= newSize <= capacity
             throw new IllegalArgumentException("newSize out of bounds"); //$NON-NLS-1$
         }
 

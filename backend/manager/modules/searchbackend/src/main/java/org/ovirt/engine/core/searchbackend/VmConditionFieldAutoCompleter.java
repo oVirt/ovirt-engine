@@ -212,13 +212,11 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
             } else if ("!=".equals(pair.getFirst())) {
                 pair.setFirst("NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive));
             }
-        }
-        else if (UPTIME.equals(fieldName)) {
+        } else if (UPTIME.equals(fieldName)) {
             pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
             TimeSpan ts = TimeSpan.parse(pair.getSecond());
             pair.setSecond(StringFormat.format("'%1$s'", ts.TotalMilliseconds < MILISECOND ? 0 : ts.TotalMilliseconds / MILISECOND));
-        }
-        else if (CREATIONDATE.equals(fieldName)) {
+        } else if (CREATIONDATE.equals(fieldName)) {
             Date tmp = new Date(Date.parse(StringHelper.trim(pair.getSecond(), '\'')));
             pair.setSecond(StringFormat.format("'%1$s'", tmp));
         } else {

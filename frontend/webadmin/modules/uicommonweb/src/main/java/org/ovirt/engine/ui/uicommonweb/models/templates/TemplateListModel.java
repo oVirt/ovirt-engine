@@ -341,8 +341,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             confirmModel.getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
-        }
-        else {
+        } else {
             doExport();
         }
     }
@@ -839,42 +838,30 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
 
         if (command == getEditCommand()) {
             edit();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if (command == getExportCommand()) {
+        } else if (command == getExportCommand()) {
             export();
-        }
-        else if (command == getCreateVmFromTemplateCommand()) {
+        } else if (command == getCreateVmFromTemplateCommand()) {
             createVMFromTemplate();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
-        }
-        else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
             onExport();
-        }
-        else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
-        }
-        else if ("OnSaveVm".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnSaveVm".equals(command.getName())) { //$NON-NLS-1$
             onSaveVm();
-        }
-        else if ("postNameUniqueCheck".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("postNameUniqueCheck".equals(command.getName())) { //$NON-NLS-1$
             postNameUniqueCheck();
             setConfirmWindow(null);
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("OnExportNoTemplates".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnExportNoTemplates".equals(command.getName())) { //$NON-NLS-1$
             doExport();
-        }
-        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
-        }
-        else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
+        } else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
             UnitVmModel model = (UnitVmModel) getWindow();
             if (!model.validate()) {
                 return;

@@ -46,8 +46,7 @@ public class AddGroupCommand<T extends AddGroupParameters>
         DbGroup dbGroup = dbGroupDao.getByExternalId(groupToAdd.getDomain(), groupToAdd.getExternalId());
         if (dbGroup == null) {
             dbGroupDao.save(groupToAdd);
-        }
-        else {
+        } else {
             dbGroupDao.update(dbGroup);
             groupToAdd = dbGroup;
         }

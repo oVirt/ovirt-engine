@@ -298,9 +298,7 @@ public final class ElementTooltipUtils {
 
             // Prevent other cell widget tooltips from hanging open.
             hideAllCellWidgetTooltipsExcept(parentTableCellElementId);
-        }
-
-        else if (BrowserEvents.MOUSEDOWN.equals(eventType)) {
+        } else if (BrowserEvents.MOUSEDOWN.equals(eventType)) {
             hideAllTooltips();
         }
     }

@@ -61,8 +61,7 @@ public class PackageExplorer {
             }
             walkJars(classNames, packageName, jars);
             walkDirs(classNames, packageName, dirs);
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             log.error(
                 "Error while trying to find scan classpath for package \"{}\".",
                 packageName,

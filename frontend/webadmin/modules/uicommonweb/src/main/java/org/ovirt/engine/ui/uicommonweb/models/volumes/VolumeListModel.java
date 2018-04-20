@@ -476,8 +476,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             allowStopRebalance = false;
             allowStatusRebalance = false;
             allowOptimize = false;
-        }
-        else {
+        } else {
             List<GlusterVolumeEntity> list = getSelectedItems();
             allowStartProfiling = isStartProfileAvailable(list);
             allowStopProfiling = isStopProfileAvailable(list);
@@ -489,8 +488,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     if (!volume.getVolumeType().isDistributedType()) {
                         allowStartRebalance = false;
                     }
-                }
-                else if (volume.getStatus() == GlusterStatus.DOWN) {
+                } else if (volume.getStatus() == GlusterStatus.DOWN) {
                     allowStop = false;
                     allowStartRebalance = false;
                 }
@@ -514,8 +512,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 allowConfigureVolumeSnapshotOptions = volumeEntity.getStatus() == GlusterStatus.UP;
                 allowCreateGeoRepSession = volumeEntity.getStatus() == GlusterStatus.UP;
                 allowCreateSnapshot = isCreateSnapshotAvailable(volumeEntity);
-            }
-            else {
+            } else {
                 allowStopRebalance = false;
             }
             allowStatusRebalance = getRebalanceStatusAvailability(getSelectedItems());
@@ -624,13 +621,11 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         super.executeCommand(command);
         if (command.equals(getNewVolumeCommand())) {
             newVolume();
-        }
-        else if (command.equals(getRemoveVolumeCommand())) {
+        } else if (command.equals(getRemoveVolumeCommand())) {
             removeVolume();
         } else if(command.getName().equals("closeConfirmationWindow")) {//$NON-NLS-1$
             closeConfirmationWindow();
-        }
-        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+        } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
         } else if (command.getName().equals("onCreateVolume")) { //$NON-NLS-1$
             onCreateVolume();
@@ -1126,15 +1121,13 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         if (volumeModel.getNfs_accecssProtocol().getEntity()) {
             volume.enableNFS();
-        }
-        else {
+        } else {
             volume.disableNFS();
         }
 
         if (volumeModel.getCifs_accecssProtocol().getEntity()) {
             volume.enableCifs();
-        }
-        else {
+        } else {
             volume.disableCifs();
         }
 

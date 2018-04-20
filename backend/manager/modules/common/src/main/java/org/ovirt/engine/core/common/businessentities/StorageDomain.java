@@ -206,8 +206,7 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
     private void updateOverCommitPercent() {
         if (getAvailableDiskSize() == null || getAvailableDiskSize() == 0) {
             setStorageDomainOverCommitPercent(0);
-        }
-        else {
+        } else {
             setStorageDomainOverCommitPercent((getCommittedDiskSize() - getActualImagesSize()) * 100
                     / getAvailableDiskSize());
         }

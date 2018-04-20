@@ -197,8 +197,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
             DbUser tempVar = new DbUser();
             tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
-        }
-        else {
+        } else {
             for (Object item : model.getItems()) {
                 EntityModel entityModel = (EntityModel) item;
                 if (entityModel.getIsSelected()) {
@@ -224,8 +223,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
                 tempVar3.setPermission(perm);
                 tempVar3.setGroup(group);
                 list.add(tempVar3);
-            }
-            else {
+            } else {
                 PermissionsOperationsParameters tempVar4 = new PermissionsOperationsParameters();
                 tempVar4.setPermission(perm);
                 tempVar4.setUser(user);
@@ -343,17 +341,13 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
 
         if (command == getAddCommand()) {
             add();
-        }
-        else if (command == getRemoveCommand()) {
+        } else if (command == getRemoveCommand()) {
             remove();
-        }
-        else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        }
-        else if ("OnAdd".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("OnAdd".equals(command.getName())) { //$NON-NLS-1$
             onAdd();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+        } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         }
     }

@@ -135,9 +135,8 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
                                 VdcObjectType.Storage,
                                 storageDomainId));
             }
-        }
-        // Don't throw an exception when cannot destroy image in the VDSM.
-        catch (EngineException e) {
+        } catch (EngineException e) {
+            // Don't throw an exception when cannot destroy image in the VDSM.
             // Set fault for parent command RestoreAllSnapshotCommand to use, if decided to fail the command.
             getReturnValue().setFault(new EngineFault(e, e.getVdsError().getCode()));
             log.info("Image '{}' not exist in Irs", getDiskImage().getImageId());

@@ -177,8 +177,7 @@ public class ErrorTranslator {
                 String value = values.size() == 1 ? values.getFirst() :
                         values.size() > 1 ? values.removeFirst() : ""; //$NON-NLS-1$
                 returnValue = returnValue.replace(match, value);
-            }
-            else {
+            } else {
                 // Variable not found, break the cycle to avoid
                 // infinite loop
                 break;

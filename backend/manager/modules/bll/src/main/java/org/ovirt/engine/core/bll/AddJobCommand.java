@@ -45,8 +45,7 @@ public abstract class AddJobCommand<T extends AddJobParameters> extends CommandB
         if (jobDao.get(id) != null) {
             setActionReturnValue(id);
             setSucceeded(true);
-        }
-        else {
+        } else {
             setSucceeded(false);
         }
     }
