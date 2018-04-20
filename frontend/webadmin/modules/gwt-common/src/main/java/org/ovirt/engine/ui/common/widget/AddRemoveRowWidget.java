@@ -83,6 +83,9 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
                 setEnabled(model.getIsChangable());
                 updateEnabled();
             }
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                setVisible(model.getIsAvailable());
+            }
         };
     }
 
