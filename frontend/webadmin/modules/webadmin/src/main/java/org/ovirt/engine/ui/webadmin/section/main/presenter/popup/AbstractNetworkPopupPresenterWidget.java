@@ -60,6 +60,8 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasVal
         getView().getQosButton().addClickHandler(event -> getView().getQosButton().getCommand().execute());
 
         getView().addMtuEditor();
+
+        getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
     }
 
     private boolean isSubnetVisible(final T model) {
