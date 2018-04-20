@@ -50,7 +50,7 @@ public class DynamicUrlContentProxy extends ProxyPlaceImpl<DynamicUrlContentPres
     @Override
     public DynamicUrlContentPresenter get() {
         if (presenter == null) {
-            presenter = new DynamicUrlContentPresenter(contentUrl, getEventBus(), viewProvider.get(), this, slot);
+            presenter = new DynamicUrlContentPresenter(getEventBus(), viewProvider.get(), this, slot, contentUrl);
             presenter.bind();
         }
         return presenter;

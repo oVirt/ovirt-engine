@@ -20,11 +20,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentProx
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MenuPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabContentUrlEvent;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabUnloadHandlerEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CloseDynamicPopupEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SetDynamicPopupContentUrlEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
@@ -169,6 +171,15 @@ public class PluginUiFunctions implements HasHandlers {
     }
 
     /**
+     * Adds tab/place iframe unload handler. This handler is called when the user
+     * transitions away from the application place denoted by {@code historyToken}.
+     */
+    public void setPlaceUnloadHandler(final String historyToken, final JavaScriptObject unloadHandler) {
+        Scheduler.get().scheduleDeferred(() -> SetDynamicTabUnloadHandlerEvent.fire(PluginUiFunctions.this,
+                historyToken, unloadHandler));
+    }
+
+    /**
      * Adds new action button to standard table-based main tab.
      */
     public void addMenuPlaceActionButton(EntityType entityType, String label,
@@ -309,4 +320,5 @@ public class PluginUiFunctions implements HasHandlers {
     public TagObject getRootTagNode() {
         return TagObject.from(tagModelProvider.getModel().getRootNode());
     }
+
 }

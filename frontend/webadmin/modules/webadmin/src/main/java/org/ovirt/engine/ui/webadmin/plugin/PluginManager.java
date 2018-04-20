@@ -435,6 +435,10 @@ public class PluginManager implements HasHandlers {
             return (object != null) ? object : {};
         };
 
+        var logDeprecatedCall = function(deprecated, replacement) {
+            $wnd.console.warn(deprecated + " is deprecated, please use " + replacement + " instead.");
+        };
+
         // Define pluginApi function used to construct specific Plugin API instances
         var pluginApi = function(pluginName) {
             return new pluginApi.fn.init(pluginName);
@@ -486,7 +490,7 @@ public class PluginManager implements HasHandlers {
                 }
             },
             addMainTab: function(label, historyToken, contentUrl, options) {
-                console.warn("addMainTab is deprecated, please use addPrimaryMenuPlace instead.");
+                logDeprecatedCall("addMainTab", "addPrimaryMenuPlace");
                 this.addPrimaryMenuPlace(label, historyToken, contentUrl, options);
             },
             addDetailPlace: function(entityTypeName, label, historyToken, contentUrl, options) {
@@ -495,7 +499,7 @@ public class PluginManager implements HasHandlers {
                 }
             },
             addSubTab: function(entityTypeName, label, historyToken, contentUrl, options) {
-                console.warn("addSubTab is deprecated, please use addDetailPlace instead.");
+                logDeprecatedCall("addSubTab", "addDetailPlace");
                 this.addDetailPlace(entityTypeName, label, historyToken, contentUrl, options);
             },
             setPlaceContentUrl: function(historyToken, contentUrl) {
@@ -504,7 +508,7 @@ public class PluginManager implements HasHandlers {
                 }
             },
             setTabContentUrl: function(historyToken, contentUrl) {
-                console.warn("setTabContentUrl is deprecated, please use setPlaceContentUrl instead.");
+                logDeprecatedCall("setTabContentUrl", "setPlaceContentUrl");
                 this.setPlaceContentUrl(historyToken, contentUrl);
             },
             setPlaceAccessible: function(historyToken, tabAccessible) {
@@ -513,8 +517,13 @@ public class PluginManager implements HasHandlers {
                 }
             },
             setTabAccessible: function(historyToken, tabAccessible) {
-                console.warn("setTabAccessible is deprecated, please use setPlaceAccessible instead.");
+                logDeprecatedCall("setTabAccessible", "setPlaceAccessible");
                 this.setPlaceAccessible(historyToken, tabAccessible);
+            },
+            setPlaceUnloadHandler: function(historyToken, unloadHandler) {
+                if (validatePluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setPlaceUnloadHandler(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(historyToken,unloadHandler);
+                }
             },
             addMenuPlaceActionButton: function(entityTypeName, label, actionButtonInterface) {
                 if (validatePluginAction(this.pluginName)) {
@@ -522,7 +531,7 @@ public class PluginManager implements HasHandlers {
                 }
             },
             addMainTabActionButton: function(entityTypeName, label, actionButtonInterface) {
-                console.warn("addMainTabActionButton is deprecated, please use addMenuPlaceActionButton instead.");
+                logDeprecatedCall("addMainTabActionButton", "addMenuPlaceActionButton");
                 this.addMenuPlaceActionButton(entityTypeName, label, actionButtonInterface);
             },
             addDetailPlaceActionButton: function(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface) {
@@ -531,7 +540,7 @@ public class PluginManager implements HasHandlers {
                 }
             },
             addSubTabActionButton: function(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface) {
-                console.warn("addSubTabActionButton is deprecated, please use addDetailPlaceActionButton instead.");
+                logDeprecatedCall("addSubTabActionButton", "addDetailPlaceActionButton");
                 this.addDetailPlaceActionButton(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface);
             },
             showDialog: function(title, dialogToken, contentUrl, width, height, options) {
