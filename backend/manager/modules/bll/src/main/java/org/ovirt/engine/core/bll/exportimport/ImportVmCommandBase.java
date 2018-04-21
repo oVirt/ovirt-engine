@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
-import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -60,7 +59,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -492,14 +490,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     public void addVmToAffinityLabels() {
         // Left empty to override in ImportVmFromConfiguration
-    }
-
-    protected List<AffinityGroup> mapAffinityGroups() {
-        return Collections.EMPTY_LIST;
-    }
-
-    protected List<Label> mapAffinityLabels() {
-        return Collections.EMPTY_LIST;
     }
 
     protected void addPermissionsToDB() {
