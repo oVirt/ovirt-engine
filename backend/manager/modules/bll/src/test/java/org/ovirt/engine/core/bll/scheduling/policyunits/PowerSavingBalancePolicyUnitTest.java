@@ -46,7 +46,7 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
     @ClassRule
     public static MockConfigRule configRule =
             new MockConfigRule(
-                    MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, Integer.MAX_VALUE),
+                    MockConfigRule.mockConfig(ConfigValues.MaxSchedulerWeight, 1000),
                     MockConfigRule.mockConfig(ConfigValues.HighUtilizationForPowerSave, 80),
                     MockConfigRule.mockConfig(ConfigValues.LowUtilizationForPowerSave, 20),
                     MockConfigRule.mockConfig(ConfigValues.CpuOverCommitDurationMinutes, 5),
