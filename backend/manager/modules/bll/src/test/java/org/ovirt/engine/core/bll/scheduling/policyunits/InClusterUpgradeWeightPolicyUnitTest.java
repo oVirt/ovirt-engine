@@ -27,10 +27,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-import junit.framework.TestCase;
-
 @RunWith(MockitoJUnitRunner.class)
-public class InClusterUpgradeWeightPolicyUnitTest extends TestCase {
+public class InClusterUpgradeWeightPolicyUnitTest {
 
     @ClassRule
     public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));
