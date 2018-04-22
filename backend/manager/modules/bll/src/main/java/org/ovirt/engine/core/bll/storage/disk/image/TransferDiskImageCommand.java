@@ -236,7 +236,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             setImageId(getParameters().getImageId());
             return super.getDiskImage();
         }
-        return (DiskImage) diskDao.get(getParameters().getImageGroupID());
+        DiskImage diskImage = super.getDiskImage();
+        if (diskImage == null) {
+            diskImage = (DiskImage) diskDao.get(getParameters().getImageGroupID());
+        }
+        return diskImage;
     }
 
     @Override
@@ -1075,16 +1079,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 ? AuditLogType.TRANSFER_IMAGE_INITIATED : getParameters().getAuditLogType();
     }
 
-    private String getImageIdNullSafe() {
-        return getParameters().getImageId() != null ?
-                getParameters().getImageId().toString() : "(null)";
-    }
-
     // Return a string describing the transfer, safe for use before the new image
     // is successfully created; e.g. "disk 'NewDisk' (id '<uuid>')".
     private String getTransferDescription() {
-        return String.format("%s %s '%s' (id '%s')",
-                getParameters().getTransferType().name(), getImageType(), getImageAlias(), getImageIdNullSafe());
+        return String.format("%s %s '%s' (disk id: '%s', image id: '%s')",
+                getParameters().getTransferType().name(),
+                getImageType(),
+                getImageAlias(),
+                getDiskImage().getId(),
+                getDiskImage().getImageId());
     }
 
     public void onSucceeded() {
