@@ -131,24 +131,4 @@ public class Tags implements Serializable {
     public void setChildren(List<Tags> children) {
         _children = children;
     }
-
-    public StringBuilder getTagIdAndChildrenIds() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("'").append(getTagId()).append("'");
-
-        for (Tags tag : _children) {
-            builder.append(",").append(tag.getTagIdAndChildrenIds());
-        }
-        return builder;
-    }
-
-    public StringBuilder getTagNameAndChildrenNames() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("'").append(getTagName()).append("'");
-
-        for (Tags tag : _children) {
-            builder.append("," + tag.getTagNameAndChildrenNames());
-        }
-        return builder;
-    }
 }
