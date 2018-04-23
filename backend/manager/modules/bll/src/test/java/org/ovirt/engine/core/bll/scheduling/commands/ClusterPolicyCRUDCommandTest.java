@@ -3,9 +3,8 @@ package org.ovirt.engine.core.bll.scheduling.commands;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -17,40 +16,24 @@ public class ClusterPolicyCRUDCommandTest extends BaseCommandTest {
     @Mock
     private SchedulingManager schedulingManager;
 
+    private ClusterPolicyCRUDParameters params = new ClusterPolicyCRUDParameters(Guid.newGuid(), new ClusterPolicy());
+
+    @InjectMocks
+    private ClusterPolicyCRUDCommand command = new ClusterPolicyCRUDCommand(params, null) {
+        @Override
+        protected void executeCommand() {
+            // Do Nothing
+        }
+    };
+
     @Test
     public void testCheckAddEditValidations() {
-        Guid clusterPolicyId = new Guid("e754440b-76a6-4099-8235-4565ab4b5521");
-        ClusterPolicy clusterPolicy = new ClusterPolicy();
-        clusterPolicy.setId(clusterPolicyId);
-        ClusterPolicyCRUDCommand command =
-                new ClusterPolicyCRUDCommand(new ClusterPolicyCRUDParameters(clusterPolicyId,
-                        clusterPolicy), null) {
-
-                    @Override
-                    protected void executeCommand() {
-                    }
-                };
-        command.schedulingManager = schedulingManager;
         assertTrue(command.checkAddEditValidations());
     }
 
     @Test
     public void testCheckAddEditValidationsFailOnParameters() {
-        Guid clusterPolicyId = new Guid("e754440b-76a6-4099-8235-4565ab4b5521");
-        ClusterPolicy clusterPolicy = new ClusterPolicy();
-        clusterPolicy.setId(clusterPolicyId);
-        HashMap<String, String> parameterMap = new HashMap<>();
-        parameterMap.put("fail?", "sure, fail!");
-        clusterPolicy.setParameterMap(parameterMap);
-        ClusterPolicyCRUDCommand command =
-                new ClusterPolicyCRUDCommand(new ClusterPolicyCRUDParameters(clusterPolicyId,
-                        clusterPolicy), null) {
-
-                    @Override
-                    protected void executeCommand() {
-                    }
-                };
-        command.schedulingManager = schedulingManager;
+        params.getClusterPolicy().getParameterMap().put("fail?", "sure, fail!");
         assertFalse(command.checkAddEditValidations());
     }
 }
