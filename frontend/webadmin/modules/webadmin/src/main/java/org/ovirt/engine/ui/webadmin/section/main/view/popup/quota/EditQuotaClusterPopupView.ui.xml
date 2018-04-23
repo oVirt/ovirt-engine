@@ -40,7 +40,7 @@
                         <ge:EntityModelRadioButtonEditor ui:field="specificMemRadioButtonEditor" label="{constants.useQuotaPopup}" usePatternFly="true" />
                     </b:Column>
                     <b:Column size="SM_4">
-                        <ge:LongEntityModelTextBoxEditor ui:field="memValueEditor" usePatternFly="true" unitString="{constants.mb}" />
+                        <ge:LongEntityModelTextBoxEditor ui:field="memValueEditor" usePatternFly="true" unitString="{constants.mib}" />
                     </b:Column>
                 </b:Row>
                 <b:Row>

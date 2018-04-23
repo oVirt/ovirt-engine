@@ -39,7 +39,7 @@
                         <ge:EntityModelRadioButtonEditor ui:field="specificStorageRadioButtonEditor" label="{constants.useQuotaPopup}" usePatternFly="true" />
                     </b:Column>
                     <b:Column size="SM_4">
-                        <ge:LongEntityModelTextBoxEditor ui:field="storageValueEditor" usePatternFly="true" unitString="{constants.gb}" />
+                        <ge:LongEntityModelTextBoxEditor ui:field="storageValueEditor" usePatternFly="true" unitString="{constants.gib}" />
                     </b:Column>
                 </b:Row>
             </b:Container>
