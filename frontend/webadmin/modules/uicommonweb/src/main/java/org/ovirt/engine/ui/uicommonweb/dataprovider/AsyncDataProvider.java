@@ -20,7 +20,6 @@ import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
-import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;

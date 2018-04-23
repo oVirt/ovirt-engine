@@ -1,9 +1,11 @@
-package org.ovirt.engine.core.common;
+package org.ovirt.engine.ui.uicommonweb.dataprovider;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.EventNotificationEntity;
 
 public final class VdcEventNotificationUtils {
     private static final Map<EventNotificationEntity, HashSet<AuditLogType>> eventNotificationTypeMap = new HashMap<>();
