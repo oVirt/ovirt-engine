@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
@@ -20,25 +23,20 @@ public abstract class SqlInjectionChecker {
     private static final String BACKSLASH_DOUBLE_QUOTE = "\\\\\"";
     private static final String QUOTE_QUOTE = "''";
     private static final String DELIMITERS = "'\"";
-    private HashSet<String> sqlInjectionExpressions = new HashSet<>();
-    private static final String[] ANSI_SQL_KEYWORDS = { " insert ", " delete ", " update ", " create ", " drop  ", " union ", " alter ",
-                                                 " if ", " else ", "sum(", "min(", "max(", "count(", "avg(", " having "};
+    private static final List<String> ANSI_SQL_KEYWORDS = Arrays.asList(
+            " insert ", " delete ", " update ", " create ", " drop  ", " union ", " alter ", " if ", " else ",
+            "sum(", "min(", "max(", "count(", "avg(", " having ");
+
+    private Set<String> sqlInjectionExpressions;
+
     SqlInjectionChecker() {
-        for (String s : ANSI_SQL_KEYWORDS) {
-            addInjectionExpression(s);
-        }
+        sqlInjectionExpressions = new HashSet<>(ANSI_SQL_KEYWORDS);
         sqlInjectionExpressions.add(getSqlCommandSeperator());
         sqlInjectionExpressions.add(getSqlConcat());
         sqlInjectionExpressions.addAll(getCommentExpressions());
         sqlInjectionExpressions.addAll(getInjectionFunctions());
     }
-    /**
-     * Adds an entry to injection expressions.
-     * @param Expr the expression.
-     */
-    public void addInjectionExpression(String Expr){
-        sqlInjectionExpressions.add(Expr);
-    }
+
     /**
      * Checks if the given sql has SQL Injection expressions
      * @param sql the sql string
