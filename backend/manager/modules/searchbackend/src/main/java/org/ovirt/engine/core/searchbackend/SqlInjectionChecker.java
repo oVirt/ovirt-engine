@@ -124,7 +124,7 @@ public abstract class SqlInjectionChecker {
                     }
                     break;
                 case BACKSLASH: // A backslash should be formatted as \\
-                    if ((i > 0 && prev == BACKSLASH) || (next == QUOTE || next == PERCENT || next == BACKSLASH)) {
+                    if ((i > 0 && prev == BACKSLASH) || next == QUOTE || next == PERCENT || next == BACKSLASH) {
                         sb.append(c);
                     } else {
                         sb.append(BACKSLASH);
