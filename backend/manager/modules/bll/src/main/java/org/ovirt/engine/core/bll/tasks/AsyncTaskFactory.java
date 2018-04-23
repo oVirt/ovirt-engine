@@ -59,12 +59,6 @@ public final class AsyncTaskFactory {
         return cmdEntity;
     }
 
-    public SPMAsyncTask construct(AsyncTaskCreationInfo creationInfo,
-            AsyncTask asyncTask) {
-        AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
-        return construct(creationInfo.getTaskType(), asyncTaskParams, true);
-    }
-
     /**
      * Constructs a task based on its type and the task type's parameters.
      *
