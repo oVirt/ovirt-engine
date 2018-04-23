@@ -201,12 +201,7 @@ public final class VdcEventNotificationUtils {
      *            Type of the audit log.
      */
     private static void addEventNotificationEntry(EventNotificationEntity entity, AuditLogType auditLogType) {
-        HashSet<AuditLogType> entry = eventNotificationTypeMap.get(entity);
-        if (entry == null) {
-            entry = new HashSet<>();
-            eventNotificationTypeMap.put(entity, entry);
-        }
-        entry.add(auditLogType);
+        eventNotificationTypeMap.computeIfAbsent(entity, k -> new HashSet<>()).add(auditLogType);
     }
 
 }
