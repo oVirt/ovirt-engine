@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -41,12 +41,10 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                         getParameters().getPath()));
         if (vdsReturnValue.getSucceeded()) {
             ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
-            HashSet<Guid> guidsFromDb = new HashSet<>();
             if (guidsFromIrs.size() > 0) {
-                List<StorageDomain> domainsInDb = storageDomainDao.getAll();
-                for (StorageDomain domain : domainsInDb) {
-                    guidsFromDb.add(domain.getId());
-                }
+                Set<Guid> guidsFromDb =
+                        storageDomainDao.getAll().stream().map(StorageDomain::getId).collect(Collectors.toSet());
+
                 for (Guid domainId : guidsFromIrs) {
                     if (!guidsFromDb.contains(domainId)) {
                         Pair<StorageDomainStatic, Guid> domainFromIrs =
