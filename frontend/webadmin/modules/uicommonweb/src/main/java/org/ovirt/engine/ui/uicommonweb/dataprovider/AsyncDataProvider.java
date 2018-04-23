@@ -1213,13 +1213,13 @@ public class AsyncDataProvider {
         }
     }
 
-    public VolumeType getVolumeType(VolumeFormat volumeFormat, StorageType storageType) {
+    public VolumeType getVolumeType(VolumeFormat volumeFormat) {
         switch (volumeFormat) {
         case COW:
             return VolumeType.Sparse;
         case RAW:
         default:
-            return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
+            return VolumeType.Preallocated;
         }
     }
 
