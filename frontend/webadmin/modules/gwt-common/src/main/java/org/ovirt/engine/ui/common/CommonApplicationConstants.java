@@ -649,7 +649,9 @@ public interface CommonApplicationConstants extends Constants {
 
     String mb();
 
-    String gb();
+    String mib();
+
+    String gib();
 
     String severityEvent();
 

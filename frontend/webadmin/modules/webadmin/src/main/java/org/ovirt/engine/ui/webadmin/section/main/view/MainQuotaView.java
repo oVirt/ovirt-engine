@@ -149,9 +149,9 @@ public class MainQuotaView extends AbstractMainWithDetailsTableView<Quota, Quota
                 if (allocated < 0) {
                     returnVal = constants.unlimited();
                 } else if (value <= 0){
-                    returnVal = messages.megabytes("0"); //$NON-NLS-1$
+                    returnVal = messages.mebibytes("0"); //$NON-NLS-1$
                 } else if (value <= 5*1024) {
-                    returnVal = messages.megabytes(String.valueOf(value));
+                    returnVal = messages.mebibytes(String.valueOf(value));
                 } else {
                     returnVal = messages.gibibytes(decimalFormat.format((double)value/1024));
                 }
