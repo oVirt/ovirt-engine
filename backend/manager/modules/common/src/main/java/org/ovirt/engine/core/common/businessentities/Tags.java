@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -151,12 +150,5 @@ public class Tags implements Serializable {
             builder.append("," + tag.getTagNameAndChildrenNames());
         }
         return builder;
-    }
-
-    public void getTagIdAndChildrenIdsAsList(HashSet<Guid> tagIds) {
-        tagIds.add(getTagId());
-        for (Tags tag : _children) {
-            tag.getTagIdAndChildrenIdsAsList(tagIds);
-        }
     }
 }

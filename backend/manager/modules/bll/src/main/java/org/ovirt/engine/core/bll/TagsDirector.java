@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -235,28 +234,6 @@ public class TagsDirector implements BackendService, ITagsHandler {
     public String getTagNameAndChildrenNames(Guid tagId) {
         Tags tag = getTagById(tagId);
         StringBuilder sb = tag.getTagNameAndChildrenNames();
-        return sb.toString();
-    }
-
-    public HashSet<Guid> getTagIdAndChildrenIdsAsSet(Guid tagId) {
-        Tags tag = getTagById(tagId);
-        HashSet<Guid> set = new HashSet<>();
-        tag.getTagIdAndChildrenIdsAsList(set);
-        return set;
-    }
-
-    /**
-     * This function will return the tag's ID and its children IDs. Its used to determine if a tag is assigned to an
-     * entity. Tag is determined as assigned to an entity if the entity is assigned to the tag or to one of its
-     * children.
-     *
-     * @param tagName
-     *            the name of the 'root' tag.
-     * @return a comma separated list of IDs.
-     */
-    public String getTagIdAndChildrenIds(String tagName) {
-        Tags tag = getTagByTagName(tagName);
-        StringBuilder sb = tag.getTagIdAndChildrenIds();
         return sb.toString();
     }
 

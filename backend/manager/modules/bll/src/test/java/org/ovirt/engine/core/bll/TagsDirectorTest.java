@@ -7,8 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -249,34 +247,6 @@ public class TagsDirectorTest {
         tag2.setParentId(tag.getParentId());
         tagsDirector.addTag(tag);
         String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.getTagId());
-        String[] ids = idsStr.split("[,]");
-        assertEquals(2, ids.length);
-        assertEquals(ids[0], "'" + tag.getTagId().toString() + "'");
-        assertEquals(ids[1], "'" + tag2.getTagId().toString() + "'");
-    }
-
-    @Test
-    public void testGetTagIdAndChildrenIdsAsSet() {
-        Tags tag = createTag("tag1", "desc1");
-        Tags tag2 = createTag("tag2", "desc2");
-        tag.getChildren().add(tag2);
-        tag2.setParentId(tag.getParentId());
-        tagsDirector.addTag(tag);
-        Set<Guid> idsToCheck = new HashSet<>();
-        idsToCheck.add(tag.getTagId());
-        idsToCheck.add(tag2.getTagId());
-        HashSet<Guid> idsFromTagsDirector = tagsDirector.getTagIdAndChildrenIdsAsSet(tag.getTagId());
-        assertEquals(idsToCheck, idsFromTagsDirector);
-    }
-
-    @Test
-    public void testGetTagIdAndChildrenIdsByName() {
-        Tags tag = createTag("tag1", "desc1");
-        Tags tag2 = createTag("tag2", "desc2");
-        tag.getChildren().add(tag2);
-        tag2.setParentId(tag.getParentId());
-        tagsDirector.addTag(tag);
-        String idsStr = tagsDirector.getTagIdAndChildrenIds(tag.getTagName());
         String[] ids = idsStr.split("[,]");
         assertEquals(2, ids.length);
         assertEquals(ids[0], "'" + tag.getTagId().toString() + "'");
