@@ -135,7 +135,7 @@ public abstract class SqlInjectionChecker {
                     sb.append(c);
                     break;
                 }
-                prev = c.charValue();
+                prev = c;
                 i++;
                 next = (i < sourceArray.length - 1) ? sourceArray[i + 1] : BLANK;
             }
