@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.businessentities.network.AnonymousHostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -199,6 +200,7 @@ public class NetworkAttachmentDaoImpl extends DefaultGenericDao<NetworkAttachmen
 
         DnsResolverConfiguration dnsResolverConfiguration = entity.getDnsResolverConfiguration();
         if (dnsResolverConfiguration != null) {
+            Validate.isTrue(dnsResolverConfiguration.getId() == null);
             dnsResolverConfigurationDao.save(dnsResolverConfiguration);
         }
 

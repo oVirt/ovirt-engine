@@ -92,7 +92,9 @@ public class DnsResolverConfigurationDaoImpl extends DefaultGenericDao<DnsResolv
 
     @Override
     public void save(DnsResolverConfiguration entity) {
-        entity.setId(Guid.newGuid());
+        if (entity.getId() == null) {
+            entity.setId(Guid.newGuid());
+        }
         super.save(entity);
         saveNameServersByDnsResolverConfigurationId(entity.getId(), entity.getNameServers());
     }
