@@ -7,7 +7,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandMultiAsyncTasks;
 import org.ovirt.engine.core.bll.CommandsFactory;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -126,7 +125,6 @@ public class CommandAsyncTask extends SPMAsyncTask {
     private void endCommandAction() {
         CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
         ActionReturnValue actionReturnValue = null;
-        ExecutionContext context = null;
         boolean endActionRuntimeException = false;
 
         AsyncTask dbAsyncTask = getParameters().getDbAsyncTask();
@@ -167,8 +165,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
             if (endActionRuntimeException) {
                 handleEndActionRuntimeException(entityInfo, dbAsyncTask);
             } else {
-                boolean isTaskGroupSuccess = dbAsyncTask.getActionParameters().getTaskGroupSuccess();
-                handleEndActionResult(entityInfo, actionReturnValue, context, isTaskGroupSuccess);
+                handleEndActionResult(entityInfo, actionReturnValue);
             }
         }
     }
@@ -199,9 +196,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         }
     }
 
-    private void handleEndActionResult(CommandMultiAsyncTasks commandInfo, ActionReturnValue actionReturnValue,
-            ExecutionContext context,
-            boolean isTaskGroupSuccess) {
+    private void handleEndActionResult(CommandMultiAsyncTasks commandInfo, ActionReturnValue actionReturnValue) {
         try {
             ActionType actionType = getParameters().getDbAsyncTask().getActionType();
             log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type '{}'"
