@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 public class PostgresSqlInjectionChecker extends SqlInjectionChecker {
 
-    private static final String[] POSTGRES_SQL_COMMENT_INDICATORS = {"--", "/*", "*/"};
-    private static final String[] POSTGRES_SQL_FUNCTIONS = {"ascii(", "chr(", "convert(", "cast(", "pg_sleep(", "length(", "substr(", "pg_read_file(", "replace(", " copy "};
+    private static final Set<String> POSTGRES_SQL_COMMENT_INDICATORS =  new HashSet<>(Arrays.asList("--", "/*", "*/"));
+    private static final Set<String> POSTGRES_SQL_FUNCTIONS = new HashSet<>(Arrays.asList(
+            "ascii(", "chr(", "convert(", "cast(", "pg_sleep(", "length(", "substr(", "pg_read_file(", "replace(", " copy "));
 
     @Override
     protected String getSqlCommandSeperator() {
@@ -18,21 +21,12 @@ public class PostgresSqlInjectionChecker extends SqlInjectionChecker {
     }
 
     @Override
-    protected HashSet<String> getCommentExpressions() {
-        HashSet<String> commentExpressions = new HashSet<>();
-        for (String s : POSTGRES_SQL_COMMENT_INDICATORS) {
-            commentExpressions.add(s);
-        }
-        return commentExpressions;
+    protected Set<String> getCommentExpressions() {
+        return POSTGRES_SQL_COMMENT_INDICATORS;
     }
 
     @Override
-    protected HashSet<String> getInjectionFunctions() {
-        HashSet<String> functionExpressions = new HashSet<>();
-        for (String s : POSTGRES_SQL_FUNCTIONS) {
-            functionExpressions.add(s);
-        }
-        return functionExpressions;
+    protected Set<String> getInjectionFunctions() {
+        return POSTGRES_SQL_FUNCTIONS;
     }
-
 }

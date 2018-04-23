@@ -155,9 +155,9 @@ public abstract class SqlInjectionChecker {
     /**
      * gets the database vendor specific sql comment begin/end definition
      */
-    protected abstract HashSet<String> getCommentExpressions();
+    protected abstract Set<String> getCommentExpressions();
     /**
      * gets the database vendor specific functions that are considered as sql injection.
      */
-    protected abstract HashSet<String> getInjectionFunctions();
+    protected abstract Set<String> getInjectionFunctions();
 }
