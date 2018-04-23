@@ -10,7 +10,6 @@ import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -123,12 +122,10 @@ public class BackendExportDomainDiskResourceTest
         return disk;
     }
 
-    private HashMap<Guid, DiskImage> getDiskMap() {
-        HashMap<Guid, DiskImage> map = new HashMap<>();
+    private Map<Guid, DiskImage> getDiskMap() {
         DiskImage disk = new DiskImage();
         disk.setId(DISK_ID);
-        map.put(DISK_ID, disk);
-        return map;
+        return Collections.singletonMap(DISK_ID, disk);
     }
     @Override
     protected void setUpEntityQueryExpectations(QueryType query,

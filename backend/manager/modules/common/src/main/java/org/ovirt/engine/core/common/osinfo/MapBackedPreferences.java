@@ -3,13 +3,15 @@ package org.ovirt.engine.core.common.osinfo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.prefs.AbstractPreferences;
 
 public class MapBackedPreferences extends AbstractPreferences implements Serializable {
 
     private static final long serialVersionUID = -6359144559146465048L;
-    HashMap<String, String> preferencesStore;
-    ArrayList<String> childNodes;
+    Map<String, String> preferencesStore;
+    List<String> childNodes;
 
     /**
      * Creates a preference node with the specified parent and the specified

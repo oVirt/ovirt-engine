@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
@@ -16,6 +16,6 @@ public abstract class JsonVmManagementParametersBaseMixIn extends VmManagementPa
 
     @JsonIgnore
     @Override
-    public abstract HashMap<Guid, DiskImage> getDiskInfoDestinationMap();
+    public abstract Map<Guid, DiskImage> getDiskInfoDestinationMap();
 
 }

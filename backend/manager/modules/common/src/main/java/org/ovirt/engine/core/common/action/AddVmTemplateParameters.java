@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -35,7 +35,7 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
     private Guid baseTemplateId;
 
     private Guid destinationStorageDomainId;
-    private HashMap<Guid, DiskImage> diskInfoDestinationMap;
+    private Map<Guid, DiskImage> diskInfoDestinationMap;
     private String vmLargeIcon;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE, message = "VALIDATION_VM_TEMPLATE_NAME_MAX", groups = { CreateEntity.class, UpdateEntity.class })
@@ -134,11 +134,11 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
         this.destinationStorageDomainId = destinationStorageDomainId;
     }
 
-    public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
+    public Map<Guid, DiskImage> getDiskInfoDestinationMap() {
         return diskInfoDestinationMap;
     }
 
-    public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
+    public void setDiskInfoDestinationMap(Map<Guid, DiskImage> diskInfoDestinationMap) {
         this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
 

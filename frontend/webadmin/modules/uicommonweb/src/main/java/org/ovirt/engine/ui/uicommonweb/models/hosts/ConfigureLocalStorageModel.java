@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -532,7 +533,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         public List<StoragePool> dataCenterList;
         public List<Cluster> clusterList;
         public List<StorageDomain> storageList;
-        public HashMap<StoragePool, VDS> localStorageHostByDataCenterMap;
-        public HashMap<StoragePool, ArrayList<Cluster>> clusterListByDataCenterMap;
+        public Map<StoragePool, VDS> localStorageHostByDataCenterMap;
+        public Map<StoragePool, ArrayList<Cluster>> clusterListByDataCenterMap;
     }
 }

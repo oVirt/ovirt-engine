@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -42,7 +42,7 @@ public abstract class FenceAgentCommandBase extends CommandBase<FenceAgentComman
         // check if port was set directly
         if (port == null) {
             // check if port was set using the fence agent options
-            HashMap<String, String> optionsMap = getParameters().getAgent().getOptionsMap();
+            Map<String, String> optionsMap = getParameters().getAgent().getOptionsMap();
             if (optionsMap != null && optionsMap.containsKey(PORT)) {
                 String portStr = optionsMap.get(PORT);
                 if (StringUtils.isNumeric(portStr)) {

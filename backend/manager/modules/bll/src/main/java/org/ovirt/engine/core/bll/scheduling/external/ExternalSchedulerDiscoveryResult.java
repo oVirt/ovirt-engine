@@ -33,12 +33,12 @@ public class ExternalSchedulerDiscoveryResult {
             return false;
         }
         @SuppressWarnings("unchecked")
-        HashMap<String, HashMap<String, Object[]>> castedResult = (HashMap<String, HashMap<String, Object[]>>) xmlRpcRawResult;
+        Map<String, HashMap<String, Object[]>> castedResult = (Map<String, HashMap<String, Object[]>>) xmlRpcRawResult;
 
         // keys will be filter, score and balance
         for (Map.Entry<String, HashMap<String, Object[]>> entry : castedResult.entrySet()) {
             String type = entry.getKey();
-            HashMap<String, Object[]> typeMap = entry.getValue();
+            Map<String, Object[]> typeMap = entry.getValue();
                 List<ExternalSchedulerDiscoveryUnit> currentList = getRelevantList(type);
                 if (currentList == null) {
                     log.error("External scheduler error, got unknown type");

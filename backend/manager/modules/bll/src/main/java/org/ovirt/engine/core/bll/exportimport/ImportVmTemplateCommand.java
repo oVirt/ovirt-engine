@@ -218,7 +218,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             getParameters().setImages(images);
             getVmTemplate().setImages(images);
             ensureDomainMap(getImages(), getParameters().getDestDomainId());
-            HashMap<Guid, DiskImage> imageMap = new HashMap<>();
+            Map<Guid, DiskImage> imageMap = new HashMap<>();
             for (DiskImage image : images) {
                 if (Guid.Empty.equals(image.getVmSnapshotId())) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);

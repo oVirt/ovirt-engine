@@ -25,10 +25,10 @@ public abstract class OvfLogEventHandler<T> {
 
     // map containing entries of entity's class field names to aliases - their
     // name
-    private HashMap<String, String> fieldsToAliasesMap;
+    private Map<String, String> fieldsToAliasesMap;
 
     // Reversed map to the above
-    private HashMap<String, String> aliasesToFieldsMap;
+    private Map<String, String> aliasesToFieldsMap;
 
     // list containing the names of the entity's fields that are annotated with
     // OvfExportOnlyField
@@ -95,7 +95,7 @@ public abstract class OvfLogEventHandler<T> {
      * OVF. Values hold the data of the fields.
      */
     public Map<String, String> getAliasesValuesMap() {
-        HashMap<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         try {
 
             Map<String, String> fieldsMap = fieldsToAliasesMap;

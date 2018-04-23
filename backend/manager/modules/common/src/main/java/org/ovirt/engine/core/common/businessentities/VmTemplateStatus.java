@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VmTemplateStatus implements Identifiable {
     OK(0),
@@ -8,7 +9,7 @@ public enum VmTemplateStatus implements Identifiable {
     Illegal(2);
 
     private int intValue;
-    private static final HashMap<Integer, VmTemplateStatus> mappings = new HashMap<>();
+    private static final Map<Integer, VmTemplateStatus> mappings = new HashMap<>();
 
     static {
         for (VmTemplateStatus status : values()) {

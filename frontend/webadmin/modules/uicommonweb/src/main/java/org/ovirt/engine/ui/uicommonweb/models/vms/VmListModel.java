@@ -1010,8 +1010,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         if (storagePool != null) {
             AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery<>(
                             templatesDiskSet -> {
-                                HashMap<String, ArrayList<String>> templateDic =
-                                        new HashMap<>();
+                                Map<String, ArrayList<String>> templateDic = new HashMap<>();
 
                                 // check if relevant templates are already there
                                 for (VM vm : getSelectedItems()) {

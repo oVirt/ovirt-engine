@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
@@ -20,7 +21,7 @@ public enum ImageTransferPhase implements Identifiable {
 
     private int value;
     private String description;
-    private static final HashMap<Integer, ImageTransferPhase> valueToPhase = new HashMap<>();
+    private static final Map<Integer, ImageTransferPhase> valueToPhase = new HashMap<>();
 
     static {
         for (ImageTransferPhase phase : values()) {

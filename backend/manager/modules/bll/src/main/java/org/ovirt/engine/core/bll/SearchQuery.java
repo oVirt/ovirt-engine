@@ -84,7 +84,7 @@ import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
-    private static final HashMap<String, QueryData> queriesCache = new HashMap<>();
+    private static final Map<String, QueryData> queriesCache = new HashMap<>();
     public static final String LDAP = "LDAP";
 
     @Inject

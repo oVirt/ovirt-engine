@@ -608,7 +608,7 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private List<VDS> runFilters(ArrayList<Guid> filters,
+    private List<VDS> runFilters(List<Guid> filters,
             Cluster cluster,
             List<VDS> hostList,
             VM vm,
@@ -619,8 +619,8 @@ public class SchedulingManager implements BackendService {
             boolean shouldRunExternalFilters,
             String correlationId) {
         SchedulingResult result = new SchedulingResult();
-        ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<>();
-        ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<>();
+        List<PolicyUnitImpl> internalFilters = new ArrayList<>();
+        List<PolicyUnitImpl> externalFilters = new ArrayList<>();
 
         // Create a local copy so we can manipulate it
         filters = new ArrayList<>(filters);
@@ -661,7 +661,7 @@ public class SchedulingManager implements BackendService {
         return hostList;
     }
 
-    private List<VDS> runInternalFilters(ArrayList<PolicyUnitImpl> filters,
+    private List<VDS> runInternalFilters(List<PolicyUnitImpl> filters,
             Cluster cluster,
             List<VDS> hostList,
             VM vm,
@@ -709,7 +709,7 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private List<VDS> runExternalFilters(ArrayList<PolicyUnitImpl> filters,
+    private List<VDS> runExternalFilters(List<PolicyUnitImpl> filters,
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters,
@@ -741,7 +741,7 @@ public class SchedulingManager implements BackendService {
         return hosts.stream().filter(host -> idSet.contains(host.getId())).collect(Collectors.toList());
     }
 
-    private void sortFilters(ArrayList<Guid> filters, final Map<Guid, Integer> filterPositionMap) {
+    private void sortFilters(List<Guid> filters, final Map<Guid, Integer> filterPositionMap) {
         filters.sort(Comparator.comparingInt(f -> filterPositionMap.getOrDefault(f, 0)));
     }
 

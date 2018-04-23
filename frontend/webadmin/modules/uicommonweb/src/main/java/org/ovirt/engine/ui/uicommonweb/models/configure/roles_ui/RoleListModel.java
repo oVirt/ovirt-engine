@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -398,7 +399,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         role.setDescription(model.getDescription().getEntity());
 
         ArrayList<ActionGroup> actions = new ArrayList<>();
-        HashMap<ActionGroup, ActionGroup> actionDistinctSet = new HashMap<>();
+        Map<ActionGroup, ActionGroup> actionDistinctSet = new HashMap<>();
         for (SelectionTreeNodeModel sm : model.getPermissionGroupModels()) {
             for (SelectionTreeNodeModel smChild : sm.getChildren()) {
                 if (smChild.getIsSelectedNullable() == null || smChild.getIsSelectedNullable()) {

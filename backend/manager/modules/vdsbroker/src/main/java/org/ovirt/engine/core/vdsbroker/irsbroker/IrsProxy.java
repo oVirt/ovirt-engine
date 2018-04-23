@@ -114,7 +114,7 @@ public class IrsProxy {
 
     private ScheduledFuture storagePoolRefreshJob;
     private ScheduledFuture domainRecoverOnHostJob;
-    private final HashSet<Guid> triedVdssList = new HashSet<>();
+    private final Set<Guid> triedVdssList = new HashSet<>();
     private Guid currentVdsId;
 
     private static Set<VDSStatus> vdsConnectedToPoolStatuses;
@@ -319,8 +319,8 @@ public class IrsProxy {
             // PROBLEM
             // then cause failover with attempts
             if (result != null && !(result.getExceptionObject() instanceof VDSNetworkException)) {
-                HashMap<Guid, AsyncTaskStatus> tasksList =
-                        (HashMap<Guid, AsyncTaskStatus>) resourceManager
+                Map<Guid, AsyncTaskStatus> tasksList =
+                        (Map<Guid, AsyncTaskStatus>) resourceManager
                                 .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
                                         new VdsIdVDSCommandParametersBase(curVdsId)).getReturnValue();
                 boolean allTasksFinished = true;
@@ -364,7 +364,7 @@ public class IrsProxy {
                     (KeyValuePairCompat<StoragePool, List<StorageDomain>>) storagePoolInfoResult
                             .getReturnValue();
             int masterVersion = data.getKey().getMasterDomainVersion();
-            HashSet<Guid> domainsInVds = new HashSet<>();
+            Set<Guid> domainsInVds = new HashSet<>();
             List<StorageDomain> storageDomainsToSync = data.getValue()
                     .stream()
                     .peek(storageDomain -> domainsInVds.add(storageDomain.getId()))
@@ -600,7 +600,7 @@ public class IrsProxy {
         throw new IRSNoMasterDomainException(exceptionMessage);
     }
 
-    public HashSet<Guid> getTriedVdssList() {
+    public Set<Guid> getTriedVdssList() {
         return triedVdssList;
     }
 
@@ -1436,7 +1436,7 @@ public class IrsProxy {
         for (Map.Entry<Guid, DomainMonitoringResult> entry : problematicDomains.entrySet()) {
             Guid domainId = entry.getKey();
             DomainMonitoringResult domainMonitoringResult = entry.getValue();
-            HashSet<Guid> hostsReportedDomainAsProblematic = domainsInProblem.get(domainId);
+            Set<Guid> hostsReportedDomainAsProblematic = domainsInProblem.get(domainId);
             boolean domainNotFound = domainMonitoringResult == DomainMonitoringResult.STORAGE_ACCCESS_ERROR;
             if (domainNotFound) {
                 domainsUnreachableByHost.add(domainId);

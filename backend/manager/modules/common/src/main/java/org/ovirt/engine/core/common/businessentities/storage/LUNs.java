@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.Size;
@@ -37,7 +37,7 @@ public class LUNs implements BusinessEntity<String> {
     @Size(max = BusinessEntitiesDefinitions.LUN_PRODUCT_ID)
     private String productId;
 
-    private ArrayList<StorageServerConnections> _lunConnections;
+    private List<StorageServerConnections> _lunConnections;
 
     private int deviceSize;
 
@@ -51,9 +51,9 @@ public class LUNs implements BusinessEntity<String> {
 
     private String vendorName;
 
-    private HashMap<String, Boolean> pathsDictionary;
+    private Map<String, Boolean> pathsDictionary;
 
-    private HashMap<String, Integer> pathsCapacity;
+    private Map<String, Integer> pathsCapacity;
 
     private StorageType lunType;
 
@@ -193,11 +193,11 @@ public class LUNs implements BusinessEntity<String> {
         this.productId = value;
     }
 
-    public ArrayList<StorageServerConnections> getLunConnections() {
+    public List<StorageServerConnections> getLunConnections() {
         return _lunConnections;
     }
 
-    public void setLunConnections(ArrayList<StorageServerConnections> value) {
+    public void setLunConnections(List<StorageServerConnections> value) {
         _lunConnections = value;
     }
 
@@ -268,20 +268,20 @@ public class LUNs implements BusinessEntity<String> {
         return getPathsDictionary() == null ? 0 : getPathsDictionary().size();
     }
 
-    public HashMap<String, Boolean> getPathsDictionary() {
+    public Map<String, Boolean> getPathsDictionary() {
         return pathsDictionary;
     }
 
-    public void setPathsDictionary(HashMap<String, Boolean> value) {
+    public void setPathsDictionary(Map<String, Boolean> value) {
         pathsDictionary = value;
     }
 
 
-    public HashMap<String, Integer> getPathsCapacity() {
+    public Map<String, Integer> getPathsCapacity() {
         return pathsCapacity;
     }
 
-    public void setPathsCapacity(HashMap<String, Integer> value) {
+    public void setPathsCapacity(Map<String, Integer> value) {
         pathsCapacity = value;
     }
 

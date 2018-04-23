@@ -52,7 +52,7 @@ public class ExternalSchedulerBrokerObjectBuilder {
         }
 
         @SuppressWarnings("unchecked")
-        HashMap<String, Object> castedResult = (HashMap<String, Object>) xmlRpcStruct;
+        Map<String, Object> castedResult = (Map<String, Object>) xmlRpcStruct;
 
         // keys will be status_code, plugin_errors, errors and result
         result.setResultCode((int) castedResult.get("result_code"));
@@ -60,7 +60,7 @@ public class ExternalSchedulerBrokerObjectBuilder {
         Object[] errors = null;
 
         if (result.getResultCode() != RESULT_OK) {
-            plugin_errors = (HashMap<String, Object[]>)castedResult.get("plugin_errors");
+            plugin_errors = (Map<String, Object[]>) castedResult.get("plugin_errors");
             errors = (Object[])castedResult.get("errors");
 
             if (plugin_errors != null) {

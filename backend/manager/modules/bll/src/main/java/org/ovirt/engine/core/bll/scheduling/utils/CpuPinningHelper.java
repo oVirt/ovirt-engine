@@ -15,8 +15,8 @@ public class CpuPinningHelper {
 
     private static Collection<Integer> parsePCpuPinningNumbers(final String text) {
         try {
-            HashSet<Integer> include = new HashSet<>();
-            HashSet<Integer> exclude = new HashSet<>();
+            Set<Integer> include = new HashSet<>();
+            Set<Integer> exclude = new HashSet<>();
             String[] splitText = text.split(",");
             for (String section : splitText) {
                 if (section.startsWith("^")) {

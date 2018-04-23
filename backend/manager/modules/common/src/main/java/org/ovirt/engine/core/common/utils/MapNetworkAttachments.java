@@ -44,7 +44,7 @@ public class MapNetworkAttachments {
 
     private <K, I> Set<I> getSetForKey(K key, Map<K, Set<I>> result) {
         if (!result.containsKey(key)) {
-            HashSet<I> values = new HashSet<>();
+            Set<I> values = new HashSet<>();
             result.put(key, values);
             return values;
         } else {

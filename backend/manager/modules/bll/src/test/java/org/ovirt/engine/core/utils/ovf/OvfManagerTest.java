@@ -98,7 +98,7 @@ public class OvfManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        final HashMap<Integer, String> osIdsToNames = new HashMap<>();
+        final Map<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
         final List<Pair<GraphicsType, DisplayType>> gndDefaultOs = new ArrayList<>();

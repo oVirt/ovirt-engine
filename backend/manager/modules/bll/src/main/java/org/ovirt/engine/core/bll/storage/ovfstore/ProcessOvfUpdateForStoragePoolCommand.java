@@ -99,7 +99,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdatePa
     private List<Guid> proccessedIdsInfo;
     private List<Long> proccessedOvfGenerationsInfo;
     private List<String> proccessedOvfConfigurationsInfo;
-    private HashSet<Guid> proccessedDomains;
+    private Set<Guid> proccessedDomains;
     private List<Guid> activeDataDomainsIds;
 
     public ProcessOvfUpdateForStoragePoolCommand(T parameters, CommandContext commandContext) {
@@ -348,7 +348,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdatePa
                 if (vm.getStaticData().getDbGeneration() == currentDbGeneration) {
                     List<LunDisk> lunDisks = DisksFilter.filterLunDisks(vm.getDiskMap().values());
                     for (LunDisk lun : lunDisks) {
-                        lun.getLun().setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId())));
+                        lun.getLun().setLunConnections(storageServerConnectionDao.getAllForLun(lun.getLun().getId()));
                     }
 
                     List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());

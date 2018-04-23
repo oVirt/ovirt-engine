@@ -121,14 +121,14 @@ public class DisksAllocationModel extends EntityModel {
         }
     }
 
-    private HashMap<Guid, DiskImage> imageToDestinationDomainMap;
+    private Map<Guid, DiskImage> imageToDestinationDomainMap;
 
-    public HashMap<Guid, DiskImage> getImageToDestinationDomainMap() {
+    public Map<Guid, DiskImage> getImageToDestinationDomainMap() {
         updateImageToDestinationDomainMap();
         return imageToDestinationDomainMap;
     }
 
-    public void setImageToDestinationDomainMap(HashMap<Guid, DiskImage> imageToDestinationDomainMap) {
+    public void setImageToDestinationDomainMap(Map<Guid, DiskImage> imageToDestinationDomainMap) {
         this.imageToDestinationDomainMap = imageToDestinationDomainMap;
     }
 

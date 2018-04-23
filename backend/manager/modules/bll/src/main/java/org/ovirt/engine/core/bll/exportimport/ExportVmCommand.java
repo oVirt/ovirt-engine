@@ -297,7 +297,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     }
 
     private void updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
-        HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary = new HashMap<>();
+        Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary = new HashMap<>();
         List<DiskImage> vmImages = new ArrayList<>();
         List<LunDisk> lunDisks = new ArrayList<>();
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
@@ -335,7 +335,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
         lunDisks.addAll(DisksFilter.filterLunDisks(getVm().getDiskMap().values(), ONLY_NOT_SHAREABLE));
         lunDisks.forEach(lun -> lun.getLun()
-                .setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLun().getId()))));
+                .setLunConnections(storageServerConnectionDao.getAllForLun(lun.getLun().getId())));
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vm);
         fullEntityOvfData.setClusterName(vm.getClusterName());

@@ -87,8 +87,8 @@ public class VmWatchdog implements Queryable {
                 null);
     }
 
-    public HashMap<String, Object> getSpecParams() {
-        HashMap<String, Object> specParams = new HashMap<>();
+    public Map<String, Object> getSpecParams() {
+        Map<String, Object> specParams = new HashMap<>();
 
         specParams.put(WATCHDOG_MODEL_PARAM_NAME, model.name());
         specParams.put(WATCHDOG_ACTION_PARAM_NAME, action.name().toLowerCase());

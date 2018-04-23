@@ -18,7 +18,7 @@ public class VmPayload extends VmDevice implements Serializable {
     private static final String SpecParamsFileType = "file";
 
     private String volumeId;
-    private HashMap<String, String> files; // file data is base64-encoded
+    private Map<String, String> files; // file data is base64-encoded
 
     // Use the constructor with the vmid if you have it!
     public VmPayload() {
@@ -79,7 +79,7 @@ public class VmPayload extends VmDevice implements Serializable {
      *
      * @return Map of files in this payload
      */
-    public HashMap<String, String> getFiles() {
+    public Map<String, String> getFiles() {
         return files;
     }
 

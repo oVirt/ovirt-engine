@@ -31,7 +31,7 @@ public class GetVfToPfMapByHostIdQueryTest
         IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(hostId);
 
-        final HashMap<Guid, Guid> expected = new HashMap<>();
+        final Map<Guid, Guid> expected = new HashMap<>();
         when(networkDeviceHelper.getVfMap(hostId)).thenReturn(expected);
 
         getQuery().executeQueryCommand();

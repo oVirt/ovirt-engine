@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 public class QuotaManager implements BackendService {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Logger log = LoggerFactory.getLogger(QuotaManager.class);
-    private HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<>();
-    private HashMap<Guid, Guid> storagePoolDefaultQuotaIdMap = new HashMap<>();
+    private Map<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<>();
+    private Map<Guid, Guid> storagePoolDefaultQuotaIdMap = new HashMap<>();
 
     private final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
     private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<>();
@@ -1094,8 +1094,8 @@ public class QuotaManager implements BackendService {
             return;
         }
 
-        HashMap<Guid, Map<Guid, Quota>> newStoragePoolQuotaMap = new HashMap<>();
-        HashMap<Guid, Guid> newDefaultQuotaIdMap = new HashMap<>();
+        Map<Guid, Map<Guid, Quota>> newStoragePoolQuotaMap = new HashMap<>();
+        Map<Guid, Guid> newDefaultQuotaIdMap = new HashMap<>();
 
         for (Quota quota : allQuotaIncludingConsumption) {
             if (!newStoragePoolQuotaMap.containsKey(quota.getStoragePoolId())) {

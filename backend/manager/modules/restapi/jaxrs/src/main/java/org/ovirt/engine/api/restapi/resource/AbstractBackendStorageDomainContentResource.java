@@ -62,8 +62,8 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
                 "Cluster: name=" + name);
     }
 
-    protected HashMap<Guid, Guid> getDiskToDestinationMap(Action action) {
-        HashMap<Guid, Guid> diskToDestinationMap = new HashMap<>();
+    protected Map<Guid, Guid> getDiskToDestinationMap(Action action) {
+        Map<Guid, Guid> diskToDestinationMap = new HashMap<>();
         if (action.isSetVm() && action.getVm().isSetDiskAttachments() && action.getVm().getDiskAttachments().isSetDiskAttachments()) {
             for (DiskAttachment diskAttachment : action.getVm().getDiskAttachments().getDiskAttachments()) {
                 Disk disk = diskAttachment.getDisk();

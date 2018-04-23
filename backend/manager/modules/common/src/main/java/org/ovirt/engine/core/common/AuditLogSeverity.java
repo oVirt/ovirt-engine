@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
@@ -12,7 +13,7 @@ public enum AuditLogSeverity implements Identifiable {
     ALERT(10);
 
     private int intValue;
-    private static final HashMap<Integer, AuditLogSeverity> mappings = new HashMap<>();
+    private static final Map<Integer, AuditLogSeverity> mappings = new HashMap<>();
 
     static {
         for (AuditLogSeverity logSeverity : values()) {

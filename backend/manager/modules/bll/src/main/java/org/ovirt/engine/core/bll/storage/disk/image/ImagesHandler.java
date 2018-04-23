@@ -561,7 +561,7 @@ public class ImagesHandler {
         diskLunMapDao.remove(new DiskLunMapId(lunDisk.getId(), lun.getLUNId()));
         baseDiskDao.remove(lunDisk.getId());
 
-        lun.setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLUNId())));
+        lun.setLunConnections(storageServerConnectionDao.getAllForLun(lun.getLUNId()));
 
         if (!lun.getLunConnections().isEmpty()) {
             storageHelperDirector.getItem(

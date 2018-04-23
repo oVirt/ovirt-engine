@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VDSType {
     VDS(0),
@@ -8,7 +9,7 @@ public enum VDSType {
     oVirtVintageNode(2);
 
     private int intValue;
-    private static final HashMap<Integer, VDSType> mappings = new HashMap<>();
+    private static final Map<Integer, VDSType> mappings = new HashMap<>();
 
     static {
         for (VDSType type : values()) {

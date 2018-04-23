@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -189,7 +190,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
             device.setAttachedVmNames(split(rs.getString("attached_vm_names")));
             device.setRunningVmName(rs.getString("running_vm_name"));
 
-            HashMap specParams = SerializationFactory.getDeserializer()
+            Map<String, Object> specParams = SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("spec_params"), HashMap.class);
 
             device.setIommuPlaceholder(specParams != null && VmHostDevice.isIommuPlaceHolder(specParams));

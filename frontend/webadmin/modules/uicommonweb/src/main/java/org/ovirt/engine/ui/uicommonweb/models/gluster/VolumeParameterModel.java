@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 public class VolumeParameterModel extends EntityModel {
 
     private static final String NULL_CONST = "(null)"; //$NON-NLS-1$
-    private HashMap<String, GlusterVolumeOptionInfo> optionsMap;
+    private Map<String, GlusterVolumeOptionInfo> optionsMap;
     private ListModel<String> keyList;
     private Boolean isNew;
     private EntityModel<String> value;
@@ -90,11 +90,11 @@ public class VolumeParameterModel extends EntityModel {
         return getKeyList().getIsValid() && getValue().getIsValid();
     }
 
-    public HashMap<String, GlusterVolumeOptionInfo> getOptionsMap() {
+    public Map<String, GlusterVolumeOptionInfo> getOptionsMap() {
         return optionsMap;
     }
 
-    public void setOptionsMap(HashMap<String, GlusterVolumeOptionInfo> optionsMap) {
+    public void setOptionsMap(Map<String, GlusterVolumeOptionInfo> optionsMap) {
         this.optionsMap = optionsMap;
         getKeyList().setItems(new ArrayList<String>(getOptionsMap().keySet()), getKeyList().getSelectedItem());
     }

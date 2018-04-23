@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VdsInterfaceType {
     // we use this enum with bit manipulation
@@ -11,7 +12,7 @@ public enum VdsInterfaceType {
     GUESTS(8); // 01000
 
     private int intValue;
-    private static final HashMap<Integer, VdsInterfaceType> mappings = new HashMap<>();
+    private static final Map<Integer, VdsInterfaceType> mappings = new HashMap<>();
 
     static {
         for (VdsInterfaceType vdsInterfaceType : values()) {

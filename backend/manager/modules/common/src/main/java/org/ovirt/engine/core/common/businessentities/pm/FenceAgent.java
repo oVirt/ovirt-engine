@@ -26,7 +26,7 @@ public class FenceAgent implements BusinessEntity<Guid> {
     private int order;
 
     @EditableVdsField
-    private HashMap<String, String> optionsMap;
+    private Map<String, String> optionsMap;
 
     @EditableVdsField
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
@@ -157,11 +157,11 @@ public class FenceAgent implements BusinessEntity<Guid> {
         this.ip = ip;
     }
 
-    public HashMap<String, String> getOptionsMap() {
+    public Map<String, String> getOptionsMap() {
         return optionsMap;
     }
 
-    public void setOptionsMap(HashMap<String, String> value) {
+    public void setOptionsMap(Map<String, String> value) {
         optionsMap = value;
         options = optionsMapToString(value);
     }
@@ -177,7 +177,7 @@ public class FenceAgent implements BusinessEntity<Guid> {
     /**
      * Converts a PM Options map to string
      */
-    public static String optionsMapToString(HashMap<String, String> map) {
+    public static String optionsMapToString(Map<String, String> map) {
         String result = "";
         String seperator = "";
         Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();

@@ -165,7 +165,7 @@ public class CpuFlagsManagerHandler implements BackendService {
 
                     if (info.length == 5) {
                         // if no flags at all create new list instead of split
-                        HashSet<String> flgs =
+                        Set<String> flgs =
                                 StringUtils.isEmpty(info[2]) ? new HashSet<>()
                                         : new HashSet<>(Arrays.asList(info[2].split("[,]", -1)));
 
@@ -257,7 +257,7 @@ public class CpuFlagsManagerHandler implements BackendService {
             ServerCpu clusterCpu = null;
             List<String> missingFlags = null;
 
-            HashSet<String> lstServerflags =
+            Set<String> lstServerflags =
                     StringUtils.isEmpty(serverFlags) ? new HashSet<>()
                             : new HashSet<>(Arrays.asList(serverFlags.split("[,]", -1)));
 
@@ -330,7 +330,7 @@ public class CpuFlagsManagerHandler implements BackendService {
          */
         public ServerCpu findMaxServerCpuByFlags(String flags) {
             ServerCpu result = null;
-            HashSet<String> lstFlags = StringUtils.isEmpty(flags) ? new HashSet<>()
+            Set<String> lstFlags = StringUtils.isEmpty(flags) ? new HashSet<>()
                     : new HashSet<>(Arrays.asList(flags.split("[,]", -1)));
 
             if (lstFlags.contains(CpuVendor.INTEL.getFlag())) {

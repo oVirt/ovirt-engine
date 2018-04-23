@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,13 +32,13 @@ public class VdsFenceOptions implements Serializable {
     private static final String MAPPING_FORMAT_ERROR = "Illegal fence mapping format '{}'";
 
     private static final Logger log = LoggerFactory.getLogger(VdsFenceOptions.class);
-    private HashMap<String, HashMap<String, String>> fenceOptionMapping;
-    private static HashMap<String, String> fenceOptionTypes;
+    private Map<String, Map<String, String>> fenceOptionMapping;
+    private static Map<String, String> fenceOptionTypes;
 
     private String fenceAgent = "";
     private String fenceOptions;
-    private static HashMap<String, String> fenceAgentInstanceOptions;
-    private static HashSet<String> fenceSpecialParams;
+    private static Map<String, String> fenceAgentInstanceOptions;
+    private static Set<String> fenceSpecialParams;
     private String version;
 
     /**
@@ -64,7 +65,7 @@ public class VdsFenceOptions implements Serializable {
         init();
     }
 
-    public HashMap<String, HashMap<String, String>> getFenceOptionMappingMap() {
+    public Map<String, Map<String, String>> getFenceOptionMappingMap() {
         return fenceOptionMapping;
     }
 
@@ -81,7 +82,7 @@ public class VdsFenceOptions implements Serializable {
             String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);
             if (parts.length == 2) {
                 String agent = parts[0];
-                HashMap<String, String> agentOptions = new HashMap<>();
+                Map<String, String> agentOptions = new HashMap<>();
                 // check for empty options
                 if (StringUtils.isNotEmpty(parts[1])) {
                     String[] options = parts[1].split(Pattern.quote(COMMA), -1);
@@ -125,7 +126,7 @@ public class VdsFenceOptions implements Serializable {
         String result = "";
         if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(displayedKey)) {
             if (fenceOptionMapping.containsKey(agent)) {
-                HashMap<String, String> agentOptions = fenceOptionMapping.get(agent);
+                Map<String, String> agentOptions = fenceOptionMapping.get(agent);
                 result = agentOptions.getOrDefault(displayedKey, displayedKey);
             } else {
                 log.error(AGENT_ERROR, agent);
@@ -146,7 +147,7 @@ public class VdsFenceOptions implements Serializable {
         String result = "";
         if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(realKey)) {
             if (fenceOptionMapping.containsKey(agent)) {
-                HashMap<String, String> agentOptions = fenceOptionMapping.get(agent);
+                Map<String, String> agentOptions = fenceOptionMapping.get(agent);
                 if (agentOptions.containsValue(realKey)) {
                     for (Map.Entry<String, String> pair : agentOptions.entrySet()) {
                         if (StringUtils.equals(pair.getValue(), realKey)) {

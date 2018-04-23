@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -16,7 +17,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String, String>> {
+public class HostHooksListModel extends SearchableListModel<VDS, Map<String, String>> {
 
     public HostHooksListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().hostHooksTitle());
@@ -56,7 +57,7 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
 
         if (!getEntity().isContainingHooks()) {
             setIsEmpty(true);
-            setItems(new ArrayList<HashMap<String, String>>());
+            setItems(new ArrayList<>());
             return;
         }
 
@@ -66,12 +67,11 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(QueryType.GetVdsHooksById, tempVar, new AsyncQuery<QueryReturnValue>(returnValue -> {
-            ArrayList<HashMap<String, String>> list = new ArrayList<>();
-            HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = returnValue.getReturnValue();
-            HashMap<String, String> row;
-            for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet()) {
-                for (Map.Entry<String, HashMap<String, String>> keyValuePair1 : keyValuePair.getValue()
-                        .entrySet()) {
+            List<Map<String, String>> list = new ArrayList<>();
+            Map<String, Map<String, Map<String, String>>> dictionary = returnValue.getReturnValue();
+            Map<String, String> row;
+            for (Map.Entry<String, Map<String, Map<String, String>>> keyValuePair : dictionary.entrySet()) {
+                for (Map.Entry<String, Map<String, String>> keyValuePair1 : keyValuePair.getValue().entrySet()) {
                     for (Map.Entry<String, String> keyValuePair2 : keyValuePair1.getValue().entrySet()) {
                         row = new HashMap<>();
                         row.put("EventName", keyValuePair.getKey()); //$NON-NLS-1$

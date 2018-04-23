@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
 
     private static final Logger log = LoggerFactory.getLogger(EnumValueAutoCompleter.class);
 
-    private final HashMap<String, Integer> enumValues = new HashMap<>();
+    private final Map<String, Integer> enumValues = new HashMap<>();
 
     public <E extends Enum<E> & Identifiable> EnumValueAutoCompleter(Class<E> enumerationType) {
 

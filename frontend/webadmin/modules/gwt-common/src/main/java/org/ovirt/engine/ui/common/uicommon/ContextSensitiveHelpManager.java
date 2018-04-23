@@ -110,7 +110,7 @@ public class ContextSensitiveHelpManager {
         for (String locale : json.keySet()) {
 
             JSONObject localeObject = json.get(locale).isObject();
-            HashMap<String, String> localeMappings = new HashMap<>();
+            Map<String, String> localeMappings = new HashMap<>();
 
             for (String docTag : localeObject.keySet()) {
                 JSONString urlString = localeObject.get(docTag).isString();

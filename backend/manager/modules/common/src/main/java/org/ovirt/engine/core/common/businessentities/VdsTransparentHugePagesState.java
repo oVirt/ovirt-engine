@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VdsTransparentHugePagesState {
 
@@ -10,7 +11,7 @@ public enum VdsTransparentHugePagesState {
     Always(2);
 
     private int intValue;
-    private static final HashMap<Integer, VdsTransparentHugePagesState> mappings = new HashMap<>();
+    private static final Map<Integer, VdsTransparentHugePagesState> mappings = new HashMap<>();
 
     static {
         for (VdsTransparentHugePagesState status : EnumSet.allOf(VdsTransparentHugePagesState.class)) {

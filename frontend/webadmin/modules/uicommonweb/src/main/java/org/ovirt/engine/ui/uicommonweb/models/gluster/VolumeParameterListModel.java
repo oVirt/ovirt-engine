@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -118,8 +119,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                         .getConstants()
                         .errorInFetchingVolumeOptionList());
             } else {
-                innerParameterModel
-                        .setOptionsMap(getOptionsMap((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue()));
+                innerParameterModel.setOptionsMap(getOptionsMap(returnValue.getReturnValue()));
             }
 
             innerParameterModel.stopProgress();
@@ -132,8 +132,8 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(asyncQuery, volume.getClusterId());
     }
 
-    private HashMap<String, GlusterVolumeOptionInfo> getOptionsMap(Set<GlusterVolumeOptionInfo> optionList) {
-        HashMap<String, GlusterVolumeOptionInfo> optionsMap = new HashMap<>();
+    private Map<String, GlusterVolumeOptionInfo> getOptionsMap(Set<GlusterVolumeOptionInfo> optionList) {
+        Map<String, GlusterVolumeOptionInfo> optionsMap = new HashMap<>();
         for (GlusterVolumeOptionInfo volumeOption : optionList) {
             optionsMap.put(volumeOption.getKey(), volumeOption);
         }
@@ -213,8 +213,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                         .getConstants()
                         .errorInFetchingVolumeOptionList());
             } else {
-                innerParameterModel
-                        .setOptionsMap(getOptionsMap((Set<GlusterVolumeOptionInfo>) returnValue.getReturnValue()));
+                innerParameterModel.setOptionsMap(getOptionsMap(returnValue.getReturnValue()));
             }
 
             GlusterVolumeOptionEntity selectedOption = getSelectedItem();

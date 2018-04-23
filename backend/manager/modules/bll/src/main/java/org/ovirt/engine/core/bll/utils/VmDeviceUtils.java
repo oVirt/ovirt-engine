@@ -689,7 +689,7 @@ public class VmDeviceUtils {
      * Returns USB controller spec params.
      */
     private Map<String, Object> createUsbControllerSpecParams(String model, int index) {
-        final HashMap<String, Object> specParams = new HashMap<>();
+        final Map<String, Object> specParams = new HashMap<>();
         specParams.put(VdsProperties.Model, model);
         specParams.put(VdsProperties.Index, Integer.toString(index));
         return specParams;

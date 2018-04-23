@@ -83,8 +83,8 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      * defined properties
      */
     public VMCustomProperties parseProperties(Version version, String propertiesStr) {
-        HashMap<String, String> userDefinedPropertiesMap = new HashMap<>();
-        HashMap<String, String> predefinedPropertiesMap = new HashMap<>();
+        Map<String, String> userDefinedPropertiesMap = new HashMap<>();
+        Map<String, String> predefinedPropertiesMap = new HashMap<>();
 
         convertCustomPropertiesStrToMaps(version, propertiesStr, predefinedPropertiesMap, userDefinedPropertiesMap);
         return new VMCustomProperties(convertProperties(predefinedPropertiesMap),

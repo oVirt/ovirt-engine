@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VdsSpmStatus {
     None(0),
@@ -8,7 +9,7 @@ public enum VdsSpmStatus {
     SPM(2);
 
     private int intValue;
-    private static final HashMap<Integer, VdsSpmStatus> mappings = new HashMap<>();
+    private static final Map<Integer, VdsSpmStatus> mappings = new HashMap<>();
 
     static {
         for (VdsSpmStatus vdsSpmStatus : values()) {

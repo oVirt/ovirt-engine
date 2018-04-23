@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
 
     @Override
     protected void executeQueryCommand() {
-        ArrayList<StorageDomain> returnValue = new ArrayList<>();
+        List<StorageDomain> returnValue = new ArrayList<>();
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.HSMGetStorageDomainsList,
                 new HSMGetStorageDomainsListVDSCommandParameters(getParameters().getId(),
                         Guid.Empty,
@@ -40,7 +41,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                         getParameters().getStorageDomainType(),
                         getParameters().getPath()));
         if (vdsReturnValue.getSucceeded()) {
-            ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
+            List<Guid> guidsFromIrs = (List<Guid>) vdsReturnValue.getReturnValue();
             if (guidsFromIrs.size() > 0) {
                 Set<Guid> guidsFromDb =
                         storageDomainDao.getAll().stream().map(StorageDomain::getId).collect(Collectors.toSet());

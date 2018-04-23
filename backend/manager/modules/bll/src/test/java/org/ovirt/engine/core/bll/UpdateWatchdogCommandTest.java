@@ -11,7 +11,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
@@ -56,7 +56,7 @@ public class UpdateWatchdogCommandTest extends BaseCommandTest {
     public void getSpecParams() {
         command.getParameters().setAction(VmWatchdogAction.RESET);
         command.getParameters().setModel(vmWatchdogType);
-        HashMap<String, Object> specParams = command.getSpecParams();
+        Map<String, Object> specParams = command.getSpecParams();
         assertNotNull(specParams);
         assertEquals("i6300esb", specParams.get("model"));
         assertEquals("reset", specParams.get("action"));

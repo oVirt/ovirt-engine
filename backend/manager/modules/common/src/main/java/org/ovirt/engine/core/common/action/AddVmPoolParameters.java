@@ -20,7 +20,7 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
     @Valid
     private VmStatic vmStaticData;
     private int vmsCount;
-    private HashMap<Guid, DiskImage> diskInfoDestinationMap;
+    private Map<Guid, DiskImage> diskInfoDestinationMap;
     private Boolean soundDeviceEnabled;
     private Boolean consoleEnabled;
     private Boolean virtioScsiEnabled;
@@ -51,11 +51,11 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
         return vmsCount;
     }
 
-    public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
+    public Map<Guid, DiskImage> getDiskInfoDestinationMap() {
         return diskInfoDestinationMap;
     }
 
-    public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
+    public void setDiskInfoDestinationMap(Map<Guid, DiskImage> diskInfoDestinationMap) {
         this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
 

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -66,7 +66,7 @@ public class SubTabVirtualMachineSnapshotView extends AbstractDetailTabListView<
 
     @Override
     public PatternflyListViewItem<Snapshot> createListViewItem(Snapshot selectedItem) {
-        HashMap<Guid, SnapshotModel> snapshotsMap = getDetailModel().getSnapshotsMap();
+        Map<Guid, SnapshotModel> snapshotsMap = getDetailModel().getSnapshotsMap();
         SnapshotModel snapshotModel = snapshotsMap.get(selectedItem.getId());
         VmSnapshotListViewItem newItem = new VmSnapshotListViewItem(selectedItem.getDescription(), selectedItem,
                 getDetailModel(), snapshotModel);

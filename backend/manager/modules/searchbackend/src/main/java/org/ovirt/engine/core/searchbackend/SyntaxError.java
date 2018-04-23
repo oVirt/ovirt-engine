@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum SyntaxError {
     NO_ERROR(0),
@@ -28,9 +29,9 @@ public enum SyntaxError {
     INVALID_PAGE_FEILD(22);
 
     private int intValue;
-    private static HashMap<Integer, SyntaxError> mappings;
+    private static Map<Integer, SyntaxError> mappings;
 
-    private static synchronized HashMap<Integer, SyntaxError> getMappings() {
+    private static synchronized Map<Integer, SyntaxError> getMappings() {
         if (mappings == null) {
             mappings = new HashMap<>();
         }

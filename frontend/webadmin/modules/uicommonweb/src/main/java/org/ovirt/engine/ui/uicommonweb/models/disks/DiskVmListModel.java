@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.disks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -15,7 +16,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class DiskVmListModel extends SearchableListModel<Disk, VM> {
-    private HashMap diskVmMap;
+    private Map<Boolean, List<VM>> diskVmMap;
 
     public DiskVmListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
@@ -45,9 +46,9 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM> {
         Frontend.getInstance().runQuery(QueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, new AsyncQuery<QueryReturnValue>(returnValue -> {
             diskVmMap = returnValue.getReturnValue();
 
-            ArrayList<VM> vmList = new ArrayList<>();
-            ArrayList<VM> pluggedList = (ArrayList<VM>) diskVmMap.get(true);
-            ArrayList<VM> unPluggedList = (ArrayList<VM>) diskVmMap.get(false);
+            List<VM> vmList = new ArrayList<>();
+            List<VM> pluggedList = diskVmMap.get(true);
+            List<VM> unPluggedList = diskVmMap.get(false);
 
             if (pluggedList != null) {
                 vmList.addAll(pluggedList);
@@ -84,7 +85,7 @@ public class DiskVmListModel extends SearchableListModel<Disk, VM> {
     }
 
     public boolean isDiskPluggedToVm(VM vm) {
-        ArrayList<VM> pluggedList = (ArrayList<VM>) diskVmMap.get(true);
+        List<VM> pluggedList = diskVmMap.get(true);
         return pluggedList != null && pluggedList.contains(vm);
     }
 }

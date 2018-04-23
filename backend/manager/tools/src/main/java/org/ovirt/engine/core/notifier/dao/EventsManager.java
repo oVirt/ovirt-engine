@@ -96,7 +96,7 @@ public class EventsManager implements Observer {
     }
 
     public List<AuditLogEvent> getAuditLogEvents() throws SQLException {
-        HashSet<String> downEvents = new HashSet<>(eventMap.values());
+        Set<String> downEvents = new HashSet<>(eventMap.values());
         List<AuditLogEvent> auditLogEvents = new ArrayList<>();
         try (Connection connection = ds.getConnection();
              PreparedStatement ps = connection.prepareStatement(

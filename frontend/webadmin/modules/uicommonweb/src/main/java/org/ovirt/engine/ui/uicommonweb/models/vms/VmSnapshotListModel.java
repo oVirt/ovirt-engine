@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -144,13 +145,13 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         canSelectSnapshot = value;
     }
 
-    private HashMap<Guid, SnapshotModel> snapshotsMap;
+    private Map<Guid, SnapshotModel> snapshotsMap;
 
-    public HashMap<Guid, SnapshotModel> getSnapshotsMap() {
+    public Map<Guid, SnapshotModel> getSnapshotsMap() {
         return snapshotsMap;
     }
 
-    public void setSnapshotsMap(HashMap<Guid, SnapshotModel> value) {
+    public void setSnapshotsMap(Map<Guid, SnapshotModel> value) {
         snapshotsMap = value;
         onPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap")); //$NON-NLS-1$
     }
@@ -709,7 +710,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         vm.setUseHostCpuFlags(model.getHostCpu().getEntity());
         vm.setDiskMap(behavior.getVm().getDiskMap());
 
-        HashMap<Guid, DiskImage> imageToDestinationDomainMap =
+        Map<Guid, DiskImage> imageToDestinationDomainMap =
                 model.getDisksAllocationModel().getImageToDestinationDomainMap();
 
         AddVmFromSnapshotParameters parameters =

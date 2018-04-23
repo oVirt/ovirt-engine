@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
@@ -22,14 +22,13 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
     @Override
     public Hooks list() {
         @SuppressWarnings("unchecked")
-        HashMap<String, HashMap<String, HashMap<String, String>>> hooksMap =
-                getEntity(HashMap.class, QueryType.GetVdsHooksById,
-                        new IdQueryParameters(asGuid(hostId)), null);
+        Map<String, Map<String, Map<String, String>>> hooksMap =
+                getEntity(Map.class, QueryType.GetVdsHooksById, new IdQueryParameters(asGuid(hostId)), null);
         return mapCollection(hooksMap);
     }
 
-    private Hooks mapCollection(HashMap<String, HashMap<String, HashMap<String, String>>> hooksMap) {
-        Hooks hooks = getMapper(HashMap.class, Hooks.class).map(hooksMap, null);
+    private Hooks mapCollection(Map<String, Map<String, Map<String, String>>> hooksMap) {
+        Hooks hooks = getMapper(Map.class, Hooks.class).map(hooksMap, null);
         for (Hook hook : hooks.getHooks()) {
             addLinks(hook);
         }

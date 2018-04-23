@@ -273,7 +273,7 @@ public class NumaValidator {
             return new ValidationResult(EngineMessage.HOST_NUMA_NOT_SUPPORTED);
         }
 
-        final HashMap<Integer, VdsNumaNode> hostNodeMap = new HashMap<>();
+        final Map<Integer, VdsNumaNode> hostNodeMap = new HashMap<>();
         for (VdsNumaNode hostNumaNode : hostNumaNodes) {
             hostNodeMap.put(hostNumaNode.getIndex(), hostNumaNode);
         }

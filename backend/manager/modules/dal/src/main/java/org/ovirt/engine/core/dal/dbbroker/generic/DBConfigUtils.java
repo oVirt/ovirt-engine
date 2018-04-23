@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -231,7 +232,7 @@ public class DBConfigUtils implements IConfigUtilsInterface {
                         }
                         break;
                     case CommaSeparatedVersionArray:
-                        HashSet<Version> versions = new HashSet<>();
+                        Set<Version> versions = new HashSet<>();
                         for (String ver : result.toString().split("[,]", -1)) {
                             try {
                                 versions.add(new Version(ver));

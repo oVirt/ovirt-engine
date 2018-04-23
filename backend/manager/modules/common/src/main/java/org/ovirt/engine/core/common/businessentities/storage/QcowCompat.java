@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum QcowCompat {
     Undefined(0, "Undefined", 0),
@@ -10,9 +11,9 @@ public enum QcowCompat {
     private int value;
     private String compatValue;
     private int qcowHeaderVersion;
-    private static final HashMap<String, QcowCompat> mappingByCompatValue = new HashMap<>();
-    private static final HashMap<Integer, QcowCompat> mappingByValue = new HashMap<>();
-    private static final HashMap<Integer, QcowCompat> mappingByQcowHeaderVersion = new HashMap<>();
+    private static final Map<String, QcowCompat> mappingByCompatValue = new HashMap<>();
+    private static final Map<Integer, QcowCompat> mappingByValue = new HashMap<>();
+    private static final Map<Integer, QcowCompat> mappingByQcowHeaderVersion = new HashMap<>();
 
     static {
         QcowCompat[] enumValues = values();

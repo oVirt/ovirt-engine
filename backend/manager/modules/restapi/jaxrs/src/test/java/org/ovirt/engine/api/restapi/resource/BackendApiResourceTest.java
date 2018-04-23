@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -308,8 +309,8 @@ public class BackendApiResourceTest {
         verifyResponseGlusterOnly(resource.get());
     }
 
-    protected HashMap<String, Integer> setUpStats() {
-        HashMap<String, Integer> stats = new HashMap<>();
+    protected Map<String, Integer> setUpStats() {
+        Map<String, Integer> stats = new HashMap<>();
 
         stats.put("total_vms", TOTAL_VMS);
         stats.put("active_vms", ACTIVE_VMS);

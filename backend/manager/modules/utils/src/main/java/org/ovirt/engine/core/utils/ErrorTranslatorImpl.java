@@ -167,8 +167,8 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
      * @see org.ovirt.engine.core.utils.ErrorTranslator#resolveMessages(java.util.List)
      */
     public final List<String> resolveMessages(List<String> translatedMessages) {
-        ArrayList<String> translatedErrors = new ArrayList<>();
-        HashMap<String, String> variables = new HashMap<>();
+        List<String> translatedErrors = new ArrayList<>();
+        Map<String, String> variables = new HashMap<>();
         for (String currentMessage : translatedMessages) {
             if (isDynamicVariable(currentMessage)) {
                 addVariable(currentMessage, variables);
@@ -179,14 +179,14 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         /**
          * Place to global variable adding
          */
-        ArrayList<String> returnValue = new ArrayList<>();
+        List<String> returnValue = new ArrayList<>();
         for (String error : translatedErrors) {
             returnValue.add(resolveMessage(error, variables));
         }
         return returnValue;
     }
 
-    private void addVariable(String variable, HashMap<String, String> variables) {
+    private void addVariable(String variable, Map<String, String> variables) {
         int firstSpace = variable.indexOf(' ');
         if (firstSpace != -1 && firstSpace < variable.length()) {
             String key = variable.substring(1, firstSpace);
@@ -197,7 +197,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         }
     }
 
-    private String resolveMessage(String message, HashMap<String, String> variables) {
+    private String resolveMessage(String message, Map<String, String> variables) {
         StrSubstitutor sub = new StrSubstitutor(variables);
         return sub.replace(message);
     }

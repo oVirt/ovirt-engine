@@ -350,12 +350,12 @@ public class RunVmCommandTest extends BaseCommandTest {
     public static Set<VmRngDevice.Source>[] rngSourcesSubsets;
 
     static {
-        HashSet<VmRngDevice.Source> sourcesEmpty = new HashSet<>();
-        HashSet<VmRngDevice.Source> sourcesRandom = new HashSet<>();
+        Set<VmRngDevice.Source> sourcesEmpty = new HashSet<>();
+        Set<VmRngDevice.Source> sourcesRandom = new HashSet<>();
         sourcesRandom.add(VmRngDevice.Source.RANDOM);
-        HashSet<VmRngDevice.Source> sourcesHwRng = new HashSet<>();
+        Set<VmRngDevice.Source> sourcesHwRng = new HashSet<>();
         sourcesHwRng.add(VmRngDevice.Source.HWRNG);
-        HashSet<VmRngDevice.Source> sourcesAll = new HashSet<>();
+        Set<VmRngDevice.Source> sourcesAll = new HashSet<>();
         sourcesAll.add(VmRngDevice.Source.RANDOM);
         sourcesAll.add(VmRngDevice.Source.HWRNG);
 

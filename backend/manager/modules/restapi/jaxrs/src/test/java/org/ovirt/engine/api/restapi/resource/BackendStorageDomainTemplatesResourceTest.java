@@ -6,9 +6,9 @@ import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -125,7 +125,7 @@ public class BackendStorageDomainTemplatesResourceTest
         return IntStream.range(0, NAMES.length).mapToObj(this::getEntity).collect(Collectors.toList());
     }
 
-    protected HashMap<VmTemplate, List<DiskImage>> setUpExportTemplates() {
+    protected Map<VmTemplate, List<DiskImage>> setUpExportTemplates() {
         return IntStream.range(0, NAMES.length).boxed().collect(
                 Collectors.toMap(this::getEntity,
                         x -> new ArrayList<>(),

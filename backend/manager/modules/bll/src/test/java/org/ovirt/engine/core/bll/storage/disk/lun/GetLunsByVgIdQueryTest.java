@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -126,11 +126,7 @@ public class GetLunsByVgIdQueryTest extends AbstractQueryTest<GetLunsByVgIdParam
 
     private static List<LUNs> setUpLunsFromDeviceList() {
         List<LUNs> luns = setUpLuns(false);
-        for (LUNs lun : luns) {
-            HashMap<String, Boolean> pathsDictionary = new HashMap<>();
-            pathsDictionary.put(PHYSICAL_DEVICE_FIELD, true);
-            lun.setPathsDictionary(pathsDictionary);
-        }
+        luns.forEach(l -> l.setPathsDictionary(Collections.singletonMap(PHYSICAL_DEVICE_FIELD, true)));
         return luns;
     }
 

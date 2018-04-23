@@ -266,7 +266,7 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     }
 
     public Map<String, String> getDownloadHeaders() {
-        HashMap<String, String> httpHeaders = new HashMap<>();
+        Map<String, String> httpHeaders = new HashMap<>();
 
         if (getTokenProvider() != null) {
             httpHeaders.put("X-Auth-Token", getTokenProvider().getToken());

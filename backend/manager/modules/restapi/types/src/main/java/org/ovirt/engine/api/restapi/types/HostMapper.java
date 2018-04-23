@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toCollection;
 import static org.ovirt.engine.core.compat.Version.VERSION_NOT_SET;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -496,13 +495,13 @@ public class HostMapper {
         }
     }
 
-    @Mapping(from = HashMap.class, to = Hooks.class)
-    public static Hooks map(HashMap<String, HashMap<String, HashMap<String, String>>> dictionary, Hooks hooks) {
+    @Mapping(from = Map.class, to = Hooks.class)
+    public static Hooks map(Map<String, Map<String, Map<String, String>>> dictionary, Hooks hooks) {
         if (hooks == null) {
             hooks = new Hooks();
         }
-        for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet()) { // events
-            for (Map.Entry<String, HashMap<String, String>> keyValuePair1 : keyValuePair.getValue() // hooks
+        for (Map.Entry<String, Map<String, Map<String, String>>> keyValuePair : dictionary.entrySet()) { // events
+            for (Map.Entry<String, Map<String, String>> keyValuePair1 : keyValuePair.getValue() // hooks
                     .entrySet()) {
                 Hook hook = createHook(keyValuePair, keyValuePair1);
                 hooks.getHooks().add(hook);
@@ -608,8 +607,8 @@ public class HostMapper {
         return model;
     }
 
-    private static Hook createHook(Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair,
-            Map.Entry<String, HashMap<String, String>> keyValuePair1) {
+    private static Hook createHook(Map.Entry<String, Map<String, Map<String, String>>> keyValuePair,
+            Map.Entry<String, Map<String, String>> keyValuePair1) {
         String hookName = keyValuePair1.getKey();
         String eventName = keyValuePair.getKey();
         String md5 = keyValuePair1.getValue().get(MD5_FILE_SIGNATURE);

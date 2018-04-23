@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,7 +17,7 @@ public enum HostVmFilter implements ViewFilter<HostVmFilter> {
     ALL(ConstantsManager.getInstance().getConstants().all()) {
         @Override
         public void executeQuery(Guid hostId, AsyncQuery<List<VM>> aQuery) {
-            HashSet<VM> resultSet = new HashSet<>();
+            Set<VM> resultSet = new HashSet<>();
             int[] callCount = {2};
 
             AsyncCallback<List<VM>> callback = vmList -> {

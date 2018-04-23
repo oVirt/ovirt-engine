@@ -226,14 +226,14 @@ public class AsyncDataProvider {
     private static int DEFAULT_OS_ID = 0;
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
-    private HashMap<KeyValuePairCompat<ConfigValues, String>, Object> cachedConfigValues = new HashMap<>();
+    private Map<KeyValuePairCompat<ConfigValues, String>, Object> cachedConfigValues = new HashMap<>();
 
-    private HashMap<KeyValuePairCompat<ConfigValues, String>, Object> cachedConfigValuesPreConvert = new HashMap<>();
+    private Map<KeyValuePairCompat<ConfigValues, String>, Object> cachedConfigValuesPreConvert = new HashMap<>();
 
     private String _defaultConfigurationVersion = null;
 
     // cached OS names
-    private HashMap<Integer, String> osNames;
+    private Map<Integer, String> osNames;
 
     // OS default icons
     private Map<Integer, VmIconIdSizePair> osIdToDefaultIconIdMap;
@@ -250,7 +250,7 @@ public class AsyncDataProvider {
     private List<Integer> osIds;
 
     // cached unique OS names
-    private HashMap<Integer, String> uniqueOsNames;
+    private Map<Integer, String> uniqueOsNames;
 
     // cached linux OS
     private List<Integer> linuxOsIds;
@@ -270,9 +270,9 @@ public class AsyncDataProvider {
     // cached windows OS
     private List<Integer> windowsOsIds;
     // cached OS Architecture
-    private HashMap<Integer, ArchitectureType> osArchitectures;
+    private Map<Integer, ArchitectureType> osArchitectures;
     // default OS per architecture
-    private HashMap<ArchitectureType, Integer> defaultOSes;
+    private Map<ArchitectureType, Integer> defaultOSes;
 
     // default OS per architecture
     private Set<Integer> oses64bit;
@@ -1113,7 +1113,7 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetAllDisksByVmId, params, aQuery);
     }
 
-    public HashMap<Integer, String> getOsUniqueOsNames() {
+    public Map<Integer, String> getOsUniqueOsNames() {
         return uniqueOsNames;
     }
 
@@ -1694,10 +1694,9 @@ public class AsyncDataProvider {
 
     public void getPmOptions(AsyncQuery<List<String>> aQuery, final String pmType, String version) {
         aQuery.converterCallback = source -> {
-            HashMap<String, ArrayList<String>> cachedPmMap = new HashMap<>();
-            HashMap<String, HashMap<String, Object>> dict =
-                    (HashMap<String, HashMap<String, Object>>) source;
-            for (Entry<String, HashMap<String, Object>> pair : dict.entrySet()) {
+            Map<String, ArrayList<String>> cachedPmMap = new HashMap<>();
+            Map<String, Map<String, Object>> dict = (Map<String, Map<String, Object>>) source;
+            for (Entry<String, Map<String, Object>> pair : dict.entrySet()) {
                 ArrayList<String> list = new ArrayList<>();
                 for (Entry<String, Object> p : pair.getValue().entrySet()) {
                     list.add(p.getKey());
@@ -2340,7 +2339,7 @@ public class AsyncDataProvider {
         return ret;
     }
 
-    public Map<EventNotificationEntity, HashSet<AuditLogType>> getAvailableNotificationEvents() {
+    public Map<EventNotificationEntity, Set<AuditLogType>> getAvailableNotificationEvents() {
         return VdcEventNotificationUtils.getNotificationEvents();
     }
 

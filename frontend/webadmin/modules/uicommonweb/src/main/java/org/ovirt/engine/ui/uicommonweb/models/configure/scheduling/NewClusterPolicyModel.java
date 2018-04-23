@@ -120,8 +120,7 @@ public class NewClusterPolicyModel extends Model {
             getUnusedFilters().addAll(getFilterPolicyUnits(policyUnits));
             return;
         }
-        HashMap<Guid, PolicyUnit> map =
-                (HashMap<Guid, PolicyUnit>) ((HashMap<Guid, PolicyUnit>) policyUnitsMap).clone();
+        Map<Guid, PolicyUnit> map = (HashMap<Guid, PolicyUnit>) ((HashMap<Guid, PolicyUnit>) policyUnitsMap).clone();
         for (Guid policyUnitId : clusterPolicy.getFilters()) {
             map.remove(policyUnitId);
             getUsedFilters().add(policyUnitsMap.get(policyUnitId));
@@ -146,8 +145,7 @@ public class NewClusterPolicyModel extends Model {
             getUnusedFunctions().addAll(getFunctionPolicyUnits(policyUnits));
             return;
         }
-        HashMap<Guid, PolicyUnit> map =
-                (HashMap<Guid, PolicyUnit>) ((HashMap<Guid, PolicyUnit>) policyUnitsMap).clone();
+        Map<Guid, PolicyUnit> map = (Map<Guid, PolicyUnit>) ((HashMap<Guid, PolicyUnit>) policyUnitsMap).clone();
         for (Pair<Guid, Integer> pair : clusterPolicy.getFunctions()) {
             map.remove(pair.getFirst());
             getUsedFunctions().add(new Pair<>(policyUnitsMap.get(pair.getFirst()), pair.getSecond()));

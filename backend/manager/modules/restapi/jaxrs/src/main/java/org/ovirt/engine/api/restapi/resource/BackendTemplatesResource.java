@@ -199,9 +199,9 @@ public class BackendTemplatesResource
         return getEntity(Cluster.class, QueryType.GetClusterById, new IdQueryParameters(id), "GetClusterById");
     }
 
-    protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid vmId, Guid storageDomainId,
+    protected Map<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid vmId, Guid storageDomainId,
             boolean isTemplateGeneralStorageDomainSet) {
-        HashMap<Guid, DiskImage> destinationTemplateDiskMap = null;
+        Map<Guid, DiskImage> destinationTemplateDiskMap = null;
         if (vm.isSetDiskAttachments() && vm.getDiskAttachments().isSetDiskAttachments()) {
             destinationTemplateDiskMap = new HashMap<>();
             Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> vmSourceDisks = queryVmDisksMap(vmId);

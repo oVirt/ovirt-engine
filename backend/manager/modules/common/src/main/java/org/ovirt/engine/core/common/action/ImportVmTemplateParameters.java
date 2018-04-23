@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -77,13 +77,13 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
         privateClusterId = value;
     }
 
-    private HashMap<Guid, DiskImage> diskTemplateMap;
+    private Map<Guid, DiskImage> diskTemplateMap;
 
-    public HashMap<Guid, DiskImage> getDiskTemplateMap() {
+    public Map<Guid, DiskImage> getDiskTemplateMap() {
         return diskTemplateMap;
     }
 
-    public void setDiskTemplateMap(HashMap<Guid, DiskImage> diskTemplateMap) {
+    public void setDiskTemplateMap(Map<Guid, DiskImage> diskTemplateMap) {
         this.diskTemplateMap = diskTemplateMap;
     }
 

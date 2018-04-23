@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
 import org.ovirt.engine.core.bll.tasks.CommandAsyncTask;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class CommandMultiAsyncTasks {
     private static final Logger log = LoggerFactory.getLogger(CommandMultiAsyncTasks.class);
 
-    private HashMap<Guid, CommandAsyncTask> _listTasks;
+    private Map<Guid, CommandAsyncTask> _listTasks;
     private Guid commandId;
 
     public Guid getCommandId() {

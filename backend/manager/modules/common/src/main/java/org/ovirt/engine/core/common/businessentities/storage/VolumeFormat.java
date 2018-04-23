@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VolumeFormat {
     // Added in order to keep the ordinal and array element values consistent
@@ -10,7 +11,7 @@ public enum VolumeFormat {
     RAW(5);
 
     private int intValue;
-    private static final HashMap<Integer, VolumeFormat> mappings = new HashMap<>();
+    private static final Map<Integer, VolumeFormat> mappings = new HashMap<>();
 
     static {
         for (VolumeFormat volumeFormat : values()) {

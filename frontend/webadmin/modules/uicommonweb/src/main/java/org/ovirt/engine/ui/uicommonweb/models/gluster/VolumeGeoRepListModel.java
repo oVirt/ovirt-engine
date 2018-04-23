@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -359,7 +359,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         final GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
                 (GlusterVolumeGeoReplicationSessionConfigModel) getWindow();
 
-        LinkedHashMap<String, String> oldConfigs = geoRepConfigModel.getConfigs();
+        Map<String, String> oldConfigs = geoRepConfigModel.getConfigs();
 
         geoRepConfigModel.startProgress();
 

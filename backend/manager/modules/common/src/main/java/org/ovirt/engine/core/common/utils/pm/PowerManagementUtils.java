@@ -1,20 +1,18 @@
 package org.ovirt.engine.core.common.utils.pm;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class PowerManagementUtils {
     /**
      * Converts a PM Options string to a map.
      *
-     * <b>Note:</b> A {@link HashMap} is used instead of the interface {@link Map}, as this method is used by the
-     * frontend, and requires GWT compilation.
-     *
      * @param pmOptions
      *            String representation of the map
      * @return A parsed map
      */
-    public static HashMap<String, String> pmOptionsStringToMap(String pmOptions) {
-        HashMap<String, String> map = new HashMap<>();
+    public static Map<String, String> pmOptionsStringToMap(String pmOptions) {
+        Map<String, String> map = new HashMap<>();
         if (pmOptions == null || pmOptions.equals("")) {
             return map;
         }

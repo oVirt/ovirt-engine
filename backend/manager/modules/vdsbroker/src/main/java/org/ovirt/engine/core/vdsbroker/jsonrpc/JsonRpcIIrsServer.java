@@ -661,7 +661,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
 
     @Override
     public VmLeaseTaskInfoReturn addVmLease(String leaseUUID, String sdUUID) {
-        HashMap<String, Object> leaseDict = new HashMap<>();
+        Map<String, Object> leaseDict = new HashMap<>();
         leaseDict.put("lease_id", leaseUUID);
         leaseDict.put("sd_id", sdUUID);
 
@@ -675,7 +675,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
 
     @Override
     public VmLeaseTaskInfoReturn removeVmLease(String leaseUUID, String sdUUID) {
-        HashMap<String, Object> leaseDict = new HashMap<>();
+        Map<String, Object> leaseDict = new HashMap<>();
         leaseDict.put("lease_id", leaseUUID);
         leaseDict.put("sd_id", sdUUID);
 
@@ -689,7 +689,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
 
     @Override
     public LeaseInfoReturn getVmLeaseInfo(String leaseUUID, String sdUUID) {
-        HashMap<String, Object> leaseDict = new HashMap<>();
+        Map<String, Object> leaseDict = new HashMap<>();
         leaseDict.put("lease_id", leaseUUID);
         leaseDict.put("sd_id", sdUUID);
 

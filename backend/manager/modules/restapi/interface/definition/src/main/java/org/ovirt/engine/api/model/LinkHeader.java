@@ -4,6 +4,7 @@
 package org.ovirt.engine.api.model;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +35,7 @@ public class LinkHeader {
         link.setHref(matcher.group(1));
 
         String[] props = matcher.group(2).split(";");
-        HashMap<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         for (String prop : props) {
             String[] split = prop.split("=");
             map.put(split[0].trim(), split[1].trim());

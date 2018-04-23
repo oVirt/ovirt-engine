@@ -9,9 +9,10 @@ import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -162,11 +163,12 @@ public class BackendExportDomainDisksResourceTest
         }
     }
 
-    private HashMap<Guid, DiskImage> getDiskMap() {
+    private Map<Guid, DiskImage> getDiskMap() {
         return IntStream.range(0, NAMES.length)
                 .mapToObj(i -> (DiskImage) getEntity(i))
                 .collect(Collectors.toMap(DiskImage::getId, Function.identity(), (u, v) -> null, LinkedHashMap::new));
     }
+
     @Override
     protected void setUpEntityQueryExpectations(QueryType query,
             Class<? extends QueryParametersBase> queryClass,
@@ -199,13 +201,13 @@ public class BackendExportDomainDisksResourceTest
         }
     }
 
-    protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
+    protected Map<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
         if (notFound) {
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
+
         return IntStream.range(0, NAMES.length)
-                .boxed()
-                .collect(Collectors.toMap(this::getVmTemplateEntity, ArrayList::new, (u, v) -> null, HashMap::new));
+                .boxed().collect(Collectors.toMap(this::getVmTemplateEntity, ArrayList::new));
     }
 
     protected VmTemplate getVmTemplateEntity(int index) {

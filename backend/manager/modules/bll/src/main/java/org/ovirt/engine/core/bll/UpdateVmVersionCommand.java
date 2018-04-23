@@ -253,8 +253,8 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         return addVmParams;
     }
 
-    private HashMap<Guid, DiskImage> buildDiskInfoDestinationMap() {
-        HashMap<Guid, DiskImage> destinationMap = new HashMap<>();
+    private Map<Guid, DiskImage> buildDiskInfoDestinationMap() {
+        Map<Guid, DiskImage> destinationMap = new HashMap<>();
 
         if (getParameters().getVmPoolId() == null) {
             return destinationMap;

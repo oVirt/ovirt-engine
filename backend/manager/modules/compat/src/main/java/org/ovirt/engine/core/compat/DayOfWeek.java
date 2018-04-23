@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.compat;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum DayOfWeek {
     // Summary:
@@ -32,9 +33,9 @@ public enum DayOfWeek {
     Saturday(6);
 
     private int intValue;
-    private static HashMap<Integer, DayOfWeek> mappings;
+    private static Map<Integer, DayOfWeek> mappings;
 
-    private static synchronized HashMap<Integer, DayOfWeek> getMappings() {
+    private static synchronized Map<Integer, DayOfWeek> getMappings() {
         if (mappings == null) {
             mappings = new HashMap<>();
         }

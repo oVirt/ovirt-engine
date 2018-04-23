@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -360,11 +361,11 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
      */
     private void updateGeoRepStatus(GlusterVolumeEntity volume, GlusterGeoRepSession session) {
 
-        List<HashSet<GeoRepSessionStatus>> list = new ArrayList<>();
+        List<Set<GeoRepSessionStatus>> list = new ArrayList<>();
         // grouped node status
         int replicaCount = volume.getReplicaCount() == 0 ? 1 : volume.getReplicaCount();
         for (int i = 0; i < volume.getBricks().size(); i = i + replicaCount) {
-            HashSet<GeoRepSessionStatus> subVolumeStatusSet = new HashSet<>();
+            Set<GeoRepSessionStatus> subVolumeStatusSet = new HashSet<>();
             int j = 0;
             while (j < replicaCount) {
                 Guid brickId = volume.getBricks().get(i + j).getId();
@@ -376,7 +377,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
 
         session.setStatus(GeoRepSessionStatus.ACTIVE);
         // iterate through grouped status to set consolidated status
-        for (HashSet<GeoRepSessionStatus> subVolumeStatusValues : list) {
+        for (Set<GeoRepSessionStatus> subVolumeStatusValues : list) {
             if (subVolumeStatusValues.contains(GeoRepSessionStatus.ACTIVE)) {
                 // healthy
                 continue;
@@ -423,7 +424,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                 new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(), volName));
         if (returnValue.getSucceeded()) {
             List<GlusterGeoRepSession> sessions = (List<GlusterGeoRepSession>) returnValue.getReturnValue();
-            HashMap<String, GlusterGeoRepSession> sessionsMap = new HashMap<>();
+            Map<String, GlusterGeoRepSession> sessionsMap = new HashMap<>();
             if (sessions == null) {
                 return sessionsMap;
             }

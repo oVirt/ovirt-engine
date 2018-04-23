@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VDSStatus implements Identifiable {
     Unassigned(0),
@@ -20,7 +21,7 @@ public enum VDSStatus implements Identifiable {
     InstallingOS(14),
     Kdumping(15);
 
-    private static final HashMap<Integer, VDSStatus> mappings = new HashMap<>();
+    private static final Map<Integer, VDSStatus> mappings = new HashMap<>();
     private int intValue;
 
     static {

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -26,7 +27,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryPara
     protected void executeQueryCommand() {
         List<EventSubscriber> list = eventDao.getAllForSubscriber(getParameters().getId());
         if (list.size() > 0) {
-            HashMap<String, EventSubscriber> dic = new HashMap<>();
+            Map<String, EventSubscriber> dic = new HashMap<>();
 
             for (EventSubscriber ev : list) {
                 if (dic.containsKey(ev.getEventUpName())) {
@@ -37,7 +38,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryPara
                 }
             }
 
-            ArrayList<EventSubscriber> groupedList = new ArrayList<>(dic.values());
+            List<EventSubscriber> groupedList = new ArrayList<>(dic.values());
             for (EventSubscriber event : groupedList) {
                 event.setTagName(StringUtils.strip(event.getTagName(), ", "));
             }

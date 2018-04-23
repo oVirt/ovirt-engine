@@ -2,6 +2,7 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -10,7 +11,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
     private AdSearchObjecAutoCompleter searchObjectAC;
     private BaseAutoCompleter colonAC;
     private BaseAutoCompleter pluralAC;
-    private HashMap<SyntaxObjectType, SyntaxObjectType[]> stateMap;
+    private Map<SyntaxObjectType, SyntaxObjectType[]> stateMap;
     protected static final String USER_ACCOUNT_TYPE = "$USER_ACCOUNT_TYPE";
     private static final String LDAP_GROUP_CATEGORY = "$LDAP_GROUP_CATEGORY";
 

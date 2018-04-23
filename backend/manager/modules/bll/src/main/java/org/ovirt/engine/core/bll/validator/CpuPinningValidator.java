@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator;
 import static org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.parseCpuPinning;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,7 +51,7 @@ public class CpuPinningValidator {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
         }
 
-        HashSet<Integer> assignedVCpus = new HashSet<>();
+        Set<Integer> assignedVCpus = new HashSet<>();
         int maxvCPU = vmStatic.getNumOfCpus();
 
         // check if vcpu rules are valid

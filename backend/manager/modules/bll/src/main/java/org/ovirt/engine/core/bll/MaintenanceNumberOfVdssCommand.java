@@ -61,7 +61,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssParameters> extends CommandBase<T> {
-    private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<>();
+    private final Map<Guid, VDS> vdssToMaintenance = new HashMap<>();
     private final List<PermissionSubject> inspectedEntitiesMap;
     private Map<String, Pair<String, String>> sharedLockMap;
 

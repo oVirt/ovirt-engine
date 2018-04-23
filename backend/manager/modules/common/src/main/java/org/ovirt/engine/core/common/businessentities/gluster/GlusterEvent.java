@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -21,7 +22,7 @@ public class GlusterEvent implements Serializable {
     private String nodeId;
 
     @JsonProperty("message")
-    private HashMap<String, Object> message = new HashMap<>();
+    private Map<String, Object> message = new HashMap<>();
 
     public String getEvent() {
         return event;
@@ -47,11 +48,11 @@ public class GlusterEvent implements Serializable {
         this.nodeId = nodeId;
     }
 
-    public HashMap<String, Object> getMessage() {
+    public Map<String, Object> getMessage() {
         return message;
     }
 
-    public void setMessage(HashMap<String, Object> message) {
+    public void setMessage(Map<String, Object> message) {
         this.message = message;
     }
 

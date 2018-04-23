@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -45,7 +45,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
     /**
      * Create specParams from the parameters.
      */
-    protected HashMap<String, Object> getSpecParams() {
+    protected Map<String, Object> getSpecParams() {
         VmWatchdog watchdog = new VmWatchdog(getParameters().getModel(), getParameters().getAction());
 
         return watchdog.getSpecParams();

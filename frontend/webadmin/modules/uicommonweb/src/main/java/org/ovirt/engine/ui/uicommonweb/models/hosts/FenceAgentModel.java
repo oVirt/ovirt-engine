@@ -188,7 +188,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         }
     }
 
-    public HashMap<String, String> getPmOptionsMap() {
+    public Map<String, String> getPmOptionsMap() {
         return getPmOptionsMapInternal(getPmPort(), getPmSlot(), getPmSecure(), getPmOptions());
     }
 
@@ -231,10 +231,10 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         }
     }
 
-    private HashMap<String, String> getPmOptionsMapInternal(EntityModel<Integer> port, EntityModel<String> slot,
+    private Map<String, String> getPmOptionsMapInternal(EntityModel<Integer> port, EntityModel<String> slot,
             EntityModel<Boolean> secure, EntityModel<String> options) {
 
-        HashMap<String, String> dict = new HashMap<>();
+        Map<String, String> dict = new HashMap<>();
 
         if (port.getIsAvailable() && port.getEntity() != null) {
             dict.put(PM_PORT_KEY, String.valueOf(port.getEntity()));

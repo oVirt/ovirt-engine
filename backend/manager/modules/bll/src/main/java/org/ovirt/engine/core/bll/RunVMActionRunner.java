@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -25,7 +26,7 @@ public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
     protected void sortCommands() {
 
         List<CommandBase<?>> commandsList = getCommands();
-        HashMap<Guid, RunVmCommandBase<?>> runVmCommandsMap = new HashMap<>();
+        Map<Guid, RunVmCommandBase<?>> runVmCommandsMap = new HashMap<>();
         for (CommandBase<?> command : commandsList) {
             RunVmCommandBase<?> runVMCommandBase = (RunVmCommandBase<?>) command;
             runVmCommandsMap.put(runVMCommandBase.getVmId(), runVMCommandBase);

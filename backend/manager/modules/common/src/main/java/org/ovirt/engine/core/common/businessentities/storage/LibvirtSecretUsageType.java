@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum LibvirtSecretUsageType {
     CEPH(0);
 
     private Integer value;
-    private static final HashMap<Integer, LibvirtSecretUsageType> mappings = new HashMap<>();
+    private static final Map<Integer, LibvirtSecretUsageType> mappings = new HashMap<>();
 
     static {
         for (LibvirtSecretUsageType volumeType : values()) {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 
@@ -164,7 +165,7 @@ public enum ActionGroup {
     private RoleType roleType;
     private boolean allowsViewingChildren;
     private int applicationMode;
-    private static final HashMap<Integer, ActionGroup> map = new HashMap<>(ActionGroup.values().length);
+    private static final Map<Integer, ActionGroup> map = new HashMap<>(ActionGroup.values().length);
 
     static {
         for (ActionGroup t : ActionGroup.values()) {

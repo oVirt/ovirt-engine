@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.scheduling;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
@@ -11,7 +12,7 @@ public enum PolicyUnitType implements Identifiable {
     SELECTOR(3);
 
     private int intValue;
-    private static final HashMap<Integer, PolicyUnitType> mappings = new HashMap<>();
+    private static final Map<Integer, PolicyUnitType> mappings = new HashMap<>();
 
     static {
         for (PolicyUnitType vmType : values()) {

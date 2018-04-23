@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.pm;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FenceConfigHelper {
-    private static HashMap<String, String> keyValidatorMap;
-    private static HashMap<String, String> keyValidatorExampleMap;
-    private static HashMap<String, String> keySeparatorMap;
+    private static Map<String, String> keyValidatorMap;
+    private static Map<String, String> keyValidatorExampleMap;
+    private static Map<String, String> keySeparatorMap;
     private static Logger log = LoggerFactory.getLogger(FenceConfigHelper.class);
     private static boolean initialized=false;
     private static final String FenceAgentMappingExpr = "((\\w)+[=](\\w)+[,]{0,1})+";

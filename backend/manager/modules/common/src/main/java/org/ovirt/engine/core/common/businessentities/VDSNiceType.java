@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VDSNiceType implements Identifiable {
     RHEL(0),
     RHEVH(2);
 
     private int intValue;
-    private static final HashMap<Integer, VDSNiceType> mappings = new HashMap<>();
+    private static final Map<Integer, VDSNiceType> mappings = new HashMap<>();
 
     static {
         for (VDSNiceType type : values()) {

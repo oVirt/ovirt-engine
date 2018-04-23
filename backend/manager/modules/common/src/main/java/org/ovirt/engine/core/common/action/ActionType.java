@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
@@ -586,7 +587,7 @@ public enum ActionType {
     private int intValue;
     private ActionGroup actionGroup;
     private boolean isActionMonitored;
-    private static final HashMap<Integer, ActionType> mappings = new HashMap<>();
+    private static final Map<Integer, ActionType> mappings = new HashMap<>();
     private QuotaDependency quotaDependency;
     private boolean quotaDependentAsInternalCommand = false;
 

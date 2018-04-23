@@ -103,8 +103,7 @@ public class JsonObjectDeserializerTest {
     }
     private void checkJson(String json) {
         @SuppressWarnings("unchecked")
-        final HashMap<String, Boolean> map =
-                new JsonObjectDeserializer().deserialize(json, HashMap.class);
+        final Map<String, Boolean> map = new JsonObjectDeserializer().deserialize(json, HashMap.class);
         assertTrue(map.get("success"));
     }
 

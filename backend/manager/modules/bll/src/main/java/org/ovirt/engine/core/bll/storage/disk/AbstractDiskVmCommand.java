@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +121,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
      *            - The lun we set the connection at.
      */
     private void updateLUNConnectionsInfo(LUNs lun) {
-        lun.setLunConnections(new ArrayList<>(storageServerConnectionDao.getAllForLun(lun.getLUNId())));
+        lun.setLunConnections(storageServerConnectionDao.getAllForLun(lun.getLUNId()));
     }
 
     protected boolean isDiskPassPciAndIdeLimit() {

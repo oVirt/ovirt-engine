@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionConfigParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
@@ -16,7 +17,7 @@ public class GlusterVolumeGeoReplicationSessionConfigModel extends Model {
 
     private ListModel<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> configsModel;
 
-    private LinkedHashMap<String, String> configsMap;
+    private Map<String, String> configsMap;
 
     private GlusterGeoRepSession geoRepSession;
 
@@ -37,7 +38,7 @@ public class GlusterVolumeGeoReplicationSessionConfigModel extends Model {
         this.configsModel = configsModel;
     }
 
-    public LinkedHashMap<String, String> getConfigs() {
+    public Map<String, String> getConfigs() {
         return configsMap;
     }
 

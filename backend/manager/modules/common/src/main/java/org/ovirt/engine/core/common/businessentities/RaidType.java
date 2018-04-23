@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum RaidType {
     NONE("-1"),
@@ -9,7 +10,7 @@ public enum RaidType {
     RAID10("10");
 
     private String value;
-    private static final HashMap<String, RaidType> mappings = new HashMap<>();
+    private static final Map<String, RaidType> mappings = new HashMap<>();
 
     static {
         for (RaidType raidType : values()) {

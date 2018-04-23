@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum MigrateOnErrorOptions {
     NO(0),
@@ -9,7 +10,7 @@ public enum MigrateOnErrorOptions {
 
     private int intValue;
 
-    private static final HashMap<Integer, MigrateOnErrorOptions> mappings = new HashMap<>();
+    private static final Map<Integer, MigrateOnErrorOptions> mappings = new HashMap<>();
 
     static {
         for (MigrateOnErrorOptions option : values()) {

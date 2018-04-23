@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractInputCell;
@@ -38,7 +39,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
     private static CellTemplate template = GWT.create(CellTemplate.class);
 
-    private final HashMap<String, Integer> indexForOption = new HashMap<>();
+    private final Map<String, Integer> indexForOption = new HashMap<>();
 
     private List<String> options;
 

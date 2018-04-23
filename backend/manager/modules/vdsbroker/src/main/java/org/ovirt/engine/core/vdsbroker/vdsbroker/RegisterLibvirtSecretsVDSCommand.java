@@ -32,7 +32,7 @@ public class RegisterLibvirtSecretsVDSCommand<P extends RegisterLibvirtSecretsVD
     }
 
     public static Map<String, String> createStructFromLibvirtSecret(LibvirtSecret libvirtSecret) {
-        HashMap<String, String> con = new HashMap<>();
+        Map<String, String> con = new HashMap<>();
         con.put("uuid", libvirtSecret.getId().toString());
         con.put("password", libvirtSecret.getValue());
         con.put("description", libvirtSecret.getDescription() != null ? libvirtSecret.getDescription() : StringUtils.EMPTY);

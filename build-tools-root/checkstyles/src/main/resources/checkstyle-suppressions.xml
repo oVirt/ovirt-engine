@@ -68,6 +68,14 @@
     <!-- VDSBroker names which must match the VDSM API -->
     <suppress checks="MethodName" files="IVdsServer.java"/>
 
+    <!-- Declaratively imporatnt to see its a linked (ordered) type -->
+    <suppress checks="IllegalType" files="ReapedMap.java"/>
+    <suppress checks="IllegalType" files="CompensationContextBase"/>
+
+    <!-- Test intended to check concrete types -->
+    <suppress checks="IllegalType" files="JsonImmutableSerializeDeserializeTest"/>
+    <suppress checks="IllegalType" files="TestCollectionsParams"/>
+
     <!-- Most of the classes in the authentication package aren't used in the
          GWT client, and those that are used have special versions or custom
          field serializers to overcome the GWT serialization limitations. All

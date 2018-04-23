@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Hook;
@@ -8,7 +9,7 @@ import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
-public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Hook, HashMap<String, HashMap<String, HashMap<String, String>>>> {
+public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Hook, Map<String, Map<String, Map<String, String>>>> {
 
     BackendHostHooksResource resource = new BackendHostHooksResource(GUIDS[0].toString());
 
@@ -23,8 +24,8 @@ public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Ho
     static final String MD5_3 = "ccc";
 
     @Override
-    protected HashMap<String, HashMap<String, HashMap<String, String>>> getEntity(int index) {
-        HashMap<String, HashMap<String, HashMap<String, String>>> events = new HashMap<>();
+    protected Map<String, Map<String, Map<String, String>>> getEntity(int index) {
+        Map<String, Map<String, Map<String, String>>> events = new HashMap<>();
 
         events.put(ON_VM_START_EVENT, new HashMap<>());
         events.put(ON_VM_STOP_EVENT, new HashMap<>());

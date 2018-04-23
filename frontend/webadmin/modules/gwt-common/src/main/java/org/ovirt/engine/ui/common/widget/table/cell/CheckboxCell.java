@@ -54,7 +54,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
 
     @Override
     public Set<String> getConsumedEvents() {
-        HashSet<String> set = new HashSet<>(super.getConsumedEvents());
+        Set<String> set = new HashSet<>(super.getConsumedEvents());
         set.addAll(ElementTooltipUtils.HANDLED_CELL_EVENTS);
         return set;
     }

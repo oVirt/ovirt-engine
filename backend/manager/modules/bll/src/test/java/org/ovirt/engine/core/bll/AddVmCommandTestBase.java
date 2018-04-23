@@ -174,10 +174,8 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         vmTemplate.setStoragePoolId(STORAGE_POOL_ID);
         vmTemplate.getDiskTemplateMap().putAll(cmd.storageToDisksMap.values().stream().flatMap(List::stream).collect(
                 Collectors.toMap(DiskImage::getImageId, Function.identity())));
-        HashMap<Guid, DiskImage> diskImageMap = new HashMap<>();
         DiskImage diskImage = createDiskImage(STORAGE_DOMAIN_ID_1);
-        diskImageMap.put(diskImage.getId(), diskImage);
-        vmTemplate.setDiskImageMap(diskImageMap);
+        vmTemplate.setDiskImageMap(Collections.singletonMap(diskImage.getId(), diskImage));
     }
 
     protected void initCluster() {

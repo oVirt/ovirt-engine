@@ -230,7 +230,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                 return;
             }
 
-            HashSet<String> excludeUsers = new HashSet<>();
+            Set<String> excludeUsers = new HashSet<>();
             if (getExcludeItems() != null) {
                 for (DbUser item : getExcludeItems()) {
                     excludeUsers.add(item.getExternalId());
@@ -349,7 +349,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                 return;
             }
 
-            HashSet<String> excludeUsers = new HashSet<>();
+            Set<String> excludeUsers = new HashSet<>();
             if (getExcludeItems() != null) {
                 for (DbUser item : getExcludeItems()) {
                     excludeUsers.add(item.getExternalId());

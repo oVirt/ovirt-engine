@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -83,12 +81,8 @@ public class ClusterPolicyDaoTest extends BaseDaoTestCase<ClusterPolicyDao> {
         dummyPolicy.setName("Dummy policy");
         dummyPolicy.setDescription("Dummy policy description");
         dummyPolicy.setLocked(false);
-        ArrayList<Guid> filters = new ArrayList<>();
-        filters.add(FixturesTool.POLICY_UNIT_MIGRATION);
-        dummyPolicy.setFilters(filters);
-        HashMap<Guid, Integer> filterPositionMap = new HashMap<>();
-        filterPositionMap.put(FixturesTool.POLICY_UNIT_MIGRATION, 1);
-        dummyPolicy.setFilterPositionMap(filterPositionMap);
+        dummyPolicy.setFilters(Collections.singletonList(FixturesTool.POLICY_UNIT_MIGRATION));
+        dummyPolicy.setFilterPositionMap(Collections.singletonMap(FixturesTool.POLICY_UNIT_MIGRATION, 1));
         dummyPolicy.setParameterMap(new LinkedHashMap<>());
     }
 }

@@ -115,7 +115,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     @Inject
     private IconUtils iconUtils;
 
-    private HashMap<Guid, DiskImage> diskInfoDestinationMap;
+    private Map<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
     private Map<Guid, Long> targetDomainsSize;
@@ -478,8 +478,8 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         }
     }
 
-    private HashMap<Guid, DiskImage> autoSelectTargetDomainAndVolumeFormat() {
-        HashMap<Guid, DiskImage> destinationMap = new HashMap<>();
+    private Map<Guid, DiskImage> autoSelectTargetDomainAndVolumeFormat() {
+        Map<Guid, DiskImage> destinationMap = new HashMap<>();
         for (Disk disk: templateDisks) {
             DiskImage diskImage = (DiskImage)disk;
             ArrayList<Guid> storageIds = new ArrayList<>();

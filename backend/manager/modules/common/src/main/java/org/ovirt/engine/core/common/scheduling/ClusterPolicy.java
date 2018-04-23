@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.scheduling;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -46,7 +47,7 @@ public class ClusterPolicy implements BusinessEntity<Guid>, Queryable, Nameable 
      * set of policy units ids, specifies which filters need to be executed in filtering
      */
     @NotNull
-    private ArrayList<Guid> filters = new ArrayList<>();
+    private List<Guid> filters = new ArrayList<>();
     /**
      * Map of filters positions: [uuid (policy unit id), int (position)] Acceptable position values: first (-1), last
      * (1), no position (0)
@@ -58,7 +59,7 @@ public class ClusterPolicy implements BusinessEntity<Guid>, Queryable, Nameable 
      * attached.
      */
     @NotNull
-    private ArrayList<Pair<Guid, Integer>> functions = new ArrayList<>();
+    private List<Pair<Guid, Integer>> functions = new ArrayList<>();
     /**
      * policy unit id, that indicates which balance logic to execute
      */
@@ -125,11 +126,11 @@ public class ClusterPolicy implements BusinessEntity<Guid>, Queryable, Nameable 
         this.defaultPolicy = defaultPolicy;
     }
 
-    public ArrayList<Guid> getFilters() {
+    public List<Guid> getFilters() {
         return filters;
     }
 
-    public void setFilters(ArrayList<Guid> filters) {
+    public void setFilters(List<Guid> filters) {
         this.filters = filters;
     }
 
@@ -142,11 +143,11 @@ public class ClusterPolicy implements BusinessEntity<Guid>, Queryable, Nameable 
     }
 
     @NotNull
-    public ArrayList<Pair<Guid, Integer>> getFunctions() {
+    public List<Pair<Guid, Integer>> getFunctions() {
         return functions;
     }
 
-    public void setFunctions(@NotNull ArrayList<Pair<Guid, Integer>> functions) {
+    public void setFunctions(@NotNull List<Pair<Guid, Integer>> functions) {
         this.functions = functions;
     }
 

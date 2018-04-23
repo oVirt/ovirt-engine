@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VolumeType {
     Unassigned(0),
@@ -8,7 +9,7 @@ public enum VolumeType {
     Sparse(2);
 
     private int intValue;
-    private static final HashMap<Integer, VolumeType> mappings = new HashMap<>();
+    private static final Map<Integer, VolumeType> mappings = new HashMap<>();
 
     static {
         for (VolumeType volumeType : values()) {

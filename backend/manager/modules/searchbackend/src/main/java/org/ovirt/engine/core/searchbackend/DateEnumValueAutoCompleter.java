@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;
 
 public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
-    private HashMap<String, Integer> enumValues = new HashMap<>();
+    private Map<String, Integer> enumValues = new HashMap<>();
 
     public <E extends Enum<? extends E> & Identifiable> DateEnumValueAutoCompleter(Class<E> enumerationType) {
         super();

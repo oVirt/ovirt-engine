@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum DateEnumForSearch implements Identifiable {
     Today(1),
     Yesterday(2);
 
     private int intValue;
-    private static final HashMap<Integer, DateEnumForSearch> mappings = new HashMap<>();
+    private static final Map<Integer, DateEnumForSearch> mappings = new HashMap<>();
 
     static {
         for (DateEnumForSearch dateEnumForSearch : values()) {

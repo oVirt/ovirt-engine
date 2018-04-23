@@ -509,8 +509,8 @@ public class BackendVmsResource extends
         return isCompatibleWithCluster;
     }
 
-    private HashMap<Guid, DiskImage> getDisksToClone(DiskAttachments diskAttachments, Guid templateId) {
-        HashMap<Guid, DiskImage> disksMap = new HashMap<>();
+    private Map<Guid, DiskImage> getDisksToClone(DiskAttachments diskAttachments, Guid templateId) {
+        Map<Guid, DiskImage> disksMap = new HashMap<>();
 
         if (diskAttachments != null && diskAttachments.isSetDiskAttachments() && diskAttachments.getDiskAttachments().size() > 0){
             Map<Guid, DiskImage> templatesDisksMap = getTemplateDisks(templateId);

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.errors;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The purpose of this enumaration is to contain all the errors exposed by the Engine. The error codes are not
@@ -558,7 +559,7 @@ public enum EngineError {
     HOST_DEVICES_TAKEN_BY_OTHER_VM(6000);
 
     private int intValue;
-    private static final HashMap<Integer, EngineError> mappings = new HashMap<>();
+    private static final Map<Integer, EngineError> mappings = new HashMap<>();
 
     static {
         for (EngineError error : values()) {

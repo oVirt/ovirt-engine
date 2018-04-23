@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.config;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 
@@ -10,7 +11,7 @@ import org.ovirt.engine.core.config.validation.ConfigActionType;
  * not as a char that is actually part of a key/value.
  */
 public class EngineConfigCLIParser {
-    private HashMap<String, String> argsMap = new HashMap<>();
+    private Map<String, String> argsMap = new HashMap<>();
     private EngineConfigMap engineConfigMap = new EngineConfigMap();
 
     public EngineConfigCLIParser() {

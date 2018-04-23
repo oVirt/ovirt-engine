@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 
 public class VMStaticOvfLogHandler extends OvfLogEventHandler<VmStatic> {
 
-    private static HashMap<String, TypeConverter> typeConvertersMap = new HashMap<>();
+    private static Map<String, TypeConverter> typeConvertersMap = new HashMap<>();
 
     static {
         typeConvertersMap.put("migrationSupport", new MigrationSupportConverter());

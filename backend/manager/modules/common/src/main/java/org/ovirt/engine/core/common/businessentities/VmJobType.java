@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public enum VmJobType implements Identifiable {
     UNKNOWN(0),
     BLOCK(1);
 
     private final int jobType;
-    private static final HashMap<Integer, VmJobType> mappings = new HashMap<>();
+    private static final Map<Integer, VmJobType> mappings = new HashMap<>();
 
     static {
         for (VmJobType component : values()) {

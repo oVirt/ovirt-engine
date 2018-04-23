@@ -188,7 +188,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         // Drive selection
         selectionModelChangeHandlerReg = selectionModel.addSelectionChangeHandler(event -> {
             Set<M> selectedSet = selectionModel.getSelectedSet();
-            HashSet<TreeNodeModel<?, ?>> removedSet = new HashSet<>();
+            Set<TreeNodeModel<?, ?>> removedSet = new HashSet<>();
             updateSelectionSets(selectedSet, removedSet, roots);
             for (M toSelect : selectedSet) {
                 toSelect.setSelected(true);
