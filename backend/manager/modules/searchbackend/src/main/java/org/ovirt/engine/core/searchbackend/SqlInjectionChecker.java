@@ -44,7 +44,7 @@ public abstract class SqlInjectionChecker {
      */
     public boolean hasSqlInjection(String sql) {
         sql = removeAllStringValuesFromSql(sql);
-        if (sql.length() > 0) {
+        if (!sql.isEmpty()) {
             // replace all functions to have the format "f(" in order to match it exactly.
             sql = sql.replaceAll("\\s+\\(", "(");
             // look for sql injection expressions
