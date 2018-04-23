@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.utils.ObjectDescriptor;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
@@ -39,12 +40,7 @@ public final class ServerConnectionStatusReturn extends StatusReturn {
     }
 
     public Map<String, String> convertToStatusList() {
-        HashMap<String, String> result = new HashMap<>();
-        for (Map<String, Object> st : this.statusList) {
-            String status = st.get("status").toString();
-            String id = st.get("id").toString();
-            result.put(id, status);
-        }
-        return result;
+        return Arrays.stream(statusList)
+                .collect(Collectors.toMap(s -> s.get("id").toString(), s -> s.get("status").toString()));
     }
 }
