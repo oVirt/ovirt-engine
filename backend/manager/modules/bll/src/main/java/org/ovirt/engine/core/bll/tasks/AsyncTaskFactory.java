@@ -23,8 +23,6 @@ public final class AsyncTaskFactory {
 
     @Inject
     private Instance<CommandCoordinator> cocoInstance;
-    @Inject
-    private Instance<AsyncTaskManager> asyncTaskManagerInstance;
 
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskFactory.class);
     /**
@@ -86,11 +84,7 @@ public final class AsyncTaskFactory {
                     asyncTaskParams.getDbAsyncTask().getActionType() == ActionType.Unknown) {
                 result = new SPMAsyncTask(cocoInstance.get(), asyncTaskParams);
             } else {
-                result =
-                        new CommandAsyncTask(asyncTaskManagerInstance.get(),
-                                cocoInstance.get(),
-                                asyncTaskParams,
-                                duringInit);
+                result = new CommandAsyncTask(cocoInstance.get(), asyncTaskParams, duringInit);
             }
             return result;
         } catch (Exception e) {

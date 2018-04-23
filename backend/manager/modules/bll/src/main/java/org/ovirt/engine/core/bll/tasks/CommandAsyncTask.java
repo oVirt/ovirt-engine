@@ -33,8 +33,6 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
     private static final Map<Guid, CommandMultiAsyncTasks> _multiTasksByCommandIds = new HashMap<>();
 
-    private AsyncTaskManager asyncTaskManager;
-
     public CommandMultiAsyncTasks getCommandMultiAsyncTasks() {
         CommandMultiAsyncTasks entityInfo = null;
         synchronized (_lockObject) {
@@ -43,12 +41,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
         return entityInfo;
     }
 
-    public CommandAsyncTask(AsyncTaskManager asyncTaskManager,
-        CommandCoordinator coco,
-        AsyncTaskParameters parameters,
-        boolean duringInit) {
+    public CommandAsyncTask(CommandCoordinator coco, AsyncTaskParameters parameters, boolean duringInit) {
         super(coco, parameters);
-        this.asyncTaskManager = asyncTaskManager;
         boolean isNewCommandAdded = false;
         synchronized (_lockObject) {
             if (!_multiTasksByCommandIds.containsKey(getCommandId())) {
