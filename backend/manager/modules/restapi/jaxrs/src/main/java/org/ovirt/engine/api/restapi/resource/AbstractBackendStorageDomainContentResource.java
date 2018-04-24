@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
@@ -32,7 +33,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
         return parent;
     }
 
-    protected abstract java.util.Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> getDiskMap();
+    protected abstract Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> getDiskMap();
 
     protected Guid getDestStorageDomainId(Action action) {
         if (action.getStorageDomain().isSetId()) {
