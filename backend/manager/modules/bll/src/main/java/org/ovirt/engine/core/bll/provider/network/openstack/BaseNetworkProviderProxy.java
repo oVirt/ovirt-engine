@@ -120,6 +120,13 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
     }
 
     @Override
+    public Network get(String id) {
+        com.woorea.openstack.quantum.model.Network externalNetwork =
+                execute(getClient().networks().show(id));
+        return map(externalNetwork);
+    }
+
+    @Override
     public List<Network> getAll() {
         Networks networks = execute(getClient().networks().list());
         return map(networks.getList());
@@ -188,17 +195,34 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         List<Network> networks = new ArrayList<>(externalNetworks.size());
 
         for (com.woorea.openstack.quantum.model.Network externalNetwork : externalNetworks) {
-            Network network = new Network();
-            network.setVmNetwork(true);
-            network.setProvidedBy(new ProviderNetwork(getProvider().getId(), externalNetwork.getId()));
-            network.setName(externalNetwork.getName());
-            if (externalNetwork.getMtu() != null) {
-                network.setMtu(externalNetwork.getMtu());
-            }
-            networks.add(network);
+            networks.add(map(externalNetwork));
         }
 
         return networks;
+    }
+
+    private Network map(com.woorea.openstack.quantum.model.Network externalNetwork) {
+        Network network = new Network();
+        network.setVmNetwork(true);
+        network.setProvidedBy(new ProviderNetwork(getProvider().getId(), externalNetwork.getId()));
+        network.setName(externalNetwork.getName());
+        if (externalNetwork.getMtu() != null) {
+            network.setMtu(externalNetwork.getMtu());
+        }
+
+        mapPhysicalNetworkParameters(externalNetwork, network);
+
+        return network;
+    }
+
+    private void mapPhysicalNetworkParameters(com.woorea.openstack.quantum.model.Network externalNetwork,
+            Network network) {
+        String providerNetworkType = externalNetwork.getProviderNetworkType();
+        network.getProvidedBy().setExternalVlanId(VLAN_NETWORK.equals(providerNetworkType) ?
+                externalNetwork.getProviderSegmentationId() :
+                null);
+        network.getProvidedBy().setCustomPhysicalNetworkName(externalNetwork.getProviderPhysicalNetwork());
+        network.getProvidedBy().setProviderNetworkType(providerNetworkType);
     }
 
     @Override
