@@ -5,9 +5,12 @@ import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -119,19 +122,15 @@ public class BackendStorageDomainTemplatesResourceTest
     }
 
     protected List<VmTemplate> setUpTemplates() {
-        List<VmTemplate> ret = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            ret.add(getEntity(i));
-        }
-        return ret;
+        return IntStream.range(0, NAMES.length).mapToObj(this::getEntity).collect(Collectors.toList());
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpExportTemplates() {
-        HashMap<VmTemplate, List<DiskImage>> ret = new LinkedHashMap<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getEntity(i), new ArrayList<>());
-        }
-        return ret;
+        return IntStream.range(0, NAMES.length).boxed().collect(
+                Collectors.toMap(this::getEntity,
+                        x -> new ArrayList<>(),
+                        (u, v) -> null, // Should never happen, we have distinct entities
+                        LinkedHashMap::new));
     }
 
     public static org.ovirt.engine.core.common.businessentities.StorageDomain setUpStorageDomain(StorageDomainType domainType) {
@@ -144,11 +143,7 @@ public class BackendStorageDomainTemplatesResourceTest
     public static List<StoragePool> setUpStoragePool() {
         final StoragePool entity = new StoragePool();
         entity.setId(DATA_CENTER_ID);
-        return new ArrayList<StoragePool>(){
-            private static final long serialVersionUID = 6544998068993726769L;
-        {
-            add(entity);}
-        };
+        return Collections.singletonList(entity);
     }
 
     @Override
