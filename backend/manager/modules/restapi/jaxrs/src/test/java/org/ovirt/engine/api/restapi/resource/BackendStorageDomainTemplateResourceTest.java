@@ -7,9 +7,13 @@ import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -392,15 +396,11 @@ public class BackendStorageDomainTemplateResourceTest
         return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
-    protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
-        HashMap<VmTemplate, List<DiskImage>> ret = new HashMap<>();
+    protected Map<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
         if (notFound) {
-            return ret;
+            return Collections.emptyMap();
         }
-        for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getEntity(i), new ArrayList<>());
-        }
-        return ret;
+        return IntStream.range(0, NAMES.length).boxed().collect(Collectors.toMap(this::getEntity, ArrayList::new));
     }
 
     @Override
@@ -455,19 +455,12 @@ public class BackendStorageDomainTemplateResourceTest
     }
 
     protected List<VmTemplate> setUpTemplates() {
-        List<VmTemplate> ret = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            ret.add(getEntity(i));
-        }
-        return ret;
+        return IntStream.range(0, NAMES.length).mapToObj(this::getEntity).collect(Collectors.toList());
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpExportTemplates() {
-        HashMap<VmTemplate, List<DiskImage>> ret = new LinkedHashMap<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getEntity(i), new ArrayList<>());
-        }
-        return ret;
+        return IntStream.range(0, NAMES.length)
+                .boxed()
+                .collect(Collectors.toMap(this::getEntity, ArrayList::new, (u, v) -> null, LinkedHashMap::new));
     }
-
 }
