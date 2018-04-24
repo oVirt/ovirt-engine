@@ -40,12 +40,10 @@ import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Initialization;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Statistics;
-import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
@@ -617,26 +615,6 @@ public class BackendVmsResource extends
         vm.setStatistics(statistics);
     }
 
-    private void addInlineTags(Vm vm) {
-        BackendVmTagsResource tagsResource = inject(new BackendVmTagsResource(vm.getId()));
-        Tags tags = tagsResource.list();
-        vm.setTags(tags);
-    }
-
-    private void addInlineNics(Vm vm) {
-        Guid vmId = asGuid(vm.getId());
-        BackendVmNicsResource nicsResource = inject(new BackendVmNicsResource(vmId));
-        Nics nics = nicsResource.list();
-        vm.setNics(nics);
-    }
-
-    private void addInlineDisks(Vm vm) {
-        Guid vmId = asGuid(vm.getId());
-        BackendDiskAttachmentsResource disksAttachmentsResource = inject(new BackendDiskAttachmentsResource(vmId));
-        DiskAttachments diskAttachments = disksAttachmentsResource.list();
-        vm.setDiskAttachments(diskAttachments);
-    }
-
     protected Vms mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         boolean includeData = details.contains(DetailHelper.MAIN);
@@ -676,10 +654,6 @@ public class BackendVmsResource extends
         return collection;
     }
 
-    protected boolean templated(Vm vm) {
-        return vm.isSetTemplate() && (vm.getTemplate().isSetId() || vm.getTemplate().isSetName());
-    }
-
     protected InstanceType lookupInstance(Template template) {
         return getEntity(InstanceType.class,
                 QueryType.GetInstanceType,
@@ -699,10 +673,6 @@ public class BackendVmsResource extends
             return getEntity(VmTemplate.class, QueryType.GetVmTemplate, params, "GetVmTemplate");
         }
         return null; // should never happen.
-    }
-
-    public VmTemplate lookupTemplate(Guid id) {
-        return getEntity(VmTemplate.class, QueryType.GetVmTemplate, new GetVmTemplateParameters(id), "GetVmTemplate");
     }
 
     private Cluster lookupCluster(Guid id) {
