@@ -1,27 +1,35 @@
 .TH engine-backup 8 "March 13, 2014" "" ""
 .SH NAME
-engine-backup - backup and restore ovirt-engine environment
+engine-backup - Backup and restore ovirt-engine environment.
 .SH SYNOPSIS
-.B engine-backup [\-\-mode=\fIMODE\fR] [\-\-scope=\fISCOPE\fR] [\-\-file=\fIFILE\fR] [\-\-log=\fILOG_FILE\fR]
+.B engine-backup
+[\-\-mode=\fIMODE\fR] [\-\-scope=\fISCOPE\fR] [\-\-file=\fIFILE\fR] [\-\-log=\fILOG_FILE\fR]
 .PP
 .SH MODES
-\fBbackup\fR    backup system into \fIFILE\fR
+\fBbackup\fR    Backup system into \fIFILE\fR
 .br
-\fBrestore\fR   restore system from \fIFILE\fR
+\fBrestore\fR   Restore system from \fIFILE\fR
+.br
+\fBverify\fR    Verify \fIFILE\fR
 .SH SCOPES
-\fBall\fR       complete backup/restore (default)
+\fBall\fR       Complete backup/restore (default).
 .br
-\fBdb\fR        database only
+\fBfiles\fR     Product files only.
+.br
+\fBdb\fR        Database only.
+.br
+\fBdwhdb\fR     Data Warehouse database only.
+.br
 .SH OPTIONS
 .PP
 \fB\-\-file\fR=\fIFILE\fR
 .RS 4
-file to use during backup or restore
+File to use during backup or restore.
 .RE
 .PP
 \fB\-\-log\fR=\fILOG_FILE\fR
 .RS 4
-log file to use
+Log file to use.
 .RE
 .PP
 \fB\-\-tmpdir\fR=\fITEMP_DIR\fR
@@ -29,49 +37,270 @@ log file to use
 Parent of temporary directory to create (using mktemp(1)). Defaults to the TMPDIR environment variable if set, otherwise to /tmp.
 .RE
 .PP
+\fB\-\-archive\-compressor\fR=\fICOMPRESSOR\fR
+.RS 4
+Use COMPRESSOR to compress the backup file, can be one of:
+.br
+gzip
+.br
+bzip2
+.br
+xz
+.br
+None
+.RE
+.PP
+\fB\-\-files\-compressor\fR=\fICOMPRESSOR\fR
+.RS 4
+Compress the product files, same options as --archive-compressor.
+.RE
+.PP
+\fB\-\-keep\-temporary\-data\fR
+.RS 4
+Do not clean up temporary data on restore.
+.RE
+.PP
+\fB\-\-db\-compressor\fR=\fICOMPRESSOR\fR
+.RS 4
+Compress the database, same options as --archive-compressor.
+.RE
+.PP
+\fB\-\-db\-dump\-format\fR=\fIFORMAT\fR
+.RS 4
+Database dump format; see pg_dump(1) for details. Can be one of:
+.br
+.RE
+.PP
+.RS 4
+plain	Note that with this format engine-backup does not allow backing
+.br
+		up or restoring special permissions, by passing to pg_dump the
+.br
+		options '--no-owner --no-privileges'.
+.br
+custom
+.br
+.RE
+.PP
+\fB\-\-db\-restore\-jobs\fR=\fIJOBS\fR
+.RS 4
+Number of restore jobs for the database.
+.RE
+.PP
+\fB\-\-provision\-db\fR
+.RS 4
+Create a database for restore.
+.RE
+.PP
 \fB\-\-change\-db\-credentials\fR
 .RS 4
-activate the following options, to restore the database to a different location etc. If used, existing credentials are ignored.
+Activate the following options, to restore the database to a different location etc. If used, existing credentials are ignored.
 .RE
 .PP
 \fB\-\-db\-host\fR=\fIHOST\fR
 .RS 4
-set database host
+Set database host.
 .RE
 .PP
 \fB\-\-db\-port\fR=\fIPORT\fR
 .RS 4
-set database port
+Set database port.
 .RE
 .PP
 \fB\-\-db\-user\fR=\fIUSER\fR
 .RS 4
-set database user
+Set database user.
 .RE
 .PP
 \fB\-\-db\-passfile\fR=\fIPASS_FILE\fR
 .RS 4
-read database password from file
+Read database password from file.
 .RE
 .PP
 \fB\-\-db\-password\fR=\fIPASSWORD\fR
 .RS 4
-set database password. If \fIPASSWORD\fR is empty, the password is read interactively.
+Set database password. If \fIPASSWORD\fR is empty, the password is read interactively.
 .RE
 .PP
 \fB\-\-db\-name\fR=\fINAME\fR
 .RS 4
-set database name
+Set database name.
 .RE
 .PP
 \fB\-\-db\-secured\fR
 .RS 4
-set a secured connection
+Set a secured connection for database.
 .RE
 .PP
 \fB\-\-db\-secured\-validation\fR
 .RS 4
-validate host
+Validate host database.
+.RE
+.PP
+\fB\-\-dwh\-db\-compressor\fR=\fICOMPRESSOR\fR
+.RS 4
+Compress the Data Warehouse database, same options as --archive-compressor.
+.RE
+.PP
+\fB\-\-dwh\-db\-dump\-format\fR=\fIFORMAT\fR
+.RS 4
+Data Warehouse database dump format.
+.RE
+.PP
+\fB\-\-dwh\-db\-restore\-jobs\fR=\fIJOBS\fR
+.RS 4
+Number of restore jobs for the Data Warehouse database.
+.RE
+.PP
+\fB\-\-provision\-dwh\-db\fR
+.RS 4
+Create a Data Warehouse database for restore.
+.RE
+.PP
+\fB\-\-change\-dwh\-db\-credentials\fR
+.RS 4
+Activate the following options, to restore the Data Warehouse database to a different location etc. If used, existing credentials are ignored.
+.RE
+.PP
+\fB\-\-dwh\-db\-host\fR=\fIHOST\fR
+.RS 4
+Set Data Warehouse database host.
+.RE
+.PP
+\fB\-\-dwh\-db\-port\fR=\fIPORT\fR
+.RS 4
+Set Data Warehouse database port.
+.RE
+.PP
+\fB\-\-dwh\-db\-user\fR=\fIUSER\fR
+.RS 4
+Set Data Warehouse database user.
+.RE
+.PP
+\fB\-\-dwh\-db\-passfile\fR=\fIPASS_FILE\fR
+.RS 4
+Read Data Warehouse database password from file.
+.RE
+.PP
+\fB\-\-dwh\-db\-password\fR=\fIPASSWORD\fR
+.RS 4
+Set Data Warehouse database password. If \fIPASSWORD\fR is empty, the password is read interactively.
+.RE
+.PP
+\fB\-\-dwh\-db\-name\fR=\fINAME\fR
+.RS 4
+Set Data Warehouse database name.
+.RE
+.PP
+\fB\-\-dwh\-db\-secured\fR
+.RS 4
+Set a secured connection for the Data Warehouse database.
+.RE
+.PP
+\fB\-\-dwh\-db\-secured\-validation\fR
+.RS 4
+Validate host for the Data Warehouse database.
+.RE
+.PP
+\fB\-\-no\-restore\-permissions\fR
+.RS 4
+Affects only the custom dump format. Will pass to pg_restore '--no-owner --no-privileges'.
+.RE
+.PP
+\fB\-\-restore\-permissions\fR
+.RS 4
+Affects only the custom dump format. Will not pass to pg_restore '--no-owner --no-privileges'.
+.RE
+.PP
+\fB\-\-provision\-all\-databases\fR
+.RS 4
+On restore, create a PostgreSQL database for all the databases that were included in the backup.
+.RE
+.PP
+\fB\-\-he\-remove\-storage\-vm\fR
+.RS 4
+Removes the hosted-engine storage domain, all its entities and the hosted-engine VM during restore.
+.br
+This can be useful when using different storage on the restored system.
+.br
+The engine should usually notice this and eventually import the new storage.
+.RE
+.PP
+\fB\-\-he\-remove\-hosts\-vm\fR
+.RS 4
+Removes all the hosted-engine hosts during restore.
+.br
+This can be useful if some of your hosts are still alive, and/or changed, and/or you can't easily remove them for any reason.
+.br
+Not doing this is risky if some of them are still alive with running VMs on them, especially HA VMs.
+.RE
+.PP
+\fB\-\-fast\-restore\fR
+.RS 4
+The default for backup, equivalent to:
+.br
+--archive-compressor=gzip \\
+.br
+--files-compressor=xz \\
+.br
+--db-dump-format=custom \\
+.br
+--db-compressor=None \\
+.br
+--dwh-db-dump-format=custom \\
+.br
+--dwh-db-compressor=None
+.RE
+.PP
+.RS 4
+In addition, you should pass, when restoring:
+.br
+--db-restore-jobs=N \\
+.br
+--dwh-db-restore-jobs=N
+.br
+where 'N' is around 150% of available cpu cores.
+.br
+.RE
+.PP
+\fB\-\-small\-size\fR
+.RS 4
+For a small backup file, equivalent to:
+.br
+--archive-compressor=xz \\
+.br
+--files-compressor=xz \\
+.br
+--db-dump-format=plain \\
+.br
+--db-compressor=xz \\
+.br
+--dwh-db-dump-format=plain \\
+.br
+--dwh-db-compressor=xz
+.RE
+.PP
+\fB\-\-fast\-backup\fR
+.RS 4
+For a fast backup, equivalent to:
+.br
+--archive-compressor=gzip \\
+.br
+--files-compressor=xz \\
+.br
+--db-dump-format=custom \\
+.br
+--db-compressor=None \\
+.br
+--dwh-db-dump-format=custom \\
+.br
+--dwh-db-compressor=None
+.br
+.RE
+.PP
+You can use one of --fast-restore, --small-size, --fast-backup, and after that
+.br
+one of the other compressor/format options for further fine-tuning.
 .RE
 .SH ENVIRONMENT VARIABLES
 .PP
