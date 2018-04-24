@@ -24,13 +24,15 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddNetworkValidatorTest {
 
     @Mock
     private Network network;
+
+    @Mock
+    private ProviderNetwork providerNetwork;
 
     @Mock
     private DbFacade dbFacade;
@@ -48,6 +50,8 @@ public class AddNetworkValidatorTest {
     public void setup() {
         validator = spy(new AddNetworkValidator(vmDao, network));
 
+        when(network.getProvidedBy()).thenReturn(providerNetwork);
+
         // spy on attempts to access the database
         doReturn(dbFacade).when(validator).getDbFacade();
 
@@ -60,8 +64,7 @@ public class AddNetworkValidatorTest {
 
     private void externalNetworkNewInDataCenterTestSetup(boolean equalToNetwork) {
         Network externalNetwork = mock(Network.class);
-        ProviderNetwork providerNetwork = mock(ProviderNetwork.class);
-        when(network.getProvidedBy()).thenReturn(providerNetwork);
+
 
         if (equalToNetwork) {
             when(externalNetwork.getProvidedBy()).thenReturn(providerNetwork);
@@ -103,21 +106,21 @@ public class AddNetworkValidatorTest {
 
     @Test
     public void externalNetworkVlanValid() {
-        when(network.getVlanId()).thenReturn(RandomUtils.instance().nextInt());
-        when(network.getLabel()).thenReturn(RandomUtils.instance().nextString(10));
+        when(providerNetwork.hasExternalVlanId()).thenReturn(true);
+        when(providerNetwork.hasCustomPhysicalNetworkName()).thenReturn(true);
         assertThat(validator.externalNetworkVlanValid(), isValid());
     }
 
     @Test
     public void externalNetworkVlanInvalid() {
-        when(network.getVlanId()).thenReturn(RandomUtils.instance().nextInt());
+        when(providerNetwork.hasExternalVlanId()).thenReturn(true);
         assertThat(validator.externalNetworkVlanValid(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED));
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_CUSTOM));
     }
 
     @Test
-    public void externalNetworkNoVlanWithLabel() {
-        when(network.getLabel()).thenReturn(RandomUtils.instance().nextString(10));
+    public void externalNetworkNoVlanWithCustomNetwork() {
+        when(providerNetwork.hasCustomPhysicalNetworkName()).thenReturn(true);
         assertThat(validator.externalNetworkVlanValid(), isValid());
     }
 }

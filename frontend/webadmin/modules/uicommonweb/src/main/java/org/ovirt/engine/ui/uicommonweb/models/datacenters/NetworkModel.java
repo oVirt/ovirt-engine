@@ -665,9 +665,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         network.setVmNetwork(getIsVmNetwork().getEntity());
 
         String label = getNetworkLabel().getSelectedItem();
-        if (getExternal().getEntity() && getConnectedToPhysicalNetwork().getEntity()) {
-            label = !getUsePhysicalNetworkFromDatacenter().getEntity() ? getCustomPhysicalNetwork().getEntity() : null;
-        }
         network.setLabel(StringHelper.isNotNullOrEmpty(label) ? label : null);
 
         network.setDefaultMtu();
@@ -678,7 +675,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         network.setDnsResolverConfiguration(getDnsConfigurationModel().flush());
 
         network.setVlanId(null);
-        if (getHasVLanTag().getEntity()) {
+        if (getHasVLanTag().getEntity() && !getExternal().getEntity()) {
             network.setVlanId(Integer.parseInt(getVLanTag().getEntity().toString()));
         }
 

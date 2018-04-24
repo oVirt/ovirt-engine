@@ -157,6 +157,9 @@ public class NewNetworkModel extends NetworkModel {
             if (getConnectedToPhysicalNetwork().getEntity() && getUsePhysicalNetworkFromDatacenter().getEntity()) {
                 Network network = getDatacenterPhysicalNetwork().getSelectedItem();
                 providerNetwork.setPhysicalNetworkId(network.getId());
+            } else if (getConnectedToPhysicalNetwork().getEntity() && getUsePhysicalNetworkFromCustom().getEntity()) {
+                providerNetwork.setCustomPhysicalNetworkName(getCustomPhysicalNetwork().getEntity());
+                providerNetwork.setExternalVlanId(getVLanTag().getEntity());
             }
 
             Frontend.getInstance().runAction(

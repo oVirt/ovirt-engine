@@ -63,8 +63,6 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
         NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
         getNetwork().getProvidedBy().setExternalId(proxy.add(getNetwork()));
-        getNetwork().setVlanId(null);
-        getNetwork().setLabel(null);
 
         TransactionSupport.executeInNewTransaction(() -> {
             super.executeCommand();
@@ -76,8 +74,8 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
     private void loadPhysicalNetworkProviderParameters() {
         Network physicalProviderNetwork = networkDao.get(getNetwork().getProvidedBy().getPhysicalNetworkId());
-        getNetwork().setVlanId(physicalProviderNetwork.getVlanId());
-        getNetwork().setLabel(physicalProviderNetwork.getVdsmName());
+        getNetwork().getProvidedBy().setExternalVlanId(physicalProviderNetwork.getVlanId());
+        getNetwork().getProvidedBy().setCustomPhysicalNetworkName(physicalProviderNetwork.getVdsmName());
     }
 
     protected void postAddNetwork(Guid providerId, String externalId) {

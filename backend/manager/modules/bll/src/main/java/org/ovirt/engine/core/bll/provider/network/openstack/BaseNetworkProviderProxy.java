@@ -99,11 +99,11 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
             networkForCreate.setMtu(network.getMtu());
         }
 
-        if (NetworkUtils.isLabeled(network)) {
-            networkForCreate.setProviderPhysicalNetwork(network.getLabel());
-            if (NetworkUtils.isVlan(network)) {
+        if (network.getProvidedBy().hasCustomPhysicalNetworkName()) {
+            networkForCreate.setProviderPhysicalNetwork(network.getProvidedBy().getCustomPhysicalNetworkName());
+            if (network.getProvidedBy().hasExternalVlanId()) {
                 networkForCreate.setProviderNetworkType(VLAN_NETWORK);
-                networkForCreate.setProviderSegmentationId(network.getVlanId());
+                networkForCreate.setProviderSegmentationId(network.getProvidedBy().getExternalVlanId());
             } else {
                 networkForCreate.setProviderNetworkType(FLAT_NETWORK);
             }
