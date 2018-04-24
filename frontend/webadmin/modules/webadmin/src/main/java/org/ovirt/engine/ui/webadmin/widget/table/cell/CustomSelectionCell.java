@@ -119,11 +119,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
     }
 
     private int getSelectedIndex(String value) {
-        Integer index = indexForOption.get(value);
-        if (index == null) {
-            return -1;
-        }
-        return index.intValue();
+        return indexForOption.getOrDefault(value, -1);
     }
 
     public void setEnabled(boolean isEnabled) {
