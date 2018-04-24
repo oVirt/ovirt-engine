@@ -9,8 +9,12 @@ import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqParams;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.ws.rs.core.UriInfo;
 
@@ -159,15 +163,12 @@ public class BackendExportDomainDiskResourceTest
 
     }
 
-    protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
-        HashMap<VmTemplate, List<DiskImage>> ret = new HashMap<>();
+    protected Map<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
         if (notFound) {
-            return ret;
+            return Collections.emptyMap();
         }
-        for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getVmTemplateEntity(i), new ArrayList<>());
-        }
-        return ret;
+        return IntStream.range(0, NAMES.length)
+                .boxed().collect(Collectors.toMap(this::getVmTemplateEntity, ArrayList::new));
     }
 
     protected VmTemplate getVmTemplateEntity(int index) {
