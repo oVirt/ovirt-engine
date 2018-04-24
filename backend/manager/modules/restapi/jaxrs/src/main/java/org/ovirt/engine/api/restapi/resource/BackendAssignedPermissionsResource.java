@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -63,8 +62,7 @@ public class BackendAssignedPermissionsResource
 
     @Override
     public Permissions list() {
-        Set<org.ovirt.engine.core.common.businessentities.Permission> permissions =
-                new TreeSet<>(new PermissionsComparator());
+        Set<org.ovirt.engine.core.common.businessentities.Permission> permissions = new TreeSet<>(permissionComparator);
         List<org.ovirt.engine.core.common.businessentities.Permission> directPermissions =
                 getBackendCollection(queryType, queryParams);
         permissions.addAll(directPermissions);
@@ -88,17 +86,8 @@ public class BackendAssignedPermissionsResource
         return inheritedPermissions;
     }
 
-    static class PermissionsComparator
-            implements Comparator<org.ovirt.engine.core.common.businessentities.Permission>, Serializable {
-        @Override
-        public int compare(
-                org.ovirt.engine.core.common.businessentities.Permission o1,
-                org.ovirt.engine.core.common.businessentities.Permission o2) {
-            String id1 = o1.getId().toString();
-            String id2 = o2.getId().toString();
-            return id1.compareTo(id2);
-        }
-    }
+    private static final Comparator<org.ovirt.engine.core.common.businessentities.Permission> permissionComparator =
+            Comparator.comparing(p -> p.getId().toString());
 
     @Override
     public Response add(Permission permission) {
