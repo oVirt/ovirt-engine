@@ -12,11 +12,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -31,10 +33,12 @@ import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransferImageCommandTest extends BaseCommandTest{
@@ -51,6 +55,10 @@ public class TransferImageCommandTest extends BaseCommandTest{
     @Spy
     @InjectMocks
     protected TransferImageCommand<? extends TransferImageParameters> transferImageCommand = spyCommand();
+
+    @ClassRule
+    public static MockConfigRule configRule = new MockConfigRule(mockConfig(
+            ConfigValues.TransferImageClientInactivityTimeoutInSeconds, 600));
 
     @Before
     public void setUp() {

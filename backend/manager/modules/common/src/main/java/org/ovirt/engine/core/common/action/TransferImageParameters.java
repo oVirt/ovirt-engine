@@ -16,6 +16,7 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
     long lastPauseLogTime;
     String downloadFilename;
     boolean retryExtendTicket = true;
+    private Integer clientInactivityTimeout;
 
     public TransferImageParameters() {
     }
@@ -78,5 +79,13 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
 
     public void setRetryExtendTicket(boolean retryExtendTicket) {
         this.retryExtendTicket = retryExtendTicket;
+    }
+
+    public Integer getClientInactivityTimeout() {
+        return clientInactivityTimeout;
+    }
+
+    public void setClientInactivityTimeout(Integer clientInactivityTimeout) {
+        this.clientInactivityTimeout = clientInactivityTimeout;
     }
 }

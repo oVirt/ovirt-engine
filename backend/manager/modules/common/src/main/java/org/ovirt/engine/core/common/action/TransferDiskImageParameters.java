@@ -3,7 +3,8 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TransferDiskImageParameters extends TransferImageParameters {
-    private static final long serialVersionUID = -1534535133135826714L;
+    private static final long serialVersionUID = 7834167203208979364L;
+
     private AddDiskParameters addDiskParameters;
 
     public TransferDiskImageParameters() {}
