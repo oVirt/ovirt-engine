@@ -887,10 +887,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
-        HashSet<String> lunIds = new HashSet<>();
-        for (LunModel lun : sanModel.getAddedLuns()) {
-            lunIds.add(lun.getLunId());
-        }
+        Set<String> lunIds = sanModel.getAddedLuns().stream().map(LunModel::getLunId).collect(Collectors.toSet());
 
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(storageDomain);
         params.setVdsId(host.getId());
@@ -940,13 +937,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         model.setTitle(title);
         setWindow(model);
 
-        ArrayList<EntityModel> items = new ArrayList<>();
-        for (StorageDomain sd : storages) {
-            EntityModel tempVar = new EntityModel();
-            tempVar.setEntity(sd);
-            items.add(tempVar);
-        }
-
+        List<EntityModel<StorageDomain>> items = storages.stream().map(EntityModel::new).collect(Collectors.toList());
         model.setItems(items);
 
         UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnAttachStorage", this); //$NON-NLS-1$
@@ -965,12 +956,12 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     public void onAttachStorage() {
         ListModel<EntityModel<StorageDomain>> model = (ListModel<EntityModel<StorageDomain>>) getWindow();
 
-        ArrayList<StorageDomain> items = new ArrayList<>();
-        for (EntityModel<StorageDomain> a : model.getItems()) {
-            if (a.getIsSelected()) {
-                items.add(a.getEntity());
-            }
-        }
+        List<StorageDomain> items = model
+                .getItems()
+                .stream()
+                .filter(Model::getIsSelected)
+                .map(EntityModel::getEntity)
+                .collect(Collectors.toList());
 
         if (items.size() > 0) {
             for (StorageDomain sd : items) {
