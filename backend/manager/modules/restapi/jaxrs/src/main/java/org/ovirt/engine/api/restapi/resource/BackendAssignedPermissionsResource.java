@@ -1,11 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
@@ -136,11 +137,7 @@ public class BackendAssignedPermissionsResource
     }
 
     public Map<Guid, DbUser> getUsers() {
-        HashMap<Guid, DbUser> users = new HashMap<>();
-        for (DbUser user : lookupUsers()) {
-            users.put(user.getId(), user);
-        }
-        return users;
+        return lookupUsers().stream().collect(Collectors.toMap(DbUser::getId, Function.identity()));
     }
 
     private List<DbUser> lookupUsers() {
