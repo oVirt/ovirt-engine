@@ -28,6 +28,8 @@ public class GetImageTicketVDSCommand<P extends GetImageTicketVDSCommandParamete
 
     private static final String TRANSFERRED = "transferred";
 
+    private static final String IDLE_TIME = "idle_time";
+
     private ImageTicketInformationReturn imageTicketInformationReturn;
 
     public GetImageTicketVDSCommand(P parameters) {
@@ -83,6 +85,9 @@ public class GetImageTicketVDSCommand<P extends GetImageTicketVDSCommandParamete
         }
         if (ticketInfoMap.containsKey(TRANSFERRED)) {
             ticketInfo.setTransferred(((Number) ticketInfoMap.get(TRANSFERRED)).longValue());
+        }
+        if (ticketInfoMap.containsKey(IDLE_TIME)) {
+            ticketInfo.setIdleTime((Integer) ticketInfoMap.get(IDLE_TIME));
         }
 
         return ticketInfo;

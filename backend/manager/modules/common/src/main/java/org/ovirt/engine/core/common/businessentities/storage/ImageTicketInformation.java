@@ -26,6 +26,8 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
 
     private Long transferred;
 
+    private Integer idleTime;
+
     @Override
     public Guid getId() {
         return id;
@@ -92,6 +94,14 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
         this.transferred = transferred;
     }
 
+    public Integer getIdleTime() {
+        return idleTime;
+    }
+
+    public void setIdleTime(Integer idleTime) {
+        this.idleTime = idleTime;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -111,7 +121,8 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
                 && Objects.equals(transferTypes, other.transferTypes)
                 && Objects.equals(fileName, other.fileName)
                 && Objects.equals(active, other.active)
-                && Objects.equals(transferred, other.transferred);
+                && Objects.equals(transferred, other.transferred)
+                && Objects.equals(idleTime, other.idleTime);
     }
 
     @Override
@@ -124,6 +135,7 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
                 transferTypes,
                 fileName,
                 active,
-                transferred);
+                transferred,
+                idleTime);
     }
 }
