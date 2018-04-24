@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -745,10 +746,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             onSaveSanStorage();
             return;
         }
-        Set<String> unkownStatusLuns = new HashSet<>();
-        for (LunModel lunModel : sanStorageModelBase.getAddedLuns()) {
-            unkownStatusLuns.add(lunModel.getLunId());
-        }
+        Set<String> unkownStatusLuns =
+                sanStorageModelBase.getAddedLuns().stream().map(LunModel::getLunId).collect(Collectors.toSet());
+
         Frontend.getInstance()
                 .runQuery(QueryType.GetDeviceList,
                         new GetDeviceListQueryParameters(hostId,
@@ -1314,10 +1314,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
-        HashSet<String> lunIds = new HashSet<>();
-        for (LunModel lun : sanModel.getAddedLuns()) {
-            lunIds.add(lun.getLunId());
-        }
+        Set<String> lunIds = sanModel.getAddedLuns().stream().map(LunModel::getLunId).collect(Collectors.toSet());
 
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(storageDomain);
         params.setVdsId(host.getId());
@@ -1495,11 +1492,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     SanStorageModelBase sanStorageModelBase = (SanStorageModelBase) storageModel.getCurrentStorageItem();
                     boolean force = sanStorageModelBase.isForce();
                     StorageDomain storageDomain1 = storageListModel.getSelectedItem();
-                    HashSet<String> lunIds = new HashSet<>();
 
-                    for (LunModel lun : sanStorageModelBase.getAddedLuns()) {
-                        lunIds.add(lun.getLunId());
-                    }
+                    Set<String> lunIds =
+                            sanStorageModelBase.getAddedLuns().stream().map(LunModel::getLunId).collect(Collectors.toSet());
 
                     if (lunIds.size() > 0) {
                         Frontend.getInstance().runAction(ActionType.ExtendSANStorageDomain,
@@ -1805,10 +1800,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                         model.setHelpTag(HelpTag.import_storage_domain_confirmation);
                         model.setHashName("import_storage_domain_confirmation"); //$NON-NLS-1$
 
-                        List<String> stoageDomainNames = new ArrayList<>();
-                        for (StorageDomainStatic domain : attachedStorageDomains) {
-                            stoageDomainNames.add(domain.getStorageName());
-                        }
+                        List<String> stoageDomainNames = attachedStorageDomains
+                                .stream()
+                                .map(StorageDomainStatic::getStorageName)
+                                .collect(Collectors.toList());
+
                         model.setItems(stoageDomainNames);
 
                         UICommand cancelCommand = createCancelCommand("CancelImportConfirm"); //$NON-NLS-1$
