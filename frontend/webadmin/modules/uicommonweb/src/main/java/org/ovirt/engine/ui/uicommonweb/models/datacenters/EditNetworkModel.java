@@ -6,6 +6,9 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -40,21 +43,50 @@ public class EditNetworkModel extends NetworkModel {
         initIsVm();
         getExternal().setEntity(getNetwork().isExternal());
         getExternal().setIsChangeable(false);
-        getHasVLanTag().setEntity(getNetwork().getVlanId() != null);
-        getVLanTag().setEntity(getNetwork().getVlanId());
 
         if (isConnectedToPhysicalNetwork()) {
             if (getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
                 getUsePhysicalNetworkFromDatacenter().setEntity(true);
-            } else {
-                getUsePhysicalNetworkFromCustom().setEntity(true);
-                getCustomPhysicalNetwork().setEntity(getNetwork().getLabel());
             }
         } else {
             getNetworkLabel().setSelectedItem(getNetwork().getLabel());
+            getHasVLanTag().setEntity(getNetwork().getVlanId() != null);
+            getVLanTag().setEntity(getNetwork().getVlanId());
         }
 
         toggleProfilesAvailability();
+    }
+
+    @Override
+    public void syncWithBackend() {
+        super.syncWithBackend();
+        checkAndMapCustomExternalNetwork();
+    }
+
+    private void checkAndMapCustomExternalNetwork() {
+        if (getNetwork().isExternal() && !getNetwork().getProvidedBy().isSetPhysicalNetworkId()) {
+            startProgress();
+            Frontend.getInstance()
+                    .runQuery(QueryType.GetExternalNetworkById,
+                            new IdQueryParameters(getNetwork().getId()),
+                            new AsyncQuery<QueryReturnValue>(result -> {
+                                Network network = result.getReturnValue();
+                                if (network != null) {
+                                    getNetwork().setProvidedBy(network.getProvidedBy());
+                                    initExternalNetworkParameters();
+                                }
+                                stopProgress();
+                            }));
+        }
+    }
+
+    private void initExternalNetworkParameters() {
+        getConnectedToPhysicalNetwork().setEntity(true);
+        getUsePhysicalNetworkFromCustom().setEntity(true);
+        getCustomPhysicalNetwork().setEntity(getNetwork().getProvidedBy().getCustomPhysicalNetworkName());
+        getHasVLanTag().setEntity(getNetwork().getProvidedBy().hasExternalVlanId());
+        getVLanTag().setEntity(getNetwork().getProvidedBy().getExternalVlanId());
+        onExportChanged();
     }
 
     private void initManagement() {
@@ -103,7 +135,8 @@ public class EditNetworkModel extends NetworkModel {
 
     private boolean isConnectedToPhysicalNetwork() {
         final Network network = getNetwork();
-        return network.isExternal() && (network.getProvidedBy().isSetPhysicalNetworkId() || StringHelper.isNotNullOrEmpty(network.getLabel()));
+        return network.isExternal() && (network.getProvidedBy().isSetPhysicalNetworkId()
+                || StringHelper.isNotNullOrEmpty(network.getProvidedBy().getCustomPhysicalNetworkName()));
     }
 
     @Override
@@ -125,6 +158,12 @@ public class EditNetworkModel extends NetworkModel {
 
     @Override
     public void executeSave() {
+        if (getExternal().getEntity() && getConnectedToPhysicalNetwork().getEntity()
+                && getUsePhysicalNetworkFromCustom().getEntity()) {
+            getNetwork().getProvidedBy().setCustomPhysicalNetworkName(null);
+            getNetwork().getProvidedBy().setExternalVlanId(null);
+        }
+
         Frontend.getInstance().runAction(ActionType.UpdateNetwork,
                 new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
                 result -> {

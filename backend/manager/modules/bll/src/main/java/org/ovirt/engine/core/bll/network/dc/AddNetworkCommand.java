@@ -193,8 +193,9 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         }
 
         public ValidationResult externalNetworkVlanValid() {
-            return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED)
-                    .when(network.getVlanId() != null && network.getLabel() == null);
+            return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_CUSTOM)
+                    .when(network.getProvidedBy().hasExternalVlanId() && !network.getProvidedBy()
+                            .hasCustomPhysicalNetworkName());
         }
 
         /**
