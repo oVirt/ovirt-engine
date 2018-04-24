@@ -168,7 +168,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
-    protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
+    protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     private String cachedDiskSharedLockMessage;

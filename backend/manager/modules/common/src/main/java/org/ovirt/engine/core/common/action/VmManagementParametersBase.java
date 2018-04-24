@@ -71,7 +71,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     private VmStatic vmStatic;
     private boolean makeCreatorExplicitOwner;
     private Guid storageDomainId;
-    private HashMap<Guid, DiskImage> diskInfoDestinationMap;
+    private Map<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
     private boolean clearPayload;
     private VM vm;
@@ -195,11 +195,11 @@ public class VmManagementParametersBase extends VmOperationParameterBase
         return makeCreatorExplicitOwner;
     }
 
-    public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
+    public Map<Guid, DiskImage> getDiskInfoDestinationMap() {
         return diskInfoDestinationMap;
     }
 
-    public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
+    public void setDiskInfoDestinationMap(Map<Guid, DiskImage> diskInfoDestinationMap) {
         this.diskInfoDestinationMap = diskInfoDestinationMap;
     }
 
