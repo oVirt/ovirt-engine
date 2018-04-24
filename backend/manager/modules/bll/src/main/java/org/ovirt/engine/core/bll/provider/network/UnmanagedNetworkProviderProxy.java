@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
@@ -44,6 +45,14 @@ public class UnmanagedNetworkProviderProxy implements NetworkProviderProxy {
     @Override
     public List<Network> getAll() {
         return Injector.get(NetworkDao.class).getAllForProvider(provider.getId());
+    }
+
+    @Override
+    public Network get(String id) {
+        return getAll().stream()
+                .filter(network -> Objects.equals(network.getProvidedBy().getExternalId(), id))
+                .findAny()
+                .orElse(null);
     }
 
     @Override

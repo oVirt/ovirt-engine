@@ -38,6 +38,14 @@ public interface NetworkProviderProxy extends ProviderProxy {
     List<Network> getAll();
 
     /**
+     * Retrieve a network associated with given network id.
+     *
+     * @param id External id of the network
+     * @return External network with given id.
+     */
+    Network get(String id);
+
+    /**
      * Retrieve a list of all subnets that are associated with the given network.
      *
      * @param network
