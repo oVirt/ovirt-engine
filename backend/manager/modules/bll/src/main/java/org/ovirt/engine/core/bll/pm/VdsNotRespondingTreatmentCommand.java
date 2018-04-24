@@ -206,7 +206,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         log.info("Fence failed on vds '{}' which is spm of pool '{}' - moving pool to non operational",
                 getVds().getName(),
                 getVds().getStoragePoolId());
-        CommandContext commandContext = getContext().clone();
+        CommandContext commandContext = getContext().clone().withoutLock();
         // CommandContext clone is 'shallow' and does not clone the internal ExecutionContext.
         // So ExecutionContext is cloned here manually to prevent a bug (BZ1145099).
         commandContext.withExecutionContext(new ExecutionContext(commandContext.getExecutionContext()));
