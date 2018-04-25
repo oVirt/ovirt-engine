@@ -65,40 +65,40 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
     }
 
     void handleViewChange(boolean advancedViewEnabled) {
-        getTable().ensureColumnVisible(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(),
+        getTable().ensureColumnVisible(logTypeColumn, constants.eventIdEvent(),
                 advancedViewEnabled,
                 "80px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.userColumn, constants.userEvent(),
+        getTable().ensureColumnVisible(userColumn, constants.userEvent(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.hostColumn, constants.hostEvent(),
+        getTable().ensureColumnVisible(hostColumn, constants.hostEvent(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.virtualMachineColumn, constants.vmEvent(),
+        getTable().ensureColumnVisible(virtualMachineColumn, constants.vmEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "120px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.templateColumn, constants.templateEvent(),
+        getTable().ensureColumnVisible(templateColumn, constants.templateEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.dataCenterColumn, constants.dcEvent(),
+        getTable().ensureColumnVisible(dataCenterColumn, constants.dcEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.storageColumn, constants.storageEvent(),
+        getTable().ensureColumnVisible(storageColumn, constants.storageEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.clusterColumn, constants.clusterEvent(),
+        getTable().ensureColumnVisible(clusterColumn, constants.clusterEvent(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.volumeColumn, constants.volumeEvent(),
+        getTable().ensureColumnVisible(volumeColumn, constants.volumeEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly),
                 "120px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.corrIdColumn, constants.eventCorrelationId(),
+        getTable().ensureColumnVisible(corrIdColumn, constants.eventCorrelationId(),
                 advancedViewEnabled,
                 "120px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.originColumn, constants.eventOrigin(),
+        getTable().ensureColumnVisible(originColumn, constants.eventOrigin(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(AdvancedViewColumns.customEventIdColumn, constants.eventCustomEventId(),
+        getTable().ensureColumnVisible(customEventIdColumn, constants.eventCustomEventId(),
                 advancedViewEnabled,
                 "140px"); //$NON-NLS-1$
 
@@ -132,18 +132,14 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
         getTable().addColumn(messageColumn, constants.messageEvent(), BASIC_VIEW_MSG_COLUMN_WIDTH);
     }
 
-}
-
-class AdvancedViewColumns {
-
-    public static final AbstractTextColumn<AuditLog> logTypeColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> logTypeColumn = new AbstractTextColumn<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return String.valueOf(object.getLogTypeValue());
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> userColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> userColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.USER_NAME);
         }
@@ -154,7 +150,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> hostColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> hostColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_HOST);
         }
@@ -165,7 +161,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> virtualMachineColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> virtualMachineColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_VM);
         }
@@ -176,7 +172,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> templateColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> templateColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_TEMPLATE);
         }
@@ -187,7 +183,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> dataCenterColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> dataCenterColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_DATACENTER);
         }
@@ -198,7 +194,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> storageColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> storageColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_STORAGE);
         }
@@ -209,14 +205,14 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> clusterColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> clusterColumn = new AbstractTextColumn<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getClusterName();
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> volumeColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> volumeColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_VOLUME);
         }
@@ -227,7 +223,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> corrIdColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> corrIdColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.CORRELATION_ID);
         }
@@ -238,7 +234,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> originColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> originColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.ORIGIN);
         }
@@ -248,7 +244,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final AbstractTextColumn<AuditLog> customEventIdColumn = new AbstractTextColumn<AuditLog>() {
+    private static final AbstractTextColumn<AuditLog> customEventIdColumn = new AbstractTextColumn<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.CUSTOM_EVENT_ID);
         }
