@@ -55,7 +55,6 @@ public class DBSchedulerUtilQuartzImplTest {
             assertNotNull(job);
         } catch (SchedulerException e) {
             fail("Unexpected exception occured -" + e.getMessage());
-            e.printStackTrace();
         } finally {
             scheduler.deleteJob(jobName);
         }
@@ -78,7 +77,6 @@ public class DBSchedulerUtilQuartzImplTest {
             assertNotNull(triggers.get(0).getNextFireTime());
         } catch (SchedulerException e) {
             fail("Unexpected exception occured -" + e.getMessage());
-            e.printStackTrace();
         } finally {
             scheduler.deleteJob(jobName);
         }
