@@ -106,10 +106,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        if (getSnapshotActionType() == ActionType.RemoveSnapshotSingleDiskLive) {
-            return lockProperties.withScope(Scope.Command);
-        }
-
         return lockProperties.withScope(Scope.Execution);
     }
 
@@ -167,10 +163,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
 
         lockSnapshot(snapshot);
-
-        if (getParameters().isFreeLockNeeded()) {
-            freeLock();
-        }
+        freeLock();
 
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
 

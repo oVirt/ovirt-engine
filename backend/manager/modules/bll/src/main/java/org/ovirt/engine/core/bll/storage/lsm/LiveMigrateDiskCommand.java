@@ -314,13 +314,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         removeSnapshotParameters.setParentParameters(getParameters());
         removeSnapshotParameters.setNeedsLocking(false);
 
-        // This is required to prevent the freeLock() in RemoveSnapshotCommand#execute
-        // from being called and prematurely freeing the lock
-        removeSnapshotParameters.setFreeLockNeeded(false);
-
         runInternalAction(ActionType.RemoveSnapshot,
                 removeSnapshotParameters,
-                ExecutionHandler.createInternalJobContext(createStepsContext(StepEnum.MERGE_SNAPSHOTS), liveStorageMigrationEngineLock));
+                ExecutionHandler.createInternalJobContext(createStepsContext(StepEnum.MERGE_SNAPSHOTS)));
     }
 
     private CommandContext createStepsContext(StepEnum step) {
