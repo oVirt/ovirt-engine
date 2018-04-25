@@ -73,6 +73,16 @@ public class EditNetworkModel extends NetworkModel {
     }
 
     @Override
+    protected void updateMtuSelectorsChangeability() {
+        if (getExternal().getEntity()) {
+            setMtuSelectorsChangeability(false, null);
+            return;
+        }
+
+        setMtuSelectorsChangeability(true, null);
+    }
+
+    @Override
     protected void selectExternalProvider() {
         final Network network = getNetwork();
         getExternalProviders().setSelectedItem(Linq.firstOrNull(getExternalProviders().getItems(),

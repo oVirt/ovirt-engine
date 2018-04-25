@@ -856,19 +856,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         getVLanTag().setIsChangeable(getHasVLanTag().getEntity());
     }
 
-    private void setMtuSelectorsChangeability(boolean isChangeable, String prohibitionReason) {
+    protected void setMtuSelectorsChangeability(boolean isChangeable, String prohibitionReason) {
         getMtuSelector().setIsChangeable(isChangeable, prohibitionReason);
         getMtu().setIsChangeable(isChangeable && isCustomMtu(), prohibitionReason);
     }
 
-    protected void updateMtuSelectorsChangeability() {
-        if (getExternal().getEntity()) {
-            setMtuSelectorsChangeability(false, null);
-            return;
-        }
-
-        setMtuSelectorsChangeability(true, null);
-    }
+    protected abstract void updateMtuSelectorsChangeability();
 
     private void updateSubnetChangeability() {
         getSubnetModel().toggleChangeability(getCreateSubnet().getEntity());
