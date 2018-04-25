@@ -69,6 +69,10 @@ public class GetValidHostsForVmsParameters extends QueryParametersBase {
         this.setMessages(messages);
     }
 
+    public GetValidHostsForVmsParameters(List<VM> vms) {
+        this (vms, Guid.Empty, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
+
     public GetValidHostsForVmsParameters(List<VM> vms, Guid clusterId) {
         this (vms, clusterId, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetValidHostsForVmsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -36,7 +37,13 @@ public class GetValidHostsForVmsQuery<P extends GetValidHostsForVmsParameters> e
     }
 
     private List<VDS> getValidHosts() {
-        Cluster cluster = clusterDao.get(getParameters().getClusterId());
+        Guid clusterId = getParameters().getClusterId();
+        if (Guid.Empty.equals(clusterId)) {
+            clusterId = getParameters().getVms().get(0).getClusterId();
+        }
+
+        Cluster cluster = clusterDao.get(clusterId);
+
         List<VM> vms = getParameters().getVms();
         List<Guid> blackList = getParameters().getBlackList();
         List<Guid> whiteList = getParameters().getWhiteList();
@@ -74,4 +81,18 @@ public class GetValidHostsForVmsQuery<P extends GetValidHostsForVmsParameters> e
         return hosts;
     }
 
+    @Override
+    protected boolean validateInputs() {
+        if (!super.validateInputs()) {
+            return false;
+        }
+
+        if (getParameters().getVms().size() == 0) {
+            getQueryReturnValue().setExceptionString(EngineMessage.VM_AT_LEAST_ONE_SPECIFIED.name());
+            getQueryReturnValue().setSucceeded(false);
+            return false;
+        }
+
+        return true;
+    }
 }
