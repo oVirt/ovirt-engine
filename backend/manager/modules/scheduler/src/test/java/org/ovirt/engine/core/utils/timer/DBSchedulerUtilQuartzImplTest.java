@@ -71,23 +71,21 @@ public class DBSchedulerUtilQuartzImplTest {
         }
     }
 
+    private static class DummyJob implements Serializable {
+        private static final long serialVersionUID = 2288097737673782124L;
+        private static String msg;
 
-}
+        public DummyJob() {
 
-class DummyJob implements Serializable {
-    private static final long serialVersionUID = 2288097737673782124L;
-    private static String msg;
+        }
 
-    public DummyJob() {
+        public String getMessage() {
+            return msg;
+        }
 
-    }
-
-    public String getMessage() {
-        return msg;
-    }
-
-    @OnTimerMethodAnnotation("dummyScheduleMethod")
-    public void dummyScheduleMethod(String str) {
-        msg = str;
+        @OnTimerMethodAnnotation("dummyScheduleMethod")
+        public void dummyScheduleMethod(String str) {
+            msg = str;
+        }
     }
 }

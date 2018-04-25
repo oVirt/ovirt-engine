@@ -5,6 +5,20 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VmBasedWidgetSwitchModeCommand extends UICommand {
+    // this class is here just because constructor can not call super by referencing itself, so there must be a middle man
+    private static class AdvancedButtonTarget implements ICommandTarget {
+
+        @Override
+        public void executeCommand(UICommand command) {
+            VmBasedWidgetSwitchModeCommand button = (VmBasedWidgetSwitchModeCommand) command;
+            button.advancedClicked();
+        }
+
+        @Override
+        public void executeCommand(UICommand uiCommand, Object... parameters) {
+            // nothing to do
+        }
+    }
 
     public static final String NAME = "OnAdvanced"; //$NON-NLS-1$
 
@@ -43,21 +57,4 @@ public class VmBasedWidgetSwitchModeCommand extends UICommand {
     private void setAdvancedMode(boolean advancedMode) {
         model.getAdvancedMode().setEntity(advancedMode);
     }
-
-}
-
-// this class is here just because constructor can not call super by referencing itself, so there must be a middle man
-class AdvancedButtonTarget implements ICommandTarget {
-
-    @Override
-    public void executeCommand(UICommand command) {
-        VmBasedWidgetSwitchModeCommand button = (VmBasedWidgetSwitchModeCommand) command;
-        button.advancedClicked();
-    }
-
-    @Override
-    public void executeCommand(UICommand uiCommand, Object... parameters) {
-        // nothing to do
-    }
-
 }

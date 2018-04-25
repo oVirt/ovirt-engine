@@ -322,90 +322,89 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         }
     }
 
-}
+    private static class RenderableSuggestion<T> extends MultiWordSuggestion {
 
-class RenderableSuggestion<T> extends MultiWordSuggestion {
-
-    public RenderableSuggestion(T row, SuggestBoxRenderer<T> renderer) {
-        super(renderer.getReplacementString(row), renderer.getDisplayString(row));
-    }
-}
-
-class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
-
-    private SuggestBoxRenderer<T> renderer;
-    private final SuggestionMatcher matcher;
-
-    // intended to avoid null checks
-    private Collection<T> data = new ArrayList<>();
-
-    public RenderableSuggestOracle(SuggestBoxRenderer<T> renderer, SuggestionMatcher matcher) {
-        this.renderer = renderer;
-        this.matcher = matcher;
+        public RenderableSuggestion(T row, SuggestBoxRenderer<T> renderer) {
+            super(renderer.getReplacementString(row), renderer.getDisplayString(row));
+        }
     }
 
-    @Override
-    public void requestSuggestions(Request request, Callback callback) {
-        List<RenderableSuggestion<T>> suggestions = new ArrayList<>();
+    private static class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
 
-        String query = request.getQuery();
-        for (T row : data) {
-            RenderableSuggestion<T> suggestionCandidate = new RenderableSuggestion<>(row, renderer);
-            if (this.matcher.match(query, suggestionCandidate)) {
-                suggestions.add(suggestionCandidate);
-            }
+        private SuggestBoxRenderer<T> renderer;
+        private final SuggestionMatcher matcher;
+
+        // intended to avoid null checks
+        private Collection<T> data = new ArrayList<>();
+
+        public RenderableSuggestOracle(SuggestBoxRenderer<T> renderer, SuggestionMatcher matcher) {
+            this.renderer = renderer;
+            this.matcher = matcher;
         }
 
-        callback.onSuggestionsReady(request, new Response(suggestions));
-    }
+        @Override
+        public void requestSuggestions(Request request, Callback callback) {
+            List<RenderableSuggestion<T>> suggestions = new ArrayList<>();
 
-    @Override
-    public void requestDefaultSuggestions(Request request, Callback callback) {
-        List<RenderableSuggestion<T>> suggestions = new ArrayList<>();
-
-        for (T row : data) {
-            suggestions.add(new RenderableSuggestion<>(row, renderer));
-        }
-
-        callback.onSuggestionsReady(request, new Response(suggestions));
-    }
-
-    public void setData(Collection<T> data) {
-        this.data = data;
-    }
-
-}
-
-class EnterIgnoringNativePreviewHandler<T> implements NativePreviewHandler {
-
-    private final ListModelTypeAheadListBox<T> listModelTypeAheadListBox;
-
-    public EnterIgnoringNativePreviewHandler(ListModelTypeAheadListBox<T> listModelTypeAheadListBox) {
-        this.listModelTypeAheadListBox = listModelTypeAheadListBox;
-    }
-
-    @Override
-    public void onPreviewNativeEvent(NativePreviewEvent event) {
-        NativeEvent nativeEvent = event.getNativeEvent();
-        if (nativeEvent.getKeyCode() == KeyCodes.KEY_ENTER && event.getTypeInt() == Event.ONKEYPRESS && !event.isCanceled()) {
-            // swallow the enter key otherwise the whole dialog would get submitted
-            nativeEvent.preventDefault();
-            nativeEvent.stopPropagation();
-            event.cancel();
-
-            // process the event here directly
-            Suggestion currentSelection = listModelTypeAheadListBox.getCurrentSelection();
-            if (currentSelection != null) {
-                String replacementString = currentSelection.getReplacementString();
-                try {
-                    listModelTypeAheadListBox.setValue(listModelTypeAheadListBox.asEntity(replacementString), true);
-                } catch (IllegalArgumentException e) {
-                    // do not set the value if it is not a correct one
+            String query = request.getQuery();
+            for (T row : data) {
+                RenderableSuggestion<T> suggestionCandidate = new RenderableSuggestion<>(row, renderer);
+                if (this.matcher.match(query, suggestionCandidate)) {
+                    suggestions.add(suggestionCandidate);
                 }
             }
 
-            listModelTypeAheadListBox.hideSuggestions();
+            callback.onSuggestionsReady(request, new Response(suggestions));
         }
+
+        @Override
+        public void requestDefaultSuggestions(Request request, Callback callback) {
+            List<RenderableSuggestion<T>> suggestions = new ArrayList<>();
+
+            for (T row : data) {
+                suggestions.add(new RenderableSuggestion<>(row, renderer));
+            }
+
+            callback.onSuggestionsReady(request, new Response(suggestions));
+        }
+
+        public void setData(Collection<T> data) {
+            this.data = data;
+        }
+
     }
 
+    private static class EnterIgnoringNativePreviewHandler<T> implements NativePreviewHandler {
+
+        private final ListModelTypeAheadListBox<T> listModelTypeAheadListBox;
+
+        public EnterIgnoringNativePreviewHandler(ListModelTypeAheadListBox<T> listModelTypeAheadListBox) {
+            this.listModelTypeAheadListBox = listModelTypeAheadListBox;
+        }
+
+        @Override
+        public void onPreviewNativeEvent(NativePreviewEvent event) {
+            NativeEvent nativeEvent = event.getNativeEvent();
+            if (nativeEvent.getKeyCode() == KeyCodes.KEY_ENTER && event.getTypeInt() == Event.ONKEYPRESS && !event.isCanceled()) {
+                // swallow the enter key otherwise the whole dialog would get submitted
+                nativeEvent.preventDefault();
+                nativeEvent.stopPropagation();
+                event.cancel();
+
+                // process the event here directly
+                Suggestion currentSelection = listModelTypeAheadListBox.getCurrentSelection();
+                if (currentSelection != null) {
+                    String replacementString = currentSelection.getReplacementString();
+                    try {
+                        listModelTypeAheadListBox.setValue(listModelTypeAheadListBox.asEntity(replacementString), true);
+                    } catch (IllegalArgumentException e) {
+                        // do not set the value if it is not a correct one
+                    }
+                }
+
+                listModelTypeAheadListBox.hideSuggestions();
+            }
+        }
+
+    }
 }

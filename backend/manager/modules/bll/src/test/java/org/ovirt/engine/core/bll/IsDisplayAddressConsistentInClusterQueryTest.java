@@ -67,55 +67,54 @@ public class IsDisplayAddressConsistentInClusterQueryTest extends
         assertThat(getQuery().isDisplayAddressPartiallyOverridden(mergedAddresses), is(true));
     }
 
-}
+    private abstract static class BaseVdsContainer {
 
-abstract class BaseVdsContainer {
+        private List<VDS> content;
 
-    private List<VDS> content;
+        public BaseVdsContainer(int numOfVds) {
+            for (int i = 0; i < numOfVds; i++) {
+                addVds();
+            }
+        }
 
-    public BaseVdsContainer(int numOfVds) {
-        for (int i = 0; i < numOfVds; i++) {
-            addVds();
+        protected abstract void addVds();
+
+        public void addVds(String returnValue) {
+            if (content == null) {
+                content = new ArrayList<>();
+            }
+
+            VDS vds = mock(VDS.class);
+            when(vds.getConsoleAddress()).thenReturn(returnValue);
+            content.add(vds);
+        }
+
+        public List<VDS> getAllVds() {
+            return content;
         }
     }
 
-    protected abstract void addVds();
+    private static class OverriddenConsoleAddress extends BaseVdsContainer {
 
-    public void addVds(String returnValue) {
-        if (content == null) {
-            content = new ArrayList<>();
+        public OverriddenConsoleAddress(int numOfVds) {
+            super(numOfVds);
         }
 
-        VDS vds = mock(VDS.class);
-        when(vds.getConsoleAddress()).thenReturn(returnValue);
-        content.add(vds);
+        @Override
+        protected void addVds() {
+            super.addVds("some overridden value"); //$NON-NLS-1$
+        }
     }
 
-    public List<VDS> getAllVds() {
-        return content;
-    }
-}
+    private static class DefaultConsoleAddress extends BaseVdsContainer {
 
-class OverriddenConsoleAddress extends BaseVdsContainer {
+        public DefaultConsoleAddress(int numOfVds) {
+            super(numOfVds);
+        }
 
-    public OverriddenConsoleAddress(int numOfVds) {
-        super(numOfVds);
-    }
-
-    @Override
-    protected void addVds() {
-        super.addVds("some overridden value"); //$NON-NLS-1$
-    }
-}
-
-class DefaultConsoleAddress extends BaseVdsContainer {
-
-    public DefaultConsoleAddress(int numOfVds) {
-        super(numOfVds);
-    }
-
-    @Override
-    protected void addVds() {
-        super.addVds(null);
+        @Override
+        protected void addVds() {
+            super.addVds(null);
+        }
     }
 }

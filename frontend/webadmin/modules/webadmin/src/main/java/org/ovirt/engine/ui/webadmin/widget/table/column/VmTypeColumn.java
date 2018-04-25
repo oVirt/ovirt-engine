@@ -105,192 +105,191 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
         return images.isEmpty() ? null : MultiImageColumnHelper.getValue(images);
     }
 
-}
+    enum VmTypeConfig {
 
-enum VmTypeConfig {
-
-    DESKTOP_STATELESS(VmType.Desktop, true, false) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.desktopStateless();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.statelessDesktop();
-        }
-    },
-
-    DESKTOP_STATEFUL(VmType.Desktop, false, false) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.desktopImage();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.desktop();
-        }
-    },
-
-    SERVER_STATEFUL(VmType.Server, false, false) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.serverImage();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.server();
-        }
-    },
-
-    SERVER_STATELESS(VmType.Server, true, false) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.serverStateless();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.statelessServer();
-        }
-    },
-
-    HIGH_PERFORMANCE_STATEFUL(VmType.HighPerformance, false, false) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.highPerformanceImage();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.highPerformance();
-        }
-    },
-
-    HIGH_PERFORMANCE_STATELESS(VmType.HighPerformance, true, false) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.highPerformanceStateless();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.statelessHighPerformance();
-        }
-    },
-
-    DESKTOP_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.Desktop, true, true) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.desktopStatelessChanges();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.statelessDesktopChanges();
-        }
-    },
-
-    DESKTOP_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.Desktop, false, true) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.desktopChanges();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.desktopChanges();
-        }
-    },
-
-    SERVER_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.Server, false, true) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.serverChanges();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.serverChanges();
-        }
-    },
-
-    SERVER_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.Server, true, true) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.serverStatelessChanges();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.statelessServerChanges();
-        }
-    },
-
-    HIGH_PERFORMANCE_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.HighPerformance, false, true) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.highPerformanceChanges();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.highPerformanceChanges();
-        }
-    },
-
-    HIGH_PERFORMANCE_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.HighPerformance, true, true) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.highPerformanceStatelessChanges();
-        }
-
-        @Override
-        public String getTooltip() {
-            return constants.statelessHighPerformanceChanges();
-        }
-    },
-
-    DEFAULT(null, false, false) {
-        @Override
-        public ImageResource getImageResource() {
-            return resources.manyDesktopsImage();
-        }
-
-        @Override
-        public String getTooltip() {
-            return ""; //$NON-NLS-1$
-        }
-    };
-
-    private final VmType vmType;
-    private final boolean stateless;
-    private final boolean nextRunConfigurationExists;
-
-    private static final ApplicationResources resources = AssetProvider.getResources();
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
-    VmTypeConfig(VmType vmType, boolean stateless, boolean nextRunConfigurationExists) {
-        this.vmType = vmType;
-        this.stateless = stateless;
-        this.nextRunConfigurationExists = nextRunConfigurationExists;
-    }
-
-    public static VmTypeConfig from(VmType vmType, boolean stateless, boolean nextRunConfigurationExists) {
-        for (VmTypeConfig config : values()) {
-            if (config.stateless == stateless && config.vmType == vmType
-                    && config.nextRunConfigurationExists == nextRunConfigurationExists) {
-                return config;
+        DESKTOP_STATELESS(VmType.Desktop, true, false) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.desktopStateless();
             }
+
+            @Override
+            public String getTooltip() {
+                return constants.statelessDesktop();
+            }
+        },
+
+        DESKTOP_STATEFUL(VmType.Desktop, false, false) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.desktopImage();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.desktop();
+            }
+        },
+
+        SERVER_STATEFUL(VmType.Server, false, false) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.serverImage();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.server();
+            }
+        },
+
+        SERVER_STATELESS(VmType.Server, true, false) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.serverStateless();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.statelessServer();
+            }
+        },
+
+        HIGH_PERFORMANCE_STATEFUL(VmType.HighPerformance, false, false) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.highPerformanceImage();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.highPerformance();
+            }
+        },
+
+        HIGH_PERFORMANCE_STATELESS(VmType.HighPerformance, true, false) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.highPerformanceStateless();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.statelessHighPerformance();
+            }
+        },
+
+        DESKTOP_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.Desktop, true, true) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.desktopStatelessChanges();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.statelessDesktopChanges();
+            }
+        },
+
+        DESKTOP_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.Desktop, false, true) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.desktopChanges();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.desktopChanges();
+            }
+        },
+
+        SERVER_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.Server, false, true) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.serverChanges();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.serverChanges();
+            }
+        },
+
+        SERVER_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.Server, true, true) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.serverStatelessChanges();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.statelessServerChanges();
+            }
+        },
+
+        HIGH_PERFORMANCE_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.HighPerformance, false, true) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.highPerformanceChanges();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.highPerformanceChanges();
+            }
+        },
+
+        HIGH_PERFORMANCE_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.HighPerformance, true, true) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.highPerformanceStatelessChanges();
+            }
+
+            @Override
+            public String getTooltip() {
+                return constants.statelessHighPerformanceChanges();
+            }
+        },
+
+        DEFAULT(null, false, false) {
+            @Override
+            public ImageResource getImageResource() {
+                return resources.manyDesktopsImage();
+            }
+
+            @Override
+            public String getTooltip() {
+                return ""; //$NON-NLS-1$
+            }
+        };
+
+        private final VmType vmType;
+        private final boolean stateless;
+        private final boolean nextRunConfigurationExists;
+
+        private static final ApplicationResources resources = AssetProvider.getResources();
+        private static final ApplicationConstants constants = AssetProvider.getConstants();
+
+        VmTypeConfig(VmType vmType, boolean stateless, boolean nextRunConfigurationExists) {
+            this.vmType = vmType;
+            this.stateless = stateless;
+            this.nextRunConfigurationExists = nextRunConfigurationExists;
         }
 
-        return DEFAULT;
+        public static VmTypeConfig from(VmType vmType, boolean stateless, boolean nextRunConfigurationExists) {
+            for (VmTypeConfig config : values()) {
+                if (config.stateless == stateless && config.vmType == vmType
+                        && config.nextRunConfigurationExists == nextRunConfigurationExists) {
+                    return config;
+                }
+            }
+
+            return DEFAULT;
+        }
+
+
+        public abstract ImageResource getImageResource();
+
+        public abstract String getTooltip();
     }
-
-
-    public abstract ImageResource getImageResource();
-
-    public abstract String getTooltip();
 }

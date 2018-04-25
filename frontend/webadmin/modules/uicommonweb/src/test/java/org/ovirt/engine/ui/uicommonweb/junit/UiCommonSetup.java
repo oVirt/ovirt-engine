@@ -10,7 +10,6 @@ import org.junit.runners.model.Statement;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup.Mocks;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.LocalizedEnums;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -101,62 +100,60 @@ public class UiCommonSetup implements TestRule {
         return env.mocks;
     }
 
-}
+    private static class Env {
 
-class Env {
+        private final AsyncDataProvider asyncDataProvider = mock(AsyncDataProvider.class);
+        private final Frontend frontend = mock(Frontend.class, RETURNS_DEEP_STUBS);
+        private final TypeResolver typeResolver = mock(TypeResolver.class);
 
-    private final AsyncDataProvider asyncDataProvider = mock(AsyncDataProvider.class);
-    private final Frontend frontend = mock(Frontend.class, RETURNS_DEEP_STUBS);
-    private final TypeResolver typeResolver = mock(TypeResolver.class);
+        private final ConstantsManager constantsManager = mock(ConstantsManager.class);
+        private final UIConstants uiConstants = mock(UIConstants.class);
+        private final UIMessages uiMessages = mock(UIMessages.class);
+        private final LocalizedEnums enums = mock(LocalizedEnums.class);
 
-    private final ConstantsManager constantsManager = mock(ConstantsManager.class);
-    private final UIConstants uiConstants = mock(UIConstants.class);
-    private final UIMessages uiMessages = mock(UIMessages.class);
-    private final LocalizedEnums enums = mock(LocalizedEnums.class);
+        final Mocks mocks = new Mocks() {
+            @Override
+            public AsyncDataProvider asyncDataProvider() {
+                return asyncDataProvider;
+            }
 
-    final Mocks mocks = new Mocks() {
-        @Override
-        public AsyncDataProvider asyncDataProvider() {
-            return asyncDataProvider;
+            @Override
+            public Frontend frontend() {
+                return frontend;
+            }
+
+            @Override
+            public TypeResolver typeResolver() {
+                return typeResolver;
+            }
+
+            @Override
+            public UIConstants uiConstants() {
+                return uiConstants;
+            }
+
+            @Override
+            public UIMessages uiMessages() {
+                return uiMessages;
+            }
+
+            @Override
+            public LocalizedEnums enums() {
+                return enums;
+            }
+        };
+
+        Env() {
+            when(constantsManager.getConstants()).thenReturn(uiConstants);
+            when(constantsManager.getMessages()).thenReturn(uiMessages);
+            when(constantsManager.getEnums()).thenReturn(enums);
         }
 
-        @Override
-        public Frontend frontend() {
-            return frontend;
+        void update(boolean init) {
+            AsyncDataProvider.setInstance(init ? asyncDataProvider : null);
+            Frontend.setInstance(init ? frontend : null);
+            TypeResolver.setInstance(init ? typeResolver : null);
+            ConstantsManager.setInstance(init ? constantsManager : null);
         }
-
-        @Override
-        public TypeResolver typeResolver() {
-            return typeResolver;
-        }
-
-        @Override
-        public UIConstants uiConstants() {
-            return uiConstants;
-        }
-
-        @Override
-        public UIMessages uiMessages() {
-            return uiMessages;
-        }
-
-        @Override
-        public LocalizedEnums enums() {
-            return enums;
-        }
-    };
-
-    Env() {
-        when(constantsManager.getConstants()).thenReturn(uiConstants);
-        when(constantsManager.getMessages()).thenReturn(uiMessages);
-        when(constantsManager.getEnums()).thenReturn(enums);
     }
-
-    void update(boolean init) {
-        AsyncDataProvider.setInstance(init ? asyncDataProvider : null);
-        Frontend.setInstance(init ? frontend : null);
-        TypeResolver.setInstance(init ? typeResolver : null);
-        ConstantsManager.setInstance(init ? constantsManager : null);
-    }
-
 }

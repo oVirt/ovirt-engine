@@ -61,20 +61,20 @@ public class I18NRegexpTest {
                 + "'", new Regex(REGEXP).isMatch(incorrectPart.text + correctPart.text), is(false));
     }
 
-}
+    private static class CorrectString {
+        String text;
 
-class CorrectString {
-    String text;
-
-    public CorrectString(String text) {
-        this.text = text;
+        public CorrectString(String text) {
+            this.text = text;
+        }
     }
-}
 
-class IncorrectString {
-    String text;
+    private static class IncorrectString {
+        String text;
 
-    public IncorrectString(String text) {
-        this.text = text;
+        public IncorrectString(String text) {
+            this.text = text;
+        }
     }
+
 }

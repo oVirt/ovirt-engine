@@ -60,6 +60,7 @@
       <property name="tokens" value="SEMI"/>
     </module>
     <module name="OneStatementPerLine"/>
+    <module name="OneTopLevelClass" />
     <module name="PackageDeclaration"/>
     <module name="RedundantImport"/>
     <module name="RightCurly" />
