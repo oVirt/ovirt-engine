@@ -424,8 +424,14 @@ LANGUAGE plpgsql;
         FROM pg_proc
         INNER JOIN pg_namespace ns
             ON (pg_proc.pronamespace = ns.oid)
-        WHERE ns.nspname = 'public'
-        AND proname NOT LIKE 'uuid_%'
+        WHERE
+            ns.nspname = 'public'
+            AND (
+                 probin IS  NULL
+                 OR
+                 -- prevent dropping installed extension functions
+                 probin NOT IN  (SELECT '$libdir/' || extname from pg_extension)
+            )
         ORDER BY proname;
     END;$PROCEDURE$
 
