@@ -16,6 +16,8 @@ import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.Initialization;
+import org.ovirt.engine.api.model.Snapshot;
+import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VirtioScsi;
@@ -32,6 +34,7 @@ import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ImportVmTemplateFromConfParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -89,20 +92,58 @@ public class BackendTemplatesResource
             clusterId = getClusterId(template);
             cluster = lookupCluster(clusterId);
         }
+
         if (template.getVersion() != null) {
             validateParameters(template.getVersion(), "baseTemplate");
         }
-
         VmStatic originalVm = getVm(cluster, template);
         VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, originalVm);
+
         if (namedCluster(template)) {
             staticVm.setClusterId(clusterId);
         }
-
-        // REVISIT: powershell has a IsVmTemlateWithSameNameExist safety check
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,
                 template.getName(),
                 template.getDescription());
+        return addTemplate(template, originalVm, null, params, ActionType.AddVmTemplate);
+    }
+
+    @Override
+    public Response addFromVmSnapshot(Template template) {
+        validateIconParameters(template);
+        validateSnapshotExistence(template.getVm());
+
+        Guid snapshotId = getSnapshotId(template.getVm().getSnapshots());
+        org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getVmConfiguration(snapshotId);
+
+        if (template.getVersion() != null) {
+            validateParameters(template.getVersion(), "baseTemplate");
+        }
+        VmStatic originalVm = vmConfiguration.getStaticData();
+        VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, originalVm);
+
+        if (namedCluster(template)) {
+            Guid clusterId = getClusterId(template);
+            staticVm.setClusterId(clusterId);
+        }
+
+        AddVmTemplateFromSnapshotParameters params = new AddVmTemplateFromSnapshotParameters(
+                staticVm,
+                template.getName(),
+                template.getDescription(),
+                snapshotId);
+        return addTemplate(template,
+                originalVm,
+                vmConfiguration.getDiskMap().keySet(),
+                params,
+                ActionType.AddVmTemplateFromSnapshot);
+    }
+
+    private Response addTemplate(Template template,
+            VmStatic originalVm,
+            Set<Guid> snapshotDisksIds,
+            AddVmTemplateParameters params,
+            ActionType actionType) {
         if (template.getVersion() != null) {
             params.setBaseTemplateId(Guid.createGuidFromString(template.getVersion().getBaseTemplate().getId()));
             params.setTemplateVersionName(template.getVersion().getVersionName());
@@ -121,7 +162,6 @@ public class BackendTemplatesResource
         }
 
         DisplayHelper.setGraphicsToParams(template.getDisplay(), params);
-
         boolean domainSet = template.isSetStorageDomain() && template.getStorageDomain().isSetId();
         if (domainSet) {
             params.setDestinationStorageDomainId(asGuid(template.getStorageDomain().getId()));
@@ -131,18 +171,19 @@ public class BackendTemplatesResource
                         template.getVm(),
                         originalVm.getId(),
                         params.getDestinationStorageDomainId(),
-                        domainSet
-                        )
-                );
+                        domainSet,
+                        snapshotDisksIds
+                )
+        );
 
         setupOptionalParameters(params);
         IconHelper.setIconToParams(template, params);
 
         Response response = performCreate(
-                ActionType.AddVmTemplate,
+                actionType,
                 params,
                 new QueryIdResolver<Guid>(QueryType.GetVmTemplate, GetVmTemplateParameters.class)
-                );
+        );
 
         Template result = (Template) response.getEntity();
         if (result != null) {
@@ -150,6 +191,24 @@ public class BackendTemplatesResource
         }
 
         return response;
+    }
+
+    private void validateSnapshotExistence(Vm vm) {
+        Snapshot snapshot = vm.getSnapshots().getSnapshots().get(0);
+        validateParameters(snapshot, "id");
+    }
+
+    private Guid getSnapshotId(Snapshots snapshots) {
+        return asGuid(snapshots.getSnapshots().get(0).getId());
+    }
+
+    private org.ovirt.engine.core.common.businessentities.VM getVmConfiguration(Guid snapshotId) {
+        org.ovirt.engine.core.common.businessentities.VM vmConfiguration =
+                getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
+                        QueryType.GetVmConfigurationBySnapshot,
+                        new IdQueryParameters(snapshotId),
+                        "");
+        return vmConfiguration;
     }
 
     @Override
@@ -201,7 +260,7 @@ public class BackendTemplatesResource
     }
 
     protected Map<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid vmId, Guid storageDomainId,
-            boolean isTemplateGeneralStorageDomainSet) {
+            boolean isTemplateGeneralStorageDomainSet, Set<Guid> snapshotDisksIds) {
         Map<Guid, DiskImage> destinationTemplateDiskMap = null;
         if (vm.isSetDiskAttachments() && vm.getDiskAttachments().isSetDiskAttachments()) {
             destinationTemplateDiskMap = new HashMap<>();
@@ -221,6 +280,9 @@ public class BackendTemplatesResource
                     continue;
                 }
 
+                if (snapshotDisksIds != null && !snapshotDisksIds.contains(sourceDisk.getId())) {
+                    continue;
+                }
                 DiskImage destinationDisk = (DiskImage) DiskMapper.map(disk, sourceDisk);
                 if (isTemplateGeneralStorageDomainSet) {
                     destinationDisk.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
