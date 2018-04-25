@@ -83,6 +83,11 @@ public class NewNetworkModel extends NetworkModel {
     }
 
     @Override
+    protected void updateMtuSelectorsChangeability() {
+        setMtuSelectorsChangeability(true, null);
+    }
+
+    @Override
     protected void initIsVm() {
         getIsVmNetwork().setEntity(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
     }
