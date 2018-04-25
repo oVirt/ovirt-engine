@@ -320,7 +320,9 @@ public class UploadImageModel extends Model implements ICommandTarget {
             DiskImage diskImage = (DiskImage) getDiskModel().getDisk();
             diskImage.setActualSizeInBytes(getImageSize());
             diskImage.setVolumeFormat(getImageInfoModel().getFormat());
-            diskImage.setVolumeType(AsyncDataProvider.getInstance().getVolumeType(diskImage.getVolumeFormat()));
+            diskImage.setVolumeType(AsyncDataProvider.getInstance().getVolumeType(
+                    diskImage.getVolumeFormat(),
+                    getDiskModel().getStorageDomain().getSelectedItem().getStorageType()));
             diskImage.setContentType(getImageInfoModel().getContentType());
             if (getImageInfoModel().getContentType() == DiskContentType.ISO) {
                 diskImage.setSize(getImageSize());
