@@ -164,4 +164,13 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return the external {@link Network}s
      */
     List<Network> getAllExternalNetworksLinkedToPhysicalNetwork(Guid physicalNetworkId);
+
+    /**
+     * Retrieves a network with given vdsm name and data center id
+     *
+     * @param vdsmName     Vdsm name of the network
+     * @param dataCenterId Id of the data center
+     * @return the {@link Network}
+     */
+    Network getNetworkByVdsmNameAndDataCenterId(String vdsmName, Guid dataCenterId);
 }

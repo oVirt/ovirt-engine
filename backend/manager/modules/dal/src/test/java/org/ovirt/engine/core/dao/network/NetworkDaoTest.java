@@ -415,4 +415,23 @@ public class NetworkDaoTest extends BaseDaoTestCase {
         List<Network> linkedNetworks = dao.getAllExternalNetworksLinkedToPhysicalNetwork(FixturesTool.NETWORK_ENGINE);
         assertTrue(linkedNetworks.isEmpty());
     }
+
+    @Test
+    public void testGetNetworkByVdsmNameAndDataCenterId() {
+        Network network = dao.getNetworkByVdsmNameAndDataCenterId(FixturesTool.NETWORK_ENGINE_VDSM_NAME,
+                FixturesTool.DATA_CENTER);
+        assertNotNull(network);
+    }
+
+    @Test
+    public void testGetNetworkByVdsmNameAndDataCenterIdNullName() {
+        Network network = dao.getNetworkByVdsmNameAndDataCenterId(null, FixturesTool.DATA_CENTER);
+        assertNull(network);
+    }
+
+    @Test
+    public void testGetNetworkByVdsmNameAndDataCenterIdNullDataCenter() {
+        Network network = dao.getNetworkByVdsmNameAndDataCenterId(FixturesTool.NETWORK_ENGINE_VDSM_NAME, null);
+        assertNull(network);
+    }
 }
