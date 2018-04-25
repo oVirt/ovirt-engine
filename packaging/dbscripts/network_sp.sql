@@ -237,6 +237,21 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetNetworkByVdsmNameAndDataCenterId (
+    v_vdsm_name      VARCHAR(15),
+    v_data_center_id UUID
+    )
+RETURNS SETOF network STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT network.*
+    FROM network
+    WHERE vdsm_name = v_vdsm_name
+          AND storage_pool_id = v_data_center_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetManagementNetworkByCluster (v_cluster_id UUID)
 RETURNS SETOF network STABLE AS $PROCEDURE$
 BEGIN

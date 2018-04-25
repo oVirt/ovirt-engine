@@ -575,6 +575,8 @@ public class FixturesTool {
      */
     public static final Guid NETWORK_ENGINE = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
 
+    public static final String NETWORK_ENGINE_VDSM_NAME = "engine";
+
     /**
      * Predefined Network without entries in network_cluster with the following properties :
      * <ul>

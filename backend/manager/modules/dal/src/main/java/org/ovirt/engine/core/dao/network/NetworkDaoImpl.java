@@ -181,6 +181,14 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     }
 
     @Override
+    public Network getNetworkByVdsmNameAndDataCenterId(String vdsmName, Guid dataCenterId) {
+        return getCallsHandler().executeRead("GetNetworkByVdsmNameAndDataCenterId",
+                networkRowMapper,
+                getCustomMapSqlParameterSource().addValue("vdsm_name", vdsmName)
+                        .addValue("data_center_id", dataCenterId));
+    }
+
+    @Override
     public void save(Network entity) {
         DnsResolverConfiguration dnsResolverConfiguration = entity.getDnsResolverConfiguration();
         if (dnsResolverConfiguration != null) {
