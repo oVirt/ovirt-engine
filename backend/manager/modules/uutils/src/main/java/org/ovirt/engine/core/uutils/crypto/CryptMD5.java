@@ -26,7 +26,7 @@ public class CryptMD5 {
     private static final int SALT_MAX_LENGTH = 8;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
-    protected static String encode(byte b1, byte b2, byte b3, int n) {
+    private static String encode(byte b1, byte b2, byte b3, int n) {
         StringBuilder result = new StringBuilder();
         int w = ((b1&0xff) << 16) | ((b2&0xff) << 8) | (b3&0xff);
         while (n-- > 0) {
