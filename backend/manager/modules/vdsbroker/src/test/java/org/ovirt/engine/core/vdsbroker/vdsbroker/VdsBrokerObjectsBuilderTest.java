@@ -220,6 +220,19 @@ public class VdsBrokerObjectsBuilderTest {
     }
 
     @Test
+    public void testStripIpv6ZoneId() {
+        assertEquals("fe80::1",     VdsBrokerObjectsBuilder.stripIpv6ZoneIndex("fe80::1"));
+        assertEquals("fe80::1/64",  VdsBrokerObjectsBuilder.stripIpv6ZoneIndex("fe80::1/64"));
+        assertEquals("fe80::1",     VdsBrokerObjectsBuilder.stripIpv6ZoneIndex("fe80::1%"));
+        assertEquals("fe80::1",     VdsBrokerObjectsBuilder.stripIpv6ZoneIndex("fe80::1%1"));
+        assertEquals("fe80::1",     VdsBrokerObjectsBuilder.stripIpv6ZoneIndex("fe80::1%eth0"));
+        assertEquals("fe80::1",     VdsBrokerObjectsBuilder.stripIpv6ZoneIndex("fe80::1%eth0/64"));
+        assertEquals("",            VdsBrokerObjectsBuilder.stripIpv6ZoneIndex("%"));
+        assertEquals("",            VdsBrokerObjectsBuilder.stripIpv6ZoneIndex(""));
+        assertEquals(null,          VdsBrokerObjectsBuilder.stripIpv6ZoneIndex(null));
+    }
+
+    @Test
     public void testAddNicWithId(){
         String nicId = Guid.newGuid().toString();
         Map<String, Object> vmStruct = createNicDeviceStruct(nicId);
