@@ -11,9 +11,17 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public class StorageQosMetricParametersModel extends Model {
-    private EntityModel<Integer> total;
-    private EntityModel<Integer> read;
-    private EntityModel<Integer> write;
+    // TODO(sr) changed from EntityModel<Integer> to EntityModel<String>
+    //  to work around BZ #1455944
+    //
+    //  Once we fix that BZ, we should switch back to
+    //
+    //  EntityModel<Integer>
+    //
+    //
+    private EntityModel<String> total;
+    private EntityModel<String> read;
+    private EntityModel<String> write;
     private EntityModel<Boolean> choiceGroupNone;
     private EntityModel<Boolean> choiceGroupTotal;
     private EntityModel<Boolean> choiceGroupReadWrite;
@@ -26,9 +34,9 @@ public class StorageQosMetricParametersModel extends Model {
         this.maxTotal = maxTotal;
         this.maxRead = maxRead;
         this.maxWrite = maxWrite;
-        setTotal(new EntityModel<Integer>());
-        setRead(new EntityModel<Integer>());
-        setWrite(new EntityModel<Integer>());
+        setTotal(new EntityModel<String>());
+        setRead(new EntityModel<String>());
+        setWrite(new EntityModel<String>());
         setChoiceGroupNone(new EntityModel<Boolean>());
         setChoiceGroupTotal(new EntityModel<Boolean>());
         setChoiceGroupReadWrite(new EntityModel<Boolean>());
@@ -39,27 +47,27 @@ public class StorageQosMetricParametersModel extends Model {
 
     }
 
-    public EntityModel<Integer> getTotal() {
+    public EntityModel<String> getTotal() {
         return total;
     }
 
-    public void setTotal(EntityModel<Integer> total) {
+    public void setTotal(EntityModel<String> total) {
         this.total = total;
     }
 
-    public EntityModel<Integer> getRead() {
+    public EntityModel<String> getRead() {
         return read;
     }
 
-    public void setRead(EntityModel<Integer> read) {
+    public void setRead(EntityModel<String> read) {
         this.read = read;
     }
 
-    public EntityModel<Integer> getWrite() {
+    public EntityModel<String> getWrite() {
         return write;
     }
 
-    public void setWrite(EntityModel<Integer> write) {
+    public void setWrite(EntityModel<String> write) {
         this.write = write;
     }
 
@@ -89,7 +97,9 @@ public class StorageQosMetricParametersModel extends Model {
     }
 
     public boolean validate() {
-        if(getChoiceGroupNone().getEntity()) {
+        if (getChoiceGroupNone().getEntity()) {
+            // If the Radio Button has been set to None, ensure the object is valid.
+            setIsValid(true);
             return true;
         }
 
@@ -107,7 +117,7 @@ public class StorageQosMetricParametersModel extends Model {
         return getIsValid();
     }
 
-    private void setErrorMsg(EntityModel<Integer> entityModel) {
+    private void setErrorMsg(EntityModel<String> entityModel) {
         if (entityModel.getEntity() != null) {
             entityModel.setIsValid(false);
             entityModel.getInvalidityReasons().add(ConstantsManager.getInstance()
@@ -116,7 +126,7 @@ public class StorageQosMetricParametersModel extends Model {
         }
     }
 
-    private void validateValue(EntityModel<Integer> entity, Integer maxValue) {
+    private void validateValue(EntityModel<String> entity, Integer maxValue) {
         entity.validateEntity(new IValidation[] {
                 new IntegerValidation(0, maxValue) });
     }

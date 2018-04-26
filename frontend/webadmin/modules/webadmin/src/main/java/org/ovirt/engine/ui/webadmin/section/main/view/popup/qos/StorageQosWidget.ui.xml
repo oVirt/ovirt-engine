@@ -27,15 +27,15 @@
         </b:Row>
         <b:Row>
             <b:Column size="SM_3" offset="SM_2">
-                <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputTotalEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
+                <e:StringEntityModelTextBoxOnlyEditor ui:field="throughputTotalEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
             </b:Column>
             <b:Column size="SM_7">
                 <b:Row>
                     <b:Column size="SM_6">
-                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputReadEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
+                        <e:StringEntityModelTextBoxOnlyEditor ui:field="throughputReadEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
                     </b:Column>
                     <b:Column size="SM_6">
-                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputWriteEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
+                        <e:StringEntityModelTextBoxOnlyEditor ui:field="throughputWriteEditor" usePatternFly="true" unitString="{constants.mbpsLabelStorageQosPopup}" />
                     </b:Column>
                 </b:Row>
             </b:Column>
@@ -58,15 +58,15 @@
         </b:Row>
         <b:Row>
             <b:Column size="SM_3" offset="SM_2">
-                <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsTotalEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
+                <e:StringEntityModelTextBoxOnlyEditor ui:field="iopsTotalEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
             </b:Column>
             <b:Column size="SM_7">
                 <b:Row>
                     <b:Column size="SM_6">
-                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsReadEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
+                        <e:StringEntityModelTextBoxOnlyEditor ui:field="iopsReadEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
                     </b:Column>
                     <b:Column size="SM_6">
-                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsWriteEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
+                        <e:StringEntityModelTextBoxOnlyEditor ui:field="iopsWriteEditor" usePatternFly="true" unitString="{constants.iopsCountLabelQosPopup}" />
                     </b:Column>
                 </b:Row>
             </b:Column>

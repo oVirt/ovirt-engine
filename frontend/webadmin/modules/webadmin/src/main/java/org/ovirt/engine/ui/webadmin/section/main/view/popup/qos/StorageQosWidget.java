@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.StorageQosParametersModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -62,32 +62,32 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
     @UiField
     @Path(value = "throughput.total.entity")
     @WithElementId
-    IntegerEntityModelTextBoxOnlyEditor throughputTotalEditor;
+    StringEntityModelTextBoxOnlyEditor throughputTotalEditor;
 
     @UiField
     @Path(value = "throughput.read.entity")
     @WithElementId
-    IntegerEntityModelTextBoxOnlyEditor throughputReadEditor;
+    StringEntityModelTextBoxOnlyEditor throughputReadEditor;
 
     @UiField
     @Path(value = "throughput.write.entity")
     @WithElementId
-    IntegerEntityModelTextBoxOnlyEditor throughputWriteEditor;
+    StringEntityModelTextBoxOnlyEditor throughputWriteEditor;
 
     @UiField
     @Path(value = "iops.total.entity")
     @WithElementId
-    IntegerEntityModelTextBoxOnlyEditor iopsTotalEditor;
+    StringEntityModelTextBoxOnlyEditor iopsTotalEditor;
 
     @UiField
     @Path(value = "iops.read.entity")
     @WithElementId
-    IntegerEntityModelTextBoxOnlyEditor iopsReadEditor;
+    StringEntityModelTextBoxOnlyEditor iopsReadEditor;
 
     @UiField
     @Path(value = "iops.write.entity")
     @WithElementId
-    IntegerEntityModelTextBoxOnlyEditor iopsWriteEditor;
+    StringEntityModelTextBoxOnlyEditor iopsWriteEditor;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
