@@ -32,7 +32,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateParameters;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
@@ -150,8 +149,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         // dao related mocks.
         doReturn(1L).when(vmStaticDao).getDbGeneration(any());
         doReturn(pool1).when(command).getStoragePool();
-        List<Snapshot> snapshots = new ArrayList<>();
-        doReturn(snapshots).when(snapshotDao).getAllWithConfiguration(any());
+
         // needed for ovf writer utility
         injectorRule.bind(ClusterDao.class, clusterDao);
         mockAnswers();
@@ -329,10 +327,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(vmGuids).when(vmAndTemplatesGenerationsDao).getVmsIdsForOvfUpdate(poolId);
         doReturn(templatesGuids).when(vmAndTemplatesGenerationsDao).getVmTemplatesIdsForOvfUpdate(poolId);
         doReturn(removedGuids).when(vmAndTemplatesGenerationsDao).getIdsForOvfDeletion(poolId);
-        doReturn(Collections.EMPTY_LIST).when(affinityGroupDao).getAllAffinityGroupsByVmId(any());
-        doReturn(Collections.EMPTY_LIST).when(labelDao).getAllByEntityIds(any());
         doReturn(new DbUser()).when(dbUserDao).getByUsernameAndDomain(any(), any());
-        doReturn(Collections.EMPTY_LIST).when(permissionDao).getAllForAdElementAndObjectId(any(), any());
         pool.setStatus(StoragePoolStatus.Up);
     }
 
