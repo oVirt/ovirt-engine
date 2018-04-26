@@ -47,9 +47,19 @@ public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
             } else {
                 readWriteSelected = true;
             }
-            parameterModel.getTotal().setEntity(max);
-            parameterModel.getRead().setEntity(maxRead);
-            parameterModel.getWrite().setEntity(maxWrite);
+
+            if (max != null) {
+                parameterModel.getTotal().setEntity(Integer.toString(max));
+            }
+
+            if (maxRead != null) {
+                parameterModel.getRead().setEntity(Integer.toString(maxRead));
+            }
+
+            if (maxWrite != null) {
+                parameterModel.getWrite().setEntity(Integer.toString(maxWrite));
+            }
+
         } else {
             noneSelected = true;
         }
@@ -64,21 +74,35 @@ public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
         storageQos.setMaxThroughput(null);
         storageQos.setMaxReadThroughput(null);
         storageQos.setMaxWriteThroughput(null);
-        if (getThroughput().getChoiceGroupTotal().getEntity()) {
-            storageQos.setMaxThroughput(getThroughput().getTotal().getEntity());
+        if (getThroughput().getChoiceGroupTotal().getEntity() &&
+                getThroughput().getTotal().getEntity() != null) {
+            storageQos.setMaxThroughput(Integer.parseInt(getThroughput().getTotal().getEntity()));
         } else if (getThroughput().getChoiceGroupReadWrite().getEntity()) {
-            storageQos.setMaxReadThroughput(getThroughput().getRead().getEntity());
-            storageQos.setMaxWriteThroughput(getThroughput().getWrite().getEntity());
+
+            if (getThroughput().getRead().getEntity() != null) {
+                storageQos.setMaxReadThroughput(Integer.parseInt(getThroughput().getRead().getEntity()));
+            }
+
+            if (getThroughput().getWrite().getEntity() != null) {
+                storageQos.setMaxWriteThroughput(Integer.parseInt(getThroughput().getWrite().getEntity()));
+            }
         }
 
         storageQos.setMaxIops(null);
         storageQos.setMaxReadIops(null);
         storageQos.setMaxWriteIops(null);
-        if (getIops().getChoiceGroupTotal().getEntity()) {
-            storageQos.setMaxIops(getIops().getTotal().getEntity());
+        if (getIops().getChoiceGroupTotal().getEntity() &&
+                getIops().getTotal().getEntity() != null) {
+            storageQos.setMaxIops(Integer.parseInt(getIops().getTotal().getEntity()));
         } else if (getIops().getChoiceGroupReadWrite().getEntity()) {
-            storageQos.setMaxReadIops(getIops().getRead().getEntity());
-            storageQos.setMaxWriteIops(getIops().getWrite().getEntity());
+
+            if (getIops().getRead().getEntity() != null) {
+                storageQos.setMaxReadIops(Integer.parseInt(getIops().getRead().getEntity()));
+            }
+
+            if (getIops().getWrite().getEntity() != null) {
+                storageQos.setMaxWriteIops(Integer.parseInt(getIops().getWrite().getEntity()));
+            }
         }
     }
 
