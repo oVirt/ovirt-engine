@@ -67,6 +67,7 @@ public class ValidationUtils {
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     public static final Pattern ipv6RegexPattern = Pattern.compile(IPV6_PATTERN);
+    public static final Pattern ipv4RegexPattern = Pattern.compile(IPV4_PATTERN);
 
     /***
      * This function validates a hostname according to URI RFC's.
@@ -151,6 +152,15 @@ public class ValidationUtils {
 
     public static boolean validatePort(int port) {
         return (port >= BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT) && (port <= BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT);
+    }
+
+    /**
+     *
+     * @param ipv4Address a ipv4 address with prefix ('/24') is invalid
+     * @return true if the address matches the regex
+     */
+    public static boolean isValidIpv4(String ipv4Address) {
+        return ipv4Address == null ? false : ipv4RegexPattern.matcher(ipv4Address).matches();
     }
 
     /**
