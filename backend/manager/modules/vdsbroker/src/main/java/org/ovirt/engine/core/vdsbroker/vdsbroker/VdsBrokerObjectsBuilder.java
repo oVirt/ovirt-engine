@@ -2392,7 +2392,14 @@ public class VdsBrokerObjectsBuilder {
             Map ifaceMap = (Map) ifaceStruct;
             nic.setInterfaceName(assignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_NAME));
             nic.setMacAddress(getMacAddress(ifaceMap));
-            nic.setIpv4Addresses(extractList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES, true));
+            List<String> ipv4Addresses = extractList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES, true);
+            if (ipv4Addresses != null) {
+                nic.setIpv4Addresses(ipv4Addresses
+                        .stream()
+                        .filter(ValidationUtils::isValidIpv4)
+                        .collect(Collectors.toList())
+                );
+            }
             List<String> ipv6Addresses = extractList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES, true);
             if (ipv6Addresses != null) {
                 nic.setIpv6Addresses(ipv6Addresses

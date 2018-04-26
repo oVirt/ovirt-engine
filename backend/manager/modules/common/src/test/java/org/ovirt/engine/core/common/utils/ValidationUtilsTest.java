@@ -92,6 +92,46 @@ public class ValidationUtilsTest {
     }
 
     @Test
+    public void validIpv4() {
+        assertTrue(ValidationUtils.isValidIpv4("0.0.0.0"));
+        assertTrue(ValidationUtils.isValidIpv4("255.255.255.255"));
+
+        assertFalse(ValidationUtils.isValidIpv4("192.168.122.1/24"));
+
+        assertFalse(ValidationUtils.isValidIpv4("0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0.0"));
+        assertFalse(ValidationUtils.isValidIpv4("255"));
+        assertFalse(ValidationUtils.isValidIpv4("255.255"));
+        assertFalse(ValidationUtils.isValidIpv4("255.255.255"));
+
+        assertFalse(ValidationUtils.isValidIpv4("256.255.255.255"));
+        assertFalse(ValidationUtils.isValidIpv4("255.256.255.255"));
+        assertFalse(ValidationUtils.isValidIpv4("255.255.256.255"));
+        assertFalse(ValidationUtils.isValidIpv4("255.255.255.256"));
+
+        assertFalse(ValidationUtils.isValidIpv4("256.0.0.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.256.0.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0.256.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0.0.256"));
+
+        assertFalse(ValidationUtils.isValidIpv4("0001.0.0.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0001.0.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0.0001.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0.0.0001"));
+
+        assertFalse(ValidationUtils.isValidIpv4("1 .0.0.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0. 1.0.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0. 1.0"));
+        assertFalse(ValidationUtils.isValidIpv4("0.0.0. 1"));
+
+        assertFalse(ValidationUtils.isValidIpv4("a.1.1.1"));
+        assertFalse(ValidationUtils.isValidIpv4("1.a.1.1"));
+        assertFalse(ValidationUtils.isValidIpv4("1.1.a.1"));
+        assertFalse(ValidationUtils.isValidIpv4("1.1.1.a"));
+    }
+
+    @Test
     public void testValidIsoPath() {
         assertPatternMatches("Valid isoPath: ", ValidationUtils.ISO_SUFFIX_PATTERN, "", "foo.iso", "RHEVM-123456-tools.iso");
         assertPatternDoesNotMatch("Invalid isoPath: ", ValidationUtils.ISO_SUFFIX_PATTERN, "x", "sysprep.vfd", "disk.ISO");
