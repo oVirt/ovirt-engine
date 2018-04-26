@@ -182,7 +182,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             setImageId(getParameters().getImageId());
             return super.getDiskImage();
         }
-        return (DiskImage) diskDao.get(getParameters().getImageGroupID());
+        DiskImage diskImage = super.getDiskImage();
+        if (diskImage == null) {
+            diskImage = (DiskImage) diskDao.get(getParameters().getImageGroupID());
+        }
+        return diskImage;
     }
 
     @Override

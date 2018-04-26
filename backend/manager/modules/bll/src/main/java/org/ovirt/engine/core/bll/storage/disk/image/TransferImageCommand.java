@@ -914,16 +914,15 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
     protected abstract String getImageType();
 
-    private String getImageIdNullSafe() {
-        return getParameters().getImageId() != null ?
-                getParameters().getImageId().toString() : "(null)";
-    }
-
     // Return a string describing the transfer, safe for use before the new image
     // is successfully created; e.g. "disk 'NewDisk' (id '<uuid>')".
-    protected String getTransferDescription() {
-        return String.format("%s %s '%s' (id '%s')",
-                getParameters().getTransferType().name(), getImageType(), getImageAlias(), getImageIdNullSafe());
+    private String getTransferDescription() {
+        return String.format("%s %s '%s' (disk id: '%s', image id: '%s')",
+                getParameters().getTransferType().name(),
+                getImageType(),
+                getImageAlias(),
+                getDiskImage().getId(),
+                getDiskImage().getImageId());
     }
 
     public void onSucceeded() {
