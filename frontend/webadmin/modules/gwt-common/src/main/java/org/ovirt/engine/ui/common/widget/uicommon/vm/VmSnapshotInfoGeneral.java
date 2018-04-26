@@ -45,8 +45,8 @@ public class VmSnapshotInfoGeneral extends GeneralFormPanel {
             return;
         }
 
-        definedMemory.setValue(vm.getVmMemSizeMb() + constants.mb());
-        minAllocatedMemory.setValue(vm.getMinAllocatedMem() + constants.mb());
+        definedMemory.setValue(messages.megabytes(String.valueOf(vm.getVmMemSizeMb())));
+        minAllocatedMemory.setValue(messages.megabytes(String.valueOf(vm.getMinAllocatedMem())));
         cpuInfo.setValue(messages.cpuInfoLabel(vm.getNumOfCpus(),
                 vm.getNumOfSockets(), vm.getCpuPerSocket(), vm.getThreadsPerCpu()));
     }

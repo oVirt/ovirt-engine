@@ -651,8 +651,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String pkts();
 
-    String mb();
-
     String mib();
 
     String gib();

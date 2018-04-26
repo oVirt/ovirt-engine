@@ -208,9 +208,9 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
         VM entity = listModel.getEntity();
         if (entity != null) {
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.definedMemoryVm()),
-                    SafeHtmlUtils.fromString(entity.getVmMemSizeMb() + constants.mb()), dl);
+                    SafeHtmlUtils.fromString(messages.megabytes(String.valueOf(entity.getVmMemSizeMb()))), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.physMemGauranteedVm()),
-                    SafeHtmlUtils.fromString(entity.getMinAllocatedMem() + constants.mb()), dl);
+                    SafeHtmlUtils.fromString(messages.megabytes(String.valueOf(entity.getMinAllocatedMem()))), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.numOfCpuCoresVm()),
                     SafeHtmlUtils.fromString(messages.cpuInfoLabel(entity.getNumOfCpus(),
                             entity.getNumOfSockets(), entity.getCpuPerSocket(),
