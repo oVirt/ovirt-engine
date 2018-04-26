@@ -2144,13 +2144,7 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     DELETE
     FROM dns_resolver_configuration
-    WHERE id = (
-      SELECT
-        dns_resolver_configuration_id
-      FROM
-        vds_dynamic
-      WHERE
-        vds_id = v_id);
+    WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

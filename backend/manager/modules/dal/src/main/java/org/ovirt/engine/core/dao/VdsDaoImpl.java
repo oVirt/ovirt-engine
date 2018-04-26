@@ -257,7 +257,8 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         final VDS entity = new VDS();
         entity.setStatisticsData(VdsStatisticsDaoImpl.getRowMapper().mapRow(rs, rowNum));
 
-        entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
+        Guid hostId = getGuidDefaultEmpty(rs, "vds_id");
+        entity.setId(hostId);
         entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
         entity.setClusterName(rs.getString("cluster_name"));
         entity.setClusterDescription(rs.getString("cluster_description"));
@@ -311,8 +312,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setSpmStatus(VdsSpmStatus.forValue(rs.getInt("spm_status")));
         entity.setSupportedClusterLevels(rs.getString("supported_cluster_levels"));
 
-        Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
-        entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
+        entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(hostId));
 
         entity.setSupportedEngines(rs.getString("supported_engines"));
         entity.setClusterCompatibilityVersion(new VersionRowMapper("cluster_compatibility_version").mapRow(rs, rowNum));
