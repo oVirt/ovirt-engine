@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -956,8 +957,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     @Override
     protected void endWithFailure() {
         if (getParameters().getTransferType() == TransferType.Upload) {
-            // Do rollback only for upload
-            super.endWithFailure();
+            // Do rollback only for upload - i.e. remove the disk added in 'createImage()'
+            runInternalAction(ActionType.RemoveDisk, new RemoveDiskParameters(getParameters().getImageGroupID()));
         }
         setSucceeded(true);
     }
