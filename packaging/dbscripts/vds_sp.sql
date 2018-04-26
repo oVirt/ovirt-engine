@@ -1342,18 +1342,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION UpdateVdsDynamicDnsResolverConfigurationId (
-    v_vds_guid UUID,
-    v_dns_resolver_configuration_id UUID
-    )
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    UPDATE vds_dynamic
-    SET dns_resolver_configuration_id = v_dns_resolver_configuration_id
-    WHERE vds_id = v_vds_guid;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION UpdateVdsDynamicIsUpdateAvailable (
     v_vds_guid UUID,
     v_is_update_available BOOLEAN

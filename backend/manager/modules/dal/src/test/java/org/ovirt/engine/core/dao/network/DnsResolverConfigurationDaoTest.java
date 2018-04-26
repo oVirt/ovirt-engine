@@ -45,7 +45,7 @@ public class DnsResolverConfigurationDaoTest
 
     @Override
     protected int getEntitiesTotalCount() {
-        return 2;
+        return 3;
     }
 
     public DnsResolverConfiguration dnsResolverConfigurationFromFixtures() {
@@ -76,8 +76,8 @@ public class DnsResolverConfigurationDaoTest
 
     @Test
     public void testRemoveByVdsDynamicId() {
-        assertNotNull(dao.get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION));
-        dao.removeByVdsDynamicId(FixturesTool.GLUSTER_SERVER_UUID3);
-        assertNull(dao.get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION));
+        assertNotNull(dao.get(FixturesTool.VDS_GLUSTER_SERVER2));
+        dao.removeByVdsDynamicId(FixturesTool.VDS_GLUSTER_SERVER2);
+        assertNull(dao.get(FixturesTool.VDS_GLUSTER_SERVER2));
     }
 }

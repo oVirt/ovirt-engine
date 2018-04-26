@@ -2,11 +2,13 @@ package org.ovirt.engine.core.dao;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
@@ -57,7 +59,10 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setMemCommited((Integer) rs.getObject("mem_commited"));
         entity.setPhysicalMemMb((Integer) rs.getObject("physical_mem_mb"));
         entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
-        entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
+
+        Guid hostId = getGuidDefaultEmpty(rs, "vds_id");
+        entity.setId(hostId);
+
         entity.setVmActive((Integer) rs.getObject("vm_active"));
         entity.setVmCount(rs.getInt("vm_count"));
         entity.setVmsCoresCount(rs.getInt("vms_cores_count"));
@@ -113,8 +118,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setPrettyName(rs.getString("pretty_name"));
         entity.setHostedEngineConfigured(rs.getBoolean("hosted_engine_configured"));
 
-        Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
-        entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
+        entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(hostId));
         entity.setInFenceFlow(rs.getBoolean("in_fence_flow"));
         entity.setKernelFeatures(
                 ObjectUtils.mapNullable(rs.getString("kernel_features"), JsonHelper::jsonToMapUnchecked));
@@ -145,18 +149,13 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
             dnsResolverConfigurationDao.removeByVdsDynamicId(vdsId);
         } else {
             if (reportedDnsResolverConfiguration.getId() == null) {
+                reportedDnsResolverConfiguration.setId(vdsId);
                 dnsResolverConfigurationDao.save(reportedDnsResolverConfiguration);
             } else {
+                Validate.isTrue(Objects.equals(vdsId, reportedDnsResolverConfiguration.getId()));
                 dnsResolverConfigurationDao.update(reportedDnsResolverConfiguration);
             }
         }
-
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vds_guid", vdsId)
-                .addValue("dns_resolver_configuration_id",
-                        reportedDnsResolverConfiguration == null ? null : reportedDnsResolverConfiguration.getId());
-
-        getCallsHandler().executeModification("UpdateVdsDynamicDnsResolverConfigurationId", parameterSource);
     }
 
     @Override

@@ -354,6 +354,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
         List<NetworkCluster> clustersFromDB = dbFacade.getNetworkClusterDao().getAllForCluster(FixturesTool.CLUSTER);
         DnsResolverConfiguration dnsResolverConfiguration =
                 dbFacade.getDnsResolverConfigurationDao().get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION);
+        dnsResolverConfiguration.setId(null);
 
         NetworkCluster clusterFromDB = clustersFromDB.get(0);
         assertNotNull(clusterFromDB);

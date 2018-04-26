@@ -14,6 +14,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -169,6 +170,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     public void save(Network entity) {
         DnsResolverConfiguration dnsResolverConfiguration = entity.getDnsResolverConfiguration();
         if (dnsResolverConfiguration != null) {
+            Validate.isTrue(dnsResolverConfiguration.getId() == null);
             dnsResolverConfigurationDao.save(dnsResolverConfiguration);
         }
         super.save(entity);
