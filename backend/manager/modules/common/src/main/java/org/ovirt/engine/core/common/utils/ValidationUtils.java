@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -65,6 +66,7 @@ public class ValidationUtils {
             + "]*[\\p{L}0-9._-]*$|^[\\p{L}0-9._-]*[" + VmPool.MASK_CHARACTER + "]*[\\p{L}0-9._-]+$";
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    public static final Pattern ipv6RegexPattern = Pattern.compile(IPV6_PATTERN);
 
     /***
      * This function validates a hostname according to URI RFC's.
@@ -149,5 +151,15 @@ public class ValidationUtils {
 
     public static boolean validatePort(int port) {
         return (port >= BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT) && (port <= BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT);
+    }
+
+    /**
+     *
+     * @param ipv6Address an address with prefix ('/64') or link local zone index ('%eth0')
+     *                    is invalid
+     * @return true if the address matches the regex
+     */
+    public static boolean isValidIpv6(String ipv6Address) {
+        return ipv6Address == null ? false : ipv6RegexPattern.matcher(ipv6Address).matches();
     }
 }

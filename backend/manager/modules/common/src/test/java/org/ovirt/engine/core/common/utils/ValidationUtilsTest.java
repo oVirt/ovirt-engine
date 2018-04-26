@@ -50,6 +50,48 @@ public class ValidationUtilsTest {
     }
 
     @Test
+    public void validIpv6() {
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3:4:5:6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("a:b:c:d:e:f:a:b"));
+        assertTrue(ValidationUtils.isValidIpv6("abcd:1bcd:a2cd:ab3d:abc4:0000:ffff:0f0f"));
+
+        assertTrue(ValidationUtils.isValidIpv6("1::"));
+        assertTrue(ValidationUtils.isValidIpv6("1::8"));
+        assertTrue(ValidationUtils.isValidIpv6("1::7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("1::6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("1::5:6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("1::4:5:6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("1::3:4:5:6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("::2:3:4:5:6:7:8"));
+
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3:4:5:6:7::"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3:4:5:6::8"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3:4:5::8"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3:4::8"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3::8"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2::8"));
+        assertTrue(ValidationUtils.isValidIpv6("1::8"));
+        assertTrue(ValidationUtils.isValidIpv6("::8"));
+
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3:4:5:6::8"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3:4:5::7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3:4::6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2:3::5:6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("1:2::4:5:6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("1::3:4:5:6:7:8"));
+        assertTrue(ValidationUtils.isValidIpv6("::2:3:4:5:6:7:8"));
+
+        assertFalse(ValidationUtils.isValidIpv6(null));
+        assertFalse(ValidationUtils.isValidIpv6(""));
+        assertFalse(ValidationUtils.isValidIpv6("1.2.3.4"));
+        assertFalse(ValidationUtils.isValidIpv6("fe80::7:8%eth0"));
+        assertFalse(ValidationUtils.isValidIpv6("fe80::7:8%1"));
+        assertFalse(ValidationUtils.isValidIpv6("abcd"));
+        assertFalse(ValidationUtils.isValidIpv6("abcd "));
+        assertFalse(ValidationUtils.isValidIpv6("abcd e"));
+    }
+
+    @Test
     public void testValidIsoPath() {
         assertPatternMatches("Valid isoPath: ", ValidationUtils.ISO_SUFFIX_PATTERN, "", "foo.iso", "RHEVM-123456-tools.iso");
         assertPatternDoesNotMatch("Invalid isoPath: ", ValidationUtils.ISO_SUFFIX_PATTERN, "x", "sysprep.vfd", "disk.ISO");
