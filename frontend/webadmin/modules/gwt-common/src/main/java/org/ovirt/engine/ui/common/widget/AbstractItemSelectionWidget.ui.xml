@@ -8,6 +8,21 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
+    <ui:style>
+        .listModelPanel {
+            padding-right: 10px;
+            overflow: hidden;
+        }
+
+        .filterListEditor {
+            width: 100%
+        }
+
+        .addSelectedItemButton {
+            float:right;
+        }
+    </ui:style>
+
     <g:FlowPanel>
         <b:Row>
             <b:Column size="SM_6">
@@ -15,11 +30,11 @@
                     <g:Label ui:field="filterListLabel" text="{constants.selectItemLabel}" />
                 </t:WidgetTooltip>
             </b:Column>
-            <b:Column size="SM_5">
-                <e:ListModelTypeAheadListBoxEditor ui:field="filterListEditor" usePatternFly="true" />
-            </b:Column>
-            <b:Column size="SM_1">
-                <b:Button ui:field="addSelectedItemButton" text="{constants.addItemButtonLabel}" />
+            <b:Column size="SM_6">
+                <b:Button ui:field="addSelectedItemButton" text="{constants.addItemButtonLabel}" addStyleNames="{style.addSelectedItemButton}"/>
+                <g:SimplePanel addStyleNames="{style.listModelPanel}">
+                    <e:ListModelTypeAheadListBoxEditor ui:field="filterListEditor" usePatternFly="true" addStyleNames="{style.filterListEditor}"/>
+                </g:SimplePanel>
             </b:Column>
         </b:Row>
     </g:FlowPanel>
