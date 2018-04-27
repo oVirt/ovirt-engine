@@ -209,7 +209,6 @@ public class StorageDomainValidatorTest {
 
     @Test
     public void validRunningVmsOrVmLeasesForBackupDomain() {
-        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(Collections.EMPTY_LIST);
         QueryReturnValue ret = new QueryReturnValue();
         ret.setReturnValue(new ArrayList<VmBase>());
         ret.setSucceeded(true);
@@ -267,7 +266,6 @@ public class StorageDomainValidatorTest {
 
     @Test
     public void invalidVmLeasesForBackupDomain() {
-        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(Collections.EMPTY_LIST);
         QueryReturnValue ret = new QueryReturnValue();
         List<VmBase> vmLeases = new ArrayList<>();
         VM vm1 = new VM();
@@ -284,7 +282,6 @@ public class StorageDomainValidatorTest {
 
     @Test
     public void validVmLeasesForBackupDomain() {
-        when(vmDao.getAllActiveForStorageDomain(any())).thenReturn(Collections.EMPTY_LIST);
         QueryReturnValue ret = new QueryReturnValue();
         List<VmBase> vmLeases = new ArrayList<>();
         VM vm1 = new VM();
