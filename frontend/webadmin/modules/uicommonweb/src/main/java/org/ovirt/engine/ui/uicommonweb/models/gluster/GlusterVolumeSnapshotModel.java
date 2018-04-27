@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.TimeZoneType;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.DayOfWeek;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -23,7 +25,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class GlusterVolumeSnapshotModel extends Model {
+public class GlusterVolumeSnapshotModel extends EntityModel<GlusterVolumeEntity> {
     private EntityModel<String> dataCenter;
     private EntityModel<String> clusterName;
     private EntityModel<String> volumeName;
@@ -338,5 +340,15 @@ public class GlusterVolumeSnapshotModel extends Model {
         public String toString() {
             return description;
         }
+    }
+
+    public static GlusterVolumeSnapshotModel createVolumeSnapshotModel(ICommandTarget commandTarget, GlusterVolumeEntity volumeEntity) {
+        final GlusterVolumeSnapshotModel snapshotModel =
+                new GlusterVolumeSnapshotModel(true, !volumeEntity.getSnapshotScheduled());
+
+        snapshotModel.setHelpTag(HelpTag.new_volume_snapshot);
+        snapshotModel.setHashName("new_volume_snapshot"); //$NON-NLS-1$
+        snapshotModel.setTitle(ConstantsManager.getInstance().getConstants().createScheduleVolumeSnapshotTitle());
+        return snapshotModel;
     }
 }
