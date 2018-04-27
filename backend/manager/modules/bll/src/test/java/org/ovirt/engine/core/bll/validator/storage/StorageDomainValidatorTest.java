@@ -23,7 +23,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
@@ -51,7 +51,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
  * The hasSpaceForClonedDisk() and hasSpaceForNewDisk() methods are covered separately in
  * {@link StorageDomainValidatorFreeSpaceTest}.
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(Strict.class)
 public class StorageDomainValidatorTest {
     private StorageDomain domain;
     private StorageDomainValidator validator;
@@ -294,7 +294,6 @@ public class StorageDomainValidatorTest {
         ret.setReturnValue(vmLeases);
         ret.setSucceeded(true);
         doReturn(ret).when(validator).getEntitiesWithLeaseIdForStorageDomain(any());
-        when(vmDao.get(vm1.getId())).thenReturn(vm1);
         assertThat(validator.isRunningVmsOrVmLeasesForBackupDomain(vmHandler), isValid());
     }
 
