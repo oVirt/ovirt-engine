@@ -539,8 +539,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         executeCommand();
 
         verify(command, never()).performOvfUpdate(any());
-        List<Guid> idsThatNeededToBeUpdated = new LinkedList<>(vmGuids);
-        idsThatNeededToBeUpdated.addAll(templatesGuids);
 
         verifyCorrectOvfDataUpdaterRun(Collections.emptyList());
         verifyOvfUpdatedForSupportedPools(Collections.emptyList(), Collections.emptyMap());
