@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -98,7 +99,7 @@ public class CommandCallbacksPoller implements BackendService {
     }
 
     private List<Guid> getChildCommandIds(Guid cmdId) {
-        return commandsRepository.getChildCommandIds(cmdId);
+        return new ArrayList<>(commandsRepository.getChildCommandIds(cmdId));
     }
 
     private void invokeCallbackMethods() {
