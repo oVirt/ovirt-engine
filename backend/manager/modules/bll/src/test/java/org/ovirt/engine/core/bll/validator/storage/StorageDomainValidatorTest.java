@@ -47,9 +47,9 @@ import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
- * A test case for the {@link org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator} class.
+ * A test case for the {@link StorageDomainValidator} class.
  * The hasSpaceForClonedDisk() and hasSpaceForNewDisk() methods are covered separately in
- * {@link org.ovirt.engine.core.bll.validator.storage.StorageDomainValidatorFreeSpaceTest}.
+ * {@link StorageDomainValidatorFreeSpaceTest}.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class StorageDomainValidatorTest {
