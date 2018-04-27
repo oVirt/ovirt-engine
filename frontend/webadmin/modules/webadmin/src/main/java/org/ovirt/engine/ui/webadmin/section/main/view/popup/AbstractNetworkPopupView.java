@@ -337,8 +337,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
 
             @Override
-            public String getLabel() {
-                return constants.attachAll();
+            public void render(Context context, SafeHtmlBuilder sb) {
+                super.render(context, sb);
+                sb.append(templates.textForCheckBox(constants.attachAll()));
             }
         };
         AbstractCheckboxHeader requiredAllHeader = new AbstractCheckboxHeader() {
@@ -366,10 +367,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
 
             @Override
-            public String getLabel() {
-                return constants.requiredAll();
+            public void render(Context context, SafeHtmlBuilder sb) {
+                super.render(context, sb);
+                sb.append(templates.textForCheckBox(constants.requiredAll()));
             }
-
         };
 
         clustersTable.addColumn(new AbstractTextColumn<NetworkClusterModel>() {
