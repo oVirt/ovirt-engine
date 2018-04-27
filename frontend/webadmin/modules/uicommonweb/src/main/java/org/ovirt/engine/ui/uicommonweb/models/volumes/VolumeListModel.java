@@ -1,17 +1,23 @@
 package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
+import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
+import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterVolumeSnapshotConfigParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -20,6 +26,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
@@ -30,8 +39,10 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.compat.DayOfWeek;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
+import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
@@ -48,6 +59,8 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterClusterSnapshotConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel.EndDateOptions;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
@@ -519,6 +532,15 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             allowProfileStatisticsDetails = getProfileStatisticsAvailability(list);
             allowEditSnapshotSchedule = isEditSnapshotScheduleAvailable(list);
         }
+
+        if (getSelectedItems().get(0) == null || getSelectedItems().get(0).getStatus() == GlusterStatus.DOWN) {
+            allowCreateSnapshot = false;
+        }
+
+        if (getSelectedItems().get(0) != null && getSelectedItems().get(0).getStatus() == GlusterStatus.UP && getSelectedItems().get(0).getSnapshotScheduled()) {
+            allowEditSnapshotSchedule = true;
+        }
+
         getStartCommand().setIsExecutionAllowed(allowStart);
         getStopCommand().setIsExecutionAllowed(allowStop);
         getRemoveVolumeCommand().setIsExecutionAllowed(allowRemove);
@@ -625,7 +647,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             removeVolume();
         } else if(command.getName().equals("closeConfirmationWindow")) {//$NON-NLS-1$
             closeConfirmationWindow();
-        } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+        } else if (command.getName().equalsIgnoreCase("Cancel")) { //$NON-NLS-1$
             cancel();
         } else if (command.getName().equals("onCreateVolume")) { //$NON-NLS-1$
             onCreateVolume();
@@ -684,12 +706,312 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         } else if (command.getName().equalsIgnoreCase("onConfigureVolumeSnapshotOptions")) {//$NON-NLS-1$
             onConfigureVolumeSnapshotOptions();
         } else if (command.equals(getCreateSnapshotCommand())) {
-            getSnapshotListModel().getCreateSnapshotCommand().execute();
+            setWindow(null);
+            createVolumeSnapshot();
+        } else if (command.getName().equalsIgnoreCase("onCreateSnapshot")) {//$NON-NLS-1$
+            onCreateSnapshot();
         } else if (command.equals(getEditSnapshotScheduleCommand())) {
-            getSnapshotListModel().getEditSnapshotScheduleCommand().execute();
+            editSnapshotSchedule();
+        } else if (command.getName().equalsIgnoreCase("onEditSnapshotSchedule")) {//$NON-NLS-1$
+            onEditSnapshotSchedule();
+        } else if (command.getName().equalsIgnoreCase("onEditSnapshotScheduleInternal")) {//$NON-NLS-1$
+            onEditSnapshotScheduleInternal();
         } else if (command.getName().equals("startVolumeWithForceOption")) {//$NON-NLS-1$
             prepareForStartVolume(false);
         }
+    }
+
+    public void createVolumeSnapshot() {
+        if (getWindow() != null) {
+            return;
+        }
+        GlusterVolumeEntity volumeEntity = getSelectedItem();
+        GlusterVolumeSnapshotModel snapshotModel = GlusterVolumeSnapshotModel.createVolumeSnapshotModel(this, volumeEntity);
+        setWindow(snapshotModel);
+
+        snapshotModel.startProgress();
+
+        snapshotModel.getClusterName().setEntity(volumeEntity.getClusterName());
+        snapshotModel.getVolumeName().setEntity(volumeEntity.getName());
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("onCreateSnapshot", this); //$NON-NLS-1$
+        snapshotModel.getCommands().add(okCommand);
+
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        snapshotModel.getCommands().add(cancelCommand);
+        AsyncDataProvider.getInstance().getIsGlusterVolumeSnapshotCliScheduleEnabled(new AsyncQuery<>(
+                isCliScheduleEnabled -> {
+                    snapshotModel.getDisableCliSchedule().setEntity(isCliScheduleEnabled);
+                    snapshotModel.stopProgress();
+                }), volumeEntity.getClusterId());
+
+   }
+
+    private void onCreateSnapshot() {
+        final GlusterVolumeSnapshotModel snapshotModel = (GlusterVolumeSnapshotModel) getWindow();
+
+        if (!snapshotModel.validate(false)) {
+            return;
+        }
+
+        if (!snapshotModel.isScheduleTabVisible()
+                || snapshotModel.getRecurrence().getSelectedItem() == GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
+            createNewSnapshot(snapshotModel);
+        } else {
+            scheduleSnapshot(snapshotModel, false);
+        }
+    }
+
+    private Time getExecutionTime(GlusterVolumeSnapshotModel model) {
+        int hours = model.getExecutionTime().getEntity().getHours();
+        int minutes = model.getExecutionTime().getEntity().getMinutes();
+
+        return new Time(hours, minutes, 0);
+    }
+
+    private void scheduleSnapshot(final GlusterVolumeSnapshotModel snapshotModel, boolean reschedule) {
+        GlusterVolumeEntity volumeEntity = getSelectedItem();
+
+        final GlusterVolumeSnapshotSchedule schedule = new GlusterVolumeSnapshotSchedule();
+        schedule.setSnapshotNamePrefix(snapshotModel.getSnapshotName().getEntity());
+        schedule.setSnapshotDescription(snapshotModel.getDescription().getEntity());
+        schedule.setClusterId(volumeEntity.getClusterId());
+        schedule.setVolumeId(volumeEntity.getId());
+        switch (snapshotModel.getRecurrence().getSelectedItem()) {
+        case INTERVAL:
+            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.INTERVAL);
+            schedule.setInterval(Integer.valueOf(snapshotModel.getInterval().getSelectedItem()));
+            break;
+        case HOURLY:
+            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.HOURLY);
+            break;
+        case DAILY:
+            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.DAILY);
+            schedule.setExecutionTime(getExecutionTime(snapshotModel));
+            break;
+        case WEEKLY:
+            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.WEEKLY);
+            schedule.setExecutionTime(getExecutionTime(snapshotModel));
+            StringBuilder sb = new StringBuilder();
+            for (DayOfWeek day : snapshotModel.getDaysOfTheWeek().getSelectedItem()) {
+                sb.append(day.name().substring(0, 3));
+                sb.append(',');//$NON-NLS-1$
+            }
+            schedule.setDays(sb.toString());
+            break;
+        case MONTHLY:
+            schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.MONTHLY);
+            schedule.setExecutionTime(getExecutionTime(snapshotModel));
+            schedule.setDays(snapshotModel.getDaysOfMonth().getSelectedItem());
+            break;
+        }
+
+        Date startAt = snapshotModel.getStartAt().getEntity();
+        schedule.setStartDate(startAt);
+        schedule.setTimeZone(snapshotModel.getTimeZones().getSelectedItem().getKey());
+
+        if (snapshotModel.getEndByOptions().getSelectedItem() == EndDateOptions.NoEndDate) {
+            schedule.setEndByDate(null);
+        } else {
+            schedule.setEndByDate(snapshotModel.getEndDate().getEntity());
+        }
+
+        ScheduleGlusterVolumeSnapshotParameters params =
+                new ScheduleGlusterVolumeSnapshotParameters(schedule, snapshotModel.getDisableCliSchedule().getEntity());
+        snapshotModel.startProgress();
+
+        ActionType actionType = null;
+        if (reschedule) {
+            actionType = ActionType.RescheduleGlusterVolumeSnapshot;
+        } else {
+            actionType = ActionType.ScheduleGlusterVolumeSnapshot;
+        }
+
+        Frontend.getInstance().runAction(actionType,
+                params,
+                result -> {
+                    VolumeListModel localModel =
+                            (VolumeListModel) result.getState();
+                    snapshotModel.stopProgress();
+                    localModel.postSnapshotAction(result.getReturnValue());
+                },
+                this, snapshotModel.getDisableCliSchedule().getEntity());
+    }
+
+    private void createNewSnapshot(final GlusterVolumeSnapshotModel snapshotModel) {
+        GlusterVolumeEntity volumeEntity = getSelectedItem();
+
+        final GlusterVolumeSnapshotEntity snapshot = new GlusterVolumeSnapshotEntity();
+        snapshot.setClusterId(volumeEntity.getClusterId());
+        snapshot.setSnapshotName(snapshotModel.getSnapshotName().getEntity());
+        snapshot.setVolumeId(volumeEntity.getId());
+        snapshot.setDescription(snapshotModel.getDescription().getEntity());
+
+        CreateGlusterVolumeSnapshotParameters parameter =
+                new CreateGlusterVolumeSnapshotParameters(snapshot, false);
+
+        snapshotModel.startProgress();
+        Frontend.getInstance().runAction(ActionType.CreateGlusterVolumeSnapshot,
+                parameter,
+                result -> {
+                          VolumeListModel localModel =
+                            (VolumeListModel) result.getState();
+                    snapshotModel.stopProgress();
+                    localModel.postSnapshotAction(result.getReturnValue());
+                },
+                this);
+    }
+
+    public void postSnapshotAction(ActionReturnValue returnValue) {
+        if (returnValue != null && returnValue.getSucceeded()) {
+            setWindow(null);
+        }
+    }
+
+    public void editSnapshotSchedule() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
+        final GlusterVolumeSnapshotModel snapshotModel =
+                new GlusterVolumeSnapshotModel(true, true);
+        snapshotModel.setHelpTag(HelpTag.edit_volume_snapshot_schedule);
+        snapshotModel.setHashName("edit_volume_snapshot_schedule"); //$NON-NLS-1$
+        snapshotModel.setTitle(constants.editVolumeSnapshotScheduleTitle());
+        setWindow(snapshotModel);
+
+        snapshotModel.startProgress();
+
+        AsyncDataProvider.getInstance().getVolumeSnapshotSchedule(new AsyncQuery<>(new AsyncCallback<GlusterVolumeSnapshotSchedule>() {
+
+            @Override
+            public void onSuccess(final GlusterVolumeSnapshotSchedule schedule) {
+                if (schedule == null) {
+                    snapshotModel.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .unableToFetchVolumeSnapshotSchedule());
+                    return;
+                }
+                snapshotModel.getSnapshotName().setEntity(schedule.getSnapshotNamePrefix());
+                snapshotModel.getDescription().setEntity(schedule.getSnapshotDescription());
+                snapshotModel.getRecurrence().setSelectedItem(schedule.getRecurrence());
+                if (schedule.getEndByDate() == null) {
+                    snapshotModel.getEndByOptions().setSelectedItem(EndDateOptions.NoEndDate);
+                } else {
+                    snapshotModel.getEndByOptions().setSelectedItem(EndDateOptions.HasEndDate);
+                    snapshotModel.getEndDate().setEntity(schedule.getEndByDate());
+                }
+
+                if (schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
+                    Map<String, String> timeZones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
+                    snapshotModel.getTimeZones().setSelectedItem(Linq.firstOrNull(timeZones.entrySet(),
+                            item -> item.getKey().startsWith(schedule.getTimeZone())));
+                }
+                switch (schedule.getRecurrence()) {
+                case INTERVAL:
+                    snapshotModel.getInterval().setSelectedItem(String.valueOf(schedule.getInterval()));
+                    break;
+                case HOURLY:
+                    break;
+                case DAILY:
+                    snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
+                    break;
+                case WEEKLY:
+                    List<DayOfWeek> daysList = new ArrayList<>();
+                    for (String day : schedule.getDays().split(",")) {//$NON-NLS-1$
+                        daysList.add(getDayOfWeek(day));
+                    }
+                    snapshotModel.getDaysOfTheWeek().setSelectedItem(daysList);
+                    snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
+                    break;
+                case MONTHLY:
+                    snapshotModel.getDaysOfMonth().setSelectedItem(schedule.getDays());
+                    snapshotModel.getExecutionTime().setEntity(getExecutionTimeValue(schedule));
+                    break;
+                }
+
+                snapshotModel.getStartAt().setEntity(schedule.getStartDate());
+                snapshotModel.stopProgress();
+            }
+
+            private DayOfWeek getDayOfWeek(String day) {
+                switch (day) {
+                case "Sun"://$NON-NLS-1$
+                    return DayOfWeek.Sunday;
+                case "Mon"://$NON-NLS-1$
+                    return DayOfWeek.Monday;
+                case "Tue"://$NON-NLS-1$
+                    return DayOfWeek.Tuesday;
+                case "Wed"://$NON-NLS-1$
+                    return DayOfWeek.Wednesday;
+                case "Thu"://$NON-NLS-1$
+                    return DayOfWeek.Thursday;
+                case "Fri"://$NON-NLS-1$
+                    return DayOfWeek.Friday;
+                case "Sat"://$NON-NLS-1$
+                    return DayOfWeek.Saturday;
+                default:
+                    return null;
+                }
+            }
+
+            private Date getExecutionTimeValue(GlusterVolumeSnapshotSchedule schedule) {
+                Date dt = new Date();
+                dt.setHours(schedule.getExecutionTime().getHours());
+                dt.setMinutes(schedule.getExecutionTime().getMinutes());
+
+                return dt;
+            }
+        }),
+                getSelectedItem().getId());
+
+        snapshotModel.getClusterName().setEntity(getSelectedItem().getClusterName());
+        snapshotModel.getVolumeName().setEntity(getSelectedItem().getName());
+
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("onEditSnapshotSchedule", this); //$NON-NLS-1$
+        snapshotModel.getCommands().add(okCommand);
+
+        UICommand cancelCommand = UICommand.createCancelUiCommand("cancel", this); //$NON-NLS-1$
+        snapshotModel.getCommands().add(cancelCommand);
+    }
+
+    private void confirmDeleteVolumeSnapshotSchedule() {
+        ConfirmationModel model = new ConfirmationModel();
+        setConfirmWindow(model);
+        model.setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .removeGlusterVolumeSnapshotScheduleConfirmationTitle());
+        model.setHelpTag(HelpTag.remove_volume_snapshot_schedule_confirmation);
+        model.setHashName("remove_volume_snapshot_schedule_confirmation"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().youAreAboutToRemoveSnapshotScheduleMsg());
+
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("onEditSnapshotScheduleInternal", this); //$NON-NLS-1$
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("cancelConfirmation", this); //$NON-NLS-1$
+        model.getCommands().add(cancelCommand);
+    }
+
+    public void onEditSnapshotSchedule() {
+        final GlusterVolumeSnapshotModel snapshotModel = (GlusterVolumeSnapshotModel) getWindow();
+
+        if (snapshotModel.getRecurrence().getSelectedItem() == GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
+            confirmDeleteVolumeSnapshotSchedule();
+        } else {
+            onEditSnapshotScheduleInternal();
+        }
+    }
+
+    private void onEditSnapshotScheduleInternal() {
+        final GlusterVolumeSnapshotModel snapshotModel = (GlusterVolumeSnapshotModel) getWindow();
+
+        if (!snapshotModel.validate(false)) {
+            return;
+        }
+
+        setConfirmWindow(null);
+
+        scheduleSnapshot(snapshotModel, true);
     }
 
     private void startVolumeProfiling() {
