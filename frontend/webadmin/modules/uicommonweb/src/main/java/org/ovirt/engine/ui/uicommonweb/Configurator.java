@@ -25,7 +25,7 @@ import com.google.gwt.i18n.client.LocaleInfo;
 public abstract class Configurator {
 
     private static final String DOCS_HTML_DIR = "html"; //$NON-NLS-1$
-    private static final String DOCS_ROOT = BaseContextPathData.getRelativePath() + "docs/manual"; //$NON-NLS-1$
+    private static final String DOCS_ROOT = BaseContextPathData.getRelativePath() + "docs"; //$NON-NLS-1$
     private static final String CSH_ROOT = BaseContextPathData.getRelativePath() + "docs/csh"; //$NON-NLS-1$
     private static final String JSON = ".json"; //$NON-NLS-1$
 
@@ -127,12 +127,12 @@ public abstract class Configurator {
     /**
      * Returns the base URL for serving documentation.
      * <p>
-     * Example: <code>https://&lt;ovirt-engine&gt;/docs/manual/en-US/html/</code>
+     * Example: <code>https://&lt;ovirt-engine&gt;/docs/</code>
      *
      * @return Documentation base URL, including the trailing slash.
      */
     public String getDocsBaseUrl() {
-        return FrontendUrlUtils.getRootURL() + DOCS_ROOT + "/" + localeDir + "/" + DOCS_HTML_DIR + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return FrontendUrlUtils.getRootURL() + DOCS_ROOT + "/"; //$NON-NLS-1$
     }
 
     /**

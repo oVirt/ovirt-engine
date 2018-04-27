@@ -334,7 +334,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         String docPath = ContextSensitiveHelpManager.getPath(helpTag);
         String docBase = model.getConfigurator().getDocsBaseUrl();
 
-        WebUtils.openUrlInNewWindow("_blank", docBase + docPath, WebUtils.OPTION_SCROLLBARS); //$NON-NLS-1$
+        WebUtils.openUrlInNewTab(docBase + docPath);
     }
 
     public T getModel() {
