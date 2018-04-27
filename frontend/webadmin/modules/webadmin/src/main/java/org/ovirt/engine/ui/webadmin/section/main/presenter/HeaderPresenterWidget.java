@@ -83,7 +83,6 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
     private final BookmarkPresenterWidget bookmarksPresenter;
     private final TagsPresenterWidget tagsPresenter;
     private final CurrentUser user;
-    private final String windowName;
     private String guideUrl;
     private final OptionsProvider optionsProvider;
 
@@ -101,7 +100,6 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
         super(eventBus, view);
 
         this.user = user;
-        this.windowName = dynamicMessages.applicationDocTitle();
         this.optionsProvider = optionsProvider;
         setGuideUrl(dynamicMessages.guideUrl());
         this.aboutPopupProvider = aboutPopupProvider;
@@ -122,7 +120,7 @@ public class HeaderPresenterWidget extends PresenterWidget<HeaderPresenterWidget
 
         registerHandler(getView().getLogoutLink().addClickHandler(event -> user.logout()));
 
-        registerHandler(getView().getGuideLink().addClickHandler(event -> WebUtils.openUrlInNewWindow(windowName, guideUrl)));
+        registerHandler(getView().getGuideLink().addClickHandler(event -> WebUtils.openUrlInNewTab(guideUrl)));
 
         registerHandler(getView().getOptionsLink().addClickHandler(event -> {
             OptionsModel model = optionsProvider.getModel();
