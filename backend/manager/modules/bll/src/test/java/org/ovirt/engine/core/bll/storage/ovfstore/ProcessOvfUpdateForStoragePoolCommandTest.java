@@ -53,10 +53,8 @@ import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.LabelDao;
-import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -101,9 +99,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
     private StorageDomainOvfInfoDao storageDomainOvfInfoDao;
 
     @Mock
-    private ClusterDao clusterDao;
-
-    @Mock
     private AffinityGroupDao affinityGroupDao;
 
     @Mock
@@ -111,9 +106,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     @Mock
     private DbUserDao dbUserDao;
-
-    @Mock
-    private PermissionDao permissionDao;
 
     @Mock
     private OvfHelper ovfHelper;
@@ -150,8 +142,6 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
         doReturn(1L).when(vmStaticDao).getDbGeneration(any());
         doReturn(pool1).when(command).getStoragePool();
 
-        // needed for ovf writer utility
-        injectorRule.bind(ClusterDao.class, clusterDao);
         mockAnswers();
     }
 
