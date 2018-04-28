@@ -106,6 +106,6 @@ public class InstanceImagesAttachDiskModel extends AttachDiskModel {
     }
 
     protected List<Disk> getAttachedNotSubmittedDisks() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

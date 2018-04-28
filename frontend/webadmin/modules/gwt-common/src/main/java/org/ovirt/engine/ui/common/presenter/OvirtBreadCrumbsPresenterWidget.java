@@ -99,7 +99,7 @@ public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
 
     private List<T> getItemsAsList(M searchableListModel) {
         Collection<T> items = searchableListModel.getItems();
-        return items != null ? new ArrayList<>(searchableListModel.getItems()) : Collections.EMPTY_LIST;
+        return items != null ? new ArrayList<>(searchableListModel.getItems()) : Collections.emptyList();
     }
 
     public void nextEntity() {

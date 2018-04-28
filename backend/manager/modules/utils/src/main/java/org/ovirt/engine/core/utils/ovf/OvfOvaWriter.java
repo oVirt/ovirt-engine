@@ -15,7 +15,7 @@ public abstract class OvfOvaWriter extends OvfWriter {
     private OsRepository osRepository;
 
     public OvfOvaWriter(VmBase vmBase, List<DiskImage> images, Version version, OsRepository osRepository) {
-        super(vmBase, images, Collections.EMPTY_LIST, version);
+        super(vmBase, images, Collections.emptyList(), version);
         this.osRepository = osRepository;
     }
 

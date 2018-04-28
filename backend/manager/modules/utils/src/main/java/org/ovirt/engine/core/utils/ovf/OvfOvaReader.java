@@ -35,7 +35,7 @@ public abstract class OvfOvaReader extends OvfReader {
             OsRepository osRepository) {
         super(document,
                 fullEntityOvfData.getDiskImages(),
-                Collections.EMPTY_LIST,
+                Collections.emptyList(),
                 fullEntityOvfData.getInterfaces(),
                 vm,
                 osRepository);

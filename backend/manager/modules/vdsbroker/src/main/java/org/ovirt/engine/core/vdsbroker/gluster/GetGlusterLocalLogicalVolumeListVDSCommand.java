@@ -22,7 +22,7 @@ public class GetGlusterLocalLogicalVolumeListVDSCommand<P extends VdsIdVDSComman
         if (getVDSReturnValue().getSucceeded()) {
             return result.getLogicalVolumes();
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override protected void executeVdsBrokerCommand() {

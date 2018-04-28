@@ -21,7 +21,7 @@ public class GetGlusterLocalPhysicalVolumeListVDSCommand<P extends VdsIdVDSComma
         if (getVDSReturnValue().getSucceeded()) {
             return result.getPhysicalVolumes();
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override protected void executeVdsBrokerCommand() {
