@@ -779,7 +779,7 @@ select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported
 select fn_db_add_config_value_for_versions_up_to('IsHighPerformanceTypeSupported', 'true', '4.3');
 select fn_db_add_config_value('AlwaysFilterResultsForWebUi', 'false', 'general');
 select fn_db_add_config_value('EnableKASLRDump','false','general');
-select fn_db_add_config_value('GuestNicNamesBlacklist','','general');
+select fn_db_add_config_value('GuestNicNamesBlacklist','lo[0-9]*','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
