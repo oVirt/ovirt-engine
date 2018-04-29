@@ -240,4 +240,8 @@ public final class NetworkUtils {
                         .filter(hostNic -> hostNic.getNetworkName() != null)
                         .collect(Collectors.toMap(VdsNetworkInterface::getNetworkName, Function.identity()));
     }
+
+    public static String stripIpv6ZoneIndex(String ip) {
+        return ip == null ? null : ip.lastIndexOf('%') < 0 ? ip : ip.substring(0, ip.lastIndexOf('%'));
+    }
 }

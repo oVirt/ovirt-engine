@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -986,6 +988,8 @@ public class VmAnalyzer {
     private List<VmGuestAgentInterface> filterGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
         if (!nics.isEmpty()) {
             nics = nics.stream().filter(this::isNotBlacklisted).collect(Collectors.toList());
+            nics.forEach(this::filterIpv4Addresses);
+            nics.forEach(this::filterIpv6Addresses);
         }
         return nics;
     }
@@ -993,6 +997,19 @@ public class VmAnalyzer {
     private boolean isNotBlacklisted(VmGuestAgentInterface nic) {
         List<String> blacklist = Config.getValue(ConfigValues.GuestNicNamesBlacklist);
         return nic.getInterfaceName() == null || blacklist.stream().noneMatch(nic.getInterfaceName()::matches);
+    }
+
+    private void filterIpv4Addresses(VmGuestAgentInterface nic) {
+        nic.setIpv4Addresses(nic.getIpv4Addresses().stream()
+                .filter(ValidationUtils::isValidIpv4)
+                .collect(Collectors.toList()));
+    }
+
+    private void filterIpv6Addresses(VmGuestAgentInterface nic) {
+        nic.setIpv6Addresses(nic.getIpv6Addresses().stream()
+                .map(NetworkUtils::stripIpv6ZoneIndex)
+                .filter(ValidationUtils::isValidIpv6)
+                .collect(Collectors.toList()));
     }
 
     private String extractVmIpsFromGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
