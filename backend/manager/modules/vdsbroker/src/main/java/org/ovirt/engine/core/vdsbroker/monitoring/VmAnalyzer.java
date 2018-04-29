@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static org.ovirt.engine.core.utils.CollectionUtils.nullToEmptyList;
 import static org.ovirt.engine.core.utils.ObjectIdentityChecker.getChangedFields;
 
 import java.lang.reflect.Field;
@@ -638,7 +639,6 @@ public class VmAnalyzer {
 
         updateVmDynamicData();
         updateStatistics();
-        prepareGuestAgentNetworkDevicesForUpdate();
 
         if (!vdsManager.isInitialized()) {
             resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
@@ -690,6 +690,11 @@ public class VmAnalyzer {
     }
 
     private void updateVmDynamicData() {
+        if (vdsmVm.getVmDynamic().getGuestAgentNicsHash() != dbVm.getGuestAgentNicsHash()) {
+            vmGuestAgentNics = nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces());
+            dbVm.setIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentNics));
+        }
+
         // check if dynamic data changed - update cache and DB
         List<String> changedFields = getChangedFields(dbVm, vdsmVm.getVmDynamic());
         // remove all fields that should not be checked:
@@ -972,39 +977,11 @@ public class VmAnalyzer {
         statistics.addNetworkUsageHistory(statistics.getUsageNetworkPercent(), usageHistoryLimit);
     }
 
-    /**
-     * Prepare the VM Guest Agent network devices for update. <br>
-     * The evaluation of the network devices for update is done by comparing the calculated hash of the network devices
-     * from VDSM to the latest hash kept on engine side.
-     */
-    private void prepareGuestAgentNetworkDevicesForUpdate() {
-        List<VmGuestAgentInterface> vmGuestAgentInterfaces = vdsmVm.getVmGuestAgentInterfaces();
-        int guestAgentNicHash = Objects.hashCode(vmGuestAgentInterfaces);
-        if (guestAgentNicHash != dbVm.getGuestAgentNicsHash()) {
-            if (vmDynamicToSave == null) {
-                saveDynamic(dbVm);
-            }
-            updateGuestAgentInterfacesChanges(
-                    vmDynamicToSave,
-                    vmGuestAgentInterfaces,
-                    guestAgentNicHash);
-        }
-    }
-
     private void updateVmJobs() {
         vmJobs = vdsmVm.getVmJobs();
     }
 
     /**** Helpers and sub-methods ****/
-
-    private void updateGuestAgentInterfacesChanges(
-            VmDynamic vmDynamic,
-            List<VmGuestAgentInterface> vmGuestAgentInterfaces,
-            int guestAgentNicHash) {
-        vmDynamic.setGuestAgentNicsHash(guestAgentNicHash);
-        vmDynamic.setIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentInterfaces));
-        vmGuestAgentNics = vmGuestAgentInterfaces;
-    }
 
     private String extractVmIpsFromGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
         if (nics == null || nics.isEmpty()) {
@@ -1095,7 +1072,7 @@ public class VmAnalyzer {
     }
 
     public List<VmGuestAgentInterface> getVmGuestAgentNics() {
-        return vmGuestAgentNics != null ? vmGuestAgentNics : Collections.emptyList();
+        return vmGuestAgentNics;
     }
 
     protected <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
