@@ -68,6 +68,7 @@ public class VdsmVm {
 
     public VdsmVm setVmGuestAgentInterfaces(List<VmGuestAgentInterface> vmGuestAgentInterfaces) {
         this.vmGuestAgentInterfaces = vmGuestAgentInterfaces;
+        vmDynamic.setGuestAgentNicsHash(Objects.hashCode(vmGuestAgentInterfaces));
         return this;
     }
 

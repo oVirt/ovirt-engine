@@ -52,7 +52,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private BootSequence bootSequence;
     private VmExitStatus exitStatus;
     private VmPauseStatus pauseStatus;
-    @UnchangeableByVdsm
     private int guestAgentNicsHash;
     @UnchangeableByVdsm
     private String exitMessage;
@@ -724,5 +723,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         setGuestOsTimezoneName(vm.getGuestOsTimezoneName());
         setGuestOsTimezoneOffset(vm.getGuestOsTimezoneOffset());
         setGuestContainers(vm.getGuestContainers());
+        setGuestAgentNicsHash(vm.getGuestAgentNicsHash());
     }
 }

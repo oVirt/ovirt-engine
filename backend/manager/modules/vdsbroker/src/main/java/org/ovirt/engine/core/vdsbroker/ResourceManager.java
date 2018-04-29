@@ -324,6 +324,7 @@ public class ResourceManager implements BackendService {
         vm.setCpuName(null);
         vm.setEmulatedMachine(null);
         vm.setVolatileRun(false);
+        vm.setGuestAgentNicsHash(0);
     }
 
     private static String getCommandTypeName(VDSCommandType command) {

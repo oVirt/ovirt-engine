@@ -330,7 +330,7 @@ public class VmsMonitoring {
 
     private void saveVmGuestAgentNetworkDevices(List<VmAnalyzer> vmAnalyzers) {
         List<VmAnalyzer> analyzersWithChangeGuestAgentNics = vmAnalyzers.stream()
-                .filter(analyzer -> !analyzer.getVmGuestAgentNics().isEmpty())
+                .filter(analyzer -> analyzer.getVmGuestAgentNics() != null)
                 .collect(Collectors.toList());
         if (analyzersWithChangeGuestAgentNics.isEmpty()) {
             return;
