@@ -182,6 +182,10 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    GuestNicNamesBlacklist(ClientAccessLevel.User),
+    @Reloadable
+    @TypeConverterAttribute(List.class)
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     ValidNumOfMonitors(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)

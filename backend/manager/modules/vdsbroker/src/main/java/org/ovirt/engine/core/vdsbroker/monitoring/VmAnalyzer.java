@@ -691,7 +691,7 @@ public class VmAnalyzer {
 
     private void updateVmDynamicData() {
         if (vdsmVm.getVmDynamic().getGuestAgentNicsHash() != dbVm.getGuestAgentNicsHash()) {
-            vmGuestAgentNics = nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces());
+            vmGuestAgentNics = filterGuestAgentInterfaces(nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces()));
             dbVm.setIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentNics));
         }
 
@@ -982,6 +982,18 @@ public class VmAnalyzer {
     }
 
     /**** Helpers and sub-methods ****/
+
+    private List<VmGuestAgentInterface> filterGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
+        if (!nics.isEmpty()) {
+            nics = nics.stream().filter(this::isNotBlacklisted).collect(Collectors.toList());
+        }
+        return nics;
+    }
+
+    private boolean isNotBlacklisted(VmGuestAgentInterface nic) {
+        List<String> blacklist = Config.getValue(ConfigValues.GuestNicNamesBlacklist);
+        return nic.getInterfaceName() == null || blacklist.stream().noneMatch(nic.getInterfaceName()::matches);
+    }
 
     private String extractVmIpsFromGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
         if (nics == null || nics.isEmpty()) {
