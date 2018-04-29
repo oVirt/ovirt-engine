@@ -170,7 +170,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
                             EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         } else {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
     }
 }
