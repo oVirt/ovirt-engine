@@ -101,7 +101,6 @@ import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -2394,31 +2393,12 @@ public class VdsBrokerObjectsBuilder {
             Map ifaceMap = (Map) ifaceStruct;
             nic.setInterfaceName(assignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_NAME));
             nic.setMacAddress(getMacAddress(ifaceMap));
-            List<String> ipv4Addresses = extractList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES, true);
-            if (ipv4Addresses != null) {
-                nic.setIpv4Addresses(ipv4Addresses
-                        .stream()
-                        .filter(ValidationUtils::isValidIpv4)
-                        .collect(Collectors.toList())
-                );
-            }
-            List<String> ipv6Addresses = extractList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES, true);
-            if (ipv6Addresses != null) {
-                nic.setIpv6Addresses(ipv6Addresses
-                    .stream()
-                    .map(VdsBrokerObjectsBuilder::stripIpv6ZoneIndex)
-                    .filter(ValidationUtils::isValidIpv6)
-                    .collect(Collectors.toList())
-                );
-            }
+            nic.setIpv4Addresses(extractList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES, false));
+            nic.setIpv6Addresses(extractList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES, false));
             nic.setVmId(vmId);
             interfaces.add(nic);
         }
         return interfaces;
-    }
-
-    static String stripIpv6ZoneIndex(String ip) {
-        return ip == null ? null : ip.lastIndexOf('%') < 0 ? ip : ip.substring(0, ip.lastIndexOf('%'));
     }
 
     private static String getMacAddress(Map<String, Object> ifaceMap) {

@@ -105,4 +105,17 @@ public class NetworkUtilsTest {
         final String URL = String.format("https://%s/someting", IP_ADDRESS);
         assertEquals(IP_ADDRESS, NetworkUtils.getIpAddress(URL));
     }
+
+    @Test
+    public void testStripIpv6ZoneId() {
+        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1"));
+        assertEquals("fe80::1/64",  NetworkUtils.stripIpv6ZoneIndex("fe80::1/64"));
+        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1%"));
+        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1%1"));
+        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1%eth0"));
+        assertEquals("fe80::1",     NetworkUtils.stripIpv6ZoneIndex("fe80::1%eth0/64"));
+        assertEquals("",            NetworkUtils.stripIpv6ZoneIndex("%"));
+        assertEquals("",            NetworkUtils.stripIpv6ZoneIndex(""));
+        assertEquals(null,          NetworkUtils.stripIpv6ZoneIndex(null));
+    }
 }
