@@ -418,5 +418,7 @@ public interface UIMessages extends Messages {
     String storageDomainOfDiskCannotBeAccessed(String diskName);
 
     String highPerformancePopupRecommendationMsgForKsm(String clusterName);
+
+    String biosTypeSupportedForX86Only();
 }
 

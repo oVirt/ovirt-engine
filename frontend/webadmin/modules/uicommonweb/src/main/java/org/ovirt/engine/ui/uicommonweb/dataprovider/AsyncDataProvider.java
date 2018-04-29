@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQuer
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -3268,6 +3269,10 @@ public class AsyncDataProvider {
 
     public boolean isGetImageTicketSupported(Version clusterVersion) {
         return (Boolean) getConfigValuePreConverted(ConfigValues.GetImageTicketSupported, clusterVersion.getValue());
+    }
+
+    public ArrayList<BiosType> getBiosTypeList() {
+        return new ArrayList<>(Arrays.asList(BiosType.values()));
     }
 
     public void updateVDSInterfaceList(List<VDS> vdsList, Runnable callback) {

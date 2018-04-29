@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -259,6 +260,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
             getCustomCpu().setIsChangeable(false);
             getEmulatedMachine().setIsChangeable(false);
+            getBiosType().setIsChangeable(false);
 
             getCoresPerSocket().setIsChangeable(false);
             getNumOfSockets().setIsChangeable(false);
@@ -452,6 +454,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void setName(EntityModel<String> value) {
         privateName = value;
+    }
+
+    private ListModel<BiosType> biosType;
+
+    public ListModel<BiosType> getBiosType() {
+        return biosType;
+    }
+
+    private void setBiosType(ListModel<BiosType> value) {
+        biosType = value;
     }
 
     private NotChangableForVmInPoolListModel<String> emulatedMachine;
@@ -1613,6 +1625,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setDataCenterWithClustersList(new NotChangableForVmInPoolListModel<DataCenterWithCluster>());
         getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(this);
 
+        setBiosType(new NotChangableForVmInPoolListModel<>());
+        getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
+        getBiosType().setSelectedItem(BiosType.I440FX_SEA_BIOS);
+
         setEmulatedMachine(new NotChangableForVmInPoolListModel<String>());
 
         setCustomCpu(new NotChangableForVmInPoolListModel<String>());
@@ -2292,6 +2308,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         updateSoundCard();
         updateResumeBehavior();
+        updateBiosType();
     }
 
     private void updateBootMenu() {
@@ -3409,6 +3426,20 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMigrationDowntime().setIsChangeable(!hasMigrationPolicy && overrideDowntime, constants.availableOnlyWithLegacyPolicy());
         getAutoConverge().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
         getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
+    }
+
+    private void updateBiosType() {
+        Cluster cluster = getSelectedCluster();
+
+        if (cluster == null) {
+            return;
+        }
+        if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
+            getBiosType().setIsChangeable(false, ConstantsManager.getInstance().getMessages().biosTypeSupportedForX86Only());
+            return;
+
+        }
+        getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getCompatibilityVersion());
     }
 
 }

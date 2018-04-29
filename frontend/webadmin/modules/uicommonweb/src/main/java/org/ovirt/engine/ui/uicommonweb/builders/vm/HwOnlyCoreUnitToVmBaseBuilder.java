@@ -31,6 +31,7 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBui
         vm.setDefaultBootSequence(model.getBootSequence());
         vm.setSingleQxlPci(model.getIsSingleQxlEnabled().getEntity());
         vm.setCustomEmulatedMachine(model.getEmulatedMachine().getSelectedItem());
+        vm.setBiosType(model.getBiosType().getSelectedItem());
         vm.setCustomCpuName(model.getCustomCpu().getSelectedItem());
     }
 }

@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Row;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
@@ -293,6 +294,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     public EntityModelDetachableWidgetWithInfo threadsPerCoreEditorWithInfoIcon;
+
+    @UiField(provided = true)
+    @Path(value = "biosType.selectedItem")
+    @WithElementId("biosType")
+    public ListModelListBoxEditor<BiosType> biosTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "emulatedMachine.selectedItem")
@@ -1487,6 +1493,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
         providersEditor.setLabel(constants.providerLabel());
+
+        biosTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<BiosType>(), new ModeSwitchingVisibilityRenderer());
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -1868,6 +1876,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfSocketsEditor.setTabIndex(nextTabIndex++);
         corePerSocketEditor.setTabIndex(nextTabIndex++);
         threadsPerCoreEditor.setTabIndex(nextTabIndex++);
+        biosTypeEditor.setTabIndex(nextTabIndex++);
         emulatedMachine.setTabIndex(nextTabIndex++);
         customCpu.setTabIndex(nextTabIndex++);
         nextTabIndex = serialNumberPolicyEditor.setTabIndexes(nextTabIndex);

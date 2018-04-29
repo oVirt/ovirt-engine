@@ -1713,5 +1713,13 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___START_REMOVING_GLUSTER_VOLUME_BRICKS_DETECTED_FROM_CLI();
 
     String ActionType___ResetGlusterVolumeBrick();
+
+    String BiosType___I440FX_SEA_BIOS();
+
+    String BiosType___Q35_OVMF();
+
+    String BiosType___Q35_SEA_BIOS();
+
+    String BiosType___Q35_SECURE_BOOT();
 }
 

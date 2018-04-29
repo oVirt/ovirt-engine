@@ -220,6 +220,9 @@
                                     <e:ListModelListBoxOnlyEditor ui:field="threadsPerCoreEditor" usePatternFly="true" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
+                                    <e:ListModelListBoxEditor ui:field="biosTypeEditor" label="{constants.biosTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
                                     <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" label="{constants.emulatedMachineLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>

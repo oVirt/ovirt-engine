@@ -409,6 +409,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String commentLabel();
 
+    String biosTypeLabel();
+
     String emulatedMachineLabel();
 
     String cpuModelLabel();
