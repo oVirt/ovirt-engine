@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -686,7 +687,7 @@ public class VmAnalyzer {
     private void updateVmDynamicData() {
         if (vdsmVm.getVmDynamic().getGuestAgentNicsHash() != dbVm.getGuestAgentNicsHash()) {
             vmGuestAgentNics = filterGuestAgentInterfaces(nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces()));
-            dbVm.setIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentNics));
+            dbVm.setIp(extractVmIps(vmGuestAgentNics));
         }
 
         // check if dynamic data changed - update cache and DB
@@ -1004,23 +1005,11 @@ public class VmAnalyzer {
                 .collect(Collectors.toList()));
     }
 
-    private String extractVmIpsFromGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
-        if (nics == null || nics.isEmpty()) {
-            return null;
-        }
-
-        List<String> ips = new ArrayList<>();
-        List<String> ips_v6 = new ArrayList<>();
-        for (VmGuestAgentInterface nic : nics) {
-            if (nic.getIpv4Addresses() != null) {
-                ips.addAll(nic.getIpv4Addresses());
-            }
-            if (nic.getIpv6Addresses() != null) {
-                ips_v6.addAll(nic.getIpv6Addresses());
-            }
-        }
-        ips.addAll(ips_v6);
-        return ips.isEmpty() ? null : String.join(" ", ips);
+    private String extractVmIps(List<VmGuestAgentInterface> nics) {
+        Stream<String> ipsV4 = nics.stream().map(VmGuestAgentInterface::getIpv4Addresses).flatMap(List::stream);
+        Stream<String> ipsV6 = nics.stream().map(VmGuestAgentInterface::getIpv6Addresses).flatMap(List::stream);
+        String ips = Stream.of(ipsV4, ipsV6).flatMap(stream -> stream).collect(Collectors.joining(" "));
+        return ips.isEmpty() ? null : ips;
     }
 
     protected boolean isBalloonWorking(VmBalloonInfo balloonInfo) {
