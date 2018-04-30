@@ -579,7 +579,7 @@ public class RunVmCommandTest extends BaseCommandTest {
                 eq(ConnectStorageServer),
                 captor.capture());
         assertThat(captor.getValue().getConnectionList().size(), is(1));
-        assertEquals(captor.getValue().getStorageType(), StorageType.ISCSI);
+        assertEquals(StorageType.ISCSI, captor.getValue().getStorageType());
         assertTrue(connectSucceeded);
     }
 

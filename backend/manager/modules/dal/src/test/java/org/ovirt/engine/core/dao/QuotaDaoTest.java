@@ -311,7 +311,7 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         // Check before the update, that the fields are not equal.
         assertNotEquals(quotaName, quotaGeneralToSpecific.getQuotaName());
         assertNotEquals(quotaClusterList.size(), quotaGeneralToSpecific.getQuotaClusters().size());
-        assertNotEquals(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB(), newStorageLimit);
+        assertNotEquals(newStorageLimit, quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB());
 
         // Update
         quotaGeneralToSpecific.setQuotaName(quotaName);

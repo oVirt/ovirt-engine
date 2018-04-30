@@ -140,7 +140,7 @@ public class LinkFollowerTest {
         assertFalse(child1.isRoot());
         assertFalse(child1.isFollowed());
         assertEquals("disk_attachments", child1.getElement());
-        assertEquals(child1.getChildren().size(), 2);
+        assertEquals(2, child1.getChildren().size());
         assertNotNull(child1.getChild("disk").get());
         assertNotNull(child1.getChild("template").get());
 
@@ -150,7 +150,7 @@ public class LinkFollowerTest {
         assertFalse(child2.isRoot());
         assertFalse(child2.isFollowed());
         assertEquals("nics", child2.getElement());
-        assertEquals(child2.getChildren().size(), 1);
+        assertEquals(1, child2.getChildren().size());
         assertNotNull(child2.getChild("network_labels").get());
 
         //tags

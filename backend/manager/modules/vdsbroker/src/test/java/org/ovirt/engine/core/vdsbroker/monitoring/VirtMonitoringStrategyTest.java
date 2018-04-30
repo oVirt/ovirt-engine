@@ -114,7 +114,7 @@ public class VirtMonitoringStrategyTest {
         vds.setHostOs("RHEL - 7Server - 1.el7");
         cluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertNotEquals(vds.getStatus(), VDSStatus.NonOperational);
+        assertNotEquals(VDSStatus.NonOperational, vds.getStatus());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class VirtMonitoringStrategyTest {
         vds.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
         cluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertNotEquals(vds.getStatus(), VDSStatus.NonOperational);
+        assertNotEquals(VDSStatus.NonOperational, vds.getStatus());
     }
 
     private VDS createBaseVds() {

@@ -58,7 +58,7 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
                 assertEquals(CPU_NUMBER, clusterLimit.getVcpuLimit().longValue());
             }
             if (clusterLimit.getCluster().getId().equals(CLUSTER_ID_2.toString())) {
-                assertEquals((int) clusterLimit.getVcpuUsage(), VIRTUAL_CPU_USAGE);
+                assertEquals(VIRTUAL_CPU_USAGE, (int) clusterLimit.getVcpuUsage());
             }
         }
 

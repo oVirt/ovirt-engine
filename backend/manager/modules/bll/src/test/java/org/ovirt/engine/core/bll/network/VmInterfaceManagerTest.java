@@ -140,7 +140,7 @@ public class VmInterfaceManagerTest {
         vmInterfaceManager.auditLogMacInUseUnplug(iface, VM_NAME);
 
         verifyCommonAuditLogFilledProperly(AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG, iface);
-        assertEquals(auditLogableCaptor.getValue().getVmName(), VM_NAME);
+        assertEquals(VM_NAME, auditLogableCaptor.getValue().getVmName());
     }
 
     private Map<String, String> verifyCommonAuditLogFilledProperly(AuditLogType auditLogType, VmNic iface) {

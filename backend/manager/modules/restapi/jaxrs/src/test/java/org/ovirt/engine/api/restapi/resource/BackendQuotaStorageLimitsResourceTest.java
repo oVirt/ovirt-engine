@@ -58,7 +58,7 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
                 assertEquals(STORAGE_SIZE_GB, storageLimit.getLimit());
             }
             if (storageLimit.getStorageDomain().getId().equals(STORAGE_ID_2.toString())) {
-                assertEquals(storageLimit.getUsage(), STORAGE_SIZE_GB_USAGE, 0.0);
+                assertEquals(STORAGE_SIZE_GB_USAGE, storageLimit.getUsage(), 0.0);
             }
         }
 

@@ -74,7 +74,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase<ImageStorageDo
         dao.remove(new ImageStorageDomainMapId(EXISTING_IMAGE_ID, FixturesTool.STORAGE_DOMAIN_SCALE_SD5));
         List<ImageStorageDomainMap> entries = dao.getAllByStorageDomainId(EXISTING_IMAGE_ID);
         for (ImageStorageDomainMap entry : entries) {
-            assertNotEquals(entry.getStorageDomainId(), FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
+            assertNotEquals(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, entry.getStorageDomainId());
         }
         assertNotNull(entries);
         assertTrue(entries.isEmpty());

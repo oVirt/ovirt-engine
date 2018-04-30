@@ -29,7 +29,7 @@ public class HostProviderBindingDaoImplTest extends BaseDaoTestCase<HostProvider
             FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID,
             FixturesTool.PROVIDER_BINDING_HOST_ID_PLUGIN_TYPE);
 
-        assertEquals(result, FixturesTool.PROVIDER_BINDING_HOST_PLUGIN_ID);
+        assertEquals(FixturesTool.PROVIDER_BINDING_HOST_PLUGIN_ID, result);
     }
 
     /**
@@ -69,9 +69,9 @@ public class HostProviderBindingDaoImplTest extends BaseDaoTestCase<HostProvider
         dao.update(FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID, values);
 
         String result = dao.get(FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID, plugin1);
-        assertEquals(result, hostId1);
+        assertEquals(hostId1, result);
         result = dao.get(FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID, plugin2);
-        assertEquals(result, hostId2);
+        assertEquals(hostId2, result);
     }
 
     /**
@@ -87,7 +87,7 @@ public class HostProviderBindingDaoImplTest extends BaseDaoTestCase<HostProvider
 
         dao.update(FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID, values);
         String result = dao.get(FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID, plugin);
-        assertEquals(result, hostId);
+        assertEquals(hostId, result);
 
         values = new HashMap();
         values.put("OTHER", hostId);
@@ -109,7 +109,7 @@ public class HostProviderBindingDaoImplTest extends BaseDaoTestCase<HostProvider
         dao.update(FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID2, values);
 
         String result = dao.get(FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID2, plugin);
-        assertEquals(result, hostId);
+        assertEquals(hostId, result);
 
         vdsStaticDao.remove(FixturesTool.PROVIDER_BINDING_HOST_ID_HOST_ID2);
 

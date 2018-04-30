@@ -41,7 +41,7 @@ public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVm
     public void testGetAllDiskElementsByDisksIds() {
         List<DiskVmElement> vmElements = dao.getAllDiskVmElementsByDisksIds(Arrays.asList(
                 FixturesTool.DISK_ID, FixturesTool.DISK_ID_2, FixturesTool.BOOTABLE_DISK_ID));
-        assertEquals(vmElements.size(), 2);
+        assertEquals(2, vmElements.size());
     }
 
     @Test

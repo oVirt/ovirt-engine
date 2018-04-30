@@ -152,7 +152,7 @@ public class VmAnalyzerTest {
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.VM_DOWN));
         assertEquals(VDSCommandType.Destroy, vdsCommandTypeCaptor.getValue());
-        assertEquals(vdsParamsCaptor.getValue().getClass(), DestroyVmVDSCommandParameters.class);
+        assertEquals(DestroyVmVDSCommandParameters.class, vdsParamsCaptor.getValue().getClass());
     }
 
     @Theory

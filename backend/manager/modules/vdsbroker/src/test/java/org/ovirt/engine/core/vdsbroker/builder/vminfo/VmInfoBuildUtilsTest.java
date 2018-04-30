@@ -227,7 +227,7 @@ public class VmInfoBuildUtilsTest {
                 (List<Map<String, Object>>) struct.get(VdsProperties.NETWORK_FILTER_PARAMETERS);
 
         assertNotNull(struct.get(VdsProperties.NW_FILTER));
-        assertEquals(struct.get(VdsProperties.NW_FILTER), NETWORK_FILTER_NAME);
+        assertEquals(NETWORK_FILTER_NAME, struct.get(VdsProperties.NW_FILTER));
         assertNotNull(parametersList);
 
         assertEquals(2, parametersList.size());
@@ -301,8 +301,8 @@ public class VmInfoBuildUtilsTest {
                 underTest.getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false, false);
 
         // Ensures that the boot disk unit is lower
-        assertEquals(vmDeviceUnitMap.get(0).get(lunDiskVmDevice), (Integer) 1);
-        assertEquals(vmDeviceUnitMap.get(0).get(diskImageVmDevice), (Integer) 0);
+        assertEquals((Integer) 1, vmDeviceUnitMap.get(0).get(lunDiskVmDevice));
+        assertEquals((Integer) 0, vmDeviceUnitMap.get(0).get(diskImageVmDevice));
     }
 
     @Test

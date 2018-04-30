@@ -399,7 +399,8 @@ public class NetworkDaoTest extends BaseDaoTestCase<NetworkDao> {
         Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME2, FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
-        assertEquals(result.getDnsResolverConfiguration().getId(), FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION_TO_REMOVE);
+        assertEquals(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION_TO_REMOVE,
+                result.getDnsResolverConfiguration().getId());
 
         dao.remove(result.getId());
 

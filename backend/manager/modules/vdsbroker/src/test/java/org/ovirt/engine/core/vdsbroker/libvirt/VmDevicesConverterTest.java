@@ -25,9 +25,9 @@ public class VmDevicesConverterTest {
         XmlDocument devices = new XmlDocument(DEVICES_XML);
         List<Map<String, Object>> res = converter.parseVolumeChain(devices.selectSingleNode("//*/disk[2]"));
         assertEquals(3, res.size());
-        assertEquals(res.get(0).get(VdsProperties.VolumeId), "cc5beaf2-3265-4b36-b7be-4f23dc3b07af");
-        assertEquals(res.get(1).get(VdsProperties.VolumeId), "fff3c995-e7c3-4a2c-96a3-f0ce569a57c2");
-        assertEquals(res.get(2).get(VdsProperties.VolumeId), "011046ce-312a-42e6-bcb7-764fd332da02");
+        assertEquals("cc5beaf2-3265-4b36-b7be-4f23dc3b07af", res.get(0).get(VdsProperties.VolumeId));
+        assertEquals("fff3c995-e7c3-4a2c-96a3-f0ce569a57c2", res.get(1).get(VdsProperties.VolumeId));
+        assertEquals("011046ce-312a-42e6-bcb7-764fd332da02", res.get(2).get(VdsProperties.VolumeId));
     }
 
     @Test
