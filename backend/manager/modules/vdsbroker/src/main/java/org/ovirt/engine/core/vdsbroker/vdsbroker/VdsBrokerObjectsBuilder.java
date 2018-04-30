@@ -584,10 +584,10 @@ public class VdsBrokerObjectsBuilder {
             vm.setExitReason(exitReason);
         }
 
-        // if monitorResponse returns negative it means its erroneous
+        // negative monitorResponse means it is erroneous
         if (struct.containsKey(VdsProperties.monitorResponse)) {
             int response = Integer.parseInt(struct.get(VdsProperties.monitorResponse).toString());
-            if (response < 0) {
+            if (response < 0 && vm.getStatus().isGuestCpuRunning()) {
                 vm.setStatus(VMStatus.NotResponding);
             }
         }

@@ -30,8 +30,7 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
     }
 
     protected VdsmVm createVdsmVm(Map<String, Object> struct) {
-        VmDynamic vmDynamic = new VmDynamic();
-        vdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, struct, getVds());
+        VmDynamic vmDynamic = vdsBrokerObjectsBuilder.buildVMDynamicData(struct, getVds());
         Guid vmId = vmDynamic.getId();
         return new VdsmVm(vdsBrokerObjectsBuilder.getVdsmCallTimestamp(struct))
                 .setVmDynamic(vmDynamic)
