@@ -41,32 +41,21 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
 
     @Override
     protected void executeVdsBrokerCommand() {
-        // ignore starting already started host or stopping already stopped host.
+        FenceStatusReturn result = fenceNode(getParameters().getAction());
+
+        FenceOperationResult actionResult = new FenceOperationResult(
+                getParameters().getAction(),
+                result.getStatus().code,
+                result.getStatus().message,
+                result.power,
+                result.operationStatus);
+        setReturnValue(actionResult);
+        getVDSReturnValue().setSucceeded(actionResult.getStatus() != FenceOperationResult.Status.ERROR);
+
         if (getParameters().getAction() == FenceActionType.STATUS
-                || !isAlreadyInRequestedStatus()) {
-            FenceStatusReturn result = fenceNode(getParameters().getAction());
-
-            FenceOperationResult actionResult = new FenceOperationResult(
-                    getParameters().getAction(),
-                    result.getStatus().code,
-                    result.getStatus().message,
-                    result.power,
-                    result.operationStatus);
-            setReturnValue(actionResult);
-            getVDSReturnValue().setSucceeded(actionResult.getStatus() != FenceOperationResult.Status.ERROR);
-
-            if (getParameters().getAction() == FenceActionType.STATUS
-                    && actionResult.getPowerStatus() == PowerStatus.UNKNOWN
-                    && !getParameters().getTargetVdsID().equals(Guid.Empty)) {
-                alertPowerManagementStatusFailed(actionResult.getMessage());
-            }
-
-        } else {
-            // start/stop action was skipped, host is already turned on/off
-            alertActionSkippedAlreadyInStatus();
-            getVDSReturnValue().setSucceeded(true);
-            setReturnValue(
-                    new FenceOperationResult(FenceOperationResult.Status.SKIPPED_ALREADY_IN_STATUS, PowerStatus.UNKNOWN));
+                && actionResult.getPowerStatus() == PowerStatus.UNKNOWN
+                && !getParameters().getTargetVdsID().equals(Guid.Empty)) {
+            alertPowerManagementStatusFailed(actionResult.getMessage());
         }
     }
 
@@ -82,41 +71,6 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         alert.setVdsName(getTargetVds().getName());
         alert.addCustomValue("Reason", reason);
         auditLogDirector.log(alert, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
-    }
-
-    /**
-     * Alerts when power management stop was skipped because host is already down.
-     */
-    protected void alertActionSkippedAlreadyInStatus() {
-        AuditLogable auditLogable = new AuditLogableImpl();
-        auditLogable.addCustomValue("HostName", getTargetVds().getName());
-        auditLogable.addCustomValue("AgentStatus", getParameters().getAction().getValue());
-        auditLogable.addCustomValue("Operation", getParameters().getAction().toString());
-        auditLogDirector.log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
-    }
-
-    /**
-     * Checks if Host is already in the requested status. If Host is Down and a Stop command is issued or if Host is Up
-     * and a Start command is issued command should do nothing.
-     */
-    private boolean isAlreadyInRequestedStatus() {
-        FenceStatusReturn result = fenceNode(FenceActionType.STATUS);
-        FenceOperationResult actionResult = new FenceOperationResult(
-                FenceActionType.STATUS,
-                result.getStatus().code,
-                result.getStatus().message,
-                result.power,
-                result.operationStatus);
-
-        return actionResult.getStatus() == FenceOperationResult.Status.SUCCESS
-                && actionResult.getPowerStatus() == getRequestedPowerStatus(getParameters().getAction());
-    }
-
-    /**
-     * Returns requested power status for specified fence operations
-     */
-    protected PowerStatus getRequestedPowerStatus(FenceActionType fenceAction) {
-        return fenceAction == FenceActionType.START ? PowerStatus.ON : PowerStatus.OFF;
     }
 
     protected FenceStatusReturn fenceNode(FenceActionType fenceAction) {

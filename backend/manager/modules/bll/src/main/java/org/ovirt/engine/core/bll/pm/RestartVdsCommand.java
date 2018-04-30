@@ -117,21 +117,16 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
      */
     @Override
     protected void executeCommand() {
-        ActionReturnValue returnValue = new ActionReturnValue();
+        ActionReturnValue returnValue;
         final Guid vdsId = getVdsId();
         final String sessionId = getParameters().getSessionId();
 
-        // do not try to stop Host if Host is reported as Down via PM
-        if (new HostFenceActionExecutor(getVds()).isHostPoweredOff()) {
-            returnValue.setSucceeded(true);
+        // execute StopVds action
+        returnValue = executeVdsFenceAction(vdsId, sessionId, ActionType.StopVds);
+        if (getParameters().getParentCommand() == ActionType.VdsNotRespondingTreatment) {
+            updateHostInFenceFlow(vdsId, true);
         }
-        else {
-            // execute StopVds action
-            returnValue = executeVdsFenceAction(vdsId, sessionId, ActionType.StopVds);
-            if (getParameters().getParentCommand() == ActionType.VdsNotRespondingTreatment) {
-                updateHostInFenceFlow(vdsId, true);
-            }
-        }
+
         if (wasSkippedDueToPolicy(returnValue)) {
             // fence execution was skipped due to fencing policy, host should be alive
             RestartVdsResult restartVdsResult = new RestartVdsResult();
