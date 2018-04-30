@@ -174,6 +174,15 @@ public enum VMStatus implements Identifiable {
     }
 
     /**
+     * This method reflects whether the guest CPU is surely running.
+     *
+     * @return true if the guest CPU is surely running in this status, false otherwise
+     */
+    public boolean isGuestCpuRunning() {
+        return EnumSet.of(Up, PoweringUp).contains(this);
+    }
+
+    /**
      * Sole purpose of this enum is allow to pass multiple VMStatus items to {@link EditableVmField} annotation
      * without the need of enumerating them.
      */

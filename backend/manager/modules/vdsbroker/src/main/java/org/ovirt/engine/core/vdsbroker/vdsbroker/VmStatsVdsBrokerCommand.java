@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildInterfaceStatisticsData;
+import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVMDynamicData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVMStatisticsData;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmBalloonInfo;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder.buildVmDiskStatistics;
@@ -35,8 +36,7 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
     }
 
     protected VdsmVm createVdsmVm(Map<String, Object> struct) {
-        VmDynamic vmDynamic = new VmDynamic();
-        VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, struct, getVds());
+        VmDynamic vmDynamic = buildVMDynamicData(struct, getVds());
         Guid vmId = vmDynamic.getId();
         return new VdsmVm(getVdsmCallTimestamp(struct))
                 .setVmDynamic(vmDynamic)
