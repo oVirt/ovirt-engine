@@ -865,6 +865,10 @@ verifyArgs() {
 		output "Please note: permissions are not backed up with a plain dump format, thus not restored during restore"
 		output "#####################################################################################################"
 	fi
+	touch "${FILE}"
+	chmod 0600 "${FILE}"
+	touch "${LOG}"
+	chmod 0600 "${LOG}"
 }
 
 # Similar to verifyArgs above, but called during restore after reading
