@@ -22,5 +22,8 @@ public class CollectionUtils {
         return list == null ? Collections.emptyList() : list;
     }
 
+    public static <T> List<T> emptyListToNull(List<T> list) {
+        return list != null && list.isEmpty() ? null : list;
+    }
 
 }

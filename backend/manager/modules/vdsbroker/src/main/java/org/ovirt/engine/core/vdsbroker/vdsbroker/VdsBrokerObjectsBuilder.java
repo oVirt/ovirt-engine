@@ -114,6 +114,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.CollectionUtils;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -2406,8 +2407,8 @@ public class VdsBrokerObjectsBuilder {
             Map ifaceMap = (Map) ifaceStruct;
             nic.setInterfaceName(assignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_NAME));
             nic.setMacAddress(getMacAddress(ifaceMap));
-            nic.setIpv4Addresses(extractList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES, false));
-            nic.setIpv6Addresses(extractList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES, false));
+            nic.setIpv4Addresses(extractList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES));
+            nic.setIpv6Addresses(extractList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES));
             nic.setVmId(vmId);
             interfaces.add(nic);
         }
@@ -2438,7 +2439,7 @@ public class VdsBrokerObjectsBuilder {
             for (Map.Entry<String, Map<String, Object>> item : numaNodeMap.entrySet()) {
                 int index = Integer.parseInt(item.getKey());
                 Map<String, Object> itemMap = item.getValue();
-                List<Integer> cpuIds = extractList(itemMap, VdsProperties.NUMA_NODE_CPU_LIST, false);
+                List<Integer> cpuIds = extractList(itemMap, VdsProperties.NUMA_NODE_CPU_LIST);
                 long memTotal =  assignLongValue(itemMap, VdsProperties.NUMA_NODE_TOTAL_MEM);
                 VdsNumaNode numaNode = new VdsNumaNode();
                 numaNode.setIndex(index);
@@ -2458,7 +2459,7 @@ public class VdsBrokerObjectsBuilder {
 
                 if (numaNodeDistanceMap != null) {
                     // Save the received NUMA node distances
-                    distances = extractList(numaNodeDistanceMap, String.valueOf(index), false);
+                    distances = extractList(numaNodeDistanceMap, String.valueOf(index));
                     for (int i = 0; i < distances.size(); i++) {
                         distanceMap.put(newNumaNodeList.get(i).getIndex(), distances.get(i));
                     }
@@ -2488,14 +2489,14 @@ public class VdsBrokerObjectsBuilder {
 
     }
 
-    private static <T> List<T> extractList(Map<String, Object> struct, String propertyName, boolean returnNullOnEmpty) {
+    private static <T> List<T> extractList(Map<String, Object> struct, String propertyName) {
         if (struct.containsKey(propertyName)){
             Object[] items = (Object[]) struct.get(propertyName);
             if (items.length > 0) {
                 return Arrays.stream(items).map(item -> (T) item).collect(Collectors.toList());
             }
         }
-        return returnNullOnEmpty ? null : Collections.emptyList();
+        return Collections.emptyList();
     }
 
     /**
@@ -2628,6 +2629,6 @@ public class VdsBrokerObjectsBuilder {
     }
 
     public LeaseStatus buildLeaseStatus(Map<String, Object> struct) {
-        return new LeaseStatus(extractList(struct, "owners", true));
+        return new LeaseStatus(CollectionUtils.emptyListToNull(extractList(struct, "owners")));
     }
 }
