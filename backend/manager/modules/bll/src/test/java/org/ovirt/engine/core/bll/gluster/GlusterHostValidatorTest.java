@@ -53,12 +53,12 @@ public class GlusterHostValidatorTest {
                 .getGlusterVolumeBricksByServerId(SERVER_ID_2);
         doReturn(getBricksFromServer(SERVER_ID_3, GlusterStatus.UP)).when(brickDao)
                 .getGlusterVolumeBricksByServerId(SERVER_ID_3);
-        doReturn(getGlusterVolumes(CLUSTER_ID, GlusterStatus.UP)).when(volumeDao).getByClusterId(CLUSTER_ID);
+        doReturn(getGlusterVolumes(GlusterStatus.UP)).when(volumeDao).getByClusterId(CLUSTER_ID);
     }
 
     @Test
     public void testCheckGlusterQuorumWithoutGluster() {
-        Cluster cluster = getCluster(false, CLUSTER_ID);
+        Cluster cluster = getCluster(false);
         Iterable<Guid> hostIds = new LinkedList<>();
         assertTrue("Quorum checks runs for Cluster without gluster service",
                 hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty());
@@ -66,17 +66,17 @@ public class GlusterHostValidatorTest {
 
     @Test
     public void testCheckGlusterQuorumWithoutBricks() {
-        Cluster cluster = getCluster(true, CLUSTER_ID);
+        Cluster cluster = getCluster(true);
         Iterable<Guid> hostIds = Arrays.asList(DUMMY_SERVER_ID, SERVER_ID_1);
         assertTrue(hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty());
     }
 
     @Test
     public void testCheckGlusterQuorumWithoutRequiredVolumeOptions() {
-        Cluster cluster = getCluster(true, CLUSTER_ID);
+        Cluster cluster = getCluster(true);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_1, SERVER_ID_2);
         // Reset the quroum related volume options
-        List<GlusterVolumeEntity> glusterVolumes = getGlusterVolumes(CLUSTER_ID, GlusterStatus.UP);
+        List<GlusterVolumeEntity> glusterVolumes = getGlusterVolumes(GlusterStatus.UP);
         for (GlusterVolumeEntity volume : glusterVolumes) {
             volume.setOptions("");
         }
@@ -86,14 +86,14 @@ public class GlusterHostValidatorTest {
 
     @Test
     public void testCheckGlusterQuorumTwoServersUp() {
-        Cluster cluster = getCluster(true, CLUSTER_ID);
+        Cluster cluster = getCluster(true);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_1);
         assertTrue(hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty());
     }
 
     @Test
     public void testCheckGlusterQuorumWithTwoServersDown() {
-        Cluster cluster = getCluster(true, CLUSTER_ID);
+        Cluster cluster = getCluster(true);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_1, SERVER_ID_2);
         assertTrue("Quorum check is failing", hostValidator.checkGlusterQuorum(cluster, hostIds).size() == 2);
         assertTrue(Arrays.asList("Vol-1", "Vol-2").equals(hostValidator.checkGlusterQuorum(cluster, hostIds)));
@@ -101,9 +101,9 @@ public class GlusterHostValidatorTest {
 
     @Test
     public void testCheckGlusterQuorumWithBricksDown() {
-        Cluster cluster = getCluster(true, CLUSTER_ID);
+        Cluster cluster = getCluster(true);
         // Make sure first brick in all the subvolumes are down
-        List<GlusterVolumeEntity> glusterVolumes = getGlusterVolumes(CLUSTER_ID, GlusterStatus.UP);
+        List<GlusterVolumeEntity> glusterVolumes = getGlusterVolumes(GlusterStatus.UP);
         for (GlusterVolumeEntity volume : glusterVolumes) {
             for (int index = 0; index < volume.getBricks().size(); index += volume.getReplicaCount()) {
                 volume.getBricks().get(index).setStatus(GlusterStatus.DOWN);
@@ -117,8 +117,8 @@ public class GlusterHostValidatorTest {
 
     @Test
     public void testCheckGlusterQuorumWithVolumeDown() {
-        Cluster cluster = getCluster(true, CLUSTER_ID);
-        doReturn(getGlusterVolumes(CLUSTER_ID, GlusterStatus.DOWN)).when(volumeDao).getByClusterId(CLUSTER_ID);
+        Cluster cluster = getCluster(true);
+        doReturn(getGlusterVolumes(GlusterStatus.DOWN)).when(volumeDao).getByClusterId(CLUSTER_ID);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_1, SERVER_ID_2);
         assertTrue("Quorum check is failing with volumes in down status",
                 hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty());
@@ -154,21 +154,20 @@ public class GlusterHostValidatorTest {
                         .size() == 2);
     }
 
-    private Cluster getCluster(boolean supportGlusterService, Guid clusterId) {
+    private Cluster getCluster(boolean supportGlusterService) {
         Cluster cluster = new Cluster();
-        cluster.setId(clusterId);
+        cluster.setId(CLUSTER_ID);
         cluster.setGlusterService(supportGlusterService);
         return cluster;
     }
 
-    private List<GlusterVolumeEntity> getGlusterVolumes(Guid clusterId, GlusterStatus status) {
+    private List<GlusterVolumeEntity> getGlusterVolumes(GlusterStatus status) {
         List<GlusterVolumeEntity> volumesList = new ArrayList<>();
         String volumeOptions = "cluster.quorum-type=fixed,cluster.quorum-count=2";
 
         volumesList.add(getGlusterVolume("Vol-1",
                 VOL_ID_1,
                 GlusterVolumeType.REPLICATE,
-                3,
                 volumeOptions,
                 getBricksForVolume(1),
                 status));
@@ -176,7 +175,6 @@ public class GlusterHostValidatorTest {
         volumesList.add(getGlusterVolume("Vol-2",
                 VOL_ID_2,
                 GlusterVolumeType.DISTRIBUTED_REPLICATE,
-                3,
                 "cluster.quorum-type=auto",
                 getBricksForVolume(2),
                 status));
@@ -204,14 +202,13 @@ public class GlusterHostValidatorTest {
     private GlusterVolumeEntity getGlusterVolume(String name,
             Guid volumeID,
             GlusterVolumeType volumeType,
-            int replicaCount,
             String volumeOptions,
             List<GlusterBrickEntity> bricks,
             GlusterStatus status) {
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setName(name);
         volume.setId(volumeID);
-        volume.setReplicaCount(replicaCount);
+        volume.setReplicaCount(3);
         volume.setVolumeType(volumeType);
         volume.setOptions(volumeOptions);
         volume.setBricks(bricks);
