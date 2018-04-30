@@ -33,7 +33,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -41,8 +40,6 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -62,7 +59,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -96,12 +92,6 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Mock
     CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
-    @Mock
-    private SnapshotsValidator snapshotsValidator;
-
-    @Mock
-    private StorageDomainStaticDao storageDomainStaticDao;
 
     @Mock
     private StorageServerConnectionDao storageServerConnectionDao;
@@ -623,20 +613,5 @@ public class RunVmCommandTest extends BaseCommandTest {
         assertThat(captor.getValue().getConnectionList().size(), is(1));
         assertFalse(connectSucceeded);
 
-    }
-
-    private StorageDomainStatic backupStorageDomain(boolean isBackup) {
-        StorageDomain mockStorage = new StorageDomain();
-        mockStorage.setBackup(isBackup);
-        return mockStorage.getStorageStaticData();
-    }
-
-    private Guid initDiskImage(VM vm) {
-        DiskImage image = new DiskImage();
-        Guid storageDomainId = Guid.newGuid();
-        image.setId(Guid.newGuid());
-        image.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
-        vm.getDiskMap().put(image.getId(), image);
-        return storageDomainId;
     }
 }
