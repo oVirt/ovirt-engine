@@ -16,8 +16,10 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cdrom;
@@ -40,7 +42,7 @@ import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 
-public class LinkHelperTest extends Assert {
+public class LinkHelperTest {
 
     private static final String VM_ID = "awesome";
     private static final String CLUSTER_ID = "alarming";

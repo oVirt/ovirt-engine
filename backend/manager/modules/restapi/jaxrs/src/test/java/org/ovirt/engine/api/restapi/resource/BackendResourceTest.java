@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;

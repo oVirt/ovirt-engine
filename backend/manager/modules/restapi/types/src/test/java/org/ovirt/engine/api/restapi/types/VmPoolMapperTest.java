@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.ovirt.engine.api.model.VmPool;
 
 public class VmPoolMapperTest extends AbstractInvertibleMappingTest<VmPool, org.ovirt.engine.core.common.businessentities.VmPool, org.ovirt.engine.core.common.businessentities.VmPool> {

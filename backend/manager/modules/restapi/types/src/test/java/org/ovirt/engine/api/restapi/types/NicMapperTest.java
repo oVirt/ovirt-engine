@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
 import org.hamcrest.text.IsEqualIgnoringCase;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;

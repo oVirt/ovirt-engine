@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,14 +12,13 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 
-public class UsageFinderTest extends Assert {
+public class UsageFinderTest {
 
     private UsageFinder usageFinder;
 

@@ -16,15 +16,17 @@
 
 package org.ovirt.engine.api.common.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Fault;
 
-public class EnumValidatorTest extends Assert {
+public class EnumValidatorTest {
 
     @Test
     public void testValid() throws Exception {

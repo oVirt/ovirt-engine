@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;

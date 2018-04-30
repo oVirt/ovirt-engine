@@ -16,6 +16,9 @@
 
 package org.ovirt.engine.api.restapi.types.openstack;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.restapi.types.AbstractInvertibleMappingTest;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;

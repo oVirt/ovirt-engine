@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.hex2string;

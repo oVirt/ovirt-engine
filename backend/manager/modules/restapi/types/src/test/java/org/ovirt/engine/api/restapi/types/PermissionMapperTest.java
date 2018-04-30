@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.ovirt.engine.api.model.Permission;
 
 public class PermissionMapperTest

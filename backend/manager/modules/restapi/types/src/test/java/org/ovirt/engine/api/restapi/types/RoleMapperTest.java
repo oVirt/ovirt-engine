@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.ovirt.engine.api.model.Role;
 
 public class RoleMapperTest extends AbstractInvertibleMappingTest<Role, org.ovirt.engine.core.common.businessentities.Role, org.ovirt.engine.core.common.businessentities.Role> {

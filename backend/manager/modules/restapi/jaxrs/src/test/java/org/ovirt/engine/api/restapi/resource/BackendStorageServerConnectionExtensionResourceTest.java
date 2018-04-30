@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.StorageConnectionExtension;
 import org.ovirt.engine.core.common.action.ActionType;

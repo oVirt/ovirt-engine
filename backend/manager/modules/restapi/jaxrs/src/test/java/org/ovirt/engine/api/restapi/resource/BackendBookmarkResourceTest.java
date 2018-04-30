@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.ovirt.engine.api.restapi.resource.BackendBookmarksResourceTest.VALUES;
 import static org.ovirt.engine.api.restapi.resource.BackendBookmarksResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendBookmarksResourceTest.setUpBookmarks;

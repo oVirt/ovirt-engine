@@ -1,6 +1,9 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.restapi.test.mappers.api.IBar;
@@ -8,7 +11,7 @@ import org.ovirt.engine.api.restapi.test.mappers.api.IFoo;
 import org.ovirt.engine.api.restapi.test.mappers.impl.BarImpl;
 import org.ovirt.engine.api.restapi.test.mappers.impl.FooImpl;
 
-public class MappingLocatorTest extends Assert {
+public class MappingLocatorTest {
 
     private static final String PACKAGE_NAME = "org.ovirt.engine.api.restapi.test.mapping";
     private MappingLocator mappingLocator;

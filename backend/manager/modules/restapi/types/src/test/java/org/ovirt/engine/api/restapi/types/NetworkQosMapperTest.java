@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.junit.Assert.assertEquals;
+
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.QosType;
 

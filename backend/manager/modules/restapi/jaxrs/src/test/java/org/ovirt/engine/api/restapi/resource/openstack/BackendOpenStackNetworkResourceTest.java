@@ -16,6 +16,7 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;

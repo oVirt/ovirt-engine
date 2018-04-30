@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;

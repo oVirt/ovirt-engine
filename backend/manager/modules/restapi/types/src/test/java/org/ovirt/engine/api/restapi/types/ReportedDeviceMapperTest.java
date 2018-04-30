@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.IpVersion;
 import org.ovirt.engine.api.model.ReportedDevice;

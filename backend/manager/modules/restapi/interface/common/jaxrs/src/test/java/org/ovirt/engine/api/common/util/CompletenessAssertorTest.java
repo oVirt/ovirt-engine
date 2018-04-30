@@ -16,11 +16,14 @@
 
 package org.ovirt.engine.api.common.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.Fault;
@@ -35,7 +38,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmStatus;
 
-public class CompletenessAssertorTest extends Assert {
+public class CompletenessAssertorTest {
 
     @Test
     public void testMissingParameter() throws Exception {

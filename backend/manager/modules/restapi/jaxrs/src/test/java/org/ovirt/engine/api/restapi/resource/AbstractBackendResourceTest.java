@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.assertEquals;
+
 import org.ovirt.engine.api.model.BaseResource;
 
 public abstract class AbstractBackendResourceTest<R extends BaseResource, Q /* extends Queryable */>

@@ -16,6 +16,7 @@
 
 package org.ovirt.engine.api.common.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,11 +26,10 @@ import java.util.Set;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 
-public class DetailHelperTest extends Assert {
+public class DetailHelperTest {
 
     private static final String ACCEPTABLE = "application/xml";
 

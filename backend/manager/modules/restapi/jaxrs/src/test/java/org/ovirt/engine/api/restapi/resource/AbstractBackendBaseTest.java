@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
@@ -27,7 +30,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
@@ -66,7 +68,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(Silent.class)
-public abstract class AbstractBackendBaseTest extends Assert {
+public abstract class AbstractBackendBaseTest {
 
     protected static final Guid[] GUIDS = { new Guid("00000000-0000-0000-0000-000000000000"),
             new Guid("11111111-1111-1111-1111-111111111111"),

@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;

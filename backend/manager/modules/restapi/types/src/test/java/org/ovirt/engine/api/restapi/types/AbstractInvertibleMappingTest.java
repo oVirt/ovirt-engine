@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +20,7 @@ import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
  * @param <I>
  *            inverse type (may be identical to T)
  */
-public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
+public abstract class AbstractInvertibleMappingTest<F, T, I> {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();

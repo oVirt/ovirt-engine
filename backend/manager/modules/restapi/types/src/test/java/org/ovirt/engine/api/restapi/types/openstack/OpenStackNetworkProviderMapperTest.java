@@ -16,6 +16,10 @@
 
 package org.ovirt.engine.api.restapi.types.openstack;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.ovirt.engine.api.model.AgentConfiguration;
 import org.ovirt.engine.api.model.MessageBrokerType;
 import org.ovirt.engine.api.model.NetworkPluginType;

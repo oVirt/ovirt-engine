@@ -16,10 +16,11 @@ limitations under the License.
 
 package org.ovirt.engine.api.utils;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-public class LinkCreatorTest extends Assert {
+public class LinkCreatorTest {
     @Test
     public void testCombine() throws Exception {
         assertEquals("/foo/bar", LinkCreator.combine("/foo", "bar"));

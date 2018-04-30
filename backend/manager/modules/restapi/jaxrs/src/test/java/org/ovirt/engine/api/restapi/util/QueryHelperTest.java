@@ -16,13 +16,13 @@
 
 package org.ovirt.engine.api.restapi.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
@@ -33,7 +33,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Vm;
 
 
-public class QueryHelperTest extends Assert {
+public class QueryHelperTest {
 
     private static final String QUERY = "name=zibert AND id=0*";
 
