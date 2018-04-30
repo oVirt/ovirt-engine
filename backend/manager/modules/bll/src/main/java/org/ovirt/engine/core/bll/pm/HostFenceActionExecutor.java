@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.pm;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
@@ -10,6 +11,9 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.di.Injector;
 
@@ -32,7 +36,15 @@ public class HostFenceActionExecutor {
     /**
      * Fencing policy applied during action execution
      */
-    private final FencingPolicy fencingPolicy;
+    private FencingPolicy fencingPolicy;
+
+    public FencingPolicy getFencingPolicy() {
+        return fencingPolicy;
+    }
+
+    public void setFencingPolicy(FencingPolicy fencingPolicy) {
+        this.fencingPolicy = fencingPolicy;
+    }
 
     public HostFenceActionExecutor(VDS fencedHost) {
         this(fencedHost, null);
@@ -98,7 +110,27 @@ public class HostFenceActionExecutor {
         PowerManagementHelper.AgentsIterator iterator = createFenceAgentsIterator(fenceAgents);
         FenceOperationResult result = null;
         while (iterator.hasNext()) {
-            result = createFenceActionExecutor(iterator.next()).fence(fenceAction);
+            List<FenceAgent> agents = iterator.next();
+            if (fenceAction != FenceActionType.STATUS) {
+                result = createFenceActionExecutor(agents).fence(FenceActionType.STATUS);
+                // Skip this agent in ERROR only if there is another agent to try
+                if (result.getStatus() == Status.ERROR && iterator.hasNext()) {
+                    continue;
+                }
+                // Checks if Host is already in the requested status. If Host is Down and a Stop command is issued
+                // or if Host is Up and a Start command is issued then do nothing.
+                if (result.getStatus() == Status.SKIPPED_ALREADY_IN_STATUS
+                        && result.getPowerStatus() == getRequestedPowerStatus(fenceAction)) {
+                    alertActionSkippedAlreadyInStatus(fenceAction, getRequestedPowerStatus(fenceAction));
+                    return result;
+                }
+                // Skip action if fencing is disabled in cluster policy
+                if (result.getStatus() == Status.SKIPPED_DUE_TO_POLICY) {
+                    alertActionSkippedFencingDisabledInPolicy();
+                    return result;
+                }
+            }
+            result = createFenceActionExecutor(agents).fence(fenceAction);
             if (result.getStatus() == Status.SUCCESS) {
                 break;
             }
@@ -112,6 +144,36 @@ public class HostFenceActionExecutor {
      */
     protected PowerManagementHelper.AgentsIterator createFenceAgentsIterator(List<FenceAgent> fenceAgents) {
         return PowerManagementHelper.getAgentsIterator(fenceAgents);
+    }
+
+    /**
+     * gets requseted power status for the given fence action
+     * @param fenceAction the fencing action
+     * @return PowerStatus
+     */
+
+    private PowerStatus getRequestedPowerStatus(FenceActionType fenceAction) {
+        return fenceAction == FenceActionType.START ? PowerStatus.ON : PowerStatus.OFF;
+    }
+
+    /**
+     * Alerts when power management stop was skipped because host is already down.
+     */
+    protected void alertActionSkippedAlreadyInStatus(FenceActionType fenceActionType, PowerStatus powerStatus) {
+        AuditLogable auditLogable = new AuditLogableImpl();
+        auditLogable.addCustomValue("HostName", fencedHost.getName());
+        auditLogable.addCustomValue("AgentStatus", powerStatus.name());
+        auditLogable.addCustomValue("Operation", fenceActionType.getValue());
+        Injector.get(AuditLogDirector.class).log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
+    }
+
+    /**
+     * Alerts when power management stop was skipped because host is already down.
+     */
+    protected void alertActionSkippedFencingDisabledInPolicy() {
+        AuditLogable auditLogable = new AuditLogableImpl();
+        auditLogable.addCustomValue("VdsName", fencedHost.getName());
+        Injector.get(AuditLogDirector.class).log(auditLogable, AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
     }
 
     /**

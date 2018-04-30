@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -59,6 +60,9 @@ public class HostFenceActionExecutorTest {
 
         executor = spy(new HostFenceActionExecutor(fencedHost, new FencingPolicy()));
         doReturn(agentExecutor1).doReturn(agentExecutor2).when(executor).createFenceActionExecutor(any());
+        doNothing().when(executor).alertActionSkippedAlreadyInStatus(any(), any());
+        doNothing().when(executor).alertActionSkippedFencingDisabledInPolicy();
+
     }
 
     /**
@@ -233,6 +237,46 @@ public class HostFenceActionExecutorTest {
                 executor.createFenceActionExecutor(createConcurrentAgentsList(2, 1))
                         instanceof ConcurrentAgentsFenceActionExecutor);
     }
+
+    @Test
+    public void hostPowerOffSkippedWhenFenceStatusIsOff() {
+        mockFenceAgent();
+
+        // result of fence action invoked on specified agent
+        mockFenceResult(
+                agentExecutor1,
+                new FenceOperationResult(Status.SKIPPED_ALREADY_IN_STATUS, PowerStatus.OFF));
+        FenceOperationResult result = executor.fence(FenceActionType.STOP);
+        assertEquals(result.getStatus(), Status.SKIPPED_ALREADY_IN_STATUS);
+    }
+
+    @Test
+    public void hostPowerOnSkippedWhenFenceStatusIsOn() {
+        mockFenceAgent();
+
+        // result of fence action invoked on specified agent
+        mockFenceResult(
+                agentExecutor1,
+                new FenceOperationResult(Status.SKIPPED_ALREADY_IN_STATUS, PowerStatus.ON));
+        FenceOperationResult result = executor.fence(FenceActionType.START);
+        assertEquals(result.getStatus(), Status.SKIPPED_ALREADY_IN_STATUS);
+    }
+
+    @Test
+    public void hostPowerOnSkippedWhenFencingDisabledInClusterPolicy() {
+        FencingPolicy fencingPolicy = new FencingPolicy();
+        fencingPolicy.setFencingEnabled(false);
+        executor.setFencingPolicy(fencingPolicy);
+        mockFenceAgent();
+
+        // result of fence action invoked on specified agent
+        mockFenceResult(
+                agentExecutor1,
+                new FenceOperationResult(Status.SKIPPED_DUE_TO_POLICY, PowerStatus.OFF));
+        FenceOperationResult result = executor.fence(FenceActionType.STOP);
+        assertEquals(result.getStatus(), Status.SKIPPED_DUE_TO_POLICY);
+    }
+
 
     protected FenceAgent createFenceAgent(int order) {
         FenceAgent agent = new FenceAgent();
