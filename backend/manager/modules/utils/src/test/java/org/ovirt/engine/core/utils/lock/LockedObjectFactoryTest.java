@@ -76,6 +76,7 @@ public class LockedObjectFactoryTest {
                 () -> lockedTestInstanceB.methodWithWriteLock(), false);
     }
 
+    @Test
     public void testAllocateNewMacWhenBlockedByReadMethod() {
         Runnable action = () -> lockedTestInstanceA.methodWithWriteLock();
         performOperation(() -> lockedTestInstanceB.methodWithReadLock(), action, false);
