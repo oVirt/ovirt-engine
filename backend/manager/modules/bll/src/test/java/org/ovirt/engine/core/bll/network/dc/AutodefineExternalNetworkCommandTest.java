@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
@@ -115,29 +115,21 @@ public class AutodefineExternalNetworkCommandTest extends BaseCommandTest {
     @Test
     public void testCommandNonVmNetwork() {
         setUpPhysicalNetwork(HAS_SHORT_NAME, !IS_VM_NETWORK);
-        Assert.assertFalse(command.validate());
-        Assert.assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
     }
 
     @Test
     public void testCommandExternalNetwork() {
         setUpPhysicalNetwork(HAS_SHORT_NAME, IS_VM_NETWORK);
         physicalNetwork.setProvidedBy(new ProviderNetwork());
-        Assert.assertFalse(command.validate());
-        Assert.assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK.name()));
+        ValidateTestUtils.runAndAssertValidateFailure
+                (command, EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK);
     }
 
     @Test
     public void testCommandInvalidNetworkId() {
         when(networkDao.get(PHYSICAL_NETWORK_ID)).thenReturn(null);
-        Assert.assertFalse(command.validate());
-        Assert.assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS.name()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.NETWORK_HAVING_ID_NOT_EXISTS);
     }
 
     @Test
