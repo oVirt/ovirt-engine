@@ -4,8 +4,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -17,8 +17,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
+import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetupExtension;
 
+@ExtendWith(UiCommonSetupExtension.class)
 public class BaseVmTest {
     protected static final Guid VM_ID = Guid.newGuid();
     protected static final VmType VM_TYPE = VmType.Desktop;
@@ -80,14 +81,11 @@ public class BaseVmTest {
     protected static final IconCacheModelVmBaseMock REVERSE_ICON_CACHE = new IconCacheModelVmBaseMock()
             .put(LARGE_ICON_DATA, LARGE_ICON_ID);
     protected static final Version CLUSTER_VERSION = Version.ALL.get(0);
-    protected static AsyncDataProvider adp;
+    protected AsyncDataProvider adp;
 
-    @ClassRule
-    public static UiCommonSetup setup = new UiCommonSetup();
-
-    @BeforeClass
-    public static void mockAsyncDataProvider() {
-        adp = setup.getMocks().asyncDataProvider();
+    @BeforeEach
+    public void mockAsyncDataProvider() {
+        adp = AsyncDataProvider.getInstance(); // Mocked by UiCommonSetupExtension
 
         when(adp.getConfigValuePreConverted(ConfigValues.VncKeyboardLayoutValidValues)).thenReturn(Collections.emptyList());
         when(adp.osNameExists(OS_TYPE)).thenReturn(true);

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VdsNumaNodeDaoTest extends BaseDaoTestCase<VdsNumaNodeDao> {
     private NumaNodeStatistics newNodeStatistics;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

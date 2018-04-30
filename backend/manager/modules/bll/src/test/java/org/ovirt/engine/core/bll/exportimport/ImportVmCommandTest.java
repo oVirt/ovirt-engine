@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.exportimport;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,12 +23,14 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -64,13 +66,12 @@ import org.ovirt.engine.core.common.utils.VmInitToOpenStackMetadataAdapter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
+@ExtendWith(RandomUtilsSeedingExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ImportVmCommandTest extends BaseCommandTest {
-    @Rule
-    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-
     @Mock
     private OsRepository osRepository;
 
@@ -96,7 +97,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Mock
     private VmInitToOpenStackMetadataAdapter openStackMetadataAdapter;
 
-    @Before
+    @BeforeEach
     public void setUpOsRepository() {
         final int osId = 0;
 
@@ -106,7 +107,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         doReturn(null).when(cmd).getCluster();
     }
@@ -409,13 +410,12 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cmd.generateNewDiskId(diskList, disk);
         cmd.updateManagedDeviceMap(disk, managedDevices);
         Guid oldDiskId = cmd.newDiskIdForDisk.get(disk.getId()).getId();
-        assertEquals("The old disk id should be similar to the value at the newDiskIdForDisk.",
-                beforeOldDiskId,
-                oldDiskId);
-        assertNotNull("The manged device should return the disk device by the new key",
-                managedDevices.get(disk.getId()));
-        assertNull("The manged device should not return the disk device by the old key",
-                managedDevices.get(beforeOldDiskId));
+        assertEquals(beforeOldDiskId, oldDiskId,
+                "The old disk id should be similar to the value at the newDiskIdForDisk.");
+        assertNotNull(managedDevices.get(disk.getId()),
+                "The manged device should return the disk device by the new key");
+        assertNull(managedDevices.get(beforeOldDiskId),
+                "The manged device should not return the disk device by the old key");
     }
 
     /* Tests for alias generation in addVmImagesAndSnapshots() */
@@ -433,7 +433,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).saveDiskVmElement(any(), any(), any());
         doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any());
         cmd.addVmImagesAndSnapshots();
-        assertEquals("Disk alias not generated", "testVm_Disk1", collapsedDisk.getDiskAlias());
+        assertEquals("testVm_Disk1", collapsedDisk.getDiskAlias(), "Disk alias not generated");
     }
 
     /* Test import images with empty Guid is failing */
@@ -488,7 +488,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).saveDiskVmElement(any(), any(), any());
 
         cmd.addVmImagesAndSnapshots();
-        assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
+        assertEquals("testVm_Disk1", activeDisk.getDiskAlias(), "Disk alias not generated");
     }
 
     @Test
@@ -508,6 +508,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any());
 
         cmd.addVmImagesAndSnapshots();
-        assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
+        assertEquals("testVm_Disk1", activeDisk.getDiskAlias(), "Disk alias not generated");
     }
 }

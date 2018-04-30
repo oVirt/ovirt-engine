@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -10,14 +10,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetUserVmsByUserIdAndGroupsQueryTest
         extends AbstractUserQueryTest<GetUserVmsByUserIdAndGroupsParameters, GetUserVmsByUserIdAndGroupsQuery<GetUserVmsByUserIdAndGroupsParameters>> {
 
@@ -67,20 +70,20 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         @SuppressWarnings("unchecked")
         List<VM> actualVMs = getQuery().getQueryReturnValue().getReturnValue();
         if (!expectedResults) {
-            assertTrue("no VMs should have been returned", actualVMs.isEmpty());
+            assertTrue(actualVMs.isEmpty(), "no VMs should have been returned");
         } else {
-            assertEquals("wrong number of VMs returned", 1, actualVMs.size());
+            assertEquals(1, actualVMs.size(), "wrong number of VMs returned");
             VM actualVM = actualVMs.get(0);
-            assertEquals("wrong VMs returned", expectedVM, actualVM);
+            assertEquals(expectedVM, actualVM, "wrong VMs returned");
 
             if (includeDiskData) {
-                assertEquals("Wrong number of disks on VM", 1, actualVM.getDiskList().size());
+                assertEquals(1, actualVM.getDiskList().size(), "Wrong number of disks on VM");
                 DiskImage actualDisk = actualVM.getDiskList().get(0);
-                assertEquals("Wrong disk on VM", expectedDisk, actualDisk);
+                assertEquals(expectedDisk, actualDisk, "Wrong disk on VM");
 
-                assertEquals("Wrong number of snapshots", 1, actualDisk.getSnapshots().size());
+                assertEquals(1, actualDisk.getSnapshots().size(), "Wrong number of snapshots");
                 DiskImage actualSnapshot = actualDisk.getSnapshots().get(0);
-                assertEquals("Wrong snapshot", expectedSnapshot, actualSnapshot);
+                assertEquals(expectedSnapshot, actualSnapshot, "Wrong snapshot");
             }
         }
     }

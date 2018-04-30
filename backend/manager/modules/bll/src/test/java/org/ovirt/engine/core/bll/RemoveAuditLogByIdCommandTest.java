@@ -1,17 +1,20 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.AuditLogDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
 
     @InjectMocks
@@ -27,7 +30,7 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     private static final long EVENT_ID_2 = 102;
     private static final long EVENT_ID_3 = 103;
 
-    @Before
+    @BeforeEach
     public void prepareMocks() {
         doReturn(getEventWithOvirtOrigin()).when(auditLogDao).get(EVENT_ID_2);
         doReturn(getEventWithExternalOrigin()).when(auditLogDao).get(EVENT_ID_3);

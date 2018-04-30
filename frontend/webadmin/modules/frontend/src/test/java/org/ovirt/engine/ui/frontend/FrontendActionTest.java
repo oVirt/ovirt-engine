@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.frontend;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
@@ -19,14 +19,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -57,7 +59,8 @@ import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
  * Do the actions in a separate unit test as the environment testing is different between queries and
  * actions
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FrontendActionTest {
 
     /**
@@ -106,7 +109,7 @@ public class FrontendActionTest {
 
     private Object testState = new Object();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
         fakeScheduler = new FakeGWTScheduler();
@@ -124,7 +127,7 @@ public class FrontendActionTest {
         when(mockConstants.noValidateMessage()).thenReturn(NO_MESSAGE);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         // Make sure that the query start and end have not been called.
         verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, false, true));
@@ -199,12 +202,12 @@ public class FrontendActionTest {
         callbackMultipleActions.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
-        assertEquals("ActionType should be 'AddLocalStorageDomain'", ActionType.AddLocalStorageDomain, //$NON-NLS-1$
-                callbackMultipleParam.getValue().getActionType());
-        assertEquals("Parameters should match", parameters, //$NON-NLS-1$
-                callbackMultipleParam.getValue().getParameters());
-        assertNull("There should be no result", callbackMultipleParam.getValue().getReturnValue()); //$NON-NLS-1$
-        assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
+        assertEquals(ActionType.AddLocalStorageDomain, callbackMultipleParam.getValue().getActionType(),
+                "ActionType should be 'AddLocalStorageDomain'"); //$NON-NLS-1$
+        assertEquals(parameters, callbackMultipleParam.getValue().getParameters(),
+                "Parameters should match"); //$NON-NLS-1$
+        assertNull(callbackMultipleParam.getValue().getReturnValue(), "There should be no result"); //$NON-NLS-1$
+        assertEquals(testState, callbackMultipleParam.getValue().getState(), "States should match"); //$NON-NLS-1$
         verifyAsyncActionStartedAndFailed();
     }
 
@@ -236,11 +239,11 @@ public class FrontendActionTest {
         callbackMultipleActions.getValue().onSuccess(returnValues);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
-        assertEquals("Parameters should match", parameters, //$NON-NLS-1$
-                callbackMultipleParam.getValue().getParameters());
-        assertEquals("Result should match", returnValues, //$NON-NLS-1$
-                callbackMultipleParam.getValue().getReturnValue());
-        assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
+        assertEquals(parameters, callbackMultipleParam.getValue().getParameters(),
+                "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValues, callbackMultipleParam.getValue().getReturnValue(),
+                "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackMultipleParam.getValue().getState(), "States should match"); //$NON-NLS-1$
         verifyAsyncActionStartedAndSucceeded();
     }
 
@@ -276,14 +279,14 @@ public class FrontendActionTest {
         ArgumentCaptor<ArrayList> failedCaptor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mockEventsHandler).runMultipleActionFailed(eq(ActionType.AddLocalStorageDomain),
                 failedCaptor.capture());
-        assertEquals("There is one failure", 1, failedCaptor.getValue().size()); //$NON-NLS-1$
-        assertEquals("Failures should match", returnValues.get(1), failedCaptor.getValue().get(0)); //$NON-NLS-1$
+        assertEquals(1, failedCaptor.getValue().size(), "There is one failure"); //$NON-NLS-1$
+        assertEquals(returnValues.get(1), failedCaptor.getValue().get(0), "Failures should match"); //$NON-NLS-1$
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
-        assertEquals("Parameters should match", parameters,  //$NON-NLS-1$
-                callbackMultipleParam.getValue().getParameters());
-        assertEquals("Result should match", returnValues, //$NON-NLS-1$
-                callbackMultipleParam.getValue().getReturnValue());
-        assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
+        assertEquals(parameters, callbackMultipleParam.getValue().getParameters(),
+                "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValues, callbackMultipleParam.getValue().getReturnValue(),
+                "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackMultipleParam.getValue().getState(), "States should match"); //$NON-NLS-1$
         verifyAsyncActionStartedAndSucceeded();
     }
 
@@ -327,15 +330,15 @@ public class FrontendActionTest {
         ArgumentCaptor<ArrayList> failedCaptor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mockEventsHandler).runMultipleActionFailed(eq(ActionType.AddLocalStorageDomain),
                 failedCaptor.capture());
-        assertEquals("There are two failures", 2, failedCaptor.getValue().size()); //$NON-NLS-1$
-        assertEquals("Failures should match", returnValues.get(1), failedCaptor.getValue().get(0)); //$NON-NLS-1$
-        assertEquals("Failures should match", returnValues.get(3), failedCaptor.getValue().get(1)); //$NON-NLS-1$
+        assertEquals(2, failedCaptor.getValue().size(), "There are two failures"); //$NON-NLS-1$
+        assertEquals(returnValues.get(1), failedCaptor.getValue().get(0), "Failures should match"); //$NON-NLS-1$
+        assertEquals(returnValues.get(3), failedCaptor.getValue().get(1), "Failures should match"); //$NON-NLS-1$
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
-        assertEquals("Parameters should match", parameters, //$NON-NLS-1$
-                callbackMultipleParam.getValue().getParameters());
-        assertEquals("Result should match", returnValues, //$NON-NLS-1$
-                callbackMultipleParam.getValue().getReturnValue());
-        assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
+        assertEquals(parameters, callbackMultipleParam.getValue().getParameters(),
+                "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValues, callbackMultipleParam.getValue().getReturnValue(),
+                "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackMultipleParam.getValue().getState(), "States should match"); //$NON-NLS-1$
         verifyAsyncActionStartedAndSucceeded();
     }
 
@@ -379,11 +382,11 @@ public class FrontendActionTest {
         callbackAction.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
-        assertNull("Result should be null", callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
-        assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
-        assertEquals("Action type should match", ActionType.AddDisk, //$NON-NLS-1$
-                callbackParam.getValue().getActionType());
+        assertEquals(testParameters, callbackParam.getValue().getParameters(), "Parameters should match"); //$NON-NLS-1$
+        assertNull(callbackParam.getValue().getReturnValue(), "Result should be null"); //$NON-NLS-1$
+        assertEquals(testState, callbackParam.getValue().getState(), "States should match"); //$NON-NLS-1$
+        assertEquals(ActionType.AddDisk, callbackParam.getValue().getActionType(),
+                "Action type should match"); //$NON-NLS-1$
         verifyAsyncActionStartedAndFailed();
     }
 
@@ -403,11 +406,11 @@ public class FrontendActionTest {
         ActionReturnValue returnValue = new ActionReturnValue();
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
-        assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
-        assertEquals("Action type should match", ActionType.AddDisk, //$NON-NLS-1$
-                callbackParam.getValue().getActionType());
+        assertEquals(testParameters, callbackParam.getValue().getParameters(), "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue(), "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackParam.getValue().getState(), "States should match"); //$NON-NLS-1$
+        assertEquals(ActionType.AddDisk, callbackParam.getValue().getActionType(),
+                "Action type should match"); //$NON-NLS-1$
         verifyAsyncActionStartedAndSucceeded();
     }
 
@@ -429,11 +432,11 @@ public class FrontendActionTest {
         frontend.handleActionResult(ActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, false);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
-        assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
-        assertEquals("Action type should match", ActionType.AddDisk, //$NON-NLS-1$
-                callbackParam.getValue().getActionType());
+        assertEquals(testParameters, callbackParam.getValue().getParameters(), "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue(), "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackParam.getValue().getState(), "States should match"); //$NON-NLS-1$
+        assertEquals(ActionType.AddDisk, callbackParam.getValue().getActionType(),
+                "Action type should match"); //$NON-NLS-1$
     }
 
     /**
@@ -461,11 +464,11 @@ public class FrontendActionTest {
         frontend.handleActionResult(ActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
-        assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
-        assertEquals("Action type should match", ActionType.AddDisk, //$NON-NLS-1$
-                callbackParam.getValue().getActionType());
+        assertEquals(testParameters, callbackParam.getValue().getParameters(), "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue(), "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackParam.getValue().getState(), "States should match"); //$NON-NLS-1$
+        assertEquals(ActionType.AddDisk, callbackParam.getValue().getActionType(),
+                "Action type should match"); //$NON-NLS-1$
         verify(mockEventsHandler).runActionExecutionFailed(ActionType.AddDisk, testFault);
     }
 
@@ -492,18 +495,18 @@ public class FrontendActionTest {
         frontend.handleActionResult(ActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
-        assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
-        assertEquals("Action type should match", ActionType.AddDisk, //$NON-NLS-1$
-                callbackParam.getValue().getActionType());
+        assertEquals(testParameters, callbackParam.getValue().getParameters(), "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue(), "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackParam.getValue().getState(), "States should match"); //$NON-NLS-1$
+        assertEquals(ActionType.AddDisk, callbackParam.getValue().getActionType(),
+                "Action type should match"); //$NON-NLS-1$
         ArgumentCaptor<FrontendFailureEventArgs> failureCaptor =
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
-        assertEquals("Descriptions should match", "This is a description", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessages().get(0).getDescription());
-        assertEquals("Text should match", NO_MESSAGE, //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessages().get(0).getText());
+        assertEquals("This is a description", failureCaptor.getValue().getMessages().get(0).getDescription(), //$NON-NLS-1$
+                "Descriptions should match"); //$NON-NLS-1$
+        assertEquals(NO_MESSAGE, failureCaptor.getValue().getMessages().get(0).getText(), //$NON-NLS-1$
+                "Text should match"); //$NON-NLS-1$
     }
 
     /**
@@ -532,18 +535,18 @@ public class FrontendActionTest {
         frontend.handleActionResult(ActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
-        assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
-        assertEquals("Action type should match", ActionType.AddDisk, //$NON-NLS-1$
-                callbackParam.getValue().getActionType());
+        assertEquals(testParameters, callbackParam.getValue().getParameters(), "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue(), "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackParam.getValue().getState(), "States should match"); //$NON-NLS-1$
+        assertEquals(ActionType.AddDisk, callbackParam.getValue().getActionType(),
+                "Action type should match"); //$NON-NLS-1$
         ArgumentCaptor<FrontendFailureEventArgs> failureCaptor =
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
-        assertEquals("Descriptions should match", "This is a description", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessages().get(0).getDescription());
-        assertEquals("Text should match translation", "Translated Message 1", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessages().get(0).getText());
+        assertEquals("This is a description", failureCaptor.getValue().getMessages().get(0).getDescription(), //$NON-NLS-1$
+                "Descriptions should match"); //$NON-NLS-1$
+        assertEquals("Translated Message 1", failureCaptor.getValue().getMessages().get(0).getText(), //$NON-NLS-1$
+                "Text should match translation"); //$NON-NLS-1$
     }
 
     /**
@@ -574,18 +577,18 @@ public class FrontendActionTest {
         frontend.handleActionResult(ActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
-        assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValue, callbackParam.getValue().getReturnValue()); //$NON-NLS-1$
-        assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
-        assertEquals("Action type should match", ActionType.AddDisk, //$NON-NLS-1$
-                callbackParam.getValue().getActionType());
+        assertEquals(testParameters, callbackParam.getValue().getParameters(), "Parameters should match"); //$NON-NLS-1$
+        assertEquals(returnValue, callbackParam.getValue().getReturnValue(), "Result should match"); //$NON-NLS-1$
+        assertEquals(testState, callbackParam.getValue().getState(), "States should match"); //$NON-NLS-1$
+        assertEquals(ActionType.AddDisk, callbackParam.getValue().getActionType(),
+                "Action type should match"); //$NON-NLS-1$
         ArgumentCaptor<FrontendFailureEventArgs> failureCaptor =
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
-        assertEquals("Text should match", "Translated Message 1", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessages().get(0).getText());
-        assertEquals("Text should match", "Translated Message 2", //$NON-NLS-1$ //$NON-NLS-2$
-                failureCaptor.getValue().getMessages().get(1).getText());
+        assertEquals("Translated Message 1", failureCaptor.getValue().getMessages().get(0).getText(), //$NON-NLS-1$
+                "Text should match"); //$NON-NLS-1$
+        assertEquals("Translated Message 2", failureCaptor.getValue().getMessages().get(1).getText(), //$NON-NLS-1$
+                "Text should match"); //$NON-NLS-1$
     }
 
     /**
@@ -611,9 +614,9 @@ public class FrontendActionTest {
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals(returnValue, callbackParam.getValue().getReturnValue());
-        assertEquals("List size should be 0", 0, actionTypes.size()); //$NON-NLS-1$
-        assertEquals("List size should be 0", 0, testParameters.size()); //$NON-NLS-1$
-        assertEquals("List size should be 0", 0, callbacks.size()); //$NON-NLS-1$
+        assertEquals(0, actionTypes.size(), "List size should be 0"); //$NON-NLS-1$
+        assertEquals(0, testParameters.size(), "List size should be 0"); //$NON-NLS-1$
+        assertEquals(0, callbacks.size(), "List size should be 0"); //$NON-NLS-1$
         verifyAsyncActionStartedAndSucceeded();
     }
 

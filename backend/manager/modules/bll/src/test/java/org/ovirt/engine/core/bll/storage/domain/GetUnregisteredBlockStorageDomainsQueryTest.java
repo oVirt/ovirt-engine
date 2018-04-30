@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -10,11 +10,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -30,7 +28,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
-@RunWith(MockitoJUnitRunner.class)
 public class GetUnregisteredBlockStorageDomainsQueryTest extends
         AbstractQueryTest<GetUnregisteredBlockStorageDomainsParameters, GetUnregisteredBlockStorageDomainsQuery<GetUnregisteredBlockStorageDomainsParameters>> {
 
@@ -48,7 +45,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
     private LunDao lunDao;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         doReturn(getExistingStorageDomains()).when(storageDomainDao).getAll();

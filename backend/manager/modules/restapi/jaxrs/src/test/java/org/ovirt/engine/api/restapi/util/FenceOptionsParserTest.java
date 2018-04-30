@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.ovirt.engine.api.restapi.util.FenceOptionsParser.parse;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Option;
 

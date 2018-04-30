@@ -1,16 +1,18 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.StorageResource;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendHostStorageResourceTest
     extends AbstractBackendCollectionResourceTest<HostStorage, LUNs, BackendHostStorageResource> {
 
@@ -30,7 +33,7 @@ public class BackendHostStorageResourceTest
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Override
     public void testQuery() {
     }

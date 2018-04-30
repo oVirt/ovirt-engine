@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -31,7 +31,7 @@ public class NetworkQosValidatorTest {
     private NetworkQosValidator validator;
     private NetworkQosValidator nullValidator;
 
-    @Before
+    @BeforeEach
     public void setup() {
         qos = new NetworkQoS();
         oldQos = new NetworkQoS();

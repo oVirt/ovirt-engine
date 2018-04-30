@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class HotUnPlugDiskFromVmCommandTest extends HotPlugDiskToVmCommandTest {
 
     @Override

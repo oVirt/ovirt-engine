@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,16 +10,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetupExtension;
 
+@ExtendWith(UiCommonSetupExtension.class)
 public class SortedListModelTest {
-
-    @ClassRule
-    public static UiCommonSetup setup = new UiCommonSetup();
-
     static class TestItem {
 
         private final int value;
@@ -68,7 +65,7 @@ public class SortedListModelTest {
         return Comparator.comparingInt(t -> t.salt);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         testedModel = new SortedListModel<>();
     }

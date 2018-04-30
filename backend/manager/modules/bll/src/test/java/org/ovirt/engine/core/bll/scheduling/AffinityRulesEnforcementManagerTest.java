@@ -10,17 +10,19 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -31,16 +33,18 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AffinityRulesEnforcementManagerTest {
 
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1L),
-        MockConfigDescriptor.of(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1L)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.AffinityRulesEnforcementManagerInitialDelay, 1L),
+                MockConfigDescriptor.of(ConfigValues.AffinityRulesEnforcementManagerRegularInterval, 1L)
+        );
+    }
 
     @Mock
     private AuditLogDirector auditLogDirector;
@@ -73,7 +77,7 @@ public class AffinityRulesEnforcementManagerTest {
      * - vm2 runs on cluster2.
      * In the default setup  we tell the AffinityRulesEnforcmenetManager, that in each cluster, something needs to be migrated.
      */
-    @Before
+    @BeforeEach
     public void setup() {
         cluster1 = createCluster();
         cluster2 = createCluster();

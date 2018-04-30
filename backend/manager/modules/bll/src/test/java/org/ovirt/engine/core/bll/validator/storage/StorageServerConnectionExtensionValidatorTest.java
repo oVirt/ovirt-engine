@@ -1,47 +1,47 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class StorageServerConnectionExtensionValidatorTest {
     @Mock
-    private VdsDao vdsDao;
+    @InjectedMock
+    public VdsDao vdsDao;
 
     @Mock
-    private StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
+    @InjectedMock
+    public StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
 
     @Spy
     private StorageServerConnectionExtensionValidator validator;
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
     private StorageServerConnectionExtension conn;
 
-    @Before
+    @BeforeEach
     public void setup() {
         Guid hostId = Guid.newGuid();
-        injectorRule.bind(StorageServerConnectionExtensionDao.class, storageServerConnectionExtensionDao);
-        injectorRule.bind(VdsDao.class, vdsDao);
         doReturn(new VDS()).when(vdsDao).get(hostId);
 
         conn = new StorageServerConnectionExtension();

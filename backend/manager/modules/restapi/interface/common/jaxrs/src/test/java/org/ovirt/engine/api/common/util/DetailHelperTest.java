@@ -16,7 +16,7 @@
 
 package org.ovirt.engine.api.common.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,8 +26,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 
 public class DetailHelperTest {
 

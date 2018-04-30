@@ -1,18 +1,18 @@
 package org.ovirt.engine.core.searchbackend;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class EnumValueAutoCompleterTest {
     private EnumValueAutoCompleter comp;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         comp = new EnumValueAutoCompleter(Jedi.class);
     }
@@ -21,13 +21,13 @@ public class EnumValueAutoCompleterTest {
     @Test
     public void testValues() {
         List<String> comps = Arrays.asList(comp.getCompletion("L"));
-        assertTrue("luke", comps.contains("luke"));
-        assertTrue("leia", comps.contains("leia"));
+        assertTrue(comps.contains("luke"), "luke");
+        assertTrue(comps.contains("leia"), "leia");
     }
 
     @Test
     public void testConvertFieldEnumValueToActualValue() {
-        assertEquals("MACE", "4", comp.convertFieldEnumValueToActualValue("MACE"));
-        assertEquals("mace", "4", comp.convertFieldEnumValueToActualValue("mace"));
+        assertEquals("4", comp.convertFieldEnumValueToActualValue("MACE"), "MACE");
+        assertEquals("4", comp.convertFieldEnumValueToActualValue("mace"), "mace");
     }
 }

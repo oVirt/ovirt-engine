@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -42,7 +42,7 @@ public class GetQuotaStorageByQuotaIdQueryTest
         // Assert the result
         @SuppressWarnings("unchecked")
         List<QuotaStorage> results = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of results returned", 1, results.size());
-        assertEquals("Wrong results returned", group, results.get(0));
+        assertEquals(1, results.size(), "Wrong number of results returned");
+        assertEquals(group, results.get(0), "Wrong results returned");
     }
 }

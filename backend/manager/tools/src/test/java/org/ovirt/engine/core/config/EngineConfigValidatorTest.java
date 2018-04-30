@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.config;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 
 public class EngineConfigValidatorTest {
@@ -31,26 +32,26 @@ public class EngineConfigValidatorTest {
         setAction.validate(engineConfigMap);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSetValidatorWithOutKey() {
         EngineConfigMap engineConfigMap = mock(EngineConfigMap.class);
         when(engineConfigMap.getValue()).thenReturn("valueToSet");
         ConfigActionType setAction = ConfigActionType.ACTION_SET;
-        setAction.validate(engineConfigMap);
+        assertThrows(IllegalArgumentException.class, () -> setAction.validate(engineConfigMap));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSetValidatorWithOutValue() {
         EngineConfigMap engineConfigMap = mock(EngineConfigMap.class);
         when(engineConfigMap.getKey()).thenReturn("keyToSet");
         ConfigActionType setAction = ConfigActionType.ACTION_SET;
-        setAction.validate(engineConfigMap);
+        assertThrows(IllegalArgumentException.class, () -> setAction.validate(engineConfigMap));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetValidatorWithOutKey() {
         EngineConfigMap engineConfigMap = mock(EngineConfigMap.class);
         ConfigActionType setAction = ConfigActionType.ACTION_GET;
-        setAction.validate(engineConfigMap);
+        assertThrows(IllegalArgumentException.class, () -> setAction.validate(engineConfigMap));
     }
 }

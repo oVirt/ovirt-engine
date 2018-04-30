@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,9 +19,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Api;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.SpecialObjects;
@@ -229,7 +229,7 @@ public class BackendApiResourceTest {
         resource = new BackendApiResource();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         backend = mock(BackendLocal.class);
 
@@ -261,7 +261,7 @@ public class BackendApiResourceTest {
         resource.setHttpHeaders(httpHeaders);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         CurrentManager.remove();
     }

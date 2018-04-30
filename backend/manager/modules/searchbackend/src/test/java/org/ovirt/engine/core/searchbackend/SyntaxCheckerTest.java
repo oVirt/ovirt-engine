@@ -1,43 +1,46 @@
 package org.ovirt.engine.core.searchbackend;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.utils.MockedConfig;
 
-
+@ExtendWith(MockConfigExtension.class)
 public class SyntaxCheckerTest {
 
     private static final String TAG_NAME = "'tag1'";
     private static final String TAG_NAME_WITH_CHILDREN = "'tag1','all'";
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.DBPagingType, "Range"),
-            MockConfigDescriptor.of(ConfigValues.DBSearchTemplate, "SELECT * FROM (%2$s) %1$s) as T1 %3$s"),
-            MockConfigDescriptor.of(ConfigValues.DBPagingSyntax, "OFFSET (%1$s -1) LIMIT %2$s"),
-            MockConfigDescriptor.of(ConfigValues.PgMajorRelease, 9),
-            MockConfigDescriptor.of(ConfigValues.DBI18NPrefix, "")
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.DBPagingType, "Range"),
+                MockConfigDescriptor.of(ConfigValues.DBSearchTemplate, "SELECT * FROM (%2$s) %1$s) as T1 %3$s"),
+                MockConfigDescriptor.of(ConfigValues.DBPagingSyntax, "OFFSET (%1$s -1) LIMIT %2$s"),
+                MockConfigDescriptor.of(ConfigValues.PgMajorRelease, 9),
+                MockConfigDescriptor.of(ConfigValues.DBI18NPrefix, "")
+        );
+    }
 
     public boolean contains(SyntaxContainer res, String item) {
         return Arrays.asList(res.getCompletionArray()).contains(item);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         BaseConditionFieldAutoCompleter.tagsHandler = mock(ITagsHandler.class);
         Tags tags = new Tags();
@@ -54,15 +57,15 @@ public class SyntaxCheckerTest {
     public void testVMCompletion() {
         SyntaxChecker chkr = new SyntaxChecker();
         SyntaxContainer res = chkr.getCompletion("");
-        assertTrue("Vms", contains(res, "Vms"));
+        assertTrue(contains(res, "Vms"), "Vms");
         res = chkr.getCompletion("V");
-        assertTrue("Vms2", contains(res, "Vms"));
+        assertTrue(contains(res, "Vms"), "Vms2");
         res = chkr.getCompletion("Vms");
-        assertTrue(":", contains(res, ":"));
+        assertTrue(contains(res, ":"), ":");
         res = chkr.getCompletion("Vms : ");
-        assertTrue("Events", contains(res, "Events"));
+        assertTrue(contains(res, "Events"), "Events");
         res = chkr.getCompletion("Vms : Events");
-        assertTrue("=", contains(res, "="));
+        assertTrue(contains(res, "="), "=");
     }
 
     /**
@@ -73,23 +76,22 @@ public class SyntaxCheckerTest {
     public void testHostCompletion() {
         SyntaxChecker chkr = new SyntaxChecker();
         SyntaxContainer res = chkr.getCompletion("");
-        assertTrue("Hosts", contains(res, "Hosts"));
+        assertTrue(contains(res, "Hosts"), "Hosts");
         res = chkr.getCompletion("H");
-        assertTrue("Hots2", contains(res, "Hosts"));
+        assertTrue(contains(res, "Hosts"), "Hots2");
         res = chkr.getCompletion("Host");
-        assertTrue(":", contains(res, ":"));
+        assertTrue(contains(res, ":"), ":");
         res = chkr.getCompletion("Host : ");
-        assertTrue("sortby", contains(res, "sortby"));
+        assertTrue(contains(res, "sortby"), "sortby");
         res = chkr.getCompletion("Host : sortby");
-        assertTrue("migrating_vms", contains(res, "migrating_vms"));
+        assertTrue(contains(res, "migrating_vms"), "migrating_vms");
         res = chkr.getCompletion("Host : sortby migrating_vms");
-        assertTrue("asc", contains(res, "asc"));
+        assertTrue(contains(res, "asc"), "asc");
     }
 
     @Test
+    @MockedConfig("mockConfigurationForPagPhraseWrong")
     public void testGetPagPhraseWrong() {
-        mcr.mockConfigValue(ConfigValues.DBPagingType, "wrongPageType");
-        mcr.mockConfigValue(ConfigValues.DBPagingSyntax, "wrongPageSyntax");
         SyntaxChecker chkr = new SyntaxChecker();
         SyntaxContainer res = new SyntaxContainer("");
         res.setMaxCount(0);
@@ -98,16 +100,32 @@ public class SyntaxCheckerTest {
         assertEquals("", chkr.getPagePhrase(res, "1"));
     }
 
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationForPagPhraseWrong() {
+        return Stream.concat(mockConfiguration(),
+                Stream.of(
+                        MockConfigDescriptor.of(ConfigValues.DBPagingType, "wrongPageType"),
+                        MockConfigDescriptor.of(ConfigValues.DBPagingSyntax, "wrongPageSyntax"))
+        );
+    }
+
+
     @Test
+    @MockedConfig("mockConfigurationForPagPhrase")
     public void testGetPagPhrase() {
-        mcr.mockConfigValue(ConfigValues.DBPagingType, "Range");
-        mcr.mockConfigValue(ConfigValues.DBPagingSyntax, " WHERE RowNum BETWEEN %1$s AND %2$s");
         SyntaxChecker chkr = new SyntaxChecker();
         SyntaxContainer res = new SyntaxContainer("");
         res.setMaxCount(0);
 
         // check valid config values
         assertNotEquals("", chkr.getPagePhrase(res, "1"));
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationForPagPhrase() {
+        return Stream.concat(mockConfiguration(),
+                Stream.of(
+                        MockConfigDescriptor.of(ConfigValues.DBPagingType, "Range"),
+                        MockConfigDescriptor.of(ConfigValues.DBPagingSyntax, " WHERE RowNum BETWEEN %1$s AND %2$s"))
+        );
     }
 
     @Test
@@ -467,7 +485,7 @@ public class SyntaxCheckerTest {
         SyntaxChecker chkr = new SyntaxChecker();
         ISyntaxChecker curSyntaxChecker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");
         SyntaxContainer res = curSyntaxChecker.analyzeSyntaxState(dynamicQuery, true);
-        assertTrue("Invalid syntax: " + dynamicQuery, res.getvalid());
+        assertTrue(res.getvalid(), "Invalid syntax: " + dynamicQuery);
         String query = chkr.generateQueryFromSyntaxContainer(res, true);
         assertEquals(exepctedSQLResult, query);
     }

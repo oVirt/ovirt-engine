@@ -1,19 +1,19 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils.MB_TO_BYTES;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 
 public class IoTuneUtilsTest {
 
     private StorageQos qos;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         qos = new StorageQos();
     }

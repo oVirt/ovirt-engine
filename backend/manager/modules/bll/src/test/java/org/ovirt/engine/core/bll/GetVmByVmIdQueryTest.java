@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -35,6 +35,6 @@ public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameter
 
         VM result = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("Wrong VM returned", expectedResult, result);
+        assertEquals(expectedResult, result, "Wrong VM returned");
     }
 }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.utils.collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -10,8 +10,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CopyOnAccessMapTest {
 
@@ -132,7 +132,7 @@ public class CopyOnAccessMapTest {
     private MyValue value2;
     private Map<MyKey, MyValue> innerMap = null;
 
-    @Before
+    @BeforeEach
     public void setup() {
         innerMap = new HashMap<>();
         testedMap = new CopyOnAccessMap<>(innerMap);

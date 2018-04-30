@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,11 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
@@ -31,7 +33,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-@RunWith(Silent.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ExecuteNetworkCommandInNetworkOperationTest {
 
     @Mock
@@ -78,7 +81,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     private DataFromHostSetupNetworksModel dataFromHostSetupNetworksModel =
             new DataFromHostSetupNetworksModel();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(logicalNetworkModelOfNetworkA.getNetwork()).thenReturn(networkA);
         when(logicalNetworkModelOfNetworkC.getNetwork()).thenReturn(networkC);

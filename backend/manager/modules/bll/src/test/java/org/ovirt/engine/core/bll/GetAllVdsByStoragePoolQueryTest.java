@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -36,6 +36,6 @@ public class GetAllVdsByStoragePoolQueryTest extends AbstractUserQueryTest<IdQue
         getQuery().executeQueryCommand();
 
         // Check the result
-        assertEquals("Wrong roles returned", result, getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(result, getQuery().getQueryReturnValue().getReturnValue(), "Wrong roles returned");
     }
 }

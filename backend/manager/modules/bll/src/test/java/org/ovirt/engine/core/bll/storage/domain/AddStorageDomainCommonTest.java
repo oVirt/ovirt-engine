@@ -1,15 +1,18 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -32,19 +35,20 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AddStorageDomainCommonTest extends BaseCommandTest {
 
     @InjectMocks
     private AddStorageDomainCommon<StorageDomainManagementParameter> cmd =
             new AddStorageDomainCommon<>(new StorageDomainManagementParameter(), null);
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.StorageDomainNameSizeLimit, 10)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.StorageDomainNameSizeLimit, 10));
+    }
 
     @Mock
     private VdsDao vdsDao;
@@ -62,7 +66,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
     private StoragePool sp;
     private Guid connId;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Guid vdsId = Guid.newGuid();
         spId = Guid.newGuid();
@@ -110,7 +114,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         sd.setStorageFormat(null);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
         StorageFormatType targetStorageFormatType = StorageFormatType.values()[StorageFormatType.values().length - 1];
-        assertEquals("Format not initialized correctly", targetStorageFormatType, sd.getStorageFormat());
+        assertEquals(targetStorageFormatType, sd.getStorageFormat(), "Format not initialized correctly");
     }
 
     @Test
@@ -118,7 +122,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         sd.setStorageFormat(null);
         sd.setStorageDomainType(StorageDomainType.ISO);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
-        assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
+        assertEquals(StorageFormatType.V1, sd.getStorageFormat(), "Format not initialized correctly");
     }
 
     @Test
@@ -126,7 +130,7 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         sd.setStorageFormat(null);
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
-        assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
+        assertEquals(StorageFormatType.V1, sd.getStorageFormat(), "Format not initialized correctly");
     }
 
     @Test

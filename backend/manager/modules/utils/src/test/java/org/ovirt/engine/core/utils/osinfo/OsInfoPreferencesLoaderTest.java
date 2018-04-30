@@ -1,18 +1,18 @@
 package org.ovirt.engine.core.utils.osinfo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OsInfoPreferencesLoaderTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws URISyntaxException {
         Path directoryPath = new File(OsInfoPreferencesLoader.class.getResource("/osinfo.conf.d").toURI().getPath()).toPath();
         OsInfoPreferencesLoader.INSTANCE.init(directoryPath);

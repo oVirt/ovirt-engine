@@ -1,21 +1,22 @@
 package org.ovirt.engine.core.uutils.config;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class ShellLikeConfdTest {
 
     private static ShellLikeConfd config;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         config = new ShellLikeConfd();
 
@@ -41,11 +42,10 @@ public class ShellLikeConfdTest {
         assertArrayEquals(reference.split("\n"), res);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetSuffixedProperty() {
-
         assertEquals("value0", config.getProperty("key00", "non_existent", false));
         assertEquals("suffixed val", config.getProperty("key01", "suffixed", false));
-        assertEquals("throws exception", config.getProperty("non_existent", "non_existent", false));
+        assertThrows(IllegalArgumentException.class, () -> config.getProperty("non_existent", "non_existent", false));
     }
 }

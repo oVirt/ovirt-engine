@@ -6,9 +6,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ActivateStorageDomainCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainDao storageDomainDao;

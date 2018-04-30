@@ -1,10 +1,10 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.DiskStatus;
@@ -35,11 +35,11 @@ public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSn
         assertEquals(model.getDescription(), transform.getDescription());
         assertNotNull(model.getSnapshot());
         assertEquals(model.getSnapshot().getId(), transform.getSnapshot().getId());
-        assertEquals("unexpected status", model.getStatus(), transform.getStatus());
-        assertEquals("unexpected sparse", model.isSparse(), transform.isSparse());
-        assertEquals("unexpected propagate errors", model.isPropagateErrors(), transform.isPropagateErrors());
-        assertEquals("unexpected wipe after delete", model.isWipeAfterDelete(), transform.isWipeAfterDelete());
-        assertEquals("unexpected shareable", model.isShareable(), transform.isShareable());
+        assertEquals(model.getStatus(), transform.getStatus(), "unexpected status");
+        assertEquals(model.isSparse(), transform.isSparse(), "unexpected sparse");
+        assertEquals(model.isPropagateErrors(), transform.isPropagateErrors(), "unexpected propagate errors");
+        assertEquals(model.isWipeAfterDelete(), transform.isWipeAfterDelete(), "unexpected wipe after delete");
+        assertEquals(model.isShareable(), transform.isShareable(), "unexpected shareable");
     }
 
     @Test

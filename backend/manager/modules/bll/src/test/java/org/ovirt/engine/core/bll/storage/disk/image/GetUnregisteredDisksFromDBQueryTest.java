@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -27,7 +27,7 @@ public class GetUnregisteredDisksFromDBQueryTest extends AbstractQueryTest<IdAnd
     @Mock
     private UnregisteredDisksDao unregisteredDisksDaoMock;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -41,7 +41,7 @@ public class GetUnregisteredDisksFromDBQueryTest extends AbstractQueryTest<IdAnd
 
         @SuppressWarnings("unchecked")
         List<VM> result = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of Disks in result", 1, result.size());
+        assertEquals(1, result.size(), "Wrong number of Disks in result");
     }
 
     private void mockQueryParameters() {

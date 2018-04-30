@@ -14,14 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -44,7 +44,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GlusterSnapshotSyncJobTest {
     private static final Guid CLUSTER_ID_1 = Guid.newGuid();
     private static final Guid VOLUME_ID_1 = Guid.newGuid();
@@ -83,7 +83,7 @@ public class GlusterSnapshotSyncJobTest {
     @Mock
     private EngineLock engineLock;
 
-    @Before
+    @BeforeEach
     public void init() {
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getValidCluster()).when(clusterDao).get(any());

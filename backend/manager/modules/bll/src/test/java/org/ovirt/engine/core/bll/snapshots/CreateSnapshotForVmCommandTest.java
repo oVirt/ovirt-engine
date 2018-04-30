@@ -13,11 +13,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -40,6 +42,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 /** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
@@ -89,7 +92,7 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     private VmOverheadCalculatorImpl vmOverheadCalculator;
 
     @SuppressWarnings("unchecked")
-    @Before
+    @BeforeEach
     public void setUp() {
         doReturn(true).when(vm).isManagedVm();
         doReturn(DisplayType.vga).when(vmStatic).getDefaultDisplayType();

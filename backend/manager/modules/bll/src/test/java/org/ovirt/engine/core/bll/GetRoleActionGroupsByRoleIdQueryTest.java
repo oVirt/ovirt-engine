@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -34,6 +34,6 @@ public class GetRoleActionGroupsByRoleIdQueryTest extends AbstractUserQueryTest<
         // Execute the query and assert the result
         getQuery().executeQueryCommand();
 
-        assertEquals("Wrong query result", expected, getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(expected, getQuery().getQueryReturnValue().getReturnValue(), "Wrong query result");
     }
 }

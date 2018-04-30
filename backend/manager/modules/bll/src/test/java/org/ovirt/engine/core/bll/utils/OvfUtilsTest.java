@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.utils;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,7 +26,7 @@ public class OvfUtilsTest {
 
     private OvfUtils ovfUtils;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ovfUtils = new OvfUtils();
     }
@@ -35,14 +35,14 @@ public class OvfUtilsTest {
     public void testFetchVmDisks() throws Exception {
         XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
         Set<Guid> disks = ovfUtils.fetchVmDisks(xmlDocument);
-        assertNotNull("The list of disks should not be null", disks);
-        assertTrue("The list of disks should not be empty", !disks.isEmpty());
+        assertNotNull(disks, "The list of disks should not be null");
+        assertTrue(!disks.isEmpty(), "The list of disks should not be empty");
     }
 
     @Test
     public void testIsExternalVM() throws Exception {
         XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
-        assertFalse("VM should not be external VM", ovfUtils.isExternalVM(xmlDocument));
+        assertFalse(ovfUtils.isExternalVM(xmlDocument), "VM should not be external VM");
     }
 
     @Test
@@ -50,14 +50,14 @@ public class OvfUtilsTest {
         XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
         List<UnregisteredDisk> unregDisks = new ArrayList<>();
         ovfUtils.updateUnregisteredDisksWithVMs(unregDisks, Guid.newGuid(), "TestVM", xmlDocument);
-        assertTrue("The list of disks should not be empty", unregDisks.isEmpty());
+        assertTrue(unregDisks.isEmpty(), "The list of disks should not be empty");
     }
 
     @Test
     public void testMemoryDisks() throws Exception {
         XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
         Set<Guid> memoryDisks = ovfUtils.fetchMemoryDisks(xmlDocument);
-        assertFalse("The list of memory disks for snapshot should not be empty", memoryDisks.isEmpty());
+        assertFalse(memoryDisks.isEmpty(), "The list of memory disks for snapshot should not be empty");
     }
 
     @Test
@@ -71,8 +71,8 @@ public class OvfUtilsTest {
 
         unregDisks.add(unregDisk);
         ovfUtils.updateUnregisteredDisksWithVMs(unregDisks, Guid.newGuid(), "TestVM", xmlDocument);
-        assertTrue("The list of disks should not be empty", !unregDisks.isEmpty());
-        assertTrue("The VMs id is set in the unregisteterd disks", !unregDisks.get(0).getVms().isEmpty());
+        assertTrue(!unregDisks.isEmpty(), "The list of disks should not be empty");
+        assertTrue(!unregDisks.get(0).getVms().isEmpty(), "The VMs id is set in the unregisteterd disks");
     }
 
     private String getXmlOvfData() throws IOException {

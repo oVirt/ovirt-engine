@@ -4,13 +4,16 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -33,8 +36,11 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.utils.MockedConfig;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
 
     @Mock
@@ -56,16 +62,20 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
     private StorageDomain storageDomain;
     private DiskImage diskImage;
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.QcowCompatSupported, Version.v4_2, true));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.QcowCompatSupported, Version.v4_2, true));
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationQcowCompatNotSupported() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.QcowCompatSupported, Version.v4_2, false));
+    }
 
     @Spy
     @InjectMocks
     private AmendImageGroupVolumesCommand<AmendImageGroupVolumesCommandParameters> command =
             new AmendImageGroupVolumesCommand<>(createParameters(), CommandContext.createContext(""));
 
-    @Before
+    @BeforeEach
     public void setup() {
         diskImage = new DiskImage();
         diskImage.setStoragePoolId(storagePoolId);
@@ -125,8 +135,8 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfigurationQcowCompatNotSupported")
     public void testValidationFailsAmendNotSupported() {
-        mcr.mockConfigValue(ConfigValues.QcowCompatSupported, Version.v4_2, false);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_AMEND_NOT_SUPPORTED_BY_DC_VERSION);
     }
 

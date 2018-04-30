@@ -1,15 +1,17 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
 
     private UpdateHostNicVfsConfigParameters param;
@@ -30,7 +33,7 @@ public class UpdateHostNicVfsConfigCommandTest extends BaseCommandTest {
     @Mock
     VfsConfigValidator validator;
 
-    @Before
+    @BeforeEach
     public void setup() {
         createCommand();
         setAllValidationsValid();

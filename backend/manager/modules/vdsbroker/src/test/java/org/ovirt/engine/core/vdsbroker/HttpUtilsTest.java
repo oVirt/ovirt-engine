@@ -1,18 +1,20 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.stream.Stream;
 
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public class HttpUtilsTest {
 
     private static final String HOSTNAME = "hostname";
@@ -21,8 +23,9 @@ public class HttpUtilsTest {
     private static final String IPV6_ADDRESS = "1:2::3:4";
     private static final String IPV4_ADDRESS = "1.2.3.4";
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.EncryptHostCommunication, false));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.EncryptHostCommunication, false));
+    }
 
     @Test
     public void testGetConnectionUrl1() throws MalformedURLException {

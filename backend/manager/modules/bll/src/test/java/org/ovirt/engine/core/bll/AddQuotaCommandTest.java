@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
@@ -14,8 +16,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public class AddQuotaCommandTest extends BaseCommandTest {
     @Mock
     private QuotaDao quotaDao;
@@ -26,15 +29,16 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     @InjectMocks
     private AddQuotaCommand command = createCommand();
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.QuotaGraceStorage, 20),
-        MockConfigDescriptor.of(ConfigValues.QuotaGraceCluster, 20),
-        MockConfigDescriptor.of(ConfigValues.QuotaThresholdStorage, 80),
-        MockConfigDescriptor.of(ConfigValues.QuotaThresholdCluster, 80)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.QuotaGraceStorage, 20),
+                MockConfigDescriptor.of(ConfigValues.QuotaGraceCluster, 20),
+                MockConfigDescriptor.of(ConfigValues.QuotaThresholdStorage, 80),
+                MockConfigDescriptor.of(ConfigValues.QuotaThresholdCluster, 80)
+        );
+    }
 
-    @Before
+    @BeforeEach
     public void testSetup() {
         command.init();
     }

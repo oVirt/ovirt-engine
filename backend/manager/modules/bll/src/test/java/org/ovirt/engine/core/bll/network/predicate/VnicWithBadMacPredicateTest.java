@@ -1,19 +1,22 @@
 package org.ovirt.engine.core.bll.network.predicate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VnicWithBadMacPredicateTest {
 
     private static final String MAC_ADDRESS = "mac address";
@@ -24,7 +27,7 @@ public class VnicWithBadMacPredicateTest {
 
     private VmNetworkInterface vnic;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vnic = new VmNetworkInterface();
         vnic.setMacAddress(MAC_ADDRESS);

@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.pm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -12,12 +12,13 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
@@ -27,14 +28,17 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Sta
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.FenceAgentDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class HostFenceActionExecutorTest {
     private static Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
 
     @Mock
-    FenceAgentDao fenceAgentDao;
+    @InjectedMock
+    public FenceAgentDao fenceAgentDao;
 
     @Mock
     VDS fencedHost;
@@ -45,17 +49,12 @@ public class HostFenceActionExecutorTest {
     @Mock
     SingleAgentFenceActionExecutor agentExecutor2;
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
     HostFenceActionExecutor executor;
 
     List<FenceAgent> fenceAgents;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        injectorRule.bind(FenceAgentDao.class, fenceAgentDao);
-
         when(fencedHost.getId()).thenReturn(FENCECD_HOST_ID);
 
         executor = spy(new HostFenceActionExecutor(fencedHost, new FencingPolicy()));

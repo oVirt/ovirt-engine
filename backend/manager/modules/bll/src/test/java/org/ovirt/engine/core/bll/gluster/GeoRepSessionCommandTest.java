@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.mockito.Mockito.doReturn;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -37,7 +37,7 @@ public abstract class GeoRepSessionCommandTest<T extends GeoRepSessionCommandBas
 
     protected abstract T createCommand();
 
-    @Before
+    @BeforeEach
     public void prepareMocks() {
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getGeoRepSession(geoRepSessionId)).when(geoRepDao).getById(geoRepSessionId);

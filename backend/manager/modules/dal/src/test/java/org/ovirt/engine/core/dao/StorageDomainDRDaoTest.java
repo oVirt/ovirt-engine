@@ -1,17 +1,19 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 
 public class StorageDomainDRDaoTest extends BaseDaoTestCase<StorageDomainDRDao> {
 
     private StorageDomainDR storageDomainDR;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

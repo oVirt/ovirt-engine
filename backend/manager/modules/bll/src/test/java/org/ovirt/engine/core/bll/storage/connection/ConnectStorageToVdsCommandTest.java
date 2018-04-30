@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -18,7 +18,7 @@ public class ConnectStorageToVdsCommandTest extends BaseCommandTest {
     private ConnectStorageToVdsCommand<StorageServerConnectionParametersBase> command;
     private StorageServerConnectionParametersBase params;
 
-    @Before
+    @BeforeEach
     public void prepareCommand() {
         params = new StorageServerConnectionParametersBase();
         command = new ConnectStorageToVdsCommand<>(params, null);

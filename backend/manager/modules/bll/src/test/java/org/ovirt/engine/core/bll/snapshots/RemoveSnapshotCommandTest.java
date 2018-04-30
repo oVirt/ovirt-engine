@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
@@ -14,11 +14,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -43,6 +45,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /** A test case for the {@link RemoveSnapshotCommand} class. */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     /** The command to test */
@@ -71,7 +74,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockVm();
         VmValidator vmValidator = spy(new VmValidator(cmd.getVm()));
@@ -117,25 +120,25 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Test
     public void testValidateImageNotInTemplateTrue() {
         when(vmTemplateDao.get(mockSourceImageAndGetId())).thenReturn(null);
-        assertTrue("validation should succeed", cmd.validateImageNotInTemplate());
+        assertTrue(cmd.validateImageNotInTemplate(), "validation should succeed");
     }
 
     @Test
     public void testValidateImageNotInTemplateFalse() {
         when(vmTemplateDao.get(mockSourceImageAndGetId())).thenReturn(new VmTemplate());
-        assertFalse("validation should succeed", cmd.validateImageNotInTemplate());
+        assertFalse(cmd.validateImageNotInTemplate(), "validation should succeed");
     }
 
     @Test
     public void testValidateSnapshotNotActiveTrue() {
         mockSnapshot(SnapshotType.REGULAR);
-        assertTrue("validation should succeed", cmd.validateSnapshotType());
+        assertTrue(cmd.validateSnapshotType(), "validation should succeed");
     }
 
     @Test
     public void testValidateSnapshotNotActiveFalse() {
         mockSnapshot(SnapshotType.ACTIVE);
-        assertFalse("validation should fail", cmd.validateSnapshotType());
+        assertFalse(cmd.validateSnapshotType(), "validation should fail");
     }
 
     @Test

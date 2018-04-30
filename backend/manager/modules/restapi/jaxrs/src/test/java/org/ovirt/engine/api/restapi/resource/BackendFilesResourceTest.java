@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,10 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendFilesResourceTest
     extends AbstractBackendCollectionResourceTest<File, String, BackendFilesResource> {
 
@@ -31,7 +34,7 @@ public class BackendFilesResourceTest
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Override
     public void testQuery() {
     }
@@ -138,7 +141,7 @@ public class BackendFilesResourceTest
         Fault fault = (Fault) wae.getResponse().getEntity();
         assertEquals(reason, fault.getReason());
         assertNotNull(fault.getDetail());
-        assertTrue("expected detail to include: " + t.getMessage(), fault.getDetail().contains(t.getMessage()));
+        assertTrue(fault.getDetail().contains(t.getMessage()), "expected detail to include: " + t.getMessage());
     }
 
     @Test

@@ -1,13 +1,14 @@
 package org.ovirt.engine.ui.common.utils;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.ui.common.utils.AddOnlyRingBuffer.LinearBuffer;
 
 public class AddOnlyRingBufferTest {
@@ -32,7 +33,7 @@ public class AddOnlyRingBufferTest {
 
     private AddOnlyRingBuffer<String> tested;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tested = new AddOnlyRingBuffer<>(CAPACITY, new StringArrayBuffer());
     }
@@ -105,34 +106,34 @@ public class AddOnlyRingBufferTest {
         assertFalse(tested.isFull());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void bufferReset_headLowerBound() {
-        tested.reset(-1, 2);
+        assertThrows(IllegalArgumentException.class, () -> tested.reset(-1, 2));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void bufferReset_headUpperBound() {
-        tested.reset(CAPACITY, 2);
+        assertThrows(IllegalArgumentException.class, () -> tested.reset(CAPACITY, 2));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void bufferReset_sizeLowerBound() {
-        tested.reset(1, -1);
+        assertThrows(IllegalArgumentException.class, () -> tested.reset(1, -1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void bufferReset_sizeUpperBound() {
-        tested.reset(1, CAPACITY + 1);
+        assertThrows(IllegalArgumentException.class, () -> tested.reset(1, CAPACITY + 1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructorInvariants_capacityLowerBound() {
-        new AddOnlyRingBuffer<>(0, new StringArrayBuffer());
+        assertThrows(IllegalArgumentException.class, () -> new AddOnlyRingBuffer<>(0, new StringArrayBuffer()));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constructorInvariants_delegateNull() {
-        new AddOnlyRingBuffer<String>(CAPACITY, null);
+        assertThrows(NullPointerException.class, () -> new AddOnlyRingBuffer<>(CAPACITY, null));
     }
 
 }

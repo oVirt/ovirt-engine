@@ -1,22 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.validation.CidrValidator;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CidrValidationTest {
     private static final String BAD_CIDR_FORMAT = "BAD_CIDR_FORMAT"; //$NON-NLS-1$
     private static final String CIDR_IS_NOT_A_NETWORK_ADDRESS = "CIDR_IS_NOT_A_NETWORK_ADDRESS"; //$NON-NLS-1$
@@ -28,10 +30,7 @@ public class CidrValidationTest {
     @Mock
     private CidrValidator mockedCidrValidator;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     public void setup() {
         underTest = spy(new CidrValidation());
         doReturn(mockedCidrValidator).when(underTest).getCidrValidator();
@@ -68,8 +67,7 @@ public class CidrValidationTest {
 
     @Test
     public void checkStringInputAssertion() {
-        expectedException.expectMessage(CidrValidation.ILLEGAL_ARGUMENT_EXCEPTION_MESSAGE);
-        expectedException.expect(IllegalArgumentException.class);
-        ValidationResult actualResult = underTest.validate(new Object());
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> underTest.validate(new Object()));
+        assertEquals(CidrValidation.ILLEGAL_ARGUMENT_EXCEPTION_MESSAGE, e.getMessage());
     }
 }

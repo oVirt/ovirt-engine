@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -21,7 +21,7 @@ public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<QueryPara
 
     private static final String sessionID = RandomUtils.instance().nextString(10);
 
-    @Before
+    @BeforeEach
     public void setupEnvironment() {
         CorrelationIdTracker.clean();
         DbUser user = mock(DbUser.class);
@@ -37,10 +37,10 @@ public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<QueryPara
         when(getQueryParameters().getSessionId()).thenReturn(sessionID);
         getQuery().executeQueryCommand();
 
-        assertEquals("Wrong user returned from query", getUser(), getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(getUser(), getQuery().getQueryReturnValue().getReturnValue(), "Wrong user returned from query");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         sessionDataContainer.removeSessionOnLogout(sessionID);
     }

@@ -1,17 +1,19 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -30,6 +32,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
 
     @Mock
@@ -60,7 +63,7 @@ public class ReplaceGlusterVolumeBrickCommandTest extends BaseCommandTest {
     private ReplaceGlusterVolumeBrickCommand cmd =
             new ReplaceGlusterVolumeBrickCommand(new GlusterVolumeReplaceBrickActionParameters(), null);
 
-    @Before
+    @BeforeEach
     public void prepareMocks() {
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);

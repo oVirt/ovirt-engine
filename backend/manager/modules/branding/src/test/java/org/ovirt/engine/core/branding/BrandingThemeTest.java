@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.branding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for the {@code BrandingTheme} class.
@@ -24,56 +24,59 @@ public class BrandingThemeTest {
      */
     BrandingTheme testTheme;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         File testThemeRootPath = new File(this.getClass().getClassLoader().
             getResource("./org/ovirt/engine/core/branding").toURI().getPath()); //$NON-NLS-1$
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "01-test.brand"); //$NON-NLS-1$
         testTheme = new BrandingTheme(testThemePath.getAbsolutePath(),
                 testThemeRootPath, 2);
-        assertTrue("The theme should load", testTheme.load()); //$NON-NLS-1$
+        assertTrue(testTheme.load(), "The theme should load"); //$NON-NLS-1$
     }
 
     @Test
     public void testGetPath() {
-        assertEquals("Path should be '/01-test.brand'", "/01-test.brand", //$NON-NLS-1$ //$NON-NLS-2$
-                testTheme.getPath());
+        assertEquals("/01-test.brand", //$NON-NLS-1$ //$NON-NLS-2$
+                testTheme.getPath(), "Path should be '/01-test.brand'");
     }
 
     @Test
     public void testGetThemeStyleSheet() {
-        assertEquals("Wedadmin style sheet: 'web_admin.css'", "web_admin.css", //$NON-NLS-1$ //$NON-NLS-2$
-                testTheme.getThemeStylesheets("webadmin").get(0));
-        assertEquals("Wedadmin style sheet: '123.css'", "123.css", //$NON-NLS-1$ //$NON-NLS-2$
-                testTheme.getThemeStylesheets("webadmin").get(1));
+        assertEquals("web_admin.css", //$NON-NLS-1$ //$NON-NLS-2$
+                testTheme.getThemeStylesheets("webadmin").get(0), "Wedadmin style sheet: 'web_admin.css'");
+        assertEquals("123.css", //$NON-NLS-1$ //$NON-NLS-2$
+                testTheme.getThemeStylesheets("webadmin").get(1), "Wedadmin style sheet: '123.css'");
     }
 
     @Test
     public void testGetMessagesBundle() {
         List<ResourceBundle> bundle = testTheme.getMessagesBundle();
-        assertNotNull("There should be a bundle", bundle); //$NON-NLS-1$
+        assertNotNull(bundle, "There should be a bundle"); //$NON-NLS-1$
         assertEquals("Login header", bundle.get(0).getString("obrand.common.login_header_label")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
     public void testGetMessagesBundleLocale() {
         List<ResourceBundle> bundle = testTheme.getMessagesBundle(Locale.FRENCH);
-        assertNotNull("There should be a bundle", bundle); //$NON-NLS-1$
+        assertNotNull(bundle, "There should be a bundle"); //$NON-NLS-1$
         assertEquals("Login header(fr)", bundle.get(0).getString("obrand.common.login_header_label")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
     public void testGetCascadingResource() {
-        assertTrue("getCascadingResource not reading file from resources.properties", //$NON-NLS-1$
-                testTheme.getCascadingResource("favicon").getFile().getAbsolutePath().contains("/01-test.brand/images/favicon.ico")); //$NON-NLS-1$ //$NON-NLS-2$
-        assertEquals("getCascadingResource not reading contentType from resources.properties", "someMadeUp/contentType",
-                testTheme.getCascadingResource("favicon").getContentType()); //$NON-NLS-1$ //$NON-NLS-2$
+        assertTrue( //$NON-NLS-1$
+                testTheme.getCascadingResource("favicon").getFile().getAbsolutePath().contains("/01-test.brand/images/favicon.ico"),
+                "getCascadingResource not reading file from resources.properties"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("someMadeUp/contentType",
+                testTheme.getCascadingResource("favicon").getContentType(),
+                "getCascadingResource not reading contentType from resources.properties"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
     public void testGetCascadingResourceMissingKey() {
-        assertNull("getCascadingResource not using resources.properties properly", //$NON-NLS-1$
-                testTheme.getCascadingResource("this_is_not_a_valid_key")); //$NON-NLS-1$
+        assertNull( //$NON-NLS-1$
+                testTheme.getCascadingResource("this_is_not_a_valid_key"),
+                "getCascadingResource not using resources.properties properly"); //$NON-NLS-1$
     }
 
     @Test
@@ -85,10 +88,11 @@ public class BrandingThemeTest {
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "04-test4.brand"); //$NON-NLS-1$
         BrandingTheme theme4 = new BrandingTheme(testThemePath.getAbsolutePath(),
                 testThemeRootPath, 2); //$NON-NLS-1$
-        assertTrue("Theme 4 should load", theme4.load()); //$NON-NLS-1$
+        assertTrue(theme4.load(), "Theme 4 should load"); //$NON-NLS-1$
 
-        assertNull("getCascadingResource not handling missing resources.properties gracefully", //$NON-NLS-1$
-                theme4.getCascadingResource("this_file_is_missing_anyway")); //$NON-NLS-1$
+        assertNull( //$NON-NLS-1$
+                theme4.getCascadingResource("this_file_is_missing_anyway"),
+                "getCascadingResource not handling missing resources.properties gracefully"); //$NON-NLS-1$
     }
 
     @Test
@@ -100,10 +104,11 @@ public class BrandingThemeTest {
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "05-test5.brand"); //$NON-NLS-1$
         BrandingTheme theme5 = new BrandingTheme(testThemePath.getAbsolutePath(),
                 testThemeRootPath, 2); //$NON-NLS-1$
-        assertTrue("Theme 5 should load", theme5.load()); //$NON-NLS-1$
+        assertTrue(theme5.load(), "Theme 5 should load"); //$NON-NLS-1$
 
-        assertNull("getCascadingResource not handling missing resources key gracefully", //$NON-NLS-1$
-                theme5.getCascadingResource("this_file_is_missing_anyway")); //$NON-NLS-1$
+        assertNull( //$NON-NLS-1$
+                theme5.getCascadingResource("this_file_is_missing_anyway"),
+                "getCascadingResource not handling missing resources key gracefully"); //$NON-NLS-1$
     }
 
     @Test
@@ -115,7 +120,7 @@ public class BrandingThemeTest {
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "06-test6.brand"); //$NON-NLS-1$
         BrandingTheme theme6 = new BrandingTheme(testThemePath.getAbsolutePath(),
                 testThemeRootPath, 1); //$NON-NLS-1$
-        assertFalse("Theme 6 should not load", theme6.load()); //$NON-NLS-1$
+        assertFalse(theme6.load(), "Theme 6 should not load"); //$NON-NLS-1$
 
     }
 
@@ -127,9 +132,9 @@ public class BrandingThemeTest {
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "01-test.brand"); //$NON-NLS-1$
         BrandingTheme theme1 = new BrandingTheme(testThemePath.getAbsolutePath(),
                 testThemeRootPath, 2); //$NON-NLS-1$
-        assertTrue("Theme 1 should load", theme1.load()); //$NON-NLS-1$
-        assertFalse("should replace template should be false", //$NON-NLS-1$
-                theme1.shouldReplaceWelcomePageSectionTemplate());
+        assertTrue(theme1.load(), "Theme 1 should load"); //$NON-NLS-1$
+        assertFalse( //$NON-NLS-1$
+                theme1.shouldReplaceWelcomePageSectionTemplate(), "should replace template should be false");
 
     }
 }

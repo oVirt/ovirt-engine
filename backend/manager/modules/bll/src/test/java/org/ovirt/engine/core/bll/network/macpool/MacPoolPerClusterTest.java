@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll.network.macpool;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -11,16 +13,15 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -32,17 +33,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class MacPoolPerClusterTest extends BaseCommandTest {
     private static final String SESSION_ID = "session id";
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private ClusterDao clusterDao;
@@ -54,7 +51,8 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     private DecoratedMacPoolFactory decoratedMacPoolFactory;
 
     @Mock
-    private AuditLogDirector auditLogDirector;
+    @InjectedMock
+    public AuditLogDirector auditLogDirector;
 
     @Mock
     private MacsUsedAcrossWholeSystem macsUsedAcrossWholeSystem;
@@ -70,10 +68,8 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     private MacPoolPerCluster macPoolPerCluster;
     private CommandContext commandContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        injectorRule.bind(AuditLogDirector.class, auditLogDirector);
-
         commandContext = CommandContext.createContext(SESSION_ID);
         macPool = createMacPool(MAC_FROM, MAC_TO);
         cluster = createCluster(macPool);
@@ -91,9 +87,8 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     @Test
     public void testPoolDoesNotExistForGivenCluster() {
         macPoolPerCluster.initialize();
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(null));
-        getMacPool(cluster.getId());
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> getMacPool(cluster.getId()));
+        assertEquals(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(null), e.getMessage());
     }
 
     @Test
@@ -133,9 +128,8 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
         mockGettingAllMacPools(macPool);
         macPoolPerCluster.initialize();
 
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(MacPoolPerCluster.UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST);
-        macPoolPerCluster.createPool(macPool);
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> macPoolPerCluster.createPool(macPool));
+        assertEquals(MacPoolPerCluster.UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST, e.getMessage());
     }
 
     @Test
@@ -194,11 +188,10 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     public void testModifyOfNotExistingMacPool() {
         macPoolPerCluster.initialize();
 
-        expectedException.expect(IllegalStateException.class);
         MacPool macPool = createMacPool(null, null);
         Guid macPoolId = macPool.getId();
-        expectedException.expectMessage(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(macPoolId));
-        macPoolPerCluster.modifyPool(macPool);
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> macPoolPerCluster.modifyPool(macPool));
+        assertEquals(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(macPoolId), e.getMessage());
     }
 
     @Test
@@ -212,9 +205,8 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
         Guid macPoolId = macPool.getId();
         macPoolPerCluster.removePool(macPoolId);
 
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(macPoolId));
-        getMacPool(cluster.getId());
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> getMacPool(cluster.getId()));
+        assertEquals(macPoolPerCluster.createExceptionMessageMacPoolHavingIdDoesNotExist(macPoolId), e.getMessage());
     }
 
     @Test

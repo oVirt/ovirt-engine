@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -35,7 +35,7 @@ public class GetAllDisksWithSnapshotsQueryTest
         // Assert each return disk is active
         assertAllDisksAreActive(result);
         // Verify the number of returned disks
-        assertEquals("wrong number of disks returned", 5, result.size());
+        assertEquals(5, result.size(), "wrong number of disks returned");
 
     }
 
@@ -45,7 +45,7 @@ public class GetAllDisksWithSnapshotsQueryTest
                 continue;
             }
             DiskImage diskImage = (DiskImage) disk;
-            assertTrue("disk should be active", diskImage.getActive());
+            assertTrue(diskImage.getActive(), "disk should be active");
         }
     }
 }

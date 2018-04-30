@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -36,6 +36,6 @@ public class GetClusterByIdQueryTest
         getQuery().executeQueryCommand();
 
         Cluster actual = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("wrong VDS Group", expected, actual);
+        assertEquals(expected, actual, "wrong VDS Group");
     }
 }

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -9,8 +9,8 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -41,7 +41,7 @@ public class CustomMapSqlParameterSourceTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         DbEngineDialect dialectMock = mock(DbEngineDialect.class);
         when(dialectMock.getParamNamePrefix()).thenReturn("");
@@ -57,25 +57,25 @@ public class CustomMapSqlParameterSourceTest {
         int paramValue = this.random.nextInt();
 
         paramSource.addValue(paramName, paramValue);
-        assertEquals("wrong value returned from parameter source",
+        assertEquals(
                 paramValue,
-                paramSource.getValue(paramName));
+                paramSource.getValue(paramName), "wrong value returned from parameter source");
     }
 
     @Test
     public void testAddValueEnum() {
         paramSource.addValue(paramName, TestEnum.TWO);
-        assertEquals("wrong value returned from parameter source",
+        assertEquals(
                 TestEnum.TWO.ordinal(),
-                paramSource.getValue(paramName));
+                paramSource.getValue(paramName), "wrong value returned from parameter source");
     }
 
     @Test
     public void testAddValueEnumWithGetValue() {
         paramSource.addValue(paramName, TestEnumWithGetValue.TWO);
-        assertEquals("wrong value returned from parameter source",
+        assertEquals(
                 TestEnumWithGetValue.TWO.getValue(),
-                paramSource.getValue(paramName));
+                paramSource.getValue(paramName), "wrong value returned from parameter source");
     }
 
     @Test
@@ -83,9 +83,9 @@ public class CustomMapSqlParameterSourceTest {
         Guid guid = new Guid(UUID.randomUUID());
 
         paramSource.addValue(paramName, guid);
-        assertEquals("wrong value returned from parameter source",
+        assertEquals(
                 guid.getUuid(),
-                paramSource.getValue(paramName));
+                paramSource.getValue(paramName), "wrong value returned from parameter source");
     }
 
     @Test
@@ -93,15 +93,15 @@ public class CustomMapSqlParameterSourceTest {
         Version verision = new Version(this.random.nextInt(), this.random.nextInt());
 
         paramSource.addValue(paramName, verision);
-        assertEquals("wrong value returned from parameter source",
+        assertEquals(
                 verision.toString(),
-                paramSource.getValue(paramName));
+                paramSource.getValue(paramName), "wrong value returned from parameter source");
     }
 
     @Test
     public void testAddValueNull() {
         paramSource.addValue(paramName, null);
-        assertNull("wrong value returned from parameter source",
-                paramSource.getValue(paramName));
+        assertNull(
+                paramSource.getValue(paramName), "wrong value returned from parameter source");
     }
 }

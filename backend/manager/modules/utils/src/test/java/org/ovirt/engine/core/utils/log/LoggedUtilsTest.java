@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.utils.log;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.slf4j.Logger;
 
@@ -124,13 +124,15 @@ public class LoggedUtilsTest {
     public void testDetermineMessageReturnsClassNameForNoParameterExpansion() {
         Logger log = mock(Logger.class);
 
-        assertEquals("LoggedUtils.determineMessage shouldn't return parameter expansion for a disabled log level.",
+        assertEquals(
                 Object.class.getName(),
                 LoggedUtils.determineMessage(log,
-                        LoggedOverridingSubclassNoParameters.class.getAnnotation(Logged.class), new Object()));
-        assertEquals("LoggedUtils.determineMessage shouldn't return parameter expansion when diabled completely.",
+                        LoggedOverridingSubclassNoParameters.class.getAnnotation(Logged.class), new Object()),
+                "LoggedUtils.determineMessage shouldn't return parameter expansion for a disabled log level.");
+        assertEquals(
                 Object.class.getName(),
-                LoggedUtils.determineMessage(log, LoggedClass.class.getAnnotation(Logged.class), new Object()));
+                LoggedUtils.determineMessage(log, LoggedClass.class.getAnnotation(Logged.class), new Object()),
+                "LoggedUtils.determineMessage shouldn't return parameter expansion when diabled completely.");
     }
 
     /* --- Tests for the method "log" --- */

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
@@ -9,11 +9,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -23,7 +25,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
-@RunWith(Silent.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GlusterHostValidatorTest {
 
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
@@ -41,7 +44,7 @@ public class GlusterHostValidatorTest {
 
     private GlusterHostValidator hostValidator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         setupMock();
         hostValidator = new GlusterHostValidator(volumeDao, brickDao);
@@ -61,8 +64,8 @@ public class GlusterHostValidatorTest {
     public void testCheckGlusterQuorumWithoutGluster() {
         Cluster cluster = getCluster(false);
         Iterable<Guid> hostIds = new LinkedList<>();
-        assertTrue("Quorum checks runs for Cluster without gluster service",
-                hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty());
+        assertTrue(hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty(),
+                "Quorum checks runs for Cluster without gluster service");
     }
 
     @Test
@@ -96,7 +99,7 @@ public class GlusterHostValidatorTest {
     public void testCheckGlusterQuorumWithTwoServersDown() {
         Cluster cluster = getCluster(true);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_1, SERVER_ID_2);
-        assertEquals("Quorum check is failing", 2, hostValidator.checkGlusterQuorum(cluster, hostIds).size());
+        assertEquals(2, hostValidator.checkGlusterQuorum(cluster, hostIds).size(), "Quorum check is failing");
         assertEquals(Arrays.asList("Vol-1", "Vol-2"), hostValidator.checkGlusterQuorum(cluster, hostIds));
     }
 
@@ -112,7 +115,7 @@ public class GlusterHostValidatorTest {
         }
         doReturn(glusterVolumes).when(volumeDao).getByClusterId(CLUSTER_ID);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_2);
-        assertEquals("Quorum check is failing", 2, hostValidator.checkGlusterQuorum(cluster, hostIds).size());
+        assertEquals(2, hostValidator.checkGlusterQuorum(cluster, hostIds).size(), "Quorum check is failing");
         assertEquals(Arrays.asList("Vol-1", "Vol-2"), hostValidator.checkGlusterQuorum(cluster, hostIds));
     }
 
@@ -121,16 +124,16 @@ public class GlusterHostValidatorTest {
         Cluster cluster = getCluster(true);
         doReturn(getGlusterVolumes(GlusterStatus.DOWN)).when(volumeDao).getByClusterId(CLUSTER_ID);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_1, SERVER_ID_2);
-        assertTrue("Quorum check is failing with volumes in down status",
-                hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty());
+        assertTrue(hostValidator.checkGlusterQuorum(cluster, hostIds).isEmpty(),
+                "Quorum check is failing with volumes in down status");
     }
 
     @Test
     public void testcheckUnsyncedEntriesWithDownBricks() {
         doReturn(getBricksFromServer(SERVER_ID_1, GlusterStatus.DOWN)).when(brickDao)
                 .getGlusterVolumeBricksByServerId(SERVER_ID_1);
-        assertTrue("Unsynced entries test is failing for bricks with down status",
-                hostValidator.checkUnsyncedEntries(Arrays.asList(SERVER_ID_1)).isEmpty());
+        assertTrue(hostValidator.checkUnsyncedEntries(Arrays.asList(SERVER_ID_1)).isEmpty(),
+                "Unsynced entries test is failing for bricks with down status");
 
     }
 
@@ -138,8 +141,8 @@ public class GlusterHostValidatorTest {
     public void testcheckUnsyncedEntriesWithoutUnSyncedEntries() {
         doReturn(getBricksFromServer(SERVER_ID_1, GlusterStatus.UP)).when(brickDao)
                 .getGlusterVolumeBricksByServerId(SERVER_ID_1);
-        assertTrue("Unsynced entries test is failing for bricks without unsynced entries",
-                hostValidator.checkUnsyncedEntries(Arrays.asList(SERVER_ID_1)).isEmpty());
+        assertTrue(hostValidator.checkUnsyncedEntries(Arrays.asList(SERVER_ID_1)).isEmpty(),
+                "Unsynced entries test is failing for bricks without unsynced entries");
     }
 
     @Test
@@ -149,11 +152,9 @@ public class GlusterHostValidatorTest {
         bricks.get(1).setUnSyncedEntries(10);
         bricks.get(2).setUnSyncedEntries(0);
         doReturn(bricks).when(brickDao).getGlusterVolumeBricksByServerId(SERVER_ID_1);
-        assertEquals("Unsynced entries test is failing for bricks with unsynced entries",
-                2,
-                hostValidator.checkUnsyncedEntries(Arrays.asList(SERVER_ID_1, SERVER_ID_2))
-                        .get(SERVER_ID_1)
-                        .size());
+        assertEquals(2,
+                hostValidator.checkUnsyncedEntries(Arrays.asList(SERVER_ID_1, SERVER_ID_2)).get(SERVER_ID_1).size(),
+                "Unsynced entries test is failing for bricks with unsynced entries");
     }
 
     private Cluster getCluster(boolean supportGlusterService) {

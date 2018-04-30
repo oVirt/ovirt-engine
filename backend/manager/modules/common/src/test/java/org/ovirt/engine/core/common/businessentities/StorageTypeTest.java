@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 public class StorageTypeTest {
@@ -35,7 +35,8 @@ public class StorageTypeTest {
 
     @Test
     public void testNewStorageTypes() {
-        assertEquals("A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain " +
-                "method accordingly", 9, StorageType.values().length);
+        assertEquals(9, StorageType.values().length,
+                "A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain " +
+                        "method accordingly");
     }
 }

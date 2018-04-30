@@ -1,21 +1,21 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
 
 public class MTUValidatorTest {
 
     private Validator validator;
 
-    @Before
+    @BeforeEach
     public void setup() {
         validator = ValidationUtils.getValidator();
     }

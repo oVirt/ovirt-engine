@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
@@ -20,13 +20,15 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -78,10 +80,12 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
+@ExtendWith({MockConfigExtension.class, RandomUtilsSeedingExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
     private Guid diskImageGuid = Guid.newGuid();
@@ -128,14 +132,13 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     @Mock
     private BackendInternal backend;
 
-    @Rule
-    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, false),
-            MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_1, true),
-            MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, false),
+                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_1, true),
+                MockConfigDescriptor.of(ConfigValues.MaxBlockDiskSize, 8)
+        );
+    }
 
     /**
      * The command under test.

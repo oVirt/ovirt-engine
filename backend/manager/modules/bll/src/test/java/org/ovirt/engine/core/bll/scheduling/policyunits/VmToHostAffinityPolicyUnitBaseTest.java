@@ -2,9 +2,10 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -15,11 +16,13 @@ import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public abstract class VmToHostAffinityPolicyUnitBaseTest {
-    @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000));
+    }
 
     @Mock
     AffinityGroupDao affinityGroupDao;
@@ -33,7 +36,7 @@ public abstract class VmToHostAffinityPolicyUnitBaseTest {
     protected AffinityGroup positive_enforcing_group;
     protected AffinityGroup negative_enforcing_group;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());

@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -13,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
@@ -43,6 +46,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         AbstractQueryTest<GlusterVolumeRemoveBricksQueriesParameters, GetGlusterVolumeRemoveBricksStatusQuery<GlusterVolumeRemoveBricksQueriesParameters>> {
 
@@ -73,7 +77,7 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
     @Mock
     private GlusterUtil glusterUtils;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -243,10 +247,10 @@ public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
         verify(volumeDao, times(1)).getById(VOLUME_ID);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testQueryForInvalidVolumeId() {
         doReturn(Guid.Empty).when(getQueryParameters()).getVolumeId();
 
-        getQuery().executeQueryCommand();
+        assertThrows(RuntimeException.class, () -> getQuery().executeQueryCommand());
     }
 }

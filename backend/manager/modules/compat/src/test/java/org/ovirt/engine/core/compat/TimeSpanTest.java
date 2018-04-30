@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.compat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TimeSpanTest {
 
@@ -64,17 +65,17 @@ public class TimeSpanTest {
         assertEquals(-5, span.Milliseconds);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidParse() {
-        TimeSpan.parse("1.02.03");
+        assertThrows(IllegalArgumentException.class, ()  -> TimeSpan.parse("1.02.03"));
     }
 
     @Test
     public void testTryParse() {
         TimeSpan ref = TimeSpan.tryParse("-1.02:03:04.05");
-        assertNotNull("A TimeSpan should be returned", ref);
+        assertNotNull(ref, "A TimeSpan should be returned");
         assertEquals(-1, ref.Days);
         ref = TimeSpan.tryParse("A Long Time");
-        assertNull("A TimeSpan should not be returned", ref);
+        assertNull(ref, "A TimeSpan should not be returned");
     }
 }

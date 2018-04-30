@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,7 +15,7 @@ public class VdsHandlerTest {
 
     private VdsHandler vdsHandler = new VdsHandler();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vdsHandler.init();
     }
@@ -32,7 +32,7 @@ public class VdsHandlerTest {
         boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
 
         // Then
-        assertTrue("Update should be valid for different names", updateIsValid);
+        assertTrue(updateIsValid, "Update should be valid for different names");
     }
 
     @Test
@@ -47,8 +47,8 @@ public class VdsHandlerTest {
         boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
 
         // Then
-        assertFalse("Update should not be valid for different server SSL enabled states",
-                updateIsValid);
+        assertFalse(
+                updateIsValid, "Update should not be valid for different server SSL enabled states");
     }
 
     @Test
@@ -63,8 +63,8 @@ public class VdsHandlerTest {
         boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Up);
 
         // Then
-        assertFalse("Update should not be valid for different cluster IDs on a running host",
-                updateIsValid);
+        assertFalse(
+                updateIsValid, "Update should not be valid for different cluster IDs on a running host");
     }
 
     @Test
@@ -81,8 +81,8 @@ public class VdsHandlerTest {
         boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
 
         // Then
-        assertTrue("Update should be valid for different SSH ports in Down status",
-                updateIsValid);
+        assertTrue(
+                updateIsValid, "Update should be valid for different SSH ports in Down status");
     }
 
     @Test
@@ -97,8 +97,8 @@ public class VdsHandlerTest {
         boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
 
         // Then
-        assertTrue("Update should be valid for different names in down status",
-                updateIsValid);
+        assertTrue(
+                updateIsValid, "Update should be valid for different names in down status");
     }
 
     @Test
@@ -113,7 +113,7 @@ public class VdsHandlerTest {
         boolean updateIsValid = vdsHandler.isUpdateValid(src, dest, VDSStatus.Down);
 
         // Then
-        assertFalse("Update should not be valid for different server SSL enabled states",
-                updateIsValid);
+        assertFalse(
+                updateIsValid, "Update should not be valid for different server SSL enabled states");
     }
 }

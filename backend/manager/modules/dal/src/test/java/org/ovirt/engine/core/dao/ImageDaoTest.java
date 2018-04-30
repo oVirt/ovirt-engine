@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -59,6 +60,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         return EXISTING_IMAGE_ID;
     }
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -89,7 +91,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         dao.updateImageVmSnapshotId(EXISTING_IMAGE_ID, guid);
         Image imageFromDb = dao.get(EXISTING_IMAGE_ID);
         assertNotNull(imageFromDb);
-        assertEquals("Image snapshot id wasn't updated properly", guid, imageFromDb.getSnapshotId());
+        assertEquals(guid, imageFromDb.getSnapshotId(), "Image snapshot id wasn't updated properly");
     }
 
     @Test

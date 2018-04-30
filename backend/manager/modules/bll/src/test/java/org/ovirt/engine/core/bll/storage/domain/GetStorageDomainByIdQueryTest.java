@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -37,6 +37,6 @@ public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<IdQuery
         // Assert we got the correct storage domain back
         StorageDomain actual = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("Wrong storage domain returned", expected, actual);
+        assertEquals(expected, actual, "Wrong storage domain returned");
     }
 }

@@ -1,22 +1,20 @@
 package org.ovirt.engine.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 
+@ExtendWith(RandomUtilsSeedingExtension.class)
 public class NetworkUtilsTest {
 
     private static final String IFACE_NAME = "eth1";
-
-    @Rule
-    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Test
     public void interfaceBasedOn() {

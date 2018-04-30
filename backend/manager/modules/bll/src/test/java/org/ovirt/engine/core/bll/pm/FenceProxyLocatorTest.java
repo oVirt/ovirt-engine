@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.pm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -16,12 +16,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -33,12 +33,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
 /**
  * This class tests the FenceProxyLocator
  */
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FenceProxyLocatorTest extends BaseCommandTest {
 
     private static Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
@@ -49,26 +50,25 @@ public class FenceProxyLocatorTest extends BaseCommandTest {
     private static Guid OTHER_DATACENTER_ID = new Guid("77777777-7777-7777-7777-777777777777");
 
     @Mock
-    private VdsDao vdsDao;
+    @InjectedMock
+    public VdsDao vdsDao;
 
     @Mock
-    private FenceAgentDao fenceAgentDao;
+    @InjectedMock
+    public FenceAgentDao fenceAgentDao;
 
     private VdsFenceOptions vdsFenceOptions;
 
     private VDS fencedHost;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        injectorRule.bind(VdsDao.class, vdsDao);
-        injectorRule.bind(FenceAgentDao.class, fenceAgentDao);
-
         mockVdsFenceOptions(true);
         mockFencedHost();
         mockFenceAgents();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         fencedHost = null;
     }

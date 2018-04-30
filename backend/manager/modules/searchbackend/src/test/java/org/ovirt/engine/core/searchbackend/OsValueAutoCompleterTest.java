@@ -1,22 +1,19 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Theories.class)
 public class OsValueAutoCompleterTest {
 
     private OsValueAutoCompleter completer;
@@ -30,12 +27,11 @@ public class OsValueAutoCompleterTest {
         completionMap.put(5, "windows_2008_R2x64");
     }
 
-    @DataPoints
-    public static Set<Map.Entry<Integer, String>> data() {
-        return completionMap.entrySet();
+    public static Stream<Map.Entry<Integer, String>> data() {
+        return completionMap.entrySet().stream();
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         completer = new OsValueAutoCompleter(completionMap);
     }
@@ -53,7 +49,8 @@ public class OsValueAutoCompleterTest {
     /**
      * every auto completed input is always valid when using the auto-completer validate() method
      */
-    @Theory
+    @ParameterizedTest
+    @MethodSource("data")
     public void autoCompletedInputIsAlwaysValid(Map.Entry<Integer, String> osCompletionEntry) {
         String reason = "input " + osCompletionEntry.getValue() + " is invalid";
         assertThat(reason,
@@ -66,7 +63,8 @@ public class OsValueAutoCompleterTest {
      * when auto-completing "rhel" and "rhel_x" was picked and is used as a search term, it shall
      * match its key in the completion list. i.e convertFieldEnumValueToActualValue("rhel_x") always yields -> 1
      */
-    @Theory
+    @ParameterizedTest
+    @MethodSource("data")
     public void autoCompletedInputMatchesItsNumericKeyValue(Map.Entry<Integer, String> osCompletionEntry) {
         assertThat(osCompletionEntry.getKey().toString(),
                 is(completer.convertFieldEnumValueToActualValue(osCompletionEntry.getValue())));

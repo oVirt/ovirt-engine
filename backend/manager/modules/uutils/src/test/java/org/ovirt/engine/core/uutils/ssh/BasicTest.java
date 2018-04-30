@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.uutils.ssh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.security.KeyPair;
@@ -9,9 +10,9 @@ import java.security.KeyPairGenerator;
 
 import javax.naming.AuthenticationException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Basic tests.
@@ -23,7 +24,7 @@ public class BasicTest extends TestCommon {
     static final String helloResult = "test\n";
     SSHClient client;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         client = new SSHClient();
         client.setSoftTimeout(30 * 1000);
@@ -32,7 +33,7 @@ public class BasicTest extends TestCommon {
         client.setUser(TestCommon.user);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (client != null) {
             client.close();
@@ -40,22 +41,26 @@ public class BasicTest extends TestCommon {
         }
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test
     public void testWrongPassword() throws Exception {
         client.setPassword(TestCommon.password + "A");
-        client.connect();
-        client.authenticate();
-        client.executeCommand(helloCommand, null, null, null);
+        assertThrows(AuthenticationException.class, () -> {
+            client.connect();
+            client.authenticate();
+            client.executeCommand(helloCommand, null, null, null);
+        });
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test
     public void testWrongKey() throws Exception {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
         KeyPair badKeyPair = generator.generateKeyPair();
         client.setKeyPair(badKeyPair);
-        client.connect();
-        client.authenticate();
-        client.executeCommand(helloCommand, null, null, null);
+        assertThrows(AuthenticationException.class, () -> {
+            client.connect();
+            client.authenticate();
+            client.executeCommand(helloCommand, null, null, null);
+        });
     }
 
     @Test
@@ -82,7 +87,7 @@ public class BasicTest extends TestCommon {
 
     @Test
     public void testHostKey() throws Exception {
-        assumeNotNull(TestCommon.sshd);
+        assumeTrue(TestCommon.sshd != null);
         client.connect();
         assertEquals(TestCommon.sshd.getKey(), client.getHostKey());
     }

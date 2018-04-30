@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -9,11 +9,13 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class EditAffinityGroupCommandTest extends BaseCommandTest {
     private static final String AFFINITY_GROUP_NAME = "test123";
     Guid clusterId = Guid.newGuid();
@@ -48,7 +51,7 @@ public class EditAffinityGroupCommandTest extends BaseCommandTest {
 
     private AffinityGroup affinityGroup;
 
-    @Before
+    @BeforeEach
     public void setup() {
         AffinityGroup affinityGroup2 = new AffinityGroup();
         affinityGroup2.setClusterId(clusterId);

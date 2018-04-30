@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
@@ -13,14 +13,16 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -36,9 +38,10 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AddVdsCommandTest {
     private static final String PEER_1 = "peer1";
     private static final Guid vdsId = Guid.newGuid();
@@ -60,9 +63,6 @@ public class AddVdsCommandTest {
     @Mock
     private HostValidator validator;
 
-    @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.InstallVds, true));
-
     private VDS makeTestVds(Guid vdsId) {
         VDS newVdsData = new VDS();
         newVdsData.setHostName("BUZZ");
@@ -74,6 +74,10 @@ public class AddVdsCommandTest {
         newVdsData.setClusterId(Guid.newGuid());
         newVdsData.setId(vdsId);
         return newVdsData;
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.InstallVds, true));
     }
 
     public AddVdsActionParameters createParameters() {

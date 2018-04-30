@@ -22,12 +22,15 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendOpenStackImageProvidersResourceTest extends
         AbstractBackendCollectionResourceTest<OpenStackImageProvider, Provider, BackendOpenStackImageProvidersResource> {
 

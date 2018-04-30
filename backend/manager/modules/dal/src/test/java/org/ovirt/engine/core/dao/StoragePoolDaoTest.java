@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -122,12 +122,12 @@ public class StoragePoolDaoTest extends BaseGenericDaoTestCase<Guid, StoragePool
     @Test
     public void testGetAllByStatus() {
         List<StoragePool> result = dao.getAllByStatus(StoragePoolStatus.Up);
-        assertNotNull("list of returned pools in status up shouldn't be null", result);
-        assertEquals("wrong number of storage pools returned for up status", 7, result.size());
+        assertNotNull(result, "list of returned pools in status up shouldn't be null");
+        assertEquals(7, result.size(), "wrong number of storage pools returned for up status");
 
         result = dao.getAllByStatus(StoragePoolStatus.Maintenance);
-        assertNotNull("list of returned pools in maintenance status shouldn't be null", result);
-        assertEquals("wrong number of storage pool returned for maintenance status", 0, result.size());
+        assertNotNull(result, "list of returned pools in status up shouldn't be null");
+        assertEquals(0, result.size(), "wrong number of storage pool returned for maintenance status");
     }
 
     /**

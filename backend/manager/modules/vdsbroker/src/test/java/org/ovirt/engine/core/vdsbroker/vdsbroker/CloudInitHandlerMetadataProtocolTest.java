@@ -1,19 +1,18 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler.NetConfigSourceProtocol;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.utils.JsonHelper;
  * The tests verify the network configuration output of the {@link CloudInitHandler} for a
  * given network configuration input.
  */
-@RunWith(Parameterized.class)
 public class CloudInitHandlerMetadataProtocolTest {
 
     private static final String IFACE_NAME = "iface name";
@@ -37,16 +35,7 @@ public class CloudInitHandlerMetadataProtocolTest {
     private static final String IPV6_GATEWAY = "ipv6 gateway";
     private static final int IPV6_PREFIX = 666;
 
-    private VmInit vmInit;
-    private Object expected;
-
-    public CloudInitHandlerMetadataProtocolTest(VmInit vmInit, Object expected) {
-        this.vmInit = vmInit;
-        this.expected = expected;
-    }
-
-    @Parameterized.Parameters(name="{index}: {1}")
-    public static Collection<Object[]> params() {
+    public static Stream<Arguments> params() {
 
         Pair noneAndNone = noneAndNone();
         Pair staticIPv4 = staticIPv4();
@@ -59,23 +48,23 @@ public class CloudInitHandlerMetadataProtocolTest {
         Pair dnsServersOnly = dnsServersOnly();
         Pair startOnBootFalse = startOnBootFalse();
 
-        return Arrays.asList(new Object[][]{
-                {noneAndNone.getFirst(), noneAndNone.getSecond()},
-                {staticIPv4.getFirst(), staticIPv4.getSecond()},
-                {staticIPv6.getFirst(), staticIPv6.getSecond()},
-                {staticIPv6AddressOnly.getFirst(), staticIPv6AddressOnly.getSecond()},
-                {staticIPv4AndIPv6.getFirst(), staticIPv4AndIPv6.getSecond()},
-                {dhcpIPv4.getFirst(), dhcpIPv4.getSecond()},
-                {dhcpIPv6.getFirst(), dhcpIPv6.getSecond()},
-                {staticIPv4WithDns.getFirst(), staticIPv4WithDns.getSecond()},
-                {dnsServersOnly.getFirst(), dnsServersOnly.getSecond()},
-                {startOnBootFalse.getFirst(), startOnBootFalse.getSecond()},
-
-        });
+        return Stream.of(
+                Arguments.of(noneAndNone.getFirst(), noneAndNone.getSecond()),
+                Arguments.of(staticIPv4.getFirst(), staticIPv4.getSecond()),
+                Arguments.of(staticIPv6.getFirst(), staticIPv6.getSecond()),
+                Arguments.of(staticIPv6AddressOnly.getFirst(), staticIPv6AddressOnly.getSecond()),
+                Arguments.of(staticIPv4AndIPv6.getFirst(), staticIPv4AndIPv6.getSecond()),
+                Arguments.of(dhcpIPv4.getFirst(), dhcpIPv4.getSecond()),
+                Arguments.of(dhcpIPv6.getFirst(), dhcpIPv6.getSecond()),
+                Arguments.of(staticIPv4WithDns.getFirst(), staticIPv4WithDns.getSecond()),
+                Arguments.of(dnsServersOnly.getFirst(), dnsServersOnly.getSecond()),
+                Arguments.of(startOnBootFalse.getFirst(), startOnBootFalse.getSecond())
+        );
     }
 
-    @Test
-    public void test() {
+    @ParameterizedTest
+    @MethodSource("params")
+    public void test(VmInit vmInit, Object expected) {
         CloudInitHandler underTest = new CloudInitHandler(vmInit, NetConfigSourceProtocol.OPENSTACK_METADATA);
         try {
             Map<String, byte[]> actual = underTest.getFileData();

@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.network;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
@@ -20,15 +20,16 @@ import java.util.stream.Collectors;
 
 import javax.transaction.TransactionManager;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -38,16 +39,15 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VmInterfaceManagerTest {
 
     private static final String VM_NAME = "vm name";
-
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
 
     @Mock
     private MacPool macPool;
@@ -62,14 +62,15 @@ public class VmInterfaceManagerTest {
     private AuditLogDirector auditLogDirector;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private TransactionManager transactionManager;
+    @InjectedMock
+    public TransactionManager transactionManager;
 
     @Captor
     private ArgumentCaptor<AuditLogable> auditLogableCaptor;
 
     private VmInterfaceManager vmInterfaceManager;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
     public void setupMocks() {
         vmInterfaceManager = spy(new VmInterfaceManager(macPool));
@@ -77,8 +78,6 @@ public class VmInterfaceManagerTest {
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
         doReturn(auditLogDirector).when(vmInterfaceManager).getAuditLogDirector();
         doNothing().when(vmInterfaceManager).removeFromExternalNetworks(any());
-
-        injectorRule.bind(TransactionManager.class, transactionManager);
     }
 
     @Test

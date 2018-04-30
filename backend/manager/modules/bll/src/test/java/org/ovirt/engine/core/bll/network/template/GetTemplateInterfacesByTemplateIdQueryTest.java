@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.network.template;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -36,6 +36,6 @@ public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQuer
 
         List<VmNetworkInterface> result = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("Wrong interfaces returned", expectedResult, result);
+        assertEquals(expectedResult, result, "Wrong interfaces returned");
     }
 }

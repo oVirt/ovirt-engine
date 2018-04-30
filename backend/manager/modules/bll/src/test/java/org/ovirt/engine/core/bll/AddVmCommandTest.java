@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,12 +17,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.validator.QuotaValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -35,9 +36,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(Strict.class)
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmParameters>> {
     private static final String CPU_ID = "0";
 
@@ -50,24 +52,23 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
-    private static Map<String, String> createMigrationMap() {
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         Map<String, String> migrationMap = new HashMap<>();
         migrationMap.put("undefined", "true");
         migrationMap.put("x86", "true");
         migrationMap.put("ppc", "true");
-        return migrationMap;
-    }
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.MaxIoThreadsPerVm, 127),
-        MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
-        MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_3, true),
-        MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
-        MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
-        MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
-        MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, Version.v4_3, createMigrationMap())
-    );
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.MaxIoThreadsPerVm, 127),
+                MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
+                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_3, true),
+                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
+                MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
+                        new HashSet<>(Collections.singletonList(new Version(3, 0)))),
+                MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
+                MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, Version.v4_3, migrationMap)
+        );
+    }
 
     @Override
     protected AddVmCommand<AddVmParameters> createCommand() {
@@ -82,8 +83,8 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
 
         doReturn(true).when(cmd).validateCustomProperties(any());
         doReturn(true).when(cmd).validateSpaceRequirements();
-        assertTrue("vm could not be added",
-                cmd.canAddVm(Collections.singletonList(createStorageDomain(STORAGE_DOMAIN_ID_1))));
+        assertTrue(cmd.canAddVm(Collections.singletonList(createStorageDomain(STORAGE_DOMAIN_ID_1))),
+                "vm could not be added");
     }
 
     @Test
@@ -92,7 +93,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         cmd.initEffectiveCompatibilityVersion();
         when(vmValidationUtils.isDiskInterfaceSupportedByOs(anyInt(), any(), eq(DiskInterface.VirtIO_SCSI)))
                 .thenReturn(true);
-        assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
+        assertTrue(cmd.isVirtioScsiEnabled(), "isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.");
     }
 
     @Test
@@ -132,7 +133,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     @Test
     public void testPatternBasedNameFails() {
         cmd.getParameters().getVm().setName("aa-??bb");
-        assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());
+        assertFalse(cmd.validateInputs(), "Pattern-based name should not be supported for VM");
     }
 
     @Test

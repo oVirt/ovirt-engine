@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-
 
 public class ImportExportRepoImageCommandTest extends BaseCommandTest {
     @Mock
@@ -31,7 +30,7 @@ public class ImportExportRepoImageCommandTest extends BaseCommandTest {
     protected Guid diskImageGroupId = Guid.newGuid();
     protected DiskImage diskImage;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         StorageDomain imageStorageDomain = new StorageDomain();
         imageStorageDomain.setStorage(Guid.newGuid().toString());

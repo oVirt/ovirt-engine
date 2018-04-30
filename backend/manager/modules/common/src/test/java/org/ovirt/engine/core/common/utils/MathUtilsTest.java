@@ -1,43 +1,41 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-@RunWith(Parameterized.class)
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 public class MathUtilsTest {
+    private static long[] args1 = {5*3, 7*3, 3, 0, 10};
+    private static long[] args2 = {7*3, 5*3, 5, 10, 0};
+    private static long[] gcds = {3, 3, 1, 10, 10};
+    private static long[] lcms = {5*7*3, 5*7*3, 3*5, 0, 0};
 
-    @Parameterized.Parameter(0)
-    public long arg1;
-    @Parameterized.Parameter(1)
-    public long arg2;
-    @Parameterized.Parameter(2)
-    public long gcd;
-    @Parameterized.Parameter(3)
-    public long lcm;
-
-    @Test
-    public void checkGcd() {
+    @ParameterizedTest
+    @MethodSource
+    public void checkGcd(long arg1, long arg2, long gcd) {
         assertEquals(gcd, MathUtils.greatestCommonDivisor(arg1, arg2));
     }
 
-    @Test
-    public void checkLcm() {
+    public static Stream<Arguments> checkGcd() {
+        return argsWithResult(gcds);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    public void checkLcm(long arg1, long arg2, long lcm) {
         assertEquals(lcm, MathUtils.leastCommonMultiple(arg1, arg2));
     }
 
-    @Parameterized.Parameters
-    public static Object[][] params() {
-        return new Object[][] {
-                {5*3, 7*3, 3, 5*7*3},
-                {7*3, 5*3, 3, 5*7*3},
+    public static Stream<Arguments> checkLcm() {
+        return argsWithResult(lcms);
+    }
 
-                {3, 5, 1, 3*5},
-
-                {0, 10, 10, 0},
-                {10, 0, 10, 0}
-        };
+    public static Stream<Arguments> argsWithResult(long[] result) {
+        return IntStream.range(0, args1.length).mapToObj(i -> Arguments.of(args1[i], args2[i], result[i]));
     }
 }

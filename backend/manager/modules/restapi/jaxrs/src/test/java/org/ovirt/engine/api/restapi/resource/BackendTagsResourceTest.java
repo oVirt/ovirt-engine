@@ -1,10 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,8 +19,10 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -30,6 +33,7 @@ import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendTagsResourceTest
     extends AbstractBackendCollectionResourceTest<Tag, Tags, BackendTagsResource> {
 
@@ -41,7 +45,7 @@ public class BackendTagsResourceTest
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Override
     public void testQuery() {
     }
@@ -56,7 +60,7 @@ public class BackendTagsResourceTest
         assertEquals(3, results.size());
     }
 
-    @Test(expected = WebFaultException.class)
+    @Test
     public void testListLimitResultsBadFormat() {
         UriInfo uriInfo = setUpUriExpectationsWithMax(true);
         setUpEntityQueryExpectations(QueryType.GetAllTags,
@@ -66,8 +70,7 @@ public class BackendTagsResourceTest
                                      setUpTags(),
                                      null);
         collection.setUriInfo(uriInfo);
-        getCollection();
-        fail("Expected WebFaultException");
+        assertThrows(WebFaultException.class, this::getCollection);
     }
 
     @Test

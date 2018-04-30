@@ -6,12 +6,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class MacIsNotReservedInSnapshotAndCanBeReleasedTest extends AllocateReleaseMacWhenBeingReservedForSnapshotTest {
     @Test
     public void testMacPoolCleanupAfterExecutionWhenMacWasntAddedAndExecutionFailed() {

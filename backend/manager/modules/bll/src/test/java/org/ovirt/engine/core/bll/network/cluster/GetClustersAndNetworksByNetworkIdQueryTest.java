@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -67,7 +67,7 @@ public class GetClustersAndNetworksByNetworkIdQueryTest
         query.executeQueryCommand();
 
         // Assert the result
-        assertEquals("Wrong result returned", expected, getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(expected, getQuery().getQueryReturnValue().getReturnValue(), "Wrong result returned");
     }
 
     private void setupNetworkDao() {

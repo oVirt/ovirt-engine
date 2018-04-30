@@ -7,11 +7,13 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -39,6 +41,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 
 /** A test case for {@link RemoveDiskCommandTest} */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RemoveDiskCommandTest extends BaseCommandTest {
     @Mock
     private VmDao vmDao;
@@ -61,7 +64,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
     private RemoveDiskCommand<RemoveDiskParameters> cmd =
             new RemoveDiskCommand<>(new RemoveDiskParameters(diskId), null);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         disk = new DiskImage();
         setupDisk();

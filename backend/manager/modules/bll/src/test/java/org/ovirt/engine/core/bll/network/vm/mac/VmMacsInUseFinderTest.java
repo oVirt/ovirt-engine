@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.network.vm.mac;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -10,16 +10,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VmMacsInUseFinderTest {
 
     private static final String MAC1 = "mac1";
@@ -33,7 +36,7 @@ public class VmMacsInUseFinderTest {
 
     private VmMacsInUseFinder underTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         underTest = new VmMacsInUseFinder(mockReadMacPool);
         when(mockVm.getInterfaces()).thenReturn(createVnics(MAC1, MAC2));

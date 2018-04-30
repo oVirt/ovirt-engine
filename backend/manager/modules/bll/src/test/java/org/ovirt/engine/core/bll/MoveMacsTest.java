@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
@@ -15,15 +17,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
@@ -35,13 +37,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class MoveMacsTest {
 
     private final CommandContext commandContext = new CommandContext(new EngineContext());
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private MacPoolPerCluster macPoolPerCluster;
@@ -64,7 +64,7 @@ public class MoveMacsTest {
     private List<String> macsToMigrate;
     private Cluster cluster;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         sourceMacPoolId = Guid.newGuid();
         targetMacPoolId = Guid.newGuid();
@@ -104,12 +104,9 @@ public class MoveMacsTest {
         List<String> macsFailedTobeAdded = Collections.singletonList(macsToMigrate.get(0));
         when(targetMacPool.addMacs(any())).thenReturn(macsFailedTobeAdded);
 
-        String expectedMessage =
-                underTest.createMessageCannotChangeClusterDueToDuplicatesInTargetPool(macsFailedTobeAdded);
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(expectedMessage);
-
-        underTest.migrateMacsToAnotherMacPool(sourceMacPoolId, targetMacPoolId, macsToMigrate, commandContext);
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+                () -> underTest.migrateMacsToAnotherMacPool(sourceMacPoolId, targetMacPoolId, macsToMigrate, commandContext));
+        assertEquals(underTest.createMessageCannotChangeClusterDueToDuplicatesInTargetPool(macsFailedTobeAdded), e.getMessage());
     }
 
     @Test

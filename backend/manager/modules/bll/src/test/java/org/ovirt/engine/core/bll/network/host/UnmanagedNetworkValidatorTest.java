@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.ovirt.engine.core.bll.network.host.UnmanagedNetworkValidator.LABEL;
 import static org.ovirt.engine.core.bll.network.host.UnmanagedNetworkValidator.NETWORK;
 import static org.ovirt.engine.core.bll.network.host.UnmanagedNetworkValidator.NIC;
@@ -14,9 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -29,8 +29,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class UnmanagedNetworkValidatorTest {
 
     private UnmanagedNetworkValidator validator = new UnmanagedNetworkValidator();

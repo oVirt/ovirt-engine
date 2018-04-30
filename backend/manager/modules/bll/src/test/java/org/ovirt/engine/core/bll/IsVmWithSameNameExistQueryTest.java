@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -25,6 +25,6 @@ public class IsVmWithSameNameExistQueryTest extends AbstractUserQueryTest<NameQu
         getQuery().executeQueryCommand();
 
         // Assert the result
-        assertEquals("Wrong result", result, getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(result, getQuery().getQueryReturnValue().getReturnValue(), "Wrong result");
     }
 }

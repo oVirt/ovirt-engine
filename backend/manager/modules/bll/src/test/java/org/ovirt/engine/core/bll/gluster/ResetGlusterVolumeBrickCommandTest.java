@@ -1,18 +1,21 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeResetBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -33,8 +36,10 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ResetGlusterVolumeBrickCommandTest extends BaseCommandTest {
 
     @Mock
@@ -49,9 +54,9 @@ public class ResetGlusterVolumeBrickCommandTest extends BaseCommandTest {
     @Mock
     InterfaceDao interfaceDao;
 
-    @ClassRule
-    public static MockConfigRule mcr =
-            new MockConfigRule(MockConfigDescriptor.of(ConfigValues.ResetBrickSupported, Version.v4_2, Boolean.TRUE));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.ResetBrickSupported, Version.v4_2, Boolean.TRUE));
+    }
 
     private static final String serverName = "myhost";
     private final Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
@@ -69,7 +74,7 @@ public class ResetGlusterVolumeBrickCommandTest extends BaseCommandTest {
     private ResetGlusterVolumeBrickCommand cmd =
             new ResetGlusterVolumeBrickCommand(new GlusterVolumeResetBrickActionParameters(), null);
 
-    @Before
+    @BeforeEach
     public void prepareMocks() {
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVolume(volumeId1, GlusterVolumeType.DISTRIBUTED_REPLICATE, 0)).when(volumeDao).getById(volumeId1);

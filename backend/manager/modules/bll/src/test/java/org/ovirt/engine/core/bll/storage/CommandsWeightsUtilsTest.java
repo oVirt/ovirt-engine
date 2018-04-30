@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.utils.CommandsWeightsUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CommandsWeightsUtilsTest {
     @InjectMocks
     private CommandsWeightsUtils weightsUtils;
@@ -34,12 +34,11 @@ public class CommandsWeightsUtilsTest {
         Map<String, Double> map = new HashMap<>();
         IntStream.range(0, weightParts.size()).forEach(i -> map.put(String.valueOf(i), weightParts.get(i)));
         Map<String, Integer> res = weightsUtils.adjust(map, totalWeight);
-        assertEquals("adjusted weights sum should be equal to the total weight",
-                totalWeight,
-                res.values().stream().mapToInt(x -> x).sum());
+        assertEquals(totalWeight, res.values().stream().mapToInt(x -> x).sum(),
+                "adjusted weights sum should be equal to the total weight");
 
         List<Integer> values = new ArrayList<>(res.values());
         values.sort(Integer::compareTo);
-        assertEquals("adjusted weights values aren't as expected", expectedWeightsSorted, values);
+        assertEquals(expectedWeightsSorted, values, "adjusted weights values aren't as expected");
     }
 }

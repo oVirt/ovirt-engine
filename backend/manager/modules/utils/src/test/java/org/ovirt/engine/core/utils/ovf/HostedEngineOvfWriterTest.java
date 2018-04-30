@@ -3,12 +3,13 @@ package org.ovirt.engine.core.utils.ovf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
@@ -16,9 +17,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 public class HostedEngineOvfWriterTest {
 
     private VM vm;
@@ -33,13 +34,15 @@ public class HostedEngineOvfWriterTest {
     @Mock
     private OsRepository osRepository;
 
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.VdcVersion, version.getValue()),
-            MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, version, 160),
-            MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, version, 4));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.VdcVersion, Version.getLast().getValue()),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 160),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 4)
+        );
+    }
 
-    @Before
+    @BeforeEach
     public void setup() {
         initVm();
         fullEntityOvfData = new FullEntityOvfData();

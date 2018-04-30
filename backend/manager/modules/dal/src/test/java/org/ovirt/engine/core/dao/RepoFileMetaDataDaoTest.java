@@ -1,28 +1,23 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.dao.DuplicateKeyException;
 
 public class RepoFileMetaDataDaoTest extends BaseDaoTestCase<RepoFileMetaDataDao> {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @Inject
     private StorageDomainDao storageDomainDao;
 
@@ -160,10 +155,8 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase<RepoFileMetaDataDao
         RepoImage newRepoFileMap = getNewIsoRepoFile();
         dao.addRepoFileMap(newRepoFileMap);
 
-        expectedException.expect(DuplicateKeyException.class);
-
         // Should enter here since its a violation of primary key
-        dao.addRepoFileMap(newRepoFileMap);
+        assertThrows(DuplicateKeyException.class, () -> dao.addRepoFileMap(newRepoFileMap));
     }
 
     /**

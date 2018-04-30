@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.lang.reflect.Modifier;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 
 public class DiskStorageTypeTest {
@@ -21,7 +21,7 @@ public class DiskStorageTypeTest {
         for (Class<? extends Disk> diskClass : diskClasses) {
             if (!Modifier.isAbstract(diskClass.getModifiers())) {
                 DiskStorageType diskStorageType = DiskStorageType.forClass(diskClass);
-                assertNotNull("No type for " + diskClass, diskStorageType);
+                assertNotNull(diskStorageType, "No type for " + diskClass);
                 diskStorageTypes.add(diskStorageType);
                 concreteDiskClasses.add(diskClass);
             }

@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -18,7 +18,7 @@ public class RankSelectorPolicyUnitTest {
     private Guid host3;
     private List<Guid> hosts;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         unit1 = Guid.newGuid();
         unit2 = Guid.newGuid();

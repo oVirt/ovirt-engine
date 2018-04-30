@@ -15,21 +15,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.transaction.TransactionManager;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -66,11 +66,13 @@ import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(Strict.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GlusterSyncJobTest {
 
     private static final String REPL_VOL_NAME = "repl-vol";
@@ -80,13 +82,9 @@ public class GlusterSyncJobTest {
     @Mock
     private GlusterUtil glusterUtil;
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.GlusterMetaVolumeName, "gluster_shared_storage")
-    );
-
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.GlusterMetaVolumeName, "gluster_shared_storage"));
+    }
 
     @Spy
     @InjectMocks
@@ -122,8 +120,9 @@ public class GlusterSyncJobTest {
     private static final Guid NEW_VOL_ID = new Guid("98918f1c-a3d7-4abe-ab25-563bbf0d4fd3");
     private static final String NEW_VOL_NAME = "test-new-vol";
 
+    @InjectedMock
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private TransactionManager transactionManager;
+    public TransactionManager transactionManager;
     @Mock
     private GlusterVolumeDao volumeDao;
     @Mock
@@ -156,11 +155,6 @@ public class GlusterSyncJobTest {
     private final List<Guid> removedBrickIds = new ArrayList<>();
     private final List<Guid> addedBrickIds = new ArrayList<>();
     private final List<GlusterBrickEntity> bricksWithChangedStatus = new ArrayList<>();
-
-    @Before
-    public void before() {
-        injectorRule.bind(TransactionManager.class, transactionManager);
-    }
 
     private void createObjects() {
         existingServer1 = createServer(SERVER_ID_1, SERVER_NAME_1);

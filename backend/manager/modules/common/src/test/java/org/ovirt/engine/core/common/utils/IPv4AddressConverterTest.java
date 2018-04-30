@@ -2,9 +2,9 @@ package org.ovirt.engine.core.common.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IPv4AddressConverterTest {
     private IPAddressConverter underTest = IPv4AddressConverter.getInstance();
@@ -47,14 +47,14 @@ public class IPv4AddressConverterTest {
         runTest(errorMessage, expectedIpv4Address, actualIpv4Address);
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void checkInvalidNullStringIpv4AddressConversion() {
-        assertEquals("", underTest.convertPrefixToNetmask(null));
+        assertThrows(NumberFormatException.class, () -> underTest.convertPrefixToNetmask(null));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void checkInvalidStringIpv4AddressConversion() {
-        assertEquals("", underTest.convertPrefixToNetmask("a'"));
+        assertThrows(NumberFormatException.class, () -> underTest.convertPrefixToNetmask("a'"));
     }
 
     @Test

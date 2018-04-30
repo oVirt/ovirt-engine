@@ -1,23 +1,26 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BaseVmListModelTest;
 
-@RunWith(Silent.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PoolListModelTest extends BaseVmListModelTest {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     PoolModel model;
 
-    @Before
+    @BeforeEach
     public void setUp()  {
         setUpUnitVmModelExpectations(model);
     }

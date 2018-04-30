@@ -1,14 +1,13 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeNotNull;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doNothing;
@@ -21,16 +20,17 @@ import static org.mockito.Mockito.when;
 
 import java.util.Objects;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -47,17 +47,14 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 
-@RunWith(Theories.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VmAnalyzerTest {
-
-    @DataPoints
-    public static VmTestPairs[] VMS = VmTestPairs.values();
-
     VmAnalyzer vmAnalyzer;
 
     @Mock
@@ -85,10 +82,8 @@ public class VmAnalyzerTest {
     @Mock
     private ResourceManager resourceManager;
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void externalVMWhenMissingInDb(VmTestPairs data) {
         //given
         initMocks(data, false);
@@ -103,7 +98,8 @@ public class VmAnalyzerTest {
         assertTrue(vmAnalyzer.isUnmanagedVm());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void vmNotRunningOnHost(VmTestPairs data) {
         //given
         initMocks(data, false);
@@ -114,13 +110,15 @@ public class VmAnalyzerTest {
         assertTrue(vmAnalyzer.isMovedToDown());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void proceedDownVmsNormalExistReason_MIGRATION_HANDOVER(VmTestPairs data) {
         //given
         initMocks(data, false);
 
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm().getStatus() == VMStatus.MigratingFrom);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         assumeTrue(data.vdsmVm().getVmDynamic().getExitReason() == VmExitReason.MigrationSucceeded);
@@ -134,13 +132,15 @@ public class VmAnalyzerTest {
         assertEquals(DestroyVmVDSCommandParameters.class, vdsParamsCaptor.getValue().getClass());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void proceedDownVmsNormalExistReason(VmTestPairs data) {
         //given
         initMocks(data, false);
 
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm().getStatus() != VMStatus.MigratingFrom);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         assumeTrue(data.vdsmVm().getVmDynamic().getExitStatus() == VmExitStatus.Normal);
@@ -155,12 +155,14 @@ public class VmAnalyzerTest {
         assertEquals(DestroyVmVDSCommandParameters.class, vdsParamsCaptor.getValue().getClass());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void proceedDownVmsErrorExitReason(VmTestPairs data) {
         //given
         initMocks(data, false);
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         assumeTrue(data.vdsmVm().getVmDynamic().getExitStatus() != VmExitStatus.Normal);
         //then
@@ -169,12 +171,14 @@ public class VmAnalyzerTest {
         assertEquals(data.dbVm().getDynamicData(), vmAnalyzer.getVmDynamicToSave());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void proceedWatchdogEvents(VmTestPairs data) {
         //given
         initMocks(data, true);
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         assumeTrue(Objects.equals(data.vdsmVm().getVmDynamic().getRunOnVds(), data.dbVm().getRunOnVds()));
         //then
@@ -182,12 +186,14 @@ public class VmAnalyzerTest {
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void proceedBalloonCheck(VmTestPairs data) {
         //given
         initMocks(data, true);
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         assumeFalse(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
         assumeTrue(Objects.equals(data.vdsmVm().getVmDynamic().getRunOnVds(), data.dbVm().getRunOnVds()));
         //then
@@ -195,7 +201,8 @@ public class VmAnalyzerTest {
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void vmNotRunningOnHostWithBalloonEnabled(VmTestPairs data) {
         //given
         initMocks(data, false);
@@ -207,29 +214,33 @@ public class VmAnalyzerTest {
         assertTrue(vmAnalyzer.isMovedToDown());
     }
 
-    @Theory
+    @Test
     public void proceedGuaranteedMemoryCheck() {
         //TODO add tests here
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void updateRepository_MIGRATION_FROM(VmTestPairs data) {
         //given
         initMocks(data, true);
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         // when vm is migrating
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.MigratingFrom);
         //then
         verify(resourceManager, never()).internalSetVmStatus(data.dbVm().getDynamicData(), VMStatus.MigratingTo);
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void updateRepository_MIGRATION_FROM_TO_DOWN(VmTestPairs data) {
         //given
         initMocks(data, true);
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         // when vm ended migration
         assumeTrue(data.dbVm().getStatus() == VMStatus.MigratingFrom);
         assumeTrue(data.vdsmVm().getVmDynamic().getExitReason() == VmExitReason.MigrationSucceeded);
@@ -240,12 +251,14 @@ public class VmAnalyzerTest {
         assertEquals(VmTestPairs.DST_HOST_ID, data.dbVm().getRunOnVds());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void updateRepository_MIGRATION_FROM_TO_UP(VmTestPairs data) {
         //given
         initMocks(data, false);
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         // when migration failed
         assumeTrue(data.dbVm().getStatus() == VMStatus.MigratingFrom);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Up);
@@ -259,12 +272,14 @@ public class VmAnalyzerTest {
         assertNull(data.dbVm().getMigratingToVds());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void updateRepository_HA_VM_DOWN(VmTestPairs data) {
         //given
         initMocks(data, false);
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.dbVm().getStatus() == VMStatus.Up);
         assumeTrue(data.dbVm().isAutoStartup());
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Down);
@@ -277,12 +292,13 @@ public class VmAnalyzerTest {
         assertNull(data.dbVm().getMigratingToVds());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void updateRepository_PERSIST_DST_UP_VMS(VmTestPairs data) {
         //given
         initMocks(data, false);
         //when
-        assumeNotNull(data.vdsmVm());
+        assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.vdsmVm().getVmDynamic().getRunOnVds() == VmTestPairs.DST_HOST_ID);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.Up);
         //then
@@ -291,12 +307,14 @@ public class VmAnalyzerTest {
         assertNotEquals(data.vdsmVm().getVmDynamic(), vmAnalyzer.getVmDynamicToSave());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void updateRepository_PERSIST_ALL_VMS_EXCEPT_MIGRATING_TO(VmTestPairs data) {
         //given
         initMocks(data, false);
         //when
-        assumeNotNull(data.dbVm(), data.vdsmVm());
+        assumeTrue(data.dbVm() != null);
+        assumeTrue(data.vdsmVm() != null);
         assumeTrue(data.vdsmVm().getVmDynamic().getRunOnVds() == VmTestPairs.DST_HOST_ID);
         assumeTrue(data.vdsmVm().getVmDynamic().getStatus() == VMStatus.MigratingTo);
         //then
@@ -304,17 +322,16 @@ public class VmAnalyzerTest {
         assertNull(vmAnalyzer.getVmDynamicToSave());
     }
 
-    @Theory
+    @Test
     public void prepareGuestAgentNetworkDevicesForUpdate() {
         // TODO add tests
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         for (VmTestPairs data: VmTestPairs.values()) {
             data.reset();
         }
-        MockitoAnnotations.initMocks(this);
     }
 
     public void initMocks(VmTestPairs vmData, boolean run) {

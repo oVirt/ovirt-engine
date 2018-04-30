@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Label;
@@ -42,9 +43,9 @@ public class LabelActionParametersTest {
         List<String> validationMessages = ValidationUtils.validateInputs(new ArrayList<>(), parameters);
 
         if(isValidLabelName){
-            Assertions.assertThat(validationMessages).isEmpty();
+            assertThat(validationMessages).isEmpty();
         } else {
-            Assertions.assertThat(validationMessages)
+            assertThat(validationMessages)
                     .contains(EngineMessage.AFFINITY_LABEL_NAME_SIZE_INVALID.name())
                     .contains("$min 1")
                     .contains("$max " + BusinessEntitiesDefinitions.TAG_NAME_SIZE);

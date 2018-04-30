@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ValidationUtilsTest {
     @Test
@@ -23,11 +23,11 @@ public class ValidationUtilsTest {
                 new String[] { "www.redhat#com", "123/456", "www@redhat.com", "www.řhň.řěďháť.čőm", "你好世界",
                         "שלוםעולם" };
         for (String s : straValidHosts) {
-            assertTrue("Valid host name: " + s, ValidationUtils.validHostname(s));
+            assertTrue(ValidationUtils.validHostname(s), "Valid host name: " + s);
         }
 
         for (String s : straInvalidHosts) {
-            assertTrue("Invalid host name: " + s, !ValidationUtils.validHostname(s));
+            assertTrue(!ValidationUtils.validHostname(s), "Invalid host name: " + s);
         }
     }
 
@@ -139,13 +139,13 @@ public class ValidationUtilsTest {
 
     private void assertPatternMatches(String message, String pattern, String... validStrings) {
         for (String s : validStrings) {
-            assertTrue(message + s, Pattern.matches(pattern, s));
+            assertTrue(Pattern.matches(pattern, s), message + s);
         }
     }
 
     private void assertPatternDoesNotMatch(String message, String pattern, String... invalidStrings) {
         for (String s : invalidStrings) {
-            assertTrue(message + s, !Pattern.matches(pattern, s));
+            assertTrue(!Pattern.matches(pattern, s), message + s);
         }
     }
 }

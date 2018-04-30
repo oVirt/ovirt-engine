@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -10,12 +10,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Stream;
 
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -33,9 +31,11 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
+import org.ovirt.engine.core.utils.MockEngineLocalConfigExtension;
+import org.ovirt.engine.core.utils.MockedConfig;
 import org.ovirt.engine.core.utils.TrustStoreTestUtils;
 
+@ExtendWith(MockEngineLocalConfigExtension.class)
 public class ConfigureConsoleOptionsQueryTest extends
         AbstractQueryTest<ConfigureConsoleOptionsParams, ConfigureConsoleOptionsQuery<ConfigureConsoleOptionsParams>> {
 
@@ -43,16 +43,16 @@ public class ConfigureConsoleOptionsQueryTest extends
     private static final String CA_CERTIFICATE = "-----BEGIN CERTIFICATE-----\\nMIIDijCCAnKgAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwNTELMAkGA1UEBhMCVVMxDTALBgNVBAoM\\nBFRlc3QxFzAVBgNVBAMMDmhhcHB5Ym94LjQ1NjM3MB4XDTE2MDgxNTE0NDk1OFoXDTI2MDgxNDE0\\nNDk1OFowNTELMAkGA1UEBhMCVVMxDTALBgNVBAoMBFRlc3QxFzAVBgNVBAMMDmhhcHB5Ym94LjQ1\\nNjM3MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA17DZocXTA3jWsT0IrVC4WYKAppqz\\nxCzcHgym6WSPBqlZqaPpfWiARIHps3oQfyLe7ys+ADvHYfb58Ntaor+SANvkvLd+ShOUGMFnsyZ6\\nY5h3+NVgQsHR2vt96IVIQ0L56HWHDsB5Z1qz3PnkpTOHW32rcjwf2CGKJcfWa5j1iFlidbX1Ztzx\\nNmn7uDZ5crJGaZrYwcF2BcazD35CKQRx5MiwQDoeZcBZQ+LoMzE1F1TpAT44HahsbY3IJ8kmPoxI\\ncwTjo0dSYAwpeLR51ba+nzSMXB3ldrooCjo2EyjmC6z9MCGQG3jtImAytTSlMNiSqnpJvkSIjLbs\\ntAm9SgyLqQIDAQABo4GjMIGgMB0GA1UdDgQWBBR12nbSeneEed3FST/aht0IiqrWBjBeBgNVHSME\\nVzBVgBR12nbSeneEed3FST/aht0IiqrWBqE5pDcwNTELMAkGA1UEBhMCVVMxDTALBgNVBAoMBFRl\\nc3QxFzAVBgNVBAMMDmhhcHB5Ym94LjQ1NjM3ggIQADAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB\\n/wQEAwIBBjANBgkqhkiG9w0BAQUFAAOCAQEAzQrHzdPdKYrl51iW3ETjx9OSNhwrj2/JWde2T1XG\\nCYX4kAFvlU8MRZrQAwll5hHkbIbCXxGr5wpgLWQGPbQ44n4rAdsvfGZoF7SIy31ihjhDB4OmSlG3\\n2U1FnisjPdsGioW8iu3TokRTpxVSIcYlyDUd4pWBncrclCCqpxAlm/K+lD2LgDgXIYUKp0DfVvUx\\n8NQMpXincdvCnmdyWPEG84rlHIRA5l/Qw+LsX6/HSzbL+4xEOLDDBa82WXsSyiUwf9URLwPY4cWQ\\nkK5G3KKKn5RQwjXZV2/OVXIikuX8aJopjOrBFtDrIW7P0tyT4diGRmDE1oUpBa2ZoO9tCfUqIQ==\\n-----END CERTIFICATE-----\\n";
     private static final String HOST_SUBJECT = "O=Test,CN=192.168.122.229";
 
-    @ClassRule
-    public static MockEngineLocalConfigRule mockEngineLocalConfigRule =
-            new MockEngineLocalConfigRule(
-                    new Pair<>("ENGINE_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
-                    new Pair<>("ENGINE_HTTPS_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
-                    new Pair<>("ENGINE_FQDN", "engine-host"),
-                    new Pair<>("ENGINE_PROXY_ENABLED", "false"),
-                    new Pair<>("ENGINE_HTTPS_PORT", "8443"),
-                    new Pair<>("ENGINE_PROXY_HTTPS_PORT", "443")
-            );
+    public static Stream<Pair<String, String>> mockEngineLocalConfiguration() {
+        return Stream.of(
+                new Pair<>("ENGINE_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
+                new Pair<>("ENGINE_HTTPS_PKI_TRUST_STORE", TrustStoreTestUtils.getTrustStorePath()),
+                new Pair<>("ENGINE_FQDN", "engine-host"),
+                new Pair<>("ENGINE_PROXY_ENABLED", "false"),
+                new Pair<>("ENGINE_HTTPS_PORT", "8443"),
+                new Pair<>("ENGINE_PROXY_HTTPS_PORT", "443")
+        );
+    }
 
     @Mock
     BackendInternal backend;
@@ -60,14 +60,16 @@ public class ConfigureConsoleOptionsQueryTest extends
     @Mock
     SessionDataContainer sessionDataContainer;
 
-    @Override
-    protected Set<MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
-        return new HashSet<>(Arrays.asList(
-            MockConfigDescriptor.of(ConfigValues.ConsoleToggleFullScreenKeys, "shift+f11"),
-            MockConfigDescriptor.of(ConfigValues.ConsoleReleaseCursorKeys, "shift+f12"),
-            MockConfigDescriptor.of(ConfigValues.RemapCtrlAltDelDefault, true),
-            MockConfigDescriptor.of(ConfigValues.FullScreenWebadminDefault, false),
-            MockConfigDescriptor.of(ConfigValues.EnableSpiceRootCertificateValidation, true))
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.concat(
+                AbstractQueryTest.mockConfiguration(),
+                Stream.of(
+                        MockConfigDescriptor.of(ConfigValues.ConsoleToggleFullScreenKeys, "shift+f11"),
+                        MockConfigDescriptor.of(ConfigValues.ConsoleReleaseCursorKeys, "shift+f12"),
+                        MockConfigDescriptor.of(ConfigValues.RemapCtrlAltDelDefault, true),
+                        MockConfigDescriptor.of(ConfigValues.FullScreenWebadminDefault, false),
+                        MockConfigDescriptor.of(ConfigValues.EnableSpiceRootCertificateValidation, true)
+                )
         );
     }
 
@@ -135,13 +137,12 @@ public class ConfigureConsoleOptionsQueryTest extends
     }
 
     @Test
+    @MockedConfig("spiceRelatedConfig")
     public void failWhenCertEnforcedAndCANotFound() {
         when(getQueryParameters().getOptions()).thenReturn(getValidOptions(GraphicsType.SPICE));
         mockSessionDataContainer();
         mockGetVdsCertificateSubjectByVmId();
         doReturn(mockVm(GraphicsType.SPICE)).when(getQuery()).getCachedVm();
-
-        mockSpiceRelatedConfig();
 
         QueryReturnValue caResult = new QueryReturnValue();
         caResult.setSucceeded(false);
@@ -150,6 +151,14 @@ public class ConfigureConsoleOptionsQueryTest extends
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
         assertFalse(getQuery().getQueryReturnValue().getSucceeded());
+    }
+
+    public static Stream<MockConfigDescriptor<?>> spiceRelatedConfig() {
+        return Stream.concat(mockConfiguration(), Stream.of(
+                MockConfigDescriptor.of(ConfigValues.SSLEnabled, false),
+                MockConfigDescriptor.of(ConfigValues.EnableUSBAsDefault, false)
+                )
+        );
     }
 
     @Test
@@ -233,11 +242,6 @@ public class ConfigureConsoleOptionsQueryTest extends
         );
 
         assertEquals(expected, options.getRemoteViewerNewerVersionUrl());
-    }
-
-    private void mockSpiceRelatedConfig() {
-        mcr.mockConfigValue(ConfigValues.SSLEnabled, false);
-        mcr.mockConfigValue(ConfigValues.EnableUSBAsDefault, false);
     }
 
     private VM mockVm(GraphicsType graphicsType) {

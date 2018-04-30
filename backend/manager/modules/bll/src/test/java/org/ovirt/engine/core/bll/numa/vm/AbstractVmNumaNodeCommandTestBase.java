@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -30,14 +31,15 @@ import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-
+@ExtendWith(MockConfigExtension.class)
 public abstract class AbstractVmNumaNodeCommandTestBase
         <T extends AbstractVmNumaNodeCommand<VmNumaNodeOperationParameters>> extends BaseCommandTest {
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.SupportNUMAMigration, false));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.SupportNUMAMigration, false));
+    }
 
     @Mock
     protected VmNumaNodeDao vmNumaNodeDao;
@@ -64,7 +66,7 @@ public abstract class AbstractVmNumaNodeCommandTestBase
 
     protected abstract void initNumaNodes();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initNumaNodes();
         mockVdsNumaNodeDao(vdsNumaNodeDao, vdsNumaNodes);
@@ -83,7 +85,7 @@ public abstract class AbstractVmNumaNodeCommandTestBase
         when(vmDao.get(eq(vm.getId()))).thenReturn(vm);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         paramNumaNodes.clear();
         command.getParameters().setVm(null);

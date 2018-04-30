@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.utils.pm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType.CLUSTER;
 import static org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType.DC;
 import static org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType.OTHER_DC;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 
 public class FenceProxySourceTypeHelperTest {

@@ -1,26 +1,25 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, RandomUtilsSeedingExtension.class})
 public class MetadataDiskDescriptionHandlerTest {
 
     private static int DISK_ALIAS_MAX_LENGTH = 194;
@@ -33,10 +32,7 @@ public class MetadataDiskDescriptionHandlerTest {
     @InjectMocks
     private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
 
-    @Rule
-    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-
-    @Before
+    @BeforeEach
     public void setUp() {
         disk = new DiskImage();
     }

@@ -5,10 +5,12 @@ import static org.mockito.Mockito.doReturn;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
 /** A test case for the {@link ForceSelectSPMCommand} command */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ForceSelectSPMCommandTest extends BaseCommandTest {
 
     private Guid vdsId = Guid.newGuid();
@@ -46,7 +49,7 @@ public class ForceSelectSPMCommandTest extends BaseCommandTest {
     @Mock
     private AsyncTaskDao asyncTaskDaoMock;
 
-    @Before
+    @BeforeEach
     public void setup() {
         createVDSandStoragePool();
         mockCommand();

@@ -16,15 +16,15 @@
 
 package org.ovirt.engine.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.utils.ReapedMap.IdAwareReference;
@@ -161,8 +161,8 @@ public class ReapedMapTest {
     }
 
     private void assertSizes(int i, int j) {
-        assertEquals("unexpected primary map size", i, map.size());
-        assertEquals("unexpected secondary map size", j, map.reapableSize());
+        assertEquals(i, map.size(), "unexpected primary map size");
+        assertEquals(j, map.reapableSize(), "unexpected secondary map size");
     }
 
     private void assertExpected(Integer ... values) {

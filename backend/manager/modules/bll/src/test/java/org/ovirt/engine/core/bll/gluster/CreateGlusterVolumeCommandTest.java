@@ -1,18 +1,21 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
@@ -35,8 +38,10 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
 
     @Mock
@@ -67,11 +72,12 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
     @InjectMocks
     private CreateGlusterVolumeCommand cmd = createTestCommand(getVolume(2, false));
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_0, false),
-            MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_1, true)
-            );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_0, false),
+                MockConfigDescriptor.of(ConfigValues.GlusterSupportArbiterVolume, Version.v4_1, true)
+        );
+    }
 
     private CreateGlusterVolumeCommand createTestCommand(GlusterVolumeEntity volumeEntity) {
         CreateGlusterVolumeParameters parameters = new CreateGlusterVolumeParameters(volumeEntity);
@@ -108,7 +114,7 @@ public class CreateGlusterVolumeCommandTest extends BaseCommandTest {
         return cluster;
     }
 
-    @Before
+    @BeforeEach
     public void prepareMocks() {
         doReturn(getVds(VDSStatus.Up)).when(cmd).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);

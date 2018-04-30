@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -15,12 +15,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
@@ -35,11 +36,13 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class NetworkValidatorTest {
 
     private static final String NAMEABLE_NAME = "nameable";
@@ -49,32 +52,41 @@ public class NetworkValidatorTest {
     private static final Guid DEFAULT_GUID = Guid.newGuid();
     private static final Guid OTHER_GUID = Guid.newGuid();
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
     @Mock
-    private NetworkDao networkDao;
+    @InjectedMock
+    public NetworkDao networkDao;
 
     @Mock
     private Network network;
 
     @Mock
-    private ManagementNetworkUtil managementNetworkUtil;
+    @InjectedMock
+    public ManagementNetworkUtil managementNetworkUtil;
 
     @Mock
-    private VmDao vmDao;
+    @InjectedMock
+    public VmDao vmDao;
+
+    @Mock
+    @InjectedMock
+    public VmTemplateDao templateDao;
+
+    @Mock
+    @InjectedMock
+    public IscsiBondDao iscsiBondDao;
+
+    @Mock
+    @InjectedMock
+    public VdsDao hostDao;
 
     private List<Network> networks = new ArrayList<>();
     private NetworkValidator validator;
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         // spy on attempts to access the database
         validator = new NetworkValidator(network);
-        injectorRule.bind(ManagementNetworkUtil.class, managementNetworkUtil);
-        injectorRule.bind(NetworkDao.class, networkDao);
-        injectorRule.bind(VmDao.class, vmDao);
 
         // mock their getters
         when(networkDao.getAllForDataCenter(any())).thenReturn(networks);
@@ -148,9 +160,7 @@ public class NetworkValidatorTest {
     }
 
     private void notIscsiBondNetworkTest(Matcher<ValidationResult> matcher, List<IscsiBond> iscsiBonds) {
-        IscsiBondDao iscsiBondDao = mock(IscsiBondDao.class);
         when(iscsiBondDao.getIscsiBondsByNetworkId(any())).thenReturn(iscsiBonds);
-        injectorRule.bind(IscsiBondDao.class, iscsiBondDao);
         assertThat(validator.notIscsiBondNetwork(), matcher);
     }
 
@@ -273,9 +283,7 @@ public class NetworkValidatorTest {
     }
 
     private void networkNotUsedByHostsTest(Matcher<ValidationResult> matcher, List<VDS> hosts) {
-        VdsDao hostDao = mock(VdsDao.class);
         when(hostDao.getAllForNetwork(any())).thenReturn(hosts);
-        injectorRule.bind(VdsDao.class, hostDao);
         assertThat(validator.networkNotUsedByHosts(), matcher);
     }
 
@@ -304,9 +312,7 @@ public class NetworkValidatorTest {
     }
 
     private void networkNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
-        VmTemplateDao templateDao = mock(VmTemplateDao.class);
         when(templateDao.getAllForNetwork(any())).thenReturn(templates);
-        injectorRule.bind(VmTemplateDao.class, templateDao);
         assertThat(validator.networkNotUsedByTemplates(), matcher);
     }
 

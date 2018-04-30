@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -35,7 +35,7 @@ public class CpuPinningPolicyUnitTest {
 
     private Cluster cluster;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         hostWithCpus = new VDS();
         hostWithCpus.setId(Guid.newGuid());

@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 
@@ -12,7 +12,7 @@ public class SetVmTicketCommandTest extends BaseCommandTest {
     // The command that will be tested:
     private SetVmTicketCommand<SetVmTicketParameters> command;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         command = new SetVmTicketCommand<>(new SetVmTicketParameters(), null);
     }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -9,12 +9,14 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
@@ -23,7 +25,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PostDeleteActionHandlerTest {
     @Spy
     @InjectMocks
@@ -111,9 +114,9 @@ public class PostDeleteActionHandlerTest {
     }
 
     private void assertPostZeroValue(ParametersWithPostDeleteAction parameters, boolean postZeroExpectedValue) {
-        assertEquals(MessageFormat.format(
-                "Wrong VDS command parameters: 'postZero' should be {0}.", postZeroExpectedValue),
-                parameters.getPostZero(), postZeroExpectedValue);
+        assertEquals(
+                parameters.getPostZero(), postZeroExpectedValue, MessageFormat.format(
+                        "Wrong VDS command parameters: 'postZero' should be {0}.", postZeroExpectedValue));
     }
 
     private void assertDiscardValue(boolean discardAfterDelete, Boolean supportsDiscard,

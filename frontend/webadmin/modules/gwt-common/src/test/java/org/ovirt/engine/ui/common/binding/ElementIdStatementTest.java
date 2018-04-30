@@ -1,16 +1,17 @@
 package org.ovirt.engine.ui.common.binding;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ElementIdStatementTest {
 
     private ElementIdStatement tested;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tested = new ElementIdStatement("owner.a.b.c", "abcId"); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -43,9 +44,9 @@ public class ElementIdStatementTest {
         assertThat(subPaths[2], equalTo("a.b.c")); //$NON-NLS-1$
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void getSubPaths_malformedPath() {
-        tested.getSubPaths(".a."); //$NON-NLS-1$
+        assertThrows(IllegalStateException.class, () -> tested.getSubPaths(".a.")); //$NON-NLS-1$
     }
 
 }

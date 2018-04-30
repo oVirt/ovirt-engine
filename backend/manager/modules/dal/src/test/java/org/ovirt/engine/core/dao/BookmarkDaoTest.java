@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -22,8 +22,8 @@ public class BookmarkDaoTest extends BaseDaoTestCase<BookmarkDao> {
     private Bookmark new_bookmark;
     private Bookmark existing_bookmark;
 
+    @BeforeEach
     @Override
-    @Before
     public void setUp() throws Exception {
         super.setUp();
 

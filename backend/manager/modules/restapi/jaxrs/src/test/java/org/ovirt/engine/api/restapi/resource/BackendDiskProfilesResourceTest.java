@@ -2,11 +2,14 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendDiskProfilesResourceTest extends AbstractBackendDiskProfilesResourceTest<BackendDiskProfilesResource> {
 
     public BackendDiskProfilesResourceTest() {

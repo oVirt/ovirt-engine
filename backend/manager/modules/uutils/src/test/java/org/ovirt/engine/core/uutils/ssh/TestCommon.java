@@ -17,8 +17,8 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class TestCommon {
     static long largeTestHardTimeout;
     static SSHD sshd;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() throws Exception {
         host = System.getProperty("ssh-host");
 
@@ -75,7 +75,7 @@ public class TestCommon {
     /**
      * Terminate.
      */
-    @AfterClass
+    @AfterAll
     public static void terminate() {
         if (sshd != null) {
             sshd.stop();

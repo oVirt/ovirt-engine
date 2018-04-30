@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
@@ -25,7 +25,7 @@ public abstract class AbstractRolesCommandTestBase extends BaseCommandTest {
     @Mock
     private RoleGroupMapDao roleGroupMapDaoMock;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         role = new Role();
         role.setId(params.getRoleId());

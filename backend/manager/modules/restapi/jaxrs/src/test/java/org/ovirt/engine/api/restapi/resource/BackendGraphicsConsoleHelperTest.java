@@ -1,22 +1,20 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.ovirt.engine.api.restapi.resource.BackendGraphicsConsoleHelper.asConsoleId;
 import static org.ovirt.engine.api.restapi.resource.BackendGraphicsConsoleHelper.asGraphicsType;
 
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 
-@RunWith(Theories.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendGraphicsConsoleHelperTest {
-
-    @DataPoints
-    public static GraphicsType[] TYPES = GraphicsType.values();
-
-    @Theory
+    @ParameterizedTest
+    @EnumSource(value = GraphicsType.class)
     public void asGraphicsTypeInverseOfAsConsoleId(GraphicsType type) {
         assertEquals(type, asGraphicsType(asConsoleId(type)));
     }
@@ -24,10 +22,8 @@ public class BackendGraphicsConsoleHelperTest {
     private static final String VNC_ID = "766e63";
     private static final String SPICE_ID = "7370696365";
 
-    @DataPoints
-    public static String[] IDS = new String[] { VNC_ID, SPICE_ID };
-
-    @Theory
+    @ParameterizedTest
+    @ValueSource(strings = {VNC_ID, SPICE_ID})
     public void asConsoleIdInverseOfAsGraphicsType(String consoleId) {
         assertEquals(consoleId, asConsoleId(asGraphicsType(consoleId)));
     }

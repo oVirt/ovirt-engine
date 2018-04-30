@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 
 public abstract class CtorsTestBase {

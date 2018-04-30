@@ -1,43 +1,34 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.stream.Stream;
 
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetStorageDomainDefaultWipeAfterDeleteParameters;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 
-@RunWith(Theories.class)
 public class GetStorageDomainDefaultWipeAfterDeleteQueryTest
         extends AbstractQueryTest<GetStorageDomainDefaultWipeAfterDeleteParameters,
         GetStorageDomainDefaultWipeAfterDeleteQuery<GetStorageDomainDefaultWipeAfterDeleteParameters>> {
 
-    @DataPoints
-    public static StorageType[] types = StorageType.values();
-
-    @Override
-    public Set<MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
-        return Collections.singleton(MockConfigDescriptor.of(ConfigValues.SANWipeAfterDelete, true));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.concat(AbstractQueryTest.mockConfiguration(),
+                Stream.of(MockConfigDescriptor.of(ConfigValues.SANWipeAfterDelete, true)));
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(value = StorageType.class, names = "UNKNOWN", mode = EnumSource.Mode.EXCLUDE)
     public void testExecuteQueryForType(StorageType type) {
-        assumeTrue(type + " is not a concrete type, skipping", type.isConcreteStorageType());
-
         when(getQueryParameters().getStorageType()).thenReturn(type);
         getQuery().executeQueryCommand();
 
-        assertEquals("Wrong 'Wipe After Delete' value returned for Storage Domain type " + type,
-                type.isBlockDomain(), getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(type.isBlockDomain(), getQuery().getQueryReturnValue().getReturnValue(),
+                "Wrong 'Wipe After Delete' value returned for Storage Domain type " + type);
     }
 }

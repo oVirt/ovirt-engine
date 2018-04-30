@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
@@ -15,7 +15,7 @@ public class StorageDomainNumberOfVmDisksComparatorTest extends StorageDomainCom
     private DiskImage vmDisk2;
     private DiskImage vmDisk3;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() {
         super.setUp();

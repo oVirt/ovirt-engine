@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;

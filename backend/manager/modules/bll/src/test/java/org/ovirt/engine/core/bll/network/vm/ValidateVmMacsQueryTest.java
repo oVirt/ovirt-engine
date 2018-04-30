@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasKey;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.ValidateVmMacsParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ValidateVmMacsQueryTest extends
         AbstractQueryTest<ValidateVmMacsParameters, ValidateVmMacsQuery<ValidateVmMacsParameters>> {
 
@@ -54,7 +54,7 @@ public class ValidateVmMacsQueryTest extends
     private final List<VM> vms = new ArrayList<>();
     private final Map<Guid, List<VM>> vmsByCluster = Collections.singletonMap(CLUSTER_ID, vms);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         when(macPoolPerCluster.getMacPoolForCluster(CLUSTER_ID)).thenReturn(readMacPool);

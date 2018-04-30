@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 public class QueriesCtorsTest extends CtorsTestBase {
     private static Collection<Class<?>> queryClasses;
 
-    @BeforeClass
+    @BeforeAll
     public static void initCommandsCollection() {
         queryClasses = commandsFromEnum(QueryType.class, CommandsFactory::getQueryClass);
     }

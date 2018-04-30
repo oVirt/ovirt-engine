@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.uutils.ssh;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -14,15 +15,15 @@ import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TimeoutTest extends TestCommon {
 
     SSHClient client;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         client = new SSHClient();
         client.setSoftTimeout(10 * 1000);
@@ -32,7 +33,7 @@ public class TimeoutTest extends TestCommon {
         client.setPassword(TestCommon.password);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (client != null) {
             client.close();
@@ -40,7 +41,7 @@ public class TimeoutTest extends TestCommon {
         }
     }
 
-    @Test(expected = TimeLimitExceededException.class)
+    @Test
     public void testConnectTimeout() throws Exception {
         SSHClient client = spy(this.client);
         SshClient ssh = spy(SshClient.setUpDefaultClient());
@@ -50,10 +51,10 @@ public class TimeoutTest extends TestCommon {
         doReturn(future).when(ssh).connect(any(), anyInt());
         when(future.await(anyLong())).thenReturn(false);
 
-        client.connect();
+        assertThrows(TimeLimitExceededException.class, client::connect);
     }
 
-    @Test(expected = TimeLimitExceededException.class)
+    @Test
     public void testPasswordTimeout() throws Exception {
         SSHClient client = spy(this.client);
         SshClient ssh = spy(SshClient.setUpDefaultClient());
@@ -69,7 +70,9 @@ public class TimeoutTest extends TestCommon {
         when(authFuture.await(anyLong())).thenReturn(false);
         when(session.authPassword(any(), any())).thenReturn(authFuture);
 
-        client.connect();
-        client.authenticate();
+        assertThrows(TimeLimitExceededException.class, () -> {
+            client.connect();
+            client.authenticate();
+        });
     }
 }

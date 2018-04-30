@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,8 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
@@ -87,7 +87,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
     protected T testServlet;
 
-    @Before
+    @BeforeEach
     public void setUp() throws NoSuchAlgorithmException {
         when(mockRequest.getAttribute(GwtDynamicHostPageServlet.
                 MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey())).

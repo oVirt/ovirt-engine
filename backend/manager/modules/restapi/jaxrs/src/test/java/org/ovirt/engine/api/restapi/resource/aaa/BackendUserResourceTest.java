@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResourceTest.GROUPS;
 import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResourceTest.PARSED_GROUPS;
 
@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendUserResourceTest
         extends AbstractBackendSubResourceTest<User, DbUser, BackendUserResource> {
 

@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -47,7 +47,7 @@ public class UpdateVdsCommandTest {
     private VDS oldHost;
     private UpdateVdsActionParameters parameters;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         newHost = createTestHost(HOST_ID);
         parameters = createParameters(newHost);

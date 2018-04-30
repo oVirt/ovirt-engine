@@ -4,12 +4,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -22,9 +22,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDao;
 
-
 /** A test case for {@link ExportRepoImageCommand} */
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
 
     @Mock
@@ -40,7 +39,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
     protected VM vm;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
 

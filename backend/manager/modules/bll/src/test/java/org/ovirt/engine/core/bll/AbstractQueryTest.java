@@ -1,33 +1,32 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
-import java.util.Collections;
-import java.util.Set;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public abstract class AbstractQueryTest<P extends QueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends BaseCommandTest {
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30));
 
     @Mock (answer = RETURNS_DEEP_STUBS)
     protected DbUser dbUserMock;
@@ -39,16 +38,13 @@ public abstract class AbstractQueryTest<P extends QueryParametersBase, Q extends
     private Q query = createQuery();
 
     /** Sets up a mock user a spy query with it, and the generic query parameters */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         initQuery(getQuery());
-        for (MockConfigDescriptor<?> mcd : getExtraConfigDescriptors()) {
-            mcr.mockConfigValue(mcd);
-        }
     }
 
-    protected Set<MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
-        return Collections.emptySet();
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30));
     }
 
     /** Sets up a mock for {@link #params} */
@@ -107,9 +103,9 @@ public abstract class AbstractQueryTest<P extends QueryParametersBase, Q extends
     }
 
     @Test
+    @MockitoSettings(strictness = Strictness.LENIENT)
     public void testQueryType() throws IllegalArgumentException, IllegalAccessException {
-        assertNotSame("The query can't be found in the enum QueryType",
-                QueryType.Unknown,
-                TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
+        assertNotSame(QueryType.Unknown, TestHelperQueriesCommandType.getQueryTypeFieldValue(query),
+                "The query can't be found in the enum QueryType");
     }
 }

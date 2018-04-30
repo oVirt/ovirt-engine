@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -12,12 +12,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -26,7 +28,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /** A test case for {@link ImagesHandler} */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ImagesHandlerTest {
 
     @Mock
@@ -43,7 +46,7 @@ public class ImagesHandlerTest {
     private DiskImage disk2;
     private DiskImage disk3;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         disk1 = new DiskImage();
         disk2 = new DiskImage();
@@ -52,30 +55,29 @@ public class ImagesHandlerTest {
 
     @Test
     public void testGetSuggestedDiskAliasNullDisk() {
-        assertEquals("null disk does not give the default name",
-                prefix + ImagesHandler.DISK + ImagesHandler.DefaultDriveName,
-                ImagesHandler.getSuggestedDiskAlias(null, prefix, 1));
+        assertEquals(prefix + ImagesHandler.DISK + ImagesHandler.DefaultDriveName,
+                ImagesHandler.getSuggestedDiskAlias(null, prefix, 1),
+                "null disk does not give the default name");
     }
 
     @Test
     public void testGetSuggestedDiskAliasNullAliasDisk() {
         disk1.setDiskAlias(null);
-        assertEquals("disk with null alias does not give the default name",
-                prefix + ImagesHandler.DISK + ImagesHandler.DefaultDriveName,
-                ImagesHandler.getSuggestedDiskAlias(disk1, prefix, 1));
+        assertEquals(prefix + ImagesHandler.DISK + ImagesHandler.DefaultDriveName,
+                ImagesHandler.getSuggestedDiskAlias(disk1, prefix, 1),
+                "disk with null alias does not give the default name");
     }
 
     @Test
     public void testGetSuggestedDiskAliasNotNullAliasDisk() {
         disk1.setDiskAlias("someAlias");
-        assertEquals("a new alias was generated instead of returning the pre-defined one",
-                disk1.getDiskAlias(),
-                ImagesHandler.getSuggestedDiskAlias(disk1, prefix, 1));
+        assertEquals(disk1.getDiskAlias(), ImagesHandler.getSuggestedDiskAlias(disk1, prefix, 1),
+                "a new alias was generated instead of returning the pre-defined one");
     }
 
     @Test
     public void testGetDiskAliasWithDefaultNullAlias() {
-        assertEquals("default", ImagesHandler.getDiskAliasWithDefault(disk1, "default"));
+        assertEquals(ImagesHandler.getDiskAliasWithDefault(disk1, "default"), "default");
     }
 
     @Test
@@ -95,8 +97,8 @@ public class ImagesHandlerTest {
 
         Set<Guid> result = ImagesHandler.getAllStorageIdsForImageIds(Arrays.asList(disk1, disk2));
 
-        assertEquals("Wrong number of Guids returned", 3, result.size());
-        assertTrue("Wrong Guids returned", result.containsAll(Arrays.asList(sdId1, sdId2, sdIdShared)));
+        assertEquals(3, result.size(), "Wrong number of Guids returned");
+        assertTrue(result.containsAll(Arrays.asList(sdId1, sdId2, sdIdShared)), "Wrong Guids returned");
     }
 
     @Test
@@ -110,8 +112,8 @@ public class ImagesHandlerTest {
 
         List<DiskImage> intersection = ImagesHandler.imagesSubtract(list1, list2);
 
-        assertEquals("Intersection should contain only one disk", 1, intersection.size());
-        assertTrue("Intersection should contains disk1", intersection.contains(disk1));
+        assertEquals(1, intersection.size(), "Intersection should contain only one disk");
+        assertTrue(intersection.contains(disk1), "Intersection should contains disk1");
     }
 
     @Test
@@ -125,7 +127,7 @@ public class ImagesHandlerTest {
 
         List<DiskImage> intersection = ImagesHandler.imagesIntersection(list1, list2);
 
-        assertTrue("Intersection should contain only disk1", intersection.size() == 1 && intersection.contains(disk1));
+        assertTrue(intersection.size() == 1 && intersection.contains(disk1), "Intersection should contain only disk1");
     }
 
     @Test
@@ -146,9 +148,9 @@ public class ImagesHandlerTest {
         destDomain.setStorageType(StorageType.ISCSI);
         when(storageDomainDaoMock.get(dstDomainGuid)).thenReturn(destDomain);
 
-        assertEquals("Total Initial Size should be 0",
-                Long.valueOf(0L),
-                imagesHandler.determineTotalImageInitialSize(disk, VolumeFormat.COW, srcDomainGuid, dstDomainGuid));
+        assertEquals(Long.valueOf(0L),
+                imagesHandler.determineTotalImageInitialSize(disk, VolumeFormat.COW, srcDomainGuid, dstDomainGuid),
+                "Total Initial Size should be 0");
     }
 
     @Test
@@ -176,14 +178,14 @@ public class ImagesHandlerTest {
                         diskWithoutSnapshots)));
         DiskImage resultDisk =
                 result.stream().filter(diskImage -> diskImage.getId() == disk1.getId()).findFirst().orElse(null);
-        assertNotNull("resultDisk should hold a reference to DiskImage object", resultDisk);
-        assertEquals("wrong number of disks returned", 2, result.size());
-        assertEquals("wrong number of snapshots for disk1", 3, resultDisk.getSnapshots().size());
+        assertNotNull(resultDisk, "resultDisk should hold a reference to DiskImage object");
+        assertEquals(2, result.size(), "wrong number of disks returned");
+        assertEquals(3, resultDisk.getSnapshots().size(), "wrong number of snapshots for disk1");
     }
 
     @Test
     public void testAggregateDiskImagesSnapshotsWithEmptyList() {
         Collection<DiskImage> result =  imagesHandler.aggregateDiskImagesSnapshots(Collections.emptyList());
-        assertTrue("should return an empty list", result.isEmpty());
+        assertTrue(result.isEmpty(), "should return an empty list");
     }
 }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.utils.timer;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.utils.ResourceUtils;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -21,7 +21,7 @@ public class DBSchedulerUtilQuartzImplTest {
 
     private static DBSchedulerUtilQuartzImpl scheduler;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws IOException {
         String QUARTZ_DB_TEST_PROPERTIES = "ovirt-db-scheduler-test.properties";
         Properties props = ResourceUtils.loadProperties(SchedulerUtil.class, QUARTZ_DB_TEST_PROPERTIES);
@@ -30,7 +30,7 @@ public class DBSchedulerUtilQuartzImplTest {
         scheduler.setup(props);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         scheduler.teardown();
     }

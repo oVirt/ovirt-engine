@@ -1,19 +1,22 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -32,11 +35,13 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
 /**
  * A test case for the {@link UpdateStorageDomainCommand} class.
  */
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     private Guid sdId = Guid.newGuid();
     private StorageDomain sd;
@@ -49,9 +54,10 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
 
     private static final int STORAGE_DOMAIN_NAME_LENGTH_LIMIT = 100;
 
-    @ClassRule
-    public static MockConfigRule mcr =
-            new MockConfigRule(MockConfigDescriptor.of(ConfigValues.StorageDomainNameSizeLimit, STORAGE_DOMAIN_NAME_LENGTH_LIMIT));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.StorageDomainNameSizeLimit,
+                STORAGE_DOMAIN_NAME_LENGTH_LIMIT));
+    }
 
     @Mock
     private StorageDomainStaticDao sdsDao;
@@ -59,7 +65,7 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainValidator storageDomainValidator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         StorageDomainStatic oldSdStatic = createStorageDomain();
         Guid spId = Guid.newGuid();
@@ -103,9 +109,9 @@ public class UpdateStorageDomainCommandTest extends BaseCommandTest {
     public void setActionMessageParameters() {
         cmd.setActionMessageParameters();
         List<String> messages = cmd.getReturnValue().getValidationMessages();
-        assertTrue("action name not in messages", messages.remove(EngineMessage.VAR__ACTION__UPDATE.name()));
-        assertTrue("type not in messages", messages.remove(EngineMessage.VAR__TYPE__STORAGE__DOMAIN.name()));
-        assertTrue("redundant messages " + messages, messages.isEmpty());
+        assertTrue(messages.remove(EngineMessage.VAR__ACTION__UPDATE.name()), "action name not in messages");
+        assertTrue(messages.remove(EngineMessage.VAR__TYPE__STORAGE__DOMAIN.name()), "type not in messages");
+        assertTrue(messages.isEmpty(), "redundant messages " + messages);
     }
 
     @Test

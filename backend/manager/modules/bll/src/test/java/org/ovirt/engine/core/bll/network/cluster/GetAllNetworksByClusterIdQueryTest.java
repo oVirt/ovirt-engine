@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -34,7 +34,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Id
 
         @SuppressWarnings("unchecked")
         List<Network> result = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of networks in result", 1, result.size());
-        assertEquals("Wrong network in result", networkMock, result.get(0));
+        assertEquals(1, result.size(), "Wrong number of networks in result");
+        assertEquals(networkMock, result.get(0), "Wrong network in result");
     }
 }

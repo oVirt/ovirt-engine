@@ -1,15 +1,17 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -22,7 +24,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 
-
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ReconstructMasterDomainCommandTest extends BaseCommandTest {
 
     @Mock
@@ -46,7 +48,7 @@ public class ReconstructMasterDomainCommandTest extends BaseCommandTest {
 
     private StoragePoolValidator storagePoolValidator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         cmd = spy(new ReconstructMasterDomainCommand<>(new ReconstructMasterParameters(), null));
 

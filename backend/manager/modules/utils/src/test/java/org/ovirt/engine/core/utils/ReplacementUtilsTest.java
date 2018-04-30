@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 
 public class ReplacementUtilsTest {
@@ -76,32 +77,36 @@ public class ReplacementUtilsTest {
         assertTrue(validateReplacementElementCount(replacements, separator,  numOfElementsToShow));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void separatorNotEmpty() {
         List<Object> items = createItems();
         String separator = "";
-        ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , 5);
+        assertThrows(IllegalArgumentException.class,
+                () -> ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , 5));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void separatorNotNull() {
         List<Object> items = createItems();
         String separator = null;
-        ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator, 5);
+        assertThrows(IllegalArgumentException.class,
+                () -> ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator, 5));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void failZeroValuesToShow() {
         List<Object> items = createItems();
         String separator = ", ";
-        ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , 0);
+        assertThrows(IllegalArgumentException.class,
+                () -> ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , 0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void failNegativeNumOfValuesToShow() {
         List<Object> items = createItems();
         String separator = ", ";
-        ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , -5);
+        assertThrows(IllegalArgumentException.class,
+                () -> ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , -5));
     }
 
     @Test

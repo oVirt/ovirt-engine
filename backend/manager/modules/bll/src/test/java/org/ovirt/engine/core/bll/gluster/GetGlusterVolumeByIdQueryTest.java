@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -19,7 +19,7 @@ public class GetGlusterVolumeByIdQueryTest extends AbstractQueryTest<IdQueryPara
     @Mock
     GlusterVolumeDao glusterVolumeDaoMock;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -45,6 +45,6 @@ public class GetGlusterVolumeByIdQueryTest extends AbstractQueryTest<IdQueryPara
         getQuery().executeQueryCommand();
         GlusterVolumeEntity actual = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("wrong Gluster Volume", expected.getId(), actual.getId());
+        assertEquals(expected.getId(), actual.getId(), "wrong Gluster Volume");
     }
 }

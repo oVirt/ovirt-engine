@@ -1,47 +1,50 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetConfigurationValueParameters, GetConfigurationValueQuery<GetConfigurationValueParameters>> {
 
-    @Test
-    public void testExecuteQueryUserConfigFiltered() {
-        assertQueryExecution(ConfigValues.PredefinedVMProperties, true);
+    private static Version version = RandomUtils.instance().pickRandom(Version.ALL);
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.concat(AbstractQueryTest.mockConfiguration(), mockConfigurationForTests());
     }
 
-    @Test
-    public void testExecuteQueryUserConfigNotFiltered() {
-        assertQueryExecution(ConfigValues.PredefinedVMProperties, false);
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationForTests() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PredefinedVMProperties, version, "some string"),
+                MockConfigDescriptor.of(ConfigValues.DiscardAfterDeleteSupported, version, "some other string")
+        );
     }
 
-
-    @Test
-    public void testExecuteQueryAdminConfigFiltered() {
-        assertQueryExecution(ConfigValues.DiscardAfterDeleteSupported, true);
+    public static Stream<Arguments> queryExecution() {
+        // Return each mocked configuration value permuted with true and false
+        return mockConfigurationForTests().flatMap(m -> Stream.of(
+                Arguments.of(m.getValue(), m.getReturnValue(), true),
+                Arguments.of(m.getValue(), m.getReturnValue(), false))
+        );
     }
 
-    @Test
-    public void testExecuteQueryAdminConfigNotFiltered() {
-        assertQueryExecution(ConfigValues.DiscardAfterDeleteSupported, false);
-    }
+    @ParameterizedTest
+    @MethodSource
+    public void queryExecution(ConfigValues configValue, String expected, boolean isFiltered) {
 
-    private void assertQueryExecution(ConfigValues configValue, boolean isFiltered) {
-        // Mock the parameters
-        Version version = RandomUtils.instance().pickRandom(Version.ALL);
         when(getQueryParameters().getVersion()).thenReturn(version.toString());
         when(getQueryParameters().getConfigValue()).thenReturn(configValue);
         when(getQueryParameters().isFiltered()).thenReturn(isFiltered);
-
-        // Mock the config
-        String expected = mockConfig(version, configValue);
 
         getQuery().executeQueryCommand();
 
@@ -49,22 +52,9 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
 
         boolean shouldSucceed = !isFiltered || configValue.nonAdminVisible();
         if (shouldSucceed) {
-            assertEquals("Got wrong expected value for " + configValue, expected, actual);
+            assertEquals(expected, actual, "Got wrong expected value for " + configValue);
         } else {
-            assertNull("Should get null result for " + configValue, actual);
+            assertNull(actual, "Should get null result for " + configValue);
         }
-    }
-
-    /**
-     * Mocks a call to {@link org.ovirt.engine.core.common.config.Config#getValue(ConfigValues)} and returns the value
-     * it should return.
-     * @return The mocked value
-     */
-    private static String mockConfig(Version version, ConfigValues configValues) {
-        String returnValue = RandomUtils.instance().nextString(10, true);
-
-        mcr.mockConfigValue(configValues, version, returnValue);
-
-        return returnValue;
     }
 }

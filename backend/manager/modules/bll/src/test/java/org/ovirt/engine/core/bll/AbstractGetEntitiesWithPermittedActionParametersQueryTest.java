@@ -4,8 +4,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -22,7 +22,7 @@ public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<
         return actionGroup;
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -41,7 +41,7 @@ public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<
         sessionDataContainer.setUser(sessionID, getUser());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         sessionDataContainer.removeSessionOnLogout(sessionID);
     }

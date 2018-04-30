@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 
 public class EnumUtilsTest {
@@ -32,9 +33,10 @@ public class EnumUtilsTest {
         assertEquals(EnumForTesting.ENUM1, EnumUtils.valueOf(EnumForTesting.class, EnumForTesting.ENUM1.name(), true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void valeOfWrongCaseSensitive() {
-        EnumUtils.valueOf(EnumForTesting.class, EnumForTesting.ENUM1.name().toLowerCase(), false);
+        assertThrows(IllegalArgumentException.class,
+                () -> EnumUtils.valueOf(EnumForTesting.class, EnumForTesting.ENUM1.name().toLowerCase(), false));
     }
 
     @Test
@@ -43,13 +45,15 @@ public class EnumUtilsTest {
                 EnumUtils.valueOf(EnumForTesting.class, EnumForTesting.ENUM1.name().toLowerCase(), true));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void valeOfWrongValueSensitive() {
-        EnumUtils.valueOf(EnumForTesting.class, "no such value!", false);
+        assertThrows(IllegalArgumentException.class,
+                () -> EnumUtils.valueOf(EnumForTesting.class, "no such value!", false));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void valeOfWrongValueInsensitive() {
-        EnumUtils.valueOf(EnumForTesting.class, "no such value!", true);
+        assertThrows(IllegalArgumentException.class,
+                () -> EnumUtils.valueOf(EnumForTesting.class, "no such value!", true));
     }
 }

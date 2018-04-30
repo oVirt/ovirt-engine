@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Modifier;
 import java.util.EnumSet;
@@ -21,10 +21,10 @@ public class CommandEnumTestUtils {
                         .filter(e -> commandCreator.apply(e) == null)
                         .collect(Collectors.toList());
 
-        assertTrue(enumClass.getSimpleName() +
+        assertTrue(missingCommands.isEmpty(),
+                enumClass.getSimpleName() +
                         " contains the following values that does not correspond to an existing commands: " +
-                        missingCommands,
-                missingCommands.isEmpty());
+                        missingCommands);
     }
 
     public static <E extends Enum<E>, C> void testCommandClassHasEnum
@@ -48,9 +48,9 @@ public class CommandEnumTestUtils {
                         }).map(Class::getName)
                         .collect(Collectors.toSet());
 
-        assertTrue
-                ("Found the following commands without a corresponding " + enumClass.getSimpleName() +
-                                " constant : " + commandsWithoutEnum, commandsWithoutEnum.isEmpty());
+        assertTrue(commandsWithoutEnum.isEmpty(),
+                "Found the following commands without a corresponding " + enumClass.getSimpleName() +
+                        " constant : " + commandsWithoutEnum);
 
     }
 }

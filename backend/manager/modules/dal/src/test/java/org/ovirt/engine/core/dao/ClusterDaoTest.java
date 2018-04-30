@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.dao;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
@@ -46,6 +47,7 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
     private Cluster newGroup;
     private Cluster groupWithNoRunningVms;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -474,15 +476,17 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
     @Test
     public void testGetVmsCountByClusterId() {
         // Cluster with no VMs
-        assertEquals("Incorrect number of VMs in cluster", FixturesTool.NUMBER_OF_VMS_IN_CLUSTER_RHEL6_NFS_CLUSTER,
-                dao.getVmsCountByClusterId(FixturesTool.CLUSTER_RHEL6_NFS));
+        assertEquals(FixturesTool.NUMBER_OF_VMS_IN_CLUSTER_RHEL6_NFS_CLUSTER,
+                dao.getVmsCountByClusterId(FixturesTool.CLUSTER_RHEL6_NFS),
+                "Incorrect number of VMs in cluster");
 
         // Cluster with VMs
-        assertEquals("Incorrect number of VMs in cluster", FixturesTool.NUMBER_OF_VMS_IN_CLUSTER_RHEL6_ISCSI,
-                dao.getVmsCountByClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI));
+        assertEquals(FixturesTool.NUMBER_OF_VMS_IN_CLUSTER_RHEL6_ISCSI,
+                dao.getVmsCountByClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI),
+                "Incorrect number of VMs in cluster");
 
         // Non existing cluster, should return 0
-        assertEquals("Incorrect number of VMs in cluster", 0, dao.getVmsCountByClusterId(Guid.newGuid()));
+        assertEquals(0, dao.getVmsCountByClusterId(Guid.newGuid()), "Incorrect number of VMs in cluster");
     }
 
     @Test
@@ -491,8 +495,8 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
         List<Cluster> clusters = new ArrayList<>();
         clusters.add(dao.get(guid));
         List<Cluster> data = ((ClusterDaoImpl) dao).getHostsAndVmsForClusters(clusters);
-        assertEquals("Incorrect number of VMs in cluster", 7, data.get(0).getClusterHostsAndVms().getVms());
-        assertEquals("Incorrect number of Hosts in cluster", 1, data.get(0).getClusterHostsAndVms().getHosts());
+        assertEquals(7, data.get(0).getClusterHostsAndVms().getVms(), "Incorrect number of VMs in cluster");
+        assertEquals(1, data.get(0).getClusterHostsAndVms().getHosts(), "Incorrect number of Hosts in cluster");
     }
 
     @Test

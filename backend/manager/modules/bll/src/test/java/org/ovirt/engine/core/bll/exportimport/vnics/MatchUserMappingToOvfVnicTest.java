@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll.exportimport.vnics;
 
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicsHandlers.MatchUserMappingToOvfVnic;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -19,7 +19,7 @@ public class MatchUserMappingToOvfVnicTest {
     private static MapVnicDataPoints dataPoints;
     private static MatchUserMappingToOvfVnic matcher;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         dataPoints = new MapVnicDataPoints();
         dataPoints.prepareTestDataPoints();

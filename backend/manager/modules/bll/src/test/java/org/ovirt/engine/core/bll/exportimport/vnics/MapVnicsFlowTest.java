@@ -3,19 +3,18 @@ package org.ovirt.engine.core.bll.exportimport.vnics;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.core.common.flow.HandlerOutcome.NEUTRAL;
 import static org.ovirt.engine.core.common.flow.HandlerOutcome.SUCCESS;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicsHandlers.MatchUserMappingToOvfVnic;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicsHandlers.ReportResults;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 
-@RunWith(Parameterized.class)
 public class MapVnicsFlowTest {
 
     private static final String NETWORK_NAME = "network name";
@@ -39,20 +37,9 @@ public class MapVnicsFlowTest {
     private static final ExternalVnicProfileMapping NO_TARGET_MAPPING = new ExternalVnicProfileMapping(NETWORK_NAME, PROFILE2_NAME, null);
     private static final ExternalVnicProfileMapping FULL_MAPPING =  new ExternalVnicProfileMapping(NETWORK_NAME, PROFILE1_NAME, PROFILE_ID);
 
-    /**
-     * parameters for each test
-     */
-    private MapVnicsContext actual;
-    private MapVnicsContext expected;
     private MapVnicsFlow underTest;
 
-    public MapVnicsFlowTest(MapVnicsContext expected, MapVnicsContext actual) {
-        this.expected = expected;
-        this.actual = actual;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> testCases() {
+    public static Stream<Arguments> flow() {
 
         Pair nullMappingsAndNullOvfs = testNullMappingsAndNullOvfs();
         Pair nullMappingsAndEmptyOvfs = testNullMappingsAndEmptyOvfs();
@@ -60,27 +47,28 @@ public class MapVnicsFlowTest {
         Pair emptyMappingsAndNullOvfs = testEmptyMappingsAndNullOvfs();
         Pair someMappingsAndNullOvfs = testSomeMappingsAndNullOvfs();
 
-        return Arrays.asList(new Object[][]{
-            { nullMappingsAndNullOvfs.getFirst(),       nullMappingsAndNullOvfs.getSecond()  },
-            { nullMappingsAndEmptyOvfs.getFirst(),      nullMappingsAndEmptyOvfs.getSecond() },
-            { emptyMappingsAndEmptyOvfs.getFirst(),     emptyMappingsAndEmptyOvfs.getSecond()},
-            { emptyMappingsAndNullOvfs.getFirst(),      emptyMappingsAndNullOvfs.getSecond() },
-            { someMappingsAndNullOvfs.getFirst(),       someMappingsAndNullOvfs.getSecond()  },
-        });
+        return Stream.of(
+            Arguments.of(nullMappingsAndNullOvfs.getFirst(),       nullMappingsAndNullOvfs.getSecond()  ),
+            Arguments.of(nullMappingsAndEmptyOvfs.getFirst(),      nullMappingsAndEmptyOvfs.getSecond() ),
+            Arguments.of(emptyMappingsAndEmptyOvfs.getFirst(),     emptyMappingsAndEmptyOvfs.getSecond()),
+            Arguments.of(emptyMappingsAndNullOvfs.getFirst(),      emptyMappingsAndNullOvfs.getSecond() ),
+            Arguments.of(someMappingsAndNullOvfs.getFirst(),       someMappingsAndNullOvfs.getSecond()  )
+        );
     }
 
     /**
      * Init underTest with on the fly mocks. This test does not use these mocks,
      * but {@link MapVnicsFlow} must get some instantiated objects in order to work.
      */
-    @Before
+    @BeforeEach
     public void before() {
         underTest = MapVnicsFlow.of(
                 mock(VnicProfileViewDao.class), mock(VnicProfileDao.class), mock(NetworkClusterDao.class), mock(NetworkDao.class));
     }
 
-    @Test
-    public void test() {
+    @ParameterizedTest
+    @MethodSource
+    public void flow(MapVnicsContext expected, MapVnicsContext actual) {
         // act
         underTest.getHead().process(actual);
         // assert

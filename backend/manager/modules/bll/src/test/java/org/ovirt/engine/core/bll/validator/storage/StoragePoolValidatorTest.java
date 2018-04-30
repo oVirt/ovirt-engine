@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -17,7 +17,7 @@ public class StoragePoolValidatorTest {
     private StoragePoolValidator validator;
     private StoragePool storagePool;
 
-    @Before
+    @BeforeEach
     public void setup() {
         storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);

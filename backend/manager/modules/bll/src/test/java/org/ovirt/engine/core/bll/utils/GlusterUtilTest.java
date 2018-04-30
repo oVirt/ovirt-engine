@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -15,14 +16,17 @@ import java.util.Set;
 
 import javax.naming.AuthenticationException;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GlusterUtilTest {
     private static final String SERVER_NAME1 = "testserver1";
     private static final String SERVER_NAME2 = "testserver2";
@@ -43,7 +47,7 @@ public class GlusterUtilTest {
     @Spy
     private GlusterUtil glusterUtil;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         doNothing().when(glusterUtil).connect(client, SERVER_NAME1, USER, WRONG_PASSWORD);
         doReturn(OUTPUT_XML).when(glusterUtil).executePeerStatusCommand(client);
@@ -78,10 +82,10 @@ public class GlusterUtilTest {
         assertTrue(peers.contains(SERVER_NAME2));
     }
 
-    @Test(expected = AuthenticationException.class)
-    public void testGetPeersWithWrongPassword() throws AuthenticationException, IOException {
+    @Test
+    public void testGetPeersWithWrongPassword() {
         doReturn(client).when(glusterUtil).getSSHClient();
-        glusterUtil.getPeers(SERVER_NAME1, USER, WRONG_PASSWORD);
+        assertThrows(AuthenticationException.class, () -> glusterUtil.getPeers(SERVER_NAME1, USER, WRONG_PASSWORD));
     }
 
     @Test

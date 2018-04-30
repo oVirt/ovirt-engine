@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -15,11 +15,14 @@ import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStatisticResourceTest extends AbstractBackendSubResourceTest<Statistic, VDS, BackendStatisticResource<Host, VDS>> {
 
     private static final String STATISTIC_ID = UUID.nameUUIDFromBytes(STATISTICS[1].getBytes()).toString();

@@ -1,80 +1,61 @@
 package org.ovirt.engine.core.common.utils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
-import org.junit.experimental.theories.DataPoint;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.compat.Regex;
 
-@RunWith(Theories.class)
 public class I18NRegexpTest {
 
     private static final String REGEXP = ValidationUtils.NO_SPECIAL_CHARACTERS_I18N;
 
-    @DataPoint
-    public static final CorrectString englishText = new CorrectString("SomeText_-");
+    // Correct strings
+    public static final String englishText = "SomeText_-";
+    public static final String slovakText = "ňejakýReťazeč_-";
+    public static final String hungarianText = "körülröföghetetlenség_-";
+    public static final String hebrewText = "שלוםעולם_-";
+    public static final String chineseText = "你好世界_-";
+    public static final String dotSign = ".";
+    public static List<String> correctStrings =
+            Arrays.asList(englishText, slovakText, hungarianText, hebrewText, chineseText, dotSign);
 
-    @DataPoint
-    public static final CorrectString slovakText = new CorrectString("ňejakýReťazeč_-");
+    // Incorrect strings
+    public static final String atSign = "@";
+    public static final String spaceSign = " ";
+    public static final String slashSign = "\\";
+    public static final String apostropheSign = "'";
+    public static final List<String> incorrectStrings =
+            Arrays.asList(atSign, spaceSign, slashSign, apostropheSign);
 
-    @DataPoint
-    public static final CorrectString hungarianText = new CorrectString("körülröföghetetlenség_-");
-
-    @DataPoint
-    public static final CorrectString hebrewText = new CorrectString("שלוםעולם_-");
-
-    @DataPoint
-    public static final CorrectString chineseText = new CorrectString("你好世界_-");
-
-    @DataPoint
-    public static final CorrectString dotSign = new CorrectString(".");
-
-    @DataPoint
-    public static final IncorrectString atSign = new IncorrectString("@");
-
-    @DataPoint
-    public static final IncorrectString spaceSign = new IncorrectString(" ");
-
-    @DataPoint
-    public static final IncorrectString slashSign = new IncorrectString("\\");
-
-    @DataPoint
-    public static final IncorrectString apostropheSign = new IncorrectString("'");
-
-    @Theory
-    public void allCharsetCanPass(CorrectString correct) {
-        assertThat("Check can not recognize all chars in a valid string '" + correct.text + "'",
-                new Regex(REGEXP).isMatch(correct.text),
+    @ParameterizedTest
+    @MethodSource
+    public void allCharsetCanPass(String correct) {
+        assertThat("Check can not recognize all chars in a valid string '" + correct + "'",
+                new Regex(REGEXP).isMatch(correct),
                 is(true));
     }
 
-    @Theory
-    public void anyCharsetWithIncorrectPartCanNotPass(CorrectString correctPart, IncorrectString incorrectPart) {
-        assertThat("Check can not recognize incorrect char in string incorrect string '" + correctPart.text
-                + incorrectPart.text
-                + "'", new Regex(REGEXP).isMatch(correctPart.text + incorrectPart.text), is(false));
-        assertThat("Check can not recognize incorrect char in string incorrect string '" + incorrectPart.text
-                + correctPart.text
-                + "'", new Regex(REGEXP).isMatch(incorrectPart.text + correctPart.text), is(false));
+    public static Stream<String> allCharsetCanPass() {
+        return correctStrings.stream();
     }
 
-    private static class CorrectString {
-        String text;
-
-        public CorrectString(String text) {
-            this.text = text;
-        }
+    @ParameterizedTest
+    @MethodSource
+    public void anyCharsetWithIncorrectPartCanNotPass(String str) {
+        assertThat("Check can not recognize incorrect char in string incorrect string '" + str + "'",
+                new Regex(REGEXP).isMatch(str), is(false));
     }
 
-    private static class IncorrectString {
-        String text;
-
-        public IncorrectString(String text) {
-            this.text = text;
-        }
+    /**
+     * @return all the permutations of a correctString+incorrectString and incorrectString+correctString
+     */
+    public static Stream<String> anyCharsetWithIncorrectPartCanNotPass() {
+        return correctStrings.stream().flatMap(c -> incorrectStrings.stream().flatMap(i -> Stream.of(c + i, i + c)));
     }
-
 }

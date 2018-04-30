@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -8,19 +8,17 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
+import org.ovirt.engine.core.utils.InjectedMock;
 
-@RunWith(MockitoJUnitRunner.class)
 public class MacPoolValidatorTest extends BaseCommandTest {
 
     private final MacPool macPool = new MacPool();
@@ -28,16 +26,16 @@ public class MacPoolValidatorTest extends BaseCommandTest {
     private MacPoolValidator macPoolValidator;
 
     @Mock
-    private MacPoolDao macPoolDaoMock;
+    @InjectedMock
+    public MacPoolDao macPoolDaoMock;
 
     @Mock
-    private ClusterDao clusterDao;
+    @InjectedMock
+    public ClusterDao clusterDao;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.macPoolValidator = createMacPoolValidator(macPool);
-        injectorRule.bind(MacPoolDao.class, macPoolDaoMock);
-        injectorRule.bind(ClusterDao.class, clusterDao);
     }
 
     private MacPoolValidator createMacPoolValidator(MacPool macPool) {

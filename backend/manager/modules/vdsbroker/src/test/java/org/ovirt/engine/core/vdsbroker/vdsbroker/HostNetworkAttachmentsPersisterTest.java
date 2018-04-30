@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,15 +23,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.action.CustomPropertiesForVdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -43,7 +43,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class HostNetworkAttachmentsPersisterTest {
 
     private static final String IPV4_ADDRESS = "192.168.1.10";
@@ -67,11 +67,9 @@ public class HostNetworkAttachmentsPersisterTest {
     private VdsNetworkInterface interfaceWithoutAttachedNetwork;
     private VdsNetworkInterface interfaceWithAttachedClusterNetworkA;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
     private CustomPropertiesForVdsNetworkInterface customPropertiesForNics = new CustomPropertiesForVdsNetworkInterface();
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         clusterNetworkA = createNetworkWithName("clusterNetworkA");
@@ -429,10 +427,8 @@ public class HostNetworkAttachmentsPersisterTest {
             Collections.singletonList(networkAttachment),
             interfaceWithAttachedClusterNetworkA, nic);
 
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(HostNetworkAttachmentsPersister.INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED);
-
-        persister.persistNetworkAttachments();
+        IllegalStateException e = assertThrows(IllegalStateException.class, persister::persistNetworkAttachments);
+        assertEquals(HostNetworkAttachmentsPersister.INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED, e.getMessage());
     }
 
     @Test

@@ -2,7 +2,8 @@ package org.ovirt.engine.ui.common.binding;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -15,11 +16,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 
 import com.google.gwt.core.ext.TreeLogger;
@@ -27,7 +30,8 @@ import com.google.gwt.core.ext.UnableToCompleteException;
 import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.JField;
 
-@RunWith(Silent.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ElementIdTypeParserTest {
 
     @Mock
@@ -62,7 +66,7 @@ public class ElementIdTypeParserTest {
 
     private ElementIdTypeParser tested;
 
-    @Before
+    @BeforeEach
     public void setUp() throws UnableToCompleteException {
         when(logger.branch(any(), any(), any(), any())).thenReturn(logger);
 
@@ -194,11 +198,12 @@ public class ElementIdTypeParserTest {
                 "ownerTypeParentField", "IdPrefix_ownerTypeParentFieldCustomId")), is(equalTo(true))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    @Test(expected = UnableToCompleteException.class)
-    public void doParse_duplicateFieldIds() throws UnableToCompleteException {
+    @Test
+    public void doParse_duplicateFieldIds() {
         stubFieldIdAnnotation(ownerTypeParentFieldTypeSubField1, "customId", true); //$NON-NLS-1$
         stubFieldIdAnnotation(ownerTypeParentFieldTypeSubField2, "customId", true); //$NON-NLS-1$
-        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertThrows(UnableToCompleteException.class,
+                () -> tested.doParse(ownerType, new ArrayList<>(), ".", "IdPrefix")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
@@ -215,15 +220,16 @@ public class ElementIdTypeParserTest {
         assertThat(tested.statements.containsAll(expected), is(equalTo(true)));
     }
 
-    @Test(expected = UnableToCompleteException.class)
-    public void doParse_unhandledFieldTypeRecursion() throws UnableToCompleteException {
+    @Test
+    public void doParse_unhandledFieldTypeRecursion() {
         Set<? extends JClassType> ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy =
                 Collections.singleton(ownerTypeParentFieldTypeSubField1Type);
         doReturn(ownerTypeParentFieldTypeSubField1TypeFlattenedSupertypeHierarchy)
                 .when(ownerTypeParentFieldTypeSubField1Type).getFlattenedSupertypeHierarchy();
         when(ownerTypeParentFieldTypeSubField1Type.getFields()).thenReturn(new JField[] { ownerTypeParentField });
 
-        tested.doParse(ownerType, new ArrayList<JClassType>(), ".", "IdPrefix"); //$NON-NLS-1$ //$NON-NLS-2$
+        assertThrows(UnableToCompleteException.class,
+                () -> tested.doParse(ownerType, new ArrayList<>(), ".", "IdPrefix")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test

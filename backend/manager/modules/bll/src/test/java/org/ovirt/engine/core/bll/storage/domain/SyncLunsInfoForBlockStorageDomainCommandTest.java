@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
@@ -13,11 +13,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.domain.SyncLunsInfoForBlockStorageDomainCommand.LunHandler;
@@ -28,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTest {
 
     private SyncLunsInfoForBlockStorageDomainParameters parameters = createParameters();
@@ -43,7 +46,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     private LUNs lunFromVg;
     private LUNs lunFromDb;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         doReturn(hostValidator).when(command).getHostValidator();
         lunFromVg = new LUNs();

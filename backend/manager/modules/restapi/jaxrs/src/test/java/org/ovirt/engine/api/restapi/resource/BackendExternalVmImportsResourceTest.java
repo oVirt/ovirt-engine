@@ -1,7 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.ExternalVmImport;
 import org.ovirt.engine.api.model.ExternalVmProviderType;
@@ -17,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendExternalVmImportsResourceTest extends AbstractBackendBaseTest {
 
     private static final Guid CLUSTER_ID = GUIDS[0];
@@ -41,7 +44,7 @@ public class BackendExternalVmImportsResourceTest extends AbstractBackendBaseTes
         OsTypeMockUtils.mockOsTypes();
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         setUpBasicUriExpectations("/externalvmimports");
     }

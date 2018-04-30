@@ -16,12 +16,12 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
@@ -90,7 +90,7 @@ public class LinkHelperTest {
     private static final String EVENT_HREF = BASE_PATH + "/events/" + EVENT_ID;
     private static final String STATISTIC_HREF = VM_HREF + "/statistics/" + STATISTIC_ID;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Current current = new Current();
         current.setRoot(URI_ROOT);
@@ -99,7 +99,7 @@ public class LinkHelperTest {
         CurrentManager.put(current);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         CurrentManager.remove();
     }

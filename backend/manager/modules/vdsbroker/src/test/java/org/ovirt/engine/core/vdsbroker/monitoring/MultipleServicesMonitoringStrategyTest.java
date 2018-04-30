@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -9,9 +10,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -21,9 +20,6 @@ public class MultipleServicesMonitoringStrategyTest {
     VirtMonitoringStrategy virtStrategy;
     GlusterMonitoringStrategy glusterStrategy;
     MultipleServicesMonitoringStrategy strategy;
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     public MultipleServicesMonitoringStrategyTest() {
         virtStrategy = spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), null));
@@ -72,16 +68,14 @@ public class MultipleServicesMonitoringStrategyTest {
     @Test
     public void testProcessingSoftwareGluster() {
         doThrow(new RuntimeException()).when(glusterStrategy).processSoftwareCapabilities(any());
-        exception.expect(RuntimeException.class);
         VDS vds = new VDS();
-        strategy.processSoftwareCapabilities(vds);
+        assertThrows(RuntimeException.class, () -> strategy.processSoftwareCapabilities(vds));
     }
 
     @Test
     public void testProcessingHardwareVirt() {
         doThrow(new RuntimeException()).when(virtStrategy).processHardwareCapabilities(any());
-        exception.expect(RuntimeException.class);
         VDS vds = new VDS();
-        strategy.processHardwareCapabilities(vds);
+        assertThrows(RuntimeException.class, () -> strategy.processHardwareCapabilities(vds));
     }
 }

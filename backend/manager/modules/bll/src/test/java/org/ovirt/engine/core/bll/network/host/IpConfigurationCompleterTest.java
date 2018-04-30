@@ -1,17 +1,17 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 import java.util.Collections;
 import java.util.Set;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
@@ -33,7 +33,7 @@ public class IpConfigurationCompleterTest {
     private IpConfigurationCompleter underTest;
     private Set<NetworkAttachment> networkAttachments;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         underTest = new IpConfigurationCompleter();
         ipConfiguration = new IpConfiguration();

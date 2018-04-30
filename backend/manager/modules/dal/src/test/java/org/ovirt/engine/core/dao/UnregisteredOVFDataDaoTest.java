@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -18,66 +18,65 @@ public class UnregisteredOVFDataDaoTest extends BaseDaoTestCase<UnregisteredOVFD
     public void testGetWithEntityId() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getByEntityIdAndStorageDomain(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOMAIN_NFS2_1);
-        assertFalse("VM should exists in the UnregisteredOVFData", ovfEntityDataList.isEmpty());
+        assertFalse(ovfEntityDataList.isEmpty(), "VM should exists in the UnregisteredOVFData");
     }
 
     @Test
     public void testGetWithNotExistingEntityId() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getByEntityIdAndStorageDomain(FixturesTool.VM_RHEL5_POOL_51, FixturesTool.STORAGE_DOMAIN_NFS2_1);
-        assertTrue("VM should not exists in the UnregisteredOVFData", ovfEntityDataList.isEmpty());
+        assertTrue(ovfEntityDataList.isEmpty(), "VM should not exists in the UnregisteredOVFData");
     }
 
     @Test
     public void testGetWithVMOnWrongStorageDomainId() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getByEntityIdAndStorageDomain(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOMAIN_NFS2_2);
-        assertTrue("VM should not exists in the UnregisteredOVFData for the specific Storage Domain",
-                ovfEntityDataList.isEmpty());
+        assertTrue(ovfEntityDataList.isEmpty(),
+                "VM should not exists in the UnregisteredOVFData for the specific Storage Domain");
     }
 
     @Test
     public void testGetVMsForStorageDomain() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOMAIN_NFS2_1, VmEntityType.VM);
-        assertTrue("A VM should be fetched for the specified storage domain", !ovfEntityDataList.isEmpty());
+        assertTrue(!ovfEntityDataList.isEmpty(), "A VM should be fetched for the specified storage domain");
     }
 
     @Test
     public void testGetTemplatesForStorageDomain() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOMAIN_NFS2_1, VmEntityType.TEMPLATE);
-        assertTrue("A Template should be fetched for the specified storage domain", !ovfEntityDataList.isEmpty());
+        assertTrue(!ovfEntityDataList.isEmpty(), "A Template should be fetched for the specified storage domain");
     }
 
     @Test
     public void testGetEntitiesForNotRelatedStorageDomain() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOMAIN_NFS2_2, VmEntityType.VM);
-        assertTrue("No VM should be fetched for the specified storage domain", ovfEntityDataList.isEmpty());
+        assertTrue(ovfEntityDataList.isEmpty(), "No VM should be fetched for the specified storage domain");
     }
 
     @Test
     public void testGetAllEntitiesForStorageDomain() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOMAIN_NFS2_1, null);
-        assertEquals("A Template and a VM should be fetched for the specified storage domain",
-                2,
-                ovfEntityDataList.size());
+        assertEquals(2, ovfEntityDataList.size(),
+                "A Template and a VM should be fetched for the specified storage domain");
     }
 
     @Test
     public void testGetAllEntitiesForStorageDomainWithNoUnregisteredEntities() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOMAIN_NFS2_2, null);
-        assertTrue("No entities should be fetched for the specified storage domain", ovfEntityDataList.isEmpty());
+        assertTrue(ovfEntityDataList.isEmpty(), "No entities should be fetched for the specified storage domain");
     }
 
     @Test
     public void testGetTemplatesForNotRelatedStorageDomain() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOMAIN_NFS2_2, VmEntityType.TEMPLATE);
-        assertTrue("No Template should be fetched for the specified storage domain", ovfEntityDataList.isEmpty());
+        assertTrue(ovfEntityDataList.isEmpty(), "No Template should be fetched for the specified storage domain");
     }
 
     @Test
@@ -97,8 +96,8 @@ public class UnregisteredOVFDataDaoTest extends BaseDaoTestCase<UnregisteredOVFD
         List<OvfEntityData> fetchedOvfEntityData =
                 dao.getByEntityIdAndStorageDomain(FixturesTool.VM_TEMPLATE_RHEL5, FixturesTool.STORAGE_DOMAIN_NFS2_1);
         assertEquals(1, fetchedOvfEntityData.size());
-        assertTrue("The entity type should be template", fetchedOvfEntityData.get(0).getEntityType().isTemplateType());
-        assertEquals("The entity OVF extra data should be updated", ovfExtraData, fetchedOvfEntityData.get(0).getOvfExtraData());
+        assertTrue(fetchedOvfEntityData.get(0).getEntityType().isTemplateType(), "The entity type should be template");
+        assertEquals(ovfExtraData, fetchedOvfEntityData.get(0).getOvfExtraData(), "The entity OVF extra data should be updated");
     }
 
     @Test

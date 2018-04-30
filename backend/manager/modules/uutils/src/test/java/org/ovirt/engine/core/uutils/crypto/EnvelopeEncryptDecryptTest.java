@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.uutils.crypto;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyException;
 import java.security.KeyStore;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EnvelopeEncryptDecryptTest {
 
@@ -60,25 +61,24 @@ public class EnvelopeEncryptDecryptTest {
         );
     }
 
-    @Test(expected=KeyException.class)
+    @Test
     public void testInvalidKey() throws Exception {
         KeyStore.PrivateKeyEntry entry1 = getPrivateKeyEntry(getKeyStore("PKCS12", "key.p12", "NoSoup4U"), "1", "NoSoup4U");
         KeyStore.PrivateKeyEntry entry2 = getPrivateKeyEntry(getKeyStore("PKCS12", "key2.p12", "mypass"), "1", "mypass");
 
         byte[] test = "testing 1 2 3 4".getBytes(StandardCharsets.UTF_8);
 
-        assertArrayEquals(
-            test,
-            EnvelopeEncryptDecrypt.decrypt(
-                entry2,
-                EnvelopeEncryptDecrypt.encrypt(
-                    "AES/OFB/PKCS5Padding",
-                    256,
-                    entry1.getCertificate(),
-                    100,
-                    test
+        assertThrows(KeyException.class, () ->
+                EnvelopeEncryptDecrypt.decrypt(
+                    entry2,
+                    EnvelopeEncryptDecrypt.encrypt(
+                        "AES/OFB/PKCS5Padding",
+                        256,
+                        entry1.getCertificate(),
+                        100,
+                        test
+                    )
                 )
-            )
         );
     }
 

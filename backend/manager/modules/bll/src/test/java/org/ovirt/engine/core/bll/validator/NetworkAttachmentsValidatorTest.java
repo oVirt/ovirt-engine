@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -14,13 +15,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
 import org.ovirt.engine.core.bll.validator.network.NetworkType;
@@ -32,7 +35,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class NetworkAttachmentsValidatorTest {
 
     private Network vlanNetwork;
@@ -51,7 +55,7 @@ public class NetworkAttachmentsValidatorTest {
     @Captor
     private ArgumentCaptor<List<NetworkType>> networkTypeCaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         nic = new VdsNetworkInterface();
         nic.setId(Guid.newGuid());
@@ -129,15 +133,15 @@ public class NetworkAttachmentsValidatorTest {
         return result;
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testValidateNetworkExclusiveOnNicsAllAttachmentsMustHaveNicNameSet() {
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setNetworkId(vmNetwork1.getId());
         List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(networkAttachment);
 
-        new NetworkAttachmentsValidator(attachmentsToConfigure,
-                networkMap,
-                networkExclusivenessValidator).validateNetworkExclusiveOnNics();
+        assertThrows(IllegalArgumentException.class,
+                () -> new NetworkAttachmentsValidator(attachmentsToConfigure, networkMap, networkExclusivenessValidator)
+                        .validateNetworkExclusiveOnNics());
     }
 
     @Test

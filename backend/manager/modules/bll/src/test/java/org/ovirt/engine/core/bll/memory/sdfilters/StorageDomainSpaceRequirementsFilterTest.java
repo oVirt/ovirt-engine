@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.memory.sdfilters;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -10,11 +10,11 @@ import static org.mockito.Mockito.when;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class StorageDomainSpaceRequirementsFilterTest {
 
     private StorageDomainSpaceRequirementsFilter filter;
@@ -34,7 +34,7 @@ public class StorageDomainSpaceRequirementsFilterTest {
     private StorageDomain storageDomain;
     private List<DiskImage> memoryDisks;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         storageDomain = new StorageDomain();
         storageDomain.setId(Guid.newGuid());

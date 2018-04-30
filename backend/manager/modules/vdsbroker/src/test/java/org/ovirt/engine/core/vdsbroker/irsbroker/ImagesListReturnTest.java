@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ImagesListReturnTest {
 

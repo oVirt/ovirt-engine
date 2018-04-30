@@ -15,14 +15,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class BrandingFilterTest {
     /**
      * The filter under test.
@@ -43,7 +43,7 @@ public class BrandingFilterTest {
 
     List<BrandingTheme> mockBrandingThemes;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testFilter = new BrandingFilter();
         testFilter.init(mockFilterConfig, mockBrandingManager);

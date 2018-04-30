@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.notifier;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**

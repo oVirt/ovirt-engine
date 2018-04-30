@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,8 +13,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -30,8 +31,8 @@ public class DbUserDaoTest extends BaseDaoTestCase<DbUserDao> {
     private DbUser newUser;
     private Guid vm;
 
+    @BeforeEach
     @Override
-    @Before
     public void setUp() throws Exception {
         super.setUp();
 
@@ -233,10 +234,10 @@ public class DbUserDaoTest extends BaseDaoTestCase<DbUserDao> {
      * Ensures that inserting an user with no external id fails, as it has a
      * not null constraint.
      */
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testSaveUserWithoutExternalIdFails() {
         newUser.setExternalId(null);
-        dao.save(newUser);
+        assertThrows(RuntimeException.class, () -> dao.save(newUser));
     }
 
     /**
@@ -244,11 +245,11 @@ public class DbUserDaoTest extends BaseDaoTestCase<DbUserDao> {
      * an existing user fails, as there is a unique constraint for that pair
      * of attributes.
      */
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testSaveUserDuplicatedDomainAndExternalId() {
         newUser.setDomain(existingUser.getDomain());
         newUser.setExternalId(existingUser.getExternalId());
-        dao.save(newUser);
+        assertThrows(RuntimeException.class, () -> dao.save(newUser));
     }
 
     /**

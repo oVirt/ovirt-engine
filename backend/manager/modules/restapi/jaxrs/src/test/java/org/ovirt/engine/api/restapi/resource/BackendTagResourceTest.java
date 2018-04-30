@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.PARENT_GUID;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.PARENT_IDX;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.getModel;
@@ -11,7 +11,9 @@ import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.veri
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendTagResourceTest
     extends AbstractBackendSubResourceTest<Tag, Tags, BackendTagResource> {
 

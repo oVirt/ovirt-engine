@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.utils.archivers.tar;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,7 +19,7 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 import org.apache.commons.lang.SystemUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TarTest {
 
@@ -116,8 +117,9 @@ public class TarTest {
         }
     }
 
-    @Test(expected=FileNotFoundException.class)
-    public void testNoBase() throws IOException {
-        Tar.doTar(new ByteArrayOutputStream(), new File("/asdasdsadasdasdsa"));
+    @Test
+    public void testNoBase() {
+        assertThrows(FileNotFoundException.class,
+                () -> Tar.doTar(new ByteArrayOutputStream(), new File("/asdasdsadasdasdsa")));
     }
 }

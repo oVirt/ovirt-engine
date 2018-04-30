@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
@@ -15,11 +15,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -27,26 +29,30 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(Strict.class)
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFromTemplateCommand<AddVmParameters>> {
 
     private static final int MAX_PCI_SLOTS = 26;
     private List<StorageDomain> storageDomains;
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
-        MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
-        MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0))))
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
+                MockConfigDescriptor.of(ConfigValues.ResumeBehaviorSupported, Version.v4_0, false),
+                MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
+                        new HashSet<>(Collections.singletonList(new Version(3, 0))))
+        );
+    }
 
     @Override
     protected AddVmFromTemplateCommand<AddVmParameters> createCommand() {
         return new AddVmFromTemplateCommand<>(new AddVmParameters(vm), null);
     }
 
+    @BeforeEach
     @Override
     public void setUp() {
         super.setUp();

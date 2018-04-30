@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.dao;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -44,6 +45,7 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
     private VDS existingVds2;
     private Guid newVmId;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -346,7 +348,7 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
         List<VDS> result = dao.getAllForStoragePoolAndStatuses(existingVds.getStoragePoolId(), null);
         Set<VDSStatus> statuses = result.stream().map(VDS::getStatus).collect(Collectors.toSet());
         assertCorrectGetAllResult(result);
-        assertTrue("more than one different status expected", statuses.size() > 1);
+        assertTrue(statuses.size() > 1, "more than one different status expected");
     }
 
     private void assertGetAllForClusterCorrectResult(List<VDS> result) {
@@ -520,7 +522,7 @@ public class VdsDaoTest extends BaseDaoTestCase<VdsDao> {
         assertFalse(result.isEmpty());
 
         for (VDS vds : result) {
-            assertEquals("Wrong storage pool for VDS", existingVds.getStoragePoolId(), vds.getStoragePoolId());
+            assertEquals(existingVds.getStoragePoolId(), vds.getStoragePoolId(), "Wrong storage pool for VDS");
         }
     }
 

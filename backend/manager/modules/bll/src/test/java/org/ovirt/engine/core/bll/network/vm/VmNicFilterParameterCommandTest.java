@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.network.vm;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -28,7 +28,7 @@ public abstract class VmNicFilterParameterCommandTest<T extends VmCommand> exten
     protected final VmNicFilterParameterParameters param = new VmNicFilterParameterParameters(vmId, vmNicFilterParameter);
     private final VM vm = new VM();
 
-    @Before
+    @BeforeEach
     public void setup() {
         setupCommand();
         setAllValidationsValid();

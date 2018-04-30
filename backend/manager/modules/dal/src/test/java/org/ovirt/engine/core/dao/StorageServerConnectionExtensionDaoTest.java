@@ -1,16 +1,14 @@
 package org.ovirt.engine.core.dao;
 
-import org.junit.Rule;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
+@ExtendWith(RandomUtilsSeedingExtension.class)
 public class StorageServerConnectionExtensionDaoTest
         extends BaseGenericDaoTestCase<Guid, StorageServerConnectionExtension, StorageServerConnectionExtensionDao> {
-
-    @Rule
-    public final RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Override
     protected StorageServerConnectionExtension generateNewEntity() {

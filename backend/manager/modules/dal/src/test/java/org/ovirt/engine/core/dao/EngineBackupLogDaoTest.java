@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.EngineBackupLog;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -20,8 +20,8 @@ public class EngineBackupLogDaoTest extends BaseDaoTestCase<EngineBackupLogDao> 
     private static final String SCOPE = "db";
     private static final String NON_EXISTING_SCOPE = "invalid";
 
+    @BeforeEach
     @Override
-    @Before
     public void setUp() throws Exception {
         super.setUp();
         existingEngineBackupLog = dao.getLastSuccessfulEngineBackup(SCOPE);

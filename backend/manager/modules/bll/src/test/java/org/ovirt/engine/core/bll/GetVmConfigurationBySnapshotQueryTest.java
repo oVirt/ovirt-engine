@@ -1,17 +1,19 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * A test case for {@link GetVmConfigurationBySnapshotQuery}. This test mocks away all
  * the Daos, and just tests the flow of the query itself.
  */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmConfigurationBySnapshotQuery<IdQueryParameters>> {
     @Mock
     private SnapshotDao snapshotDaoMock;
@@ -37,7 +40,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
 
     private static final String EXISTING_VM_NAME = "Dummy configuration";
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -67,7 +70,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(any(), any(), any());
         query.execute();
         QueryReturnValue returnValue = query.getQueryReturnValue();
-        assertNotNull("Return value from query cannot be null", returnValue);
+        assertNotNull(returnValue, "Return value from query cannot be null");
         VM returnedVm = returnValue.getReturnValue();
         assertEquals(vm, returnedVm);
     }
@@ -78,7 +81,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
                 setupQueryBySnapshotId(Guid.newGuid());
         QueryReturnValue returnValue = query.getQueryReturnValue();
         VM returnedVm = returnValue.getReturnValue();
-        assertNull("Return value from non existent query should be null", returnedVm);
+        assertNull(returnedVm, "Return value from non existent query should be null");
     }
 
     private GetVmConfigurationBySnapshotQuery<IdQueryParameters> setupQueryBySnapshotId(Guid snapshotId) {

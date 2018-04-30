@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -42,7 +42,7 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
         @SuppressWarnings("unchecked")
         List<Permission> actual = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("Wrong number of returned permissions", 1, actual.size());
-        assertEquals("Wrong returned permissions", expected, actual.get(0));
+        assertEquals(1, actual.size(), "Wrong number of returned permissions");
+        assertEquals(expected, actual.get(0), "Wrong returned permissions");
     }
 }

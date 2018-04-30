@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -36,6 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.utils.InjectedMock;
 
 public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends BaseCommandTest {
     protected static final int TOTAL_NUM_DOMAINS = 2;
@@ -48,7 +49,8 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
     private static final int MEMORY_SIZE = 1024;
 
     @Mock
-    protected OsRepository osRepository;
+    @InjectedMock
+    public OsRepository osRepository;
 
     @Mock
     private VmDeviceUtils vmDeviceUtils;
@@ -81,10 +83,8 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
 
     protected abstract T createCommand();
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        injectorRule.bind(OsRepository.class, osRepository);
-
         initCluster();
         cmd.setClusterId(cluster.getId());
         cmd.setCluster(cluster);

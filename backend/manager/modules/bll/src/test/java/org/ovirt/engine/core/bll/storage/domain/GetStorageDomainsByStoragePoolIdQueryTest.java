@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -35,7 +35,7 @@ public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQuery
         getQuery().executeQueryCommand();
 
         List<StorageDomain> result = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of domains returned", 1, result.size());
-        assertEquals("Wrong domain returned", domain, result.get(0));
+        assertEquals(1, result.size(), "Wrong number of domains returned");
+        assertEquals(domain, result.get(0), "Wrong domain returned");
     }
 }

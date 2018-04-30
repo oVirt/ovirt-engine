@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.dao.network;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
@@ -16,7 +16,8 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -35,6 +36,7 @@ public class NetworkAttachmentDaoImplTest extends BaseDaoTestCase<NetworkAttachm
     @Inject
     private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

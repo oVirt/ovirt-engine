@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
@@ -29,7 +29,7 @@ public class SequentialMultipleActionsRunnerTest extends MultipleActionsRunnerBa
             true);
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         runner.setIsWaitForResult(true);
     }

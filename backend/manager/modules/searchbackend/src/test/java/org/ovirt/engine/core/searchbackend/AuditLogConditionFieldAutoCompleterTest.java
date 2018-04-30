@@ -1,23 +1,23 @@
 package org.ovirt.engine.core.searchbackend;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.DateTime;
 
 public class AuditLogConditionFieldAutoCompleterTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Locale.setDefault(Locale.US);
     }
@@ -25,16 +25,16 @@ public class AuditLogConditionFieldAutoCompleterTest {
     @Test
     public void testValidateFieldValueWithEnum() {
         IConditionFieldAutoCompleter comp = new AuditLogConditionFieldAutoCompleter();
-        assertTrue("VDC_START", comp.validateFieldValue("TYPE", "1"));
-        assertFalse("SOME_RANDOM_TEXT", comp.validateFieldValue("TYPE", "SOME_RANDOM_TEXT"));
+        assertTrue(comp.validateFieldValue("TYPE", "1"), "VDC_START");
+        assertFalse(comp.validateFieldValue("TYPE", "SOME_RANDOM_TEXT"), "SOME_RANDOM_TEXT");
     }
 
     @Test
     public void testValidateFieldValueWithTime() {
         IConditionFieldAutoCompleter comp = new AuditLogConditionFieldAutoCompleter();
         String dateString = "01/12/1972";
-        assertTrue(dateString, comp.validateFieldValue("TIME", dateString));
-        assertFalse("SOME_RANDOM_TEXT", comp.validateFieldValue("TIME", "SOME_RANDOM_TEXT"));
+        assertTrue(comp.validateFieldValue("TIME", dateString), dateString);
+        assertFalse(comp.validateFieldValue("TIME", "SOME_RANDOM_TEXT"), "SOME_RANDOM_TEXT");
     }
 
     @Test
@@ -71,7 +71,7 @@ public class AuditLogConditionFieldAutoCompleterTest {
         // Just going to test that this works
         pair.setSecond("Wednesday");
         comp.formatValue("TIME", pair, false);
-        assertNotEquals("Day should be transformed to a date", "Wednesday", pair.getSecond());
+        assertNotEquals("Wednesday", pair.getSecond(), "Day should be transformed to a date");
     }
 
     private String quote(String s) {

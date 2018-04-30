@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -129,14 +129,12 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
     @Test
     public void testClearMigratingToVds() {
         VmDynamic vmDynamic = dao.get(FixturesTool.VM_RHEL5_POOL_51);
-        assertNotNull("migrating_to_vds field should not be null before we clear it",
-                vmDynamic.getMigratingToVds());
+        assertNotNull(vmDynamic.getMigratingToVds(), "migrating_to_vds field should not be null before we clear it");
 
         dao.clearMigratingToVds(FixturesTool.VM_RHEL5_POOL_51);
 
         vmDynamic = dao.get(FixturesTool.VM_RHEL5_POOL_51);
-        assertNull("migrating_to_vds field should be null after we clear it",
-                vmDynamic.getMigratingToVds());
+        assertNull(vmDynamic.getMigratingToVds(), "migrating_to_vds field should be null after we clear it");
     }
 
     @Test

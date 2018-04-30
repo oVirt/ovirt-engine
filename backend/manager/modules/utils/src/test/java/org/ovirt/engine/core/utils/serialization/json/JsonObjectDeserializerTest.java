@@ -1,19 +1,19 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.LockProperties.Scope;
 
 /**
  * Tests for {@link JsonObjectDeserializer}.
@@ -52,28 +52,25 @@ public class JsonObjectDeserializerTest {
         checkJson("{\"success\":true, \"problem\": \"none\"}");
     }
 
-    @Test(expected = SerializationException.class)
+    @Test
     public void testDeserializeMapFailWithSingleQuote() {
-        checkJson("{'success':true}");
+        assertThrows(SerializationException.class, () -> checkJson("{'success':true}"));
     }
 
-    @Test(expected = SerializationException.class)
+    @Test
     public void testDeserializeMapFailWithNoQuote() {
-        checkJson("{success:true}");
+        assertThrows(SerializationException.class, () -> checkJson("{success:true}"));
     }
 
-    @Test(expected = SerializationException.class)
+    @Test
     public void testDeserializeMapFailWithBadTrue() {
-        checkJson("{\"success\":treue}");
+        assertThrows(SerializationException.class, () -> checkJson("{\"success\":treue}"));
     }
 
-    @Test(expected = SerializationException.class)
+    @Test
     public void testDeserializeVdcActionParameters() {
-        ActionParametersBase
-                params = new JsonObjectDeserializer().deserialize(getVdcActionParamsJson(), ActionParametersBase.class);
-        assertNotNull(params.getLockProperties());
-        assertTrue(params.getLockProperties().isWait());
-        assertEquals(Scope.None, params.getLockProperties().getScope());
+        assertThrows(SerializationException.class,
+                () -> new JsonObjectDeserializer().deserialize(getVdcActionParamsJson(), ActionParametersBase.class));
     }
 
     private String getVdcActionParamsJson() {

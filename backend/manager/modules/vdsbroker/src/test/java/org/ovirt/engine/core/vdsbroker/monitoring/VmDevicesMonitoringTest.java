@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -15,19 +15,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.transaction.TransactionManager;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -39,24 +40,23 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VmDevicesMonitoringTest {
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.DomainXML, Version.getLast(), true));
+    }
 
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
-
-    @Rule
-    public MockConfigRule mcr =
-            new MockConfigRule(MockConfigDescriptor.of(ConfigValues.DomainXML, Version.getLast(), true));
-
+    @InjectedMock
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private TransactionManager transactionManager;
+    public TransactionManager transactionManager;
     @Mock
     private VmDynamicDao vmDynamicDao;
     @Mock
@@ -79,15 +79,13 @@ public class VmDevicesMonitoringTest {
     private static final String INITIAL_HASH = "123";
     private static final String NEW_HASH = "012";
 
-    @Before
+    @BeforeEach
     public void init() {
         List<Pair<Guid, String>> initialHashes = new ArrayList<>();
         initialHashes.add(new Pair<>(VM_ID, INITIAL_HASH));
         doReturn(initialHashes).when(vmDynamicDao).getAllDevicesHashes();
         doReturn(Version.getLast()).when(vdsManager).getCompatibilityVersion();
         doReturn(vdsManager).when(resourceManager).getVdsManager(any());
-
-        injectorRule.bind(TransactionManager.class, transactionManager);
     }
 
     private static Map<String, Object> getDeviceInfo(Guid id, String deviceType, String device, String address) {

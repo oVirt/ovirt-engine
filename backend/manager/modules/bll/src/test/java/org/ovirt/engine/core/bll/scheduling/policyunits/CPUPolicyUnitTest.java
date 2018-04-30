@@ -6,8 +6,8 @@ import static org.mockito.Mockito.mock;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -25,7 +25,7 @@ public class CPUPolicyUnitTest {
 
     private Cluster cluster;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vm = new VM();
         vm.setCpuPerSocket(2);

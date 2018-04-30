@@ -11,14 +11,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -31,17 +33,18 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AutoRecoveryManagerTest {
 
     @InjectMocks
     private AutoRecoveryManager manager;
 
-    @ClassRule
-    public static MockConfigRule mcr =
-    new MockConfigRule(MockConfigDescriptor.of(ConfigValues.AutoRecoveryAllowedTypes, new HashMap<>()));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.AutoRecoveryAllowedTypes, new HashMap<>()));
+    }
 
     @Mock
     private BackendInternal backendMock;
@@ -62,7 +65,7 @@ public class AutoRecoveryManagerTest {
     private List<VDS> vdss = new ArrayList<>();
     private List<StorageDomain> storageDomains = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setup() {
         final VDS vds = new VDS();
         vdss.add(vds);

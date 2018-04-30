@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -20,7 +20,7 @@ public class RemoveAdGroupCommandTest extends BaseCommandTest {
     private RemoveGroupCommand<IdParameters> command;
     private Guid adElementId = Guid.newGuid();
 
-    @Before
+    @BeforeEach
     public void initializeCommand() {
         IdParameters parameters = createParameters();
         command = spy(new RemoveGroupCommand<>(parameters, null));

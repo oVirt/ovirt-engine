@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -34,7 +34,7 @@ public class MultipleDiskVmElementValidatorTest {
     private Map<Disk, Collection<DiskVmElement>> diskToDiskVmElements;
     private MultipleDiskVmElementValidator multipleDiskVmElementValidator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         diskWithOneVmElement = createDiskImage();
         diskWithOneVmElement.setDiskAlias("diskWithOneVmElement");

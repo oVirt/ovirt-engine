@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -12,12 +12,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -38,17 +40,16 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
+@ExtendWith(RandomUtilsSeedingExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RefreshLunsSizeCommandTest extends BaseCommandTest {
 
     private static final String STORAGE = "STORAGE";
     private Guid sdId = Guid.newGuid();
     private StorageDomain sd;
     private Guid spId;
-
-    @Rule
-    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Spy
     @InjectMocks
@@ -62,7 +63,7 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     @Mock
     private LunDao lunsDao;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         StorageDomainStatic sdStatic = createStorageDomain();
         spId = Guid.newGuid();
@@ -143,9 +144,9 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     public void setActionMessageParameters() {
         cmd.setActionMessageParameters();
         List<String> messages = cmd.getReturnValue().getValidationMessages();
-        assertTrue("action name not in messages", messages.remove(EngineMessage.VAR__ACTION__UPDATE.name()));
-        assertTrue("type not in messages", messages.remove(EngineMessage.VAR__TYPE__STORAGE__DOMAIN.name()));
-        assertTrue("redundant messages " + messages, messages.isEmpty());
+        assertTrue(messages.remove(EngineMessage.VAR__ACTION__UPDATE.name()), "action name not in messages");
+        assertTrue(messages.remove(EngineMessage.VAR__TYPE__STORAGE__DOMAIN.name()), "type not in messages");
+        assertTrue(messages.isEmpty(), "redundant messages " + messages);
     }
 
     @Test

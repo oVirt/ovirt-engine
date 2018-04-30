@@ -6,10 +6,10 @@ import static org.ovirt.engine.api.restapi.resource.AbstractBackendNetworksResou
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.ovirt.engine.api.model.Network;
 
-@Ignore
+@Disabled
 public class AbstractBackendNetworkResourceTest<N extends AbstractBackendNetworkResource> extends
         AbstractBackendSubResourceTest<Network, org.ovirt.engine.core.common.businessentities.network.Network, N> {
 

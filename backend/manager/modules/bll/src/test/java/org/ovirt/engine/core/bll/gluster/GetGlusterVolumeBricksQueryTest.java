@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -27,7 +27,7 @@ AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParamete
     GlusterBrickEntity brickEntity;
     List<GlusterBrickEntity> bricks = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -60,6 +60,6 @@ AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParamete
         getQuery().executeQueryCommand();
         List<GlusterBrickEntity> actual = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("wrong Gluster Volume", expected.getBricks(), actual);
+        assertEquals(expected.getBricks(), actual, "wrong Gluster Volume");
     }
 }

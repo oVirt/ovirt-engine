@@ -3,7 +3,9 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendAffinityGroupVmResourceTest
         extends AbstractBackendSubResourceTest<Vm, org.ovirt.engine.core.common.businessentities.VM, BackendAffinityGroupVmResource> {
 

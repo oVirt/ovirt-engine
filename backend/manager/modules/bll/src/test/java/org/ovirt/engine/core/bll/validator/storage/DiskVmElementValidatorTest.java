@@ -2,19 +2,19 @@ package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -27,18 +27,23 @@ import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class })
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class DiskVmElementValidatorTest {
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
+    @Mock
+    @InjectedMock
+    public OsRepository osRepository;
 
     @Mock
-    private OsRepository osRepository;
+    @InjectedMock
+    public VmDeviceUtils vmDeviceUtils;
 
     @Mock
-    private VmValidationUtils vmValidationUtils;
+    @InjectedMock
+    public VmValidationUtils vmValidationUtils;
 
     private static final int OS_WITH_SUPPORTED_INTERFACES = 1;
     private static final int OS_WITH_NO_SUPPORTED_INTERFACES = 2;
@@ -47,9 +52,8 @@ public class DiskVmElementValidatorTest {
     private DiskVmElement dve;
     private DiskVmElementValidator validator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        injectorRule.bind(OsRepository.class, osRepository);
         initializeInterfaceValidation(DiskInterface.VirtIO);
 
         disk = new DiskImage();
@@ -130,7 +134,6 @@ public class DiskVmElementValidatorTest {
     public void virtioScsiDiskWithoutController() {
         VM vm = createVM(OS_WITH_NO_SUPPORTED_INTERFACES);
         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
-        injectorRule.bind(VmDeviceUtils.class, mock(VmDeviceUtils.class));
 
         assertThat(validator.isVirtIoScsiValid(vm),
                 failsWith(EngineMessage.CANNOT_PERFORM_ACTION_VIRTIO_SCSI_IS_DISABLED));
@@ -138,7 +141,6 @@ public class DiskVmElementValidatorTest {
 
     private void initializeInterfaceValidation(DiskInterface diskInterface) {
         when(vmValidationUtils.isDiskInterfaceSupportedByOs(OS_WITH_SUPPORTED_INTERFACES, null, diskInterface)).thenReturn(true);
-        injectorRule.bind(VmValidationUtils.class, vmValidationUtils);
     }
 
     private static VM createVM(int vmOs) {

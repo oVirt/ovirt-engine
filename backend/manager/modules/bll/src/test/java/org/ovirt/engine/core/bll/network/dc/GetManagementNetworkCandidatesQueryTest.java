@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -11,14 +11,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetManagementNetworkCandidatesQueryTest extends
         AbstractQueryTest<IdQueryParameters, GetManagementNetworkCandidatesQuery<IdQueryParameters>> {
     public static final Guid DC_ID = Guid.newGuid();

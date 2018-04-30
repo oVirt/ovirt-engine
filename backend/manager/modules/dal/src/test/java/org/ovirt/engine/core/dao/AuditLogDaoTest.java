@@ -1,31 +1,29 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
 /**
  * {@code AuditLogDaoTest} performs tests against the {@link AuditLogDao} type.
  */
+@ExtendWith(MockConfigExtension.class)
 public class AuditLogDaoTest extends BaseDaoTestCase<AuditLogDao> {
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     private static final String VM_NAME = FixturesTool.VM_RHEL5_POOL_50_NAME;
     private static final String VM_TEMPLATE_NAME = "1";
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_50;
@@ -45,8 +43,8 @@ public class AuditLogDaoTest extends BaseDaoTestCase<AuditLogDao> {
     private AuditLog existingAuditLog;
     private AuditLog externalAuditLog;
 
+    @BeforeEach
     @Override
-    @Before
     public void setUp() throws Exception {
         super.setUp();
 
@@ -218,12 +216,12 @@ public class AuditLogDaoTest extends BaseDaoTestCase<AuditLogDao> {
     }
 
     private static void assertGetByNameResults(List<AuditLog> results, int expectedResults) {
-        assertNotNull("Results object should not be null", results);
-        assertEquals("Wrong number of results", expectedResults, results.size());
+        assertNotNull(results, "Results object should not be null");
+        assertEquals(expectedResults, results.size(), "Wrong number of results");
 
         for (AuditLog auditLog : results) {
-            assertEquals("Wrong name of VM in result", VM_NAME, auditLog.getVmName());
-            assertEquals("Wrong template name of VM in result", VM_TEMPLATE_NAME, auditLog.getVmTemplateName());
+            assertEquals(VM_NAME, auditLog.getVmName(), "Wrong name of VM in result");
+            assertEquals(VM_TEMPLATE_NAME, auditLog.getVmTemplateName(), "Wrong template name of VM in result");
         }
     }
 

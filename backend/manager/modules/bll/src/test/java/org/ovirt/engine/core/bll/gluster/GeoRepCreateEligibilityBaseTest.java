@@ -5,7 +5,7 @@ import static org.mockito.Mockito.doReturn;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -40,7 +40,7 @@ public class GeoRepCreateEligibilityBaseTest {
         return getGlusterVolume(MASTER_VOLUME_ID, MASTER_CLUSTER_ID, GlusterStatus.UP, new GlusterVolumeSizeInfo(10000L, 4000L, 6000L));
     }
 
-    @Before
+    @BeforeEach
     public void setupMock(GlusterGeoRepDao geoRepDao, ClusterDao clusterDao) {
         doReturn(getGeoRepSessions()).when(geoRepDao).getAllSessions();
 

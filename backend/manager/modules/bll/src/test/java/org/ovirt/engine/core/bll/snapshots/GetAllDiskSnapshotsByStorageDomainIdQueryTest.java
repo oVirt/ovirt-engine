@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -39,7 +39,7 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
 
     private static final String snapshotDescription = "Test Snapshot";
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -79,9 +79,9 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         List<DiskImage> diskImages = query.getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
-        assertEquals("There should be two images returned", 2, diskImages.size());
-        assertEquals("DiskImage should contain the VmSnapshotDescription", snapshotDescription,
-                diskImages.get(0).getVmSnapshotDescription());
+        assertEquals(2, diskImages.size(), "There should be two images returned");
+        assertEquals(snapshotDescription, diskImages.get(0).getVmSnapshotDescription(),
+                "DiskImage should contain the VmSnapshotDescription");
     }
 
     @Test
@@ -95,6 +95,6 @@ public class GetAllDiskSnapshotsByStorageDomainIdQueryTest
         List<DiskImage> diskImages = query.getQueryReturnValue().getReturnValue();
 
         // Assert the no active images are returned
-        assertTrue("Active images shouldn't be returned", diskImages.stream().noneMatch(DiskImage::getActive));
+        assertTrue(diskImages.stream().noneMatch(DiskImage::getActive), "Active images shouldn't be returned");
     }
 }

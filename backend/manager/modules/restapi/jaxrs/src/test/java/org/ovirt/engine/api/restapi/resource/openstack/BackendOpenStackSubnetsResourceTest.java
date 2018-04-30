@@ -16,7 +16,7 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
@@ -24,12 +24,15 @@ import static org.ovirt.engine.api.restapi.utils.HexUtils.string2hex;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.queries.GetExternalSubnetsOnProviderByExternalNetworkQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendOpenStackSubnetsResourceTest
         extends AbstractBackendCollectionResourceTest<OpenStackSubnet, ExternalSubnet, BackendOpenStackSubnetsResource> {
     public BackendOpenStackSubnetsResourceTest() {

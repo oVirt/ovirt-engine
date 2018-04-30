@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -10,25 +10,28 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
 /**
  * A test case for the {@link SessionDataContainer} class.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SessionDataContainerTest {
 
     private static final String TEST_KEY = "someKey";
@@ -38,8 +41,9 @@ public class SessionDataContainerTest {
     private static final String USER = "user";
     private static final String SOFT_LIMIT = "soft_limit";
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30));
+    }
 
     @Mock
     private EngineSessionDao engineSessionDao;
@@ -53,7 +57,7 @@ public class SessionDataContainerTest {
     @Mock
     private SsoSessionUtils ssoSessionUtils;
 
-    @Before
+    @BeforeEach
     public void setUpContainer() {
         when(engineSessionDao.remove(anyLong())).thenReturn(1);
         when(ssoSessionValidator.getSessionStatuses(any())).thenReturn(Collections.singletonMap(TEST_SSO_TOKEN, true));
@@ -70,16 +74,15 @@ public class SessionDataContainerTest {
 
     @Test
     public void testGetDataAndSetDataWithEmptySession() {
-        assertNull("Get should return null with an empty session", container.getData("", TEST_KEY, false));
+        assertNull(container.getData("", TEST_KEY, false), "Get should return null with an empty session");
         clearSession();
     }
 
     @Test
     public void testGetDataAndSetDataWithFullSession() {
         container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
-        assertEquals("Get should return the value with a given session",
-                TEST_VALUE,
-                container.getData(TEST_SESSION_ID, TEST_KEY, false));
+        assertEquals(TEST_VALUE, container.getData(TEST_SESSION_ID, TEST_KEY, false),
+                "Get should return the value with a given session");
         clearSession();
     }
 
@@ -87,9 +90,8 @@ public class SessionDataContainerTest {
     public void testGetUserAndSetUserWithSessionParam() {
         DbUser user = mock(DbUser.class);
         container.setUser(TEST_SESSION_ID, user);
-        assertEquals("Get should return the value with a given session",
-                user,
-                container.getUser(TEST_SESSION_ID, false));
+        assertEquals(user, container.getUser(TEST_SESSION_ID, false),
+                "Get should return the value with a given session");
         clearSession();
     }
 
@@ -100,8 +102,8 @@ public class SessionDataContainerTest {
         // Set some data on the test sessions
         container.setData(TEST_SESSION_ID, TEST_KEY, TEST_VALUE);
         container.removeSessionOnLogout(TEST_SESSION_ID);
-        assertNull("Get should return null since the session was removed",
-                container.getData(TEST_SESSION_ID, TEST_KEY, false));
+        assertNull(container.getData(TEST_SESSION_ID, TEST_KEY, false),
+                "Get should return null since the session was removed");
     }
     /* Tests for clearedExpiredSessions */
 
@@ -111,8 +113,7 @@ public class SessionDataContainerTest {
         // Clear expired sessions - data is moved to older generation
         // nothing should happen as far as the user is concerned
         container.cleanExpiredUsersSessions();
-        assertNull("Get not find the session",
-                container.getData(TEST_SESSION_ID, TEST_KEY, false));
+        assertNull(container.getData(TEST_SESSION_ID, TEST_KEY, false), "Get not find the session");
     }
 
     @Test
@@ -123,8 +124,7 @@ public class SessionDataContainerTest {
         // Clear expired sessions - data is moved to older generation
         // nothing should happen as far as the user is concerned
         container.cleanExpiredUsersSessions();
-        assertNotNull("Get found the session",
-                container.getData(TEST_SESSION_ID, TEST_KEY, false));
+        assertNotNull(container.getData(TEST_SESSION_ID, TEST_KEY, false), "Get found the session");
     }
 
     /** Initializes the {@link #key} data */
@@ -144,8 +144,8 @@ public class SessionDataContainerTest {
         Object obj = container.getData(TEST_SESSION_ID, USER, false);
 
         // session should be already refreshed -> not null
-        assertNotNull("Get should return null since the session wasn't refresh",
-                container.getData(TEST_SESSION_ID, USER, false));
+        assertNotNull(container.getData(TEST_SESSION_ID, USER, false),
+                "Get should return null since the session wasn't refresh");
         clearSession();
     }
 
@@ -162,8 +162,8 @@ public class SessionDataContainerTest {
         container.getData(TEST_SESSION_ID, USER, true);
 
         // no session available
-        assertNull("Get should return null since the session wasn't refresh",
-                container.getData(TEST_SESSION_ID, USER, false));
+        assertNull(container.getData(TEST_SESSION_ID, USER, false),
+                "Get should return null since the session wasn't refresh");
     }
 
 }

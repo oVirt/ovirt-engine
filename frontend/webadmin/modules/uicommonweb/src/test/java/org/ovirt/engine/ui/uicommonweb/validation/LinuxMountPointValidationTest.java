@@ -1,21 +1,19 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetupExtension;
 
 @SuppressWarnings("HardcodedFileSeparator")
+@ExtendWith(UiCommonSetupExtension.class)
 public class LinuxMountPointValidationTest {
-    @ClassRule
-    public static final UiCommonSetup setup = new UiCommonSetup();
-
     private LinuxMountPointValidation validation;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         validation = new LinuxMountPointValidation();
     }

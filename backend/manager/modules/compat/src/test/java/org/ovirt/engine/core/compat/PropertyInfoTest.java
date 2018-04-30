@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.compat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 
 public class PropertyInfoTest {
@@ -21,7 +21,7 @@ public class PropertyInfoTest {
         Set<String> properties = Collections.singleton("somevalue");
         TypeCompat.getPropertyValues(this, properties, values);
         assertFalse(properties.isEmpty());
-        assertEquals("Standard", "Anakin", values.get("somevalue"));
+        assertEquals("Anakin", values.get("somevalue"), "Standard");
     }
 
     public String getSomeValue() {

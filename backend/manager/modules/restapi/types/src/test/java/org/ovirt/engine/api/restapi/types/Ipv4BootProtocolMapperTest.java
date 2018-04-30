@@ -1,22 +1,24 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.junit.Assert.assertThat;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.EnumSet;
 
 import javax.ws.rs.WebApplicationException;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 
 public class Ipv4BootProtocolMapperTest {
 
-    @Test(expected = WebApplicationException.class)
+    @Test
     public void testMapAutoconf() {
-        Ipv4BootProtocolMapper.map(BootProtocol.AUTOCONF);
+        assertThrows(WebApplicationException.class, () -> Ipv4BootProtocolMapper.map(BootProtocol.AUTOCONF));
     }
 
     @Test

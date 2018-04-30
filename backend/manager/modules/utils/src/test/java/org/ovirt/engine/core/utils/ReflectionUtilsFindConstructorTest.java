@@ -1,47 +1,24 @@
 package org.ovirt.engine.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests for the {@link ReflectionUtils} class.
  *
  */
-@RunWith(Parameterized.class)
 public class ReflectionUtilsFindConstructorTest {
-
-    /* --- Class Fields --- */
-
-    /** The type to test the method with. */
-    private final Class<?> typeToTest;
-
-    /**
-     * The parameters used to look for an empty ctor (unless non-static inner class, should be an empty array).
-     */
-    private final Class<?>[] parametersForEmptyCase;
-
-    /** The parameters used to look for the exact case. */
-    private final Class<?>[] parametersForExactCase;
-
-    /** The parameters used for the negative case of super type. */
-    private final Class<?>[] parametersForSupertypeCase;
-
-    /** The parameters used for the positive case of sub type. */
-    private final Class<?>[] parametersForSubtypeCase;
-
     /* --- Private classes used for testing the findConstructor method. --- */
 
     @SuppressWarnings("unused")
@@ -95,89 +72,72 @@ public class ReflectionUtilsFindConstructorTest {
         }
     }
 
-    /* --- Constructors --- */
-
-    /**
-     * Construct a test case for the given test data.
-     *
-     * @param typeToTest
-     *            The type to test the method with.
-     * @param parametersForEmptyCase
-     *            The parameters used to look for an empty ctor (unless non-static inner class, should be an empty
-     *            array).
-     * @param parametersForExactCase
-     *            The parameters used to look for the exact case.
-     * @param parametersForSupertypeCase
-     *            The parameters used for the negative case of super type.
-     * @param parametersForSubtypeCase
-     *            The parameters used for the positive case of sub type.
-     */
-    public ReflectionUtilsFindConstructorTest(Class<?> typeToTest,
-                                              Class<?>[] parametersForEmptyCase,
-                                              Class<?>[] parametersForExactCase,
-                                              Class<?>[] parametersForSupertypeCase,
-                                              Class<?>[] parametersForSubtypeCase) {
-        this.typeToTest = typeToTest;
-        this.parametersForEmptyCase = parametersForEmptyCase;
-        this.parametersForExactCase = parametersForExactCase;
-        this.parametersForSupertypeCase = parametersForSupertypeCase;
-        this.parametersForSubtypeCase = parametersForSubtypeCase;
-    }
-
-    /* --- Parameters generation --- */
-
-    @Parameters
-    public static Collection<Object[]> parameters() {
-        Collection<Object[]> ret = new ArrayList<>(5);
-
-        ret.add(new Object[] { ClassWithEmptyPublicCtor.class, new Class<?>[0], new Class<?>[] { Exception.class },
-                new Class<?>[] { Throwable.class }, new Class<?>[] { RuntimeException.class } });
-        ret.add(new Object[] { ClassWithEmptyProtectedCtor.class, new Class<?>[0], new Class<?>[] { Exception.class },
-                new Class<?>[] { Throwable.class }, new Class<?>[] { RuntimeException.class } });
-        ret.add(new Object[] { ClassWithEmptyPrivateCtor.class, new Class<?>[0], new Class<?>[] { Exception.class },
-                new Class<?>[] { Throwable.class }, new Class<?>[] { RuntimeException.class } });
-        ret.add(new Object[] { GenericizedClass.class, new Class<?>[0], new Class<?>[] { Exception.class },
-                new Class<?>[] { Throwable.class }, new Class<?>[] { RuntimeException.class } });
-        ret.add(new Object[] { ClassWithEmptyPublicCtor.InnerClass.class,
-                new Class<?>[] { ClassWithEmptyPublicCtor.class },
-                new Class<?>[] { ClassWithEmptyPublicCtor.class, Exception.class },
-                new Class<?>[] { ClassWithEmptyPublicCtor.class, Throwable.class },
-                new Class<?>[] { ClassWithEmptyPublicCtor.class, RuntimeException.class } });
-        ret.add(new Object[] { ClassWithEmptyPublicCtor.StaticInnerClass.class, new Class<?>[0],
-                new Class<?>[] { Exception.class }, new Class<?>[] { Throwable.class },
-                new Class<?>[] { RuntimeException.class } });
-
-        return ret;
-    }
-
     /* --- Tests for the positive cases --- */
 
     /**
      * Test that {@link ReflectionUtils#findConstructor(Class, Class...)} finds the constructor when no parameter types
      * are passed.
      */
-    @Test
-    public void positiveTestFindConstructorForNoParams() {
-        findConstructorAndAssertItWasFound(parametersForEmptyCase);
+    @ParameterizedTest
+    @MethodSource
+    public void positiveTestFindConstructorForNoParams(Class<?> typeToTest, Class<?>[] ctorParams) {
+        findConstructorAndAssertItWasFound(typeToTest, ctorParams);
+    }
+
+    public static Stream<Arguments> positiveTestFindConstructorForNoParams() {
+        return Stream.of(
+                Arguments.of(ClassWithEmptyPublicCtor.class, new Class<?>[0]),
+                Arguments.of(ClassWithEmptyProtectedCtor.class, new Class<?>[0]),
+                Arguments.of(ClassWithEmptyPrivateCtor.class, new Class<?>[0]),
+                Arguments.of(GenericizedClass.class, new Class<?>[0]),
+                Arguments.of(ClassWithEmptyPublicCtor.InnerClass.class, new Class<?>[]{ClassWithEmptyPublicCtor.class}),
+                Arguments.of(ClassWithEmptyPublicCtor.StaticInnerClass.class, new Class<?>[0])
+        );
     }
 
     /**
      * Test that {@link ReflectionUtils#findConstructor(Class, Class...)} finds the constructor when the exact parameter
      * is passed.
      */
-    @Test
-    public void positiveTestFindConstructorForExactParam() {
-        findConstructorAndAssertItWasFound(parametersForExactCase);
+    @ParameterizedTest
+    @MethodSource
+    public void positiveTestFindConstructorForExactParam(Class<?> typeToTest, Class<?>[] ctorParams) {
+        findConstructorAndAssertItWasFound(typeToTest, ctorParams);
+    }
+
+    public static Stream<Arguments> positiveTestFindConstructorForExactParam() {
+        return Stream.of(
+                Arguments.of(ClassWithEmptyPublicCtor.class, new Class<?>[] { Exception.class }),
+                Arguments.of(ClassWithEmptyProtectedCtor.class, new Class<?>[] { Exception.class }),
+                Arguments.of(ClassWithEmptyPrivateCtor.class, new Class<?>[] { Exception.class }),
+                Arguments.of(GenericizedClass.class, new Class<?>[] { Exception.class }),
+                Arguments.of(ClassWithEmptyPublicCtor.InnerClass.class, new Class<?>[] { ClassWithEmptyPublicCtor.class }),
+                Arguments.of(ClassWithEmptyPublicCtor.StaticInnerClass.class, new Class<?>[] { Exception.class })
+        );
     }
 
     /**
      * Test that {@link ReflectionUtils#findConstructor(Class, Class...)} finds the constructor when the subtype of the
      * parameter is passed.
      */
-    @Test
-    public void positiveTestFindConstructorForSubtypeOfParam() {
-        findConstructorAndAssertItWasFound(parametersForSubtypeCase);
+    @ParameterizedTest
+    @MethodSource
+    public void positiveTestFindConstructorForSubtypeOfParam(Class<?> typeToTest, Class<?>[] ctorParams) {
+        findConstructorAndAssertItWasFound(typeToTest, ctorParams);
     }
+
+    public static Stream<Arguments> positiveTestFindConstructorForSubtypeOfParam() {
+        return Stream.of(
+                Arguments.of(ClassWithEmptyPublicCtor.class, new Class<?>[] { RuntimeException.class }),
+                Arguments.of(ClassWithEmptyProtectedCtor.class, new Class<?>[] { RuntimeException.class }),
+                Arguments.of(ClassWithEmptyPrivateCtor.class, new Class<?>[] { RuntimeException.class }),
+                Arguments.of(GenericizedClass.class, new Class<?>[] { RuntimeException.class }),
+                Arguments.of(ClassWithEmptyPublicCtor.InnerClass.class,
+                        new Class<?>[] { ClassWithEmptyPublicCtor.class, RuntimeException.class }),
+                Arguments.of(ClassWithEmptyPublicCtor.StaticInnerClass.class, new Class<?>[] { RuntimeException.class })
+        );
+    }
+
 
     /* --- Tests for the negative cases --- */
 
@@ -185,22 +145,37 @@ public class ReflectionUtilsFindConstructorTest {
      * Test that {@link ReflectionUtils#findConstructor(Class, Class...)} doesn't find a constructor when the supertype
      * is used for lookup.
      */
-    @Test
-    public void negativeTestFindConstructorForSupertype() {
-        assertNull(createAssertMessage("ctor was found anyway"),
-                   ReflectionUtils.findConstructor(typeToTest, parametersForSupertypeCase));
+    @ParameterizedTest
+    @MethodSource
+    public void negativeTestFindConstructorForSupertype(Class<?> typeToTest, Class<?>[] ctorParams) {
+        assertNull(ReflectionUtils.findConstructor(typeToTest, ctorParams),
+                createAssertMessage(typeToTest, "ctor was found anyway"));
+    }
+
+    public static Stream<Arguments> negativeTestFindConstructorForSupertype() {
+        return Stream.of(
+                Arguments.of(ClassWithEmptyPublicCtor.class, new Class<?>[] { Throwable.class }),
+                Arguments.of(ClassWithEmptyProtectedCtor.class, new Class<?>[] { Throwable.class }),
+                Arguments.of(ClassWithEmptyPrivateCtor.class, new Class<?>[] { Throwable.class }),
+                Arguments.of(GenericizedClass.class, new Class<?>[] { Throwable.class }),
+                Arguments.of(ClassWithEmptyPublicCtor.InnerClass.class,
+                        new Class<?>[] { ClassWithEmptyPublicCtor.class, Throwable.class }),
+                Arguments.of(ClassWithEmptyPublicCtor.StaticInnerClass.class, new Class<?>[] { Throwable.class })
+        );
     }
 
     /**
      * Test that {@link ReflectionUtils#findConstructor(Class, Class...)} doesn't find a constructor when the number of
      * arguments doesn't match anything.
      */
-    @Test
-    public void negativeTestFindConstructorForMismatchingArgumentsNumber() {
-        assertNull(createAssertMessage("ctor was found anyway"),
-                   ReflectionUtils.findConstructor(typeToTest,
-                                                   (Class<?>[]) ArrayUtils.add(parametersForExactCase, Object.class)));
+    @ParameterizedTest
+    @MethodSource("positiveTestFindConstructorForExactParam")
+    public void negativeTestFindConstructorForMismatchingArgumentsNumber(Class<?> typeToTest, Class<?>[] ctorParams) {
+        assertNull(ReflectionUtils.findConstructor
+                (typeToTest, (Class<?>[]) ArrayUtils.add(ctorParams, Object.class)),
+                createAssertMessage(typeToTest, "ctor was found anyway"));
     }
+
 
     /* --- Helper Methods --- */
 
@@ -211,18 +186,18 @@ public class ReflectionUtilsFindConstructorTest {
      * @param parameters
      *            The parameters to check with.
      */
-    private void findConstructorAndAssertItWasFound(Class<?>[] parameters) {
+    private void findConstructorAndAssertItWasFound(Class<?> typeToTest, Class<?>[] parameters) {
         Constructor<?> constructor = ReflectionUtils.findConstructor(typeToTest, parameters);
-        assertNotNull(createAssertMessage("ctor not found"), constructor);
-        assertEquals(createAssertMessage("found ctor with wrong parameter length"), parameters.length,
-                     constructor.getParameterTypes().length);
+        assertNotNull(constructor, createAssertMessage(typeToTest, "ctor not found"));
+        assertEquals(parameters.length, constructor.getParameterTypes().length,
+                createAssertMessage(typeToTest, "found ctor with wrong parameter length"));
 
         Class<?>[] ctorParameters = constructor.getParameterTypes();
         for (int i = 0; i < parameters.length; i++) {
-            assertTrue(createAssertMessage("parameter not compatible, expected {1} or a subclass, but was {2}",
-                                          parameters[i].getSimpleName(),
-                                          ctorParameters[i].getSimpleName()),
-                       ctorParameters[i].isAssignableFrom(parameters[i]));
+            assertTrue(ctorParameters[i].isAssignableFrom(parameters[i]),
+                    createAssertMessage(typeToTest, "parameter not compatible, expected {1} or a subclass, but was {2}",
+                            parameters[i].getSimpleName(),
+                            ctorParameters[i].getSimpleName()));
         }
     }
 
@@ -230,6 +205,8 @@ public class ReflectionUtilsFindConstructorTest {
      * Create an assertion message with the class type that was checked, because the parameterized tests don't have this
      * info.
      *
+     * @param typeToTest
+     *             The type being tested.
      * @param message
      *            Additional message to print.
      * @param arguments
@@ -237,7 +214,7 @@ public class ReflectionUtilsFindConstructorTest {
      *
      * @return The assertion message.
      */
-    private String createAssertMessage(String message, Object... arguments) {
+    private String createAssertMessage(Class<?> typeToTest, String message, Object... arguments) {
         return MessageFormat.format("Test for type {0} failed: " + message,
                                     ArrayUtils.addAll(new Object[] { typeToTest.getSimpleName() }, arguments));
     }

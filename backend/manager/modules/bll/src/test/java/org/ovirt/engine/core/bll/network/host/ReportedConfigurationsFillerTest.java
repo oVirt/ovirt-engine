@@ -7,15 +7,15 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.network.cluster.DefaultRouteUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -35,10 +35,10 @@ import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.vdsbroker.EffectiveHostNetworkQos;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 public class ReportedConfigurationsFillerTest {
 
     @Mock
@@ -80,15 +80,16 @@ public class ReportedConfigurationsFillerTest {
     private HostNetworkQos vlanNetworkQos;
     private Cluster cluster;
 
-    @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500),
-            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500),
+                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
+                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
+        );
+    }
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         hostId = Guid.newGuid();
         clusterId = Guid.newGuid();

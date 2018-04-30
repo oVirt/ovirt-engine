@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -10,15 +10,15 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -36,10 +36,10 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(Strict.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 public class HostValidatorTest {
 
     private static final int HOST_NAME_SIZE = 20;
@@ -53,12 +53,13 @@ public class HostValidatorTest {
     @Mock
     private StoragePoolDao storagePoolDao;
 
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.EncryptHostCommunication, true),
-            MockConfigDescriptor.of(ConfigValues.InstallVds, Boolean.TRUE),
-            MockConfigDescriptor.of(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.EncryptHostCommunication, true),
+                MockConfigDescriptor.of(ConfigValues.InstallVds, Boolean.TRUE),
+                MockConfigDescriptor.of(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE)
+        );
+    }
 
     @Mock
     private VDS host;

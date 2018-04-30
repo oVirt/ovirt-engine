@@ -8,12 +8,14 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -21,7 +23,8 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class InClusterUpgradeFilterPolicyUnitTest {
     @Mock
     private VdsDynamicDao vdsDynamicDao;
@@ -36,7 +39,7 @@ public class InClusterUpgradeFilterPolicyUnitTest {
     private VDS tooOldHost;
     private VDS currentHost;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         newEnoughHost = newHost("RHEL - 7.2 - 1.el7");
         tooOldHost = newHost("RHEL - 5.0 - 1.el5");

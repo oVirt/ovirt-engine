@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -39,7 +39,7 @@ public class GetAllAuditLogsByVMTemplateIdQueryTest
 
         @SuppressWarnings("unchecked")
         List<AuditLog> result = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of audit logs in result", 1, result.size());
-        assertEquals("Wrong audit log in result", expectedResult, result.get(0));
+        assertEquals(1, result.size(), "Wrong number of audit logs in result");
+        assertEquals(expectedResult, result.get(0), "Wrong audit log in result");
     }
 }

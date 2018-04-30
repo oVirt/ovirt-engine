@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.ovirt.engine.core.dao.FixturesTool.IMAGE_ID;
 import static org.ovirt.engine.core.dao.FixturesTool.TEMPLATE_IMAGE_ID;
 
@@ -16,7 +17,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,6 +51,7 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
         return IMAGE_ID;
     }
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -66,9 +69,9 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     }
 
     @Override
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetAll() {
-        super.testGetAll();
+        assertThrows(UnsupportedOperationException.class, super::testGetAll);
     }
 
     @Test
@@ -103,8 +106,8 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
         assertNotNull(result1);
         assertNotNull(result2);
         assertEquals(result1.getId(), result2.getId());
-        assertNotSame("Images should be different", result1.getImageId(), result2.getImageId());
-        assertNotSame("Vm snapshots should be different", result1.getVmSnapshotId(), result2.getVmSnapshotId());
+        assertNotSame(result1.getImageId(), result2.getImageId(), "Images should be different");
+        assertNotSame(result1.getVmSnapshotId(), result2.getVmSnapshotId(), "Vm snapshots should be different");
     }
 
     @Test
@@ -219,7 +222,7 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     public void testTryGetNonExistsDiskImage() {
         DiskImage result = dao.getDiskImageByDiskAndImageIds(Guid.newGuid(), Guid.newGuid());
 
-        assertNull(null, result);
+        assertNull(result);
     }
 
     @Test
@@ -247,6 +250,6 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
         DiskImage result = dao.getDiskImageByDiskAndImageIds(FixturesTool.IMAGE_GROUP_ID, FixturesTool.IMAGE_ID,
                 UNPRIVILEGED_USER_ID, true);
 
-        assertNull(null, result);
+        assertNull(result);
     }
 }

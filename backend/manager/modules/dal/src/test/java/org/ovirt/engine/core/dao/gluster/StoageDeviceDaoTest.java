@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
@@ -39,8 +39,8 @@ public class StoageDeviceDaoTest extends BaseDaoTestCase<StorageDeviceDao > {
     @Test
     public void testGetById(){
         StorageDevice storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_1);
-        assertNotNull("Failed to retrive storage device", storageDevice);
-        assertEquals("Failed to retrive corrective storage device", EXISTING_STORAGE_DEVICE_ID_1, storageDevice.getId());
+        assertNotNull(storageDevice, "Failed to retrive storage device");
+        assertEquals(EXISTING_STORAGE_DEVICE_ID_1, storageDevice.getId(), "Failed to retrive corrective storage device");
 
         storageDevice = dao.get(NON_EXISTING_STORAGE_DEVICE_ID);
         assertNull(storageDevice);
@@ -51,45 +51,45 @@ public class StoageDeviceDaoTest extends BaseDaoTestCase<StorageDeviceDao > {
         StorageDevice storageDevice = getStorageDevice();
         dao.save(storageDevice);
         StorageDevice storageDeviceFromDB = dao.get(storageDevice.getId());
-        assertEquals("Storage device is not saved correctly", storageDevice, storageDeviceFromDB);
+        assertEquals(storageDevice, storageDeviceFromDB, "Storage device is not saved correctly");
     }
 
     @Test
     public void testGetStorageDevicesInHost() {
         List<StorageDevice> storageDevices = dao.getStorageDevicesInHost(FixturesTool.GLUSTER_BRICK_SERVER1);
-        assertEquals("Fails to retrive all the storage devices for host", 2, storageDevices.size());
+        assertEquals(2, storageDevices.size(), "Fails to retrive all the storage devices for host");
     }
 
     @Test
     public void testRemove() {
         StorageDevice storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
-        assertNotNull("storage device doesn't exists", storageDevice);
+        assertNotNull(storageDevice, "storage device doesn't exists");
         dao.remove(EXISTING_STORAGE_DEVICE_ID_2);
         storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
-        assertNull("Failed to remove storage device", storageDevice);
+        assertNull(storageDevice, "Failed to remove storage device");
     }
 
     @Test
     public void testUpdateStorageDevice() {
         StorageDevice storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
-        assertNotNull("storage device doesn't exists", storageDevice);
+        assertNotNull(storageDevice, "storage device doesn't exists");
         storageDevice.setSize(1234567L);
         storageDevice.setMountPoint("/gluster-bricks/brick1");
         storageDevice.setFsType("xfs");
         dao.update(storageDevice);
         StorageDevice storageDeviceFromDB = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
-        assertEquals("Failed to update Storage Device", storageDevice, storageDeviceFromDB);
+        assertEquals(storageDevice, storageDeviceFromDB, "Failed to update Storage Device");
     }
 
     @Test
     public void updateIsFreeFlag() {
         StorageDevice storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
-        assertNotNull("storage device doesn't exists", storageDevice);
+        assertNotNull(storageDevice, "storage device doesn't exists");
         dao.updateIsFreeFlag(EXISTING_STORAGE_DEVICE_ID_2, false);
         storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
-        assertFalse("canCreateBrick is not updated", storageDevice.getCanCreateBrick());
+        assertFalse(storageDevice.getCanCreateBrick(), "canCreateBrick is not updated");
         dao.updateIsFreeFlag(EXISTING_STORAGE_DEVICE_ID_2, true);
         storageDevice = dao.get(EXISTING_STORAGE_DEVICE_ID_2);
-        assertTrue("canCreateBrick is not updated", storageDevice.getCanCreateBrick());
+        assertTrue(storageDevice.getCanCreateBrick(), "canCreateBrick is not updated");
     }
 }

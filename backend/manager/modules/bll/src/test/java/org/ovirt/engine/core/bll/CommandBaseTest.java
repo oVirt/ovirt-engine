@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,12 +9,13 @@ import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,12 +27,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
 /** A test case for {@link CommandBase} */
+@ExtendWith(MockConfigExtension.class)
 public class CommandBaseTest extends BaseCommandTest {
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30));
+    }
 
     protected String session = "someSession";
 
@@ -45,7 +48,7 @@ public class CommandBaseTest extends BaseCommandTest {
                     .extraInterfaces(RenamedEntityInfoProvider.class)
                     .useConstructor(new ActionParametersBase(), CommandContext.createContext(session)));
 
-    @Before
+    @BeforeEach
     public void setupEnvironment() {
         CorrelationIdTracker.clean();
         DbUser user = mock(DbUser.class);
@@ -54,7 +57,7 @@ public class CommandBaseTest extends BaseCommandTest {
         sessionDataContainer.setUser(session, user);
     }
 
-    @After
+    @AfterEach
     public void clearEnvironment() {
         CorrelationIdTracker.clean();
         sessionDataContainer.removeSessionOnLogout(session);
@@ -73,7 +76,7 @@ public class CommandBaseTest extends BaseCommandTest {
         command.postConstruct();
 
         // Check the session
-        assertEquals("wrong user id on command", user.getId(), command.getUserId());
+        assertEquals(user.getId(), command.getUserId(), "wrong user id on command");
     }
 
     @Test
@@ -101,8 +104,8 @@ public class CommandBaseTest extends BaseCommandTest {
                 "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM",
                 "IRS_FAILED_RETRIEVING_SNAPSHOT_INFO");
 
-        assertTrue("extractVariableDeclarations didn't return the same static messages",
-                CollectionUtils.isEqualCollection(msgs, command.extractVariableDeclarations(msgs)));
+        assertTrue(CollectionUtils.isEqualCollection(msgs, command.extractVariableDeclarations(msgs)),
+                "extractVariableDeclarations didn't return the same static messages");
     }
 
     @Test
@@ -119,7 +122,7 @@ public class CommandBaseTest extends BaseCommandTest {
                 new StringBuilder().append(msg3_1).append(msg3_2).append(msg3_3).toString());
         List<String> extractedMsgs = Arrays.asList(msg1_1, msg1_2, msg2, msg3_1, msg3_2, msg3_3);
 
-        assertTrue("extractVariableDeclarations didn't extract the variables as expected",
-                CollectionUtils.isEqualCollection(extractedMsgs, command.extractVariableDeclarations(appendedMsgs)));
+        assertTrue(CollectionUtils.isEqualCollection(extractedMsgs, command.extractVariableDeclarations(appendedMsgs)),
+                "extractVariableDeclarations didn't extract the variables as expected");
     }
 }

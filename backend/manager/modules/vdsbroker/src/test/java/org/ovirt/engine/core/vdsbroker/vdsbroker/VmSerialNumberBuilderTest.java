@@ -1,20 +1,24 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.utils.MockedConfig;
 
+@ExtendWith(MockConfigExtension.class)
 public class VmSerialNumberBuilderTest {
 
     private static final Guid VM_ID = Guid.newGuid();
@@ -26,10 +30,7 @@ public class VmSerialNumberBuilderTest {
     Cluster cluster;
     Map<String, Object> creationInfo;
 
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
-
-    @Before
+    @BeforeEach
     public void setUp() {
         vm = new VM();
         vm.setId(VM_ID);
@@ -75,20 +76,28 @@ public class VmSerialNumberBuilderTest {
     }
 
     @Test
+    @MockedConfig("mockConfigForHost")
     public void testConfigHostPolicy() {
-        setupConfigWithSerialNumber(SerialNumberPolicy.HOST_ID, null);
         assertSerialNumber(null);
     }
 
-    @Test
-    public void testConfigVmIdPolicy() {
-        setupConfigWithSerialNumber(SerialNumberPolicy.VM_ID, null);
-        assertSerialNumber(VM_ID.toString());
+    public static Stream<MockConfigDescriptor<?>> mockConfigForHost() {
+        return mockConfigWithSerialNumber(SerialNumberPolicy.HOST_ID, null);
     }
 
     @Test
+    @MockedConfig("mockConfigForVM")
+    public void testConfigVmIdPolicy() {
+        assertSerialNumber(VM_ID.toString());
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigForVM() {
+        return mockConfigWithSerialNumber(SerialNumberPolicy.VM_ID, null);
+    }
+
+    @Test
+    @MockedConfig("mockConfigForSerial")
     public void testConfigCustomPolicy() {
-        setupConfigWithSerialNumber(SerialNumberPolicy.CUSTOM, CUSTOM_CONFIG_SERIAL);
         assertSerialNumber(CUSTOM_CONFIG_SERIAL);
     }
 
@@ -100,17 +109,21 @@ public class VmSerialNumberBuilderTest {
     }
 
     @Test
+    @MockedConfig("mockConfigForSerial")
     public void testVmAppliedBeforeConfig() {
         setupVmWithSerialNumber(SerialNumberPolicy.CUSTOM, CUSTOM_VM_SERIAL);
-        setupConfigWithSerialNumber(SerialNumberPolicy.CUSTOM, CUSTOM_CONFIG_SERIAL);
         assertSerialNumber(CUSTOM_VM_SERIAL);
     }
 
     @Test
+    @MockedConfig("mockConfigForSerial")
     public void testClusterAppliedBeforeConfig() {
         setupClusterWithSerialNumber(SerialNumberPolicy.VM_ID, null);
-        setupConfigWithSerialNumber(SerialNumberPolicy.CUSTOM, CUSTOM_CONFIG_SERIAL);
         assertSerialNumber(VM_ID.toString());
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigForSerial() {
+        return mockConfigWithSerialNumber(SerialNumberPolicy.CUSTOM, CUSTOM_CONFIG_SERIAL);
     }
 
     private void assertSerialNumber(String serialNumber) {
@@ -129,8 +142,11 @@ public class VmSerialNumberBuilderTest {
         cluster.setCustomSerialNumber(customSerialNumber);
     }
 
-    private void setupConfigWithSerialNumber(SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {
-        mockConfigRule.mockConfigValue(ConfigValues.DefaultSerialNumberPolicy, serialNumberPolicy);
-        mockConfigRule.mockConfigValue(ConfigValues.DefaultCustomSerialNumber, customSerialNumber);
+    private static Stream<MockConfigDescriptor<?>> mockConfigWithSerialNumber
+            (SerialNumberPolicy serialNumberPolicy, String customSerialNumber) {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.DefaultSerialNumberPolicy, serialNumberPolicy),
+                MockConfigDescriptor.of(ConfigValues.DefaultCustomSerialNumber, customSerialNumber)
+        );
     }
 }

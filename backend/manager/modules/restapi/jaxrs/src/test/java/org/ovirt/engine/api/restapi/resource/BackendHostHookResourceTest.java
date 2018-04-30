@@ -1,13 +1,16 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<Hook, Object, BackendHostHookResource> {
 
     private static final String MD5_2 = "md5_2";

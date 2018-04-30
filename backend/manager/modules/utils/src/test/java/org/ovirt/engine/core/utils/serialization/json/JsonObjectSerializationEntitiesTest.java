@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -40,13 +41,8 @@ import org.ovirt.engine.core.utils.RandomUtils;
 /**
  * This test is designed to test that our business entities can be serialized/deserialized by Jackson correctly.
  */
-@RunWith(Parameterized.class)
 public class JsonObjectSerializationEntitiesTest {
-    @Parameterized.Parameter
-    public BusinessEntity<?> entity;
-
-    @Parameterized.Parameters
-    public static Object[] data() {
+    public static Stream<BusinessEntity<?>> data() {
         RandomUtils random = RandomUtils.instance();
         VdsStatic vdsStatic = new VdsStatic(random.nextString(10),
                                     random.nextString(10),
@@ -59,7 +55,7 @@ public class JsonObjectSerializationEntitiesTest {
                                     random.nextBoolean(),
                                     random.nextEnum(VDSType.class),
                                     Guid.newGuid());
-        return new Object[] {
+        return Stream.of(
                 vdsStatic,
                 randomVdsDynamic(),
                 randomVdsStatistics(),
@@ -71,7 +67,7 @@ public class JsonObjectSerializationEntitiesTest {
                 randomRole(),
                 new IdContainerClass<>(new VdsSpmIdMap(Guid.newGuid(), Guid.newGuid(), random.nextInt())),
                 new IdContainerClass<>(Guid.newGuid())
-        };
+        );
     }
 
     private static StoragePool randomStoragePool() {
@@ -160,8 +156,9 @@ public class JsonObjectSerializationEntitiesTest {
         return role;
     }
 
-    @Test
-    public void serializeAndDesrializeEntity() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void serializeAndDesrializeEntity(BusinessEntity<?> entity) {
         String serializedEntity = new JsonObjectSerializer().serialize(entity);
         assertNotNull(serializedEntity);
         Serializable deserializedEntity =

@@ -1,10 +1,12 @@
-package org.ovirt.engine.core.di;
+package org.ovirt.engine.core.utils;
 
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,10 +15,17 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.TypeLiteral;
 
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.support.AnnotationSupport;
 
-public class InjectorRule extends TestWatcher {
+/**
+ * An extension to inject mocks to the Injector.
+ * In order to use it, just add it as an extension (e.g., {@code @ExtendWith(InjectorExtension.class)}), and add a
+ * {@link InjectedMock} annotation to any <strong>public</strong> field you want injected in that way.
+ */
+public class InjectorExtension implements BeforeEachCallback, AfterEachCallback {
 
     private static final Map<Class<?>, Object> beansCache = new ConcurrentHashMap<>();
 
@@ -25,17 +34,24 @@ public class InjectorRule extends TestWatcher {
     }
 
     @Override
-    protected void finished(Description description) {
-        super.finished(description);
+    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+        List<Field> fields =
+                AnnotationSupport.findPublicAnnotatedFields(extensionContext.getTestClass().get(), Object.class, InjectedMock.class);
+
+        for (Field field : fields) {
+            beansCache.put(field.getType(), field.get(extensionContext.getTestInstance().get()));
+        }
+    }
+
+    @Override
+    public void afterEach(ExtensionContext extensionContext) throws Exception {
         beansCache.clear();
     }
 
-    public <T> void bind(Class<T> pureClsType, T instance) {
-        beansCache.put(pureClsType, instance);
-    }
+
+    /* Inner utils classes */
 
     private static class TestCDIProvider<T> extends CDI<T> {
-
         @Override
         public BeanManager getBeanManager() {
             return mock(BeanManager.class, RETURNS_DEEP_STUBS);
@@ -83,7 +99,6 @@ public class InjectorRule extends TestWatcher {
     }
 
     private static class SimpleInstanceIdGenerator<T> implements Instance<T> {
-
         private final T value;
 
         public SimpleInstanceIdGenerator(T value) {
@@ -122,7 +137,6 @@ public class InjectorRule extends TestWatcher {
 
         @Override
         public void destroy(T u) {
-
         }
 
         @Override

@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,8 +55,8 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
     public void updateOvfUpdatedInfoFewDomains() {
         StorageDomainOvfInfo ovfInfo = dao.get(getExistingEntityId());
         StorageDomainOvfInfo ovfInfo1 = dao.getAllForDomain(FixturesTool.STORAGE_DOMAIN_NFS2_2).get(0);
-        assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus());
-        assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo.getStatus());
+        assertNotSame(StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus(), "domain shouldn't be ovf updated prior to test");
+        assertNotSame(StorageDomainOvfInfoStatus.UPDATED, ovfInfo.getStatus(), "domain shouldn't be ovf updated prior to test");
         dao.updateOvfUpdatedInfo(Arrays.asList(ovfInfo.getStorageDomainId(), ovfInfo1.getStorageDomainId()),
                 StorageDomainOvfInfoStatus.UPDATED,
                 StorageDomainOvfInfoStatus.DISABLED);
@@ -72,7 +72,7 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
         ovfInfo.setStatus(StorageDomainOvfInfoStatus.DISABLED);
         dao.update(ovfInfo);
         StorageDomainOvfInfo ovfInfo1 = dao.getAllForDomain(FixturesTool.STORAGE_DOMAIN_NFS2_2).get(0);
-        assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus());
+        assertNotSame(StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus(), "domain shouldn't be ovf updated prior to test");
         dao.updateOvfUpdatedInfo(Arrays.asList(ovfInfo.getStorageDomainId(), ovfInfo1.getStorageDomainId()),
                 StorageDomainOvfInfoStatus.UPDATED,
                 StorageDomainOvfInfoStatus.DISABLED);
@@ -85,7 +85,7 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
     @Test
     public void loadStorageDomainIdsForOvfIds() {
         StorageDomainOvfInfo ovfInfo = dao.get(getExistingEntityId());
-        assertTrue("domain shouldn't have stored ovfs prior to test", ovfInfo.getStoredOvfIds().isEmpty());
+        assertTrue(ovfInfo.getStoredOvfIds().isEmpty(), "domain shouldn't have stored ovfs prior to test");
         Guid ovfId1 = Guid.newGuid();
         Guid ovfId2 = Guid.newGuid();
         List<Guid> ovfIds = Arrays.asList(ovfId1, ovfId2);

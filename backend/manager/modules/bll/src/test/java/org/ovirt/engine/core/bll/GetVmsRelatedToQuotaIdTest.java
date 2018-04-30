@@ -1,15 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,7 +16,6 @@ import org.ovirt.engine.core.dao.VmDao;
 /**
  * A test case for {@link GetVmsRelatedToQuotaIdQuery}.
  */
-@RunWith(MockitoJUnitRunner.class)
 public class GetVmsRelatedToQuotaIdTest extends AbstractQueryTest<IdQueryParameters, GetVmsRelatedToQuotaIdQuery<IdQueryParameters>> {
     @Mock
     VmDao vmDao;

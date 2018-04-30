@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -101,7 +101,7 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                         "disk",
                         UNPRIVILEGED_USER_ID,
                         true);
-        assertTrue("A user without any permissions should not see any devices", devices.isEmpty());
+        assertTrue(devices.isEmpty(), "A user without any permissions should not see any devices");
     }
 
     /**
@@ -110,8 +110,8 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
      * @param devices The result to check
      */
     private static void assertGetVMDeviceByIdTypeAndDeviceFullResult(List<VmDevice> devices) {
-        assertEquals("there should only be " + TOTAL_DISK_DEVICES_FOR_EXISTING_VM + " disks",
-                TOTAL_DISK_DEVICES_FOR_EXISTING_VM, devices.size());
+        assertEquals(TOTAL_DISK_DEVICES_FOR_EXISTING_VM, devices.size(),
+                "there should only be " + TOTAL_DISK_DEVICES_FOR_EXISTING_VM + " disks");
     }
 
     /**
@@ -120,8 +120,8 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
      * @param devices The result to check
      */
     private static void assertGetVMDeviceByIdResult(List<VmDevice> devices) {
-        assertEquals("there should only be " + TOTAL_DEVICES_FOR_EXISTING_VM + " devices",
-                TOTAL_DEVICES_FOR_EXISTING_VM, devices.size());
+        assertEquals(TOTAL_DEVICES_FOR_EXISTING_VM, devices.size(),
+                "there should only be " + TOTAL_DEVICES_FOR_EXISTING_VM + " devices");
     }
 
     @Test
@@ -201,7 +201,7 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     @Test
     public void testGetVmDeviceByType() {
         List<VmDevice> devices = dao.getVmDeviceByType(VmDeviceGeneralType.HOSTDEV);
-        assertEquals("Expected to retrieve " + TOTAL_HOST_DEVICES + " host devices.", TOTAL_HOST_DEVICES, devices.size());
+        assertEquals(TOTAL_HOST_DEVICES, devices.size(), "Expected to retrieve " + TOTAL_HOST_DEVICES + " host devices.");
         Set<Guid> vmIds = devices.stream().map(VmDevice::getVmId).collect(Collectors.toSet());
         assertTrue(vmIds.contains(EXISTING_VM_ID));
         assertTrue(vmIds.contains(EXISTING_VM_ID_2));
@@ -246,6 +246,6 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 dao.getVmDeviceByVmId(EXISTING_VM_ID,
                         UNPRIVILEGED_USER_ID,
                         true);
-        assertTrue("A user without any permissions should not see any devices", devices.isEmpty());
+        assertTrue(devices.isEmpty(), "A user without any permissions should not see any devices");
     }
 }

@@ -1,14 +1,16 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 /** A test case for the {@link GetUnregisteredVmTemplatesQuery} class. */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetUnregisteredVmTemplatesQueryTest extends AbstractQueryTest<IdQueryParameters, GetUnregisteredVmTemplatesQuery<? extends IdQueryParameters>> {
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDaoMock;
@@ -32,7 +35,7 @@ public class GetUnregisteredVmTemplatesQueryTest extends AbstractQueryTest<IdQue
     @Mock
     private OvfHelper ovfHelperMock;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -46,7 +49,7 @@ public class GetUnregisteredVmTemplatesQueryTest extends AbstractQueryTest<IdQue
 
         @SuppressWarnings("unchecked")
         List<VmTemplate> result = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of Templates in result", 2, result.size());
+        assertEquals(2, result.size(), "Wrong number of Templates in result");
     }
 
     private void mockQueryParameters() {

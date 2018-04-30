@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.queries.QueryType;
 
 public class QueryExistenceTest {

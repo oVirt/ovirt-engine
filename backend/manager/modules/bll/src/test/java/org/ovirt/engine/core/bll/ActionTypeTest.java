@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.BitSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.action.ActionType;
 
 public class ActionTypeTest {
@@ -24,7 +24,8 @@ public class ActionTypeTest {
                 bitset.set(at.getValue());
             }
         }
-        assertTrue("ActionType contains the following non unique values: " + nonUniqueValues, nonUniqueValues.isEmpty());
+        assertTrue(nonUniqueValues.isEmpty(),
+                "ActionType contains the following non unique values: " + nonUniqueValues);
     }
 
     @Test

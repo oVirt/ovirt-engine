@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -26,7 +26,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
     @Mock
     private PermissionDao permissionDaoMock;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -67,6 +67,6 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
         @SuppressWarnings("unchecked")
         List<Permission> result = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("Wrong permissions returned from the query", mockedPermissions, result);
+        assertEquals(mockedPermissions, result, "Wrong permissions returned from the query");
     }
 }

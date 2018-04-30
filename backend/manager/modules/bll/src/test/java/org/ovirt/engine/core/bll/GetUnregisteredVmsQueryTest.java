@@ -1,15 +1,17 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 /** A test case for the {@link GetUnregisteredVmsQuery} class. */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParameters, GetUnregisteredVmsQuery<? extends IdQueryParameters>> {
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDaoMock;
@@ -36,7 +39,7 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
     @Mock
     private OvfHelper ovfHelperMock;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -50,7 +53,7 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
 
         @SuppressWarnings("unchecked")
         List<VM> result = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of VMs in result", 2, result.size());
+        assertEquals(2, result.size(), "Wrong number of VMs in result");
         result.forEach(vm -> {
             assertTrue(vm.getId().equals(newVmGuid) ? vm.getStatus() == vmStatus : vm.getStatus() == vmStatus2);
         });

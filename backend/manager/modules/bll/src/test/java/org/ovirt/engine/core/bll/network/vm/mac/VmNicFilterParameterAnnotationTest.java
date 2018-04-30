@@ -1,22 +1,22 @@
 package org.ovirt.engine.core.bll.network.vm.mac;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(Parameterized.class)
 public class VmNicFilterParameterAnnotationTest {
 
     static final String VALID_NAME = "IP";
@@ -29,41 +29,29 @@ public class VmNicFilterParameterAnnotationTest {
 
     static final Guid VALID_VM_INTERFACE_ID = Guid.newGuid();
 
-    @Parameterized.Parameter
-    public String name;
-
-    @Parameterized.Parameter(1)
-    public String value;
-
-    @Parameterized.Parameter(2)
-    public Guid vmInterfaceId;
-
-    @Parameterized.Parameter(3)
-    public String expectedErrorMessage;
-
-    @Parameterized.Parameters
-    public static Object[][] vmNicFilterParameters() {
-        return new Object[][] {
-                { VALID_NAME, VALID_VALUE, VALID_VM_INTERFACE_ID, null },
-                { INVALID_NAME0, VALID_VALUE, VALID_VM_INTERFACE_ID,
-                        "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_NAME" },
-                { INVALID_NAME1, VALID_VALUE, VALID_VM_INTERFACE_ID,
-                        "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_NAME" },
-                { null, VALID_VALUE, VALID_VM_INTERFACE_ID, "may not be null" },
-                { VALID_NAME, INVALID_VALUE0, VALID_VM_INTERFACE_ID,
-                        "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_VALUE" },
-                { VALID_NAME, INVALID_VALUE1, VALID_VM_INTERFACE_ID,
-                        "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_VALUE" },
-                { VALID_NAME, null, VALID_VM_INTERFACE_ID, "may not be null" },
-                { VALID_NAME, VALID_VALUE, null, "may not be null" },
-        };
+    public static Stream<Arguments> validate() {
+        return Stream.of(
+                Arguments.of(VALID_NAME, VALID_VALUE, VALID_VM_INTERFACE_ID, null),
+                Arguments.of(INVALID_NAME0, VALID_VALUE, VALID_VM_INTERFACE_ID,
+                        "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_NAME"),
+                Arguments.of(INVALID_NAME1, VALID_VALUE, VALID_VM_INTERFACE_ID,
+                        "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_NAME"),
+                Arguments.of(null, VALID_VALUE, VALID_VM_INTERFACE_ID, "may not be null"),
+                Arguments.of(VALID_NAME, INVALID_VALUE0, VALID_VM_INTERFACE_ID,
+                        "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_VALUE"),
+                Arguments.of(VALID_NAME, INVALID_VALUE1, VALID_VM_INTERFACE_ID,
+                        "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_VALUE"),
+                Arguments.of(VALID_NAME, null, VALID_VM_INTERFACE_ID, "may not be null"),
+                Arguments.of(VALID_NAME, VALID_VALUE, null, "may not be null")
+        );
     }
 
     private final Validator validator = ValidationUtils.getValidator();
     private static final Class<?>[] VALIDATE_GROUPS = { CreateEntity.class, UpdateEntity.class };
 
-    @Test
-    public void runTest() {
+    @ParameterizedTest
+    @MethodSource
+    public void validate(String name, String value, Guid vmInterfaceId, String expectedErrorMessage) {
         VmNicFilterParameter vmNicFilterParameter = new VmNicFilterParameter();
         vmNicFilterParameter.setName(name);
         vmNicFilterParameter.setValue(value);

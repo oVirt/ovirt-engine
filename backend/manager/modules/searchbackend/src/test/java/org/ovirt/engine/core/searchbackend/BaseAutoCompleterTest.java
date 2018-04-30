@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @see BitValueAutoCompleterTest
@@ -11,8 +11,8 @@ public class BaseAutoCompleterTest {
     @Test
     public void testChangeCaseDisplay() {
         BaseAutoCompleter bac = new BaseAutoCompleter();
-        assertEquals("normal", "jarjarbinks", bac.changeCaseDisplay("JarJarBinks"));
-        assertEquals("dayOfWeek", "Monday", bac.changeCaseDisplay("Monday"));
-        assertEquals("dayOfWeek", "monday", bac.changeCaseDisplay("monday"));
+        assertEquals("jarjarbinks", bac.changeCaseDisplay("JarJarBinks"), "normal");
+        assertEquals("Monday", bac.changeCaseDisplay("Monday"), "dayOfWeek");
+        assertEquals("monday", bac.changeCaseDisplay("monday"), "dayOfWeek");
     }
 }

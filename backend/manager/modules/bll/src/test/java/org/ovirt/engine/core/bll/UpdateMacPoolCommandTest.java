@@ -1,24 +1,27 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class UpdateMacPoolCommandTest {
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFirstParameterIsNotNull() {
-        UpdateMacPoolCommand.validateDefaultFlagIsNotChanged(null, new MacPool());
+        assertThrows(IllegalArgumentException.class,
+                () -> UpdateMacPoolCommand.validateDefaultFlagIsNotChanged(null, new MacPool()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSecondParameterIsNotNull() {
-        UpdateMacPoolCommand.validateDefaultFlagIsNotChanged(new MacPool(), null);
+        assertThrows(IllegalArgumentException.class,
+                () -> UpdateMacPoolCommand.validateDefaultFlagIsNotChanged(new MacPool(), null));
     }
 
     @Test

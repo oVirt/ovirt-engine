@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 
@@ -14,7 +16,7 @@ public abstract class AbstractUserQueryTest<P extends QueryParametersBase, Q ext
 
     protected static final long UNPRIVILEGED_USER_SESSION_ID = 1;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -28,8 +30,9 @@ public abstract class AbstractUserQueryTest<P extends QueryParametersBase, Q ext
 
     /** Verify that all queries tested in this manner were flagged as user queries in the {@link QueryType} enum */
     @Test
+    @MockitoSettings(strictness = Strictness.LENIENT)
     public void testQueryIsAUserQuery() throws IllegalArgumentException, IllegalAccessException {
-        assertFalse("A query tested for filtered access should not be an admin query",
-                TestHelperQueriesCommandType.getQueryTypeFieldValue(getQuery()).isAdmin());
+        assertFalse(TestHelperQueriesCommandType.getQueryTypeFieldValue(getQuery()).isAdmin(),
+                "A query tested for filtered access should not be an admin query");
     }
 }

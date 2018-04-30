@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -33,7 +33,7 @@ public class GetAllVmNetworksByClusterIdQueryTest
     private Network externalNetwork;
     private List<Network> networks;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         cluster = new Cluster();
         cluster.setId(clusterId);

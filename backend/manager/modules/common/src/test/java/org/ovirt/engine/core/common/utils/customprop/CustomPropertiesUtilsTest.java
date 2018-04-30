@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.common.utils.customprop;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.ovirt.engine.core.common.utils.customprop.PropertiesUtilsTestHelper.validatePropertyMap;
 import static org.ovirt.engine.core.common.utils.customprop.PropertiesUtilsTestHelper.validatePropertyValue;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for common properties method
@@ -22,10 +22,10 @@ public class CustomPropertiesUtilsTest {
     public void stringPropertiesSyntax() {
         CustomPropertiesUtils utils = new CustomPropertiesUtils();
 
-        assertTrue("Invalid key/value delimiter", utils.syntaxErrorInProperties("speed:1024;duplex=full"));
-        assertTrue("Missing key/value delimiter", utils.syntaxErrorInProperties("speed=1024;duplex"));
-        assertTrue("Invalid key character", utils.syntaxErrorInProperties("spe*ed=1024;duplex=full"));
-        assertTrue("Invalid value character", utils.syntaxErrorInProperties("speed=1024;duplex=fu;ll"));
+        assertTrue(utils.syntaxErrorInProperties("speed:1024;duplex=full"), "Invalid key/value delimiter");
+        assertTrue(utils.syntaxErrorInProperties("speed=1024;duplex"), "Missing key/value delimiter");
+        assertTrue(utils.syntaxErrorInProperties("spe*ed=1024;duplex=full"), "Invalid key character");
+        assertTrue(utils.syntaxErrorInProperties("speed=1024;duplex=fu;ll"), "Invalid value character");
     }
 
     /**

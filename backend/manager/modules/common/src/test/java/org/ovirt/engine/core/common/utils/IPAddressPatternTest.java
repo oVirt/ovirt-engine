@@ -1,74 +1,70 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.constraints.Pattern;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class IPAddressPatternTest {
 
     private Validator validator = ValidationUtils.getValidator();
-    @Parameterized.Parameter(0)
-    public String address;
-    @Parameterized.Parameter(1)
-    public boolean expectedResult;
 
-    @Test
-    public void checkIPAdress() {
+    @ParameterizedTest
+    @MethodSource
+    public void checkIPAdress(String address, boolean expectedResult) {
         Set<ConstraintViolation<IPAdress>> validate = validator.validate(new IPAdress(address));
         assertEquals(expectedResult, validate.isEmpty());
     }
 
-    @Parameterized.Parameters
-    public static Object[][] ipAddressParams() {
-        return new Object[][] {
-                { "0.0.0.0", true },
-                { "1.1.1.1", true },
-                { "255.255.255.255", true },
-                { "192.168.1.1", true },
-                { "10.10.1.1", true },
-                { "127.0.0.1", true },
-                { "", false },
-                { null, true },
-                { "10.10.10", false },
-                { "10.10", false },
-                { "10", false },
-                { "1.1.1.", false },
-                { "1.1..1", false },
-                { "1..1.1", false },
-                { ".1.1.1", false },
-                { "....", false },
-                { "...", false },
-                { "..", false },
-                { ".", false },
-                { "1.1.1.1.1", false },
-                { "a.10.10.10", false },
-                { "10.a.10.10", false },
-                { "10.10.a.10", false },
-                { "10.10.10.a", false },
-                { "a.a.a.a", false },
-                { "256.10.10.10", false },
-                { "10.256.10.10", false },
-                { "10.10.256.10", false },
-                { "10.10.10.256", false },
-                { "300.10.10.10", false },
-                { "10.300.10.10", false },
-                { "10.10.300.10", false },
-                { "10.10.10.300", false },
-                { "-1.10.10.10", false },
-                { "10.-1.10.10", false },
-                { "10.10.-1.10", false },
-                { "10.10.10.-1", false },
-                { " ", false },
-        };
+    public static Stream<Arguments> checkIPAdress() {
+        return Stream.of(
+                Arguments.of("0.0.0.0", true ),
+                Arguments.of("1.1.1.1", true ),
+                Arguments.of("255.255.255.255", true ),
+                Arguments.of("192.168.1.1", true ),
+                Arguments.of("10.10.1.1", true ),
+                Arguments.of("127.0.0.1", true ),
+                Arguments.of("", false ),
+                Arguments.of(null, true ),
+                Arguments.of("10.10.10", false ),
+                Arguments.of("10.10", false ),
+                Arguments.of( "10", false ),
+                Arguments.of( "1.1.1.", false ),
+                Arguments.of( "1.1..1", false ),
+                Arguments.of( "1..1.1", false ),
+                Arguments.of( ".1.1.1", false ),
+                Arguments.of( "....", false ),
+                Arguments.of( "...", false ),
+                Arguments.of( "..", false ),
+                Arguments.of( ".", false ),
+                Arguments.of( "1.1.1.1.1", false ),
+                Arguments.of( "a.10.10.10", false ),
+                Arguments.of( "10.a.10.10", false ),
+                Arguments.of( "10.10.a.10", false ),
+                Arguments.of( "10.10.10.a", false ),
+                Arguments.of( "a.a.a.a", false ),
+                Arguments.of( "256.10.10.10", false ),
+                Arguments.of( "10.256.10.10", false ),
+                Arguments.of( "10.10.256.10", false ),
+                Arguments.of( "10.10.10.256", false ),
+                Arguments.of( "300.10.10.10", false ),
+                Arguments.of( "10.300.10.10", false ),
+                Arguments.of( "10.10.300.10", false ),
+                Arguments.of( "10.10.10.300", false ),
+                Arguments.of( "-1.10.10.10", false ),
+                Arguments.of( "10.-1.10.10", false ),
+                Arguments.of( "10.10.-1.10", false ),
+                Arguments.of( "10.10.10.-1", false ),
+                Arguments.of( " ", false )
+        );
     }
 
     private static class IPAdress {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -10,11 +11,15 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.set
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
@@ -26,15 +31,19 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendResourceTest extends AbstractBackendBaseTest {
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.OrganizationName, "oVirt"));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, "oVirt"));
+    }
 
     BackendHostResource resource;
 
     @Override
+    @BeforeEach
     public void setUp() {
         super.setUp();
         setUpParentMock(resource.getParent());
@@ -53,14 +62,14 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         resource.get();
     }
 
-    @Test(expected = javax.ws.rs.WebApplicationException.class)
+    @Test
     public void testQueryWithFilter() {
         List<String> filterValue = new ArrayList<>();
         filterValue.add("true");
         reset(httpHeaders);
         when(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).thenReturn(filterValue);
         resource.setUriInfo(setUpBasicUriExpectations());
-        resource.get();
+        assertThrows(WebApplicationException.class, () -> resource.get());
     }
 
     @Test
@@ -78,13 +87,13 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         resource.install(action);
     }
 
-    @Test(expected = MalformedIdException.class)
+    @Test
     public void testBadGuidValidation() {
         setUpGetEntityExpectations(false);
         Host host = new Host();
         host.setCluster(new Cluster());
         host.getCluster().setId("!!!");
-        resource.update(host);
+        assertThrows(MalformedIdException.class, () -> resource.update(host));
     }
 
     @Override

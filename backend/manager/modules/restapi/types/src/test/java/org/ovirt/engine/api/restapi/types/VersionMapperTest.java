@@ -16,11 +16,11 @@ limitations under the License.
 
 package org.ovirt.engine.api.restapi.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Version;
 
 public class VersionMapperTest {
@@ -161,7 +161,7 @@ public class VersionMapperTest {
         Version version = VersionMapper.fromVersionString(text);
         assertNotNull(version);
         Integer actual = version.getMajor();
-        assertEquals("Incorrect major version number", expected, actual);
+        assertEquals(expected, actual, "Incorrect major version number");
     }
 
     /**
@@ -174,7 +174,7 @@ public class VersionMapperTest {
         Version version = VersionMapper.fromVersionString(text);
         assertNotNull(version);
         Integer actual = version.getMinor();
-        assertEquals("Incorrect minor version number", expected, actual);
+        assertEquals(expected, actual, "Incorrect minor version number");
     }
 
     /**
@@ -187,7 +187,7 @@ public class VersionMapperTest {
         Version version = VersionMapper.fromVersionString(text);
         assertNotNull(version);
         Integer actual = version.getBuild();
-        assertEquals("Incorrect build version number", expected, actual);
+        assertEquals(expected, actual, "Incorrect build version number");
     }
 
     /**
@@ -200,6 +200,6 @@ public class VersionMapperTest {
         Version version = VersionMapper.fromVersionString(text);
         assertNotNull(version);
         Integer actual = version.getRevision();
-        assertEquals("Incorrect revision version number", expected, actual);
+        assertEquals(expected, actual, "Incorrect revision version number");
     }
 }

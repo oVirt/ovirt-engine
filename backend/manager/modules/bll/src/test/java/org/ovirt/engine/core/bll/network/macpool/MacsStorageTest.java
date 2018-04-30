@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.hamcrest.core.IsSame;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MacsStorageTest {
 

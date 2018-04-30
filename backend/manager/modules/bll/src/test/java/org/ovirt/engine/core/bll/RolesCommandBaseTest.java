@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -30,17 +30,16 @@ public class RolesCommandBaseTest extends AbstractRolesCommandTestBase {
     public void testCheckIfRoleIsReadOnlyTrue() {
         getRole().setReadonly(true);
         List<String> messages = new ArrayList<>(1);
-        assertTrue("Role should be read only", getCommand().checkIfRoleIsReadOnly(messages));
-        assertEquals("Wrong validate message",
-                EngineMessage.ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY.toString(),
-                messages.get(0));
+        assertTrue(getCommand().checkIfRoleIsReadOnly(messages), "Role should be read only");
+        assertEquals(EngineMessage.ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY.toString(), messages.get(0),
+                "Wrong validate message");
     }
 
     @Test
     public void testCheckIfRoleIsReadOnlyFalse() {
         getRole().setReadonly(false);
         List<String> messages = new ArrayList<>();
-        assertFalse("Role should be read only", getCommand().checkIfRoleIsReadOnly(messages));
-        assertTrue("Shouldn't be any validate messages", messages.isEmpty());
+        assertFalse(getCommand().checkIfRoleIsReadOnly(messages), "Role should be read only");
+        assertTrue(messages.isEmpty(), "Shouldn't be any validate messages");
     }
 }

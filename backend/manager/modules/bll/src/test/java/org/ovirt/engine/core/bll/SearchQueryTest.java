@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.when;
 
@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -43,19 +45,22 @@ import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQuery<SearchParameters>> {
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30),
-            MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
-            MockConfigDescriptor.of(ConfigValues.DBEngine, null),
-            MockConfigDescriptor.of(ConfigValues.DBPagingType, null),
-            MockConfigDescriptor.of(ConfigValues.DBSearchTemplate,
-                    "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
-            );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.concat(AbstractQueryTest.mockConfiguration(),
+                Stream.of(
+                        MockConfigDescriptor.of(ConfigValues.UserSessionTimeOutInterval, 30),
+                        MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
+                                new HashSet<>(Collections.singletonList(new Version(3, 0)))),
+                        MockConfigDescriptor.of(ConfigValues.DBEngine, null),
+                        MockConfigDescriptor.of(ConfigValues.DBPagingType, null),
+                        MockConfigDescriptor.of(ConfigValues.DBSearchTemplate,
+                                "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
+                )
+        );
+    }
 
     @Mock
     private QuotaManager quotaManager;
@@ -99,14 +104,14 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param diskDao
      *            - The dao to be used
      */
-    @Before
+    @BeforeEach
     public void mockDiskDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(diskDao.getAllWithQuery(matches(getDiskImageRegexString(search))))
                 .thenReturn(diskImageResultList);
     }
 
-    @Before
+    @BeforeEach
     public void mockQuotaDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(quotaDao.getAllWithQuery(matches(getQuotaRegexString(search))))
@@ -133,7 +138,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param clusterDao
      *            - The dao to be used
      */
-    @Before
+    @BeforeEach
     public void mockClusterDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(clusterDao.getAllWithQuery(matches(getClusterRegexString(search))))
@@ -148,7 +153,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param storagePoolDao
      *            - The dao to be used
      */
-    @Before
+    @BeforeEach
     public void mockStoragePoolDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(storagePoolDao.getAllWithQuery(matches(getStoragePoolRegexString(search))))
@@ -163,14 +168,14 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param glusterVolumeDao
      *            - The dao to be used
      */
-    @Before
+    @BeforeEach
     public void mockGlusterVolumeDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(glusterVolumeDao.getAllWithQuery(matches(getGlusterVolumeRegexString(search))))
                 .thenReturn(glusterVolumeList);
     }
 
-    @Before
+    @BeforeEach
     public void mockNetworkDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(networkViewDao.getAllWithQuery(matches(getNetworkRegexString(search))))
@@ -199,7 +204,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param diskImageDao
      *            - The dao to be used
      */
-    @Before
+    @BeforeEach
     public void mockVdsDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(vdsDao.getAllWithQuery(matches(getVdsRegexString(search))))
@@ -232,7 +237,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
      * @param vmTemplateDao
      *            - The dao to be used
      */
-    @Before
+    @BeforeEach
     public void mockVMTemplateDao() {
         SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         when(vmTemplateDao.getAllWithQuery(matches(getVMTemplateRegexString(search))))
@@ -347,7 +352,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
         return query.toString();
     }
 
-    @Before
+    @BeforeEach
     public void mockCpuFlagsManagerHandler() {
         ServerCpu resultCpu = new ServerCpu();
         resultCpu.setCpuName("cpu");
@@ -449,7 +454,7 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     }
 
     // TODO: Search using search text "Datacenters:" is not supported.
-    @Ignore
+    @Disabled
     @Test
     public void testGetAllMultiStoragePoolSearch() {
         when(getQueryParameters().getSearchPattern()).thenReturn("Datacenters" + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR);

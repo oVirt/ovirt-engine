@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
@@ -10,13 +10,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -29,7 +27,6 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
-@RunWith(MockitoJUnitRunner.class)
 public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQueryTest<IdQueryParameters, GetGlusterGeoReplicationEligibleVolumesQuery<IdQueryParameters>> {
 
     @Mock
@@ -47,7 +44,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
 
     private GeoRepCreateEligibilityBaseTest baseTest = new GeoRepCreateEligibilityBaseTest();
 
-    @Before
+    @BeforeEach
     public void setupMock() {
         doReturn(geoRepUtil).when(getQuery()).getGeoRepUtilInstance();
         doReturn(Guid.newGuid()).when(geoRepUtil).getUpServerId(any());

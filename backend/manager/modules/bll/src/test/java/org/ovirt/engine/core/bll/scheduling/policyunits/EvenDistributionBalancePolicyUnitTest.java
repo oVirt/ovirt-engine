@@ -1,21 +1,23 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -24,21 +26,22 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancingPolicyUnitTest {
     static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
 
-    @ClassRule
-    public static MockConfigRule configRule =
-            new MockConfigRule(
-                    MockConfigDescriptor.of(ConfigValues.HighUtilizationForEvenlyDistribute, 80),
-                    MockConfigDescriptor.of(ConfigValues.LowUtilizationForEvenlyDistribute, 20),
-                    MockConfigDescriptor.of(ConfigValues.CpuOverCommitDurationMinutes, 5),
-                    MockConfigDescriptor.of(ConfigValues.VcpuConsumptionPercentage, 20),
-                    MockConfigDescriptor.of(ConfigValues.UtilizationThresholdInPercent, 80)
-            );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.HighUtilizationForEvenlyDistribute, 80),
+                MockConfigDescriptor.of(ConfigValues.LowUtilizationForEvenlyDistribute, 20),
+                MockConfigDescriptor.of(ConfigValues.CpuOverCommitDurationMinutes, 5),
+                MockConfigDescriptor.of(ConfigValues.VcpuConsumptionPercentage, 20),
+                MockConfigDescriptor.of(ConfigValues.UtilizationThresholdInPercent, 80)
+        );
+    }
 
     @Spy
     @InjectMocks

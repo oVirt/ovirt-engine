@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.config;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
 /**
@@ -21,7 +21,7 @@ public class EngineConfigPropertiesTest {
     private static final String PROPERTIES_PATH = System.getProperty("engine-config.properties.production.file");
     private static PropertiesConfiguration pc;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         try {
             pc = new PropertiesConfiguration(PROPERTIES_PATH);

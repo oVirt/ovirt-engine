@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -15,13 +15,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,7 +29,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class VnicProfileHelperTest {
     private static final AuditLogType AUDIT_LOG_TYPE = AuditLogType.UNASSIGNED;
     private static final Guid CLUSTER_ID = Guid.newGuid();
@@ -48,7 +48,7 @@ public class VnicProfileHelperTest {
 
     private VnicProfileHelper underTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         underTest = spy(new VnicProfileHelper(CLUSTER_ID, DATA_CENTER_ID, AUDIT_LOG_TYPE));
         doReturn(auditLogDirector).when(underTest).createAuditLogDirector();

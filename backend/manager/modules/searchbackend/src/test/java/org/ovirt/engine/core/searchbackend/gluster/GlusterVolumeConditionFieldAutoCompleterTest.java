@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.searchbackend.gluster;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.searchbackend.EnumNameAutoCompleter;
 import org.ovirt.engine.core.searchbackend.NumericConditionRelationAutoCompleter;
 import org.ovirt.engine.core.searchbackend.StringConditionRelationAutoCompleter;

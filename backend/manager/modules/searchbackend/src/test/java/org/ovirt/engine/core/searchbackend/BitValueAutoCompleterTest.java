@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.searchbackend;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * this is the main test class for the BaseAutoCompleter class
@@ -16,7 +16,7 @@ import org.junit.Test;
 public class BitValueAutoCompleterTest {
     private IAutoCompleter comp;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         comp = new BitValueAutoCompleter();
     }
@@ -24,44 +24,44 @@ public class BitValueAutoCompleterTest {
     @Test
     public void testEmpty() {
         List<String> comps = Arrays.asList(comp.getCompletion(""));
-        assertTrue("true", comps.contains("true"));
-        assertTrue("false", comps.contains("false"));
-        assertTrue("False", !comps.contains("False"));
+        assertTrue(comps.contains("true"), "true");
+        assertTrue(comps.contains("false"), "false");
+        assertTrue(!comps.contains("False"), "False");
     }
 
     @Test
     public void testSpace() {
         List<String> comps = Arrays.asList(comp.getCompletion(" "));
-        assertTrue("true", comps.contains("true"));
-        assertTrue("false", comps.contains("false"));
-        assertTrue("False", !comps.contains("False"));
+        assertTrue(comps.contains("true"), "true");
+        assertTrue(comps.contains("false"), "false");
+        assertTrue(!comps.contains("False"), "False");
     }
 
     @Test
     public void testValue() {
         List<String> comps = Arrays.asList(comp.getCompletion("t"));
-        assertTrue("true", comps.contains("true"));
-        assertTrue("false", !comps.contains("false"));
+        assertTrue(comps.contains("true"), "true");
+        assertTrue(!comps.contains("false"), "false");
     }
 
     @Test
     public void testValueCaps() {
         List<String> comps = Arrays.asList(comp.getCompletion("FA"));
-        assertTrue("false", comps.contains("false"));
-        assertTrue("true", !comps.contains("true"));
+        assertTrue(comps.contains("false"), "false");
+        assertTrue(!comps.contains("true"), "true");
     }
 
     @Test
     public void testValidate() {
-        assertTrue("true", comp.validate("true"));
-        assertTrue("TRUE", comp.validate("TRUE"));
-        assertFalse("JarJar", comp.validate("JarJar"));
+        assertTrue(comp.validate("true"), "true");
+        assertTrue(comp.validate("TRUE"), "TRUE");
+        assertFalse(comp.validate("JarJar"), "JarJar");
     }
 
     @Test
     public void testValidateCompletion() {
-        assertTrue("TRUE", comp.validateCompletion("TRUE"));
-        assertTrue("TR", comp.validateCompletion("TR"));
-        assertFalse("JarJar", comp.validateCompletion("JarJar"));
+        assertTrue(comp.validateCompletion("TRUE"), "TRUE");
+        assertTrue(comp.validateCompletion("TR"), "TR");
+        assertFalse(comp.validateCompletion("JarJar"), "JarJar");
     }
 }

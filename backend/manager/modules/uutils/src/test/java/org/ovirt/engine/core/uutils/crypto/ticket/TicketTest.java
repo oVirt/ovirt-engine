@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.uutils.crypto.ticket;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +15,7 @@ import java.util.Set;
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TicketTest {
 
@@ -46,13 +47,12 @@ public class TicketTest {
         );
     }
 
-    @Test(expected=GeneralSecurityException.class)
+    @Test
     public void testByCertificateFailCertificate() throws Exception {
         final String content = "testByCertificate";
         KeyStore.PrivateKeyEntry entry1 = getPrivateKeyEntry(getKeyStore("PKCS12", "ticket/ca1test1.p12", "test1"), "1", "test1");
         KeyStore.PrivateKeyEntry entry2 = getPrivateKeyEntry(getKeyStore("PKCS12", "ticket/ca1test2.p12", "test2"), "1", "test2");
-        assertEquals(
-            content, new TicketDecoder(
+        assertThrows(GeneralSecurityException.class, () -> new TicketDecoder(
                 entry2.getCertificate()
             ).decode(
                 new TicketEncoder(entry1.getCertificate(), entry1.getPrivateKey()).encode(content)
@@ -60,12 +60,11 @@ public class TicketTest {
         );
     }
 
-    @Test(expected=GeneralSecurityException.class)
+    @Test
     public void testByCertificateFailCA() throws Exception {
         final String content = "testByCertificate";
         KeyStore.PrivateKeyEntry entry = getPrivateKeyEntry(getKeyStore("PKCS12", "ticket/ca1test1.p12", "test1"), "1", "test1");
-        assertEquals(
-            content, new TicketDecoder(
+        assertThrows(GeneralSecurityException.class, () -> new TicketDecoder(
                 getKeyStore("JKS", "ticket/ca2.jks", "changeit"),
                 null,
                 entry.getCertificate()
@@ -89,12 +88,11 @@ public class TicketTest {
         );
     }
 
-    @Test(expected=GeneralSecurityException.class)
+    @Test
     public void testByEKUFailEKU() throws Exception {
         final String content = "testByEKU";
         KeyStore.PrivateKeyEntry entry = getPrivateKeyEntry(getKeyStore("PKCS12", "ticket/ca1test2.p12", "test2"), "1", "test2");
-        assertEquals(
-            content, new TicketDecoder(
+        assertThrows(GeneralSecurityException.class, () -> new TicketDecoder(
                 getKeyStore("JKS", "ticket/ca1.jks", "changeit"),
                 "1.2.3.4.5"
             ).decode(
@@ -103,12 +101,11 @@ public class TicketTest {
         );
     }
 
-    @Test(expected=GeneralSecurityException.class)
+    @Test
     public void testByEKUFailCA() throws Exception {
         final String content = "testByEKU";
         KeyStore.PrivateKeyEntry entry = getPrivateKeyEntry(getKeyStore("PKCS12", "ticket/ca1test2.p12", "test2"), "1", "test2");
-        assertEquals(
-            content, new TicketDecoder(
+        assertThrows(GeneralSecurityException.class, () -> new TicketDecoder(
                 getKeyStore("JKS", "ticket/ca2.jks", "changeit"),
                 "1.2.3.4"
             ).decode(
@@ -135,7 +132,7 @@ public class TicketTest {
         assertEquals(n, salt.size());
     }
 
-    @Test(expected=GeneralSecurityException.class)
+    @Test
     public void testContentFail() throws Exception {
         KeyStore.PrivateKeyEntry entry = getPrivateKeyEntry(getKeyStore("PKCS12", "ticket/ca1test2.p12", "test2"), "1", "test2");
 
@@ -147,14 +144,16 @@ public class TicketTest {
         String modifiedTicket = new Base64(0).encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(
                 StandardCharsets.UTF_8));
 
-        new TicketDecoder(getKeyStore("JKS", "ticket/ca1.jks", "changeit"), "1.2.3.4").decode(modifiedTicket);
+        assertThrows(GeneralSecurityException.class,
+                () -> new TicketDecoder(getKeyStore("JKS", "ticket/ca1.jks", "changeit"), "1.2.3.4").decode(modifiedTicket));
     }
 
-    @Test(expected=GeneralSecurityException.class)
+    @Test
     public void testValidToFail() throws Exception {
         KeyStore.PrivateKeyEntry entry = getPrivateKeyEntry(getKeyStore("PKCS12", "ticket/ca1test2.p12", "test2"), "1", "test2");
         String ticket = new TicketEncoder(entry.getCertificate(), entry.getPrivateKey(), 1).encode("content");
         Thread.sleep(2000);
-        new TicketDecoder(getKeyStore("JKS", "ticket/ca1.jks", "changeit"), "1.2.3.4").decode(ticket);
+        assertThrows(GeneralSecurityException.class, () ->
+                new TicketDecoder(getKeyStore("JKS", "ticket/ca1.jks", "changeit"), "1.2.3.4").decode(ticket));
     }
 }

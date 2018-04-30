@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -16,7 +16,7 @@ public class ClusterInMaintenanceFilterPolicyUnitTest {
     private VDS host;
     private VM vm;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         host = new VDS();
         host.setId(Guid.newGuid());

@@ -1,19 +1,13 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-@RunWith(Theories.class)
 public class VdsCommandTypeTest {
-
     private static final String VDSCommandsuffix = "VDSCommand";
 
-    @DataPoints
-    public static final VDSCommandType[] types = VDSCommandType.values();
-
-    @Theory
+    @ParameterizedTest
+    @EnumSource(value = VDSCommandType.class)
     public void testPackages(VDSCommandType type) throws ClassNotFoundException {
         Class.forName(type.getPackageName() + "." + type + VDSCommandsuffix);
     }

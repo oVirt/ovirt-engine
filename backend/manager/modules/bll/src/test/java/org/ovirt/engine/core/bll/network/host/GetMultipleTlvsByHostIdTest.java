@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -9,14 +9,15 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.LldpInfo;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetMultipleTlvsByHostIdTest extends AbstractQueryTest<IdQueryParameters,
         GetMultipleTlvsByHostIdQuery<? extends IdQueryParameters>> {
 
@@ -108,11 +110,11 @@ public class GetMultipleTlvsByHostIdTest extends AbstractQueryTest<IdQueryParame
         assertNull(returnValue);
     }
 
-    @Override
-    protected Set<MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
-        return new HashSet<>(Arrays.asList(
-                MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_1, false),
-                MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_2, true)
-        ));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.concat(AbstractQueryTest.mockConfiguration(),
+                Stream.of(MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_1, false),
+                        MockConfigDescriptor.of(ConfigValues.LldpInformationSupported, Version.v4_2, true)
+                )
+        );
     }
 }

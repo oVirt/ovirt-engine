@@ -1,22 +1,25 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -34,7 +37,8 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AuditLogableBaseTest {
 
     protected static final Guid GUID = new Guid("11111111-1111-1111-1111-111111111111");
@@ -65,7 +69,7 @@ public class AuditLogableBaseTest {
     @InjectMocks
     private AuditLogableBase b = new AuditLogableBase();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(vmDao.get(GUID)).thenReturn(new VM());
         when(vmDao.get(GUID3)).thenThrow(new RuntimeException());
@@ -901,13 +905,11 @@ public class AuditLogableBaseTest {
         assertEquals(NAME, n);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void addCustomValueDoesNotHandleNullKeys() {
         final String key = null;
         final String value = NAME;
-        b.addCustomValue(key, value);
-        final String v = b.getCustomValue(key);
-        assertEquals(value, v);
+        assertThrows(NullPointerException.class, () -> b.addCustomValue(key, value));
     }
 
     @Test
@@ -1015,14 +1017,12 @@ public class AuditLogableBaseTest {
         assertEquals(value + sep + newVal, s);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void appendCustomValueDoesntHandleNullKeys() {
         final String key = null;
         final String value = NAME;
         final String sep = "_";
-        b.appendCustomValue(key, value, sep);
-        final String s = b.getCustomValue(key);
-        assertEquals(value, s);
+        assertThrows(NullPointerException.class, () -> b.appendCustomValue(key, value, sep));
     }
 
     @Test

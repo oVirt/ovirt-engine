@@ -2,12 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class ValidationResultTest {
@@ -79,6 +79,5 @@ public class ValidationResultTest {
     public void invalidUnlessConditionDoesntOccurWithVariableReplacements2() {
         assertThat(ValidationResult.failWith(ERROR, variableReplacements).unless(false),
                 failsWith(ERROR, variableReplacements));
-
     }
 }

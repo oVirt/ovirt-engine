@@ -1,68 +1,59 @@
 package org.ovirt.engine.core.bll.common.comparator;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.bll.common.NumericSuffixNormalizer;
 
-@RunWith(Parameterized.class)
 public class NumericSuffixNormalizerTest {
 
     private NumericSuffixNormalizer underTest;
 
-    @Parameterized.Parameter(0)
-    public String str1;
-    @Parameterized.Parameter(1)
-    public String str2;
-    @Parameterized.Parameter(2)
-    public String expected1;
-    @Parameterized.Parameter(3)
-    public String expected2;
-
-    @Before
+    @BeforeEach
     public void setUp() {
         underTest = new NumericSuffixNormalizer();
     }
 
-    @Test
-    public void testNormalize() {
+    @ParameterizedTest
+    @MethodSource
+    public void normalization(String str1, String str2, String expected1, String expected2) {
         final List<String> actual = underTest.normalize(str1, str2);
         assertThat(actual.get(0), is(expected1));
         assertThat(actual.get(1), is(expected2));
     }
 
-    @Parameterized.Parameters
-    public static Object[][] normalizationParameters() {
-        return new Object[][] {
-                { null, null, null, null },
-                { null, "", null, "" },
-                { "", "", "", "" },
-                { "", "123", "", "123" },
-                { "123", "", "123", "" },
-                { "123", "123", "123", "123" },
-                { "123", "1", "123", "001" },
-                { "1", "123", "001", "123" },
-                { "01", "0123", "0001", "0123" },
-                { "abc123", "123", "abc123", "123" },
-                { "abc123", "1", "abc123", "001" },
-                { "abc1", "123", "abc001", "123" },
-                { "abc01", "0123", "abc0001", "0123" },
-                { "123", "abc123", "123", "abc123" },
-                { "123", "abc1", "123", "abc001" },
-                { "1", "abc123", "001", "abc123" },
-                { "01", "abc0123", "0001", "abc0123" },
-                { "abc123", "abc123", "abc123", "abc123" },
-                { "abc123", "abc1", "abc123", "abc001" },
-                { "abc1", "abc123", "abc001", "abc123" },
-                { "abc01", "abc0123", "abc0001", "abc0123" },
-                { "abc", "abc123", "abc", "abc123" },
-                { "abc123", "abc", "abc123", "abc" },
-        };
+    public static Stream<Arguments> normalization() {
+        return Stream.of(
+                Arguments.of(null, null, null, null),
+                Arguments.of(null, "", null, ""),
+                Arguments.of("", "", "", ""),
+                Arguments.of("", "123", "", "123"),
+                Arguments.of("123", "", "123", ""),
+                Arguments.of("123", "123", "123", "123"),
+                Arguments.of("123", "1", "123", "001"),
+                Arguments.of("1", "123", "001", "123"),
+                Arguments.of("01", "0123", "0001", "0123"),
+                Arguments.of("abc123", "123", "abc123", "123"),
+                Arguments.of("abc123", "1", "abc123", "001"),
+                Arguments.of("abc1", "123", "abc001", "123"),
+                Arguments.of("abc01", "0123", "abc0001", "0123"),
+                Arguments.of("123", "abc123", "123", "abc123"),
+                Arguments.of("123", "abc1", "123", "abc001"),
+                Arguments.of("1", "abc123", "001", "abc123"),
+                Arguments.of("01", "abc0123", "0001", "abc0123"),
+                Arguments.of("abc123", "abc123", "abc123", "abc123"),
+                Arguments.of("abc123", "abc1", "abc123", "abc001"),
+                Arguments.of("abc1", "abc123", "abc001", "abc123"),
+                Arguments.of("abc01", "abc0123", "abc0001", "abc0123"),
+                Arguments.of("abc", "abc123", "abc", "abc123"),
+                Arguments.of("abc123", "abc", "abc123", "abc")
+        );
     }
 }

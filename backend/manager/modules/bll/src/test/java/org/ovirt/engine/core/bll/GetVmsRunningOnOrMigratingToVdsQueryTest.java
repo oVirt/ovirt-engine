@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -44,6 +44,6 @@ public class GetVmsRunningOnOrMigratingToVdsQueryTest
 
         @SuppressWarnings("unchecked")
         List<VM> actual = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of VMs", 1, actual.size());
+        assertEquals(1, actual.size(), "Wrong number of VMs");
     }
 }

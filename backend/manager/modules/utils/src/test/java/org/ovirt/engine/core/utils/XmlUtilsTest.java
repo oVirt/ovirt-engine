@@ -1,51 +1,40 @@
 package org.ovirt.engine.core.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-@RunWith(Parameterized.class)
+@ExtendWith(RandomUtilsSeedingExtension.class)
 public class XmlUtilsTest {
-    @Rule
-    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-
-    @Parameterized.Parameter(0)
-    public int level;
-    @Parameterized.Parameter(1)
-    public String value;
-
-    @Parameterized.Parameters
-    public static List<Object[]> data() {
-        List<Object[]> params = new ArrayList<>();
+    public static Stream<Arguments> data() {
         // XmlUtils.getXYZValue support recursive searching from a depth of 2 and above, e.g.:
         // <tag><innerTag>value</innerTag><tag>
-        for (int i = 2; i < 10; ++i) {
-            params.add(new Object[]{i, String.valueOf(RandomUtils.instance().nextInt())});
-        }
-        return params;
+        return IntStream.range(2, 10).mapToObj(i -> Arguments.of(i, String.valueOf(RandomUtils.instance().nextInt())));
     }
 
-    @Test
-    public void testGetIntValueNesting() throws Exception {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testGetIntValueNesting(int level, String value) throws Exception {
         int actual = XmlUtils.getIntValue(stringToElement(buildNestedXml(level, value)), "Level1");
         assertEquals(Integer.valueOf(value).intValue(), actual);
     }
 
-    @Test
-    public void testGetTextValue() throws Exception {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testGetTextValue(int level, String value) throws Exception {
         String actual = XmlUtils.getTextValue(stringToElement(buildNestedXml(level, value)), "Level1");
         assertEquals(value, actual);
     }

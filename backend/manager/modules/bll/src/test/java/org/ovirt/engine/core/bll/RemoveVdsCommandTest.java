@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -13,11 +13,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -42,6 +44,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RemoveVdsCommandTest extends BaseCommandTest {
     @Mock
     private VdsDynamicDao vdsDynamicDao;
@@ -98,7 +101,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     private Guid clusterId;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         clusterId = Guid.newGuid();
         doReturn(cluster).when(clusterDao).get(any());
@@ -187,7 +190,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
             foundMessage |= message.contains(vmName);
         }
 
-        assertTrue("Can't find VM name in can do action messages", foundMessage);
+        assertTrue(foundMessage, "Can't find VM name in can do action messages");
     }
 
     @Test

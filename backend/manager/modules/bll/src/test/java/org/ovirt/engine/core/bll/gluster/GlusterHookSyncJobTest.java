@@ -10,14 +10,15 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -33,9 +34,10 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
-import org.ovirt.engine.core.utils.ExecutorServiceRule;
+import org.ovirt.engine.core.utils.ExecutorServiceExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, ExecutorServiceExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GlusterHookSyncJobTest {
     private static final Guid[] SERVER_GUIDS = {new Guid("11111111-1111-1111-1111-111111111111"),
         new Guid("22222222-2222-2222-2222-222222222222"),
@@ -62,9 +64,6 @@ public class GlusterHookSyncJobTest {
 
     @Mock
     private GlusterAuditLogUtil logUtil;
-
-    @ClassRule
-    public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
 
     private void mockDaos() {
         List<Cluster> clusters = new ArrayList<>();

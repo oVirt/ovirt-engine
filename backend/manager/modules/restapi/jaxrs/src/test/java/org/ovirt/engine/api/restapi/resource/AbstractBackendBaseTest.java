@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
@@ -29,12 +29,13 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.mockito.stubbing.OngoingStubbing;
 import org.ovirt.engine.api.model.BaseResource;
@@ -65,9 +66,10 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(Silent.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public abstract class AbstractBackendBaseTest {
 
     protected static final Guid[] GUIDS = { new Guid("00000000-0000-0000-0000-000000000000"),
@@ -131,10 +133,7 @@ public abstract class AbstractBackendBaseTest {
 
     private List<Runnable> interactions = new ArrayList<>();
 
-    @Rule
-    public final MockConfigRule mcr = new MockConfigRule();
-
-    @Before
+    @BeforeEach
     public void setUp() {
         interactions.clear();
 
@@ -177,7 +176,7 @@ public abstract class AbstractBackendBaseTest {
         return mapperLocator.getMapper(from, to);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         Locale.setDefault(locale);
         interactions.forEach(Runnable::run);
@@ -603,7 +602,8 @@ public abstract class AbstractBackendBaseTest {
         Fault fault = (Fault) wae.getResponse().getEntity();
         assertEquals(reason, fault.getReason());
         assertNotNull(fault.getDetail());
-        assertTrue("expected detail to include: " + t.getMessage(), fault.getDetail().contains(t.getMessage()));
+        assertTrue(fault.getDetail().contains(t.getMessage()),
+                "expected detail to include: " + t.getMessage());
     }
 
     protected void verifyIncompleteException(WebApplicationException wae,

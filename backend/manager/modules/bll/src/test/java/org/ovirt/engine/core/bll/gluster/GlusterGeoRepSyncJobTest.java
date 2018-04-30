@@ -9,14 +9,15 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -37,10 +38,11 @@ import org.ovirt.engine.core.dao.StorageDomainDRDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.utils.ExecutorServiceRule;
+import org.ovirt.engine.core.utils.ExecutorServiceExtension;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, ExecutorServiceExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GlusterGeoRepSyncJobTest {
     private static final Guid CLUSTER_GUID = new Guid("CC111111-1111-1111-1111-111111111111");
 
@@ -72,10 +74,7 @@ public class GlusterGeoRepSyncJobTest {
     @Mock
     private GlusterAuditLogUtil logUtil;
 
-    @ClassRule
-    public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
-
-    @Before
+    @BeforeEach
     public void init() {
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getVolume()).when(volumeDao).getByName(any(), any());

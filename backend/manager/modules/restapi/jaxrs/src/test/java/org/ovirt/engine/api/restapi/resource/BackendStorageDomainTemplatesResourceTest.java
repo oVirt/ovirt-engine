@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
@@ -15,8 +15,10 @@ import java.util.stream.IntStream;
 
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -28,6 +30,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainTemplatesResourceTest
     extends AbstractBackendCollectionResourceTest<Template, VmTemplate, BackendStorageDomainTemplatesResource> {
 
@@ -40,33 +43,33 @@ public class BackendStorageDomainTemplatesResourceTest
 
     @Override
     @Test
-    @Ignore
+    @Disabled
     public void testQuery() {
     }
 
     @Test
     @Override
-    @Ignore
-    public void testList() {
+    @Disabled
+    public void testList() throws Exception {
     }
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListFailure() {
 
     }
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListCrash() {
 
     }
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListCrashClientLocale() {
 
     }

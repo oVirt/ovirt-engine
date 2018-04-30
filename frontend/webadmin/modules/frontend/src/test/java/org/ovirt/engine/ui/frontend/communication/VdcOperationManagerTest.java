@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.frontend.communication;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,11 +9,11 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 
 import com.google.gwt.event.shared.EventBus;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class VdcOperationManagerTest {
     VdcOperationManager testManager;
 
@@ -31,7 +31,7 @@ public class VdcOperationManagerTest {
     @Mock
     EventBus mockEventBus;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         testManager = new VdcOperationManager(mockEventBus, mockOperationProcessor);
     }
@@ -43,7 +43,7 @@ public class VdcOperationManagerTest {
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
         verify(mockEventBus).fireEvent(any());
-        assertEquals("Operations must match", testOperation, testManager.pollOperation()); //$NON-NLS-1$
+        assertEquals(testOperation, testManager.pollOperation(), "Operations must match"); //$NON-NLS-1$
     }
 
     @Test
@@ -73,9 +73,9 @@ public class VdcOperationManagerTest {
         testManager.addOperationList(operationList);
         verify(mockOperationProcessor, times(3)).processOperation(testManager);
         verify(mockEventBus, times(2)).fireEvent(any());
-        assertEquals("First poll should be action", testManager.pollOperation(), testOperation1); //$NON-NLS-1$
-        assertEquals("Second poll should be query", testManager.pollOperation(), testOperation2); //$NON-NLS-1$
-        assertNull("Third poll should be null", testManager.pollOperation()); //$NON-NLS-1$
+        assertEquals(testManager.pollOperation(), testOperation1, "First poll should be action"); //$NON-NLS-1$
+        assertEquals(testManager.pollOperation(), testOperation2, "Second poll should be query"); //$NON-NLS-1$
+        assertNull(testManager.pollOperation(), "Third poll should be null"); //$NON-NLS-1$
     }
 
 }

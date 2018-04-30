@@ -1,16 +1,18 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.ConfigurationType;
@@ -49,15 +51,18 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 public class VmMapperTest extends
         AbstractInvertibleMappingTest<Vm, VmStatic, org.ovirt.engine.core.common.businessentities.VM> {
+
 
     public VmMapperTest() {
         super(Vm.class, VmStatic.class, org.ovirt.engine.core.common.businessentities.VM.class);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         OsTypeMockUtils.mockOsTypes();
     }
@@ -197,7 +202,7 @@ public class VmMapperTest extends
                     break;
                 }
             }
-            assertTrue("Umatching dedicated host in Placement Policy", foundInTransformation);
+            assertTrue(foundInTransformation, "Umatching dedicated host in Placement Policy");
         }
     }
 
@@ -367,11 +372,15 @@ public class VmMapperTest extends
     private static final String POOL_SPICE_PROXY = "http://host3:9999";
 
     @Test
+    @MockedConfig("mockSpiceConfiguration")
     public void testGlobalSpiceProxy() {
         org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
-        mcr.mockConfigValue(ConfigValues.SpiceProxyDefault, GLOBAL_SPICE_PROXY);
         Vm model = VmMapper.map(entity, (Vm) null);
         assertEquals(GLOBAL_SPICE_PROXY, model.getDisplay().getProxy());
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockSpiceConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.SpiceProxyDefault, GLOBAL_SPICE_PROXY));
     }
 
     @Test
@@ -420,14 +429,14 @@ public class VmMapperTest extends
         assertEquals("0", cpuTune.getVcpuPins().getVcpuPins().get(0).getCpuSet());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void stringToVCpupinBadCpuNumber() {
-        VmMapper.stringToVCpupin("XXX#1-4");
+        assertThrows(IllegalArgumentException.class, () -> VmMapper.stringToVCpupin("XXX#1-4"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void stringToVCpupinWrongFormat() {
-        VmMapper.stringToVCpupin("X#X#X");
+        assertThrows(IllegalArgumentException.class, () -> VmMapper.stringToVCpupin("X#X#X"));
     }
 
     @Test

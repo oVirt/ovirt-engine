@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.provider.network;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -9,10 +9,12 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -36,6 +38,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SyncNetworkProviderCommandTest extends BaseCommandTest {
     private final Guid PROVIDER_ID = new Guid("000000000000-0000-0000-0000-00000001");
     private final String EXTERNAL_ID = "000000000000-0000-0000-0000-00000002";
@@ -76,7 +79,7 @@ public class SyncNetworkProviderCommandTest extends BaseCommandTest {
 
     private Provider provider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(providerProxyFactory.create(getProvider())).thenReturn(providerProxy);
         when(providerProxy.getAll()).thenReturn(getProviderNetworks());

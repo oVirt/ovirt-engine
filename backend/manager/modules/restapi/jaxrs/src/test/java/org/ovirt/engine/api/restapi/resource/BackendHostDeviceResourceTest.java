@@ -1,11 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.queries.HostDeviceParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendHostDeviceResourceTest
         extends AbstractBackendHostDevicesResourceTest<BackendHostDeviceResource, org.ovirt.engine.core.common.businessentities.HostDevice> {
 

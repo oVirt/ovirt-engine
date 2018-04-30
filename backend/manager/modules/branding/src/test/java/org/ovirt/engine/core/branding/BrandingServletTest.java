@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.branding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -17,13 +17,16 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BrandingServletTest {
 
     @Mock
@@ -43,7 +46,7 @@ public class BrandingServletTest {
 
     BrandingServlet testServlet;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testServlet = new BrandingServlet();
         testServlet.init(mockBrandingManager);
@@ -79,21 +82,21 @@ public class BrandingServletTest {
     @Test
     public void testGetFullPathNullParameter() {
         File file = testServlet.getFile(mockFile, null);
-        assertNull("Path should be null", file); //$NON-NLS-1$
+        assertNull(file, "Path should be null"); //$NON-NLS-1$
     }
 
     @Test
     public void testGetFullPathNonSaneParameter() {
         File file = testServlet.getFile(mockFile, "../something"); //$NON-NLS-1$
-        assertNull("Path should be null", file); //$NON-NLS-1$
+        assertNull(file, "Path should be null"); //$NON-NLS-1$
     }
 
     @Test
     public void testGetFullPathSaneParameter() {
         File file = testServlet.getFile(mockFile, "/branding/test"); //$NON-NLS-1$
-        assertNotNull("Path should not be null", file); //$NON-NLS-1$
-        assertEquals("Path should be '/abs/test/branding/test'", //$NON-NLS-1$
-                "/abs/test/branding/test", file.getAbsolutePath()); //$NON-NLS-1$
+        assertNotNull(file, "Path should not be null"); //$NON-NLS-1$
+        assertEquals("/abs/test/branding/test", file.getAbsolutePath(), //$NON-NLS-1$
+                "Path should be '/abs/test/branding/test'"); //$NON-NLS-1$
     }
 
 }

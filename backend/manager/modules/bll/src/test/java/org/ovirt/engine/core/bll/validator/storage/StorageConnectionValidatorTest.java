@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -29,7 +29,7 @@ public class StorageConnectionValidatorTest {
     private static final String CONNECTION_ID_FOR_VALIDATION = Guid.newGuid().toString();
     private static final int NUMBER_OF_EXISTING_CONNECTIONS = 3;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         connection = new StorageServerConnections();
         connection.setId(CONNECTION_ID_FOR_VALIDATION);

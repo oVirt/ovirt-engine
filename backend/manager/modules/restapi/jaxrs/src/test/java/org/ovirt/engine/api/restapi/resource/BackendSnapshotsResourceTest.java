@@ -1,8 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,8 +14,11 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Snapshot;
@@ -31,6 +34,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendSnapshotsResourceTest
         extends AbstractBackendCollectionResourceTest<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot, BackendSnapshotsResource> {
 
@@ -39,6 +43,7 @@ public class BackendSnapshotsResourceTest
     }
 
     @Override
+    @BeforeEach
     public void setUp() {
         super.setUp();
         mockOsRepository();
@@ -126,26 +131,26 @@ public class BackendSnapshotsResourceTest
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Override
     public void testQuery() {
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Override
     public void testListFailure() {
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Override
     public void testListCrash() {
     }
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListCrashClientLocale() {
     }
 

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -56,7 +56,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
     @Mock
     private DiskVmElementDao diskVmElementDao;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -125,10 +125,10 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         List<DiskImage> disks = getQuery().getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
-        assertTrue("plugged disk should be in the return value", disks.contains(pluggedDisk));
-        assertTrue("unplugged disk should be in the return value", disks.contains(unpluggedDisk));
-        assertTrue("plugged disk snapshots should be in the return value", disks.contains(pluggedDiskSnapshot));
-        assertTrue("unplugged disk snapshots should be in the return value", disks.contains(unpluggedDiskSnapshot));
+        assertTrue(disks.contains(pluggedDisk), "plugged disk should be in the return value");
+        assertTrue(disks.contains(unpluggedDisk), "unplugged disk should be in the return value");
+        assertTrue(disks.contains(pluggedDiskSnapshot), "plugged disk snapshots should be in the return value");
+        assertTrue(disks.contains(unpluggedDiskSnapshot), "unplugged disk snapshots should be in the return value");
 
         // Assert the disks have the correct snapshots
         assertCorrectSnapshots(pluggedDisk);
@@ -141,7 +141,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
      */
     private static void assertCorrectSnapshots(DiskImage disk) {
         for (int i = 0; i < NUM_DISKS_OF_EACH_KIND; ++i) {
-            assertEquals("Wrong snapshot " + i + " for disk ", disk.getId(), disk.getSnapshots().get(i).getId());
+            assertEquals(disk.getId(), disk.getSnapshots().get(i).getId(), "Wrong snapshot " + i + " for disk ");
         }
     }
 }

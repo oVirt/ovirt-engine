@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.BitSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AuditLogTypeTest {
 
@@ -24,6 +24,7 @@ public class AuditLogTypeTest {
                 bitset.set(alt.getValue());
             }
         }
-        assertTrue("AuditLogType contains the following non unique values: " + nonUniqueValues, nonUniqueValues.isEmpty());
+        assertTrue(nonUniqueValues.isEmpty(),
+                "AuditLogType contains the following non unique values: " + nonUniqueValues);
     }
 }

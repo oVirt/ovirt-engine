@@ -2,17 +2,17 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.stringContainsInOrder;
-import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
@@ -33,7 +33,7 @@ public class CloudInitHandlerTest {
     private VmInit vmInit;
     private CloudInitHandler underTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vmInit = new VmInit();
         underTest = new CloudInitHandler(vmInit, CloudInitHandler.NetConfigSourceProtocol.ENI);

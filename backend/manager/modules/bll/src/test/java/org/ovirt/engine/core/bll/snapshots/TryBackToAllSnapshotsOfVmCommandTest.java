@@ -3,11 +3,13 @@ package org.ovirt.engine.core.bll.snapshots;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for the {@link TryBackToAllSnapshotsOfVmCommand} class. */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
@@ -35,7 +38,7 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
 
     private VM vm;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vm = new VM();
         vm.setId(cmd.getParameters().getVmId());

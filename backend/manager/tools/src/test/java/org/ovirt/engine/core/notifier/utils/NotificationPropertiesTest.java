@@ -1,19 +1,19 @@
 package org.ovirt.engine.core.notifier.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class NotificationPropertiesTest {
 
     private static NotificationProperties prop = null;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws UnsupportedEncodingException {
         NotificationProperties.release();
         NotificationProperties.setDefaults(

@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.HugePage;
@@ -24,7 +24,7 @@ public class HugePagesFilterPolicyUnitTest {
 
     PendingResourceManager pendingResourceManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         host1 = new VDS();
         host1.setId(Guid.newGuid());

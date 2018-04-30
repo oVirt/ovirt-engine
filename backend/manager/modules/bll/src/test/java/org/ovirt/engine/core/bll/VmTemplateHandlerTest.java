@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,7 +14,7 @@ public class VmTemplateHandlerTest {
 
     private VmTemplateHandler vmTemplateHandler = new VmTemplateHandler();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vmTemplateHandler.init();
     }
@@ -27,8 +27,8 @@ public class VmTemplateHandlerTest {
         VmTemplate dest = new VmTemplate();
         dest.setName(RandomUtils.instance().nextString(10));
 
-        assertTrue("Update should be valid for different names",
-                vmTemplateHandler.isUpdateValid(src, dest));
+        assertTrue(
+                vmTemplateHandler.isUpdateValid(src, dest), "Update should be valid for different names");
     }
 
     @Test
@@ -39,8 +39,9 @@ public class VmTemplateHandlerTest {
         VmTemplate dest = new VmTemplate();
         dest.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
 
-        assertTrue("Update should be valid for different quota enforcement types",
-                vmTemplateHandler.isUpdateValid(src, dest));
+        assertTrue(
+                vmTemplateHandler.isUpdateValid(src, dest),
+                "Update should be valid for different quota enforcement types");
     }
 
     @Test
@@ -51,8 +52,9 @@ public class VmTemplateHandlerTest {
         VmTemplate dest = new VmTemplate();
         dest.setQuotaDefault(false);
 
-        assertTrue("Update should be valid for different quota default statuses",
-                vmTemplateHandler.isUpdateValid(src, dest));
+        assertTrue(
+                vmTemplateHandler.isUpdateValid(src, dest),
+                "Update should be valid for different quota default statuses");
     }
 
     @Test
@@ -67,6 +69,6 @@ public class VmTemplateHandlerTest {
         boolean updateIsValid = vmTemplateHandler.isUpdateValid(src, dest);
 
         // Then
-        assertTrue("Update should be valid for different cluster IDs", updateIsValid);
+        assertTrue(updateIsValid, "Update should be valid for different cluster IDs");
     }
 }

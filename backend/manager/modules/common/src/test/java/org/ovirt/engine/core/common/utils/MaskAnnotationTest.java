@@ -1,90 +1,82 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
 
-@RunWith(Parameterized.class)
 public class MaskAnnotationTest {
-
-    @Parameterized.Parameter(0)
-    public String mask;
-    @Parameterized.Parameter(1)
-    public boolean isValidMaskFormat;
-    @Parameterized.Parameter(2)
-    public boolean isValidMaskValue;
     private Validator validator;
 
-    @Before
+    @BeforeEach
     public void setup() {
         validator = ValidationUtils.getValidator();
     }
 
-    @Test
-    public void checkCidrFormatAnnotation() {
+    @ParameterizedTest
+    @MethodSource("namesParams")
+    public void checkCidrFormatAnnotation(String mask, boolean isValidMaskFormat, boolean isValidMaskValue) {
         MaskContainer container = new MaskContainer(mask);
         Set<ConstraintViolation<MaskContainer>> result = validator.validate(container);
         if (!isValidMaskValue && isValidMaskFormat) {
-            assertEquals("Failed to validate mask's error format: " + container.getMask(),
-                    EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name(),
-                    result.iterator().next().getMessage());
+            assertEquals(EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name(),
+                    result.iterator().next().getMessage(),
+                    "Failed to validate mask's error format: " + container.getMask());
         } else if (!isValidMaskFormat) {
-            assertEquals("Failed to validate mask's error format: " + container.getMask(),
-                    EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
-                    result.iterator().next().getMessage());
+            assertEquals(EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
+                    result.iterator().next().getMessage(),
+                    "Failed to validate mask's error format: " + container.getMask());
         } else {
-            assertEquals("Failed to validate mask's format: " + container.getMask(),
-                    isValidMaskFormat,
-                    result.isEmpty());
+            assertEquals(isValidMaskFormat, result.isEmpty(),
+                    "Failed to validate mask's format: " + container.getMask());
         }
 
     }
 
-    @Test
-    public void checkCidrNetworkAddressAnnotation() {
+    @ParameterizedTest
+    @MethodSource("namesParams")
+    public void checkCidrNetworkAddressAnnotation(String mask, boolean isValidMaskFormat, boolean isValidMaskValue) {
         MaskContainer container = new MaskContainer(mask);
         Set<ConstraintViolation<MaskContainer>> result = validator.validate(container);
         if (!isValidMaskFormat) {
-            assertEquals("Failed to validate mask's network address error: " + container.getMask(),
-                    EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
-                    result.iterator().next().getMessage());
+            assertEquals(EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT.name(),
+                    result.iterator().next().getMessage(),
+                    "Failed to validate mask's network address error: " + container.getMask());
         } else if (!isValidMaskValue) {
-            assertEquals("Failed to validate mask's  network address error: " + container.getMask(),
-                    EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name(),
-                    result.iterator().next().getMessage());
+            assertEquals(EngineMessage.UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE.name(),
+                    result.iterator().next().getMessage(),
+                    "Failed to validate mask's  network address error: " + container.getMask());
         } else {
-            assertEquals("Failed to validate mask's network address: " + container.getMask(),
-                    isValidMaskValue,
-                    result.isEmpty());
+            assertEquals(isValidMaskValue, result.isEmpty(),
+                    "Failed to validate mask's network address: " + container.getMask());
         }
 
     }
 
-    @Parameterized.Parameters
-    public static Object[][] namesParams() {
-        return new Object[][] {
+    public static Stream<Arguments> namesParams() {
+        return Stream.of(
                 // Bad Format
-                { "a.a.a.a", false, false },
-                { "//32", false, false },
-                { "33", false, false },
+                Arguments.of("a.a.a.a", false, false),
+                Arguments.of("//32", false, false),
+                Arguments.of("33", false, false),
 
                 // Not A Valid Mask
-                { "253.0.0.32", true, false },
+                Arguments.of("253.0.0.32", true, false),
 
                 // valid mask
-                { "255.255.255.0", true, true },
-                { "15", true, true }
-        };
+                Arguments.of("255.255.255.0", true, true),
+                Arguments.of("15", true, true)
+        );
     }
 
     private static class MaskContainer {

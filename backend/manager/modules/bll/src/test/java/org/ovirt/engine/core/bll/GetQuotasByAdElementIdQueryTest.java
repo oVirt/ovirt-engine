@@ -1,15 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.GetQuotasByAdElementIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,7 +16,6 @@ import org.ovirt.engine.core.dao.QuotaDao;
 /**
  * A test case for {@link GetTemplatesRelatedToQuotaIdQuery}.
  */
-@RunWith(MockitoJUnitRunner.class)
 public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotasByAdElementIdQueryParameters, GetQuotasByAdElementIdQuery<GetQuotasByAdElementIdQueryParameters>> {
     @Mock
     QuotaDao quotaDao;

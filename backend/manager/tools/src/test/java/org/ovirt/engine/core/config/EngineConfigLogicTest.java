@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 import org.slf4j.Logger;
@@ -17,11 +18,11 @@ public class EngineConfigLogicTest {
 
     private static final Logger log = LoggerFactory.getLogger(EngineConfigLogicTest.class);
     private static EngineConfigCLIParser parser = mock(EngineConfigCLIParser.class);
-    // Is static so that it can be initiated just once in @BeforeClass, cannot be initiated
+    // Is static so that it can be initiated just once in @BeforeAll, cannot be initiated
     // here since c'tor throws an exception
     private static EngineConfigLogic engineConfigLogic;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpEngineConfigLogicTest() throws Exception {
         engineConfigLogic = new EngineConfigLogic(parser);
     }
@@ -87,11 +88,11 @@ public class EngineConfigLogicTest {
         assertTrue(configKey == null || configKey.getKey() == null);
     }
 
-    @Test(expected = IllegalAccessException.class)
-    public void testSetInvalidIntValue() throws Exception {
+    @Test
+    public void testSetInvalidIntValue() {
         final String key = "VdsRefreshRate";
         // An exception should be thrown
-        engineConfigLogic.persist(key, "Not A Number", "");
+        assertThrows(IllegalAccessException.class, () -> engineConfigLogic.persist(key, "Not A Number", ""));
     }
 
     @Test

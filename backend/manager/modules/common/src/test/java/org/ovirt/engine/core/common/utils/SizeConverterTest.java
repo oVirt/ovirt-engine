@@ -16,12 +16,12 @@
 
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 
 public class SizeConverterTest {

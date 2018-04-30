@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -48,7 +48,7 @@ public class GetAllVmSnapshotsWithLeasesFromConfigurationByVmIdQueryTest extends
 
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -83,11 +83,9 @@ public class GetAllVmSnapshotsWithLeasesFromConfigurationByVmIdQueryTest extends
         Map<Snapshot, Guid> snapshots = getQuery().getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
-        assertEquals("there should be exactly one snapshot returned", 1, snapshots.keySet().size());
-        assertTrue("snapshot should be in the return value", snapshots.containsKey(snapshot));
+        assertEquals(1, snapshots.keySet().size(), "there should be exactly one snapshot returned");
+        assertTrue(snapshots.containsKey(snapshot), "snapshot should be in the return value");
         Snapshot snap = (Snapshot) snapshots.keySet().toArray()[0];
-        assertEquals("snapshot should contain a list of 2 diskImages",
-                2,
-                snap.getDiskImages().size());
+        assertEquals(2, snap.getDiskImages().size(), "snapshot should contain a list of 2 diskImages");
     }
 }

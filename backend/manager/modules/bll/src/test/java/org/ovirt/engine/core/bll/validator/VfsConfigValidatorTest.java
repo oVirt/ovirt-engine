@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -8,12 +8,13 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -22,9 +23,11 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class })
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VfsConfigValidatorTest {
 
     private static final String NETWORK_NAME = "net";
@@ -49,28 +52,20 @@ public class VfsConfigValidatorTest {
     private HostNicVfsConfig oldVfsConfig;
 
     @Mock
-    private InterfaceDao interfaceDao;
+    @InjectedMock
+    public InterfaceDao interfaceDao;
 
     @Mock
     private NetworkDeviceHelper networkDeviceHelper;
 
     @Mock
-    private NetworkDao networkDao;
-
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
+    @InjectedMock
+    public NetworkDao networkDao;
 
     private VfsConfigValidator validator;
 
-    @Before
-    public void setup() {
-        createValidator();
-
-        injectorRule.bind(InterfaceDao.class, interfaceDao);
-        injectorRule.bind(NetworkDao.class, networkDao);
-    }
-
-    private void createValidator() {
+    @BeforeEach
+    public void createValidator() {
         validator = new VfsConfigValidator(NIC_ID, oldVfsConfig);
     }
 

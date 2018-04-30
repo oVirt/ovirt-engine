@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.quota;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -14,12 +14,14 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -29,7 +31,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class QuotaManagerTest {
 
     private static final Guid STORAGE_QUOTA_GLOBAL_NOT_EXCEEDED = new Guid("00000000-0000-0000-0000-000000000011");
@@ -82,7 +85,7 @@ public class QuotaManagerTest {
     private int dbCalls = 0;
     private static final String EXPECTED_NUMBER_OF_DB_CALLS = "%d DB calls were expected. %d invoked";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         setStoragePool();
         mockQuotaDao();
@@ -135,12 +138,12 @@ public class QuotaManagerTest {
     }
 
     private void assertNotEmptyValidateMessage() {
-        assertTrue(EXPECTED_CAN_DO_MESSAGE, !validationMessages.isEmpty());
+        assertTrue(!validationMessages.isEmpty(), EXPECTED_CAN_DO_MESSAGE);
         validationMessages.clear();
     }
 
     private void assertEmptyValidateMessage() {
-        assertTrue(EXPECTED_EMPTY_CAN_DO_MESSAGE, validationMessages.isEmpty());
+        assertTrue(validationMessages.isEmpty(), EXPECTED_EMPTY_CAN_DO_MESSAGE);
     }
 
     private void assertAuditLogWritten() {
@@ -152,7 +155,7 @@ public class QuotaManagerTest {
     }
 
     private void assertDbWasCalled(int expectedNumOfCalls) {
-        assertEquals(String.format(EXPECTED_NUMBER_OF_DB_CALLS, expectedNumOfCalls, dbCalls), expectedNumOfCalls, dbCalls);
+        assertEquals(expectedNumOfCalls, dbCalls, String.format(EXPECTED_NUMBER_OF_DB_CALLS, expectedNumOfCalls, dbCalls));
         dbCalls = 0;
     }
 

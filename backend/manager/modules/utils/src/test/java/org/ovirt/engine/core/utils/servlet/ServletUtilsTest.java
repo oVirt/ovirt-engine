@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.utils.servlet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,13 +28,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ServletUtilsTest {
     private String canReadFileName;
 
-    @Before
+    @BeforeEach
     public void setup() throws URISyntaxException {
         canReadFileName = this.getClass().getResource("small_file.txt").toURI().toASCIIString().replaceAll("file:", "");
     }
@@ -50,13 +51,13 @@ public class ServletUtilsTest {
 
         //Does not exist.
         File file = new File("/doesnotexist/iamprettysure");
-        assertFalse("We should not be able to read this file.", ServletUtils.canReadFile(file));
+        assertFalse(ServletUtils.canReadFile(file), "We should not be able to read this file.");
         //Exists, but should not be readable.
         file = new File("/etc/securetty");
-        assertFalse("We should not be able to read this file.", ServletUtils.canReadFile(file));
+        assertFalse(ServletUtils.canReadFile(file), "We should not be able to read this file.");
         //Exists and we can read.
         file = new File(canReadFileName);
-        assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
+        assertTrue(ServletUtils.canReadFile(file), "We should be able to read this file.");
     }
 
     /**
@@ -66,10 +67,10 @@ public class ServletUtilsTest {
     public void testWriteFileToStream() throws IOException {
         File file = new File(canReadFileName);
         long hostSize = file.length();
-        assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
+        assertTrue(ServletUtils.canReadFile(file), "We should be able to read this file.");
         ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
         ServletUtils.writeFileToStream(out, file);
-        assertEquals("The bytes in the buffer have to match the length of the file", (int)hostSize, out.size());
+        assertEquals((int)hostSize, out.size(), "The bytes in the buffer have to match the length of the file");
     }
 
     /**
@@ -79,22 +80,22 @@ public class ServletUtilsTest {
     public void testWriteFileToStream_0SizeFile() throws Exception {
         File file = new File(this.getClass().getResource("zerosize").toURI());
         long zeroSize = file.length();
-        assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
-        assertEquals("The file size should be 0", 0L, zeroSize);
+        assertTrue(ServletUtils.canReadFile(file), "We should be able to read this file.");
+        assertEquals(0L, zeroSize, "The file size should be 0");
         ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
         ServletUtils.writeFileToStream(out, file);
-        assertEquals("The bytes in the buffer have to match the length of the file", (int)zeroSize, out.size());
+        assertEquals((int)zeroSize, out.size(), "The bytes in the buffer have to match the length of the file");
     }
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
      */
-    @Test(expected = IOException.class)
-    public void testWriteFileToStream_IOException() throws IOException {
+    @Test
+    public void testWriteFileToStream_IOException() {
         File file = new File("/doesnotexist/iamprettysure");
         //Make a large buffer.
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ServletUtils.writeFileToStream(out, file);
+        assertThrows(IOException.class, () -> ServletUtils.writeFileToStream(out, file));
     }
 
     /**
@@ -104,8 +105,8 @@ public class ServletUtilsTest {
     public void testGetFileSize() {
         File file = new File(canReadFileName);
         long hostsSize = file.length();
-        assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
-        assertEquals("Values should match", hostsSize, ServletUtils.getFileSize(file));
+        assertTrue(ServletUtils.canReadFile(file), "We should be able to read this file.");
+        assertEquals(hostsSize, ServletUtils.getFileSize(file), "Values should match");
     }
 
     /**
@@ -113,15 +114,15 @@ public class ServletUtilsTest {
      */
     @Test
     public void testIsSane() {
-        assertTrue("/etc should be sane", ServletUtils.isSane("/etc"));
+        assertTrue(ServletUtils.isSane("/etc"), "/etc should be sane");
         StringBuilder builder = new StringBuilder();
         for(int i = 0; i < 100; i++) {
             builder.append("/abcdefghijkl");
         }
-        assertFalse("longPath is not sane", ServletUtils.isSane(builder.toString()));
-        assertFalse("path with .. is not sane", ServletUtils.isSane("/something/../etc/password"));
-        assertFalse("path with // is not sane", ServletUtils.isSane("/something//etc/password"));
-        assertFalse("path with ./ is not sane", ServletUtils.isSane("/something/./etc/password"));
+        assertFalse(ServletUtils.isSane(builder.toString()), "longPath is not sane");
+        assertFalse(ServletUtils.isSane("/something/../etc/password"), "path with .. is not sane");
+        assertFalse(ServletUtils.isSane("/something//etc/password"), "path with // is not sane");
+        assertFalse(ServletUtils.isSane("/something/./etc/password"), "path with ./ is not sane");
     }
 
     /**
@@ -131,7 +132,7 @@ public class ServletUtilsTest {
     public void testGetFileFromString_NullPath() {
         File file = new File(canReadFileName);
         File testFile = ServletUtils.makeFileFromSanePath(null, file);
-        assertEquals("new file should be same as old file", file, testFile);
+        assertEquals(file, testFile, "new file should be same as old file");
     }
 
     /**
@@ -142,7 +143,7 @@ public class ServletUtilsTest {
         String path = this.getClass().getResource(".").toURI().toASCIIString().replaceAll("file:", "");
         File file = new File(path);
         File testFile = ServletUtils.makeFileFromSanePath("small_file.txt", file);
-        assertEquals("new file should be same as old file", new File(canReadFileName), testFile);
+        assertEquals(new File(canReadFileName), testFile, "new file should be same as old file");
     }
 
     /**
@@ -152,7 +153,7 @@ public class ServletUtilsTest {
     public void testGetFileFrom_InsanePath() {
         File file = new File("/etc");
         File testFile = ServletUtils.makeFileFromSanePath("/../hosts", file);
-        assertNull("testfile should be null", testFile);
+        assertNull(testFile, "testfile should be null");
     }
 
     /**
@@ -268,7 +269,7 @@ public class ServletUtilsTest {
         File mockFile = mock(File.class);
         when(mockFile.length()).thenReturn(1234L);
         when(mockFile.lastModified()).thenReturn(8271L);
-        assertEquals("ETag does not match", "W/\"1234-8271\"", ServletUtils.getETag(mockFile));
+        assertEquals("W/\"1234-8271\"", ServletUtils.getETag(mockFile), "ETag does not match");
     }
 
     /**
@@ -337,13 +338,13 @@ public class ServletUtilsTest {
     @Test
     public void testGetAsAbsoluteContext() {
         String result = ServletUtils.getAsAbsoluteContext("/ovirt-engine/testpath", "..");
-        assertEquals("The result should be '/ovirt-engine/'", "/ovirt-engine/", result);
+        assertEquals("/ovirt-engine/", result, "The result should be '/ovirt-engine/'");
         result = ServletUtils.getAsAbsoluteContext("/ovirt-engine/testpath", "/something");
-        assertEquals("The result should be '/something'", "/something", result);
+        assertEquals("/something", result, "The result should be '/something'");
         result = ServletUtils.getAsAbsoluteContext("/ovirt-engine/testpath", "../somethingelse");
-        assertEquals("The result should be '/ovirt-engine/somethingelse'", "/ovirt-engine/somethingelse", result);
+        assertEquals("/ovirt-engine/somethingelse", result, "The result should be '/ovirt-engine/somethingelse'");
         result = ServletUtils.getAsAbsoluteContext("/ovirt-engine/testpath", ".");
-        assertEquals("The result should be '/ovirt-engine/testpath/'", "/ovirt-engine/testpath/", result);
+        assertEquals("/ovirt-engine/testpath/", result, "The result should be '/ovirt-engine/testpath/'");
     }
 
     @Test
@@ -356,7 +357,7 @@ public class ServletUtilsTest {
         when(mockRequest.getContextPath()).thenReturn("/ovirt-engine/test");
         when(mockServletContext.getInitParameter(ServletUtils.CONTEXT_TO_ROOT_MODIFIER)).thenReturn("..");
         String result = ServletUtils.getBaseContextPath(mockRequest);
-        assertEquals("Result should be '/ovirt-engine/'", "/ovirt-engine/", result);
+        assertEquals("/ovirt-engine/", result, "Result should be '/ovirt-engine/'");
     }
 
     @Test
@@ -369,7 +370,7 @@ public class ServletUtilsTest {
         when(mockRequest.getContextPath()).thenReturn("/ovirt-engine/test");
         when(mockServletContext.getInitParameter(ServletUtils.CONTEXT_TO_ROOT_MODIFIER)).thenReturn("../..");
         String result = ServletUtils.getBaseContextPath(mockRequest);
-        assertEquals("Result should be '/'", "/", result);
+        assertEquals("/", result, "Result should be '/'");
     }
 
 }

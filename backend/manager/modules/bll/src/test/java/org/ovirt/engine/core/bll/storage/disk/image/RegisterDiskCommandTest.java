@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Calendar;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RegisterDiskCommandTest {
 
@@ -18,8 +18,8 @@ public class RegisterDiskCommandTest {
         calendar.set(Calendar.MINUTE, 34);
         calendar.set(Calendar.SECOND, 56);
 
-        assertEquals("Wrong generated alias",
+        assertEquals(
                 "RegisteredDisk_1981-11-16_12-34-56",
-                RegisterDiskCommand.generateDefaultAliasForRegiteredDisk(calendar));
+                RegisterDiskCommand.generateDefaultAliasForRegiteredDisk(calendar), "Wrong generated alias");
     }
 }

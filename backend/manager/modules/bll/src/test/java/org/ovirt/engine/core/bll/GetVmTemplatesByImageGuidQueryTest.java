@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -43,6 +43,6 @@ public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<IdQuer
         query.executeQueryCommand();
 
         // Assert the result
-        assertEquals("Wrong result returned", expected, getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(expected, getQuery().getQueryReturnValue().getReturnValue(), "Wrong result returned");
     }
 }

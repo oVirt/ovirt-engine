@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -13,7 +13,7 @@ public class CommandCtorsTest extends CtorsTestBase {
 
     private static Collection<Class<?>> commandClasses;
 
-    @BeforeClass
+    @BeforeAll
     public static void initCommandsCollection() {
         commandClasses = commandsFromEnum(ActionType.class, CommandsFactory::getCommandClass);
     }

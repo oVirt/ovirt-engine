@@ -5,10 +5,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -19,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
 public class PowerSavingWeightPolicyUnitTest extends EvenDistributionWeightPolicyUnitTest {
 
     private static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
@@ -28,7 +25,7 @@ public class PowerSavingWeightPolicyUnitTest extends EvenDistributionWeightPolic
     private PowerSavingMemoryWeightPolicyUnit powerSavingMemoryWeightPolicyUnit;
     private Map<String, String> parameters = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         PendingResourceManager pendingResourceManager = new PendingResourceManager();
         powerSavingCPUWeightPolicyUnit = new PowerSavingCPUWeightPolicyUnit(null, pendingResourceManager);

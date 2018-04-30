@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 
 public class ErrorTranslatorTest {
@@ -33,7 +33,7 @@ public class ErrorTranslatorTest {
             Locale.setDefault(Locale.ENGLISH);
             ErrorTranslator et = new ErrorTranslatorImpl(name);
             String error = et.translateErrorTextSingle(TEST_KEY_NO_REPLACEMENT);
-            assertEquals("String should equal", "VM not found", error);
+            assertEquals("VM not found", error, "String should equal");
         } finally {
             Locale.setDefault(locale);
         }
@@ -43,8 +43,8 @@ public class ErrorTranslatorTest {
     public void testNoStringSubstitutionWithList() {
         ErrorTranslator et = new ErrorTranslatorImpl(FILENAME);
         List<String> error = et.translateErrorText(Collections.singletonList(TEST_KEY_NO_REPLACEMENT));
-        assertEquals("Size", 1, error.size());
-        assertEquals("String should equal", "VM not found", error.get(0));
+        assertEquals(1, error.size(), "Size");
+        assertEquals("VM not found", error.get(0), "String should equal");
     }
 
     @Test
@@ -53,8 +53,8 @@ public class ErrorTranslatorTest {
         List<String> error = et.translateErrorText(Arrays.asList(TEST_KEY_WITH_REPLACEMENT,
                 "$action SOMEACTION", "$type SOME Type"));
         String result = "Cannot SOMEACTION SOME Type. VM's Image doesn't exist.";
-        assertEquals("Size", 1, error.size());
-        assertEquals("String should equal", result, error.get(0));
+        assertEquals(1, error.size(), "Size");
+        assertEquals(result, error.get(0), "String should equal");
     }
 
     @Test
@@ -73,10 +73,10 @@ public class ErrorTranslatorTest {
             Locale.setDefault(Locale.GERMAN);
             ErrorTranslator et = new ErrorTranslatorImpl(name);
             List<String> errors = et.translateErrorText(Collections.singletonList(TEST_KEY_NO_REPLACEMENT));
-            assertEquals("Unexpected Size", 1, errors.size());
-            assertEquals("String should equal", "Desktop nicht gefunden", errors.get(0));
+            assertEquals(1, errors.size(), "Unexpected Size");
+            assertEquals("Desktop nicht gefunden", errors.get(0), "String should equal");
             String error = et.translateErrorTextSingle(TEST_KEY_NO_REPLACEMENT, Locale.GERMAN);
-            assertEquals("String should equal", "Desktop nicht gefunden", error);
+            assertEquals("Desktop nicht gefunden", error, "String should equal");
         } finally {
             Locale.setDefault(locale);
         }
@@ -95,9 +95,9 @@ public class ErrorTranslatorTest {
     private static void doTestLocaleOverride(String name) {
         ErrorTranslator et = new ErrorTranslatorImpl(name);
         List<String> errors = et.translateErrorText(Collections.singletonList(TEST_KEY_NO_REPLACEMENT), Locale.ITALIAN);
-        assertEquals("Unexpected Size", 1, errors.size());
-        assertEquals("String should equal", "Impossibile trovare il desktop", errors.get(0));
+        assertEquals(1, errors.size(), "Unexpected Size");
+        assertEquals("Impossibile trovare il desktop", errors.get(0), "String should equal");
         String error = et.translateErrorTextSingle(TEST_KEY_NO_REPLACEMENT, Locale.ITALIAN);
-        assertEquals("String should equal", "Impossibile trovare il desktop", error);
+        assertEquals("Impossibile trovare il desktop", error, "String should equal");
     }
 }

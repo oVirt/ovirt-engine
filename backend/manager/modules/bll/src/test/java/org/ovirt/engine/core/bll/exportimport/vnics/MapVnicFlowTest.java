@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.exportimport.vnics;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -25,21 +25,22 @@ import static org.ovirt.engine.core.bll.exportimport.vnics.MapVnicFlowTestUtils.
 import static org.ovirt.engine.core.bll.exportimport.vnics.MapVnicFlowTestUtils.profileViewOf;
 import static org.ovirt.engine.core.bll.exportimport.vnics.MapVnicFlowTestUtils.vnicOf;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.FromDataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicHandlers.ApplyProfileById;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicHandlers.NetworkAttachedToCluster;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicHandlers.SourceNameExistsOnEngine;
@@ -54,12 +55,10 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 
-@RunWith(Theories.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class MapVnicFlowTest {
 
-    @Rule
-    // instantiate mocks
-    public MockitoRule initMocks = MockitoJUnit.rule();
     @Mock
     // queried when checking if target network is attached to target cluster
     private NetworkClusterDao mockNetworkClusterDao;
@@ -78,13 +77,13 @@ public class MapVnicFlowTest {
     private static int testCount = 0;
     private static MapVnicDataPoints dataPoints;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         dataPoints = new MapVnicDataPoints();
         dataPoints.prepareTestDataPoints();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         testCount = 0;
         // instantiate flow once per test object instance because it requires the per-test-instance mocks
@@ -106,7 +105,6 @@ public class MapVnicFlowTest {
      * tested in {@link MapVnicFlowTest#testSetA}
      * @return : set of no or bad (missing network id) profile views that are returned by {@link VnicProfileViewDao}
      */
-    @DataPoints("set A - profile views")
     @SuppressWarnings("unchecked")
     public static List<VnicProfileView>[] daoProfileViewsSetA() {
         return new List[] {
@@ -127,7 +125,6 @@ public class MapVnicFlowTest {
      * - mappings where target profile not found on engine
      * - mappings where source profile not on engine
      */
-    @DataPoints("set A - user mapping")
     public static ExternalVnicProfileMapping[] mappingsSetA() {
         return new ExternalVnicProfileMapping[] {
             null,
@@ -138,21 +135,25 @@ public class MapVnicFlowTest {
     }
 
     /**
-    * This test runs over the product of the combinations of the two sets which are its inputs. see junit @DataPoint.
+    * This test runs over the product of the combinations of the two sets which are its inputs.
     * The expected profile on the vnic OVF is always 'no profile'. These combinations only trigger the vnicProfileViewDao,
     * when the a target specified by name or a source specified by name are searched in the dao.
     * The profile returned by the dao does not match the empty profile on the OVF, so no profile is applied to the OVF vnic.
     */
-    @Theory
-    public void testSetA(
-            @FromDataPoints("set A - profile views") List<VnicProfileView> daoProfileViews,
-            @FromDataPoints("set A - user mapping") ExternalVnicProfileMapping mapping) {
+    @ParameterizedTest
+    @MethodSource
+    public void testSetA(List<VnicProfileView> daoProfileViews, ExternalVnicProfileMapping mapping) {
 
         printDataPointDetails(daoProfileViews, mapping, testCount++, "set A");
         when(mockVnicProfileViewDao.getAllForCluster(CLUSTER)).thenReturn(daoProfileViews);
         testInner(vnicOf(null, null), mapping, vnicOf(null, null));
         verify(mockVnicProfileDao, never()).get(any());
         verify(mockNetworkDao, never()).get(any());
+    }
+
+    public static Stream<Arguments> testSetA() {
+        // Permute the two arrays
+        return Arrays.stream(daoProfileViewsSetA()).flatMap(x -> Arrays.stream(mappingsSetA()).map(y -> Arguments.of(x, y)));
     }
 
     /**

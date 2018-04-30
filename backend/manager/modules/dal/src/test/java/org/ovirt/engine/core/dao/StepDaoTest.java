@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.dao;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyCollectionOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
@@ -77,7 +77,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     }
 
     protected void verifyUpdate(Step existingEntity, Step result) {
-        assertEquals("Progress should be equal", existingEntity.getProgress(), result.getProgress());
+        assertEquals(existingEntity.getProgress(), result.getProgress(), "Progress should be equal");
     }
 
     @Test
@@ -93,53 +93,53 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     @Test
     public void getStepsByJobId() {
         List<Step> steps = dao.getStepsByJobId(EXISTING_JOB_WITH_MULTIPLE_STEPS);
-        assertEquals("Verify Job has steps", TOTAL_STEPS_OF_MULTI_STEP_JOB, steps.size());
+        assertEquals(TOTAL_STEPS_OF_MULTI_STEP_JOB, steps.size(), "Verify Job has steps");
     }
 
     @Test
     public void getStepsByParentStepId() {
         List<Step> steps = dao.getStepsByParentStepId(EXISTING_STEP_WITH_SUB_STEPS);
-        assertEquals("Verify Job has steps", TOTAL_STEPS_OF_PARENT_STEP, steps.size());
+        assertEquals(TOTAL_STEPS_OF_PARENT_STEP, steps.size(), "Verify Job has steps");
     }
 
     @Test
     public void updateJobStepsCompleted() {
         Step step = dao.get(IN_PROGRESS_STEP_ID);
-        assertNotNull("Started step with ID " + IN_PROGRESS_STEP_ID, step);
+        assertNotNull(step, "Started step with ID " + IN_PROGRESS_STEP_ID);
         step.setStatus(JobExecutionStatus.FINISHED);
         Date endTime = new Date();
         step.setEndTime(endTime);
         dao.updateJobStepsCompleted(IN_PROGRESS_JOB_ID, JobExecutionStatus.FINISHED, endTime);
         Step afterUpdate = dao.get(IN_PROGRESS_STEP_ID);
-        assertEquals("Compare step to itself after update in DB", step, afterUpdate);
+        assertEquals(step, afterUpdate, "Compare step to itself after update in DB");
 
     }
 
     @Test
     public void getStepsByExternalId(){
         List<Step> steps = dao.getStepsByExternalId(IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID);
-        assertEquals("Verify Rebalancing Gluster Volume Job has steps", TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME, steps.size());
+        assertEquals(TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME, steps.size(), "Verify Rebalancing Gluster Volume Job has steps");
         Step step = steps.get(0);
-        assertEquals("Verify the Step Type status", StepEnum.REBALANCING_VOLUME, step.getStepType());
-        assertEquals("Verify the Step status", JobExecutionStatus.STARTED, step.getStatus());
-        assertEquals("Invalid Step", REBALANCING_GLUSTER_VOLUME_STEP_ID, step.getId());
+        assertEquals(StepEnum.REBALANCING_VOLUME, step.getStepType(), "Verify the Step Type status");
+        assertEquals(JobExecutionStatus.STARTED, step.getStatus(), "Verify the Step status");
+        assertEquals(REBALANCING_GLUSTER_VOLUME_STEP_ID, step.getId(), "Invalid Step");
     }
 
     @Test
     public void getExternalIdsForRunningSteps(){
         List<Guid> externalIds = dao.getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
-        assertEquals("Verify external ids present", 1, externalIds.size());
-        assertEquals("Invalid TaskId", IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID, externalIds.get(0));
+        assertEquals(1, externalIds.size(), "Verify external ids present");
+        assertEquals(IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID, externalIds.get(0), "Invalid TaskId");
     }
 
     @Test
     public void updateStepProgress(){
         Integer newProgress = 74;
         Step s = dao.get(FixturesTool.STEP_ID);
-        assertNotEquals("New progress should be different than the current", newProgress, s.getProgress());
+        assertNotEquals(newProgress, s.getProgress(), "New progress should be different than the current");
         updateStepProgress(FixturesTool.STEP_ID, newProgress);
         s = dao.get(FixturesTool.STEP_ID);
-        assertEquals("New progress should be the same as the current", newProgress, s.getProgress());
+        assertEquals(newProgress, s.getProgress(), "New progress should be the same as the current");
     }
 
     private void prepareProgressTest(Guid entityId) {
@@ -247,7 +247,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     }
 
     private void assertProgress(Integer expectedProgress, BaseDisk disk) {
-        assertEquals("disk progress isn't as expected", expectedProgress, disk.getProgress());
+        assertEquals(expectedProgress, disk.getProgress(), "disk progress isn't as expected");
     }
 
     private void assertNoStartedStepsForSubjectEntity(SubjectEntity subjectEntity) {

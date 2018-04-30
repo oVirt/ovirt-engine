@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.frontend.communication;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -9,13 +9,13 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -29,7 +29,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.XsrfToken;
 import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GWTRPCCommunicationProviderTest {
 
     @Mock
@@ -63,7 +63,7 @@ public class GWTRPCCommunicationProviderTest {
      */
     GWTRPCCommunicationProvider testProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockXsrfRpcRequestBuilder = new XsrfRpcRequestBuilder();
         testProvider = new GWTRPCCommunicationProvider(mockService, mockXsrfService, mockXsrfRpcRequestBuilder);
@@ -82,8 +82,8 @@ public class GWTRPCCommunicationProviderTest {
             @Override
             public void onSuccess(VdcOperation<ActionType, ActionParametersBase> operation,
                     ActionReturnValue result) {
-                assertEquals("Test results should match", testResult, result); //$NON-NLS-1$
-                assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
+                assertEquals(testResult, result, "Test results should match"); //$NON-NLS-1$
+                assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
             }
 
             @Override
@@ -114,8 +114,8 @@ public class GWTRPCCommunicationProviderTest {
 
             @Override
             public void onFailure(VdcOperation<ActionType, ActionParametersBase> operation, Throwable exception) {
-                assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
-                assertEquals("Exceptions should match", testException, exception); //$NON-NLS-1$
+                assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
+                assertEquals(testException, exception, "Exceptions should match"); //$NON-NLS-1$
             }
         });
         operationList.add(testOperation);
@@ -136,8 +136,8 @@ public class GWTRPCCommunicationProviderTest {
             @Override
             public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
                     QueryReturnValue result) {
-                assertEquals("Test results should match", testResult, result); //$NON-NLS-1$
-                assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
+                assertEquals(testResult, result, "Test results should match"); //$NON-NLS-1$
+                assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
             }
 
             @Override
@@ -168,8 +168,8 @@ public class GWTRPCCommunicationProviderTest {
 
             @Override
             public void onFailure(VdcOperation<QueryType, QueryParametersBase> operation, Throwable exception) {
-                assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
-                assertEquals("Exceptions should match", testException, exception); //$NON-NLS-1$
+                assertEquals(operationList.get(0), operation, "Operations should match"); //$NON-NLS-1$
+                assertEquals(testException, exception, "Exceptions should match"); //$NON-NLS-1$
             }
         });
         operationList.add(testOperation);
@@ -184,7 +184,7 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcOperation<?, ?>> allOperationList = new ArrayList<>();
         List<?> allResults = new ArrayList<>();
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
-        assertEquals("Result should have no results", 0, result.size()); //$NON-NLS-1$
+        assertEquals(0, result.size(), "Result should have no results"); //$NON-NLS-1$
     }
 
     @Test
@@ -199,7 +199,7 @@ public class GWTRPCCommunicationProviderTest {
         List<ActionReturnValue> allResults = new ArrayList<>();
         allResults.add(testResult1);
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
-        assertEquals("Result should have one results", 1, result.size()); //$NON-NLS-1$
+        assertEquals(1, result.size(), "Result should have one results"); //$NON-NLS-1$
     }
 
     @Test
@@ -219,8 +219,8 @@ public class GWTRPCCommunicationProviderTest {
         allResults.add(testResult1);
         allResults.add(testResult2);
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
-        assertEquals("Result should have one results", 1, result.size()); //$NON-NLS-1$
-        assertEquals("Result should match", testResult2, result.get(0)); //$NON-NLS-1$
+        assertEquals(1, result.size(), "Result should have one results"); //$NON-NLS-1$
+        assertEquals(testResult2, result.get(0), "Result should match"); //$NON-NLS-1$
     }
 
     @Test

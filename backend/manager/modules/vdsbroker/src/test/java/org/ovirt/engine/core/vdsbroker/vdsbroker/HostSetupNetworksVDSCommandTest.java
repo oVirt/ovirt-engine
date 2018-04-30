@@ -1,20 +1,20 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.vdscommands.HostNetwork;
 import org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class HostSetupNetworksVDSCommandTest {
 
     private HostSetupNetworksVDSCommand underTest;
@@ -25,7 +25,7 @@ public class HostSetupNetworksVDSCommandTest {
     @Mock
     private HostNetwork mockHostNetwork;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         hostSetupNetworksVdsCommandParameters = new HostSetupNetworksVdsCommandParameters();
         underTest = new TestableHostSetupNetworksVDSCommand(hostSetupNetworksVdsCommandParameters);

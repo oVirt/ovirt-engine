@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -9,16 +9,16 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import java.util.Collections;
 
 import org.hamcrest.Matcher;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
-@RunWith(Strict.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateNetworkClusterValidatorTest extends NetworkClusterValidatorTestBase<UpdateNetworkClusterValidator> {
 
     private NetworkCluster oldNetworkCluster;

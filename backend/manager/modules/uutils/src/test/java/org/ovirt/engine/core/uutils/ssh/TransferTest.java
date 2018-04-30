@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.uutils.ssh;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,11 +13,11 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Long transfer test.
@@ -39,7 +40,7 @@ public class TransferTest extends TestCommon {
         return digest.digest();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws IOException {
         local1 = File.createTempFile("ssh-test-", ".tmp");
 
@@ -53,7 +54,7 @@ public class TransferTest extends TestCommon {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanUp() {
         if (local1 != null) {
             if (!local1.delete()) {
@@ -63,7 +64,7 @@ public class TransferTest extends TestCommon {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         remote = String.format("/tmp/ssh-test-%1$s.tmp", System.currentTimeMillis());
         local2 = File.createTempFile("ssh-test-", ".tmp");
@@ -78,7 +79,7 @@ public class TransferTest extends TestCommon {
         client.authenticate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (client != null) {
             try {
@@ -108,33 +109,33 @@ public class TransferTest extends TestCommon {
                 digestFile(local2));
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void testSendInvalidSource() throws Exception {
-        client.sendFile(local1.getAbsolutePath() + "A", remote);
+    @Test
+    public void testSendInvalidSource() {
+        assertThrows(FileNotFoundException.class, () -> client.sendFile(local1.getAbsolutePath() + "A", remote));
     }
 
-    @Test(expected = IOException.class)
-    public void testRecieveInvalidSource() throws Exception {
-        client.receiveFile(remote + "A", local2.getAbsolutePath());
+    @Test
+    public void testRecieveInvalidSource() {
+        assertThrows(IOException.class, () -> client.receiveFile(remote + "A", local2.getAbsolutePath()));
     }
 
-    @Test(expected = IOException.class)
-    public void testSendInvalidDestination() throws Exception {
-        client.sendFile(local1.getAbsolutePath(), "/none/exist/path/file");
+    @Test
+    public void testSendInvalidDestination() {
+        assertThrows(IOException.class, () -> client.sendFile(local1.getAbsolutePath(), "/none/exist/path/file"));
     }
 
-    @Test(expected = IOException.class)
-    public void testRecieveInvalidDestination() throws Exception {
-        client.receiveFile("/none/exist/path/file", local2.getAbsolutePath());
+    @Test
+    public void testRecieveInvalidDestination() {
+        assertThrows(IOException.class, () -> client.receiveFile("/none/exist/path/file", local2.getAbsolutePath()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testSendInvalidFile() throws Exception {
-        client.sendFile(local1.getAbsolutePath(), remote + "'");
+    @Test
+    public void testSendInvalidFile() {
+        assertThrows(IllegalArgumentException.class, () -> client.sendFile(local1.getAbsolutePath(), remote + "'"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testRecieveInvalidFile() throws Exception {
-        client.receiveFile(remote + "'", local2.getAbsolutePath());
+    @Test
+    public void testRecieveInvalidFile() {
+        assertThrows(IllegalArgumentException.class, () -> client.receiveFile(remote + "'", local2.getAbsolutePath()));
     }
 }

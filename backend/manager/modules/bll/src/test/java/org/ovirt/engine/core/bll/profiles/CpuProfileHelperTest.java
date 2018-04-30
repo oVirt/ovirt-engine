@@ -1,17 +1,19 @@
 package org.ovirt.engine.core.bll.profiles;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -21,7 +23,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CpuProfileHelperTest {
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final String CLUSTER_NAME = "ClusterName";
@@ -40,7 +43,7 @@ public class CpuProfileHelperTest {
     private CpuProfile cpuProfile1 = new CpuProfile();
     private CpuProfile cpuProfile2 = new CpuProfile();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         cpuProfile1.setId(Guid.newGuid());
         cpuProfile1.setClusterId(CLUSTER_ID);

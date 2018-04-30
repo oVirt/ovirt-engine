@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.dal.job;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.EXECUTION_MESSAGES_FILE_PATH;
 import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.JOB_MESSAGE_PREFIX;
 import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.STEP_MESSAGE_PREFIX;
 
 import java.util.ResourceBundle;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.StepEnum;
 

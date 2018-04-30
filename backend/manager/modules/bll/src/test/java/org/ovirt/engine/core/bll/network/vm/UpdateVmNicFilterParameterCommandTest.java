@@ -1,13 +1,16 @@
 package org.ovirt.engine.core.bll.network.vm;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateVmNicFilterParameterCommandTest extends VmNicFilterParameterCommandTest {
 
     @InjectMocks

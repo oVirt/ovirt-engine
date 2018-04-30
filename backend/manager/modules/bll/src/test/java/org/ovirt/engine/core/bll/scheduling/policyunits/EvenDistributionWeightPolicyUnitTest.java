@@ -1,16 +1,17 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -21,8 +22,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest {
 
     private static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
@@ -30,14 +32,15 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
     private EvenDistributionCPUWeightPolicyUnit evenDistributionCPUWeightPolicyUnit;
     private EvenDistributionMemoryWeightPolicyUnit evenDistributionMemoryWeightPolicyUnit;
 
-    @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000),
-        MockConfigDescriptor.of(ConfigValues.VcpuConsumptionPercentage, 10),
-        MockConfigDescriptor.of(ConfigValues.SpmVCpuConsumption, 1)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000),
+                MockConfigDescriptor.of(ConfigValues.VcpuConsumptionPercentage, 10),
+                MockConfigDescriptor.of(ConfigValues.SpmVCpuConsumption, 1)
+        );
+    }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         PendingResourceManager pendingResourceManager = new PendingResourceManager();
         evenDistributionCPUWeightPolicyUnit = new EvenDistributionCPUWeightPolicyUnit(null, pendingResourceManager);

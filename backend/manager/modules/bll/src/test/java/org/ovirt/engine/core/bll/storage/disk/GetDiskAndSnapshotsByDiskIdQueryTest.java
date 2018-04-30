@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.dao.DiskDao;
  * A test case for {@link GetDiskAndSnapshotsByDiskIdQuery}.
  * This test mocks away all the Daos, and just tests the flow of the query itself.
  */
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetDiskAndSnapshotsByDiskIdQueryTest extends
         AbstractGetDisksAndSnapshotsQueryTest<IdQueryParameters, GetDiskAndSnapshotsByDiskIdQuery<IdQueryParameters>> {
 
@@ -38,7 +41,7 @@ public class GetDiskAndSnapshotsByDiskIdQueryTest extends
     @Mock
     private DiskDao diskDao;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -90,33 +93,33 @@ public class GetDiskAndSnapshotsByDiskIdQueryTest extends
     @Test
     public void testQueryWithDiskWithSnapshots() {
         DiskImage disk = executeQuery(diskWithSnapshots);
-        assertEquals("wrong number of snapshots", 3, disk.getSnapshots().size());
-        assertTrue("disk should be active", disk.getActive());
+        assertEquals(3, disk.getSnapshots().size(), "wrong number of snapshots");
+        assertTrue(disk.getActive(), "disk should be active");
     }
 
     @Test
     public void testQueryWithDiskWithoutSnapshots() {
         DiskImage disk = executeQuery(diskWithoutSnapshots);
-        assertEquals("disk should not have any snapshots", 0, disk.getSnapshots().size());
+        assertEquals(0, disk.getSnapshots().size(), "disk should not have any snapshots");
     }
 
     @Test
     public void testQueryWithOvfDisk() {
         DiskImage disk = executeQuery(ovfImage);
-        assertEquals("disk should not have any snapshots", 0, disk.getSnapshots().size());
-        assertEquals("disk should be OVF_STORE", DiskContentType.OVF_STORE, disk.getContentType());
+        assertEquals(0, disk.getSnapshots().size(), "disk should not have any snapshots");
+        assertEquals(DiskContentType.OVF_STORE, disk.getContentType(), "disk should be OVF_STORE");
     }
 
     @Test
     public void testQueryWithCinderDisk() {
         DiskImage disk = executeQuery(cinderDisk);
-        assertTrue("disk should be from type CinderDisk", disk instanceof CinderDisk);
+        assertTrue(disk instanceof CinderDisk, "disk should be from type CinderDisk");
     }
 
     @Test
     public void testQueryWithLunDisk() {
         Disk disk = executeQuery(lunDisk);
-        assertTrue("disk should be from type LunDisk", disk instanceof LunDisk);
+        assertTrue(disk instanceof LunDisk, "disk should be from type LunDisk");
     }
 
     private <T extends Disk> T executeQuery(Disk disk) {

@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -45,6 +46,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
     private GlusterVolumeEntity existingReplVol;
     private GlusterVolumeEntity newVolume;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -86,7 +88,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
     @Test
     public void testGetCapacityInfo() throws ParseException {
         GlusterVolumeEntity volume = dao.getById(EXISTING_VOL_DIST_ID);
-        assertNotNull("volume capacity info is not available", volume.getAdvancedDetails());
+        assertNotNull(volume.getAdvancedDetails(), "volume capacity info is not available");
         assertEquals(100000L, volume.getAdvancedDetails().getCapacityInfo().getTotalSize().longValue());
         assertEquals(60000L, volume.getAdvancedDetails().getCapacityInfo().getUsedSize().longValue());
         assertEquals(40000L, volume.getAdvancedDetails().getCapacityInfo().getFreeSize().longValue());
@@ -173,7 +175,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
 
         assertNotNull(volume);
         assertNotEquals(volume, existingDistVol);
-        assertNotNull("volume capacity info is not available", volume.getAdvancedDetails().getCapacityInfo());
+        assertNotNull(volume.getAdvancedDetails().getCapacityInfo(), "volume capacity info is not available");
         assertEquals(500000, (long) volume.getAdvancedDetails().getCapacityInfo().getTotalSize());
         assertEquals(200000, (long) volume.getAdvancedDetails().getCapacityInfo().getUsedSize());
         assertEquals(300000, (long) volume.getAdvancedDetails().getCapacityInfo().getFreeSize());
@@ -206,10 +208,10 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         GlusterVolumeEntity volume = dao.getAllWithQuery("select * from gluster_volumes_view where id = '"
                         + existingDistVol.getId() + "'").get(0);
 
-        assertNotNull("Volume : "+ existingDistVol.getId() +" doesn't exists", volume);
-        assertEquals("Task ID is not getting updated", REBALANCING_VOLUME_TASKID, volume.getAsyncTask().getTaskId());
-        assertEquals("Invalid Task status", JobExecutionStatus.STARTED, volume.getAsyncTask().getStatus());
-        assertEquals("Invalid Task type", GlusterTaskType.REBALANCE, volume.getAsyncTask().getType());
+        assertNotNull(volume, "Volume : "+ existingDistVol.getId() +" doesn't exists");
+        assertEquals(REBALANCING_VOLUME_TASKID, volume.getAsyncTask().getTaskId(), "Task ID is not getting updated");
+        assertEquals(JobExecutionStatus.STARTED, volume.getAsyncTask().getStatus(), "Invalid Task status");
+        assertEquals(GlusterTaskType.REBALANCE, volume.getAsyncTask().getType(), "Invalid Task type");
     }
 
     @Test

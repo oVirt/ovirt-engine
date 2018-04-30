@@ -1,17 +1,18 @@
 package org.ovirt.engine.core.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 
 public class EngineConfigCLIParserTest {
     private EngineConfigCLIParser parser;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         parser = new EngineConfigCLIParser();
     }
@@ -28,14 +29,14 @@ public class EngineConfigCLIParserTest {
         assertEquals(ConfigActionType.ACTION_LIST, parser.getConfigAction());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseNoAction() {
-        parser.parse(new String[] { "-b", "-t", "filename" });
+        assertThrows(IllegalArgumentException.class, () -> parser.parse(new String[] { "-b", "-t", "filename" }));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseActionNotFirst() {
-        parser.parse(new String[] { "-b", "-a", "filename" });
+        assertThrows(IllegalArgumentException.class, () -> parser.parse(new String[] { "-b", "-a", "filename" }));
     }
 
     @Test

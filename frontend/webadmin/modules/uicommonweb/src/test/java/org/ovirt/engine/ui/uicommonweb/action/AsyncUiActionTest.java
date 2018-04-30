@@ -5,36 +5,31 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction.ActionFlowState;
-import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
+import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetupExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(UiCommonSetupExtension.class)
 public abstract class AsyncUiActionTest<C> extends UiActionBaseTest {
 
     protected org.ovirt.engine.core.common.action.ActionType
             ACTION_TYPE = org.ovirt.engine.core.common.action.ActionType.Unknown;
-
-    @Rule
-    public UiCommonSetup setup = new UiCommonSetup();
 
     @Captor
     protected ArgumentCaptor<C> callbackCaptor;
 
     protected Frontend frontend;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() {
         super.setUp();
-        frontend = setup.getMocks().frontend();
+        frontend = Frontend.getInstance(); // Mocked by UiCommonSetupExtension
     }
 
     @Test

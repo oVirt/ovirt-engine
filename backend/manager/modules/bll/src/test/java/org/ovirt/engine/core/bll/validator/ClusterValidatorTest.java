@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
@@ -11,15 +11,15 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -33,10 +33,11 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.utils.MockedConfig;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(Strict.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 public class ClusterValidatorTest {
     @Mock
     private ClusterDao clusterDao;
@@ -54,10 +55,10 @@ public class ClusterValidatorTest {
     @InjectMocks
     private ClusterValidator validator;
 
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(Version.getLast())))
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
+                new HashSet<>(Collections.singletonList(Version.getLast()))));
+    }
 
     @Test
     public void nameNotUsed() {
@@ -201,17 +202,21 @@ public class ClusterValidatorTest {
     }
 
     @Test
+    @MockedConfig("mockConfigurationWithGlusterEnabled")
     public void mixedClusterServicesSupported() {
-        mockConfigRule.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, true);
         when(cluster.supportsGlusterService()).thenReturn(true);
         when(cluster.supportsVirtService()).thenReturn(true);
 
         assertThat(validator.mixedClusterServicesSupported(), isValid());
     }
 
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationWithGlusterEnabled() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.AllowClusterWithVirtGlusterEnabled, true));
+    }
+
     @Test
+    @MockedConfig("mockConfigurationWithGlusterDisabled")
     public void nonMixedClusterServiceSupported() {
-        mockConfigRule.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, false);
         when(cluster.supportsGlusterService()).thenReturn(true);
         when(cluster.supportsVirtService()).thenReturn(false);
 
@@ -219,13 +224,17 @@ public class ClusterValidatorTest {
     }
 
     @Test
+    @MockedConfig("mockConfigurationWithGlusterDisabled")
     public void mixedClusterServicesNotSupported() {
-        mockConfigRule.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, false);
         when(cluster.supportsGlusterService()).thenReturn(true);
         when(cluster.supportsVirtService()).thenReturn(true);
 
         assertThat(validator.mixedClusterServicesSupported(),
                 failsWith(EngineMessage.CLUSTER_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED));
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationWithGlusterDisabled() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.AllowClusterWithVirtGlusterEnabled, false));
     }
 
     @Test
@@ -234,20 +243,28 @@ public class ClusterValidatorTest {
     }
 
     @Test
+    @MockedConfig("mockConfigurationWithAttestationServer")
     public void attestationServerConfigured() {
-        mockConfigRule.mockConfigValue(ConfigValues.AttestationServer, RandomUtils.instance().nextString(10));
         when(cluster.supportsTrustedService()).thenReturn(true);
 
         assertThat(validator.attestationServerConfigured(), isValid());
     }
 
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationWithAttestationServer() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.AttestationServer, RandomUtils.instance().nextString(10)));
+    }
+
     @Test
+    @MockedConfig("mockConfigurationWithEmptyAttestationServer")
     public void attestationServerNotConfiguredProperly() {
-        mockConfigRule.mockConfigValue(ConfigValues.AttestationServer, StringUtils.EMPTY);
         when(cluster.supportsTrustedService()).thenReturn(true);
 
         assertThat(validator.attestationServerConfigured(),
                 failsWith(EngineMessage.CLUSTER_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED));
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationWithEmptyAttestationServer() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.AttestationServer, StringUtils.EMPTY));
     }
 
     @Test

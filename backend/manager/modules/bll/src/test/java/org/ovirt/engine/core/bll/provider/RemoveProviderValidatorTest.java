@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.provider;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -16,11 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.RemoveProviderCommand.RemoveProviderValidator;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -31,7 +33,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RemoveProviderValidatorTest {
 
     @Mock
@@ -51,7 +54,7 @@ public class RemoveProviderValidatorTest {
 
     /* --- Set up for tests --- */
 
-    @Before
+    @BeforeEach
     public void setUp() {
         validator = spy(new RemoveProviderValidator(networkDao, clusterDao, provider));
         when(networkDao.getAllForProvider(any())).thenReturn(networks);

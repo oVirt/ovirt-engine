@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -19,7 +19,7 @@ public class GetGlusterBrickByIdQueryTest extends AbstractQueryTest<IdQueryParam
     @Mock
     GlusterBrickDao glusterBrickDaoMock;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -45,6 +45,6 @@ public class GetGlusterBrickByIdQueryTest extends AbstractQueryTest<IdQueryParam
         getQuery().executeQueryCommand();
         GlusterBrickEntity actual = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("wrong Gluster Brick", expected.getId(), actual.getId());
+        assertEquals(expected.getId(), actual.getId(), "wrong Gluster Brick");
     }
 }

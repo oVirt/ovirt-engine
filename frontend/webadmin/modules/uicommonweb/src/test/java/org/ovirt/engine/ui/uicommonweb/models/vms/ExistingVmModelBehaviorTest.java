@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ExistingVmModelBehaviorTest extends BaseVmModelBehaviorTest {
 
     VM vm = new VM();

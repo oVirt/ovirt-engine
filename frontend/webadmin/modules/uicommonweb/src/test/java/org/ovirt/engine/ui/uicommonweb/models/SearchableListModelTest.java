@@ -1,21 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
 
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
-import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
+import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetupExtension;
 
+@ExtendWith(UiCommonSetupExtension.class)
 public class SearchableListModelTest {
-
-    @ClassRule
-    public static UiCommonSetup setup = new UiCommonSetup();
-
     @Test
     public void testSelectionRestoredOnNewSetItems() {
         SearchableListModel<Void, Integer> listModel =

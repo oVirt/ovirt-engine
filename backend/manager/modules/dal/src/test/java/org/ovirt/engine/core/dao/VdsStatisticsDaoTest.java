@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.dao;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,7 +32,7 @@ public class VdsStatisticsDaoTest extends BaseGenericDaoTestCase<Guid, VdsStatis
         return 5;
     }
 
-    @Ignore
+    @Disabled
     @Override
     public void testGetAll() {
         // Not Supported

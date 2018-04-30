@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
@@ -9,11 +9,13 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -41,6 +43,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     private final Guid diskImageId = Guid.newGuid();
@@ -93,7 +96,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
     protected LiveMigrateDiskCommand<LiveMigrateDiskParameters> command =
             new LiveMigrateDiskCommand<>(createLiveMigrateDiskParameters(), null);
 
-    @Before
+    @BeforeEach
     public void setupCommand() {
         initSpyCommand();
         initStoragePool();

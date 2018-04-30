@@ -9,11 +9,13 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AttachStorageServerConnectionToStorageDomainCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
@@ -63,7 +66,7 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest extends Bas
         return new AttachStorageConnectionToStorageDomainCommand<>(parameters, null);
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         validator = mock(StorageConnectionValidator.class);
         doReturn(validator).when(command).createStorageConnectionValidator();

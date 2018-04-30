@@ -1,17 +1,17 @@
 package org.ovirt.engine.core.dao;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -34,8 +34,8 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase<ClusterFeatureDao> {
     }
 
     private void verifyFeaturesReturned(Set<AdditionalFeature> featuresFromDb, List<String> featuresExpdected) {
-        assertNotNull("Failed to retrive additional features for the version and category", featuresFromDb);
-        assertEquals("Failed to retrive correct set of features for the given version and category", featuresFromDb.size(), featuresExpdected.size());
+        assertNotNull(featuresFromDb, "Failed to retrive additional features for the version and category");
+        assertEquals(featuresFromDb.size(), featuresExpdected.size(), "Failed to retrive correct set of features for the given version and category");
         for (AdditionalFeature feature : featuresFromDb) {
             assertThat("Wrong feature returned from DB", featuresExpdected, hasItem(feature.getName()));
         }
@@ -45,7 +45,7 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase<ClusterFeatureDao> {
     public void testGetSupportedFeaturesByClusterId() {
         Set<SupportedAdditionalClusterFeature> featuresSupportedInCluster = dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
         List<String> expectedFeatures = Arrays.asList("TEST_FEATURE_1", "TEST_FEATURE_2", "TEST_FEATURE_3");
-        assertNotNull("Failed to retrive supported additional features for the cluster", featuresSupportedInCluster);
+        assertNotNull(featuresSupportedInCluster, "Failed to retrive supported additional features for the cluster");
         assertThat("Failed to retrive correct set of features for the given version and category",
                 featuresSupportedInCluster, hasSize(expectedFeatures.size()));
         for (SupportedAdditionalClusterFeature supportedFeatures : featuresSupportedInCluster) {
@@ -100,6 +100,6 @@ public class ClusterFeatureDaoTest extends BaseDaoTestCase<ClusterFeatureDao> {
 
         Set<SupportedAdditionalClusterFeature> newFeatureSet =
                 dao.getSupportedFeaturesByClusterId(EXISTING_CLUSTER);
-        assertEquals("Failed to update the feature set", new HashSet<>(features), newFeatureSet);
+        assertEquals(new HashSet<>(features), newFeatureSet, "Failed to update the feature set");
     }
 }

@@ -1,16 +1,15 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class GlusterLocalVolumeInfoTest {
     private GlusterLocalVolumeInfo volumeInfo;
@@ -36,7 +35,7 @@ public class GlusterLocalVolumeInfoTest {
 
      */
 
-    @Before
+    @BeforeEach
     public void setUp() {
         volumeInfo = new GlusterLocalVolumeInfo();
         volumeInfo.setLogicalVolumes(getLogicalVolumes());

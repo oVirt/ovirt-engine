@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.bll.snapshots;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -36,7 +36,7 @@ public class GetAllVmSnapshotsByVmIdQueryTest
     /** A snapshot for the test */
     private Snapshot snapshot;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -63,7 +63,7 @@ public class GetAllVmSnapshotsByVmIdQueryTest
         List<Snapshot> snapshots = query.getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
-        assertTrue("snapshot should be in the return value", snapshots.contains(snapshot));
-        assertEquals("there should be exactly one snapshot returned", 1, snapshots.size());
+        assertTrue(snapshots.contains(snapshot), "snapshot should be in the return value");
+        assertEquals(1, snapshots.size(), "there should be exactly one snapshot returned");
     }
 }

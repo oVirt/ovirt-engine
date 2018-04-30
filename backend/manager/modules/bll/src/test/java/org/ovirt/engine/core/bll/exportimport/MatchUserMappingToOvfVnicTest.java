@@ -3,24 +3,24 @@ package org.ovirt.engine.core.bll.exportimport;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicsContext;
 import org.ovirt.engine.core.bll.exportimport.vnics.MapVnicsHandlers.MatchUserMappingToOvfVnic;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MatchUserMappingToOvfVnicTest {
 
     private static final String NETWORK_NAME = "network name";
@@ -35,7 +35,7 @@ public class MatchUserMappingToOvfVnicTest {
     private ExternalVnicProfileMapping externalVnicProfileMapping2;
     private ExternalVnicProfileMapping emptySourceMapping;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         underTest = new MatchUserMappingToOvfVnic();
         externalVnicProfileMapping1 =

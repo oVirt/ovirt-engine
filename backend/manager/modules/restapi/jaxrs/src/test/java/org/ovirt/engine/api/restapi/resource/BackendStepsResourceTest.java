@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,8 +9,10 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.common.queries.GetStepsWithSubjectEntitiesByJobIdQu
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStepsResourceTest extends AbstractBackendCollectionResourceTest<Step, org.ovirt.engine.core.common.job.Step, BackendStepsResource> {
 
    public BackendStepsResourceTest() {
@@ -32,7 +35,7 @@ public class BackendStepsResourceTest extends AbstractBackendCollectionResourceT
     }
 
     @Test
-    @Ignore
+    @Disabled
     @Override
     public void testQuery() {
     }

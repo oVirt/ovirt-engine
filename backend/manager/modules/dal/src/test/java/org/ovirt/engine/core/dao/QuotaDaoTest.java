@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -206,10 +206,10 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         List<QuotaCluster> quotaClusterList =
                 dao.getQuotaClusterByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_SPECIFIC);
         assertNotNull(quotaClusterList);
-        assertEquals("wrong number of quotas returned", 2, quotaClusterList.size());
+        assertEquals(2, quotaClusterList.size(), "wrong number of quotas returned");
         for (QuotaCluster group : quotaClusterList) {
-            assertNotNull("VDS ID should not be null in specific mode", group.getClusterId());
-            assertNotNull("VDS name should not be null in specific mode", group.getClusterName());
+            assertNotNull(group.getClusterId(), "VDS ID should not be null in specific mode");
+            assertNotNull(group.getClusterName(), "VDS name should not be null in specific mode");
         }
     }
 
@@ -222,10 +222,10 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         List<QuotaCluster> quotaClusterList =
                 dao.getQuotaClusterByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_GENERAL);
         assertNotNull(quotaClusterList);
-        assertEquals("wrong number of quotas returned", 1, quotaClusterList.size());
+        assertEquals(1, quotaClusterList.size(), "wrong number of quotas returned");
         for (QuotaCluster group : quotaClusterList) {
-            assertEquals("VDS ID should be empty in general mode", Guid.Empty, group.getClusterId());
-            assertNull("VDS name should be null in general mode", group.getClusterName());
+            assertEquals(Guid.Empty, group.getClusterId(), "VDS ID should be empty in general mode");
+            assertNull(group.getClusterName(), "VDS name should be null in general mode");
         }
     }
 
@@ -238,7 +238,7 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         List<QuotaCluster> quotaClusterList =
                 dao.getQuotaClusterByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_EMPTY);
         assertNotNull(quotaClusterList);
-        assertEquals("wrong number of quotas returned", 0, quotaClusterList.size());
+        assertEquals(0, quotaClusterList.size(), "wrong number of quotas returned");
     }
 
     /**
@@ -250,10 +250,10 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         List<QuotaStorage> quotaStorageList =
                 dao.getQuotaStorageByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_SPECIFIC);
         assertNotNull(quotaStorageList);
-        assertEquals("wrong number of quotas returned", 1, quotaStorageList.size());
+        assertEquals(1, quotaStorageList.size(), "wrong number of quotas returned");
         for (QuotaStorage group : quotaStorageList) {
-            assertNotNull("Storage ID should not be null in specific mode", group.getStorageId());
-            assertNotNull("Storage name should not be null in specific mode", group.getStorageName());
+            assertNotNull(group.getStorageId(), "Storage ID should not be null in specific mode");
+            assertNotNull(group.getStorageName(), "Storage name should not be null in specific mode");
         }
     }
 
@@ -266,7 +266,7 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         List<QuotaStorage> quotaStorageList =
                 dao.getQuotaStorageByQuotaGuidWithGeneralDefault(FixturesTool.QUOTA_EMPTY);
         assertNotNull(quotaStorageList);
-        assertEquals("wrong number of quotas returned", 0, quotaStorageList.size());
+        assertEquals(0, quotaStorageList.size(), "wrong number of quotas returned");
     }
 
     /**
@@ -278,10 +278,10 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         List<QuotaStorage> quotaStorageList =
                 dao.getQuotaStorageByQuotaGuidWithGeneralDefault(FixturesTool.DEFAULT_QUOTA_GENERAL);
         assertNotNull(quotaStorageList);
-        assertEquals("wrong number of quotas returned", 1, quotaStorageList.size());
+        assertEquals(1, quotaStorageList.size(), "wrong number of quotas returned");
         for (QuotaStorage group : quotaStorageList) {
-            assertEquals("Storage ID should not be null in general mode", Guid.Empty, group.getStorageId());
-            assertNull("Storage name should not be null in general mode", group.getStorageName());
+            assertEquals(Guid.Empty, group.getStorageId(), "Storage ID should not be null in general mode");
+            assertNull(group.getStorageName(), "Storage name should not be null in general mode");
         }
     }
 
@@ -437,7 +437,7 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
      */
     private void assertGetAllRelevantQuoatsForStorage(Guid storageId, int expectedQuotas) {
         List<Quota> quotas = dao.getAllRelevantQuotasForStorage(storageId, FixturesTool.PRIVILEGED_SESSION_ID, false);
-        assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
+        assertEquals(expectedQuotas, quotas.size(), "Wrong number of quotas retuend");
     }
 
     /**
@@ -474,7 +474,7 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
     @Test
     public void testGetRelevantStorageQuotaForUserWithoutPrivileges() {
         List<Quota> quotas = dao.getAllRelevantQuotasForStorage(FixturesTool.STORAGE_DOMAIN_NFS_MASTER, FixturesTool.UNPRIVILEGED_SESSION_ID, true);
-        assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
+        assertEquals(0, quotas.size(), "Unprivileged user is not allowed to fetch for quota");
     }
 
     /**
@@ -486,7 +486,7 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         List<Quota> quotas = dao.getAllRelevantQuotasForCluster(FixturesTool.CLUSTER_RHEL6_NFS,
                 FixturesTool.UNPRIVILEGED_SESSION_ID,
                 true);
-        assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
+        assertEquals(0, quotas.size(), "Unprivileged user is not allowed to fetch for quota");
     }
 
     /**
@@ -494,7 +494,7 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
      */
     private void assertGetAllRelevantQuoatsForCluster(Guid clusterId, int expectedQuotas) {
         List<Quota> quotas = dao.getAllRelevantQuotasForCluster(clusterId, FixturesTool.PRIVILEGED_SESSION_ID, false);
-        assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
+        assertEquals(expectedQuotas, quotas.size(), "Wrong number of quotas retuend");
     }
 
     private static QuotaStorage getSpecificQuotaStorage(Guid quotaId) {

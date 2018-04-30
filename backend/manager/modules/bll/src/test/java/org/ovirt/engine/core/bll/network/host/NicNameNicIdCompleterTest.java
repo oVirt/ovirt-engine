@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -11,8 +11,8 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.network.host.NicNameNicIdCompleter.NicNameAndNicIdAccessors;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -23,7 +23,7 @@ public class NicNameNicIdCompleterTest {
     private VdsNetworkInterface nic;
     private NicNameNicIdCompleter completer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         nic = new VdsNetworkInterface();
         nic.setId(Guid.newGuid());

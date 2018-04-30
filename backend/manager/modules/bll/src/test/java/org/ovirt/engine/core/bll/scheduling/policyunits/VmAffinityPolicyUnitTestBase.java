@@ -8,9 +8,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -24,12 +25,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public class VmAffinityPolicyUnitTestBase {
 
-    @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.MaxSchedulerWeight, 1000));
+    }
 
     @Mock
     protected PendingResourceManager pendingResourceManager;
@@ -48,7 +51,7 @@ public class VmAffinityPolicyUnitTestBase {
     protected List<AffinityGroup> affinityGroups = new ArrayList<>();
     protected List<VM> runningVMs = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         cluster = new Cluster();
         cluster.setId(Guid.newGuid());

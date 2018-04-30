@@ -1,11 +1,11 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.restapi.test.mappers.api.IBar;
 import org.ovirt.engine.api.restapi.test.mappers.api.IFoo;
 import org.ovirt.engine.api.restapi.test.mappers.impl.BarImpl;
@@ -16,7 +16,7 @@ public class MappingLocatorTest {
     private static final String PACKAGE_NAME = "org.ovirt.engine.api.restapi.test.mapping";
     private MappingLocator mappingLocator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mappingLocator = new MappingLocator(PACKAGE_NAME);
         mappingLocator.populate();

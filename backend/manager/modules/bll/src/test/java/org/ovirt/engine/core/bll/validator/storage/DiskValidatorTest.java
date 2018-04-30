@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
@@ -15,12 +15,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -42,20 +43,19 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@RunWith(Strict.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class })
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class DiskValidatorTest {
-
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
-
     @Mock
     private VmDao vmDao;
 
     @Mock
-    private StorageDomainDao storageDomainDao;
+    @InjectedMock
+    public StorageDomainDao storageDomainDao;
 
     @Mock
     private DiskImageDao diskImageDao;
@@ -91,7 +91,7 @@ public class DiskValidatorTest {
         return vm;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         disk = createDiskImage();
         disk.setDiskAlias("disk1");
@@ -114,7 +114,6 @@ public class DiskValidatorTest {
         domain.setStorageType(storageType);
         disk.setStorageIds(new ArrayList<>(Collections.singletonList(domain.getId())));
 
-        injectorRule.bind(StorageDomainDao.class, storageDomainDao);
         when(storageDomainDao.get(domain.getId())).thenReturn(domain);
 
         return domain;

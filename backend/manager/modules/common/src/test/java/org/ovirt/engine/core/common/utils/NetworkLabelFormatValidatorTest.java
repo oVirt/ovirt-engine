@@ -1,49 +1,45 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelFormat;
 
-@RunWith(Parameterized.class)
 public class NetworkLabelFormatValidatorTest {
 
     private Validator validator = ValidationUtils.getValidator();
-    @Parameterized.Parameter(1)
-    public boolean expectedResult;
-    @Parameterized.Parameter(0)
-    public Set<String> labels;
 
-    @Test
-    public void checkNetworkLabelFormat() {
+    @ParameterizedTest
+    @MethodSource
+    public void checkNetworkLabelFormat(Set<String> labels, boolean expectedResult) {
         NetworkLabelContainer labelContainer = new NetworkLabelContainer(labels);
         Set<ConstraintViolation<NetworkLabelContainer>> validate = validator.validate(labelContainer);
-        assertEquals("Failed to validate " + labelContainer.getLabels(), expectedResult, validate.isEmpty());
+        assertEquals(expectedResult, validate.isEmpty(), "Failed to validate " + labelContainer.getLabels());
     }
 
-    @Parameterized.Parameters
-    public static Object[] ipAddressParams() {
-        return new Object[][] {
-                { Collections.emptySet(), true },
-                { null, true },
-                { Collections.singleton("abc"), true },
-                { new HashSet<>(Arrays.asList("abc", "xyz")), true },
-                { Collections.singleton("abc-_sc"), true },
-                { Collections.singleton(""), false },
-                { Collections.singleton(" "), false },
-                { Collections.singleton("abc*"), false },
-                { new HashSet<>(Arrays.asList("aaa", "abc*")), false }
-        };
+    public static Stream<Arguments> checkNetworkLabelFormat() {
+        return Stream.of(
+                Arguments.of(Collections.emptySet(), true ),
+                Arguments.of(null, true ),
+                Arguments.of(Collections.singleton("abc"), true ),
+                Arguments.of(new HashSet<>(Arrays.asList("abc", "xyz")), true ),
+                Arguments.of(Collections.singleton("abc-_sc"), true ),
+                Arguments.of(Collections.singleton(""), false ),
+                Arguments.of(Collections.singleton(" "), false ),
+                Arguments.of(Collections.singleton("abc*"), false ),
+                Arguments.of(new HashSet<>(Arrays.asList("aaa", "abc*")), false)
+        );
     }
 
     private static class NetworkLabelContainer {

@@ -1,15 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,7 +16,6 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 /**
  * A test case for {@link GetTemplatesRelatedToQuotaIdQuery}.
  */
-@RunWith(MockitoJUnitRunner.class)
 public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetTemplatesRelatedToQuotaIdQuery<IdQueryParameters>> {
     @Mock
     VmTemplateDao vmTemplateDao;

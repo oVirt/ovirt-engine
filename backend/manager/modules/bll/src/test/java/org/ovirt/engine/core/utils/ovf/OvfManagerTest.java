@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -17,17 +17,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -58,11 +59,12 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class, RandomUtilsSeedingExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class OvfManagerTest {
 
     private static final Guid SMALL_DEFAULT_ICON_ID = Guid.createGuidFromString("00000000-0000-0000-0000-00000000000a");
@@ -77,20 +79,18 @@ public class OvfManagerTest {
     private static final int MIN_ENTITY_NAME_LENGTH = 3;
     private static final int MAX_ENTITY_NAME_LENGTH = 30;
 
-    @ClassRule
-    public static MockConfigRule mockConfigRule = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.VdcVersion, "3.0.0.0"),
-        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
-        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
-        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
-        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
-        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
-        MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16),
-        MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, true)
-    );
-
-    @Rule
-    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.VdcVersion, "3.0.0.0"),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16),
+                MockConfigDescriptor.of(ConfigValues.PassDiscardSupported, Version.v4_0, true)
+        );
+    }
 
     @InjectMocks
     @Spy
@@ -103,7 +103,7 @@ public class OvfManagerTest {
     @InjectMocks
     private ImagesHandler imagesHandler;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final Map<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
@@ -134,8 +134,8 @@ public class OvfManagerTest {
     }
 
     private static void assertVm(VM vm, VM newVm, long expectedDbGeneration) {
-        assertEquals("imported vm is different than expected", vm, newVm);
-        assertEquals("imported db generation is different than expected", expectedDbGeneration, newVm.getDbGeneration());
+        assertEquals(vm, newVm, "imported vm is different than expected");
+        assertEquals(expectedDbGeneration, newVm.getDbGeneration(), "imported db generation is different than expected");
 
         // Icons are actually not stored in snapshots, so they are excluded from comparison
         newVm.getStaticData().setSmallIconId(vm.getStaticData().getSmallIconId());
@@ -205,8 +205,8 @@ public class OvfManagerTest {
         final VmTemplate newtemplate = new VmTemplate();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newtemplate);
         manager.importTemplate(xml, fullEntityOvfData);
-        assertEquals("imported template is different than expected", newtemplate, template);
-        assertEquals("imported db generation is different than expected", template.getDbGeneration(), newtemplate.getDbGeneration());
+        assertEquals(newtemplate, template, "imported template is different than expected");
+        assertEquals(template.getDbGeneration(), newtemplate.getDbGeneration(), "imported db generation is different than expected");
     }
 
 
@@ -438,8 +438,8 @@ public class OvfManagerTest {
         VM emptyVm = new VM();
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(emptyVm);
         manager.importVm(actualOvf, emptyVm, fullEntityOvfData);
-        assertEquals("Wrong number of disks", 1, fullEntityOvfData.getDiskImages().size());
-        assertEquals("Wrong disk", disk1, fullEntityOvfData.getDiskImages().get(0));
+        assertEquals(1, fullEntityOvfData.getDiskImages().size(), "Wrong number of disks");
+        assertEquals(disk1, fullEntityOvfData.getDiskImages().get(0), "Wrong disk");
     }
 
     private static DiskImage addTestDisk(VM vm, Guid snapshotId) {

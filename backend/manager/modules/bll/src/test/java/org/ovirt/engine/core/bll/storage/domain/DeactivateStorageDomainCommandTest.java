@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -11,11 +11,13 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.EnumSet;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -43,6 +45,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
 
     @Mock
@@ -76,7 +79,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
     DeactivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd =
             new DeactivateStorageDomainCommand<>(params, CommandContext.createContext(params.getSessionId()));
 
-    @Before
+    @BeforeEach
     public void setup() {
         map = new StoragePoolIsoMap();
         cmd.init();

@@ -1,13 +1,14 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PmProxies;
@@ -20,17 +21,15 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
 
 public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStatic, VDS> {
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, "oVirt"));
+    }
 
     public HostMapperTest() {
         super(Host.class, VdsStatic.class, VDS.class);
-    }
-
-    @Override
-    public void setUp() {
-        super.setUp();
-        mcr.mockConfigValue(ConfigValues.OrganizationName, "oVirt");
     }
 
     @Override

@@ -1,10 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Role;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendAssignedRoleResourceTest extends AbstractBackendRoleResourceTest {
 
     public BackendAssignedRoleResourceTest() {

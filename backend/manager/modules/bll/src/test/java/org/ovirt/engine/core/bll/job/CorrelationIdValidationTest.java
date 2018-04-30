@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.job;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -22,7 +22,7 @@ public class CorrelationIdValidationTest {
         ActionParametersBase parameters = new ActionParametersBase();
         parameters.setCorrelationId("VALID_CORRELATION_ID");
         ActionReturnValue result = ExecutionHandler.evaluateCorrelationId(parameters);
-        assertNull("Correlation id is valid", result);
+        assertNull(result, "Correlation id is valid");
     }
 
     @Test
@@ -30,8 +30,8 @@ public class CorrelationIdValidationTest {
         ActionParametersBase parameters = new ActionParametersBase();
         parameters.setCorrelationId("INVALID_CORRELATION_@#$%@#");
         ActionReturnValue result = ExecutionHandler.evaluateCorrelationId(parameters);
-        assertNotNull("Correlation id is invalid", result);
-        assertFalse("Correlation id is invalid", result.getSucceeded());
+        assertNotNull(result, "Correlation id is invalid");
+        assertFalse(result.getSucceeded(), "Correlation id is invalid");
     }
 
     @Test
@@ -39,7 +39,7 @@ public class CorrelationIdValidationTest {
         ActionParametersBase parameters = new ActionParametersBase();
         parameters.setCorrelationId(StringUtils.leftPad("", BusinessEntitiesDefinitions.CORRELATION_ID_SIZE, "A"));
         ActionReturnValue result = ExecutionHandler.evaluateCorrelationId(parameters);
-        assertNull("Correlation id is size is at max permitted length", result);
+        assertNull(result, "Correlation id is size is at max permitted length");
     }
 
     @Test
@@ -47,7 +47,7 @@ public class CorrelationIdValidationTest {
         ActionParametersBase parameters = new ActionParametersBase();
         parameters.setCorrelationId(StringUtils.leftPad("", BusinessEntitiesDefinitions.CORRELATION_ID_SIZE + 1, "A"));
         ActionReturnValue result = ExecutionHandler.evaluateCorrelationId(parameters);
-        assertNotNull("Correlation id exceeds max size", result);
-        assertFalse("Correlation id exceeds max size", result.getSucceeded());
+        assertNotNull(result, "Correlation id exceeds max size");
+        assertFalse(result.getSucceeded(), "Correlation id exceeds max size");
     }
 }

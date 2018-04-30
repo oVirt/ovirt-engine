@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -13,6 +14,7 @@ public class VmInitDaoTest extends BaseDaoTestCase<VmInitDao> {
 
     private VmInit vmInit;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

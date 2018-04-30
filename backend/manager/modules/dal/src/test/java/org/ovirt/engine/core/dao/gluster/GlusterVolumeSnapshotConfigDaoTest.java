@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.dao.gluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
@@ -26,6 +27,7 @@ public class GlusterVolumeSnapshotConfigDaoTest extends BaseDaoTestCase<GlusterV
     private GlusterVolumeSnapshotConfig existingConfig3;
     private GlusterVolumeSnapshotConfig newConfig;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

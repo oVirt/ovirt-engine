@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class EngineConfigTest {
     private static final Logger log = LoggerFactory.getLogger(EngineConfigTest.class);
     private EngineConfig config = EngineConfig.getInstance();
 
-    @BeforeClass
+    @BeforeAll
     public static void setConfigFilePathProperty() throws UnsupportedEncodingException {
         final String path = URLDecoder.decode(ClassLoader.getSystemResource("engine-config.conf").getPath(), "UTF-8");
         System.setProperty(EngineConfig.CONFIG_FILE_PATH_PROPERTY, path);
@@ -44,12 +45,13 @@ public class EngineConfigTest {
         assertTrue(keys.size() > 0);
     }
 
-    @Test(expected = IllegalAccessException.class)
+    @Test
     public void setOutOfRangeValue() throws Exception {
         final String outOfRangeForFenceQuietTime = "601";
         final String key = "FenceQuietTimeBetweenOperationsInSec";
         // Should throw IllegalAccessException since the given value is out of range
-        config.getEngineConfigLogic().persist(key, outOfRangeForFenceQuietTime, "");
+        assertThrows(IllegalAccessException.class,
+                () -> config.getEngineConfigLogic().persist(key, outOfRangeForFenceQuietTime, ""));
     }
 
     @Test

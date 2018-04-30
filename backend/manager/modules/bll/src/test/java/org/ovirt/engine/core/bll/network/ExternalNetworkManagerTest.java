@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -9,15 +9,14 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -30,9 +29,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
 public class ExternalNetworkManagerTest {
 
     private static final Guid NIC_ID = Guid.newGuid();
@@ -40,14 +40,13 @@ public class ExternalNetworkManagerTest {
     private static final Guid PROVIDER_ID = Guid.newGuid();
     private static final String PROVIDER_NAME = "provider name";
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
+    @Mock
+    @InjectedMock
+    public AuditLogDirector auditLogDirector;
 
     @Mock
-    private AuditLogDirector auditLogDirector;
-
-    @Mock
-    private ProviderDao providerDao;
+    @InjectedMock
+    public ProviderDao providerDao;
 
     @Mock
     private ProviderProxyFactory providerProxyFactory;
@@ -68,11 +67,8 @@ public class ExternalNetworkManagerTest {
     private ProviderNetwork providerNetwork;
     private Provider provider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        injectorRule.bind(ProviderDao.class, providerDao);
-        injectorRule.bind(AuditLogDirector.class, auditLogDirector);
-
         provider = new Provider<>();
         when(providerDao.get(PROVIDER_ID)).thenReturn(provider);
         when(providerProxyFactory.create(provider)).thenReturn(networkProviderProxy);

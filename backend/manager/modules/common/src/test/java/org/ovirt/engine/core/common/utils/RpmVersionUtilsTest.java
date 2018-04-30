@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RpmVersionUtilsTest {
 
@@ -17,14 +18,14 @@ public class RpmVersionUtilsTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalRpmSplitNoDashes() {
-        RpmVersionUtils.splitRpmToParts("abcdef");
+        assertThrows(IllegalArgumentException.class, () -> RpmVersionUtils.splitRpmToParts("abcdef"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalRpmSplitNoEnoughDashes() {
-        RpmVersionUtils.splitRpmToParts("abcdef-123");
+        assertThrows(IllegalArgumentException.class, () -> RpmVersionUtils.splitRpmToParts("abcdef-123"));
     }
 
     @Test

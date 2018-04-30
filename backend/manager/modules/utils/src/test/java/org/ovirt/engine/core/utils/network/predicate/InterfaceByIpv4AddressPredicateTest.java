@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.utils.network.predicate;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public class InterfaceByIpv4AddressPredicateTest extends AbstractVdsNetworkInterfacePredicateTest {
 
-    @Before
+    @BeforeEach
     public void setup() {
         setUnderTest(new InterfaceByAddressPredicate(VALID));
     }

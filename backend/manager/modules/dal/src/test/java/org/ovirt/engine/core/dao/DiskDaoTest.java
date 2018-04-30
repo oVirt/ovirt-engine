@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -89,7 +89,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     public void testGetAllForVMFilteredWithPermissionsNoPermissions() {
         // test user 2 - hasn't got permissions
         List<Disk> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, true);
-        assertTrue("VM should have no disks viewable to the user", disks.isEmpty());
+        assertTrue(disks.isEmpty(), "VM should have no disks viewable to the user");
     }
 
     @Test
@@ -110,7 +110,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     public void testGetPluggedForVMFilteredWithPermissionsNoPermissions() {
         // test user 2 - hasn't got permissions
         List<Disk> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, true, UNPRIVILEGED_USER_ID, true);
-        assertTrue("VM should have no disks viewable to the user", disks.isEmpty());
+        assertTrue(disks.isEmpty(), "VM should have no disks viewable to the user");
     }
 
     @Test
@@ -181,8 +181,8 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetVmBootActiveDisk() {
         Disk bootDisk = dao.getVmBootActiveDisk(FixturesTool.VM_RHEL5_POOL_57);
-        assertNotNull("VM should have a boot disk attached", bootDisk);
-        assertEquals("Wrong boot disk for VM", FixturesTool.BOOTABLE_DISK_ID, bootDisk.getId());
+        assertNotNull(bootDisk, "VM should have a boot disk attached");
+        assertEquals(FixturesTool.BOOTABLE_DISK_ID, bootDisk.getId(), "Wrong boot disk for VM");
     }
 
     @Test
@@ -196,7 +196,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     @Test
     public void testGetAllFromDisksByDiskStorageType() {
         List<Disk> disks = dao.getAllFromDisksByDiskStorageType(DiskStorageType.CINDER, PRIVILEGED_USER_ID, true);
-        assertEquals("We should have one disk", 1, disks.size());
+        assertEquals(1, disks.size(), "We should have one disk");
     }
 
     /**
@@ -205,7 +205,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllForVMResult(List<Disk> disks) {
-        assertEquals("VM should have six disks", 6, disks.size());
+        assertEquals(6, disks.size(), "VM should have six disks");
     }
 
     /**
@@ -215,7 +215,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      */
     private static void assertPluggedGetAllForVMResult(List<Disk> disks) {
         Integer numberOfDisks = 5;
-        assertEquals("VM should have " + numberOfDisks + " plugged disk", numberOfDisks.intValue(), disks.size());
+        assertEquals(numberOfDisks.intValue(), disks.size(), "VM should have " + numberOfDisks + " plugged disk");
     }
 
     /**
@@ -224,75 +224,75 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllAttachableDisksByPoolId(List<Disk> disks) {
-        assertEquals("There should be only four attachable disks", 4, disks.size());
+        assertEquals(4, disks.size(), "There should be only four attachable disks");
         Set<Guid> expectedFloatingDiskIds =
                 new HashSet<>(Arrays.asList(FixturesTool.FLOATING_DISK_ID, FixturesTool.FLOATING_LUN_ID,
                         FixturesTool.FLOATING_CINDER_DISK_ID));
         Set<Guid> actualFloatingDiskIds = disks.stream().map(BaseDisk::getId).collect(Collectors.toSet());
-        assertEquals("Wrong attachable disks", expectedFloatingDiskIds, actualFloatingDiskIds);
+        assertEquals(expectedFloatingDiskIds, actualFloatingDiskIds, "Wrong attachable disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshots() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(null, false);
-        assertEquals("wrong number of returned disks", 15, result.size());
+        assertEquals(15, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForUnprivilegedUserWithFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(UNPRIVILEGED_USER_ID, true);
-        assertEquals("wrong number of returned disks", 0, result.size());
+        assertEquals(0, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForUnprivilegedUserWithoutFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(UNPRIVILEGED_USER_ID, false);
-        assertEquals("wrong number of returned disks", 15, result.size());
+        assertEquals(15, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForPrivilegedUserWithoutFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(PRIVILEGED_USER_ID, false);
-        assertEquals("wrong number of returned disks", 15, result.size());
+        assertEquals(15, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsForPrivilegedUserWithFilter() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(PRIVILEGED_USER_ID, true);
-        assertEquals("wrong number of returned disks", 14, result.size());
+        assertEquals(14, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsByDiskId() {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, null, false);
-        assertEquals("wrong number of returned disks", 4, result.size());
+        assertEquals(4, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsByDiskIdForPrivilegedUserWithFilter() {
         List<Disk> result =
                 dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, PRIVILEGED_USER_ID, true);
-        assertEquals("wrong number of returned disks", 4, result.size());
+        assertEquals(4, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsByDiskIdForPrivilegedUserWithoutFilter() {
         List<Disk> result =
                 dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, PRIVILEGED_USER_ID, false);
-        assertEquals("wrong number of returned disks", 4, result.size());
+        assertEquals(4, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsByDiskIdForUnPrivilegedUserWithoutFilter() {
         List<Disk> result =
                 dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, UNPRIVILEGED_USER_ID, false);
-        assertEquals("wrong number of returned disks", 4, result.size());
+        assertEquals(4, result.size(), "wrong number of returned disks");
     }
 
     @Test
     public void testGetAllFromDisksIncludingSnapshotsByDiskIdForUnPrivilegedUserWithFilter() {
         List<Disk> result =
                 dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, UNPRIVILEGED_USER_ID, true);
-        assertEquals("wrong number of returned disks", 0, result.size());
+        assertEquals(0, result.size(), "wrong number of returned disks");
     }
 }

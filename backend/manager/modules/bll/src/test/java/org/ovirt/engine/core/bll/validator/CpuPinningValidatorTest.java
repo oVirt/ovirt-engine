@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -19,7 +19,7 @@ public class CpuPinningValidatorTest {
 
     private VmStatic vmStatic;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vmStatic = new VmStatic();
         vmStatic.setNumOfSockets(6);
@@ -42,11 +42,11 @@ public class CpuPinningValidatorTest {
 
     @Test
     public void schouldDetectValidPinnings() {
-        assertTrue("null value must be accepted",
-                isCpuPinningValid(null, vmStatic).isValid());
+        assertTrue(
+                isCpuPinningValid(null, vmStatic).isValid(), "null value must be accepted");
 
-        assertTrue("empty string must be accepted",
-                isCpuPinningValid("", vmStatic).isValid());
+        assertTrue(
+                isCpuPinningValid("", vmStatic).isValid(), "empty string must be accepted");
 
         assertTrue(isCpuPinningValid("0#0", vmStatic).isValid());
         assertTrue(isCpuPinningValid("0#1-4", vmStatic).isValid());

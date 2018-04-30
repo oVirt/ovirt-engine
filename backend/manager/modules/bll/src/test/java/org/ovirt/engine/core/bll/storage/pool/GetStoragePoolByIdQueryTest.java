@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -40,7 +40,7 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryPa
         getQuery().executeQueryCommand();
         StoragePool result = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("Wrong storage pool returned", expectedResult, result);
+        assertEquals(expectedResult, result, "Wrong storage pool returned");
         assertThat(result.getMacPoolId(), is(MAC_POOL_ID));
     }
 

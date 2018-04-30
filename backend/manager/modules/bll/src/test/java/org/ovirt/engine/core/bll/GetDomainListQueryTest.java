@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Arrays;
@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 
 /**
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.queries.QueryParametersBase;
 public class GetDomainListQueryTest
         extends AbstractQueryTest<QueryParametersBase, GetDomainListQuery<QueryParametersBase>> {
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -34,9 +34,9 @@ public class GetDomainListQueryTest
     @Test
     public void test() {
         getQuery().executeQueryCommand();
-        assertTrue("Wrong filtered domains", CollectionUtils.isEqualCollection(
-                getQuery().getQueryReturnValue().getReturnValue(),
-                Arrays.asList("aaa", "internal", "zzz")));
+        assertTrue(CollectionUtils.isEqualCollection(getQuery().getQueryReturnValue().getReturnValue(),
+                Arrays.asList("aaa", "internal", "zzz")),
+                "Wrong filtered domains");
     }
 }
 

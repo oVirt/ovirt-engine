@@ -1,21 +1,20 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 
-@RunWith(Parameterized.class)
 public class AddRoleWithActionGroupsCommandTest {
 
     /**
@@ -23,31 +22,25 @@ public class AddRoleWithActionGroupsCommandTest {
      * 1. A list of action groups
      * 2. Whether or not the role should be inheritable
      */
-    @Parameters
-    public static Object[][] data() {
-        return new Object[][]
-        { { false, Collections.emptyList() },
-                { false, Collections.singletonList(ActionGroup.CREATE_VM) },
-                { true, Collections.singletonList(ActionGroup.CONFIGURE_ENGINE) },
-                { true, Arrays.asList(ActionGroup.CONFIGURE_ENGINE, ActionGroup.CREATE_VM) },
-        };
+    public static Stream<Arguments> prepareRoleForCommandNoGroups() {
+        return Stream.of(
+                Arguments.of(false, Collections.emptyList()),
+                Arguments.of(false, Collections.singletonList(ActionGroup.CREATE_VM)),
+                Arguments.of(true, Collections.singletonList(ActionGroup.CONFIGURE_ENGINE)),
+                Arguments.of(true, Arrays.asList(ActionGroup.CONFIGURE_ENGINE, ActionGroup.CREATE_VM))
+        );
     }
 
-    private boolean shouldBeInheritable;
-    private RoleWithActionGroupsParameters params;
-    private AddRoleWithActionGroupsCommand<RoleWithActionGroupsParameters> command;
+    @ParameterizedTest
+    @MethodSource
+    public void prepareRoleForCommandNoGroups(boolean shouldBeInheritable, List<ActionGroup> groups) {
+        RoleWithActionGroupsParameters params =
+                new RoleWithActionGroupsParameters(new Role(), new ArrayList<>(groups));
+        AddRoleWithActionGroupsCommand<RoleWithActionGroupsParameters> command =
+                new AddRoleWithActionGroupsCommand<>(params, null);
 
-    public AddRoleWithActionGroupsCommandTest(boolean shouldBeInheritable, List<ActionGroup> groups) {
-        this.shouldBeInheritable = shouldBeInheritable;
-
-        params = new RoleWithActionGroupsParameters(new Role(), new ArrayList<>(groups));
-        command = new AddRoleWithActionGroupsCommand<>(params, null);
-    }
-
-    @Test
-    public void testPrepareRoleForCommandNoGroups() {
         command.prepareRoleForCommand();
-        assertEquals("Wrong inheritable state for command", shouldBeInheritable, params.getRole()
-                .allowsViewingChildren());
+        assertEquals
+                (shouldBeInheritable, params.getRole().allowsViewingChildren(), "Wrong inheritable state for command");
     }
 }

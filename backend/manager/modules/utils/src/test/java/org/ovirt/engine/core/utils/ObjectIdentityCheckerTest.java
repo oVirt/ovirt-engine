@@ -1,23 +1,23 @@
 package org.ovirt.engine.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 
 public class ObjectIdentityCheckerTest {
     @Test
     public void testIsUpdateable() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
-        assertFalse("Should be false by default", oic.isFieldUpdatable("name"));
+        assertFalse(oic.isFieldUpdatable("name"), "Should be false by default");
         oic.addPermittedFields("name");
-        assertTrue("Should be true now", oic.isFieldUpdatable("name"));
+        assertTrue(oic.isFieldUpdatable("name"), "Should be true now");
     }
 
     @Test
@@ -26,7 +26,7 @@ public class ObjectIdentityCheckerTest {
         Jedi jedi2 = new Jedi();
 
         List<String> changes = ObjectIdentityChecker.getChangedFields(jedi1, jedi2);
-        assertEquals("Should be no changes", 0, changes.size());
+        assertEquals(0, changes.size(), "Should be no changes");
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ObjectIdentityCheckerTest {
         jedi2.saberColor = "red"; // Gone to the dark side
 
         List<String> changes = ObjectIdentityChecker.getChangedFields(jedi1, jedi2);
-        assertEquals("Should be 1 changes", 1, changes.size());
+        assertEquals(1, changes.size(), "Should be 1 changes");
     }
 
     @Test
@@ -47,31 +47,34 @@ public class ObjectIdentityCheckerTest {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
 
         boolean changed = oic.isFieldsUpdated(jedi1, jedi2, Collections.singletonList("name"));
-        assertFalse("No Change", changed);
+        assertFalse(changed, "No Change");
         changed = oic.isFieldsUpdated(jedi1, jedi2, Collections.singletonList("saberColor"));
-        assertTrue("1 Change", changed);
+        assertTrue(changed, "1 Change");
     }
 
     @Test
     public void testHotsetUpdateableWhenHotsetRequested() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
-        assertTrue("hot set requested for hot set fields should be true in state Up", oic.isFieldUpdatable(VMStatus.Up, "name", null, true));
+        assertTrue(oic.isFieldUpdatable(VMStatus.Up, "name", null, true),
+                "hot set requested for hot set fields should be true in state Up");
     }
 
     @Test
     public void testHotsetUpdateableWhenHotsetRequestedAndStatusOtherThanHotSettable() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
-        assertFalse("hot set requested for hot set fields should be false in state other than Up", oic.isFieldUpdatable(null, "name", null, true));
+        assertFalse(oic.isFieldUpdatable(null, "name", null, true),
+                "hot set requested for hot set fields should be false in state other than Up");
     }
 
     @Test
     public void testHotsetNotUpdateableWhenHotsetNotRequested() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
-        assertFalse("Should be false by default", oic.isFieldUpdatable("name"));
+        assertFalse(oic.isFieldUpdatable("name"), "Should be false by default");
         oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
-        assertFalse("hot set not requested should return false even if field is hot set", oic.isFieldUpdatable(null, "name", null, false));
+        assertFalse(oic.isFieldUpdatable(null, "name", null, false),
+                "hot set not requested should return false even if field is hot set");
     }
 
     @Test
@@ -79,7 +82,8 @@ public class ObjectIdentityCheckerTest {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         oic.addField(VMStatus.Down, "name");
         oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
-        assertTrue("hot set requested for hot set fields should be true", oic.isFieldUpdatable(VMStatus.Down, "name", null, true));
+        assertTrue(oic.isFieldUpdatable(VMStatus.Down, "name", null, true),
+                "hot set requested for hot set fields should be true");
     }
 
     @Test
@@ -87,6 +91,7 @@ public class ObjectIdentityCheckerTest {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         oic.addField(VMStatus.Down, "name");
         oic.addHotsetField("name", EnumSet.of(VMStatus.Up));
-        assertTrue("hot set not requested field should be updateable according to status", oic.isFieldUpdatable(VMStatus.Down, "name", null, false));
+        assertTrue(oic.isFieldUpdatable(VMStatus.Down, "name", null, false),
+                "hot set not requested field should be updateable according to status");
     }
 }

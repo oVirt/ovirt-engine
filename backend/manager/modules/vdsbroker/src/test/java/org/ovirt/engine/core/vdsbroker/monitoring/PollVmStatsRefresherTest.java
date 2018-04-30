@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Connecting;
@@ -20,68 +20,66 @@ import static org.ovirt.engine.core.common.businessentities.VDSStatus.Reboot;
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Unassigned;
 import static org.ovirt.engine.core.common.businessentities.VDSStatus.Up;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
-@RunWith(Parameterized.class)
+@ExtendWith(MockConfigExtension.class)
 public class PollVmStatsRefresherTest {
-
-    @Parameterized.Parameter(0)
-    public VDSStatus status;
-    @Parameterized.Parameter(1)
-    public boolean monitoringNeeded;
 
     private PollVmStatsRefresher underTest;
 
     @Mock
     private VdsManager vdsManager;
 
-    @Rule
-    public final MockConfigRule mcr = new MockConfigRule(
-        MockConfigDescriptor.of(ConfigValues.VdsRefreshRate, 2L),
-        MockConfigDescriptor.of(ConfigValues.NumberVmRefreshesBeforeSave, 1)
-    );
-
-    @Parameterized.Parameters(name = "status {0} is monitoring needed - {1}")
-    public static Object[][] data() {
-        return new Object[][] {
-                // host status              is monitoring needed
-                { Up,                       true},
-                { NonResponsive,            true },
-                { Error,                    true },
-                { NonOperational,           true },
-                { PreparingForMaintenance,  true },
-                { Initializing,             true },
-                { Connecting,               true },
-                { Unassigned,               false },
-                { Down,                     false },
-                { Maintenance,              false },
-                { Installing,               false },
-                { InstallFailed,            false },
-                { Reboot,                   false },
-                { PendingApproval,          false },
-                { InstallingOS,             false },
-                { Kdumping,                 false },
-        };
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.VdsRefreshRate, 2L),
+                MockConfigDescriptor.of(ConfigValues.NumberVmRefreshesBeforeSave, 1)
+        );
     }
 
-    @Before
+    public static Stream<Arguments> monitoringNeededByStatus() {
+        return Stream.of(
+                // host status              is monitoring needed
+                Arguments.of(Up,                       true),
+                Arguments.of(NonResponsive,            true),
+                Arguments.of(Error,                    true),
+                Arguments.of(NonOperational,           true),
+                Arguments.of(PreparingForMaintenance,  true),
+                Arguments.of(Initializing,             true),
+                Arguments.of(Connecting,               true),
+                Arguments.of(Unassigned,               false),
+                Arguments.of(Down,                     false),
+                Arguments.of(Maintenance,              false),
+                Arguments.of(Installing,               false),
+                Arguments.of(InstallFailed,            false),
+                Arguments.of(Reboot,                   false),
+                Arguments.of(PendingApproval,          false),
+                Arguments.of(InstallingOS,             false),
+                Arguments.of(Kdumping,                 false)
+        );
+    }
+
+    @BeforeEach
     public void setup() {
         initMocks(this);
         underTest = spy(new PollVmStatsRefresher(vdsManager));
     }
 
-    @Test
-    public void testMonitoringNeededByStatus() {
+    @ParameterizedTest
+    @MethodSource
+    public void monitoringNeededByStatus(VDSStatus status, boolean monitoringNeeded) {
         assertEquals(underTest.isMonitoringNeeded(status), monitoringNeeded);
     }
 

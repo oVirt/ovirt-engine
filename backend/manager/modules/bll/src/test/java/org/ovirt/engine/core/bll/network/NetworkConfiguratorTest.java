@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll.network;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -17,16 +17,18 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator.NetworkConfiguratorException;
@@ -48,11 +50,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class NetworkConfiguratorTest {
 
     private static final String NETWORK_NAME1 = "networkName";
@@ -72,16 +76,16 @@ public class NetworkConfiguratorTest {
     private static final int MANAGMENT_NETWORK_VLAN_ID = 777;
     private static final String HOST_NAME = "host name";
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
-
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
             MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v3_6, false),
-            MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v4_0, true));
+            MockConfigDescriptor.of(ConfigValues.Ipv6Supported, Version.v4_0, true)
+        );
+    }
 
     @Mock
-    private ManagementNetworkUtil mockManagementNetworkUtil;
+    @InjectedMock
+    public ManagementNetworkUtil mockManagementNetworkUtil;
 
     @Mock
     private BackendInternal backend;
@@ -96,10 +100,8 @@ public class NetworkConfiguratorTest {
 
     private NetworkConfigurator underTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        injectorRule.bind(ManagementNetworkUtil.class, mockManagementNetworkUtil);
-
         managementNetwork.setId(MANAGEMENT_NETWORK_ID);
         managementNetwork.setName(MANAGEMENT_NETWORK_NAME);
         when(mockManagementNetworkUtil.getManagementNetwork(CLUSTER_ID)).thenReturn(managementNetwork);

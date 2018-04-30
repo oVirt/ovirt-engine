@@ -1,24 +1,38 @@
 package org.ovirt.engine.core.extensions.mgr;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ConfigurationTest {
-    @Rule
-    public TemporaryFolder tmp = new TemporaryFolder();
+    private File temporaryFolder;
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @BeforeEach
+    public void createTemporaryFolder() throws IOException {
+        temporaryFolder = File.createTempFile("configurationTest", "", null);
+        temporaryFolder.delete();
+        temporaryFolder.mkdir();
+        temporaryFolder.deleteOnExit();
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @AfterEach
+    public void removeTemporaryFolder() {
+        temporaryFolder.delete();
+    }
 
     /**
      * Check that retrieving a parameter works as expected.
@@ -436,7 +450,7 @@ public class ConfigurationTest {
      * @throws IOException if something fails while writing the file
      */
     public File writeConf(String... lines) throws IOException {
-        File file = tmp.newFile("tmp.conf");
+        File file = new File(temporaryFolder, "tmp.conf");
         try (PrintWriter writer = new PrintWriter(file, "UTF-8")) {
             for (String line : lines) {
                 writer.println(line);

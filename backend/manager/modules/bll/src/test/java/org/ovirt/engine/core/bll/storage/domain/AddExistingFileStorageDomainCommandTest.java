@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -10,12 +10,14 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -32,8 +34,10 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
 
     private StorageDomainManagementParameter parameters = new StorageDomainManagementParameter(getStorageDomain());
@@ -42,9 +46,6 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
     @InjectMocks
     private AddExistingFileStorageDomainCommand<StorageDomainManagementParameter> command =
             new AddExistingFileStorageDomainCommand<>(parameters, null);
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
 
     @Mock
     private VdsDao vdsDao;
@@ -55,7 +56,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
     @Mock
     private StorageDomainStaticDao storageDomainStaticDao;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         command.setStoragePool(getStoragePool());
 

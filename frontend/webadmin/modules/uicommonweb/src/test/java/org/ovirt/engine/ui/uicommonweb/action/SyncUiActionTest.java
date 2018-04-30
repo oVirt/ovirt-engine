@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.action;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -9,11 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
-@RunWith(MockitoJUnitRunner.class)
 public class SyncUiActionTest extends UiActionBaseTest {
 
     @Test
@@ -94,7 +92,7 @@ public class SyncUiActionTest extends UiActionBaseTest {
         assertFinishedWithNoErrors(Collections.singletonList(action), false);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void duplicateFinalAction() {
         UiAction action1 = createAction();
         UiAction action2 = createAction();
@@ -104,7 +102,7 @@ public class SyncUiActionTest extends UiActionBaseTest {
         action2.onAllExecutionsFinish(finalAction);
 
         action1.then(action2);
-        action1.runAction();
+        assertThrows(UnsupportedOperationException.class, action1::runAction);
     }
 
     private SimpleAction createFinalAction(final List<UiAction> actions) {

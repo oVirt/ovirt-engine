@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.branding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,20 +19,20 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 public class BrandingManagerTest {
     BrandingManager testManager;
 
-    @BeforeClass
+    @BeforeAll
     public static void setLocale() {
         Locale.setDefault(LocaleFilter.DEFAULT_LOCALE);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         File etcDir = new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/core").toURI().getPath()); //$NON-NLS-1$
@@ -42,25 +42,25 @@ public class BrandingManagerTest {
     @Test
     public void testGetBrandingThemes() {
         List<BrandingTheme> result = testManager.getBrandingThemes();
-        assertNotNull("There should be a result", result); //$NON-NLS-1$
-        assertEquals("There should be five active themes", 5, result.size()); //$NON-NLS-1$
+        assertNotNull(result, "There should be a result"); //$NON-NLS-1$
+        assertEquals(5, result.size(), "There should be five active themes"); //$NON-NLS-1$
         List<BrandingTheme> result2 = testManager.getBrandingThemes();
-        assertNotNull("There should be a result", result2); //$NON-NLS-1$
-        assertEquals("There should be five active themes", 5, result2.size()); //$NON-NLS-1$
+        assertNotNull(result2, "There should be a result"); //$NON-NLS-1$
+        assertEquals(5, result2.size(), "There should be five active themes"); //$NON-NLS-1$
         // The second result should be the exact same object as the first one.
-        assertSame("The result are not the same object", result, result2); //$NON-NLS-1$
+        assertSame(result, result2, "The result are not the same object"); //$NON-NLS-1$
     }
 
     @Test
     public void testGetMessages() throws JsonParseException, IOException {
         String result = testManager.getMessages("webadmin", Locale.US);
-        assertNotNull("There should be a result", result); //$NON-NLS-1$
+        assertNotNull(result, "There should be a result"); //$NON-NLS-1$
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getJsonFactory();
         JsonParser parser = factory.createJsonParser(result);
         JsonNode resultNode = mapper.readTree(parser);
         // There should be 6 key value pairs (2 from webadmin, 4 common)
-        assertEquals("Size should be 6", 6, resultNode.size()); //$NON-NLS-1$
+        assertEquals(6, resultNode.size(), "Size should be 6"); //$NON-NLS-1$
         assertEquals("Web Admin", resultNode.get("application_title").getTextValue()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -68,46 +68,46 @@ public class BrandingManagerTest {
     public void testGetMessagesFromMap() {
         Map<String, String> input = new HashMap<>();
         String result = testManager.getMessagesFromMap(input);
-        assertNull("There should be no result", result); //$NON-NLS-1$
+        assertNull(result, "There should be no result"); //$NON-NLS-1$
         input.put("key1", "value1"); //$NON-NLS-1$ //$NON-NLS-2$
         result = testManager.getMessagesFromMap(input);
-        assertNotNull("There should be a result", result); //$NON-NLS-1$
-        assertEquals("String doesn't match", "{\"key1\":\"value1\"}", result); //$NON-NLS-1$ //$NON-NLS-2$
+        assertNotNull(result, "There should be a result"); //$NON-NLS-1$
+        assertEquals("{\"key1\":\"value1\"}", result, "String doesn't match"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
     public void testGetBrandingRootPath() throws URISyntaxException {
         String rootPath = this.getClass().getClassLoader().
             getResource("./org/ovirt/engine/core/").toURI().getPath() + "/branding"; //$NON-NLS-1$ //$NON-NLS-2$
-        assertEquals("Root paths don't match", new File(rootPath), testManager.getBrandingRootPath()); //$NON-NLS-1$
+        assertEquals(new File(rootPath), testManager.getBrandingRootPath(), "Root paths don't match"); //$NON-NLS-1$
     }
 
     @Test
     public void testGetMessageDefaultLocale() {
         String testKey = "obrand.common.main_header_label";
         String result = testManager.getMessage(testKey);
-        assertEquals("The result should be 'Main header'", "Main header", result);
+        assertEquals("Main header", result, "The result should be 'Main header'");
     }
 
     @Test
     public void testGetMessageBadKey() {
         String testKey = "obrandcommonmain_header_label";
         String result = testManager.getMessage(testKey);
-        assertEquals("The result should be a blank string", "", result);
+        assertEquals("", result, "The result should be a blank string");
     }
 
     @Test
     public void testGetMessageNullKey() {
         String testKey = null;
         String result = testManager.getMessage(testKey);
-        assertEquals("The result should be a blank string", "", result);
+        assertEquals("", result, "The result should be a blank string");
     }
 
     @Test
     public void testGetMessageFrenchLocale() {
         String testKey = "obrand.common.main_header_label";
         String result = testManager.getMessage(testKey, Locale.FRENCH);
-        assertEquals("The result should be 'Main header(fr)'", "Main header(fr)", result);
+        assertEquals("Main header(fr)", result, "The result should be 'Main header(fr)'");
     }
 
     /**
@@ -121,11 +121,11 @@ public class BrandingManagerTest {
         // resources for this are hardcoded in test/resources.
         // brands  5, 4, 3 have no icon, brands 1 and 2 do. Should retrieve highest brand's (existing)
         // favicon (so, 2)
-        assertNotNull("Should have found test brand 2's resource",
-                testManager.getCascadingResource("favicon"));
-        assertTrue("Should have found test brand 2's resource",
+        assertNotNull(
+                testManager.getCascadingResource("favicon"), "Should have found test brand 2's resource");
+        assertTrue(
                 testManager.getCascadingResource("favicon").getFile().getAbsolutePath()
-                .contains("02-test2.brand"));
+                .contains("02-test2.brand"), "Should have found test brand 2's resource");
     }
 
     /**
@@ -134,8 +134,9 @@ public class BrandingManagerTest {
     @Test
     public void testGetCascadedResourceNotDefinedNotFound() {
         // resources for this are hardcoded in test/resources.
-        assertNull("getCascadedResource should have returned null",
-                testManager.getCascadingResource("i_am_not_in_branding_properties")); // not in any theme
+        assertNull(
+                testManager.getCascadingResource("i_am_not_in_branding_properties"),
+                "getCascadedResource should have returned null"); // not in any theme
     }
 
     /**
@@ -144,8 +145,8 @@ public class BrandingManagerTest {
     @Test
     public void testGetCascadedResourceDefinedButNotFound() {
         // resources for this are hardcoded in test/resources.
-        assertNull("getCascadedResource should have returned null",
-                testManager.getCascadingResource("doesnt_exist")); // exists is themes 1 and 2, but file is missing
+        assertNull(
+                testManager.getCascadingResource("doesnt_exist"), "getCascadedResource should have returned null"); // exists is themes 1 and 2, but file is missing
     }
 
 }

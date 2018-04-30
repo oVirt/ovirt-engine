@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
@@ -14,13 +14,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -45,8 +48,10 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateStoragePoolCommandTest extends BaseCommandTest {
 
     private static final Version VERSION_1_0 = new Version(1, 0);
@@ -58,12 +63,13 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     private static final Guid DEFAULT_CLUSTER_ID = Guid.newGuid();
     private static final Guid NON_DEFAULT_CLUSTER_ID = Guid.newGuid();
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID),
-            MockConfigDescriptor.of(ConfigValues.StoragePoolNameSizeLimit, 10),
-            MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, SUPPORTED_VERSIONS)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID),
+                MockConfigDescriptor.of(ConfigValues.StoragePoolNameSizeLimit, 10),
+                MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, SUPPORTED_VERSIONS)
+        );
+    }
 
     @Spy
     @InjectMocks
@@ -85,7 +91,7 @@ public class UpdateStoragePoolCommandTest extends BaseCommandTest {
     @Mock
     private StoragePoolValidator poolValidator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(spDao.get(any())).thenReturn(createStoragePool());
         when(clusterDao.getAllForStoragePool(any())).thenReturn(createClusterList());

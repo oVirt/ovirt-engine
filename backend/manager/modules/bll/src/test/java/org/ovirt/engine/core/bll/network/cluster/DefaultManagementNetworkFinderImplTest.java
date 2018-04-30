@@ -1,23 +1,23 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Predicate;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DefaultManagementNetworkFinderImplTest {
 
     private static final String DEFAULT_ENGINE_NETWORK_NAME = "test";
@@ -37,7 +37,7 @@ public class DefaultManagementNetworkFinderImplTest {
 
     private DefaultManagementNetworkFinderImpl underTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         underTest = new DefaultManagementNetworkFinderImpl(
                 mockNetworkDao,

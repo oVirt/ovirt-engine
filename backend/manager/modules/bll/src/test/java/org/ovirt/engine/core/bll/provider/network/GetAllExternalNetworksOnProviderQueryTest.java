@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.provider.network;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -10,11 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -26,7 +24,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
-@RunWith(MockitoJUnitRunner.class)
 public class GetAllExternalNetworksOnProviderQueryTest
         extends AbstractQueryTest<IdQueryParameters, GetAllExternalNetworksOnProviderQuery<IdQueryParameters>> {
 
@@ -70,6 +67,6 @@ public class GetAllExternalNetworksOnProviderQueryTest
         query = getQuery();
         query.executeQueryCommand();
 
-        assertEquals("Wrong result returned", expected, getQuery().getQueryReturnValue().getReturnValue());
+        assertEquals(expected, getQuery().getQueryReturnValue().getReturnValue(), "Wrong result returned");
     }
 }

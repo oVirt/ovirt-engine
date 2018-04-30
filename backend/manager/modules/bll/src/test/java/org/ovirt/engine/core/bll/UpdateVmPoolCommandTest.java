@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
 
     @Override

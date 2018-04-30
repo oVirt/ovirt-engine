@@ -1,25 +1,27 @@
 package org.ovirt.engine.core.bll.utils;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
+import java.util.stream.Stream;
 
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public class VersionSupportTest {
 
     private static final Version VALID_VERSION = new Version(1, 0);
 
-    @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, Collections.singleton(VALID_VERSION))
-            );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
+                Collections.singleton(VALID_VERSION)));
+    }
 
     @Test
     public void nullVersion() {

@@ -1,18 +1,18 @@
 package org.ovirt.engine.core.searchbackend;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DateEnumValueAutoCompleterTest {
     private DateEnumValueAutoCompleter comp;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         comp = new DateEnumValueAutoCompleter(Jedi.class);
     }
@@ -21,8 +21,8 @@ public class DateEnumValueAutoCompleterTest {
     @Test
     public void testValues() {
         List<String> comps = Arrays.asList(comp.getCompletion(" "));
-        assertTrue("Monday", comps.contains("Monday") || comps.contains("Tuesday"));
-        assertTrue("mace", comps.contains("mace"));
+        assertTrue(comps.contains("Monday") || comps.contains("Tuesday"), "Monday");
+        assertTrue(comps.contains("mace"), "mace");
     }
 
     @Test
@@ -30,21 +30,21 @@ public class DateEnumValueAutoCompleterTest {
         // Dates should return dates
         String test = "01/20/1972";
         String expected = test;
-        assertEquals(test, expected, comp.convertFieldEnumValueToActualValue(test));
+        assertEquals(expected, comp.convertFieldEnumValueToActualValue(test), test);
 
         // Days of the week should not change the value
         test = "Monday";
         expected = test;
-        assertEquals(test, expected, comp.convertFieldEnumValueToActualValue(test));
+        assertEquals(expected, comp.convertFieldEnumValueToActualValue(test), test);
 
         // Check Caps
         test = "mOnday";
         expected = "Monday";
-        assertEquals(test, expected, comp.convertFieldEnumValueToActualValue(test));
+        assertEquals(expected, comp.convertFieldEnumValueToActualValue(test), test);
 
         // Check the other enum
         test = "MACE";
         expected = "4";
-        assertEquals(test, expected, comp.convertFieldEnumValueToActualValue(test));
+        assertEquals(expected, comp.convertFieldEnumValueToActualValue(test), test);
     }
 }

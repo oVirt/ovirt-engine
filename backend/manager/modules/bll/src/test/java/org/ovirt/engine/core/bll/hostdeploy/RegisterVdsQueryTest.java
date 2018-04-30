@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 
@@ -19,7 +19,7 @@ public class RegisterVdsQueryTest extends AbstractUserQueryTest<RegisterVdsParam
     @Test
     public void testGetStrippedVdsUniqueIdWithUnacceptedChars() {
         String result = this.gerStrippedVdsUniqueId("Test_123");
-        assertEquals("Vds id doesn't equal to the expected value", "Test_123", result);
+        assertEquals("Test_123", result, "Vds id doesn't equal to the expected value");
     }
 
     /**
@@ -29,7 +29,7 @@ public class RegisterVdsQueryTest extends AbstractUserQueryTest<RegisterVdsParam
     @Test
     public void testGetStrippedVdsUniqueIdOnlyAllowrdChars() {
         String result = this.gerStrippedVdsUniqueId("Test_123");
-        assertEquals("Vds id doesn't equal to the expected value", "Test_123", result);
+        assertEquals("Test_123", result, "Vds id doesn't equal to the expected value");
     }
 
     /**
@@ -39,7 +39,7 @@ public class RegisterVdsQueryTest extends AbstractUserQueryTest<RegisterVdsParam
     @Test
     public void testGetStrippedVdsUniqueIdWithoutValidChars() {
         String result = this.gerStrippedVdsUniqueId("^%^");
-        assertEquals("Vds id is not empty as expected", "", result);
+        assertEquals("", result, "Vds id is not empty as expected");
     }
 
     private String gerStrippedVdsUniqueId(String vdsId) {

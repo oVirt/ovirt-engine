@@ -1,19 +1,22 @@
 package org.ovirt.engine.core.bll.pm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.OngoingStubbing;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -24,17 +27,19 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Sta
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SingleAgentFenceActionExecutorTest {
-    @ClassRule
-    public static MockConfigRule configRule =
-            new MockConfigRule(
-                    MockConfigDescriptor.of(ConfigValues.FenceStartStatusRetries, 1),
-                    MockConfigDescriptor.of(ConfigValues.FenceStopStatusRetries, 1),
-                    MockConfigDescriptor.of(ConfigValues.FenceStartStatusDelayBetweenRetriesInSec, 0),
-                    MockConfigDescriptor.of(ConfigValues.FenceStopStatusDelayBetweenRetriesInSec, 0));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.FenceStartStatusRetries, 1),
+                MockConfigDescriptor.of(ConfigValues.FenceStopStatusRetries, 1),
+                MockConfigDescriptor.of(ConfigValues.FenceStartStatusDelayBetweenRetriesInSec, 0),
+                MockConfigDescriptor.of(ConfigValues.FenceStopStatusDelayBetweenRetriesInSec, 0)
+        );
+    }
 
     @Mock
     FenceAgentExecutor fenceAgentExecutor;
@@ -47,7 +52,7 @@ public class SingleAgentFenceActionExecutorTest {
 
     private SingleAgentFenceActionExecutor executor;
 
-    @Before
+    @BeforeEach
     public void setup() {
         executor = spy(new SingleAgentFenceActionExecutor(fencedHost, fenceAgent, new FencingPolicy()));
         doReturn(fenceAgentExecutor).when(executor).createAgentExecutor();

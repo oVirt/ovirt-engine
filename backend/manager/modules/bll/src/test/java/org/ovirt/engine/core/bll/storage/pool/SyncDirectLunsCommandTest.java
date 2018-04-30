@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -11,13 +11,15 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
@@ -29,7 +31,8 @@ import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class SyncDirectLunsCommandTest {
 
     @Mock
@@ -54,7 +57,7 @@ public class SyncDirectLunsCommandTest {
     private SyncDirectLunsCommand<SyncDirectLunsParameters> command =
             new SyncDirectLunsCommand<>(new SyncDirectLunsParameters(), null);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         lun1 = new LUNs();
         lun1.setLUNId("lun1");

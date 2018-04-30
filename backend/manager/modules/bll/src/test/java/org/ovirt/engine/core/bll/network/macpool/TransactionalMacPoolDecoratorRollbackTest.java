@@ -19,27 +19,25 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
 public class TransactionalMacPoolDecoratorRollbackTest {
-    @ClassRule
-    public static InjectorRule injectorRule = new InjectorRule();
-
     @Mock
     private LockedObjectFactory lockedObjectFactory;
 
     @Mock
-    private TransactionManager transactionManager;
+    @InjectedMock
+    public TransactionManager transactionManager;
 
     @Mock
     private MacPool sourceMacPool;
@@ -54,7 +52,6 @@ public class TransactionalMacPoolDecoratorRollbackTest {
 
     @Test
     public void testUnsuccessfulMigrationRevertsToOriginalState() throws Exception {
-        injectorRule.bind(TransactionManager.class, transactionManager);
         when(transactionManager.getTransaction()).thenReturn(transaction);
         mockLockObjectFactoryToDisableLocking();
         mockThatDuringAddingToTargetPoolOnlyFirstMacWillBeAdded();

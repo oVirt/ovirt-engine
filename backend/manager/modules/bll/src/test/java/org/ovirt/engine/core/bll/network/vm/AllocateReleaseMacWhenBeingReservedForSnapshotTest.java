@@ -4,9 +4,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 
+@ExtendWith(MockitoExtension.class)
 public abstract class AllocateReleaseMacWhenBeingReservedForSnapshotTest {
     private static final CommandContext CMD_CONTEXT = new CommandContext(new EngineContext());
     private static final Guid CLUSTER_ID = Guid.newGuid();
@@ -58,7 +61,7 @@ public abstract class AllocateReleaseMacWhenBeingReservedForSnapshotTest {
     @InjectMocks
     UpdateVmInterfaceCommand underTest = new UpdateVmInterfaceCommand<>(parameters, CMD_CONTEXT);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         underTest.setClusterId(CLUSTER_ID);
 

@@ -16,13 +16,15 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
@@ -31,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageT
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendOpenStackVolumeAuthenticationKeysResourceTest extends
         AbstractBackendCollectionResourceTest<OpenstackVolumeAuthenticationKey, LibvirtSecret, BackendOpenStackVolumeAuthenticationKeysResource> {
     public BackendOpenStackVolumeAuthenticationKeysResourceTest() {

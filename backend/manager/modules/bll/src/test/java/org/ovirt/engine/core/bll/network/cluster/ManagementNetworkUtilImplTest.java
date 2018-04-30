@@ -1,23 +1,25 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
@@ -26,9 +28,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ManagementNetworkUtilImplTest {
 
     private static final String TEST_NETWORK_NAME = "test network name";
@@ -49,14 +52,11 @@ public class ManagementNetworkUtilImplTest {
     @Mock
     private NetworkCluster mockNetworkCluster;
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.DefaultManagementNetwork, TEST_NETWORK_NAME));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.DefaultManagementNetwork, TEST_NETWORK_NAME));
+    }
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     public void setUp() {
         underTest = new ManagementNetworkUtilImpl(mockNetworkDao, mockNetworkClusterDao);
     }
@@ -185,9 +185,9 @@ public class ManagementNetworkUtilImplTest {
         List<Network> networks = Arrays.asList(createNetwork(false, "a"), createNetwork(false, "b"));
         Guid clusterId = Guid.newGuid();
 
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(underTest.createFailureMessage(clusterId, networks));
-        underTest.getManagementNetwork(networks, clusterId);
+        IllegalStateException e =
+                assertThrows(IllegalStateException.class, () -> underTest.getManagementNetwork(networks, clusterId));
+        assertEquals(underTest.createFailureMessage(clusterId, networks), e.getMessage());
     }
 
     @Test
@@ -195,9 +195,9 @@ public class ManagementNetworkUtilImplTest {
         List<Network> networks = Arrays.asList(createNetwork(true, "a"), createNetwork(true, "b"));
 
         Guid clusterId = Guid.newGuid();
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage(underTest.createFailureMessage(clusterId, networks));
-        underTest.getManagementNetwork(networks, clusterId);
+        IllegalStateException e =
+                assertThrows(IllegalStateException.class, () -> underTest.getManagementNetwork(networks, clusterId));
+        assertEquals(underTest.createFailureMessage(clusterId, networks), e.getMessage());
     }
 
     @Test

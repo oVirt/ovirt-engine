@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 
 /**
  * Useful matchers to use when testing {@link ValidationResult}s, using the
- * {@link org.junit.Assert#assertThat(Object, Matcher)} (or equivalent) method.<br>
+ * {@link org.hamcrest.MatcherAssert#assertThat(Object, Matcher)} (or equivalent) method.<br>
  * These matchers are best used when imported statically.<br>
  * <br>
  * A couple of examples:<br>
@@ -47,7 +47,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
  *                 .and(<b>failsWith</b>(<i>EngineMessage.EXPECTED_ERROR_MESSAGE</i>)));
  * </pre>
  *
- * @see org.junit.Assert#assertThat(Object, Matcher)
+ * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
  * @see org.hamcrest.CoreMatchers
  */
 public class ValidationResultMatchers {

@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
@@ -35,7 +35,7 @@ public class GetClustersWithPermittedActionQueryTest
 
         @SuppressWarnings("unchecked")
         List<Cluster> actual = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals("Wrong number of VDS Groups", 1, actual.size());
-        assertEquals("Wrong VDS Groups", expected, actual.get(0));
+        assertEquals(1, actual.size(), "Wrong number of VDS Groups");
+        assertEquals(expected, actual.get(0), "Wrong VDS Groups");
     }
 }

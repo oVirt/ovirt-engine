@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CommandsFactoryTest {
 
@@ -13,6 +13,6 @@ public class CommandsFactoryTest {
         String[] commandPackages = CommandsFactory.getCommandPackages();
         String[] sortedCommandPackages = commandPackages.clone();
         Arrays.sort(sortedCommandPackages);
-        assertArrayEquals("The command packages are not sorted.", sortedCommandPackages, commandPackages);
+        assertArrayEquals(sortedCommandPackages, commandPackages, "The command packages are not sorted.");
     }
 }

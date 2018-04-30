@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.frontend;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
@@ -16,14 +16,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -49,7 +51,8 @@ import com.google.gwt.user.client.rpc.StatusCodeException;
 import com.google.gwt.user.client.rpc.XsrfToken;
 import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FrontendTest {
 
     private static final int RETRY_COUNT = 5;
@@ -98,7 +101,7 @@ public class FrontendTest {
     @Captor
     ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback> callbackMultipleQueries;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
         fakeScheduler = new FakeGWTScheduler();
@@ -118,7 +121,7 @@ public class FrontendTest {
         when(mockAsyncQuery.getAsyncCallback()).thenReturn(mockAsyncCallback);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         // Make sure that the query start has been called at least once.
         // Some of the tests might call it more than once.
@@ -566,9 +569,9 @@ public class FrontendTest {
         }
         ArgumentCaptor<FrontendFailureEventArgs> eventArgs = ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), eventArgs.capture());
-        assertEquals("Message text didn't match", //$NON-NLS-1$
-                "A Request to the Server failed with the following Status Code: 404", //$NON-NLS-1$
-                eventArgs.getValue().getMessages().get(0).getText());
+        assertEquals("A Request to the Server failed with the following Status Code: 404", //$NON-NLS-1$
+                eventArgs.getValue().getMessages().get(0).getText(),
+                "Message text didn't match"); //$NON-NLS-1$
         verifyAsyncQueryFailed();
     }
 
@@ -605,8 +608,7 @@ public class FrontendTest {
                 ArgumentCaptor.forClass(FrontendMultipleQueryAsyncResult.class);
         callbackMultipleQueries.getValue().onSuccess((ArrayList<QueryReturnValue>) result);
         verify(mockMultipleQueryCallback).executed(multipleResultCaptor.capture());
-        assertEquals("callback result much match", result, //$NON-NLS-1$
-                multipleResultCaptor.getValue().getReturnValues());
+        assertEquals(result, multipleResultCaptor.getValue().getReturnValues(), "callback result much match"); //$NON-NLS-1$
         verifyAsyncQuerySucceeded();
     }
 
@@ -642,8 +644,7 @@ public class FrontendTest {
                 ArgumentCaptor.forClass(FrontendMultipleQueryAsyncResult.class);
         callbackMultipleQueries.getValue().onSuccess((ArrayList<QueryReturnValue>) result);
         verify(mockMultipleQueryCallback).executed(multipleResultCaptor.capture());
-        assertEquals("callback result much match", result, //$NON-NLS-1$
-                multipleResultCaptor.getValue().getReturnValues());
+        assertEquals(result, multipleResultCaptor.getValue().getReturnValues(), "callback result much match"); //$NON-NLS-1$
         verifyAsyncQuerySucceeded();
     }
 

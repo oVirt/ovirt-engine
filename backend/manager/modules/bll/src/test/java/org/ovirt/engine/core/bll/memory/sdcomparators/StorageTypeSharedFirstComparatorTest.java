@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.memory.sdcomparators;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 

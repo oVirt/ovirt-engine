@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -11,11 +12,11 @@ import java.util.Map;
 
 import javax.naming.AuthenticationException;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameter
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<GlusterServersQueryParameters, GetGlusterServersForImportQuery<GlusterServersQueryParameters>> {
     private static final String SERVER_NAME1 = "testserver1";
     private static final String SERVER_NAME2 = "testserver2";
@@ -42,10 +44,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     @Mock
     private GlusterUtil glusterUtil;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -90,22 +89,22 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     @Test
     public void testQueryFailsIfServerExists() {
         mockQueryParameters(EXISTING_SERVER, PASSWORD);
-        expectedException.expectMessage(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
-        getQuery().executeQueryCommand();
+        Exception e = assertThrows(Exception.class, () -> getQuery().executeQueryCommand());
+        assertEquals(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString(), e.getMessage());
     }
 
     @Test
     public void testQueryFailsIfPeerExists() {
         mockQueryParameters(NEW_SERVER, PASSWORD);
         doReturn(getVdsStatic()).when(vdsStaticDao).getByHostName(SERVER_NAME1);
-        expectedException.expectMessage(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
-        getQuery().executeQueryCommand();
+        Exception e = assertThrows(Exception.class, () -> getQuery().executeQueryCommand());
+        assertEquals(EngineMessage.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString(), e.getMessage());
     }
 
     @Test
     public void testQueryFailsIfWrongPassword() {
         mockQueryParameters(NEW_SERVER, WRONG_PASSWORD);
-        expectedException.expectMessage(EngineMessage.SSH_AUTHENTICATION_FAILED.toString());
-        getQuery().executeQueryCommand();
+        Exception e = assertThrows(Exception.class, () -> getQuery().executeQueryCommand());
+        assertEquals(EngineMessage.SSH_AUTHENTICATION_FAILED.toString(), e.getMessage());
     }
 }

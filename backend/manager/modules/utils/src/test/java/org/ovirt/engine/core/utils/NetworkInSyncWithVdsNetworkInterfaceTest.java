@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.utils;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,11 +12,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -36,7 +35,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.compat.Version;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 public class NetworkInSyncWithVdsNetworkInterfaceTest {
 
     private static final int DEFAULT_MTU_VALUE = 1500;
@@ -69,14 +68,15 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     private DnsResolverConfiguration sampleDnsResolverConfiguration2;
     private DnsResolverConfiguration sampleDnsResolverConfigurationWithReversedNameServers;
 
-    @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500),
-            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500),
+                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
+                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false)
+        );
+    }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         sampleDnsResolverConfiguration = new DnsResolverConfiguration();
         sampleDnsResolverConfiguration.setNameServers(Arrays.asList(

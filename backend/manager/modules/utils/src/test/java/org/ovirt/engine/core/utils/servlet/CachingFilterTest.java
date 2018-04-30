@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.utils.servlet;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -22,15 +22,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CachingFilterTest {
     private static final String GMT = "GMT"; //$NON-NLS-1$
 
@@ -51,7 +54,7 @@ public class CachingFilterTest {
 
     private CachingFilter testFilter;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         testFilter = new CachingFilter();
         when(mockConfig.getInitParameter(CachingFilter.CACHE_INIT_PARAM)).thenReturn(".*\\.cache\\..*|.*\\/theme(-resource)?\\/.*|.*\\.(css|gif|png|favicon|js|ttf|woff|woff2)(\\?.*)?"); //$NON-NLS-1$

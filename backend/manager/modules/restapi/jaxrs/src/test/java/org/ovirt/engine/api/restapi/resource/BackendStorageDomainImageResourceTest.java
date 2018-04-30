@@ -1,11 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -19,7 +21,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainImageResourceTest extends AbstractBackendSubResourceTest<Image, RepoImage, BackendStorageDomainImageResource> {
 
     protected static final Guid DOMAIN_ID = GUIDS[0];

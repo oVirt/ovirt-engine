@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.validator.network;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.ReplacementUtils.createSetVariableString;
@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.IpV6Address;
@@ -32,7 +32,7 @@ public class NetworkAttachmentIpConfigurationValidatorTest {
     private List<NetworkAttachment> networkAttachments;
     private Random random = new Random();
 
-    @Before
+    @BeforeEach
     public void init() {
         NetworkAttachment networkAttachment = new NetworkAttachment();
         networkAttachment.setNetworkName(NETWORK_NAME);

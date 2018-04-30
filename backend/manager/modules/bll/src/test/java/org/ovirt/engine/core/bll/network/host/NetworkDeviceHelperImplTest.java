@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -22,13 +23,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
@@ -40,7 +43,8 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class NetworkDeviceHelperImplTest {
 
     private static final String NIC_NAME = RandomUtils.instance().nextString(5);
@@ -79,7 +83,7 @@ public class NetworkDeviceHelperImplTest {
     private ArgumentCaptor<Guid> vmIdCaptor;
     private NetworkDeviceHelperImpl networkDeviceHelper;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         networkDeviceHelper = new NetworkDeviceHelperImpl(interfaceDao, hostDeviceDao, hostNicVfsConfigDao);
 
@@ -230,10 +234,10 @@ public class NetworkDeviceHelperImplTest {
         when(hostDeviceDao.getAll()).thenReturn(devices);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void areAllVfsFreeNotSriovNic() {
         commonIsSriovDevice(false);
-        networkDeviceHelper.areAllVfsFree(nic);
+        assertThrows(UnsupportedOperationException.class, () -> networkDeviceHelper.areAllVfsFree(nic));
     }
 
     @Test
@@ -339,10 +343,10 @@ public class NetworkDeviceHelperImplTest {
         return freeVfs;
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void getFreeVfNotSriovNic() {
         commonIsSriovDevice(false);
-        networkDeviceHelper.getFreeVf(nic, null);
+        assertThrows(UnsupportedOperationException.class, () -> networkDeviceHelper.getFreeVf(nic, null));
     }
 
     @Test

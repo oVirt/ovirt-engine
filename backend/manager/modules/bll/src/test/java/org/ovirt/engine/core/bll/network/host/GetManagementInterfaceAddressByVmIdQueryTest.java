@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -43,6 +43,6 @@ public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQu
 
         String result = getQuery().getQueryReturnValue().getReturnValue();
 
-        assertEquals("Wrong address returned", "my_address", result);
+        assertEquals("my_address", result, "Wrong address returned");
     }
 }

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doAnswer;
@@ -15,12 +15,15 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -56,8 +59,10 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     private final Guid diskImageGuid = Guid.newGuid();
@@ -65,10 +70,12 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private final Guid SRC_STORAGE_ID = Guid.newGuid();
     private final VmDevice vmDevice = new VmDevice();
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
             MockConfigDescriptor.of(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_1, false),
-            MockConfigDescriptor.of(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_2, true));
+            MockConfigDescriptor.of(ConfigValues.MemoryDisksOnDifferentDomainsSupported, Version.v4_2, true)
+        );
+    }
 
     @Mock
     private DiskDao diskDao;

@@ -1,17 +1,19 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainImagesResourceTest extends AbstractBackendCollectionResourceTest<Image, RepoImage, BackendStorageDomainImagesResource> {
 
     public BackendStorageDomainImagesResourceTest() {
@@ -41,7 +44,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testQuery() {
     }
 
@@ -114,7 +117,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
         Fault fault = (Fault) wae.getResponse().getEntity();
         assertEquals(reason, fault.getReason());
         assertNotNull(fault.getDetail());
-        assertTrue("expected detail to include: " + t.getMessage(), fault.getDetail().contains(t.getMessage()));
+        assertTrue(fault.getDetail().contains(t.getMessage()), "expected detail to include: " + t.getMessage());
     }
 
     protected void setUpEntityQueryExpectations(String failure) {

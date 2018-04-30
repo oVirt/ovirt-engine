@@ -1,11 +1,12 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.DisplayDisconnectAction;
@@ -27,6 +28,7 @@ public class TemplateMapperTest
         super(Template.class, VmTemplate.class, VmTemplate.class);
     }
 
+    @BeforeEach
     @Override
     public void setUp() {
         super.setUp();

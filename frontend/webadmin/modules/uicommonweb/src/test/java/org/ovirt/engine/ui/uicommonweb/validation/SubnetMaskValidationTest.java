@@ -1,27 +1,21 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import java.util.Random;
+import java.util.stream.Stream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.common.validation.MaskValidator;
 
-@RunWith(Parameterized.class)
 public class SubnetMaskValidationTest {
-    @Parameterized.Parameter(0)
-    public String mask;
-    @Parameterized.Parameter(1)
-    public boolean isMaskValid;
-    @Parameterized.Parameter(2)
-    public boolean isPrefixAllowed;
-
     private SubnetMaskValidation createUnderTest(boolean isPrefixAllowed) {
         SubnetMaskValidation underTest = spy(new SubnetMaskValidation(isPrefixAllowed));
         doReturn(ErrorMessage.invalidMask.name()).when(underTest).getInvalidMask();
@@ -30,10 +24,11 @@ public class SubnetMaskValidationTest {
         return underTest;
     }
 
-    @Test
-    public void checkValidMask() {
+    @ParameterizedTest
+    @MethodSource
+    public void checkValidMask(String mask, boolean isMaskValid, boolean isPrefixAllowed) {
         SubnetMaskValidation underTest = createUnderTest(isPrefixAllowed);
-        assertEquals("Failed to validate mask: " + mask, isMaskValid, underTest.validate(mask).getSuccess());//$NON-NLS-1$
+        assertEquals(isMaskValid, underTest.validate(mask).getSuccess(), "Failed to validate mask: " + mask);//$NON-NLS-1$
     }
 
     @Test
@@ -76,10 +71,10 @@ public class SubnetMaskValidationTest {
                         isPrefixValid);
 
         if (actualResult.getSuccess()) {
-            assertEquals(exceptionMessage,
-                    isNetmaskValidValue || isPrefixAllowed && isPrefixValid, actualResult.getReasons().isEmpty());//$NON-NLS-1$
+            assertEquals(isNetmaskValidValue || isPrefixAllowed && isPrefixValid, actualResult.getReasons().isEmpty(),
+                    exceptionMessage);
         } else {
-            assertEquals(exceptionMessage, errorType.name(), actualResult.getReasons().get(0));//$NON-NLS-1$
+            assertEquals(errorType.name(), actualResult.getReasons().get(0), exceptionMessage);
         }
 
     }
@@ -91,57 +86,55 @@ public class SubnetMaskValidationTest {
         invalidMask
     }
 
-    @Parameterized.Parameters
-    public static Object[][] namesParams() {
-        return new Object[][] {
-
+    public static Stream<Arguments> checkValidMask() {
+        return Stream.of(
                 // Bad Format
-                { null, false, true }, //$NON-NLS-1$
-                { "", false, true }, //$NON-NLS-1$
-                { "a.a.a.a", false, true }, //$NON-NLS-1$
-                { "255.255.0", false, true }, //$NON-NLS-1$
-                { "255.255.0.0.0", false, true }, //$NON-NLS-1$
-                { "255.255.0.0.", false, true }, //$NON-NLS-1$
+                Arguments.of(null, false, true), //$NON-NLS-1$
+                Arguments.of("", false, true), //$NON-NLS-1$
+                Arguments.of("a.a.a.a", false, true), //$NON-NLS-1$
+                Arguments.of("255.255.0", false, true), //$NON-NLS-1$
+                Arguments.of("255.255.0.0.0", false, true), //$NON-NLS-1$
+                Arguments.of("255.255.0.0.", false, true), //$NON-NLS-1$
 
-                { "31 ", false, true }, //$NON-NLS-1$ /* note extra space */
-                { "31 ", false, false }, //$NON-NLS-1$ /* note extra space */
-                { "/31 ", false, true }, //$NON-NLS-1$ /*note extra space*/
-                { "31/", false, true }, //$NON-NLS-1$
-                { "31*", false, true }, //$NON-NLS-1$
-                { "//31 ", false, true }, //$NON-NLS-1$
-                { "33", false, true }, //$NON-NLS-1$
-                { "33", false, false }, //$NON-NLS-1$
-                { "/33", false, true }, //$NON-NLS-1$
+                Arguments.of("31 ", false, true), //$NON-NLS-1$ /* note extra space */
+                Arguments.of("31 ", false, false), //$NON-NLS-1$ /* note extra space */
+                Arguments.of("/31 ", false, true), //$NON-NLS-1$ /*note extra space*/
+                Arguments.of("31/", false, true), //$NON-NLS-1$
+                Arguments.of("31*", false, true), //$NON-NLS-1$
+                Arguments.of("//31 ", false, true), //$NON-NLS-1$
+                Arguments.of("33", false, true), //$NON-NLS-1$
+                Arguments.of("33", false, false), //$NON-NLS-1$
+                Arguments.of("/33", false, true), //$NON-NLS-1$
 
-                { "01", false, true }, //$NON-NLS-1$
-                { "01/", false, true }, //$NON-NLS-1$
+                Arguments.of("01", false, true), //$NON-NLS-1$
+                Arguments.of("01/", false, true), //$NON-NLS-1$
 
 
                 // Not Valid
-                { "255.255.0.1", false, true }, //$NON-NLS-1$
-                { "255.255.0.1", false, false }, //$NON-NLS-1$
-                { "255.0.255.0", false, true }, //$NON-NLS-1$
-                { "224.0.255.0", false, true }, //$NON-NLS-1$
-                { "255.0.0.255", false, true }, //$NON-NLS-1$
+                Arguments.of("255.255.0.1", false, true), //$NON-NLS-1$
+                Arguments.of("255.255.0.1", false, false), //$NON-NLS-1$
+                Arguments.of("255.0.255.0", false, true), //$NON-NLS-1$
+                Arguments.of("224.0.255.0", false, true), //$NON-NLS-1$
+                Arguments.of("255.0.0.255", false, true), //$NON-NLS-1$
 
 
                 // Valid
-                { "255.255.0.0", true, true }, //$NON-NLS-1$
-                { "255.255.0.0", true, false }, //$NON-NLS-1$
-                { "255.255.255.255", true, true }, //$NON-NLS-1$
+                Arguments.of("255.255.0.0", true, true), //$NON-NLS-1$
+                Arguments.of("255.255.0.0", true, false), //$NON-NLS-1$
+                Arguments.of("255.255.255.255", true, true), //$NON-NLS-1$
 
                 // prefix supported
-                { "31", true, true }, //$NON-NLS-1$
-                { "/31", true, true }, //$NON-NLS-1$
-                { "2", true, true }, //$NON-NLS-1$
-                { "/2", true, true }, //$NON-NLS-1$
+                Arguments.of("31", true, true), //$NON-NLS-1$
+                Arguments.of("/31", true, true), //$NON-NLS-1$
+                Arguments.of("2", true, true), //$NON-NLS-1$
+                Arguments.of("/2", true, true), //$NON-NLS-1$
 
                 // prefix not supported
-                { "31", false, false }, //$NON-NLS-1$
-                { "/31", false, false }, //$NON-NLS-1$
-                { "2", false, false }, //$NON-NLS-1$
-                { "/2", false, false }, //$NON-NLS-1$
-        };
+                Arguments.of("31", false, false), //$NON-NLS-1$
+                Arguments.of("/31", false, false), //$NON-NLS-1$
+                Arguments.of("2", false, false), //$NON-NLS-1$
+                Arguments.of("/2", false, false) //$NON-NLS-1$
+        );
     }
 
 }

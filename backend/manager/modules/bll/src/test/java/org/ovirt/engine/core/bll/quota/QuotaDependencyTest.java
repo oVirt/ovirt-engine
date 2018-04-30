@@ -1,64 +1,59 @@
 package org.ovirt.engine.core.bll.quota;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.ActionType;
 
-@RunWith(Theories.class)
 public class QuotaDependencyTest {
-
-    @DataPoints
-    public static ActionType[] data() {
-        return ActionType.values();
+    public static Stream<ActionType> quotaDependency() {
+        return Arrays.stream(ActionType.values()).filter(a -> a.getQuotaDependency() != ActionType.QuotaDependency.NONE);
     }
 
-    @Theory
-    public void quotaDependencyTest(ActionType actionType) {
-        if (actionType.getQuotaDependency() != ActionType.QuotaDependency.NONE) {
-            Class commandClass = CommandsFactory.getCommandClass(actionType.name());
+    @ParameterizedTest
+    @MethodSource
+    public void quotaDependency(ActionType actionType) {
+        Class commandClass = CommandsFactory.getCommandClass(actionType.name());
 
-            // if command is deprecated or internal - skip it
-            if (commandClass.getAnnotation(Deprecated.class) != null
-                    || commandClass.getAnnotation(InternalCommandAttribute.class) != null) {
-                return;
-            }
+        // if command is deprecated or internal - skip it
+        if (commandClass.getAnnotation(Deprecated.class) != null
+                || commandClass.getAnnotation(InternalCommandAttribute.class) != null) {
+            return;
+        }
 
-            switch (actionType.getQuotaDependency()) {
-            case CLUSTER:
-                assertCommandIsQuotaVdsDependent(commandClass);
-                break;
-            case STORAGE:
-                assertCommandIsQuotaStorageDependent(commandClass);
-                break;
-            case BOTH:
-                assertCommandIsQuotaVdsDependent(commandClass);
-                assertCommandIsQuotaStorageDependent(commandClass);
-                break;
-            default:
-                break;
-            }
+        switch (actionType.getQuotaDependency()) {
+        case CLUSTER:
+            assertCommandIsQuotaVdsDependent(commandClass);
+            break;
+        case STORAGE:
+            assertCommandIsQuotaStorageDependent(commandClass);
+            break;
+        case BOTH:
+            assertCommandIsQuotaVdsDependent(commandClass);
+            assertCommandIsQuotaStorageDependent(commandClass);
+            break;
+        default:
+            break;
         }
     }
 
     private void assertCommandIsQuotaStorageDependent(Class commandClass) {
-        assertTrue(String.format("The command %s was expected to implement QuotaStorageDependent interface",
-                commandClass.getName()),
-                isImplementingRecursive(commandClass, QuotaStorageDependent.class));
+        assertTrue(isImplementingRecursive(commandClass, QuotaStorageDependent.class),
+                String.format("The command %s was expected to implement QuotaStorageDependent interface",
+                        commandClass.getName()));
     }
 
     private void assertCommandIsQuotaVdsDependent(Class commandClass) {
-        assertTrue(String.format("The command %s was expected to implement QuotaVdsDependent interface",
-                commandClass.getName()),
-                isImplementingRecursive(commandClass, QuotaVdsDependent.class));
+        assertTrue(isImplementingRecursive(commandClass, QuotaVdsDependent.class),
+                String.format("The command %s was expected to implement QuotaVdsDependent interface",
+                        commandClass.getName()));
     }
 
     private boolean isImplementingRecursive(Class commandClass, Class interfaceClass) {

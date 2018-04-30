@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -42,7 +42,7 @@ public class AbstractSyncStorageDomainsLunsCommandTest {
             AbstractSyncStorageDomainsLunsCommand.class,
             withSettings().useConstructor(parameters, null).defaultAnswer(CALLS_REAL_METHODS));
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blockSd1Id = Guid.newGuid();
         String sd1Name = "vg1";
@@ -97,15 +97,18 @@ public class AbstractSyncStorageDomainsLunsCommandTest {
 
         doReturn(true).when(command).runSyncLunsInfoForBlockStorageDomain(blockSd1Id, sd1Luns);
         doReturn(true).when(command).runSyncLunsInfoForBlockStorageDomain(blockSd2Id, sd2Luns);
-        assertEquals("All luns should have been synchronized.", Collections.emptyList(), command.syncStorageDomains());
+        assertEquals(Collections.emptyList(), command.syncStorageDomains(),
+                "All luns should have been synchronized.");
 
         doReturn(false).when(command).runSyncLunsInfoForBlockStorageDomain(blockSd1Id, sd1Luns);
-        assertEquals("Storage domain with id " + blockSd1Id + " should have failed to get synchronized.",
-                Collections.singletonList(blockSd1Id), command.syncStorageDomains());
+        assertEquals(
+                Collections.singletonList(blockSd1Id), command.syncStorageDomains(),
+                "Storage domain with id " + blockSd1Id + " should have failed to get synchronized.");
 
         doReturn(false).when(command).runSyncLunsInfoForBlockStorageDomain(blockSd2Id, sd2Luns);
-        assertEquals("Both storage domains should have failed to get synchronized.",
-                Stream.of(blockSd1Id, blockSd2Id).sorted().collect(Collectors.toList()), command.syncStorageDomains());
+        assertEquals(
+                Stream.of(blockSd1Id, blockSd2Id).sorted().collect(Collectors.toList()), command.syncStorageDomains(),
+                "Both storage domains should have failed to get synchronized.");
     }
 
 }

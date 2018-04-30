@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,15 +19,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
@@ -62,9 +64,11 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.utils.MockedConfig;
 
-@RunWith(Strict.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateClusterCommandTest {
 
     private static final Version VERSION_1_0 = new Version(1, 0);
@@ -82,8 +86,18 @@ public class UpdateClusterCommandTest {
 
     private static final Set<Version> versions = new HashSet<>(Arrays.asList(VERSION_1_0, VERSION_1_1, VERSION_1_2));
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, versions));
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        Map<String, String> migrationMap = new HashMap<>();
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86", "true");
+        migrationMap.put("ppc", "true");
+
+        return Stream.concat(
+                Stream.of(MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, versions)),
+                // Permute the migration map to all supported versions
+                versions.stream().map(v -> MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, v, migrationMap))
+        );
+    }
 
     @Mock
     private VmStaticDao vmStaticDao;
@@ -296,17 +310,22 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForDetachedClusterMovesToDcWithExistingManagementNetwork")
     public void detachedClusterMovesToDcWithExistingManagementNetwork() {
 
         newDefaultManagementNetworkFound();
 
-        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultClusterID, Guid.Empty);
         createCommandWithDefaultCluster();
         oldGroupIsDetachedDefault();
         setupCpu();
         storagePoolIsLocalFS();
 
         initAndAssertValidation(true);
+    }
+
+    public static Stream<MockConfigDescriptor<?>> configForDetachedClusterMovesToDcWithExistingManagementNetwork() {
+        return Stream.concat(mockConfiguration(),
+                Stream.of(MockConfigDescriptor.of(ConfigValues.AutoRegistrationDefaultClusterID, Guid.Empty)));
     }
 
     private void managementNetworkNotFoundById() {
@@ -320,16 +339,21 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForDefaultClusterInLocalFs")
     public void defaultClusterInLocalFs() {
         newDefaultManagementNetworkFound();
 
-        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID);
         createCommandWithDefaultCluster();
         oldGroupIsDetachedDefault();
         storagePoolIsLocalFS();
         setupCpu();
         architectureIsUpdatable();
         validateFailedWithReason(EngineMessage.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
+    }
+
+    public static Stream<MockConfigDescriptor<?>> configForDefaultClusterInLocalFs() {
+        return Stream.concat(mockConfiguration(),
+                Stream.of(MockConfigDescriptor.of(ConfigValues.AutoRegistrationDefaultClusterID, DEFAULT_CLUSTER_ID)));
     }
 
     private void newDefaultManagementNetworkFound() {
@@ -360,12 +384,18 @@ public class UpdateClusterCommandTest {
     }
 
     @Test
+    @MockedConfig("configForClusterWithVirtGlusterServicesNotAllowed")
     public void clusterWithVirtGlusterServicesNotAllowed() {
         createCommandWithVirtGlusterEnabled();
         when(clusterDao.get(any())).thenReturn(createClusterWithNoCpuName());
-        mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
         cpuExists();
         validateFailedWithReason(EngineMessage.CLUSTER_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
+    }
+
+
+    public static Stream<MockConfigDescriptor<?>> configForClusterWithVirtGlusterServicesNotAllowed() {
+        return Stream.concat(mockConfiguration(),
+                Stream.of(MockConfigDescriptor.of(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE)));
     }
 
     @Test
@@ -611,12 +641,6 @@ public class UpdateClusterCommandTest {
         List<Cluster> clusterList = new ArrayList<>();
         clusterList.add(createDefaultCluster());
         when(clusterDao.getByName(any(), anyBoolean())).thenReturn(clusterList);
-
-        Map<String, String> migrationMap = new HashMap<>();
-        migrationMap.put("undefined", "true");
-        migrationMap.put("x86", "true");
-        migrationMap.put("ppc", "true");
-        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, cmd.getCluster().getCompatibilityVersion(), migrationMap);
     }
 
     private void createCommandWithDifferentName() {

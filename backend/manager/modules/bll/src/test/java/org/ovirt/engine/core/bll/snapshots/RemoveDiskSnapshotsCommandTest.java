@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -68,7 +68,7 @@ public class RemoveDiskSnapshotsCommandTest extends BaseCommandTest {
         return new RemoveDiskSnapshotsCommand<>(params, null);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         doReturn(storageDomainValidator).when(cmd).getStorageDomainValidator();
         doReturn(STORAGE_POOLD_ID).when(cmd).getStoragePoolId();

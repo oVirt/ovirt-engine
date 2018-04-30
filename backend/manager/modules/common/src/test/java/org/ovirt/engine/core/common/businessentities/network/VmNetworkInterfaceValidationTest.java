@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Random;
 import javax.validation.Valid;
 import javax.validation.groups.Default;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -192,10 +192,10 @@ public class VmNetworkInterfaceValidationTest {
         List<String> violations = ValidationUtils.validateInputs(
                 Arrays.asList(new Class<?>[] { validationGroup }), new TestParams(nic));
 
-        assertEquals("Validation should" + (shouldValidationFail ? "" : "'nt") + " fail due to violation: ["
-                + possibleViolation + "]; Actual violations were: " + violations,
+        assertEquals(
                 shouldValidationFail,
-                violations.contains(possibleViolation));
+                violations.contains(possibleViolation), "Validation should" + (shouldValidationFail ? "" : "'nt") + " fail due to violation: ["
+                        + possibleViolation + "]; Actual violations were: " + violations);
     }
 
     private static String createInvalidMacAddress() {

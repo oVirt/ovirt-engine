@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.profiles;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -12,13 +12,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
@@ -30,7 +32,8 @@ import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class DiskProfileHelperTest {
 
     private static final Guid STORAGE_DOMAIN_1 = Guid.newGuid();
@@ -53,7 +56,7 @@ public class DiskProfileHelperTest {
     private DbUser dbUser;
     private Map<DiskImage, Guid> map = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         dbUser = new DbUser();
         dbUser.setId(USER_ENTITY_ID);

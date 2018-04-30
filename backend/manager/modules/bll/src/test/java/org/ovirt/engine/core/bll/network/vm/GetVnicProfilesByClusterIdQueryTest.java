@@ -1,24 +1,24 @@
 package org.ovirt.engine.core.bll.network.vm;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetVnicProfilesByClusterIdQueryTest extends
         AbstractUserQueryTest<IdQueryParameters, GetVnicProfilesByClusterIdQuery<IdQueryParameters>> {
 
@@ -29,7 +29,7 @@ public class GetVnicProfilesByClusterIdQueryTest extends
 
     private List<VnicProfileView> vnicProfileViews = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         when(mockVnicProfileViewDao.getAllForCluster(clusterId, getUser().getId(), true)).thenReturn(vnicProfileViews);

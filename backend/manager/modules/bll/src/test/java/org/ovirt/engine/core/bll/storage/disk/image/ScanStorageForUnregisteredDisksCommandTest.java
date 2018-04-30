@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -9,11 +9,13 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest {
     @Mock
     private UnregisteredOVFDataDao unregisteredOVFDataDaoMock;
@@ -46,10 +49,10 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
     @Test
     public void testExecuteGetAllEntitiesCommand() {
         cmd.executeCommand();
-        assertTrue("return value should be true", cmd.getReturnValue().getSucceeded());
+        assertTrue(cmd.getReturnValue().getSucceeded(), "return value should be true");
     }
 
-    @Before
+    @BeforeEach
     public void setUpCommandEntities() {
         QueryReturnValue vdcRetVal = generateQueryReturnValueForGetDiskImages();
         doReturn(vdcRetVal).when(cmd).getUnregisteredDisksFromHost();

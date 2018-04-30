@@ -1,11 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -13,6 +15,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollectionResourceTest<ReportedDevice, VmGuestAgentInterface, BackendVmReportedDevicesResource> {
 
     protected static final Guid PARENT_ID = GUIDS[1];

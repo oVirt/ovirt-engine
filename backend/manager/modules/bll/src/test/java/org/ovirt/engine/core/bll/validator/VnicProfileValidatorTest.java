@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -12,12 +12,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -33,10 +34,12 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class })
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VnicProfileValidatorTest {
 
     private static final String NAMEABLE_NAME = "nameable";
@@ -48,19 +51,24 @@ public class VnicProfileValidatorTest {
     private static final Guid INVALID_NETWORK_FILTER_ID = Guid.newGuid();
 
     @Mock
-    private VnicProfileDao vnicProfileDao;
+    @InjectedMock
+    public VnicProfileDao vnicProfileDao;
 
     @Mock
-    private NetworkDao networkDao;
+    @InjectedMock
+    public NetworkDao networkDao;
 
     @Mock
-    private NetworkQoSDao networkQosDao;
+    @InjectedMock
+    public NetworkQoSDao networkQosDao;
 
     @Mock
-    private VmDao vmDao;
+    @InjectedMock
+    public VmDao vmDao;
 
     @Mock
-    private NetworkFilterDao networkFilterDao;
+    @InjectedMock
+    public NetworkFilterDao networkFilterDao;
 
     @Mock
     private VnicProfile vnicProfile;
@@ -71,22 +79,19 @@ public class VnicProfileValidatorTest {
     @Mock
     private NetworkQoS networkQos;
 
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
+    @Mock
+    @InjectedMock
+    public VmTemplateDao templateDao;
 
     private List<VnicProfile> vnicProfiles = new ArrayList<>();
 
     private VnicProfileValidator validator;
 
-    @Before
+    @BeforeEach
     public void setup() {
         validator = new VnicProfileValidator(vnicProfile);
 
         // mock some commonly used Daos
-        injectorRule.bind(VnicProfileDao.class, vnicProfileDao);
-        injectorRule.bind(NetworkDao.class, networkDao);
-        injectorRule.bind(NetworkQoSDao.class, networkQosDao);
-        injectorRule.bind(VmDao.class, vmDao);
         initNetworkFilterDao();
 
         // mock their getters
@@ -98,7 +103,6 @@ public class VnicProfileValidatorTest {
         when(networkFilterDao.getNetworkFilterById(INVALID_NETWORK_FILTER_ID)).thenReturn(null);
         when(networkFilterDao.getNetworkFilterById(VALID_NETWORK_FILTER_ID))
                 .thenReturn(new NetworkFilter(VALID_NETWORK_FILTER_ID));
-        injectorRule.bind(NetworkFilterDao.class, networkFilterDao);
     }
 
     @Test
@@ -270,9 +274,7 @@ public class VnicProfileValidatorTest {
     }
 
     private void vnicProfileNotUsedByTemplatesTest(Matcher<ValidationResult> matcher, List<VmTemplate> templates) {
-        VmTemplateDao templateDao = mock(VmTemplateDao.class);
         when(templateDao.getAllForVnicProfile(any())).thenReturn(templates);
-        injectorRule.bind(VmTemplateDao.class, templateDao);
         assertThat(validator.vnicProfileNotUsedByTemplates(), matcher);
     }
 

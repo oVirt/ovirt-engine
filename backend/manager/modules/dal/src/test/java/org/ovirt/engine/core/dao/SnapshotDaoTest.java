@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -196,10 +196,10 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
     @Test
     public void getAllByVmWithConfiguration() {
         List<Snapshot> snapshots = dao.getAllWithConfiguration(FixturesTool.VM_RHEL5_POOL_50);
-        assertEquals("VM should have a snapshot", 1, snapshots.size());
+        assertEquals(1, snapshots.size(), "VM should have a snapshot");
         for (Snapshot snapshot : snapshots) {
-            assertEquals("Snapshot should have configuration", "test!", snapshot.getVmConfiguration());
-            assertTrue("Snapshot should have configuration available", snapshot.isVmConfigurationAvailable());
+            assertEquals("test!", snapshot.getVmConfiguration(), "Snapshot should have configuration");
+            assertTrue(snapshot.isVmConfigurationAvailable(), "Snapshot should have configuration available");
         }
     }
 
@@ -220,7 +220,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
     public void getAllByVmFilteredWithPermissionsNoPermissions() {
         // test user 2 - hasn't got permissions
         List<Snapshot> snapshots = dao.getAll(FixturesTool.VM_RHEL5_POOL_57, UNPRIVILEGED_USER_ID, true);
-        assertTrue("VM should have no snapshots viewable to the user", snapshots.isEmpty());
+        assertTrue(snapshots.isEmpty(), "VM should have no snapshots viewable to the user");
     }
 
     @Test
@@ -233,7 +233,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
     @Test
     public void getAllByStorageDomain() {
         List<Snapshot> snapshots = dao.getAllByStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
-        assertFalse("Snapshots list shouldn't be empty", snapshots.isEmpty());
+        assertFalse(snapshots.isEmpty(), "Snapshots list shouldn't be empty");
     }
 
     @Test
@@ -263,10 +263,10 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
      *            The result to check
      */
     private static void assertFullGetAllByVmResult(List<Snapshot> snapshots) {
-        assertEquals("VM should have a snapshot", 1, snapshots.size());
+        assertEquals(1, snapshots.size(), "VM should have a snapshot");
         for (Snapshot snapshot : snapshots) {
-            assertFalse("Snapshot shouldn't have configuration available", snapshot.isVmConfigurationAvailable());
-            assertTrue("Snapshot should have no configuration", StringUtils.isEmpty(snapshot.getVmConfiguration()));
+            assertFalse(snapshot.isVmConfigurationAvailable(), "Snapshot shouldn't have configuration available");
+            assertTrue(StringUtils.isEmpty(snapshot.getVmConfiguration()), "Snapshot should have no configuration");
         }
     }
 

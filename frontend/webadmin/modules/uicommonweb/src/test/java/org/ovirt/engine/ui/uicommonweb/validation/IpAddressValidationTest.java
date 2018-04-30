@@ -1,21 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.emptyCollectionOf;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner.Strict;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@RunWith(Strict.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class IpAddressValidationTest {
 
     private static final String TEST_MESSAGE = "test message"; //$NON-NLS-1$
@@ -30,7 +33,7 @@ public class IpAddressValidationTest {
     @Mock
     private UIConstants mockUiConstants;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(mockConstantsManager.getConstants()).thenReturn(mockUiConstants);
         when(mockUiConstants.thisFieldMustContainIpv4OrIpv6AddressMsg()).thenReturn(TEST_MESSAGE);

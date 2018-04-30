@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
@@ -58,7 +58,7 @@ public abstract class AbstractGetDisksAndSnapshotsQueryTest<P extends QueryParam
         @Mock
         protected ImagesHandler imagesHandler;
 
-        @Before
+        @BeforeEach
         @Override
         public void setUp() throws Exception {
             super.setUp();

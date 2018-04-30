@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,7 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -79,9 +79,9 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
     }
 
     protected void verifyActionResponse(Response r, String baseUri, boolean async, String reason) {
-        assertEquals("unexpected status", async ? 202 : 200, r.getStatus());
+        assertEquals(async ? 202 : 200, r.getStatus(), "unexpected status");
         Object entity = r.getEntity();
-        assertTrue("expect Action response entity", entity instanceof Action);
+        assertTrue(entity instanceof Action, "expect Action response entity");
         Action action = (Action)entity;
         if (async) {
             assertTrue(action.isAsync());
@@ -89,23 +89,24 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
             assertNotNull(action.getId());
             assertNotNull(action.getLinks());
             assertEquals(2, action.getLinks().size());
-            assertEquals("expected parent link", "parent", action.getLinks().get(0).getRel());
+            assertEquals("parent", action.getLinks().get(0).getRel(), "expected parent link");
             assertNotNull(action.getLinks().get(0).getHref());
             assertTrue(action.getLinks().get(0).getHref().startsWith(BASE_PATH + "/" + baseUri));
             assertNotNull(action.getLinks().get(1).getHref());
-            assertEquals("expected replay link", "replay", action.getLinks().get(1).getRel());
+            assertEquals("replay", action.getLinks().get(1).getRel(), "expected replay link");
             assertTrue(action.getLinks().get(1).getHref().startsWith(BASE_PATH + "/" + baseUri));
         } else {
             assertTrue(!(action.isSetAsync() && action.isAsync()));
         }
 
-        assertTrue("unexpected status", async
+        assertTrue(async
                    ? action.getStatus().equals(CreationStatus.PENDING.value())
                      || action.getStatus().equals(CreationStatus.IN_PROGRESS.value())
                      || action.getStatus().equals(CreationStatus.COMPLETE.value())
                    : reason == null
                      ? action.getStatus().equals(CreationStatus.COMPLETE.value())
-                     : action.getStatus().equals(CreationStatus.FAILED.value()));
+                     : action.getStatus().equals(CreationStatus.FAILED.value()),
+                "unexpected status");
     }
 
     protected void verifyImmutabilityConstraint(WebApplicationException wae) {
@@ -120,7 +121,7 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
             boolean found = false;
             for (int i = 0; i < names.length; i++) {
                 if (names[i].equals(statistic.getName())) {
-                    assertEquals("unexpected value for: " + names[i], values[i], getDatum(statistic));
+                    assertEquals(values[i], getDatum(statistic), "unexpected value for: " + names[i]);
                     found = true;
                     break;
                 }

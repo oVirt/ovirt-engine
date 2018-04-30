@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseCommandTest {
     private Cluster cluster;
     private Guid clusterId;
@@ -41,7 +44,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
     @Mock
     private VmDao vmDao;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Cluster cluster = new Cluster();
         clusterId = Guid.newGuid();

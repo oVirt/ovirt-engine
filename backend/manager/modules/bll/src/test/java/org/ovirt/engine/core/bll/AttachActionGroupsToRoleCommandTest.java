@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -12,7 +12,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTestBase {
 
     @Override
@@ -54,10 +57,9 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         mockGetAllForRole(Collections.singletonList(map));
 
         List<String> messages = new ArrayList<>(1);
-        assertTrue("validate should fail", getCommand().checkIfGroupsCanBeAttached(messages));
-        assertEquals("wrong messages",
-                EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString(),
-                messages.get(0));
+        assertTrue(getCommand().checkIfGroupsCanBeAttached(messages), "validate should fail");
+        assertEquals(EngineMessage.ERROR_CANNOT_ATTACH_ACTION_GROUP_TO_ROLE_ATTACHED.toString(), messages.get(0),
+                "wrong messages");
     }
 
     @Test
@@ -67,10 +69,8 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         mockGetAllForRole(Collections.singletonList(map));
 
         List<String> messages = new ArrayList<>(1);
-        assertTrue("validate should fail", getCommand().checkIfGroupsCanBeAttached(messages));
-        assertEquals("wrong messages",
-                EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString(),
-                messages.get(0));
+        assertTrue(getCommand().checkIfGroupsCanBeAttached(messages), "validate should fail");
+        assertEquals(EngineMessage.CANNOT_ADD_ACTION_GROUPS_TO_ROLE_TYPE.toString(), messages.get(0), "wrong messages");
     }
 
     @Test
@@ -80,8 +80,8 @@ public class AttachActionGroupsToRoleCommandTest extends AbstractRolesCommandTes
         mockGetAllForRole(Collections.singletonList(map));
 
         List<String> messages = new ArrayList<>();
-        assertFalse("validate should succeed", getCommand().checkIfGroupsCanBeAttached(messages));
-        assertTrue("no messages sould have been added", messages.isEmpty());
+        assertFalse(getCommand().checkIfGroupsCanBeAttached(messages), "validate should succeed");
+        assertTrue(messages.isEmpty(), "no messages sould have been added");
     }
 
     private void mockGetAllForRole(List<RoleGroupMap> groups) {

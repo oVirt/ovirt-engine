@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.dc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -10,10 +10,12 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -31,6 +33,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ImportExternalNetworkCommandTest extends BaseCommandTest {
     private final Guid PROVIDER_ID = new Guid("000000000000-0000-0000-0000-00000001");
     private final String EXTERNAL_ID = "000000000000-0000-0000-0000-00000002";
@@ -56,7 +59,7 @@ public class ImportExternalNetworkCommandTest extends BaseCommandTest {
 
     private Provider provider = new Provider();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         provider.setType(ProviderType.EXTERNAL_NETWORK);
         when(providerDao.get(PROVIDER_ID)).thenReturn(provider);

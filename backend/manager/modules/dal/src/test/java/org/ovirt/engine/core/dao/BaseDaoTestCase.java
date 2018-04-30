@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.InputStream;
 import java.sql.Connection;
@@ -16,16 +16,16 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * {@code BaseDaoTestCase} provides a foundation for creating unit tests for the persistence layer. The annotation
  * {@link Transactional}, and the listener {@link TransactionalTestExecutionListener} ensure that all test
- * cases ({@link org.junit.Test} methods) are executed inside a transaction, and the transaction is automatically rolled
- * back on completion of the test.
+ * cases ({@link org.junit.jupiter.api.Test} methods) are executed inside a transaction, and the transaction is
+ * automatically rolled back on completion of the test.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @TestExecutionListeners({ TransactionalTestExecutionListener.class, DependencyInjectionTestExecutionListener.class })
 @ContextConfiguration(locations = { "classpath:/test-beans.xml" })
 @Transactional
@@ -54,7 +54,7 @@ public abstract class BaseDaoTestCase<D extends Dao> {
     protected static String initSql;
     protected static DataSource dataSource;
 
-    @BeforeClass
+    @BeforeAll
     public static void initTestCase() {
         if(dataSource == null) {
             try {
@@ -90,10 +90,10 @@ public abstract class BaseDaoTestCase<D extends Dao> {
          * note: all tests, which reached this point when initialization failed, can be skipped, but only if first
          * executed test class stated failure. Otherwise all tests will be skipped and success pronounced.
          */
-        assumeTrue("Uninitialized TestCase, cannot proceed. Look above for causing exception.", initialized);
+        assumeTrue(initialized, "Uninitialized TestCase, cannot proceed. Look above for causing exception.");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
     }
 

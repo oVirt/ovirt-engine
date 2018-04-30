@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class UriAuthorityTest {
     private static final String IPV6_ADDRESS = "[an:IPv6:address]"; //$NON-NLS-1$

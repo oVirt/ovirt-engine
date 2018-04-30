@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.validation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -23,7 +23,7 @@ public class NoRepetitiveStaticIpInListConstraintTest {
 
     private Validator validator;
 
-    @Before
+    @BeforeEach
     public void initValidator() {
         validator = ValidationUtils.getValidator();
     }

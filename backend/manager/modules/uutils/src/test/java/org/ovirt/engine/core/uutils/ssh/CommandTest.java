@@ -1,18 +1,21 @@
 package org.ovirt.engine.core.uutils.ssh;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 
 import javax.naming.TimeLimitExceededException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Command tests.
@@ -22,7 +25,7 @@ public class CommandTest extends TestCommon {
     static final int hardTimeout = 40 * 1000;
     SSHClient client;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         client = new SSHClient();
         client.setSoftTimeout(softTimeout);
@@ -34,7 +37,7 @@ public class CommandTest extends TestCommon {
         client.authenticate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (client != null) {
             client.close();
@@ -47,14 +50,14 @@ public class CommandTest extends TestCommon {
         client.executeCommand("true", null, null, null);
     }
 
-    @Test(expected = IOException.class)
-    public void testCommandNonZero() throws Exception {
-        client.executeCommand("false", null, null, null);
+    @Test
+    public void testCommandNonZero() {
+        assertThrows(IOException.class, () -> client.executeCommand("false", null, null, null));
     }
 
-    @Test(expected = IOException.class)
-    public void testCommandSignal() throws Exception {
-        client.executeCommand("kill $$ ; sleep 10", null, null, null);
+    @Test
+    public void testCommandSignal() {
+        assertThrows(IOException.class, () -> client.executeCommand("kill $$ ; sleep 10", null, null, null));
     }
 
     @Test
@@ -109,18 +112,20 @@ public class CommandTest extends TestCommon {
     }
 
     /* Expected harmless exception of sshd (if used) */
-    @Test(timeout = 120 * 1000)
-    public void testHardTimeout() throws Exception {
-        long start = System.currentTimeMillis();
-        try {
-            client.executeCommand(
-                    String.format("while true; do echo sleeping; sleep %d; done", softTimeout / 1000 / 2),
-                    null,
-                    null,
-                    null);
-        } catch (TimeLimitExceededException e) {
-            assertTrue(System.currentTimeMillis() - start >= hardTimeout);
-            assertTrue(System.currentTimeMillis() - start < hardTimeout * 3 / 2);
-        }
+    @Test
+    public void testHardTimeout() {
+        assertTimeout(Duration.ofMinutes(2L), () -> {
+            long start = System.currentTimeMillis();
+            try {
+                client.executeCommand(
+                        String.format("while true; do echo sleeping; sleep %d; done", softTimeout / 1000 / 2),
+                        null,
+                        null,
+                        null);
+            } catch (TimeLimitExceededException e) {
+                assertTrue(System.currentTimeMillis() - start >= hardTimeout);
+                assertTrue(System.currentTimeMillis() - start < hardTimeout * 3 / 2);
+            }
+        });
     }
 }

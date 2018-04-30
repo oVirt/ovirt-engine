@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -13,49 +13,45 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.di.InjectorRule;
+import org.ovirt.engine.core.utils.InjectedMock;
+import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
-@RunWith(Theories.class)
+@ExtendWith({MockitoExtension.class, InjectorExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class VmsListFetcherTest {
 
     VmsListFetcher vmsListFetcher;
 
-    @DataPoints
-    public static VmTestPairs[] vms = VmTestPairs.values();
-
     @Mock
     VdsManager vdsManager;
     @Mock
-    ResourceManager resourceManager;
+    @InjectedMock
+    public ResourceManager resourceManager;
     @Mock
-    private VmDynamicDao vmDynamicDao;
+    @InjectedMock
+    public VmDynamicDao vmDynamicDao;
     @Captor
     ArgumentCaptor<List<VmDynamic>> vdsManagerArgumentCaptor;
-    @Rule
-    public InjectorRule injectorRule = new InjectorRule();
 
-    @Before
+    @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
-        injectorRule.bind(ResourceManager.class, resourceManager);
-        injectorRule.bind(VmDynamicDao.class, vmDynamicDao);
         VDS vds = new VDS();
         vds.setId(VmTestPairs.SRC_HOST_ID);
         when(vdsManager.getCopyVds()).thenReturn(vds);
@@ -63,7 +59,8 @@ public class VmsListFetcherTest {
         vmsListFetcher = new VmsListFetcher(vdsManager);
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void changedVms(VmTestPairs data) {
         //given
         stubCalls(data);
@@ -77,7 +74,8 @@ public class VmsListFetcherTest {
         assertSame(vmsListFetcher.getChangedVms().get(0).getFirst(), data.dbVm().getDynamicData());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void stableVms(VmTestPairs data) {
         //given
         stubCalls(data);
@@ -89,7 +87,8 @@ public class VmsListFetcherTest {
         assertTrue(vmsListFetcher.getChangedVms().isEmpty());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void lastVmListNotIncludingExternalVm(VmTestPairs data) {
         //given
         stubCalls(data);
@@ -103,7 +102,8 @@ public class VmsListFetcherTest {
         assertEquals(data.vdsmVm().getVmDynamic(), vdsManagerArgumentCaptor.getValue().get(0));
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void externalVmAreNotSavedAsLastVm(VmTestPairs data) {
      //given
         stubCalls(data);
@@ -117,7 +117,8 @@ public class VmsListFetcherTest {
         assertEquals(0, vdsManagerArgumentCaptor.getValue().size());
     }
 
-    @Theory
+    @ParameterizedTest
+    @EnumSource(VmTestPairs.class)
     public void callToVDSMFailed(VmTestPairs data) {
         // given
         stubFailedCalls();

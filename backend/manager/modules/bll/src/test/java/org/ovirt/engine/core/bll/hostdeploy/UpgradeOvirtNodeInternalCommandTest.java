@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
@@ -20,8 +22,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
 public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
 
     private static final String OVIRT_ISO_PREFIX = "^rhevh-(.*)\\.*\\.iso$";
@@ -32,14 +35,15 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
     private static final String INVALID_OVIRT_VERSION = "5.8";
     private static final String OVIRT_NODEOS = "^rhevh.*";
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
-            MockConfigDescriptor.of(ConfigValues.DataDir, "."),
-            MockConfigDescriptor.of(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
-            MockConfigDescriptor.of(ConfigValues.OvirtInitialSupportedIsoVersion, VALID_OVIRT_VERSION),
-            MockConfigDescriptor.of(ConfigValues.OvirtNodeOS, OVIRT_NODEOS)
-            );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
+                MockConfigDescriptor.of(ConfigValues.DataDir, "."),
+                MockConfigDescriptor.of(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
+                MockConfigDescriptor.of(ConfigValues.OvirtInitialSupportedIsoVersion, VALID_OVIRT_VERSION),
+                MockConfigDescriptor.of(ConfigValues.OvirtNodeOS, OVIRT_NODEOS)
+        );
+    }
 
     @Mock
     private VdsDao vdsDao;
@@ -48,12 +52,12 @@ public class UpgradeOvirtNodeInternalCommandTest extends BaseCommandTest {
     private UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command =
             new UpgradeOvirtNodeInternalCommand<>(createParameters(), null);
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         OVirtNodeInfo.clearInstance();
     }
 
-    @Before
+    @BeforeEach
     public void mockVdsDao() {
         VDS vds = new VDS();
         vds.setVdsType(VDSType.oVirtVintageNode);

@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -99,10 +99,10 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
     public void testGetVmTemplatesByIds() {
         List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(FixturesTool.VM_TEMPLATE_RHEL5,
                 FixturesTool.VM_TEMPLATE_RHEL5_2));
-        assertEquals("loaded templates list isn't in the expected size", 2, result.size());
+        assertEquals(2, result.size(), "loaded templates list isn't in the expected size");
         Collection<Guid> recieved = result.stream().map(VmTemplate::getId).collect(Collectors.toList());
-        assertTrue("the received list didn't contain an expected Template", recieved.contains(FixturesTool.VM_TEMPLATE_RHEL5));
-        assertTrue("the received list didn't contain an expected Template", recieved.contains(FixturesTool.VM_TEMPLATE_RHEL5_2));
+        assertTrue(recieved.contains(FixturesTool.VM_TEMPLATE_RHEL5), "the received list didn't contain an expected Template");
+        assertTrue(recieved.contains(FixturesTool.VM_TEMPLATE_RHEL5_2), "the received list didn't contain an expected Template");
     }
 
     /**
@@ -235,7 +235,7 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
     @Test
     public void testGetAllForImage() {
         Map<Boolean, VmTemplate> result = dao.getAllForImage(FixturesTool.TEMPLATE_IMAGE_ID);
-        assertEquals("Wrong number of keys", 1, result.size());
+        assertEquals(1, result.size(), "Wrong number of keys");
         assertNotNull(result.values());
     }
 
@@ -328,14 +328,14 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
     private static void assertGetResult(VmTemplate result) {
         assertNotNull(result);
         assertEquals(FixturesTool.VM_TEMPLATE_RHEL5, result.getId());
-        assertEquals("Template generation wasn't loaded as expected", 1, result.getDbGeneration());
+        assertEquals(1, result.getDbGeneration(), "Template generation wasn't loaded as expected");
     }
 
     private static void assertGetAllResult(List<VmTemplate> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmTemplate template : result){
-            assertEquals("Template generation wasn't loaded as expected", 1, template.getDbGeneration());
+            assertEquals(1, template.getDbGeneration(), "Template generation wasn't loaded as expected");
         }
     }
 

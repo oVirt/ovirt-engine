@@ -1,21 +1,24 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -25,10 +28,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link UpdateQuotaCommand} class. */
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateQuotaCommandTest extends BaseCommandTest {
     /** The ID of the quota used for testing */
     private static final Guid QUOTA_ID = Guid.newGuid();
@@ -41,13 +46,14 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
     @InjectMocks
     private UpdateQuotaCommand command = new UpdateQuotaCommand(params, null);
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.QuotaGraceStorage, 20),
-            MockConfigDescriptor.of(ConfigValues.QuotaGraceCluster, 20),
-            MockConfigDescriptor.of(ConfigValues.QuotaThresholdStorage, 80),
-            MockConfigDescriptor.of(ConfigValues.QuotaThresholdCluster, 80)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.QuotaGraceStorage, 20),
+                MockConfigDescriptor.of(ConfigValues.QuotaGraceCluster, 20),
+                MockConfigDescriptor.of(ConfigValues.QuotaThresholdStorage, 80),
+                MockConfigDescriptor.of(ConfigValues.QuotaThresholdCluster, 80)
+        );
+    }
 
     /** The quota to use for testing */
     private Quota quota;
@@ -56,7 +62,7 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
     @Mock
     private QuotaDao quotaDao;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         quota = setUpQuota(QUOTA_ID);
         when(quotaDao.getById(QUOTA_ID)).thenReturn(quota);
@@ -97,20 +103,20 @@ public class UpdateQuotaCommandTest extends BaseCommandTest {
         Quota parameterQuota = command.getParameters().getQuota();
         Guid quotaId = parameterQuota.getId();
         for (QuotaStorage quotaStorage : parameterQuota.getQuotaStorages()) {
-            assertNotNull("Quota Storage should have been assigned an ID", quotaStorage.getQuotaStorageId());
-            assertEquals("Wrong Qutoa ID on Quota Storage", quotaId, quotaStorage.getQuotaId());
+            assertNotNull(quotaStorage.getQuotaStorageId(), "Quota Storage should have been assigned an ID");
+            assertEquals(quotaId, quotaStorage.getQuotaId(), "Wrong Qutoa ID on Quota Storage");
         }
 
         for (QuotaCluster quotaCluster : parameterQuota.getQuotaClusters()) {
-            assertNotNull("Quota Cluster should have been assigned an ID", quotaCluster.getQuotaClusterId());
-            assertEquals("Wrong Qutoa ID on Quota Cluster", quotaId, quotaCluster.getQuotaId());
+            assertNotNull(quotaCluster.getQuotaClusterId(), "Quota Cluster should have been assigned an ID");
+            assertEquals(quotaId, quotaCluster.getQuotaId(), "Wrong Qutoa ID on Quota Cluster");
         }
 
         // Verify the quota was updated in the database
         verify(quotaDao).update(parameterQuota);
 
         // Assert the return value
-        assertTrue("Execution should be successful", command.getReturnValue().getSucceeded());
+        assertTrue(command.getReturnValue().getSucceeded(), "Execution should be successful");
     }
 
     @Test

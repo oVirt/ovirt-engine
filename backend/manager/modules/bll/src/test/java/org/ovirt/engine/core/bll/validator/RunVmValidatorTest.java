@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -19,16 +19,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Stream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
@@ -53,22 +55,25 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RunVmValidatorTest {
 
     private static final int _64_BIT_OS = 13;
 
     public static final int MEMORY_LIMIT_32_BIT = 32000;
     public static final int MEMORY_LIMIT_64_BIT = 640000;
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.PredefinedVMProperties, Version.v3_6, "0"),
-            MockConfigDescriptor.of(ConfigValues.UserDefinedVMProperties, Version.v3_6, "0"),
-            MockConfigDescriptor.of(ConfigValues.VM32BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_32_BIT),
-            MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_64_BIT)
-            );
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PredefinedVMProperties, Version.v3_6, "0"),
+                MockConfigDescriptor.of(ConfigValues.UserDefinedVMProperties, Version.v3_6, "0"),
+                MockConfigDescriptor.of(ConfigValues.VM32BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_32_BIT),
+                MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, Version.v4_0, MEMORY_LIMIT_64_BIT)
+        );
+    }
 
     @Spy
     @InjectMocks
@@ -82,13 +87,13 @@ public class RunVmValidatorTest {
     @Mock
     private VmNicDao vmNicDao;
 
-    @Before
+    @BeforeEach
     public void setup() throws InitializationException {
         mockVmPropertiesUtils();
         mockOsRepository();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         SimpleDependencyInjector.getInstance().bind(OsRepository.class);
     }

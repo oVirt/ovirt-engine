@@ -16,9 +16,9 @@
 
 package org.ovirt.engine.api.restapi.types.openstack;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.ovirt.engine.api.model.AgentConfiguration;
 import org.ovirt.engine.api.model.MessageBrokerType;

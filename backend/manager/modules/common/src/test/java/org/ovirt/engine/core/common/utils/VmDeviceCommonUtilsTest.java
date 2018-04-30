@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Arrays;
@@ -9,10 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class VmDeviceCommonUtilsTest {
 
     private static final String NIC_1_NAME = "nic1";
@@ -57,13 +57,13 @@ public class VmDeviceCommonUtilsTest {
                 idToDiskElement);
 
         int index = 1;
-        assertEquals("Wrong boot order for CD", index++, cd.getBootOrder());
-        assertEquals("Wrong boot order for nic1", index++, nic1.getBootOrder());
-        assertEquals("Wrong boot order for nic2", index++, nic2.getBootOrder());
-        assertEquals("Wrong boot order for non bootable nic", 0, nonBootableNic.getBootOrder());
-        assertEquals("Wrong boot order for unmanaged nic", 0, unmanagedNic.getBootOrder());
-        assertEquals("Wrong boot order for bootable disk", index++, bootableDisk.getBootOrder());
-        assertEquals("Wrong boot order for non bootable disk", 0, nonBootableDisk.getBootOrder());
+        assertEquals(index++, cd.getBootOrder(), "Wrong boot order for CD");
+        assertEquals(index++, nic1.getBootOrder(), "Wrong boot order for nic1");
+        assertEquals(index++, nic2.getBootOrder(), "Wrong boot order for nic2");
+        assertEquals(0, nonBootableNic.getBootOrder(), "Wrong boot order for non bootable nic");
+        assertEquals(0, unmanagedNic.getBootOrder(), "Wrong boot order for unmanaged nic");
+        assertEquals(index++, bootableDisk.getBootOrder(), "Wrong boot order for bootable disk");
+        assertEquals(0, nonBootableDisk.getBootOrder(), "Wrong boot order for non bootable disk");
     }
 
     private VmDevice createNetworkInterface(boolean plugged, String name,

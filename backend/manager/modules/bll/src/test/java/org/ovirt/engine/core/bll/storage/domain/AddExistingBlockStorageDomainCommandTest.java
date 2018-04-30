@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -10,12 +10,14 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -25,8 +27,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
+@ExtendWith(MockConfigExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
 
     private StorageDomainManagementParameter parameters = new StorageDomainManagementParameter(getStorageDomain());
@@ -36,13 +40,10 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
     private AddExistingBlockStorageDomainCommand<StorageDomainManagementParameter> command =
             new AddExistingBlockStorageDomainCommand<>(parameters, null);
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     @Mock
     private StorageDomainStaticDao storageDomainStaticDao;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         doNothing().when(command).addStorageDomainInDb();
         doNothing().when(command).updateStorageDomainDynamicFromIrs();
@@ -62,21 +63,22 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
     @Test
     public void testAddExistingBlockDomainWhenVgInfoReturnsEmptyLunList() {
         doReturn(Collections.emptyList()).when(command).getLUNsFromVgInfo();
-        assertFalse("Could not connect to Storage Domain", command.canAddDomain());
-        assertTrue("Import block Storage Domain should have failed due to empty Lun list returned from VGInfo ",
-                command.getReturnValue()
+        assertFalse(command.canAddDomain(), "Could not connect to Storage Domain");
+        assertTrue(command.getReturnValue()
                         .getValidationMessages()
-                        .contains(EngineMessage.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO.toString()));
+                        .contains(EngineMessage.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO.toString()),
+                "Import block Storage Domain should have failed due to empty Lun list returned from VGInfo");
     }
 
     @Test
     public void testAlreadyExistStorageDomain() {
         when(storageDomainStaticDao.get(any())).thenReturn(getStorageDomain());
-        assertFalse("Storage Domain already exists", command.canAddDomain());
-        assertTrue("Import block Storage Domain should have failed due to already existing Storage Domain",
+        assertFalse(command.canAddDomain(), "Storage Domain already exists");
+        assertTrue(
                 command.getReturnValue()
                         .getValidationMessages()
-                        .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST.toString()));
+                        .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST.toString()),
+                "Import block Storage Domain should have failed due to already existing Storage Domain");
     }
 
     private static StorageDomainStatic getStorageDomain() {

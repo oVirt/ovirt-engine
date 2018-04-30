@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -38,6 +40,7 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AutodefineExternalNetworkCommandTest extends BaseCommandTest {
 
     private static final Guid PHYSICAL_NETWORK_ID = Guid.newGuid();
@@ -83,7 +86,7 @@ public class AutodefineExternalNetworkCommandTest extends BaseCommandTest {
     private Network physicalNetwork;
     private Cluster cluster;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         cluster = new Cluster();
         physicalNetwork = new Network();

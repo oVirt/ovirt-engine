@@ -1,20 +1,20 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
@@ -26,7 +26,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends AbstractQueryTest<GlusterVolumeGeoRepEligibilityParameters, GetNonEligibilityReasonsOfVolumeForGeoRepSessionQuery<GlusterVolumeGeoRepEligibilityParameters>> {
 
     @Mock
@@ -41,7 +41,7 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     @InjectMocks
     private GlusterGeoRepUtil geoRepUtil;
 
-    @Before
+    @BeforeEach
     public void setupMock() {
         doReturn(geoRepUtil).when(getQuery()).getGeoRepUtilInstance();
         baseTest.setupMock(geoRepDao, clusterDao);

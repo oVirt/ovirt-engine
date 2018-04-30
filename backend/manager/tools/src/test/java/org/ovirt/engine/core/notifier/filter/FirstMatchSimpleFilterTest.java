@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.notifier.filter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.notifier.dao.DispatchResult;
 import org.ovirt.engine.core.notifier.transport.Observer;
@@ -96,7 +97,7 @@ public class FirstMatchSimpleFilterTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         filter = new FirstMatchSimpleFilter();
         /*
@@ -112,7 +113,7 @@ public class FirstMatchSimpleFilterTest {
         filter.registerTransport(smtp);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
 
     }
@@ -274,27 +275,28 @@ public class FirstMatchSimpleFilterTest {
         FirstMatchSimpleFilter.parse("include:message(kuku:pupu) include:message(kuku:pupu)");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseNegative1() {
         // No event
-        FirstMatchSimpleFilter.parse("include:(kuku:pupu)");
+        assertThrows(IllegalArgumentException.class, () -> FirstMatchSimpleFilter.parse("include:(kuku:pupu)"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseNegative2() {
         // No Transport
-        FirstMatchSimpleFilter.parse("include:message(:pupu)");
+        assertThrows(IllegalArgumentException.class, () -> FirstMatchSimpleFilter.parse("include:message(:pupu)"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseNegative3() {
         // Random text
-        FirstMatchSimpleFilter.parse("lorem ipsum");
+        assertThrows(IllegalArgumentException.class, () -> FirstMatchSimpleFilter.parse("lorem ipsum"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParseNegative4() {
         // Invalid severity
-        FirstMatchSimpleFilter.parse("include:message:_badSeverityTest_(kuku:pupu)");
+        assertThrows(IllegalArgumentException.class,
+                () -> FirstMatchSimpleFilter.parse("include:message:_badSeverityTest_(kuku:pupu)"));
     }
 }

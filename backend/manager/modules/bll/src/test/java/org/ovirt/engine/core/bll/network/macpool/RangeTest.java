@@ -1,14 +1,15 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.math.LongRange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 
 public class RangeTest {
@@ -20,7 +21,7 @@ public class RangeTest {
     private static final int NUMBER_OF_MACS = 10;
     private Range rangeOf10Macs;
 
-    @Before
+    @BeforeEach
     public void before() {
         rangeOf10Macs = new Range(RANGE_FROM, RANGE_TO);
     }
@@ -34,19 +35,19 @@ public class RangeTest {
         assertThat(rangeOf10Macs.contains(MAC_OUTSIDE_OF_RANGE), is(false));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFailWhenUsingMacOutsideOfRange() {
-        rangeOf10Macs.use(MAC_OUTSIDE_OF_RANGE, false);
+        assertThrows(IllegalArgumentException.class, () -> rangeOf10Macs.use(MAC_OUTSIDE_OF_RANGE, false));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFailWhenAskingForMacOutsideOfRange() {
-        rangeOf10Macs.isAllocated(MAC_OUTSIDE_OF_RANGE);
+        assertThrows(IllegalArgumentException.class, () -> rangeOf10Macs.isAllocated(MAC_OUTSIDE_OF_RANGE));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFailWhenReturningMacOutsideOfRange() {
-        rangeOf10Macs.freeMac(MAC_OUTSIDE_OF_RANGE);
+        assertThrows(IllegalArgumentException.class, () -> rangeOf10Macs.freeMac(MAC_OUTSIDE_OF_RANGE));
     }
 
     @Test
@@ -117,9 +118,9 @@ public class RangeTest {
         assertThat(rangeOf10Macs.containsDuplicates(), is(false));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testAllocateMacNoEnoughMacs() {
-        rangeOf10Macs.allocateMacs(NUMBER_OF_MACS + 1);
+        assertThrows(IllegalStateException.class, () -> rangeOf10Macs.allocateMacs(NUMBER_OF_MACS + 1));
     }
 
     @Test
@@ -134,9 +135,9 @@ public class RangeTest {
         assertThat(range.getAvailableCount(), is(Integer.MAX_VALUE));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testTooBigRange() {
-        new Range(0, Integer.MAX_VALUE);
+        assertThrows(IllegalArgumentException.class, () -> new Range(0, Integer.MAX_VALUE));
     }
 
     @Test

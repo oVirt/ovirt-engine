@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -9,17 +10,17 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.commons.lang.math.LongRange;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MacPoolUsingRangesTest {
     private static final String MAC_ADDRESS = "00:1a:4a:16:01:00";
     @Mock
@@ -33,10 +34,11 @@ public class MacPoolUsingRangesTest {
         verify(auditLogDirector).log(any(AuditLogableImpl.class), eq(AuditLogType.MAC_ADDRESS_VIOLATES_NO_DUPLICATES_SETTING), anyString());
     }
 
-    @Test(expected = EngineException.class)
+    @Test
     public void testReactionToDuplicatesWhenDuplicatesNotDuringStartup() {
         MacPoolUsingRanges macPoolUsingRanges = createMacPoolDisallowingDuplicates();
-        macPoolUsingRanges.initialize(false, Arrays.asList(MAC_ADDRESS, MAC_ADDRESS));
+        assertThrows(EngineException.class,
+                () -> macPoolUsingRanges.initialize(false, Arrays.asList(MAC_ADDRESS, MAC_ADDRESS)));
     }
 
     private MacPoolUsingRanges createMacPoolDisallowingDuplicates() {

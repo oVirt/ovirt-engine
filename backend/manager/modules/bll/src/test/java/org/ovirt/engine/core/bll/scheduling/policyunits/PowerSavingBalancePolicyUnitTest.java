@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
@@ -11,14 +11,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -28,10 +30,11 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolicyUnitTest {
     private static final Guid HOST_A = new Guid("087fc690-de02-11e4-8830-0800200c9a66");
     private static final Guid HOST_B = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
@@ -44,15 +47,15 @@ public class PowerSavingBalancePolicyUnitTest extends CpuAndMemoryBalancingPolic
     @InjectMocks
     PowerSavingBalancePolicyUnit policyUnit = new PowerSavingBalancePolicyUnit(null, null);
 
-    @ClassRule
-    public static MockConfigRule configRule =
-            new MockConfigRule(
-                    MockConfigDescriptor.of(ConfigValues.HighUtilizationForPowerSave, 80),
-                    MockConfigDescriptor.of(ConfigValues.LowUtilizationForPowerSave, 20),
-                    MockConfigDescriptor.of(ConfigValues.CpuOverCommitDurationMinutes, 5),
-                    MockConfigDescriptor.of(ConfigValues.VcpuConsumptionPercentage, 20),
-                    MockConfigDescriptor.of(ConfigValues.UtilizationThresholdInPercent, 80)
-                    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.HighUtilizationForPowerSave, 80),
+                MockConfigDescriptor.of(ConfigValues.LowUtilizationForPowerSave, 20),
+                MockConfigDescriptor.of(ConfigValues.CpuOverCommitDurationMinutes, 5),
+                MockConfigDescriptor.of(ConfigValues.VcpuConsumptionPercentage, 20),
+                MockConfigDescriptor.of(ConfigValues.UtilizationThresholdInPercent, 80)
+        );
+    }
 
     @Test
     public void testBalanceMemoryLoad() throws Exception {

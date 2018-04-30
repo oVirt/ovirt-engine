@@ -2,13 +2,14 @@ package org.ovirt.engine.core.common.businessentities;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BusinessEntityMapTest {
@@ -20,19 +21,19 @@ public class BusinessEntityMapTest {
         assertThat(map.get(Guid.newGuid()), nullValue());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreatingBusinessEntityMapWithDuplicatesAmongIds() {
         Guid itemId = Guid.newGuid();
         TestItem first = new TestItem(itemId, "name");
         TestItem second = new TestItem(itemId, "different name");
-        new BusinessEntityMap<>(Arrays.asList(first, second));
+        assertThrows(IllegalArgumentException.class, () -> new BusinessEntityMap<>(Arrays.asList(first, second)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreatingBusinessEntityMapWithDuplicatesAmongName() {
         TestItem first = new TestItem(Guid.newGuid(), "name");
         TestItem second = new TestItem(Guid.newGuid(), "name");
-        new BusinessEntityMap<>(Arrays.asList(first, second));
+        assertThrows(IllegalArgumentException.class, () -> new BusinessEntityMap<>(Arrays.asList(first, second)));
     }
 
     @Test

@@ -2,17 +2,17 @@ package org.ovirt.engine.core.dao;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
@@ -95,7 +95,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase<ImageStorageDo
         imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         quotaId = imageStorageDomainMap.getQuotaId();
         // check that the new quota is the inserted one
-        assertEquals("quota wasn't changed", FixturesTool.DEFAULT_QUOTA_GENERAL, quotaId);
+        assertEquals(FixturesTool.DEFAULT_QUOTA_GENERAL, quotaId, "quota wasn't changed");
     }
 
     @Test
@@ -111,8 +111,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase<ImageStorageDo
         // fetch the image again
         imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         // check that the new disk profile is the inserted one
-        assertEquals("disk profile wasn't changed",
-                FixturesTool.DISK_PROFILE_2,
-                imageStorageDomainMap.getDiskProfileId());
+        assertEquals(FixturesTool.DISK_PROFILE_2, imageStorageDomainMap.getDiskProfileId(),
+                "disk profile wasn't changed");
     }
 }

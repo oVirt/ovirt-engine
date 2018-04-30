@@ -1,20 +1,23 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class KeyValueFormatValidationTest {
     @Mock
     private ConstantsManager mockConstantsManager;
@@ -34,7 +37,7 @@ public class KeyValueFormatValidationTest {
     private static final ValidationResult successfulValidationResult = new ValidationResult();
     private KeyValueFormatValidation underTest;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         when(mockConstantsManager.getMessages()).thenReturn(mockUiMessages);
         when(mockUiMessages.keyValueFormat()).thenReturn(FORMAT);

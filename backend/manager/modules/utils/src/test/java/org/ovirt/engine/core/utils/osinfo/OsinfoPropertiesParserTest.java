@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.utils.osinfo;
 
-import static org.junit.Assume.assumeNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OsinfoPropertiesParserTest {
 
@@ -15,7 +15,7 @@ public class OsinfoPropertiesParserTest {
     @Test
     public void defaultProperties() {
         String basedir = System.getProperty("basedir");
-        assumeNotNull(basedir, "Test isn't run via Maven. Please set the basedir system property");
+        assumeTrue(basedir != null, "Test isn't run via Maven. Please set the basedir system property");
         OsinfoPropertiesParser.parse(
                 Paths.get(basedir, "../../../../packaging/conf/osinfo-defaults.properties").toString());
     }

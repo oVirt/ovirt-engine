@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.utils.servlet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,13 +23,16 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FileServletTest {
     FileServlet testServlet;
 
@@ -42,7 +45,7 @@ public class FileServletTest {
 
     File file;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         file = new File(this.getClass().getResource("small_file.txt").toURI());
         testServlet = new FileServlet();
@@ -51,10 +54,9 @@ public class FileServletTest {
     /**
      * Test method for {@link org.ovirt.engine.core.FileServlet#init(javax.servlet.ServletConfig)}.
      */
-    @Test(expected=ServletException.class)
-    public void testInitServletConfig_NoInitParams() throws ServletException {
-        testServlet.init(mockConfig);
-        fail("Should not get here");
+    @Test
+    public void testInitServletConfig_NoInitParams() {
+        assertThrows(ServletException.class, () -> testServlet.init(mockConfig));
     }
 
     /**
@@ -64,8 +66,8 @@ public class FileServletTest {
     public void testInitServletConfig_BaseSet() throws ServletException {
         when(mockConfig.getInitParameter("file")).thenReturn(file.getParent());
         testServlet.init(mockConfig);
-        assertNull("Type should be null", testServlet.type);
-        assertEquals("base should be " + file.getParent(), file.getParentFile(), testServlet.base);
+        assertNull(testServlet.type, "Type should be null");
+        assertEquals(file.getParentFile(), testServlet.base, "base should be " + file.getParent());
     }
 
     /**
@@ -135,8 +137,8 @@ public class FileServletTest {
      */
     @Test
     public void testCheckForIndex_BadParams() throws IOException {
-        assertNull("no index file", testServlet.checkForIndex(mockRequest, mockResponse, null, null));
-        assertNull("no index file", testServlet.checkForIndex(mockRequest, mockResponse, file.getParentFile(), null));
+        assertNull(testServlet.checkForIndex(mockRequest, mockResponse, null, null), "no index file");
+        assertNull(testServlet.checkForIndex(mockRequest, mockResponse, file.getParentFile(), null), "no index file");
     }
 
     /**
@@ -147,8 +149,8 @@ public class FileServletTest {
         File file = new File(this.getClass().getResource("filetest").toURI());
         when(mockRequest.getServletPath()).thenReturn("/test/path");
         File indexFile = testServlet.checkForIndex(mockRequest, mockResponse, file, null);
-        assertNotNull("indexFile should not be null", indexFile);
-        assertTrue("indexFile should exist", indexFile.exists());
+        assertNotNull(indexFile, "indexFile should not be null");
+        assertTrue(indexFile.exists(), "indexFile should exist");
         verify(mockResponse).sendRedirect("/test/path/index.html");
     }
 
@@ -160,8 +162,8 @@ public class FileServletTest {
         File file = new File(this.getClass().getResource("filetest").toURI());
         when(mockRequest.getServletPath()).thenReturn("/test/path");
         File indexFile = testServlet.checkForIndex(mockRequest, mockResponse, file, "/path2");
-        assertNotNull("indexFile should not be null", indexFile);
-        assertTrue("indexFile should exist", indexFile.exists());
+        assertNotNull(indexFile, "indexFile should not be null");
+        assertTrue(indexFile.exists(), "indexFile should exist");
         verify(mockResponse).sendRedirect("/test/path/path2/index.html");
     }
 }

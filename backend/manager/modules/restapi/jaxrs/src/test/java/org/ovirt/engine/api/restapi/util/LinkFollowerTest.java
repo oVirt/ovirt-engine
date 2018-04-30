@@ -1,15 +1,15 @@
 package org.ovirt.engine.api.restapi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
@@ -23,7 +23,7 @@ import org.ovirt.engine.api.restapi.resource.ResourceLocator;
 import org.ovirt.engine.api.restapi.resource.utils.LinkFollower;
 import org.ovirt.engine.api.restapi.resource.utils.LinksTreeNode;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LinkFollowerTest {
 
     private LinkFollower linkFollower;
@@ -33,7 +33,7 @@ public class LinkFollowerTest {
 
     @Mock BackendVmNicsResource vmNicsResource;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         linkFollower = new LinkFollower(resourceLocator) {
             //override fetch() since it requires a real environment and would crash tests.

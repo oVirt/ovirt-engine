@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -29,7 +29,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class VmHandlerTest {
     private VmHandler vmHandler = new VmHandler();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vmHandler.init();
     }
@@ -43,8 +43,8 @@ public class VmHandlerTest {
         VmStatic dest = new VmStatic();
         dest.setName(RandomUtils.instance().nextString(10));
 
-        assertFalse("Update should not be valid for different names",
-                vmHandler.isUpdateValid(src, dest));
+        assertFalse(
+                vmHandler.isUpdateValid(src, dest), "Update should not be valid for different names");
     }
 
     @Test
@@ -125,8 +125,8 @@ public class VmHandlerTest {
         boolean updateIsValid = vmHandler.isUpdateValid(src, dest);
 
         // Then
-        assertFalse("Update should be invalid for different IDs",
-                updateIsValid);
+        assertFalse(
+                updateIsValid, "Update should be invalid for different IDs");
     }
 
     @Test
@@ -141,7 +141,7 @@ public class VmHandlerTest {
         boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Down, false);
 
         // Then
-        assertTrue("Update should be valid for different cluster IDs in the down state", updateIsValid);
+        assertTrue(updateIsValid, "Update should be valid for different cluster IDs in the down state");
     }
 
     @Test
@@ -156,7 +156,8 @@ public class VmHandlerTest {
         boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
 
         // Then
-        assertFalse("Update should be invalid for different single QXL PCI statuses on a running VM", updateIsValid);
+        assertFalse(updateIsValid,
+                "Update should be invalid for different single QXL PCI statuses on a running VM");
     }
 
     @Test
@@ -173,7 +174,8 @@ public class VmHandlerTest {
         boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
 
         // Then
-        assertTrue("Update should be valid for different descriptions on a running, hosted engine VM", updateIsValid);
+        assertTrue(updateIsValid,
+                "Update should be valid for different descriptions on a running, hosted engine VM");
     }
 
     @Test
@@ -190,7 +192,8 @@ public class VmHandlerTest {
         boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, false);
 
         // Then
-        assertFalse("Update should be invalid for different names on a running, hosted engine VM", updateIsValid);
+        assertFalse(updateIsValid,
+                "Update should be invalid for different names on a running, hosted engine VM");
     }
 
     @Test
@@ -207,7 +210,7 @@ public class VmHandlerTest {
         boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, true);
 
         // Then
-        assertTrue("Update should be valid for different number of sockets on a running VM", updateIsValid);
+        assertTrue(updateIsValid, "Update should be valid for different number of sockets on a running VM");
     }
 
 }

@@ -1,48 +1,48 @@
 package org.ovirt.engine.core.searchbackend;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SearchObjectAutoCompleterTest {
     private SearchObjectAutoCompleter comp;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         comp = new SearchObjectAutoCompleter();
     }
 
     @Test
     public void testGetDefaultSortbyPhrase() {
-        assertTrue("HOST", comp.getDefaultSort("HOST").contains("vds_name"));
-        assertEquals("Garbage", "", comp.getDefaultSort("kjfhkjdshkjfs"));
-        assertEquals("Null", "", comp.getDefaultSort(null));
+        assertTrue(comp.getDefaultSort("HOST").contains("vds_name"), "HOST");
+        assertEquals("", comp.getDefaultSort("kjfhkjdshkjfs"), "Garbage");
+        assertEquals("", comp.getDefaultSort(null), "Null");
     }
 
     @Test
     public void testGetRelatedTableName() {
-        assertEquals("EVENTS", "audit_log", comp.getRelatedTableName("EVENTS", true));
-        assertNull("Garbage", comp.getRelatedTableName("kjfhkjdshkjfs", true));
-        assertNull("Null", comp.getRelatedTableName(null, true));
+        assertEquals("audit_log", comp.getRelatedTableName("EVENTS", true), "EVENTS");
+        assertNull(comp.getRelatedTableName("kjfhkjdshkjfs", true), "Garbage");
+        assertNull(comp.getRelatedTableName(null, true), "Null");
     }
 
     @Test
     public void testIsCrossReference() {
-        assertTrue("EVENTS", comp.isCrossReference("EVENTS", "TEMPLATES"));
-        assertFalse("Garbage Cross", comp.isCrossReference("fsfsdf", "TEMPLATES"));
-        assertFalse("Garbage Object", comp.isCrossReference("EVENTS", "fsfds"));
-        assertFalse("Null Object", comp.isCrossReference("EVENTS", null));
-        assertFalse("Null text", comp.isCrossReference(null, "TEMPLATES"));
+        assertTrue(comp.isCrossReference("EVENTS", "TEMPLATES"), "EVENTS");
+        assertFalse(comp.isCrossReference("fsfsdf", "TEMPLATES"), "Garbage Cross");
+        assertFalse(comp.isCrossReference("EVENTS", "fsfds"), "Garbage Object");
+        assertFalse(comp.isCrossReference("EVENTS", null), "Null Object");
+        assertFalse(comp.isCrossReference(null, "TEMPLATES"), "Null text");
     }
 
     @Test
     public void testGetInnerJoin() {
-        assertNotNull("Sanity test", comp.getInnerJoin("EVENT", "USER", true));
+        assertNotNull(comp.getInnerJoin("EVENT", "USER", true), "Sanity test");
     }
 
     @Test

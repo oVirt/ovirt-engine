@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.provider.network.openstack;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doReturn;
@@ -12,13 +12,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 
@@ -30,7 +30,7 @@ import com.woorea.openstack.keystone.model.Token;
 import com.woorea.openstack.keystone.model.authentication.UsernamePassword;
 import com.woorea.openstack.keystone.model.authentication.UsernamePassword.PasswordCredentials;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ExternalNetworkTokenProviderTest {
 
     private static final String AUTH_URL = "authUrl";
@@ -57,7 +57,7 @@ public class ExternalNetworkTokenProviderTest {
 
     private ExternalNetworkTokenProvider tokenProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Provider<OpenstackNetworkProviderProperties> provider = new Provider<>();
         provider.setAuthUrl(AUTH_URL);

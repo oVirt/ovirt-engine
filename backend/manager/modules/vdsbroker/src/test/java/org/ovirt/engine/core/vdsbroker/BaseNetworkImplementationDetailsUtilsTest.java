@@ -1,14 +1,16 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.network.cluster.DefaultRouteUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -29,23 +31,21 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
+@ExtendWith({MockConfigExtension.class, RandomUtilsSeedingExtension.class})
 public abstract class BaseNetworkImplementationDetailsUtilsTest {
     private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
-
-    @Rule
-    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
-            MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false),
-            MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500)
-    );
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_2, true),
+                MockConfigDescriptor.of(ConfigValues.DefaultRouteReportedByVdsm, Version.v4_1, false),
+                MockConfigDescriptor.of(ConfigValues.DefaultMTU, 1500)
+        );
+    }
 
 
     @Mock
@@ -82,7 +82,7 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     protected final String networkName = RandomUtils.instance().nextString(10);
 
 
-    @Before
+    @BeforeEach
     public void setUpBefore() throws Exception {
         qosA = createAndMockQos(30, 30, 30);
         qosB = createAndMockQos(60, 60, 60);
@@ -197,19 +197,18 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
     public void calculateNetworkImplementationDetailsNoNetworkName() {
         testIface.setNetworkName(null);
 
-        assertNull("Network implementation details should not be filled.",
-            initMocksForNetworkImplementationDetailsUtils(null, null, testIface).calculateNetworkImplementationDetails(
-                testIface, null));
+        assertNull(initMocksForNetworkImplementationDetailsUtils(null, null, testIface)
+                .calculateNetworkImplementationDetails(testIface, null),
+                "Network implementation details should not be filled.");
     }
 
     @Test
     public void calculateNetworkImplementationDetailsEmptyNetworkName() {
         testIface.setNetworkName("");
 
-        assertNull("Network implementation details should not be filled.",
-            initMocksForNetworkImplementationDetailsUtils(null, null, testIface).calculateNetworkImplementationDetails(
-                testIface,
-                null));
+        assertNull(initMocksForNetworkImplementationDetailsUtils(null, null, testIface)
+                .calculateNetworkImplementationDetails(testIface, null),
+                "Network implementation details should not be filled.");
     }
 
     @Test
@@ -236,10 +235,9 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
             initMocksForNetworkImplementationDetailsUtils(network, null, testIface)
                 .calculateNetworkImplementationDetails(iface, network);
 
-        assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
-        assertEquals("Network implementation details should be " + (expectManaged ? "" : "un") + "managed.",
-            expectManaged,
-            networkImplementationDetails.isManaged());
+        assertNotNull(networkImplementationDetails, "Network implementation details should be filled.");
+        assertEquals(expectManaged, networkImplementationDetails.isManaged(),
+                "Network implementation details should be " + (expectManaged ? "" : "un") + "managed.");
     }
 
     protected void calculateNetworkImplementationDetailsAndAssertSync(VdsNetworkInterface iface,
@@ -251,10 +249,9 @@ public abstract class BaseNetworkImplementationDetailsUtilsTest {
             initMocksForNetworkImplementationDetailsUtils(network, qos, testIface)
                 .calculateNetworkImplementationDetails(iface, network);
 
-        assertNotNull("Network implementation details should be filled.", networkImplementationDetails);
-        assertEquals("Network implementation details should be " + (expectSync ? "in" : "out of") + " sync.",
-            expectSync,
-            networkImplementationDetails.isInSync());
+        assertNotNull(networkImplementationDetails, "Network implementation details should be filled.");
+        assertEquals(expectSync, networkImplementationDetails.isInSync(),
+                "Network implementation details should be " + (expectSync ? "in" : "out of") + " sync.");
     }
 
     protected Network createNetwork(boolean vmNetwork,

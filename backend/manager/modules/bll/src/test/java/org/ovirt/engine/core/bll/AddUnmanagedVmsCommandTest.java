@@ -13,15 +13,16 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -31,16 +32,13 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.dao.VmStaticDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class AddUnmanagedVmsCommandTest {
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     @Mock
     private VmStaticDao vmStaticDao;
     @Spy
@@ -55,13 +53,13 @@ public class AddUnmanagedVmsCommandTest {
 
     private static Map<String, Object> hostedEngine;
 
-    @BeforeClass
+    @BeforeAll
     public static void loadVmData() throws IOException {
         externalVm = loadVm("/external_vm.json");
         hostedEngine = loadVm("/he_vm.json");
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         doNothing().when(addUnamangedVmsCommand).addExternallyManagedVm(any());
         doNothing().when(addUnamangedVmsCommand).addDevices(any(), anyLong());

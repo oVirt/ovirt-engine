@@ -12,15 +12,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -33,9 +32,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
-import org.ovirt.engine.core.utils.ExecutorServiceRule;
+import org.ovirt.engine.core.utils.ExecutorServiceExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, ExecutorServiceExtension.class})
 public class StorageDeviceSyncJobTest {
     private static final Guid CLUSTER_GUID_3_6 = new Guid("CC111111-1111-1111-1111-111111111111");
 
@@ -47,9 +46,6 @@ public class StorageDeviceSyncJobTest {
     private static final Guid DEVICE_WITH_CHANGE = new Guid("00000000-0000-0000-0000-000000000001");
     private static final Guid DEVICE_WITH_NAME_CHANGE = new Guid("00000000-0000-0000-0000-000000000002");
     private static final Guid DEVICE_WITH_DEVUUID_BUT_NAME_CHANGED = new Guid("00000000-0000-0000-0000-000000000003");
-
-    @ClassRule
-    public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
 
     @Mock
     private StorageDeviceDao storageDeviceDao;
@@ -67,7 +63,7 @@ public class StorageDeviceSyncJobTest {
     @Mock
     private GlusterAuditLogUtil logUtil;
 
-    @Before
+    @BeforeEach
     public void init() {
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getAllUpServers()).when(glusterUtil).getAllUpServers(CLUSTER_GUID_3_6);

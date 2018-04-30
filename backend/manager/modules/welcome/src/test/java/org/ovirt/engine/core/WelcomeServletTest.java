@@ -18,25 +18,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner.Silent;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
-@RunWith(Silent.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class WelcomeServletTest {
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     @Spy
     WelcomeServlet testServlet;
 
@@ -69,7 +68,7 @@ public class WelcomeServletTest {
         when(mockBackend.runPublicQuery(eq(queryType), any())).thenReturn(queryReturnValue);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         doReturn("http://localhost:8080/ovirt-engine/sso/credentials-change.html").when(testServlet).getCredentialsChangeUrl(any());
         testServlet.setBackend(mockBackend);

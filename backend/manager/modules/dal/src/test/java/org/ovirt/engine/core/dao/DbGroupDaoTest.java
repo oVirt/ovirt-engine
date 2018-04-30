@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -19,8 +20,8 @@ public class DbGroupDaoTest extends BaseDaoTestCase<DbGroupDao> {
     private DbGroup newGroup;
     private DbGroup existingGroup;
 
+    @BeforeEach
     @Override
-    @Before
     public void setUp() throws Exception {
         super.setUp();
 
@@ -148,10 +149,10 @@ public class DbGroupDaoTest extends BaseDaoTestCase<DbGroupDao> {
      * Ensures that inserting a group with no external id fails, as it has a
      * not null constraint.
      */
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testSaveGroupWithoutExternalIdFails() {
         newGroup.setExternalId(null);
-        dao.save(newGroup);
+        assertThrows(RuntimeException.class, () -> dao.save(newGroup));
     }
 
     /**
@@ -159,11 +160,11 @@ public class DbGroupDaoTest extends BaseDaoTestCase<DbGroupDao> {
      * an existing group fails, as there is a unique constraint for that pair
      * of attributes.
      */
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testSaveGroupDuplicatedDomainAndExternalId() {
         newGroup.setDomain(existingGroup.getDomain());
         newGroup.setExternalId(existingGroup.getExternalId());
-        dao.save(newGroup);
+        assertThrows(RuntimeException.class, () -> dao.save(newGroup));
     }
 
     /**

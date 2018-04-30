@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -25,7 +25,7 @@ public class AddVdsSpmIdCommandTest extends BaseCommandTest {
     @Mock
     private VdsSpmIdMapDao vdsSpmIdMapDao;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         spId = Guid.newGuid();
         vdsId = Guid.newGuid();

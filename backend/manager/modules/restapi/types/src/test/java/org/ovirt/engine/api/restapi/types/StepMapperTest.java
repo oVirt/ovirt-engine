@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.StepStatus;
@@ -32,7 +32,7 @@ public class StepMapperTest extends AbstractInvertibleMappingTest<Step, org.ovir
         if (model.getParentStep() != null) {
             assertEquals(model.getParentStep().getId(), transform.getParentStep().getId());
         }
-        assertEquals("unexpected progress", model.getProgress(), transform.getProgress());
+        assertEquals(model.getProgress(), transform.getProgress(), "unexpected progress");
     }
 
     @Override
@@ -55,7 +55,7 @@ public class StepMapperTest extends AbstractInvertibleMappingTest<Step, org.ovir
         assertEquals(executionHostId.toString(), model.getExecutionHost().getId());
 
         bllStep = StepMapper.map(model, null);
-        assertNull("subject entities shouldn't be mapped back to the model", bllStep.getSubjectEntities());
+        assertNull(bllStep.getSubjectEntities(), "subject entities shouldn't be mapped back to the model");
     }
 
     private org.ovirt.engine.core.common.job.Step createBLLStep() {

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -25,7 +25,7 @@ public class FindVmAndDestinationsTest {
     @InjectMocks
     FindVmAndDestinations findVmAndDestinations = new FindVmAndDestinations(null, 80, 1024);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         initMocks(this);
     }

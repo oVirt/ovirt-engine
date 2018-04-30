@@ -7,7 +7,7 @@ import static org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.parseC
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.PinnedCpu;
 
 public class CpuPinningHelperTest {

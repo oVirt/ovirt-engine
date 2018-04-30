@@ -1,27 +1,25 @@
 package org.ovirt.engine.core.dao;
 
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SupportedHostFeatureDaoTest extends BaseDaoTestCase<SupportedHostFeatureDao> {
     @Test
     public void testGetSupportedHostFeaturesByHostId() {
         Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);
-        assertNotNull("Failed to retrive supported addtional features in the host", featuresSupported);
+        assertNotNull(featuresSupported, "Failed to retrive supported addtional features in the host");
         Set<String> expectedFeatures = new HashSet<>(Arrays.asList("TEST_FEATURE_1", "TEST_FEATURE_2"));
-        assertEquals("Failed to retrive supported addtional features in the host",
-                expectedFeatures,
-                featuresSupported);
+        assertEquals(expectedFeatures, featuresSupported, "Failed to retrive supported addtional features in the host");
     }
 
     @Test
@@ -37,7 +35,7 @@ public class SupportedHostFeatureDaoTest extends BaseDaoTestCase<SupportedHostFe
         Set<String> newFatures = new HashSet<>(Arrays.asList("NEW__FEATURE_1", "NEW__FEATURE_2", "NEW__FEATURE_3"));
         dao.addAllSupportedHostFeature(FixturesTool.HOST_ID, newFatures);
         Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);
-        assertTrue("Failed to add the feature", featuresSupported.containsAll(newFatures));
+        assertTrue(featuresSupported.containsAll(newFatures), "Failed to add the feature");
     }
 
     @Test
@@ -46,6 +44,6 @@ public class SupportedHostFeatureDaoTest extends BaseDaoTestCase<SupportedHostFe
         assertFalse(featuresSupported.isEmpty());
         dao.removeAllSupportedHostFeature(FixturesTool.HOST_ID, featuresSupported);
         Set<String> featuresSupportedAfterDeletion = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);
-        assertTrue("Failed to remove addtional supported features", featuresSupportedAfterDeletion.isEmpty());
+        assertTrue(featuresSupportedAfterDeletion.isEmpty(), "Failed to remove addtional supported features");
     }
 }

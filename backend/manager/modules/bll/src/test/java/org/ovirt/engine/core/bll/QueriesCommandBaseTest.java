@@ -1,18 +1,18 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import org.jgroups.util.UUID;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
@@ -43,14 +43,14 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     @Test
     public void testIsInternalExecutionDefault() {
         QueriesCommandBase<?> query = mockQuery();
-        assertFalse("By default, a query should not be marked for internal execution", query.isInternalExecution());
+        assertFalse(query.isInternalExecution(), "By default, a query should not be marked for internal execution");
     }
 
     @Test
     public void testIsInternalExecutionTrue() {
         QueriesCommandBase<?> query = mockQuery();
         query.setInternalExecution(true);
-        assertTrue("Query should be marked for internal execution", query.isInternalExecution());
+        assertTrue(query.isInternalExecution(), "Query should be marked for internal execution");
     }
 
     @Test
@@ -61,16 +61,15 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
         query.setInternalExecution(true);
         query.setInternalExecution(false);
 
-        assertFalse("Query should not be marked for internal execution", query.isInternalExecution());
+        assertFalse(query.isInternalExecution(), "Query should not be marked for internal execution");
     }
 
     /** Test that an "oddly" typed query will be considered unknown */
     @Test
     public void testUnknownQuery() throws Exception {
         QueriesCommandBase<?> query = mockQuery();
-        assertEquals("Wrong type for 'ThereIsNoSuchQuery' ",
-                QueryType.Unknown,
-                TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
+        assertEquals(QueryType.Unknown, TestHelperQueriesCommandType.getQueryTypeFieldValue(query),
+                "Wrong type for 'ThereIsNoSuchQuery'");
     }
 
     /** Tests Admin permission check */
@@ -106,11 +105,10 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
 
                         query.setInternalExecution(isInternalExecution);
                         query.executeCommand();
-                        assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
-                                + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
-                                "Query should succeed is: ",
-                                shouldBeAbleToRunQuery,
-                                query.getQueryReturnValue().getSucceeded());
+                        assertEquals(shouldBeAbleToRunQuery, query.getQueryReturnValue().getSucceeded(),
+                                "Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
+                                        + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
+                                        "Query should succeed is: ");
                     }
                 }
             }
@@ -126,14 +124,14 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
         when(params.getRefresh()).thenReturn(false);
         QueriesCommandBase<?> query = mockQuery();
 
-        assertEquals("wrong guid", Guid.EVERYONE, query.getUserID());
+        assertEquals(Guid.EVERYONE, query.getUserID(), "wrong guid");
     }
 
     @Test
     public void testGetUserIDWithNoUser() {
         QueriesCommandBase<?> query = mockQuery();
 
-        assertNull("wrong guid", query.getUserID());
+        assertNull(query.getUserID(), "wrong guid");
     }
 
     private QueriesCommandBase<?> mockQuery() {
@@ -146,8 +144,8 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
 
     /* Test Utilities */
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void clearSession() {
         CorrelationIdTracker.clean();
     }

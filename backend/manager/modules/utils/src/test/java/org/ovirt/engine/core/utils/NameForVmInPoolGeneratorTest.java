@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.utils;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 public class NameForVmInPoolGeneratorTest {

@@ -1,16 +1,13 @@
 package org.ovirt.engine.core.bll.memory.sdcomparators;
 
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
+@ExtendWith(RandomUtilsSeedingExtension.class)
 public class StorageDomainAvailableDiskSizeComparatorTest extends StorageDomainComparatorAbstractTest {
-
-    @ClassRule
-    public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
-
     public StorageDomainAvailableDiskSizeComparatorTest() {
         comparator = MemoryStorageHandler.AVAILABLE_SIZE_COMPARATOR;
     }

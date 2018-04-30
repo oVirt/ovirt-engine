@@ -16,17 +16,19 @@ limitations under the License.
 
 package org.ovirt.engine.core.common.utils.ansible;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
+import org.ovirt.engine.core.utils.MockEngineLocalConfigExtension;
 
+@ExtendWith(MockEngineLocalConfigExtension.class)
 public class AnsibleCommandBuilderTest {
 
     private static final String OVIRT_HOME = "/var/lib/ovirt-engine/";
@@ -36,11 +38,8 @@ public class AnsibleCommandBuilderTest {
     private static final String IGNORE_SSH_CONFIG = "--ssh-common-args=-F " + OVIRT_HOME + ".ssh/config";
     private static final String ANSIBLE_LOG_LEVEL = "-v";
 
-    @ClassRule
-    public static MockEngineLocalConfigRule mockEngineLocalConfigRule;
-
-    static {
-        mockEngineLocalConfigRule = new MockEngineLocalConfigRule(
+    public static Stream<Pair<String, String>> mockEngineLocalConfiguration() {
+        return Stream.of(
                 new Pair<>("ENGINE_PKI", "/etc/pki/ovirt-engine/"),
                 new Pair<>("ENGINE_USR", "/usr/share/ovirt-engine/"),
                 new Pair<>("ENGINE_VAR", OVIRT_HOME),

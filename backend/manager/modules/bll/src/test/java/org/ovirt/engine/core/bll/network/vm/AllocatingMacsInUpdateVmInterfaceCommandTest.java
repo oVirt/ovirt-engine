@@ -1,18 +1,16 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.errors.EngineException;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AllocatingMacsInUpdateVmInterfaceCommandTest extends AllocateReleaseMacWhenBeingReservedForSnapshotTest {
     @Test
     public void testAllocateMacFromRequestForNonStatelessVmWhenMacDiffers() {
@@ -26,15 +24,17 @@ public class AllocatingMacsInUpdateVmInterfaceCommandTest extends AllocateReleas
                 underTest.allocateMacFromRequest(), is(true));
     }
 
-    @Test(expected = EngineException.class)
+    @Test
     public void testAllocateMacFromRequestForNonStatelessVmWhenMacDiffersButItsNotAvailable() {
         nicBeingUpdated.setMacAddress(OLD_MAC);
         updatingNic.setMacAddress(NEW_MAC);
 
         when(macPool.addMac(updatingNic.getMacAddress())).thenReturn(false);
 
-        underTest.initMacPoolData();
-        underTest.allocateMacFromRequest();
+        assertThrows(EngineException.class, () -> {
+                    underTest.initMacPoolData();
+                    underTest.allocateMacFromRequest();
+                });
 
         //There's no snapshot, new mac of updated nic must be allocated in mac pool, but mac is not available
     }

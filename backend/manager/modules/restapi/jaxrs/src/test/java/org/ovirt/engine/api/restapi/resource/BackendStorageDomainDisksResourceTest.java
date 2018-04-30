@@ -1,9 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,8 +11,10 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -36,6 +38,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendStorageDomainDisksResource> {
 
     protected static final Guid storagePoolId = new Guid("44444444-4444-4444-4444-444444444444");
@@ -175,7 +178,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
 
     @Override
     @Test
-    @Ignore
+    @Disabled
     public void testQuery() {
     }
 
@@ -222,21 +225,21 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListFailure() {
 
     }
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListCrash() {
 
     }
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListCrashClientLocale() {
 
     }

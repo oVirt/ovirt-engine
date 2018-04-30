@@ -15,16 +15,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -46,11 +46,11 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
-import org.ovirt.engine.core.utils.ExecutorServiceRule;
+import org.ovirt.engine.core.utils.ExecutorServiceExtension;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
-import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class, MockConfigExtension.class, ExecutorServiceExtension.class})
 public class GlusterServiceSyncJobTest {
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final Guid SERVER1_ID = Guid.newGuid();
@@ -69,12 +69,9 @@ public class GlusterServiceSyncJobTest {
     @Spy
     private GlusterServiceSyncJob syncJob;
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            MockConfigDescriptor.of(ConfigValues.GlusterServicesEnabled, Version.getLast(), true));
-
-    @ClassRule
-    public static ExecutorServiceRule executorServiceRule = new ExecutorServiceRule();
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.GlusterServicesEnabled, Version.getLast(), true));
+    }
 
     @Mock
     private GlusterServerServiceDao serverServiceDao;
@@ -91,7 +88,7 @@ public class GlusterServiceSyncJobTest {
     @Mock
     private GlusterAuditLogUtil logUtil;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         createObjects();
         setupCommonMock();

@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -58,17 +58,17 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setResumeBehavior(VmResumeBehavior.KILL);
     }
 
-    @Before
+    @BeforeEach
     public void setUpVmBase() {
         setUpVm(getVm());
     }
 
-    @Before
+    @BeforeEach
     public void setUpIconCache() {
         TWO_ICONS_ICON_CACHE.inject();
     }
 
-    @After
+    @AfterEach
     public void tearDownIconCache() {
         IconCacheBaseVmModelMock.removeMock();
     }

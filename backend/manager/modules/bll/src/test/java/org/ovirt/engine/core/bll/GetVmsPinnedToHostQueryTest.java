@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -38,7 +38,7 @@ public class GetVmsPinnedToHostQueryTest extends AbstractUserQueryTest<IdQueryPa
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Wrong VM returned", expectedResult, result.get(0));
+        assertEquals(expectedResult, result.get(0), "Wrong VM returned");
     }
 
 }

@@ -1,12 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainDiskSnapshotsResourceTest extends
         AbstractBackendCollectionResourceTest<DiskSnapshot, Disk, BackendStorageDomainDiskSnapshotsResource> {
 
@@ -39,7 +42,7 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
 
     @Override
     @Test
-    @Ignore
+    @Disabled
     public void testQuery() {
     }
 
@@ -62,21 +65,21 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListFailure() {
 
     }
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListCrash() {
 
     }
 
     @Test
     @Override
-    @Ignore
+    @Disabled
     public void testListCrashClientLocale() {
 
     }

@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.queries;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.queries.QueryType.QueryAuthType;
 
 /** A test case for the {@link QueryType} class. */
@@ -11,14 +11,15 @@ public class QueryTypeTest {
 
     @Test
     public void testForValue() {
-        assertEquals("wrong value",
+        assertEquals(
                 QueryType.GetAgentFenceOptions,
-                QueryType.forValue(QueryType.GetAgentFenceOptions.getValue()));
+                QueryType.forValue(QueryType.GetAgentFenceOptions.getValue()), "wrong value");
     }
 
     @Test
     public void testAuthTypes() {
-        assertEquals("Unknown should not be an admin query", QueryAuthType.User, QueryType.Unknown.getAuthType());
-        assertFalse("Unknown should not be an admin query", QueryType.Unknown.isAdmin());
+        assertEquals(QueryAuthType.User, QueryType.Unknown.getAuthType(),
+                "Unknown should not be an admin query");
+        assertFalse(QueryType.Unknown.isAdmin(), "Unknown should not be an admin query");
     }
 }
