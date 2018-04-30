@@ -17,6 +17,7 @@ limitations under the License.
 package org.ovirt.engine.api.restapi.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Ip;
@@ -29,7 +30,7 @@ public class IpHelperTest {
     @Test
     public void testReturnNullWhenGivenNullIp() {
         IpVersion version = IpHelper.getVersion(null);
-        assertEquals(null, version);
+        assertNull(version);
     }
 
     /**

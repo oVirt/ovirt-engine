@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class StorageDomainDRDaoTest extends BaseDaoTestCase<StorageDomainDRDao> 
     public void testRemoveAndSave() {
         dao.remove(FixturesTool.POSIX_STORAGE_DOMAIN_ID, FixturesTool.GLUSTER_GEOREP_SESSION_ID2);
         StorageDomainDR result = dao.get(FixturesTool.POSIX_STORAGE_DOMAIN_ID, FixturesTool.GLUSTER_GEOREP_SESSION_ID2);
-        assertEquals(null, result);
+        assertNull(result);
         dao.save(storageDomainDR);
         result = dao.get(FixturesTool.POSIX_STORAGE_DOMAIN_ID, FixturesTool.GLUSTER_GEOREP_SESSION_ID2);
         assertEquals(storageDomainDR, result);

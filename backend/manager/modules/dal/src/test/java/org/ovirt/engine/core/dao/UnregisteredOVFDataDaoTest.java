@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -119,6 +120,6 @@ public class UnregisteredOVFDataDaoTest extends BaseDaoTestCase<UnregisteredOVFD
         assertEquals(2, ovfEntityDataList.size());
         assertEquals(FixturesTool.UNREGISTERED_TEMPLATE, ovfEntityDataList.get(0).getEntityId());
         assertEquals(FixturesTool.UNREGISTERED_TEMPLATE, ovfEntityDataList.get(1).getEntityId());
-        assertFalse(ovfEntityDataList.get(0).getStorageDomainId().equals(ovfEntityDataList.get(1).getStorageDomainId()));
+        assertNotEquals(ovfEntityDataList.get(0).getStorageDomainId(), ovfEntityDataList.get(1).getStorageDomainId());
     }
 }

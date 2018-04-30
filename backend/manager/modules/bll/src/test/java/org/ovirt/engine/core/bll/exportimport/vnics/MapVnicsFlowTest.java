@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.exportimport.vnics;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.core.common.flow.HandlerOutcome.NEUTRAL;
 import static org.ovirt.engine.core.common.flow.HandlerOutcome.SUCCESS;
@@ -84,7 +84,7 @@ public class MapVnicsFlowTest {
         // act
         underTest.getHead().process(actual);
         // assert
-        assertTrue(expected.equals(actual));
+        assertEquals(expected, actual);
     }
 
     // test cases

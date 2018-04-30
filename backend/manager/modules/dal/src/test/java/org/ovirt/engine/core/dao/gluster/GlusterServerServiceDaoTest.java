@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao.gluster;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -114,7 +114,7 @@ public class GlusterServerServiceDaoTest extends BaseDaoTestCase<GlusterServerSe
         assertNotNull(modifiedService);
         assertEquals(GlusterServiceStatus.STOPPED, modifiedService.getStatus());
         assertEquals(GlusterServiceStatus.RUNNING, existingService.getStatus());
-        assertFalse(existingService.equals(modifiedService));
+        assertNotEquals(existingService, modifiedService);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class GlusterServerServiceDaoTest extends BaseDaoTestCase<GlusterServerSe
         assertNotNull(modifiedService);
         assertEquals(GlusterServiceStatus.STOPPED, modifiedService.getStatus());
         assertEquals(GlusterServiceStatus.RUNNING, existingService.getStatus());
-        assertFalse(existingService.equals(modifiedService));
+        assertNotEquals(existingService, modifiedService);
     }
 
     private GlusterServerService insertTestService() {

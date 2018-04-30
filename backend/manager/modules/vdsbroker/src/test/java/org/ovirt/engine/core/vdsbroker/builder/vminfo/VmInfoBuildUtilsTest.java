@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
@@ -339,7 +340,7 @@ public class VmInfoBuildUtilsTest {
         vm.setClusterCompatibilityVersion(Version.v4_1);
         vm.setClusterId(CLUSTER_ID);
         doReturn(getSupportedAdditionalClusterFeatures(false)).when(clusterFeatureDao).getSupportedFeaturesByClusterId(CLUSTER_ID);
-        assertEquals(false, underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).isPresent());
+        assertFalse(underTest.getNetworkDiskType(vm, StorageType.GLUSTERFS).isPresent());
     }
 
     @Test

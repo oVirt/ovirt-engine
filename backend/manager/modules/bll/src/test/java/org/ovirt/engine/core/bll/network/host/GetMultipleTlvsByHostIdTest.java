@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -106,7 +106,7 @@ public class GetMultipleTlvsByHostIdTest extends AbstractQueryTest<IdQueryParame
         setup(ExpectedError.NOT_SUPPORTED);
         getQuery().executeQueryCommand();
         Map<String, LldpInfo> returnValue = getQuery().getQueryReturnValue().getReturnValue();
-        assertEquals(returnValue, null);
+        assertNull(returnValue);
     }
 
     @Override

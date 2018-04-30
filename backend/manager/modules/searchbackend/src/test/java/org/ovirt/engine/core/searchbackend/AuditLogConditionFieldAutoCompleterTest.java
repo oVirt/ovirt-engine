@@ -2,6 +2,7 @@ package org.ovirt.engine.core.searchbackend;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
@@ -70,7 +71,7 @@ public class AuditLogConditionFieldAutoCompleterTest {
         // Just going to test that this works
         pair.setSecond("Wednesday");
         comp.formatValue("TIME", pair, false);
-        assertFalse("Day should be transformed to a date", pair.getSecond().equals("Wednesday"));
+        assertNotEquals("Day should be transformed to a date", "Wednesday", pair.getSecond());
     }
 
     private String quote(String s) {

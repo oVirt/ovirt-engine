@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
@@ -95,8 +96,8 @@ public class GlusterHostValidatorTest {
     public void testCheckGlusterQuorumWithTwoServersDown() {
         Cluster cluster = getCluster(true);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_1, SERVER_ID_2);
-        assertTrue("Quorum check is failing", hostValidator.checkGlusterQuorum(cluster, hostIds).size() == 2);
-        assertTrue(Arrays.asList("Vol-1", "Vol-2").equals(hostValidator.checkGlusterQuorum(cluster, hostIds)));
+        assertEquals("Quorum check is failing", 2, hostValidator.checkGlusterQuorum(cluster, hostIds).size());
+        assertEquals(Arrays.asList("Vol-1", "Vol-2"), hostValidator.checkGlusterQuorum(cluster, hostIds));
     }
 
     @Test
@@ -111,8 +112,8 @@ public class GlusterHostValidatorTest {
         }
         doReturn(glusterVolumes).when(volumeDao).getByClusterId(CLUSTER_ID);
         Iterable<Guid> hostIds = Arrays.asList(SERVER_ID_2);
-        assertTrue("Quorum check is failing", hostValidator.checkGlusterQuorum(cluster, hostIds).size() == 2);
-        assertTrue(Arrays.asList("Vol-1", "Vol-2").equals(hostValidator.checkGlusterQuorum(cluster, hostIds)));
+        assertEquals("Quorum check is failing", 2, hostValidator.checkGlusterQuorum(cluster, hostIds).size());
+        assertEquals(Arrays.asList("Vol-1", "Vol-2"), hostValidator.checkGlusterQuorum(cluster, hostIds));
     }
 
     @Test
@@ -148,10 +149,11 @@ public class GlusterHostValidatorTest {
         bricks.get(1).setUnSyncedEntries(10);
         bricks.get(2).setUnSyncedEntries(0);
         doReturn(bricks).when(brickDao).getGlusterVolumeBricksByServerId(SERVER_ID_1);
-        assertTrue("Unsynced entries test is failing for bricks with unsynced entries",
+        assertEquals("Unsynced entries test is failing for bricks with unsynced entries",
+                2,
                 hostValidator.checkUnsyncedEntries(Arrays.asList(SERVER_ID_1, SERVER_ID_2))
                         .get(SERVER_ID_1)
-                        .size() == 2);
+                        .size());
     }
 
     private Cluster getCluster(boolean supportGlusterService) {

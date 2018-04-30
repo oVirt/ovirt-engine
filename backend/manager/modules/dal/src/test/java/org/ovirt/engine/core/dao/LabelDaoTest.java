@@ -335,7 +335,7 @@ public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
 
         List<Label> labelsForVm = dao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
 
-        assertTrue(labelsForVm.size() == 1);
+        assertEquals(1, labelsForVm.size());
         assertEquals(label, labelsForVm.get(0));
     }
 

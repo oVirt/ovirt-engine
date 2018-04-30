@@ -1,7 +1,10 @@
 package org.ovirt.engine.api.restapi.types;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.AffinityGroup;
@@ -68,8 +71,8 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroupMapper.map(model, entity);
 
         assertEquals(EntityAffinityRule.NEGATIVE, entity.getVmAffinityRule());
-        assertEquals(true, entity.isVmEnforcing());
-        assertEquals(true, entity.isVmAffinityEnabled());
+        assertTrue(entity.isVmEnforcing());
+        assertTrue(entity.isVmAffinityEnabled());
     }
 
     @Test
@@ -84,8 +87,8 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroupMapper.map(model, entity);
 
         assertEquals(EntityAffinityRule.POSITIVE, entity.getVmAffinityRule());
-        assertEquals(false, entity.isVmEnforcing());
-        assertEquals(true, entity.isVmAffinityEnabled());
+        assertFalse(entity.isVmEnforcing());
+        assertTrue(entity.isVmAffinityEnabled());
     }
 
     @Test
@@ -105,8 +108,8 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroupMapper.map(model, entity);
 
         assertEquals(EntityAffinityRule.NEGATIVE, entity.getVmAffinityRule());
-        assertEquals(true, entity.isVmEnforcing());
-        assertEquals(true, entity.isVmAffinityEnabled());
+        assertTrue(entity.isVmEnforcing());
+        assertTrue(entity.isVmAffinityEnabled());
     }
 
     @Test
@@ -126,8 +129,8 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroupMapper.map(model, entity);
 
         assertEquals(EntityAffinityRule.POSITIVE, entity.getVmAffinityRule());
-        assertEquals(false, entity.isVmEnforcing());
-        assertEquals(true, entity.isVmAffinityEnabled());
+        assertFalse(entity.isVmEnforcing());
+        assertTrue(entity.isVmAffinityEnabled());
     }
 
     @Test
@@ -147,8 +150,8 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroupMapper.map(model, entity);
 
         assertEquals(EntityAffinityRule.DISABLED, entity.getVmAffinityRule());
-        assertEquals(true, entity.isVmEnforcing());
-        assertEquals(false, entity.isVmAffinityEnabled());
+        assertTrue(entity.isVmEnforcing());
+        assertFalse(entity.isVmAffinityEnabled());
     }
 
     @Test
@@ -170,8 +173,8 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroupMapper.map(model, entity);
 
         assertEquals(EntityAffinityRule.POSITIVE, entity.getVmAffinityRule());
-        assertEquals(true, entity.isVmEnforcing());
-        assertEquals(true, entity.isVmAffinityEnabled());
+        assertTrue(entity.isVmEnforcing());
+        assertTrue(entity.isVmAffinityEnabled());
     }
 
     @Test
@@ -191,7 +194,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroupMapper.map(model, entity);
 
         assertEquals(EntityAffinityRule.NEGATIVE, entity.getVdsAffinityRule());
-        assertEquals(true, entity.isVdsEnforcing());
+        assertTrue(entity.isVdsEnforcing());
     }
 
     @Test
@@ -211,7 +214,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         AffinityGroupMapper.map(model, entity);
 
         assertEquals(EntityAffinityRule.POSITIVE, entity.getVdsAffinityRule());
-        assertEquals(false, entity.isVdsEnforcing());
+        assertFalse(entity.isVdsEnforcing());
     }
 
     @Test
@@ -329,7 +332,7 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
         assertEquals(false, model.getVmsRule().isEnabled());
         assertEquals(false, model.getVmsRule().isPositive());
         assertEquals(true, model.getVmsRule().isEnforcing());
-        assertEquals(null, model.isPositive());
+        assertNull(model.isPositive());
         assertEquals(true, model.isEnforcing());
     }
 

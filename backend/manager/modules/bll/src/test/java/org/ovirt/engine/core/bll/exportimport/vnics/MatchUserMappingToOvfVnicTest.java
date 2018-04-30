@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.exportimport.vnics;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,7 +52,7 @@ public class MatchUserMappingToOvfVnicTest {
         ExternalVnicProfileMapping expectedMatchingMapping = expectedIsMatch ? userMappingUnderTest : null;
         assertEquals(expectedMatchingMapping, ctx.getMatched().get(ovfVnicUnderTest));
         assertTrue(ctx.getMatched().size() > 0);
-        assertTrue(ctx.getException() == null);
+        assertNull(ctx.getException());
     }
 
     private void print(VmNetworkInterface ovfVnicUnderTest, MapVnicsContext ctx, int count) {

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.memory.sdcomparators;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Comparator;
@@ -25,7 +26,7 @@ public class StorageDomainComparatorAbstractTest {
     }
 
     protected void assertEqualsTo(StorageDomain firstStorageDomain, StorageDomain secondStorageDomain) {
-        assertTrue(compareStorageDomains(firstStorageDomain, secondStorageDomain) == 0);
+        assertEquals(0, compareStorageDomains(firstStorageDomain, secondStorageDomain));
     }
 
     protected void assertBiggerThan(StorageDomain firstStorageDomain, StorageDomain secondStorageDomain) {

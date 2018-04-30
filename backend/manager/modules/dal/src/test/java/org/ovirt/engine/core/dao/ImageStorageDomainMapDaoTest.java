@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -73,7 +74,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase<ImageStorageDo
         dao.remove(new ImageStorageDomainMapId(EXISTING_IMAGE_ID, FixturesTool.STORAGE_DOMAIN_SCALE_SD5));
         List<ImageStorageDomainMap> entries = dao.getAllByStorageDomainId(EXISTING_IMAGE_ID);
         for (ImageStorageDomainMap entry : entries) {
-            assertFalse(entry.getStorageDomainId().equals(FixturesTool.STORAGE_DOMAIN_SCALE_SD5));
+            assertNotEquals(entry.getStorageDomainId(), FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         }
         assertNotNull(entries);
         assertTrue(entries.isEmpty());

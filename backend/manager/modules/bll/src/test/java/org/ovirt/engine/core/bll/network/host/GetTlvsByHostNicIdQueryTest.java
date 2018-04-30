@@ -157,7 +157,7 @@ public class GetTlvsByHostNicIdQueryTest extends AbstractQueryTest<IdQueryParame
         setup(ExpectedError.NOT_SUPPORTED);
         getQuery().executeQueryCommand();
         Map<String, LldpInfo> returnValue = getQuery().getQueryReturnValue().getReturnValue();
-        assertTrue(returnValue == null);
+        assertNull(returnValue);
     }
 
     @Override

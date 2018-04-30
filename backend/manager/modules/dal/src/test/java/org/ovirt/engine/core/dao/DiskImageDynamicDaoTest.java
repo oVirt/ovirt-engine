@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +75,7 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
         Guid imageGroupId = FixturesTool.IMAGE_GROUP_ID_2;
 
         DiskImageDynamic existingEntity2 = dao.get(imageId);
-        assertFalse(existingEntity2.getReadRate().equals(120));
+        assertNotEquals(120, (int) existingEntity2.getReadRate());
 
         existingEntity2.setId(imageGroupId);
         Integer readRate = 120;

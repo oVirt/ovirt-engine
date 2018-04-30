@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -53,7 +54,7 @@ public class MatchUserMappingToOvfVnicTest {
         ctx.setOvfVnics(singletonList(vnic));
         underTest.handle(ctx);
         assertEquals(1, ctx.getMatched().size());
-        assertEquals(null, ctx.getMatched().get(vnic));
+        assertNull(ctx.getMatched().get(vnic));
     }
 
     @Test
@@ -77,7 +78,7 @@ public class MatchUserMappingToOvfVnicTest {
         ctx.setUserMappings(singletonList(emptySourceMapping));
         ctx.setOvfVnics(singletonList(vnic));
         underTest.handle(ctx);
-        assertEquals(null, ctx.getMatched().get(vnic));
+        assertNull(ctx.getMatched().get(vnic));
     }
 
     @Test
@@ -101,6 +102,6 @@ public class MatchUserMappingToOvfVnicTest {
         ctx.setUserMappings(externalVnicProfileMappings);
         ctx.setOvfVnics(singletonList(vnic));
         underTest.handle(ctx);
-        assertEquals(null, ctx.getMatched().get(vnic));
+        assertNull(ctx.getMatched().get(vnic));
     }
 }

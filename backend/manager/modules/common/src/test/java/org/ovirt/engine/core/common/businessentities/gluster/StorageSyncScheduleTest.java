@@ -74,7 +74,7 @@ public class StorageSyncScheduleTest {
         assertEquals(expectedExpression, schedule.toCronExpression());
         List<Class<?>> validationGroup = new ArrayList<>();
         List<String> result = ValidationUtils.validateInputs(validationGroup, schedule);
-        assertEquals(true, result.isEmpty());
+        assertTrue(result.isEmpty());
     }
 
 }

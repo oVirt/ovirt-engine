@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.gluster;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -153,7 +154,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         assertNotNull(volume);
         assertFalse(volume.isOnline());
 
-        assertFalse(volume.equals(existingDistVol));
+        assertNotEquals(volume, existingDistVol);
         existingDistVol.setStatus(GlusterStatus.DOWN);
         assertEquals(existingDistVol, volume);
     }
@@ -171,11 +172,11 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         GlusterVolumeEntity volume = dao.getById(existingDistVol.getId());
 
         assertNotNull(volume);
-        assertFalse(volume.equals(existingDistVol));
+        assertNotEquals(volume, existingDistVol);
         assertNotNull("volume capacity info is not available", volume.getAdvancedDetails().getCapacityInfo());
-        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getTotalSize() == 500000);
-        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getUsedSize() == 200000);
-        assertTrue(volume.getAdvancedDetails().getCapacityInfo().getFreeSize() == 300000);
+        assertEquals(500000, (long) volume.getAdvancedDetails().getCapacityInfo().getTotalSize());
+        assertEquals(200000, (long) volume.getAdvancedDetails().getCapacityInfo().getUsedSize());
+        assertEquals(300000, (long) volume.getAdvancedDetails().getCapacityInfo().getFreeSize());
         assertNotNull(volume.getAdvancedDetails().getUpdatedAt());
 
     }
@@ -192,7 +193,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         assertNotNull(volume);
         assertFalse(volume.isOnline());
 
-        assertFalse(volume.equals(existingDistVol));
+        assertNotEquals(volume, existingDistVol);
         existingDistVol.setStatus(GlusterStatus.DOWN);
         assertEquals(existingDistVol, volume);
     }
@@ -262,7 +263,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         assertEquals(2, protocols.size());
         assertTrue(protocols.contains(AccessProtocol.NFS));
 
-        assertFalse(volumeAfter.equals(existingDistVol));
+        assertNotEquals(volumeAfter, existingDistVol);
         existingDistVol.addAccessProtocol(AccessProtocol.NFS);
         assertEquals(volumeAfter, existingDistVol);
     }
@@ -282,7 +283,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         assertEquals(1, protocols.size());
         assertFalse(protocols.contains(AccessProtocol.NFS));
 
-        assertFalse(volumeAfter.equals(existingReplVol));
+        assertNotEquals(volumeAfter, existingReplVol);
         existingReplVol.removeAccessProtocol(AccessProtocol.NFS);
         assertEquals(volumeAfter, existingReplVol);
     }
@@ -302,7 +303,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         assertEquals(2, transportTypes.size());
         assertTrue(transportTypes.contains(TransportType.RDMA));
 
-        assertFalse(volumeAfter.equals(existingDistVol));
+        assertNotEquals(volumeAfter, existingDistVol);
         existingDistVol.addTransportType(TransportType.RDMA);
         assertEquals(volumeAfter, existingDistVol);
     }
@@ -323,9 +324,9 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         GlusterVolumeEntity volumeAfter = dao.getById(EXISTING_VOL_REPL_ID);
         assertNotNull(volumeAfter);
         assertNotNull(volumeAfter.getAdvancedDetails().getCapacityInfo());
-        assertTrue(volumeAfter.getAdvancedDetails().getCapacityInfo().getTotalSize() == 250000);
-        assertTrue(volumeAfter.getAdvancedDetails().getCapacityInfo().getUsedSize() == 175000);
-        assertTrue(volumeAfter.getAdvancedDetails().getCapacityInfo().getFreeSize() == 75000);
+        assertEquals(250000, (long) volumeAfter.getAdvancedDetails().getCapacityInfo().getTotalSize());
+        assertEquals(175000, (long) volumeAfter.getAdvancedDetails().getCapacityInfo().getUsedSize());
+        assertEquals(75000, (long) volumeAfter.getAdvancedDetails().getCapacityInfo().getFreeSize());
         assertNotNull(volumeAfter.getAdvancedDetails().getUpdatedAt());
     }
 
@@ -350,7 +351,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         assertTrue(transportTypes.contains(TransportType.TCP));
         assertTrue(transportTypes.contains(TransportType.RDMA));
 
-        assertFalse(volumeAfter.equals(existingDistVol));
+        assertNotEquals(volumeAfter, existingDistVol);
         existingDistVol.addTransportType(TransportType.TCP);
         existingDistVol.addTransportType(TransportType.RDMA);
         assertEquals(volumeAfter, existingDistVol);
@@ -371,7 +372,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         assertEquals(1, transportTypes.size());
         assertFalse(transportTypes.contains(TransportType.RDMA));
 
-        assertFalse(volumeAfter.equals(existingReplVol));
+        assertNotEquals(volumeAfter, existingReplVol);
         existingReplVol.removeTransportType(TransportType.RDMA);
         assertEquals(volumeAfter, existingReplVol);
     }
@@ -436,7 +437,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase<GlusterVolumeDao> {
         assertFalse(transportTypes.contains(TransportType.TCP));
         assertFalse(transportTypes.contains(TransportType.RDMA));
 
-        assertFalse(volumeAfter.equals(existingReplVol));
+        assertNotEquals(volumeAfter, existingReplVol);
         existingReplVol.removeTransportType(TransportType.TCP);
         existingReplVol.removeTransportType(TransportType.RDMA);
         assertEquals(volumeAfter, existingReplVol);

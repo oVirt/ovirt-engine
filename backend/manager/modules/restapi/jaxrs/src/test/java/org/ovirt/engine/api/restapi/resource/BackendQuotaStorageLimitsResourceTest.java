@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -59,7 +58,7 @@ public class BackendQuotaStorageLimitsResourceTest extends AbstractBackendBaseTe
                 assertEquals(STORAGE_SIZE_GB, storageLimit.getLimit());
             }
             if (storageLimit.getStorageDomain().getId().equals(STORAGE_ID_2.toString())) {
-                assertTrue(storageLimit.getUsage() == STORAGE_SIZE_GB_USAGE);
+                assertEquals(storageLimit.getUsage(), STORAGE_SIZE_GB_USAGE, 0.0);
             }
         }
 

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.frontend.communication;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -71,8 +71,8 @@ public class OperationProcessorTest {
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
         // Test that we inserted the callback from the processor.
-        assertFalse("The callbacks should not match.", //$NON-NLS-1$
-                operationListCaptor.getValue().get(0).getCallback().equals(mockCallback1));
+        assertNotEquals("The callbacks should not match.", //$NON-NLS-1$
+                operationListCaptor.getValue().get(0).getCallback(), mockCallback1);
     }
 
     @Test
@@ -90,12 +90,15 @@ public class OperationProcessorTest {
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
         assertEquals("Should have 3 operations", 3, operationListCaptor.getValue().size()); //$NON-NLS-1$
         // Test that we inserted the callback from the processor.
-        assertFalse("The callbacks should not match.", //$NON-NLS-1$
-                operationListCaptor.getValue().get(0).getCallback().equals(mockCallback1));
-        assertFalse("The callbacks should not match.", //$NON-NLS-1$
-                operationListCaptor.getValue().get(1).getCallback().equals(mockCallback2));
-        assertFalse("The callbacks should not match.", //$NON-NLS-1$
-                operationListCaptor.getValue().get(2).getCallback().equals(mockCallback3));
+        assertNotEquals("The callbacks should not match.", //$NON-NLS-1$
+                operationListCaptor.getValue().get(0).getCallback(),
+                mockCallback1);
+        assertNotEquals("The callbacks should not match.", //$NON-NLS-1$
+                operationListCaptor.getValue().get(1).getCallback(),
+                mockCallback2);
+        assertNotEquals("The callbacks should not match.", //$NON-NLS-1$
+                operationListCaptor.getValue().get(2).getCallback(),
+                mockCallback3);
     }
 
     @Test
@@ -142,8 +145,8 @@ public class OperationProcessorTest {
         // Verify that the operation is put back in the queue.
         verify(mockOperationManager).addOperation(operationListCaptor.getValue().get(0));
         // Verify that the callback on the operation is no longer the original.
-        assertFalse("callbacks should not match", //$NON-NLS-1$
-                operationListCaptor.getValue().get(0).getCallback().equals(mockCallback1));
+        assertNotEquals("callbacks should not match", //$NON-NLS-1$
+                operationListCaptor.getValue().get(0).getCallback(), mockCallback1);
     }
 
     @Test
@@ -175,10 +178,10 @@ public class OperationProcessorTest {
             thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
-        assertFalse("The callbacks should not match", operationListCaptor.getValue().get(0)  //$NON-NLS-1$
-                .getCallback().equals(mockCallback1));
-        assertFalse("The callbacks should not match", operationListCaptor.getValue().get(1)  //$NON-NLS-1$
-                .getCallback().equals(mockCallback2));
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue().get(0)  //$NON-NLS-1$
+                .getCallback(), mockCallback1);
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue().get(1)  //$NON-NLS-1$
+                .getCallback(), mockCallback2);
         List<ActionReturnValue> resultList1 = new ArrayList<>();
         List<ActionReturnValue> resultList2 = new ArrayList<>();
         ActionReturnValue result1 = new ActionReturnValue();
@@ -204,10 +207,10 @@ public class OperationProcessorTest {
             thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
-        assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
-                .get(0).getCallback().equals(mockCallback1));
-        assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
-                .get(1).getCallback().equals(mockCallback2));
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
+                .get(0).getCallback(), mockCallback1);
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
+                .get(1).getCallback(), mockCallback2);
         ActionReturnValue result1 = new ActionReturnValue();
         operationListCaptor.getValue().get(0).getCallback().onSuccess(operationListCaptor.getValue().get(0), result1);
         verify(mockCallback1).onSuccess(testOperation1, result1);
@@ -227,10 +230,10 @@ public class OperationProcessorTest {
             thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
-        assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
-                .get(0).getCallback().equals(mockCallback1));
-        assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
-                .get(1).getCallback().equals(mockCallback2));
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
+                .get(0).getCallback(), mockCallback1);
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
+                .get(1).getCallback(), mockCallback2);
         List<ActionReturnValue> resultList = new ArrayList<>();
         ActionReturnValue result1 = new ActionReturnValue();
         ActionReturnValue result2 = new ActionReturnValue();
@@ -254,10 +257,10 @@ public class OperationProcessorTest {
             thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
-        assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
-                .get(0).getCallback().equals(mockCallback1));
-        assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
-                .get(1).getCallback().equals(mockCallback2));
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
+                .get(0).getCallback(), mockCallback1);
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
+                .get(1).getCallback(), mockCallback2);
         Exception testException = new Exception("this is an exception"); //$NON-NLS-1$
         operationListCaptor.getValue().get(0).getCallback().onFailure(operationListCaptor.getValue().get(0),
                 testException);
@@ -278,10 +281,10 @@ public class OperationProcessorTest {
             thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
-        assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
-                .get(0).getCallback().equals(mockCallback1));
-        assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
-                .get(1).getCallback().equals(mockCallback2));
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
+                .get(0).getCallback(), mockCallback1);
+        assertNotEquals("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
+                .get(1).getCallback(), mockCallback2);
         Exception testException = new Exception("this is an exception"); //$NON-NLS-1$
         operationListCaptor.getValue().get(0).getCallback().onFailure(operationListCaptor.getValue().get(0),
                 testException);
@@ -307,10 +310,10 @@ public class OperationProcessorTest {
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
         // Check to make sure it inserted its own callback.
-        assertFalse("The callbacks should NOT match", //$NON-NLS-1$
-                operationListCaptor.getValue().get(0).getCallback().equals(mockCallbackList1));
-        assertFalse("The callbacks should NOT match", //$NON-NLS-1$
-                operationListCaptor.getValue().get(1).getCallback().equals(mockCallbackList2));
+        assertNotEquals("The callbacks should NOT match", //$NON-NLS-1$
+                operationListCaptor.getValue().get(0).getCallback(), mockCallbackList1);
+        assertNotEquals("The callbacks should NOT match", //$NON-NLS-1$
+                operationListCaptor.getValue().get(1).getCallback(), mockCallbackList2);
         // There should be only be two items in the list.
         assertEquals("There should be two items", 2, operationListCaptor.getValue().size()); //$NON-NLS-1$
         List<ActionReturnValue> resultList1 = new ArrayList<>();

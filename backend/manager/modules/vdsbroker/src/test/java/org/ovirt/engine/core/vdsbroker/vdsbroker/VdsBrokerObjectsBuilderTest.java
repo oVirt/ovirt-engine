@@ -213,7 +213,7 @@ public class VdsBrokerObjectsBuilderTest {
         assertEquals("fe80::1",     vdsBrokerObjectsBuilder.stripIpv6ZoneIndex("fe80::1%eth0/64"));
         assertEquals("",            vdsBrokerObjectsBuilder.stripIpv6ZoneIndex("%"));
         assertEquals("",            vdsBrokerObjectsBuilder.stripIpv6ZoneIndex(""));
-        assertEquals(null,          vdsBrokerObjectsBuilder.stripIpv6ZoneIndex(null));
+        assertNull(vdsBrokerObjectsBuilder.stripIpv6ZoneIndex(null));
     }
 
     @Test

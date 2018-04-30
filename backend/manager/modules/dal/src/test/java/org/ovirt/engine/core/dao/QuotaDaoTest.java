@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -310,9 +309,9 @@ public class QuotaDaoTest extends BaseDaoTestCase<QuotaDao> {
         Long newStorageLimit = 2345L;
 
         // Check before the update, that the fields are not equal.
-        assertFalse(quotaName.equals(quotaGeneralToSpecific.getQuotaName()));
+        assertNotEquals(quotaName, quotaGeneralToSpecific.getQuotaName());
         assertNotEquals(quotaClusterList.size(), quotaGeneralToSpecific.getQuotaClusters().size());
-        assertFalse(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB().equals(newStorageLimit));
+        assertNotEquals(quotaGeneralToSpecific.getGlobalQuotaStorage().getStorageSizeGB(), newStorageLimit);
 
         // Update
         quotaGeneralToSpecific.setQuotaName(quotaName);

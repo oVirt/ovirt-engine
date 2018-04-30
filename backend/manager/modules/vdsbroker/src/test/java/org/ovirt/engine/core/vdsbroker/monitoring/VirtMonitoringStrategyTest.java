@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -113,7 +114,7 @@ public class VirtMonitoringStrategyTest {
         vds.setHostOs("RHEL - 7Server - 1.el7");
         cluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertFalse(vds.getStatus().equals(VDSStatus.NonOperational));
+        assertNotEquals(vds.getStatus(), VDSStatus.NonOperational);
     }
 
     @Test
@@ -123,7 +124,7 @@ public class VirtMonitoringStrategyTest {
         vds.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
         cluster.setClusterPolicyId(ClusterPolicy.UPGRADE_POLICY_GUID);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertFalse(vds.getStatus().equals(VDSStatus.NonOperational));
+        assertNotEquals(vds.getStatus(), VDSStatus.NonOperational);
     }
 
     private VDS createBaseVds() {

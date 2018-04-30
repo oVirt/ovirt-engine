@@ -2,6 +2,7 @@ package org.ovirt.engine.core.compat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -22,16 +23,16 @@ public class VersionTest {
         assertEquals(new Version(1, 2, 3), new Version("1.2.3"));
         assertEquals(new Version(1, 2, 3, 4), new Version("1.2.3.4"));
         // nulls and other data types
-        assertFalse(new Version().equals(null));
-        assertFalse(new Version().equals("foo"));
-        assertFalse(new Version().equals(1d));
+        assertNotEquals(new Version(), null);
+        assertNotEquals(new Version(), "foo");
+        assertNotEquals(new Version(), 1d);
     }
 
     @Test
     public void compare() {
         assertTrue(Version.v3_6.compareTo(Version.v4_0) < 0);
         assertTrue(Version.v4_0.compareTo(Version.v3_6) > 0);
-        assertTrue(Version.v3_6.compareTo(new Version("3.6")) == 0);
+        assertEquals(0, Version.v3_6.compareTo(new Version("3.6")));
     }
 
     @Test
