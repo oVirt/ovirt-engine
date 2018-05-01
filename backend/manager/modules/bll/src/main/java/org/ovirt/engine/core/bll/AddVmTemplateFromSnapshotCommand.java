@@ -17,6 +17,8 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
+import org.ovirt.engine.core.common.action.CreateAllTemplateDisksFromSnapshotParameters;
+import org.ovirt.engine.core.common.action.CreateAllTemplateDisksParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -114,6 +116,15 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
                 DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_SNAPABLE, ONLY_ACTIVE);
         disksFromDb.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
         return disksFromDb;
+    }
+
+    @Override
+    protected CreateAllTemplateDisksParameters buildCreateAllTemplateDisksParameters() {
+        CreateAllTemplateDisksFromSnapshotParameters parameters =
+                new CreateAllTemplateDisksFromSnapshotParameters(getVm() != null ? getVmId() : Guid.Empty);
+        parameters.setSnapshotId(getParameters().getSourceSnapshotId());
+        fillCreateAllTemplateDisksParameters(parameters);
+        return parameters;
     }
 
     @Override

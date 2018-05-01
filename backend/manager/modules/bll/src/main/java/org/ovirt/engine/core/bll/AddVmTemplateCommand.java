@@ -411,9 +411,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return returnValue.getActionReturnValue();
     }
 
-    private CreateAllTemplateDisksParameters buildCreateAllTemplateDisksParameters() {
+    protected CreateAllTemplateDisksParameters buildCreateAllTemplateDisksParameters() {
         CreateAllTemplateDisksParameters parameters =
                 new CreateAllTemplateDisksParameters(getVm() != null ? getVmId() : Guid.Empty);
+        fillCreateAllTemplateDisksParameters(parameters);
+        return parameters;
+    }
+
+    protected void fillCreateAllTemplateDisksParameters(CreateAllTemplateDisksParameters parameters) {
         parameters.setVmTemplateId(getVmTemplateId());
         parameters.setVmTemplateName(getVmTemplateName());
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
@@ -424,7 +429,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        return parameters;
     }
 
     protected ActionType getAddAllTemplateDisksActionType() {
