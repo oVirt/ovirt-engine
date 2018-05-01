@@ -7,7 +7,8 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 
 public class HostNetworkQosMapper {
 
-    private static final int MBITS_TO_BITS = 1000000;
+    // Mbits (mega bits) = 1000 * 1000 bits
+    private static final long MBITS_TO_BITS = 1000 * 1000L;
 
     private final Map<String, Object> rootEntry;
 
@@ -35,12 +36,12 @@ public class HostNetworkQosMapper {
     }
 
     private void serializeValue(Map<String, Object> entry, String curveKey, Integer value) {
-        serializeValue(entry, curveKey, value, 1);
+        serializeValue(entry, curveKey, value, 1L);
     }
 
-    private void serializeValue(Map<String, Object> entry, String curveKey, Integer value, int conversionRate) {
+    private void serializeValue(Map<String, Object> entry, String curveKey, Integer value, long conversionRate) {
         if (value != null) {
-            Map<String, Integer> parameters = new HashMap<>();
+            Map<String, Long> parameters = new HashMap<>();
             parameters.put(VdsProperties.HOST_QOS_AVERAGE, value * conversionRate);
             entry.put(curveKey, parameters);
         }
@@ -66,17 +67,17 @@ public class HostNetworkQosMapper {
     }
 
     private Integer deserializeValue(Map<String, Object> entry, String curveKey) {
-        return deserializeValue(entry, curveKey, 1);
+        return deserializeValue(entry, curveKey, 1L);
     }
 
-    private Integer deserializeValue(Map<String, Object> entry, String curveKey, int conversionRate) {
-        Map<String, Integer> parameters = (Map<String, Integer>) entry.get(curveKey);
-        if (parameters == null) {
+    private Integer deserializeValue(Map<String, Object> entry, String curveKey, long conversionRate) {
+        Map<String, Object> parameters = (Map<String, Object>) entry.get(curveKey);
+        if (parameters == null || parameters.get(VdsProperties.HOST_QOS_AVERAGE) == null) {
             return null;
         }
-
-        Integer average = parameters.get(VdsProperties.HOST_QOS_AVERAGE);
-        return (average == null) ? null : (average / conversionRate);
+        // json-rpc de-serializes a value to integer or to long according
+        // to its magnitude, so convert int to long
+        long avg = ((Number) parameters.get(VdsProperties.HOST_QOS_AVERAGE)).longValue();
+        return (int)(avg / conversionRate);
     }
-
 }
