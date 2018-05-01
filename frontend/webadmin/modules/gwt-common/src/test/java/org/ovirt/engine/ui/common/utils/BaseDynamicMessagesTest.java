@@ -26,29 +26,28 @@ public class BaseDynamicMessagesTest {
     public void getPlaceHolderListTest1() {
         String testMessage = "This is a test if {0} can actually work out {1}"; //$NON-NLS-1$
         List<Integer> result = testMessages.getPlaceHolderList(testMessage);
-        assertEquals("Result should have 2 items", 2, result.size()); //$NON-NLS-1$
-        assertEquals("index 0 should be 0", (Integer) 0, result.get(0)); //$NON-NLS-1$
+        assertIndexes(result, 2);
     }
 
     @Test
     public void getPlaceHolderListTest2() {
         String testMessage = "This is a test if {0} can actually work out {1}, {0}, {1}, {1}"; //$NON-NLS-1$
         List<Integer> result = testMessages.getPlaceHolderList(testMessage);
-        assertEquals("Result should have 2 items", 2, result.size()); //$NON-NLS-1$
-        assertEquals("index 0 should be 0", (Integer) 0, result.get(0)); //$NON-NLS-1$
-        assertEquals("index 1 should be 1", (Integer) 1, result.get(1)); //$NON-NLS-1$
+        assertIndexes(result, 2);
     }
 
     @Test
     public void getPlaceHolderListTest3OutofOrder() {
         String testMessage = "This is {3} a {4} test {1} if {0} can actually work out {2}"; //$NON-NLS-1$
         List<Integer> result = testMessages.getPlaceHolderList(testMessage);
-        assertEquals("Result should have 5 items", 5, result.size()); //$NON-NLS-1$
-        assertEquals("index 0 should be 0", (Integer) 0, result.get(0)); //$NON-NLS-1$
-        assertEquals("index 1 should be 1", (Integer) 1, result.get(1)); //$NON-NLS-1$
-        assertEquals("index 2 should be 2", (Integer) 2, result.get(2)); //$NON-NLS-1$
-        assertEquals("index 3 should be 3", (Integer) 3, result.get(3)); //$NON-NLS-1$
-        assertEquals("index 4 should be 4", (Integer) 4, result.get(4)); //$NON-NLS-1$
+        assertIndexes(result, 5);
+    }
+
+    private static void assertIndexes(List<Integer> result, int expectedSize) {
+        assertEquals(String.format("Result should have %d items", expectedSize), expectedSize, result.size()); //$NON-NLS-1$
+        for (int i = 0; i < expectedSize; ++i) {
+            assertEquals(String.format("index %d should be %d", i, i), Integer.valueOf(i), result.get(i)); //$NON-NLS-1$
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
