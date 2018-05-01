@@ -303,6 +303,7 @@ public class InstanceImageLineModel extends EntityModel {
         vm.setClusterId(parentModel.getUnitVmModel().getSelectedCluster().getId());
         vm.setStoragePoolId(parentModel.getUnitVmModel().getSelectedDataCenter().getId());
         vm.setClusterCompatibilityVersion(parentModel.getUnitVmModel().getSelectedCluster().getCompatibilityVersion());
+        vm.setVmOs(parentModel.getUnitVmModel().getOSType().getSelectedItem());
 
         Quota selectedQuota = parentModel.getUnitVmModel().getQuota().getSelectedItem();
         vm.setQuotaId(selectedQuota == null ? null : selectedQuota.getId());
