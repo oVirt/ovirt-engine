@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -77,7 +76,6 @@ public class BaseDynamicMessagesTest {
     public void formatStringTest() {
         testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}"); //$NON-NLS-1$
         String result = testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE, "1.1.1"); //$NON-NLS-1$
-        assertNotNull("There should be a result"); //$NON-NLS-1$
         assertEquals("Result should be 'Testing 123: 1.1.1'", //$NON-NLS-1$
                 "Testing 123: 1.1.1", result); //$NON-NLS-1$
     }
@@ -87,7 +85,6 @@ public class BaseDynamicMessagesTest {
         testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}.{1}.{2}"); //$NON-NLS-1$
         String result = testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE,
                 "1", "1", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        assertNotNull("There should be a result"); //$NON-NLS-1$
         assertEquals("Result should be 'Testing 123: 1.1.1'", //$NON-NLS-1$
                 "Testing 123: 1.1.1", result); //$NON-NLS-1$
     }
@@ -97,7 +94,6 @@ public class BaseDynamicMessagesTest {
         testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}"); //$NON-NLS-1$
         String result = testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE,
                 "1.1.1", "2.2.2"); //$NON-NLS-1$ //$NON-NLS-2$
-        assertNotNull("There should be a result"); //$NON-NLS-1$
         assertEquals("Result should be 'Testing 123: 1.1.1'", //$NON-NLS-1$
                 "Testing 123: 1.1.1", result); //$NON-NLS-1$
     }
@@ -107,7 +103,6 @@ public class BaseDynamicMessagesTest {
         testMessages.addFallback(DynamicMessageKey.APPLICATION_TITLE, "Testing 123: {0}.{1}.{0}"); //$NON-NLS-1$
         String result = testMessages.formatString(DynamicMessageKey.APPLICATION_TITLE,
                 "1", "2", "3"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        assertNotNull("There should be a result"); //$NON-NLS-1$
         assertEquals("Result should be 'Testing 123: 1.1.1'", //$NON-NLS-1$
                 "Testing 123: 1.2.1", result); //$NON-NLS-1$
     }
